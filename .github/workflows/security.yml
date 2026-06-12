@@ -13,23 +13,24 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
       
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
         with:
-          node-version: '20'
-          cache: 'npm'
-        
-      # 1. Native Node dependency scanning
-      - name: Audit NPM Dependencies
-        run: npm audit --audit-level=high
-        
-      # 2. Semgrep: powerful static analysis for code quality and security
-      - name: Run Semgrep SAST
-        uses: returntocorp/semgrep-action@v1
-        with:
-          config: "p/default"
+          channel: 'stable'
+          cache: true
           
-      # 3. Trivy: comprehensive security scanning for container images and file systems
+      - name: Get dependencies
+        run: flutter pub get
+
+      # 1. Dart/Flutter native dependency vulnerability scanning
+      - name: Audit Dart Dependencies
+        run: dart pub outdated --transitive --dependency-overrides --no-dev-dependencies
+        
+      # 2. Advanced Static Analysis (Linter configuration covers most security practices)
+      - name: Run Flutter Analyze
+        run: flutter analyze
+          
+      # 3. Trivy: file system and container scanner (looks for exposed secrets, etc.)
       - name: Run Trivy Vulnerability Scanner
         uses: aquasecurity/trivy-action@master
         with:

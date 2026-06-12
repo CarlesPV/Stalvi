@@ -1,7 +1,10 @@
-# Domain Glossary (Depends on the project)
+# Domain Glossary
 
 Use these specific terms when naming variables, functions, or database columns:
 
-- **SKU (Stock Keeping Unit):** The unique identifier for an item. Never use `itemId` or `productId`.
-- **Reservation:** A temporary lock on inventory items pending payment. Never use `hold` or `lock`.
-- **Warehouse:** The physical location storing the stock. Never use `store` or `location`.
+- **Movement:** A financial transaction. Never use `transaction` to avoid confusion with database transactions.
+- **Account:** A financial source (Wallet, Bank, Savings).
+- **Category:** A classification for a Movement (e.g., Food, Salary).
+- **Transfer:** A specific type of Movement between two internal Accounts that does not affect global income/expense statistics.
+- **Soft Delete:** The action of setting `is_deleted = true` instead of dropping the record from the database.
+- **Trash:** The conceptual area where soft-deleted items stay for 30 days.

@@ -1,10 +1,24 @@
-# Architecture Map (Depends on the project)
+# Architecture Map: Konta (Flutter Clean Architecture)
 
-## Pattern: Hexagonal Architecture (Ports and Adapters)
+The application strictly enforces Clean Architecture. The flow of dependencies is unidirectional: Presentation -> Domain <- Data.
 
-- **Domain Layer:** Core entities and domain services. Isolated from everything.
-- **Application Layer:** Use cases. Orchestrates the flow of data but does not know about HTTP or SQL.
-- **Infrastructure Layer:** Implements interfaces defined by the Application layer (e.g., PostgreSQL repositories, external payment APIs).
+## 1. Presentation Layer
+- **UI:** Flutter Widgets, pages, and routing (GoRouter).
+- **State Management:** Riverpod (`@riverpod` generated providers).
+- **Responsibility:** Captures user input, displays states (AsyncData, AsyncLoading, AsyncError), and calls Use Cases or Repositories.
+
+## 2. Domain Layer
+- **Entities:** Pure Dart classes, framework-agnostic.
+- **Use Cases:** Business logic (e.g., `AddMovementUseCase`, `CalculateBudgetUseCase`).
+- **Repositories (Interfaces):** Abstract definitions of data operations.
+- **Responsibility:** The core of Konta. Contains all financial validation rules (no negative amounts, transfer rules).
+
+## 3. Data Layer
+- **Models / DTOs:** Classes that map to database rows or API responses.
+- **Repositories (Implementation):** Implements Domain interfaces.
+- **Data Sources:** - *Local:* Drift ORM (SQLite) with SQLCipher.
+  - *Remote:* Currency exchange API.
+- **Responsibility:** Fetching, storing, and encrypting data. Maps Data Models to Domain Entities before returning them.
 
 ## Data Flow
-Client -> API Route -> Controller -> Use Case -> Domain Entity -> Use Case -> Repository (DB) -> Response
+User Input -> Riverpod Provider -> Domain Use Case -> Repository Interface -> Repository Implementation -> Drift DAO (SQLite) -> Return Entity -> UI Update

@@ -8,16 +8,18 @@
   },
   "security": {
     "allowedCommands": [
-      "npm run lint",
-      "npm test",
-      "tsc --noEmit",
+      "flutter analyze",
+      "flutter test",
+      "dart run build_runner build --delete-conflicting-outputs",
+      "flutter pub get",
       "git status"
     ],
     "blockedDirectories": [
       ".git",
-      "node_modules",
-      "dist",
+      ".dart_tool",
       "build",
+      "ios/Pods",
+      "android/.gradle",
       "coverage"
     ],
     "preventSecretOutput": true

@@ -5,7 +5,7 @@
 export default async function preActionHook(context, action) {
   // Prevent the agent from accidentally modifying locked directories
   if (action.type === 'WRITE_FILE') {
-    const restrictedPaths = ['node_modules/', '.git/', '.env'];
+    const restrictedPaths = ['.git/', '.env', '.dart_tool/', 'build/', 'ios/Pods/', 'android/.gradle/'];
     const isRestricted = restrictedPaths.some(path => action.payload.path.includes(path));
     
     if (isRestricted) {

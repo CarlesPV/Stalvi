@@ -1,6 +1,7 @@
-# Known Issues & Workarounds (Depends on the project)
+# Known Issues & Workarounds
 
-Do not attempt to fix or refactor these known issues unless explicitly asked:
+Do not attempt to fix or refactor these known development environment issues unless explicitly asked:
 
-- **Redis Connection Warnings:** On local environments, Redis throws a timeout warning on startup. Ignore it; it resolves itself after 2 seconds.
-- **Legacy Payment Module:** The `src/infrastructure/legacy-payments.ts` file has `@ts-ignore` comments. Do not remove them. This file will be deprecated in v2.0.
+- **Drift Code Generation Conflicts:** If `build_runner` fails due to conflicting outputs when moving files, you must run `dart run build_runner clean` before running the build command again.
+- **SQLCipher iOS Build:** `sqlcipher_flutter_libs` requires the iOS project to use frameworks. If Pods fail, ensure `use_frameworks!` is present in `ios/Podfile`.
+- **Analyzer Warnings on Generated Files:** Files ending in `.g.dart`, `.freezed.dart`, and `.drift.dart` might show linter warnings. Ignore them; they are excluded in `analysis_options.yaml`.
