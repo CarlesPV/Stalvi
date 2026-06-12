@@ -1,0 +1,100 @@
+# ==============================================================================
+# SECRETS & ENVIRONMENT VARIABLES (CRITICAL)
+# ==============================================================================
+.env
+.env.*
+*.env
+*.pem
+*.key
+*.cert
+*.crt
+*.p12
+*.jks
+*.keystore
+key.properties
+local.properties
+android/key.properties
+android/app/key.properties
+google-services.json
+GoogleService-Info.plist
+firebase_app_id_file.json
+amplifyconfiguration.dart
+secrets/
+credentials/
+*.json.enc
+
+# ==============================================================================
+# FLUTTER & DART
+# ==============================================================================
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+build/
+coverage/
+lib-cov/
+*.lcov
+pubspec.lock
+**/*.g.dart
+**/*.freezed.dart
+**/*.drift.dart
+
+# ==============================================================================
+# ANDROID
+# ==============================================================================
+android/.gradle/
+android/app/build/
+android/build/
+android/captures/
+android/**/*.apk
+android/**/*.aab
+android/**/*.ap_
+android/**/*.dex
+android/**/*.class
+android/**/crashlytics-build.properties
+
+# ==============================================================================
+# iOS & macOS
+# ==============================================================================
+ios/Pods/
+ios/.symlinks/
+ios/Flutter/App.framework
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+ios/Flutter/Generated.xcconfig
+ios/Flutter/app.flx
+ios/Flutter/app.zip
+ios/Flutter/flutter_assets/
+ios/Flutter/flutter_export_environment.sh
+ios/Runner.xcworkspace/xcuserdata/
+ios/Runner.xcworkspace/xcshareddata/WorkspaceSettings.xcsettings
+ios/Runner.xcodeproj/project.xcworkspace/xcuserdata/
+ios/Runner.xcodeproj/xcuserdata/
+macos/Pods/
+macos/Flutter/GeneratedPluginRegistrant.swift
+macos/Flutter/ephemeral/
+*.pbxuser
+*.mode1v3
+*.mode2v3
+*.perspectivev3
+*.xcuserstate
+
+# ==============================================================================
+# IDEs, EDITORS & OS
+# ==============================================================================
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+*.swp
+*.swo
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db

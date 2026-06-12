@@ -1,0 +1,21 @@
+include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  plugins:
+    - riverpod_lint
+  exclude:
+    - "**/*.g.dart"
+    - "**/*.freezed.dart"
+    - "**/*.drift.dart"
+
+linter:
+  rules:
+    - prefer_const_constructors
+    - prefer_const_declarations
+    - prefer_const_literals_to_create_immutables
+    - always_declare_return_types
+    - cancel_subscriptions
+    - close_sinks
+    - avoid_print # Enforce logging instead of print
+    - require_trailing_commas
+    - sort_child_properties_last

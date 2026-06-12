@@ -1,0 +1,41 @@
+name: Security Audit
+
+on:
+  schedule:
+    - cron: '0 0 * * 0' # Execute every Sunday at midnight
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  security-scans:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+        
+      # 1. Native Node dependency scanning
+      - name: Audit NPM Dependencies
+        run: npm audit --audit-level=high
+        
+      # 2. Semgrep: powerful static analysis for code quality and security
+      - name: Run Semgrep SAST
+        uses: returntocorp/semgrep-action@v1
+        with:
+          config: "p/default"
+          
+      # 3. Trivy: comprehensive security scanning for container images and file systems
+      - name: Run Trivy Vulnerability Scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'table'
+          exit-code: '1'
+          ignore-unfixed: true
+          severity: 'CRITICAL,HIGH'

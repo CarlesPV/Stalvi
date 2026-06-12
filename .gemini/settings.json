@@ -1,0 +1,34 @@
+{
+  "behavior": {
+    "autoConfirmFileWrites": false,
+    "autoConfirmCommandExecution": false,
+    "maxAutonomousSteps": 30,
+    "language": "en",
+    "workingDirectory": "."
+  },
+  "security": {
+    "allowedCommands": [
+      "npm run lint",
+      "npm test",
+      "tsc --noEmit",
+      "git status"
+    ],
+    "blockedDirectories": [
+      ".git",
+      "node_modules",
+      "dist",
+      "build",
+      "coverage"
+    ],
+    "preventSecretOutput": true
+  },
+  "tools": {
+    "fileSystemRead": true,
+    "fileSystemWrite": true,
+    "terminalExecution": true,
+    "webSearch": false
+  },
+  "prompts": {
+    "systemInstructionFile": "AGENT.md"
+  }
+}

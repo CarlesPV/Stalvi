@@ -1,0 +1,24 @@
+# Files and directories the agent MUST NOT read
+.git/
+.dart_tool/
+build/
+ios/Pods/
+ios/.symlinks/
+macos/Pods/
+android/.gradle/
+*.log
+*.lock
+pubspec.lock
+
+# Ignore binaries, heavy media, and databases
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.mp4
+*.pdf
+*.sqlite
+*.db
+
+# Ignore human documentation (the agent uses .agents/context)
+docs/
