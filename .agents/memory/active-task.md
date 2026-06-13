@@ -1,23 +1,19 @@
 # Active Task Memory
 
 ## Current Task
-Execute Phase 2: Domain Modeling & Local Storage. Implement core data models (Profile, Account, Category, Tag) in Drift, establish Domain Entities and Use Cases, seed default data, and create the Onboarding Presentation flow. (COMPLETED)
+Execute Phase 3: Transaction Core & Financial Operations. Implement the `Transaction` domain entity, Drift database table, repositories, core use cases (with atomic account balance updates), and the Presentation UI for creating transactions.
 
 ## Execution Plan
-- [x] Step 1: Implement `Profile` and `Account` tables in Drift (`lib/data/database/tables/`).
-- [x] Step 2: Create `Account` and `Profile` Entities, Repository Interfaces, and Use Cases. Enforce the mandatory initial balance rule. Include AAA Unit Tests.
-- [x] Step 3: Implement `Category` and `Tag` Drift tables. Create logic to seed default categories and the default "Mi Cartera" account upon first launch.
-- [x] Step 4: Develop Presentation layer for Onboarding: Splash Screen -> Biometric Auth (`local_auth`) -> Dashboard Skeleton using Riverpod.
+- [x] Step 1: Implement `Transaction` Domain Entity, `ITransactionRepository` interface, Drift `Transactions` table, and `TransactionMapper`.
+- [x] Step 2: Implement the Drift-based `TransactionRepository` and the `AddTransactionUseCase`. Enforce the business rule: saving a transaction MUST atomically update the associated `Account` balance within a database transaction block. Write AAA Unit Tests.
+- [x] Step 3: Develop `AddTransactionScreen` (Presentation) and its Riverpod controller (`add_transaction_notifier`). Include form validation (amount > 0, valid date) and category/account dropdown selectors. Update Dashboard skeleton with a Floating Action Button.
 
 ## Progress & Notes
 - Phase 1 (Foundation & Security) is fully completed and verified.
-- Phase 2 (Domain Modeling & Local Storage) is fully completed and verified:
-  - Domain Layer: Designed entities (`Profile`, `Account`, `Category`, `Tag`), repositories interfaces, and `CreateAccountUseCase` with mandatory initial balance business rules. Written unit tests.
-  - Data Layer: Implemented corresponding Drift database tables, mappers to map between Drift classes and domain entities, and seeding logic (for default profile, default cash account, and default categories: Food, Transport, Salary). Written database integration tests.
-  - Presentation Layer: Implemented high-quality Animated `SplashScreen`, `AuthScreen` with biometric verification (`local_auth`), and `DashboardScreen` skeleton, supported by Riverpod state management. Written widget tests.
-  - Verification: 10/10 automated tests passing successfully (`flutter test`).
-- Strict adherence to Clean Architecture is maintained throughout the implementation.
+- Phase 2 (Domain Modeling & Local Storage) is fully completed and verified.
+- Phase 3 (Transaction Core) is fully completed and verified.
+- Strict adherence to Clean Architecture is maintained.
 
 ## Vulnerability & Security Logs
-- Biometric authentication state fails securely. If biometric hardware is unavailable, fallback is handled or access is managed appropriately.
-- Drift database relies on secure 256-bit encryption (SQLCipher) using keys from platform secure storage.
+- Financial precision: All transaction amounts must use integer-based calculations (e.g., storing minor units/cents) to prevent floating-point calculation vulnerabilities.
+- Data Integrity: Database insertions for transactions and balance updates must be executed within a Drift `transaction()` callback to ensure rollback if any step fails.

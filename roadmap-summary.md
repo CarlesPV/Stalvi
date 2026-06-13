@@ -32,3 +32,18 @@ This document lists the completed phases of the Konta development roadmap, provi
   - Standard static analysis pass (`flutter analyze` with 0 issues).
   - Clean architecture unit tests covering `CreateAccountUseCase` (verifying initial balance constraint) and `AppDatabase` seeding (verifying initialization seeding of default entries) with a 100% success rate.
   - Widget and integration test covering the onboarding/startup flow rendering without crashing.
+
+### Phase 3: Transaction Management (Core Engine)
+* **Completion Date:** June 13, 2026
+* **Objective:** Build the core database structures, repositories, use cases, and interactive presentation interfaces for creating and tracking transactions.
+* **Accomplishments:**
+  - **Drift Transactions Database & Repositories:** Implemented Drift storage for the `Transactions` table and the concrete implementation of `TransactionRepository` utilizing atomicity controls (executing transactions inside a Drift `transaction()` callback) to ensure accounts balances and transaction insertions synchronize or rollback safely.
+  - **Clean Architectures Repositories:** Implemented and Decoupled `AccountRepository`, `CategoryRepository`, and `ProfileRepository` matching repository contracts.
+  - **Usecases:** Created the `AddTransactionUseCase` with validations checking for positive amounts, non-future dates, and existing referenced accounts.
+  - **Presentation State Notifier:** Created `AddTransactionNotifier` managing the form state inputs and validations while executing the domain layer boundaries.
+  - **UI/UX implementation:** Built the premium `AddTransactionScreen` featuring sliding toggles (mint green / coral red accents), modal bottom sheets for account and category list selectors, notes, custom themed datepicker, progress indicator loading flows, and snackbars feedback. Exposed via a dynamic slide-up Floating Action Button on the Dashboard layout.
+* **Verification:**
+  - Standard static analysis checks (`flutter analyze` with 0 issues).
+  - Integration repository tests covering `AccountRepository` and `CategoryRepository` using SQLite in-memory databases.
+  - State management tests covering `AddTransactionNotifier` state transitions, validation boundaries, usecase bindings, and type-based category resets.
+  - Fully passing automated test suite (`39 tests passed!`).

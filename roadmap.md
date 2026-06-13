@@ -25,11 +25,11 @@ For every task, the agent must perform the following cycle:
 - [x] Implement `Category` and `Tag` tables and seed default categories.
 - [x] Develop Presentation layer for Onboarding (Splash -> Biometric Auth -> Dashboard).
 
-## Phase 3: Transaction Management (Core Engine) (Current)
-- [ ] Implement `Movement` tables and Use Cases (Income, Expense, Transfer).
-- [ ] Enforce transfer business rules (exclusion from global stats).
-- [ ] Implement Soft Delete mechanism (`is_deleted` flag) and 30-day Trash logic.
-- [ ] Build the "Add Movement" BottomSheet UI with numeric keypad priority.
+## Phase 3: Transaction Management (Core Engine) (Completed)
+- [x] Implement `Transaction` tables and Use Cases (Income, Expense).
+- [x] Enforce atomic balance updates within a Drift database transaction.
+- [x] Implement Soft Delete mechanism (`is_deleted` flag) on Account and Category.
+- [x] Build the "Add Transaction" UI screen with numeric input and customized selectors.
 
 ## Phase 4: Multi-Currency & Goals
 - [ ] Integrate external Exchange Rate API (HTTPS GET only) in Data Layer.

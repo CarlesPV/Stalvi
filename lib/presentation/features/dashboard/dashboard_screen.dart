@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:konta/core/theme/app_theme.dart';
+import 'package:konta/presentation/features/transactions/add_transaction_screen.dart';
 
 /// The main application scaffold — shown after successful authentication.
 ///
@@ -127,6 +128,39 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen>
         onDestinationSelected: (i) => setState(() => _selectedIndex = i),
         destinations: _destinations,
       ),
+      floatingActionButton: _selectedIndex == 3
+          ? null
+          : FloatingActionButton(
+              onPressed: () {
+                Navigator.of(context).push(
+                  PageRouteBuilder(
+                    pageBuilder: (context, animation, secondaryAnimation) =>
+                        const AddTransactionScreen(),
+                    transitionsBuilder:
+                        (context, animation, secondaryAnimation, child) {
+                      const begin = Offset(0.0, 0.1);
+                      const end = Offset.zero;
+                      const curve = Curves.easeOutCubic;
+                      final tween = Tween(begin: begin, end: end)
+                          .chain(CurveTween(curve: curve));
+                      return SlideTransition(
+                        position: animation.drive(tween),
+                        child: FadeTransition(
+                          opacity: animation,
+                          child: child,
+                        ),
+                      );
+                    },
+                    transitionDuration: const Duration(milliseconds: 300),
+                  ),
+                );
+              },
+              backgroundColor: colorScheme.primary,
+              foregroundColor: colorScheme.onPrimary,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16)),
+              child: const Icon(Icons.add_rounded, size: 28),
+            ),
     );
   }
 }

@@ -20,6 +20,7 @@ import 'tables/profile_table.dart';
 import 'tables/account_table.dart';
 import 'tables/category_table.dart';
 import 'tables/tag_table.dart';
+import 'tables/transaction_table.dart';
 
 part 'app_database.g.dart';
 
@@ -36,7 +37,7 @@ part 'app_database.g.dart';
 /// ```dart
 /// final db = await AppDatabase.create();
 /// ```
-@DriftDatabase(tables: [Profiles, Accounts, Categories, Tags])
+@DriftDatabase(tables: [Profiles, Accounts, Categories, Tags, Transactions])
 class AppDatabase extends _$AppDatabase {
   /// Private constructor — use the [create] factory instead.
   AppDatabase._(super.executor);
@@ -60,7 +61,7 @@ class AppDatabase extends _$AppDatabase {
 
   /// Bump this version whenever you add, modify, or remove tables.
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
 
   @override
   MigrationStrategy get migration {
@@ -137,6 +138,11 @@ class AppDatabase extends _$AppDatabase {
             modifiedAt: now,
           ),
         );
+      },
+      onUpgrade: (Migrator m, int from, int to) async {
+        if (from < 2) {
+          await m.createTable(transactions);
+        }
       },
     );
   }
