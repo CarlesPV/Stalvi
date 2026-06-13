@@ -1,21 +1,21 @@
 # Active Task Memory
 
 ## Current Task
-Initialize project structure, resolve dependencies, and prepare the local environment for Konta development.
+Implement base Drift database with SQLCipher encryption and setup core utilities (Theme, Errors, Formatters).
 
 ## Execution Plan
-- [x] Step 1: Read `.agents/context/repo-map.md` and generate the exact `lib/` directory structure.
-- [x] Step 2: Run `flutter pub get` to resolve all dependencies from `pubspec.yaml`.
-- [x] Step 3: Create a `.env` template file to comply with `SECURITY.md`.
-- [x] Step 4: Verify Android and iOS native configurations for `sqlcipher_flutter_libs`.
+- [x] Step 1: Create `SecureStorageManager` to handle the SQLCipher encryption key using `flutter_secure_storage`.
+- [x] Step 2: Initialize `AppDatabase` (Drift) in `lib/data/database/app_database.dart` with the secure connection setup (no tables yet).
+- [x] Step 3: Create `AppTheme` in `lib/core/theme/` with pastel aesthetic definitions for Light and Dark modes.
+- [x] Step 4: Create custom error classes (`AppExceptions`) and a currency formatter utility.
 
 ## Progress & Notes
-- Starting project initialization. No code written yet.
-- Step 1 completed: Created all directories under `lib/` (core, data, domain, presentation layers and their corresponding subdirectories) and populated them with `.gitkeep` files. Awaiting next step instructions.
-- Step 2 completed: Resolved dependency conflicts by updating `sqlcipher_flutter_libs` to `^0.5.7` (as no `0.3.x` version exists on pub.dev) and `intl` to `^0.20.0` (to match Flutter SDK pinning for `flutter_localizations`). Successfully ran `flutter pub get`.
-- Step 3 completed: Created `.env` file in root directory with safe comments and no secrets.
-- Environment check: Successfully executed `dart run build_runner build --delete-conflicting-outputs` to ensure the code generator environment works properly.
-- Step 4 completed: Generated `ios/` and `android/` platform directories via `flutter create --platforms=ios,android .`. **iOS**: Created `ios/Podfile` with `use_frameworks!` and `use_modular_headers!` enabled (required for `sqlcipher_flutter_libs` pod compilation), platform set to iOS 13.0. **Android**: Updated `minSdk` from `flutter.minSdkVersion` (21) to `24` in `android/app/build.gradle.kts` for full `sqlcipher_flutter_libs` compatibility.
+- Clean Architecture folders initialized.
+- **Step 1 done**: `SecureStorageManager` created at `lib/core/security/secure_storage_manager.dart`. Uses `Random.secure()` CSPRNG for 256-bit key generation, hex-encoded storage, hardened platform options (EncryptedSharedPreferences on Android, first_unlock_this_device Keychain on iOS).
+- **Step 2 done**: `AppDatabase` created at `lib/data/database/app_database.dart`. Async factory pattern retrieves cipher key before constructing `NativeDatabase`. `PRAGMA key` applied as first statement; key verified via `SELECT count(*) FROM sqlite_master`. No tables defined yet. `app_database.g.dart` generated successfully.
+- **Step 3 done**: `AppTheme` created in `lib/core/theme/app_theme.dart`. Implements light/dark themes with a financial-trust aesthetic (Deep Navy Blue primary, pastel Mint Green for positive/income, pastel Coral Red for negative/expenses) and soft charcoal (`#121212`) for dark mode background. Includes a custom `FinancialColors` `ThemeExtension` and `BuildContext` helper.
+- **Step 4 done**: Custom exceptions (`DatabaseException`, `ValidationException`, `AuthException`, `NetworkException`, `NotFoundException`) created in `lib/core/errors/app_exceptions.dart`. `CurrencyFormatter` created in `lib/core/utils/currency_formatter.dart` with robust formatting, parsing, and percentage helpers. Added comprehensive unit tests at `test/unit/currency_formatter_test.dart` and verified that they pass.
+
 
 ## Vulnerability & Security Logs
-- None yet.
+- Encryption key must be generated securely and never logged in plain text.

@@ -13,13 +13,13 @@ For every task, the agent must perform the following cycle:
 
 ---
 
-## Phase 1: Foundation & Security (Current)
-- [ ] Initialize directory structure (Clean Architecture).
-- [ ] Dependency resolution and native environment setup for SQLCipher.
-- [ ] Base Drift database setup and `flutter_secure_storage` key generation.
-- [ ] Core utilities: Theme definitions (Pastel aesthetics), custom error classes, and currency formatters.
+## Phase 1: Foundation & Security (Completed)
+- [x] Initialize directory structure (Clean Architecture).
+- [x] Dependency resolution and native environment setup for SQLCipher.
+- [x] Base Drift database setup and `flutter_secure_storage` key generation.
+- [x] Core utilities: Theme definitions (Pastel aesthetics), custom error classes, and currency formatters.
 
-## Phase 2: Domain Modeling & Local Storage
+## Phase 2: Domain Modeling & Local Storage (Current)
 - [ ] Implement `Profile` and `Account` tables in Drift.
 - [ ] Create `Account` Entities and Use Cases (mandatory initial balance).
 - [ ] Implement `Category` and `Tag` tables and seed default categories.
