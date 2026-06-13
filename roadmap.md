@@ -31,11 +31,11 @@ For every task, the agent must perform the following cycle:
 - [x] Implement Soft Delete mechanism (`is_deleted` flag) on Account and Category.
 - [x] Build the "Add Transaction" UI screen with numeric input and customized selectors.
 
-## Phase 4: Multi-Currency & Goals
-- [ ] Integrate external Exchange Rate API (HTTPS GET only) in Data Layer.
-- [ ] Update Movement creation to save converted default currency values.
-- [ ] Implement `Budget` and `Savings Goal` tables.
-- [ ] Build visual progress bars for budgets and goals in the UI.
+## Phase 4: Multi-Currency & Goals (Completed)
+- [x] Integrate external Exchange Rate API (HTTPS GET only) in Data Layer.
+- [x] Update Movement creation to save converted default currency values.
+- [x] Implement `Budget` and `Savings Goal` tables.
+- [x] Build visual progress bars for budgets and goals in the UI.
 
 ## Phase 5: Statistics, Filters, & Exports
 - [ ] Build SQLite aggregation queries (`SUM`, `GROUP BY`) for dashboard totals.

@@ -3,6 +3,7 @@ class Profile {
   final String name;
   final String username;
   final String password;
+  final String defaultCurrency;
   final DateTime createdAt;
   final DateTime modifiedAt;
 
@@ -11,6 +12,7 @@ class Profile {
     required this.name,
     required this.username,
     required this.password,
+    required this.defaultCurrency,
     required this.createdAt,
     required this.modifiedAt,
   });
@@ -24,6 +26,7 @@ class Profile {
       other.name == name &&
       other.username == username &&
       other.password == password &&
+      other.defaultCurrency == defaultCurrency &&
       other.createdAt == createdAt &&
       other.modifiedAt == modifiedAt;
   }
@@ -34,6 +37,7 @@ class Profile {
       name.hashCode ^
       username.hashCode ^
       password.hashCode ^
+      defaultCurrency.hashCode ^
       createdAt.hashCode ^
       modifiedAt.hashCode;
   }
@@ -43,6 +47,7 @@ class Profile {
     String? name,
     String? username,
     String? password,
+    String? defaultCurrency,
     DateTime? createdAt,
     DateTime? modifiedAt,
   }) {
@@ -51,6 +56,7 @@ class Profile {
       name: name ?? this.name,
       username: username ?? this.username,
       password: password ?? this.password,
+      defaultCurrency: defaultCurrency ?? this.defaultCurrency,
       createdAt: createdAt ?? this.createdAt,
       modifiedAt: modifiedAt ?? this.modifiedAt,
     );

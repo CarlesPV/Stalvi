@@ -226,6 +226,7 @@ void main() {
           accountId: testAccount.id,
           categoryId: testCategory.id,
           notes: 'Weekly grocery',
+          originalCurrency: 'EUR',
           createdAt: DateTime.now(),
           modifiedAt: DateTime.now(),
         ),

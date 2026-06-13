@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:konta/core/theme/app_theme.dart';
 import 'package:konta/presentation/features/transactions/add_transaction_screen.dart';
+import 'package:konta/presentation/features/budgets_and_goals/budgets_and_goals_screen.dart';
 
 /// The main application scaffold — shown after successful authentication.
 ///
@@ -287,41 +288,89 @@ class _SettingsSkeletonTab extends StatelessWidget {
     return ListView.separated(
       padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
       itemCount: 6,
-      separatorBuilder: (_, __) => const SizedBox(height: 2),
-      itemBuilder: (context, i) => Container(
-        height: 60,
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-        decoration: BoxDecoration(
-          color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
-          borderRadius: BorderRadius.circular(14),
-        ),
-        child: Row(
-          children: [
-            _SkeletonBlock(
-              shimmer: shimmer,
-              width: 28,
-              height: 28,
-              borderRadius: 8,
+      separatorBuilder: (_, __) => const SizedBox(height: 12),
+      itemBuilder: (context, i) {
+        if (i == 0) {
+          return Container(
+            height: 60,
+            decoration: BoxDecoration(
+              color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+              borderRadius: BorderRadius.circular(14),
             ),
-            const SizedBox(width: 14),
-            Expanded(
-              child: _SkeletonBlock(
+            child: InkWell(
+              borderRadius: BorderRadius.circular(14),
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const BudgetsAndGoalsScreen(),
+                  ),
+                );
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.pie_chart_rounded,
+                      color: colorScheme.primary,
+                      size: 22,
+                    ),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Text(
+                        'Budgets & Goals',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.w700,
+                              color: colorScheme.onSurface,
+                            ),
+                      ),
+                    ),
+                    Icon(
+                      Icons.chevron_right_rounded,
+                      color: colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        }
+
+        return Container(
+          height: 60,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          decoration: BoxDecoration(
+            color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+            borderRadius: BorderRadius.circular(14),
+          ),
+          child: Row(
+            children: [
+              _SkeletonBlock(
                 shimmer: shimmer,
-                width: double.infinity,
+                width: 28,
+                height: 28,
+                borderRadius: 8,
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: _SkeletonBlock(
+                  shimmer: shimmer,
+                  width: double.infinity,
+                  height: 14,
+                  borderRadius: 4,
+                ),
+              ),
+              const SizedBox(width: 32),
+              _SkeletonBlock(
+                shimmer: shimmer,
+                width: 20,
                 height: 14,
                 borderRadius: 4,
               ),
-            ),
-            const SizedBox(width: 32),
-            _SkeletonBlock(
-              shimmer: shimmer,
-              width: 20,
-              height: 14,
-              borderRadius: 4,
-            ),
-          ],
-        ),
-      ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

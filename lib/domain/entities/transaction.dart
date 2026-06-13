@@ -8,6 +8,9 @@ class Transaction {
   final String accountId;
   final String? categoryId;
   final String? notes;
+  final String originalCurrency;
+  final int? convertedAmount;
+  final double? exchangeRate;
   final DateTime createdAt;
   final DateTime modifiedAt;
 
@@ -19,6 +22,9 @@ class Transaction {
     required this.accountId,
     this.categoryId,
     this.notes,
+    required this.originalCurrency,
+    this.convertedAmount,
+    this.exchangeRate,
     required this.createdAt,
     required this.modifiedAt,
   });
@@ -35,6 +41,9 @@ class Transaction {
         other.accountId == accountId &&
         other.categoryId == categoryId &&
         other.notes == notes &&
+        other.originalCurrency == originalCurrency &&
+        other.convertedAmount == convertedAmount &&
+        other.exchangeRate == exchangeRate &&
         other.createdAt == createdAt &&
         other.modifiedAt == modifiedAt;
   }
@@ -48,6 +57,9 @@ class Transaction {
         accountId.hashCode ^
         categoryId.hashCode ^
         notes.hashCode ^
+        originalCurrency.hashCode ^
+        convertedAmount.hashCode ^
+        exchangeRate.hashCode ^
         createdAt.hashCode ^
         modifiedAt.hashCode;
   }
@@ -60,6 +72,9 @@ class Transaction {
     String? accountId,
     String? categoryId,
     String? notes,
+    String? originalCurrency,
+    int? convertedAmount,
+    double? exchangeRate,
     DateTime? createdAt,
     DateTime? modifiedAt,
   }) {
@@ -71,6 +86,9 @@ class Transaction {
       accountId: accountId ?? this.accountId,
       categoryId: categoryId ?? this.categoryId,
       notes: notes ?? this.notes,
+      originalCurrency: originalCurrency ?? this.originalCurrency,
+      convertedAmount: convertedAmount ?? this.convertedAmount,
+      exchangeRate: exchangeRate ?? this.exchangeRate,
       createdAt: createdAt ?? this.createdAt,
       modifiedAt: modifiedAt ?? this.modifiedAt,
     );

@@ -1,19 +1,20 @@
 # Active Task Memory
 
 ## Current Task
-Execute Phase 3: Transaction Core & Financial Operations. Implement the `Transaction` domain entity, Drift database table, repositories, core use cases (with atomic account balance updates), and the Presentation UI for creating transactions.
+Completed Phase 4: Multi-Currency & Goals. Integrated the Exchange Rate API, updated movement creation to convert currencies, implemented Budgets and Savings Goals domain/data models, and built the responsive tabbed interface with visual progress bars.
 
 ## Execution Plan
-- [x] Step 1: Implement `Transaction` Domain Entity, `ITransactionRepository` interface, Drift `Transactions` table, and `TransactionMapper`.
-- [x] Step 2: Implement the Drift-based `TransactionRepository` and the `AddTransactionUseCase`. Enforce the business rule: saving a transaction MUST atomically update the associated `Account` balance within a database transaction block. Write AAA Unit Tests.
-- [x] Step 3: Develop `AddTransactionScreen` (Presentation) and its Riverpod controller (`add_transaction_notifier`). Include form validation (amount > 0, valid date) and category/account dropdown selectors. Update Dashboard skeleton with a Floating Action Button.
+- [x] Step 1: Implement `ExchangeRate` Domain Entity and `ExchangeRateRemoteDataSource` (Data Layer) for HTTPS GET requests to fetch currency rates.
+- [x] Step 2: Update `Transaction` use cases. When a transaction is created in a non-default currency, fetch the rate and save the converted default currency value atomically.
+- [x] Step 3: Implement `Budget` and `SavingsGoal` Domain Entities, Drift database tables, Mappers, and Repositories.
+- [x] Step 4: Develop the Presentation UI for Budgets and Goals, including Riverpod providers and visual progress bars (`AsyncValue` handled).
 
 ## Progress & Notes
 - Phase 1 (Foundation & Security) is fully completed and verified.
 - Phase 2 (Domain Modeling & Local Storage) is fully completed and verified.
 - Phase 3 (Transaction Core) is fully completed and verified.
-- Strict adherence to Clean Architecture is maintained.
+- Phase 4 (Multi-Currency & Goals) is fully completed, integrated, and verified with 69 unit/widget tests.
 
 ## Vulnerability & Security Logs
-- Financial precision: All transaction amounts must use integer-based calculations (e.g., storing minor units/cents) to prevent floating-point calculation vulnerabilities.
-- Data Integrity: Database insertions for transactions and balance updates must be executed within a Drift `transaction()` callback to ensure rollback if any step fails.
+- Network Security: All external API calls for exchange rates use strict HTTPS GET. No sensitive user data (balances, profile info) is transmitted.
+- Financial precision: Currency conversion calculations maintain integer-based precision (minor units) to prevent floating-point loss.

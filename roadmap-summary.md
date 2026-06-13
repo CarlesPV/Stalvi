@@ -47,3 +47,20 @@ This document lists the completed phases of the Konta development roadmap, provi
   - Integration repository tests covering `AccountRepository` and `CategoryRepository` using SQLite in-memory databases.
   - State management tests covering `AddTransactionNotifier` state transitions, validation boundaries, usecase bindings, and type-based category resets.
   - Fully passing automated test suite (`39 tests passed!`).
+
+### Phase 4: Multi-Currency & Goals
+* **Completion Date:** June 13, 2026
+* **Objective:** Implement the multi-currency infrastructure, update movement creation with currency conversions, model Drift budget and goal tables, build the visual progress bars and budgets/goals listing tab UI screen, and establish automated test coverage.
+* **Accomplishments:**
+  - **Exchange Rate API Integration:** Created `ExchangeRate` entities, repository interface, and concrete data source using the Frankfurter API via strict HTTPS GET calls. All failures mapped to clean typed `NetworkException`s.
+  - **Conversions:** Integrated conversions inside movement usecases keeping integer-based precision.
+  - **Local Storage Tables:** Defined Drift tables `Budgets` and `SavingsGoals` with soft-delete controls, and mapped them to domain model representation.
+  - **Reactive Stream Repositories:** Implemented stream-based repository contracts (`watchBudgets` and `watchSavingsGoals`) to listen to reactive query streams in Drift.
+  - **Reusable ProgressBarWidget:** Built a capsule-style progress indicator that supports smooth tween entry animations and contextual colors (e.g. mint green on track, warning coral red when budget is exceeded).
+  - **BudgetsAndGoalsScreen:** Built a beautiful tabbed screen presenting category details, remaining limits, and savings goal milestones. Handles all Riverpod async value states (loading, error, empty list views).
+  - **Dashboard Wiring:** Exposed budgets and goals from the settings list inside the main dashboard scaffold.
+* **Verification:**
+  - Standard static analysis pass (`flutter analyze` with 0 issues).
+  - Full AAA unit tests for Exchange Rate APIs and repository.
+  - Mocked widget tests validating loading transitions, error handling, empty lists, progress animation styling, and calculations under varying locales.
+  - Full regression test suite: **69 tests passed** successfully.

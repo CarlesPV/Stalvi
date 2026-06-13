@@ -8,6 +8,7 @@ extension ProfileMapper on Profile {
       name: name,
       username: username,
       password: password,
+      defaultCurrency: defaultCurrency,
       createdAt: createdAt,
       modifiedAt: modifiedAt,
     );
@@ -21,6 +22,7 @@ extension DbProfileMapper on db.Profile {
       name: name,
       username: username,
       password: password,
+      defaultCurrency: defaultCurrency,
       createdAt: createdAt,
       modifiedAt: modifiedAt,
     );

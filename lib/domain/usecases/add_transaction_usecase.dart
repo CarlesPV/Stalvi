@@ -2,6 +2,8 @@ import 'package:konta/core/errors/app_exceptions.dart';
 import 'package:konta/domain/entities/transaction.dart';
 import 'package:konta/domain/entities/transaction_type.dart';
 import 'package:konta/domain/repositories/i_account_repository.dart';
+import 'package:konta/domain/repositories/i_profile_repository.dart';
+import 'package:konta/domain/repositories/i_exchange_rate_repository.dart';
 import 'package:konta/domain/repositories/i_transaction_repository.dart';
 
 /// Parameters required to add a new transaction.
@@ -38,8 +40,15 @@ class AddTransactionParams {
 class AddTransactionUseCase {
   final ITransactionRepository _transactionRepository;
   final IAccountRepository _accountRepository;
+  final IProfileRepository _profileRepository;
+  final IExchangeRateRepository _exchangeRateRepository;
 
-  AddTransactionUseCase(this._transactionRepository, this._accountRepository);
+  AddTransactionUseCase(
+    this._transactionRepository,
+    this._accountRepository,
+    this._profileRepository,
+    this._exchangeRateRepository,
+  );
 
   Future<Transaction> execute(AddTransactionParams params) async {
     // Validate: amount must be positive.
@@ -68,6 +77,39 @@ class AddTransactionUseCase {
       );
     }
 
+    final profile = await _profileRepository.getProfileById(account.userId);
+    if (profile == null) {
+      throw NotFoundException(
+        message: 'Profile with id "${account.userId}" not found',
+        code: 'PROFILE_NOT_FOUND',
+      );
+    }
+
+    int? convertedAmount;
+    double? exchangeRate;
+    final String originalCurrency = account.currency;
+
+    if (originalCurrency != profile.defaultCurrency) {
+      try {
+        final rateSnapshot = await _exchangeRateRepository.getLatestRates(baseCurrency: profile.defaultCurrency);
+        exchangeRate = rateSnapshot.rateFor(originalCurrency);
+        if (exchangeRate == null) {
+          throw const ValidationException(
+            message: 'Exchange rate not available for the requested currency',
+            code: 'RATE_NOT_FOUND',
+          );
+        }
+        convertedAmount = (params.amount / exchangeRate).round();
+      } on AppException {
+        rethrow;
+      } catch (e) {
+        throw ValidationException(
+          message: 'Failed to convert currency: $e',
+          code: 'CONVERSION_FAILED',
+        );
+      }
+    }
+
     final transaction = Transaction(
       id: params.id,
       amount: params.amount,
@@ -76,6 +118,9 @@ class AddTransactionUseCase {
       accountId: params.accountId,
       categoryId: params.categoryId,
       notes: params.notes,
+      originalCurrency: originalCurrency,
+      convertedAmount: convertedAmount,
+      exchangeRate: exchangeRate,
       createdAt: now,
       modifiedAt: now,
     );

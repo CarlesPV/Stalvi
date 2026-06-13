@@ -13,6 +13,9 @@ extension TransactionMapper on Transaction {
       accountId: accountId,
       categoryId: categoryId,
       notes: notes,
+      originalCurrency: originalCurrency,
+      convertedAmount: convertedAmount,
+      exchangeRate: exchangeRate,
       createdAt: createdAt,
       modifiedAt: modifiedAt,
     );
@@ -40,6 +43,9 @@ extension DbTransactionMapper on db.Transaction {
       accountId: accountId,
       categoryId: categoryId,
       notes: notes,
+      originalCurrency: originalCurrency,
+      convertedAmount: convertedAmount,
+      exchangeRate: exchangeRate,
       createdAt: createdAt,
       modifiedAt: modifiedAt,
     );
