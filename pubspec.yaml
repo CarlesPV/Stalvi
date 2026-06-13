@@ -54,6 +54,7 @@ dev_dependencies:
   drift_dev: ^2.14.1
   riverpod_generator: ^2.3.9
   riverpod_lint: ^2.3.7
+  mocktail: ^1.0.5
 
 flutter:
   uses-material-design: true

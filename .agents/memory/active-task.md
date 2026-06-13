@@ -1,21 +1,23 @@
 # Active Task Memory
 
 ## Current Task
-Implement base Drift database with SQLCipher encryption and setup core utilities (Theme, Errors, Formatters).
+Execute Phase 2: Domain Modeling & Local Storage. Implement core data models (Profile, Account, Category, Tag) in Drift, establish Domain Entities and Use Cases, seed default data, and create the Onboarding Presentation flow. (COMPLETED)
 
 ## Execution Plan
-- [x] Step 1: Create `SecureStorageManager` to handle the SQLCipher encryption key using `flutter_secure_storage`.
-- [x] Step 2: Initialize `AppDatabase` (Drift) in `lib/data/database/app_database.dart` with the secure connection setup (no tables yet).
-- [x] Step 3: Create `AppTheme` in `lib/core/theme/` with pastel aesthetic definitions for Light and Dark modes.
-- [x] Step 4: Create custom error classes (`AppExceptions`) and a currency formatter utility.
+- [x] Step 1: Implement `Profile` and `Account` tables in Drift (`lib/data/database/tables/`).
+- [x] Step 2: Create `Account` and `Profile` Entities, Repository Interfaces, and Use Cases. Enforce the mandatory initial balance rule. Include AAA Unit Tests.
+- [x] Step 3: Implement `Category` and `Tag` Drift tables. Create logic to seed default categories and the default "Mi Cartera" account upon first launch.
+- [x] Step 4: Develop Presentation layer for Onboarding: Splash Screen -> Biometric Auth (`local_auth`) -> Dashboard Skeleton using Riverpod.
 
 ## Progress & Notes
-- Clean Architecture folders initialized.
-- **Step 1 done**: `SecureStorageManager` created at `lib/core/security/secure_storage_manager.dart`. Uses `Random.secure()` CSPRNG for 256-bit key generation, hex-encoded storage, hardened platform options (EncryptedSharedPreferences on Android, first_unlock_this_device Keychain on iOS).
-- **Step 2 done**: `AppDatabase` created at `lib/data/database/app_database.dart`. Async factory pattern retrieves cipher key before constructing `NativeDatabase`. `PRAGMA key` applied as first statement; key verified via `SELECT count(*) FROM sqlite_master`. No tables defined yet. `app_database.g.dart` generated successfully.
-- **Step 3 done**: `AppTheme` created in `lib/core/theme/app_theme.dart`. Implements light/dark themes with a financial-trust aesthetic (Deep Navy Blue primary, pastel Mint Green for positive/income, pastel Coral Red for negative/expenses) and soft charcoal (`#121212`) for dark mode background. Includes a custom `FinancialColors` `ThemeExtension` and `BuildContext` helper.
-- **Step 4 done**: Custom exceptions (`DatabaseException`, `ValidationException`, `AuthException`, `NetworkException`, `NotFoundException`) created in `lib/core/errors/app_exceptions.dart`. `CurrencyFormatter` created in `lib/core/utils/currency_formatter.dart` with robust formatting, parsing, and percentage helpers. Added comprehensive unit tests at `test/unit/currency_formatter_test.dart` and verified that they pass.
-
+- Phase 1 (Foundation & Security) is fully completed and verified.
+- Phase 2 (Domain Modeling & Local Storage) is fully completed and verified:
+  - Domain Layer: Designed entities (`Profile`, `Account`, `Category`, `Tag`), repositories interfaces, and `CreateAccountUseCase` with mandatory initial balance business rules. Written unit tests.
+  - Data Layer: Implemented corresponding Drift database tables, mappers to map between Drift classes and domain entities, and seeding logic (for default profile, default cash account, and default categories: Food, Transport, Salary). Written database integration tests.
+  - Presentation Layer: Implemented high-quality Animated `SplashScreen`, `AuthScreen` with biometric verification (`local_auth`), and `DashboardScreen` skeleton, supported by Riverpod state management. Written widget tests.
+  - Verification: 10/10 automated tests passing successfully (`flutter test`).
+- Strict adherence to Clean Architecture is maintained throughout the implementation.
 
 ## Vulnerability & Security Logs
-- Encryption key must be generated securely and never logged in plain text.
+- Biometric authentication state fails securely. If biometric hardware is unavailable, fallback is handled or access is managed appropriately.
+- Drift database relies on secure 256-bit encryption (SQLCipher) using keys from platform secure storage.

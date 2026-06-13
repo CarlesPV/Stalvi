@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
@@ -12,7 +13,13 @@ import 'package:path_provider/path_provider.dart';
 // ignore: unused_import
 import 'package:sqlcipher_flutter_libs/sqlcipher_flutter_libs.dart';
 
+import 'package:uuid/uuid.dart';
+
 import 'package:konta/core/security/secure_storage_manager.dart';
+import 'tables/profile_table.dart';
+import 'tables/account_table.dart';
+import 'tables/category_table.dart';
+import 'tables/tag_table.dart';
 
 part 'app_database.g.dart';
 
@@ -29,10 +36,13 @@ part 'app_database.g.dart';
 /// ```dart
 /// final db = await AppDatabase.create();
 /// ```
-@DriftDatabase(tables: [])
+@DriftDatabase(tables: [Profiles, Accounts, Categories, Tags])
 class AppDatabase extends _$AppDatabase {
   /// Private constructor — use the [create] factory instead.
   AppDatabase._(super.executor);
+
+  @visibleForTesting
+  factory AppDatabase.forTesting(QueryExecutor e) => AppDatabase._(e);
 
   /// Async factory that retrieves the encryption key from secure storage
   /// before constructing the synchronous [QueryExecutor].
@@ -51,6 +61,85 @@ class AppDatabase extends _$AppDatabase {
   /// Bump this version whenever you add, modify, or remove tables.
   @override
   int get schemaVersion => 1;
+
+  @override
+  MigrationStrategy get migration {
+    return MigrationStrategy(
+      onCreate: (Migrator m) async {
+        await m.createAll();
+
+        final now = DateTime.now();
+        const uuid = Uuid();
+        final defaultUserId = uuid.v4();
+
+        // Seed Anonymous Profile
+        await into(profiles).insert(
+          ProfilesCompanion.insert(
+            id: defaultUserId,
+            name: 'Anonymous',
+            username: 'anonymous',
+            password: '',
+            createdAt: now,
+            modifiedAt: now,
+          ),
+        );
+
+        // Seed Default Account 'Mi Cartera'
+        await into(accounts).insert(
+          AccountsCompanion.insert(
+            id: uuid.v4(),
+            userId: defaultUserId,
+            name: 'Mi Cartera',
+            type: AccountType.cash,
+            initialBalance: 0.0,
+            currency: 'EUR',
+            color: '#4CAF50',
+            icon: 'wallet',
+            isDefault: true,
+            createdAt: now,
+            modifiedAt: now,
+          ),
+        );
+
+        // Seed Default Functional Categories
+        await into(categories).insert(
+          CategoriesCompanion.insert(
+            id: uuid.v4(),
+            name: 'Food',
+            associatedType: const Value(CategoryAssociatedType.expense),
+            icon: 'restaurant',
+            color: '#FF9800',
+            createdAt: now,
+            modifiedAt: now,
+          ),
+        );
+
+        await into(categories).insert(
+          CategoriesCompanion.insert(
+            id: uuid.v4(),
+            name: 'Transport',
+            associatedType: const Value(CategoryAssociatedType.expense),
+            icon: 'directions_car',
+            color: '#2196F3',
+            createdAt: now,
+            modifiedAt: now,
+          ),
+        );
+
+        await into(categories).insert(
+          CategoriesCompanion.insert(
+            id: uuid.v4(),
+            name: 'Salary',
+            associatedType: const Value(CategoryAssociatedType.income),
+            icon: 'attach_money',
+            color: '#4CAF50',
+            createdAt: now,
+            modifiedAt: now,
+          ),
+        );
+      },
+    );
+  }
 
   /// Opens (or creates) the encrypted database file.
   ///

@@ -19,13 +19,13 @@ For every task, the agent must perform the following cycle:
 - [x] Base Drift database setup and `flutter_secure_storage` key generation.
 - [x] Core utilities: Theme definitions (Pastel aesthetics), custom error classes, and currency formatters.
 
-## Phase 2: Domain Modeling & Local Storage (Current)
-- [ ] Implement `Profile` and `Account` tables in Drift.
-- [ ] Create `Account` Entities and Use Cases (mandatory initial balance).
-- [ ] Implement `Category` and `Tag` tables and seed default categories.
-- [ ] Develop Presentation layer for Onboarding (Splash -> Biometric Auth -> Dashboard).
+## Phase 2: Domain Modeling & Local Storage (Completed)
+- [x] Implement `Profile` and `Account` tables in Drift.
+- [x] Create `Account` Entities and Use Cases (mandatory initial balance).
+- [x] Implement `Category` and `Tag` tables and seed default categories.
+- [x] Develop Presentation layer for Onboarding (Splash -> Biometric Auth -> Dashboard).
 
-## Phase 3: Transaction Management (Core Engine)
+## Phase 3: Transaction Management (Core Engine) (Current)
 - [ ] Implement `Movement` tables and Use Cases (Income, Expense, Transfer).
 - [ ] Enforce transfer business rules (exclusion from global stats).
 - [ ] Implement Soft Delete mechanism (`is_deleted` flag) and 30-day Trash logic.
