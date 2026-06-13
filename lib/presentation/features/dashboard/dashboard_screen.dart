@@ -158,7 +158,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen>
               backgroundColor: colorScheme.primary,
               foregroundColor: colorScheme.onPrimary,
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16)),
+                borderRadius: BorderRadius.circular(16),
+              ),
               child: const Icon(Icons.add_rounded, size: 28),
             ),
     );

@@ -18,7 +18,7 @@ void main() {
 
   late db_data.AppDatabase db;
   late CategoryRepository repository;
-  final uuid = const Uuid();
+  const uuid = Uuid();
 
   setUp(() {
     db = db_data.AppDatabase.forTesting(NativeDatabase.memory());
@@ -29,7 +29,7 @@ void main() {
     await db.close();
   });
 
-  Category _buildTestCategory({
+  Category buildTestCategory({
     required String id,
     String name = 'Test Category',
     bool isDeleted = false,
@@ -49,7 +49,7 @@ void main() {
   group('CategoryRepository Tests', () {
     test('createCategory saves category and getCategoryById retrieves it', () async {
       final id = uuid.v4();
-      final category = _buildTestCategory(id: id);
+      final category = buildTestCategory(id: id);
 
       await repository.createCategory(category);
       final retrieved = await repository.getCategoryById(id);
@@ -61,8 +61,8 @@ void main() {
     });
 
     test('getAllCategories returns seeded plus new non-deleted categories', () async {
-      final catActive = _buildTestCategory(id: uuid.v4(), name: 'Active Cat');
-      final catDeleted = _buildTestCategory(id: uuid.v4(), name: 'Deleted Cat', isDeleted: true);
+      final catActive = buildTestCategory(id: uuid.v4(), name: 'Active Cat');
+      final catDeleted = buildTestCategory(id: uuid.v4(), name: 'Deleted Cat', isDeleted: true);
 
       await repository.createCategory(catActive);
       await repository.createCategory(catDeleted);
@@ -78,7 +78,7 @@ void main() {
 
     test('updateCategory correctly modifies database fields', () async {
       final id = uuid.v4();
-      final category = _buildTestCategory(id: id, name: 'Original Category');
+      final category = buildTestCategory(id: id, name: 'Original Category');
       await repository.createCategory(category);
 
       final updated = category.copyWith(name: 'Updated Category', color: '#00FFFF');
@@ -92,7 +92,7 @@ void main() {
 
     test('deleteCategory soft-deletes the category record', () async {
       final id = uuid.v4();
-      final category = _buildTestCategory(id: id, name: 'Category to Delete');
+      final category = buildTestCategory(id: id, name: 'Category to Delete');
       await repository.createCategory(category);
 
       await repository.deleteCategory(id);

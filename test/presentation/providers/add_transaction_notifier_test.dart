@@ -217,17 +217,19 @@ void main() {
       notifier.updateCategory(testCategory.id);
       notifier.updateNotes('   Weekly grocery   ');
 
-      when(() => mockUseCase.execute(any())).thenAnswer((_) async => Transaction(
-            id: 'txn_generated',
-            amount: 15000,
-            date: DateTime.now(),
-            type: TransactionType.expense,
-            accountId: testAccount.id,
-            categoryId: testCategory.id,
-            notes: 'Weekly grocery',
-            createdAt: DateTime.now(),
-            modifiedAt: DateTime.now(),
-          ));
+      when(() => mockUseCase.execute(any())).thenAnswer(
+        (_) async => Transaction(
+          id: 'txn_generated',
+          amount: 15000,
+          date: DateTime.now(),
+          type: TransactionType.expense,
+          accountId: testAccount.id,
+          categoryId: testCategory.id,
+          notes: 'Weekly grocery',
+          createdAt: DateTime.now(),
+          modifiedAt: DateTime.now(),
+        ),
+      );
 
       final success = await notifier.submit();
 
@@ -250,7 +252,8 @@ void main() {
       notifier.updateAmount('10.00');
       notifier.updateAccount(testAccount.id);
 
-      final testException = DatabaseException(message: 'Disk error', code: 'WRITE_ERROR');
+      const testException =
+          DatabaseException(message: 'Disk error', code: 'WRITE_ERROR');
       when(() => mockUseCase.execute(any())).thenThrow(testException);
 
       final success = await notifier.submit();

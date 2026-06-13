@@ -18,7 +18,7 @@ void main() {
 
   late db_data.AppDatabase db;
   late AccountRepository repository;
-  final uuid = const Uuid();
+  const uuid = Uuid();
 
   setUp(() {
     db = db_data.AppDatabase.forTesting(NativeDatabase.memory());
@@ -29,7 +29,7 @@ void main() {
     await db.close();
   });
 
-  Account _buildTestAccount({
+  Account buildTestAccount({
     required String id,
     String name = 'Test Account',
     bool isDefault = false,
@@ -54,7 +54,7 @@ void main() {
   group('AccountRepository Tests', () {
     test('createAccount saves account and getAccountById retrieves it', () async {
       final id = uuid.v4();
-      final account = _buildTestAccount(id: id);
+      final account = buildTestAccount(id: id);
 
       await repository.createAccount(account);
       final retrieved = await repository.getAccountById(id);
@@ -67,13 +67,13 @@ void main() {
     });
 
     test('getAccountsByUserId returns only non-deleted accounts for specific user', () async {
-      final user1 = 'user-1';
-      final user2 = 'user-2';
+      const user1 = 'user-1';
+      const user2 = 'user-2';
 
-      final acc1 = _buildTestAccount(id: uuid.v4(), name: 'Acc 1').copyWith(userId: user1);
-      final acc2 = _buildTestAccount(id: uuid.v4(), name: 'Acc 2').copyWith(userId: user1);
-      final accDeleted = _buildTestAccount(id: uuid.v4(), name: 'Deleted Acc', isDeleted: true).copyWith(userId: user1);
-      final accOther = _buildTestAccount(id: uuid.v4(), name: 'Acc Other').copyWith(userId: user2);
+      final acc1 = buildTestAccount(id: uuid.v4(), name: 'Acc 1').copyWith(userId: user1);
+      final acc2 = buildTestAccount(id: uuid.v4(), name: 'Acc 2').copyWith(userId: user1);
+      final accDeleted = buildTestAccount(id: uuid.v4(), name: 'Deleted Acc', isDeleted: true).copyWith(userId: user1);
+      final accOther = buildTestAccount(id: uuid.v4(), name: 'Acc Other').copyWith(userId: user2);
 
       await repository.createAccount(acc1);
       await repository.createAccount(acc2);
@@ -91,7 +91,7 @@ void main() {
 
     test('updateAccount correctly modifies database fields', () async {
       final id = uuid.v4();
-      final account = _buildTestAccount(id: id, name: 'Original Name');
+      final account = buildTestAccount(id: id, name: 'Original Name');
       await repository.createAccount(account);
 
       final updated = account.copyWith(name: 'Updated Name', initialBalance: 5000.0);
@@ -105,7 +105,7 @@ void main() {
 
     test('deleteAccount soft-deletes the account record', () async {
       final id = uuid.v4();
-      final account = _buildTestAccount(id: id, name: 'Active Acc');
+      final account = buildTestAccount(id: id, name: 'Active Acc');
       await repository.createAccount(account);
 
       await repository.deleteAccount(id);

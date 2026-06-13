@@ -1,4 +1,3 @@
-import 'package:drift/drift.dart';
 import 'package:konta/data/database/app_database.dart' as db;
 import 'package:konta/data/mappers/profile_mapper.dart';
 import 'package:konta/domain/entities/profile.dart';
