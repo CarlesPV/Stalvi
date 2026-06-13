@@ -19,8 +19,7 @@ class AccountRepository implements IAccountRepository {
 
   @override
   Future<Account?> getAccountById(String id) async {
-    final query = _db.select(_db.accounts)
-      ..where((a) => a.id.equals(id));
+    final query = _db.select(_db.accounts)..where((a) => a.id.equals(id));
     final row = await query.getSingleOrNull();
     return row?.toDomain();
   }
@@ -44,8 +43,7 @@ class AccountRepository implements IAccountRepository {
 
   @override
   Future<void> deleteAccount(String id) async {
-    await (_db.update(_db.accounts)..where((a) => a.id.equals(id)))
-        .write(
+    await (_db.update(_db.accounts)..where((a) => a.id.equals(id))).write(
       const db.AccountsCompanion(
         isDeleted: Value(true),
       ),

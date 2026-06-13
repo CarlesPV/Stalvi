@@ -47,7 +47,8 @@ void main() {
   }
 
   group('CategoryRepository Tests', () {
-    test('createCategory saves category and getCategoryById retrieves it', () async {
+    test('createCategory saves category and getCategoryById retrieves it',
+        () async {
       final id = uuid.v4();
       final category = buildTestCategory(id: id);
 
@@ -60,9 +61,11 @@ void main() {
       expect(retrieved.associatedType, CategoryType.expense);
     });
 
-    test('getAllCategories returns seeded plus new non-deleted categories', () async {
+    test('getAllCategories returns seeded plus new non-deleted categories',
+        () async {
       final catActive = buildTestCategory(id: uuid.v4(), name: 'Active Cat');
-      final catDeleted = buildTestCategory(id: uuid.v4(), name: 'Deleted Cat', isDeleted: true);
+      final catDeleted = buildTestCategory(
+          id: uuid.v4(), name: 'Deleted Cat', isDeleted: true,);
 
       await repository.createCategory(catActive);
       await repository.createCategory(catDeleted);
@@ -81,7 +84,8 @@ void main() {
       final category = buildTestCategory(id: id, name: 'Original Category');
       await repository.createCategory(category);
 
-      final updated = category.copyWith(name: 'Updated Category', color: '#00FFFF');
+      final updated =
+          category.copyWith(name: 'Updated Category', color: '#00FFFF');
       await repository.updateCategory(updated);
 
       final retrieved = await repository.getCategoryById(id);

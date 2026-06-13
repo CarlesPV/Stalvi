@@ -29,7 +29,8 @@ void main() {
   group('BudgetRepository / AppDatabase', () {
     final testBudget = Budget(
       id: 'budget-1',
-      categoryId: 'category-1', // Assuming category exists or no foreign key constraint enforcement in test memory DB
+      categoryId:
+          'category-1', // Assuming category exists or no foreign key constraint enforcement in test memory DB
       targetAmount: 50000,
       currentAmount: 10000,
       startDate: DateTime(2023, 1, 1),
@@ -42,15 +43,15 @@ void main() {
     test('can create and retrieve a budget', () async {
       // First insert a dummy category so the foreign key constraint is satisfied
       await db.into(db.categories).insert(
-        CategoriesCompanion.insert(
-          id: 'category-1',
-          name: 'Food',
-          icon: 'food',
-          color: 'red',
-          createdAt: DateTime.now(),
-          modifiedAt: DateTime.now(),
-        ),
-      );
+            CategoriesCompanion.insert(
+              id: 'category-1',
+              name: 'Food',
+              icon: 'food',
+              color: 'red',
+              createdAt: DateTime.now(),
+              modifiedAt: DateTime.now(),
+            ),
+          );
 
       await repository.createBudget(testBudget);
 
@@ -63,15 +64,15 @@ void main() {
 
     test('soft delete hides budget from getBudgets', () async {
       await db.into(db.categories).insert(
-        CategoriesCompanion.insert(
-          id: 'category-1',
-          name: 'Food',
-          icon: 'food',
-          color: 'red',
-          createdAt: DateTime.now(),
-          modifiedAt: DateTime.now(),
-        ),
-      );
+            CategoriesCompanion.insert(
+              id: 'category-1',
+              name: 'Food',
+              icon: 'food',
+              color: 'red',
+              createdAt: DateTime.now(),
+              modifiedAt: DateTime.now(),
+            ),
+          );
 
       await repository.createBudget(testBudget);
       await repository.deleteBudget(testBudget.id);
@@ -85,15 +86,15 @@ void main() {
 
     test('update budget modifies values', () async {
       await db.into(db.categories).insert(
-        CategoriesCompanion.insert(
-          id: 'category-1',
-          name: 'Food',
-          icon: 'food',
-          color: 'red',
-          createdAt: DateTime.now(),
-          modifiedAt: DateTime.now(),
-        ),
-      );
+            CategoriesCompanion.insert(
+              id: 'category-1',
+              name: 'Food',
+              icon: 'food',
+              color: 'red',
+              createdAt: DateTime.now(),
+              modifiedAt: DateTime.now(),
+            ),
+          );
 
       await repository.createBudget(testBudget);
 

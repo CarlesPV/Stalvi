@@ -34,8 +34,7 @@ class TransactionRepository implements ITransactionRepository {
 
         if (accountRow == null) {
           throw NotFoundException(
-            message:
-                'Account with id "${transaction.accountId}" not found',
+            message: 'Account with id "${transaction.accountId}" not found',
             code: 'ACCOUNT_NOT_FOUND',
           );
         }
@@ -89,8 +88,7 @@ class TransactionRepository implements ITransactionRepository {
   @override
   Future<domain.Transaction?> getTransactionById(String id) async {
     try {
-      final query = _db.select(_db.transactions)
-        ..where((t) => t.id.equals(id));
+      final query = _db.select(_db.transactions)..where((t) => t.id.equals(id));
       final row = await query.getSingleOrNull();
       return row?.toDomain();
     } catch (e) {
@@ -116,8 +114,7 @@ class TransactionRepository implements ITransactionRepository {
       return rows.map((r) => r.toDomain()).toList();
     } catch (e) {
       throw DatabaseException(
-        message:
-            'Failed to get transactions for account "$accountId"',
+        message: 'Failed to get transactions for account "$accountId"',
         code: 'TRANSACTION_QUERY_FAILED',
         details: e,
       );

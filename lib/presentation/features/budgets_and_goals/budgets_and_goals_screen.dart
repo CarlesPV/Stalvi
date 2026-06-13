@@ -10,7 +10,7 @@ import 'package:konta/presentation/providers/repository_providers.dart';
 import 'package:konta/presentation/widgets/progress_bar_widget.dart';
 
 /// Screen displaying Budgets and Savings Goals in a tabbed interface.
-/// 
+///
 /// Shows spent-to-budget limits and savings goal milestones, utilizing
 /// the reusable [ProgressBarWidget] and styled with the app's pastel aesthetic.
 class BudgetsAndGoalsScreen extends ConsumerWidget {
@@ -83,7 +83,8 @@ class _BudgetsTabBody extends ConsumerWidget {
           return const _EmptyStateWidget(
             icon: Icons.pie_chart_outline_rounded,
             title: 'No budgets set yet',
-            description: 'Set spending limits for categories to track your monthly expenses and stay within your limits.',
+            description:
+                'Set spending limits for categories to track your monthly expenses and stay within your limits.',
           );
         }
 
@@ -157,22 +158,24 @@ class _BudgetCard extends StatelessWidget {
     final double spentDouble = budget.currentAmount / 100.0;
     final double targetDouble = budget.targetAmount / 100.0;
     final double remainingDouble = targetDouble - spentDouble;
-    final double progress = budget.targetAmount > 0 
-        ? budget.currentAmount / budget.targetAmount 
+    final double progress = budget.targetAmount > 0
+        ? budget.currentAmount / budget.targetAmount
         : 0.0;
 
     final spentStr = CurrencyFormatter.format(spentDouble);
     final targetStr = CurrencyFormatter.format(targetDouble);
     final remainingStr = CurrencyFormatter.format(remainingDouble.abs());
-    final progressStr = CurrencyFormatter.formatPercentage(progress, decimalDigits: 0);
+    final progressStr =
+        CurrencyFormatter.formatPercentage(progress, decimalDigits: 0);
 
     final isOverspent = budget.currentAmount > budget.targetAmount;
-    final statusText = isOverspent 
-        ? '$remainingStr overspent' 
-        : '$remainingStr remaining';
-    final statusColor = isOverspent ? financialColors.negative : colorScheme.onSurfaceVariant;
+    final statusText =
+        isOverspent ? '$remainingStr overspent' : '$remainingStr remaining';
+    final statusColor =
+        isOverspent ? financialColors.negative : colorScheme.onSurfaceVariant;
 
-    final dateRangeStr = '${DateFormat('MMM d').format(budget.startDate)} - ${DateFormat('MMM d, y').format(budget.endDate)}';
+    final dateRangeStr =
+        '${DateFormat('MMM d').format(budget.startDate)} - ${DateFormat('MMM d, y').format(budget.endDate)}';
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
@@ -221,7 +224,9 @@ class _BudgetCard extends StatelessWidget {
                 progressStr,
                 style: theme.textTheme.bodyMedium?.copyWith(
                   fontWeight: FontWeight.w800,
-                  color: isOverspent ? financialColors.negative : colorScheme.onSurface,
+                  color: isOverspent
+                      ? financialColors.negative
+                      : colorScheme.onSurface,
                 ),
               ),
             ],
@@ -278,7 +283,8 @@ class _SavingsGoalsTabBody extends ConsumerWidget {
           return const _EmptyStateWidget(
             icon: Icons.savings_outlined,
             title: 'No savings goals yet',
-            description: 'Create a savings goal to plan for your future dreams, trips, or big purchases.',
+            description:
+                'Create a savings goal to plan for your future dreams, trips, or big purchases.',
           );
         }
 
@@ -343,13 +349,13 @@ class _SavingsGoalCard extends StatelessWidget {
 
     final double savedDouble = goal.currentAmount / 100.0;
     final double targetDouble = goal.targetAmount / 100.0;
-    final double progress = goal.targetAmount > 0 
-        ? goal.currentAmount / goal.targetAmount 
-        : 0.0;
+    final double progress =
+        goal.targetAmount > 0 ? goal.currentAmount / goal.targetAmount : 0.0;
 
     final savedStr = CurrencyFormatter.format(savedDouble);
     final targetStr = CurrencyFormatter.format(targetDouble);
-    final progressStr = CurrencyFormatter.formatPercentage(progress, decimalDigits: 0);
+    final progressStr =
+        CurrencyFormatter.formatPercentage(progress, decimalDigits: 0);
 
     final targetDateStr = goal.targetDate != null
         ? 'Target date: ${DateFormat('MMM d, y').format(goal.targetDate!)}'
@@ -402,7 +408,9 @@ class _SavingsGoalCard extends StatelessWidget {
                 progressStr,
                 style: theme.textTheme.bodyMedium?.copyWith(
                   fontWeight: FontWeight.w800,
-                  color: progress >= 1.0 ? financialColors.positive : colorScheme.onSurface,
+                  color: progress >= 1.0
+                      ? financialColors.positive
+                      : colorScheme.onSurface,
                 ),
               ),
             ],
@@ -466,7 +474,8 @@ class _EmptyStateWidget extends StatelessWidget {
               width: 80,
               height: 80,
               decoration: BoxDecoration(
-                color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+                color:
+                    colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
                 shape: BoxShape.circle,
               ),
               child: Icon(

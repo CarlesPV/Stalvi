@@ -54,9 +54,10 @@ class CurrencyFormatter {
     try {
       // Remove currency symbols, non-breaking spaces, and standard spaces
       String cleanValue = value
-          .replaceAll(RegExp(r'[^\d.,\-+]'), '') // Keep only digits, dots, commas, and signs
+          .replaceAll(RegExp(r'[^\d.,\-+]'),
+              '',) // Keep only digits, dots, commas, and signs
           .trim();
-      
+
       final hasComma = cleanValue.contains(',');
       final hasDot = cleanValue.contains('.');
 
@@ -102,7 +103,7 @@ class CurrencyFormatter {
     final format = NumberFormat.percentPattern(locale);
     format.minimumFractionDigits = decimalDigits;
     format.maximumFractionDigits = decimalDigits;
-    
+
     final result = format.format(value);
     if (showSign && value > 0) {
       return '+$result';

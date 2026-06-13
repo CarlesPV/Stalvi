@@ -2,7 +2,8 @@ import 'transaction_type.dart';
 
 class Transaction {
   final String id;
-  final int amount; // Stored in cents (e.g. 1000 for 10.00) to avoid floating-point errors
+  final int
+      amount; // Stored in cents (e.g. 1000 for 10.00) to avoid floating-point errors
   final DateTime date;
   final TransactionType type;
   final String accountId;

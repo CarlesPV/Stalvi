@@ -20,26 +20,26 @@ class Profile {
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-  
+
     return other is Profile &&
-      other.id == id &&
-      other.name == name &&
-      other.username == username &&
-      other.password == password &&
-      other.defaultCurrency == defaultCurrency &&
-      other.createdAt == createdAt &&
-      other.modifiedAt == modifiedAt;
+        other.id == id &&
+        other.name == name &&
+        other.username == username &&
+        other.password == password &&
+        other.defaultCurrency == defaultCurrency &&
+        other.createdAt == createdAt &&
+        other.modifiedAt == modifiedAt;
   }
 
   @override
   int get hashCode {
     return id.hashCode ^
-      name.hashCode ^
-      username.hashCode ^
-      password.hashCode ^
-      defaultCurrency.hashCode ^
-      createdAt.hashCode ^
-      modifiedAt.hashCode;
+        name.hashCode ^
+        username.hashCode ^
+        password.hashCode ^
+        defaultCurrency.hashCode ^
+        createdAt.hashCode ^
+        modifiedAt.hashCode;
   }
 
   Profile copyWith({

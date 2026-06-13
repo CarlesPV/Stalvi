@@ -36,7 +36,8 @@ abstract class IExchangeRateRemoteDataSource {
 ///
 /// **Security constraint:** All requests are made over HTTPS. An assertion
 /// guards against accidental HTTP usage at construction time.
-class ExchangeRateRemoteDataSourceImpl implements IExchangeRateRemoteDataSource {
+class ExchangeRateRemoteDataSourceImpl
+    implements IExchangeRateRemoteDataSource {
   /// The injected HTTP client. Injecting it enables deterministic unit tests
   /// without any real network calls.
   final http.Client _httpClient;

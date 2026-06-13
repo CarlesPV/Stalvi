@@ -21,7 +21,9 @@ class BudgetRepository implements IBudgetRepository {
   Stream<List<Budget>> watchBudgets() {
     final query = _db.select(_db.budgets)
       ..where((tbl) => tbl.isDeleted.equals(false));
-    return query.watch().map((rows) => rows.map(BudgetMapper.fromDataClass).toList());
+    return query
+        .watch()
+        .map((rows) => rows.map(BudgetMapper.fromDataClass).toList());
   }
 
   @override
@@ -35,7 +37,8 @@ class BudgetRepository implements IBudgetRepository {
   @override
   Future<List<Budget>> getBudgetsByCategoryId(String categoryId) async {
     final query = _db.select(_db.budgets)
-      ..where((tbl) => tbl.categoryId.equals(categoryId) & tbl.isDeleted.equals(false));
+      ..where((tbl) =>
+          tbl.categoryId.equals(categoryId) & tbl.isDeleted.equals(false),);
     final data = await query.get();
     return data.map(BudgetMapper.fromDataClass).toList();
   }

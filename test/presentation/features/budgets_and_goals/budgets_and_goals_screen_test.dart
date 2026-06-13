@@ -67,7 +67,7 @@ void main() {
     id: 'b_normal',
     categoryId: 'cat_food',
     targetAmount: 20000, // €200.00
-    currentAmount: 8000,  // €80.00
+    currentAmount: 8000, // €80.00
     startDate: DateTime(2026, 6, 1),
     endDate: DateTime(2026, 6, 30),
     createdAt: DateTime(2026, 6, 1),
@@ -118,12 +118,14 @@ void main() {
   }
 
   group('BudgetsAndGoalsScreen Tests', () {
-    testWidgets('renders loading state when streams are loading', (WidgetTester tester) async {
+    testWidgets('renders loading state when streams are loading',
+        (WidgetTester tester) async {
       await tester.pumpWidget(
         createTestWidget(
           budgetsStream: const NeverStream<List<Budget>>(),
           savingsGoalsStream: const NeverStream<List<SavingsGoal>>(),
-          categoriesFuture: Completer<List<Category>>().future, // A future that never resolves to stay in loading
+          categoriesFuture: Completer<List<Category>>()
+              .future, // A future that never resolves to stay in loading
         ),
       );
 
@@ -131,7 +133,8 @@ void main() {
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
     });
 
-    testWidgets('renders error state when streams fail', (WidgetTester tester) async {
+    testWidgets('renders error state when streams fail',
+        (WidgetTester tester) async {
       await tester.pumpWidget(
         createTestWidget(
           budgetsStream: Stream<List<Budget>>.error(Exception('Db error')),
@@ -146,7 +149,8 @@ void main() {
       expect(find.text('Failed to load budgets.'), findsOneWidget);
     });
 
-    testWidgets('renders empty state when lists are empty', (WidgetTester tester) async {
+    testWidgets('renders empty state when lists are empty',
+        (WidgetTester tester) async {
       await tester.pumpWidget(
         createTestWidget(
           budgetsStream: Stream.value(<Budget>[]),
@@ -159,7 +163,10 @@ void main() {
 
       // Budgets tab is default active. Check budgets empty state text.
       expect(find.text('No budgets set yet'), findsOneWidget);
-      expect(find.text('Set spending limits for categories to track your monthly expenses and stay within your limits.'), findsOneWidget);
+      expect(
+          find.text(
+              'Set spending limits for categories to track your monthly expenses and stay within your limits.',),
+          findsOneWidget,);
 
       // Switch to Savings Goals tab
       await tester.tap(find.text('Savings Goals'));
@@ -167,10 +174,15 @@ void main() {
 
       // Check savings goals empty state text.
       expect(find.text('No savings goals yet'), findsOneWidget);
-      expect(find.text('Create a savings goal to plan for your future dreams, trips, or big purchases.'), findsOneWidget);
+      expect(
+          find.text(
+              'Create a savings goal to plan for your future dreams, trips, or big purchases.',),
+          findsOneWidget,);
     });
 
-    testWidgets('renders budgets correctly with progress bars and remaining calculations', (WidgetTester tester) async {
+    testWidgets(
+        'renders budgets correctly with progress bars and remaining calculations',
+        (WidgetTester tester) async {
       await tester.pumpWidget(
         createTestWidget(
           budgetsStream: Stream.value([testBudgetNormal, testBudgetExceeded]),
@@ -182,7 +194,8 @@ void main() {
       await tester.pumpAndSettle();
 
       // Check Category names
-      expect(find.text('Food & Dining'), findsWidgets); // Should find two occurrences because we have two budgets with the same category
+      expect(find.text('Food & Dining'),
+          findsWidgets,); // Should find two occurrences because we have two budgets with the same category
 
       // Budget 1 (Normal): Spent €80.00 of €200.00 (progress: 40%) -> remaining: €120.00
       final b1Spent = CurrencyFormatter.format(80.0);
@@ -204,7 +217,9 @@ void main() {
       expect(find.byType(ProgressBarWidget), findsNWidgets(2));
     });
 
-    testWidgets('renders savings goals correctly with custom color/icon and achievements', (WidgetTester tester) async {
+    testWidgets(
+        'renders savings goals correctly with custom color/icon and achievements',
+        (WidgetTester tester) async {
       await tester.pumpWidget(
         createTestWidget(
           budgetsStream: Stream.value([testBudgetNormal]),

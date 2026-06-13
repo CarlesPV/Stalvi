@@ -19,7 +19,8 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
-          appDatabaseProvider.overrideWith((ref) async => AppDatabase.forTesting(NativeDatabase.memory())),
+          appDatabaseProvider.overrideWith(
+              (ref) async => AppDatabase.forTesting(NativeDatabase.memory()),),
         ],
         child: const KontaApp(),
       ),
@@ -32,5 +33,3 @@ void main() {
     await tester.pump(const Duration(seconds: 3));
   });
 }
-
-

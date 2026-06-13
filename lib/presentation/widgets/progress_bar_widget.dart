@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:konta/core/theme/app_theme.dart';
 
 /// A reusable visual progress bar widget designed with Konta brand aesthetics.
-/// 
+///
 /// Takes [currentAmount] and [targetAmount] (in cents or any consistent unit),
 /// calculates the progress percentage, and renders an animated bar.
 ///
@@ -35,7 +35,8 @@ class ProgressBarWidget extends StatelessWidget {
     final financialColors = context.financialColors;
 
     // Calculate progress ratio
-    final double progress = targetAmount > 0 ? currentAmount / targetAmount : 0.0;
+    final double progress =
+        targetAmount > 0 ? currentAmount / targetAmount : 0.0;
     final double clampedProgress = progress.clamp(0.0, 1.0);
 
     // Determine colors
@@ -44,7 +45,7 @@ class ProgressBarWidget extends StatelessWidget {
         ? financialColors.negative
         : (activeColor ?? financialColors.positive);
 
-    final Color resolvedBgColor = backgroundColor ?? 
+    final Color resolvedBgColor = backgroundColor ??
         colorScheme.surfaceContainerHighest.withValues(alpha: 0.6);
 
     return Column(
@@ -76,7 +77,8 @@ class ProgressBarWidget extends StatelessWidget {
                             boxShadow: [
                               if (animatedValue > 0.02)
                                 BoxShadow(
-                                  color: resolvedActiveColor.withValues(alpha: 0.25),
+                                  color: resolvedActiveColor.withValues(
+                                      alpha: 0.25,),
                                   blurRadius: 4,
                                   offset: const Offset(0, 1),
                                 ),

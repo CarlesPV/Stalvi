@@ -18,7 +18,8 @@ class AddTransactionScreen extends ConsumerStatefulWidget {
   const AddTransactionScreen({super.key});
 
   @override
-  ConsumerState<AddTransactionScreen> createState() => _AddTransactionScreenState();
+  ConsumerState<AddTransactionScreen> createState() =>
+      _AddTransactionScreenState();
 }
 
 class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
@@ -30,10 +31,14 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
     super.initState();
     // Synchronize initial values from controllers to notifier
     _amountController.addListener(() {
-      ref.read(addTransactionNotifierProvider.notifier).updateAmount(_amountController.text);
+      ref
+          .read(addTransactionNotifierProvider.notifier)
+          .updateAmount(_amountController.text);
     });
     _notesController.addListener(() {
-      ref.read(addTransactionNotifierProvider.notifier).updateNotes(_notesController.text);
+      ref
+          .read(addTransactionNotifierProvider.notifier)
+          .updateNotes(_notesController.text);
     });
   }
 
@@ -75,7 +80,8 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
 
     final state = ref.watch(addTransactionNotifierProvider);
     final isExpense = state.type == TransactionType.expense;
-    final activeColor = isExpense ? financialColors.negative : financialColors.positive;
+    final activeColor =
+        isExpense ? financialColors.negative : financialColors.positive;
 
     // Listen to form submission status to show SnackBars and pop screen
     ref.listen<AsyncValue<void>>(
@@ -157,7 +163,8 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                 height: 54,
                 padding: const EdgeInsets.all(4),
                 decoration: BoxDecoration(
-                  color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+                  color: colorScheme.surfaceContainerHighest
+                      .withValues(alpha: 0.5),
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Row(
@@ -165,20 +172,26 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                     Expanded(
                       child: GestureDetector(
                         onTap: () {
-                          ref.read(addTransactionNotifierProvider.notifier).updateType(TransactionType.expense);
+                          ref
+                              .read(addTransactionNotifierProvider.notifier)
+                              .updateType(TransactionType.expense);
                         },
                         child: AnimatedContainer(
                           duration: const Duration(milliseconds: 200),
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
-                            color: isExpense ? financialColors.negative : Colors.transparent,
+                            color: isExpense
+                                ? financialColors.negative
+                                : Colors.transparent,
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(
                             'Expense',
                             style: theme.textTheme.bodyMedium?.copyWith(
                               fontWeight: FontWeight.w700,
-                              color: isExpense ? colorScheme.onPrimary : colorScheme.onSurfaceVariant,
+                              color: isExpense
+                                  ? colorScheme.onPrimary
+                                  : colorScheme.onSurfaceVariant,
                             ),
                           ),
                         ),
@@ -187,20 +200,26 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                     Expanded(
                       child: GestureDetector(
                         onTap: () {
-                          ref.read(addTransactionNotifierProvider.notifier).updateType(TransactionType.income);
+                          ref
+                              .read(addTransactionNotifierProvider.notifier)
+                              .updateType(TransactionType.income);
                         },
                         child: AnimatedContainer(
                           duration: const Duration(milliseconds: 200),
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
-                            color: !isExpense ? financialColors.positive : Colors.transparent,
+                            color: !isExpense
+                                ? financialColors.positive
+                                : Colors.transparent,
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(
                             'Income',
                             style: theme.textTheme.bodyMedium?.copyWith(
                               fontWeight: FontWeight.w700,
-                              color: !isExpense ? colorScheme.onPrimary : colorScheme.onSurfaceVariant,
+                              color: !isExpense
+                                  ? colorScheme.onPrimary
+                                  : colorScheme.onSurfaceVariant,
                             ),
                           ),
                         ),
@@ -239,7 +258,8 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                   IntrinsicWidth(
                     child: TextField(
                       controller: _amountController,
-                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                      keyboardType:
+                          const TextInputType.numberWithOptions(decimal: true),
                       style: theme.textTheme.displayLarge?.copyWith(
                         color: activeColor,
                         fontWeight: FontWeight.w800,
@@ -263,7 +283,8 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
               // ── Selectors Card ────────────────────────────────────────────
               Container(
                 decoration: BoxDecoration(
-                  color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+                  color: colorScheme.surfaceContainerHighest
+                      .withValues(alpha: 0.3),
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
                     color: colorScheme.outline.withValues(alpha: 0.08),
@@ -281,18 +302,28 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                       iconColor: selectedAccount != null
                           ? _parseHexColor(selectedAccount.color)
                           : colorScheme.onSurfaceVariant,
-                      onTap: () => _showAccountSelector(context, accountsAsync.valueOrNull ?? []),
+                      onTap: () => _showAccountSelector(
+                          context, accountsAsync.valueOrNull ?? [],),
                     ),
-                    Divider(height: 1, color: colorScheme.outline.withValues(alpha: 0.08)),
+                    Divider(
+                        height: 1,
+                        color: colorScheme.outline.withValues(alpha: 0.08),),
                     // Category Selector
                     _FormSelectorTile(
                       label: 'Category',
                       value: selectedCategory?.name ?? 'Uncategorized',
-                      icon: selectedCategory != null ? _getIconData(selectedCategory.icon) : Icons.category_rounded,
-                      iconColor: selectedCategory != null ? _parseHexColor(selectedCategory.color) : colorScheme.onSurfaceVariant,
-                      onTap: () => _showCategorySelector(context, categoriesAsync.valueOrNull ?? [], state.type),
+                      icon: selectedCategory != null
+                          ? _getIconData(selectedCategory.icon)
+                          : Icons.category_rounded,
+                      iconColor: selectedCategory != null
+                          ? _parseHexColor(selectedCategory.color)
+                          : colorScheme.onSurfaceVariant,
+                      onTap: () => _showCategorySelector(context,
+                          categoriesAsync.valueOrNull ?? [], state.type,),
                     ),
-                    Divider(height: 1, color: colorScheme.outline.withValues(alpha: 0.08)),
+                    Divider(
+                        height: 1,
+                        color: colorScheme.outline.withValues(alpha: 0.08),),
                     // Date Selector
                     _FormSelectorTile(
                       label: 'Date',
@@ -319,7 +350,8 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                   hintText: 'Add details about this transaction...',
                   hintStyle: const TextStyle(color: Colors.grey),
                   filled: true,
-                  fillColor: colorScheme.surfaceContainerHighest.withValues(alpha: 0.2),
+                  fillColor: colorScheme.surfaceContainerHighest
+                      .withValues(alpha: 0.2),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(16),
                     borderSide: BorderSide(
@@ -342,7 +374,9 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                 onPressed: isLoading
                     ? null
                     : () {
-                        ref.read(addTransactionNotifierProvider.notifier).submit();
+                        ref
+                            .read(addTransactionNotifierProvider.notifier)
+                            .submit();
                       },
                 style: FilledButton.styleFrom(
                   backgroundColor: activeColor,
@@ -360,7 +394,8 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                         height: 24,
                         child: CircularProgressIndicator(
                           strokeWidth: 2.5,
-                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(Colors.white),
                         ),
                       )
                     : const Text(
@@ -419,16 +454,20 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                       decoration: BoxDecoration(
                         color: isSelected
                             ? accColor.withValues(alpha: 0.08)
-                            : colorScheme.surfaceContainerHighest.withValues(alpha: 0.2),
+                            : colorScheme.surfaceContainerHighest
+                                .withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(14),
                         border: Border.all(
-                          color: isSelected ? accColor.withValues(alpha: 0.4) : Colors.transparent,
+                          color: isSelected
+                              ? accColor.withValues(alpha: 0.4)
+                              : Colors.transparent,
                         ),
                       ),
                       child: ListTile(
                         leading: CircleAvatar(
                           backgroundColor: accColor.withValues(alpha: 0.12),
-                          child: Icon(_getIconData(account.icon), color: accColor, size: 20),
+                          child: Icon(_getIconData(account.icon),
+                              color: accColor, size: 20,),
                         ),
                         title: Text(
                           account.name,
@@ -446,7 +485,9 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                             ? Icon(Icons.check_circle_rounded, color: accColor)
                             : null,
                         onTap: () {
-                          ref.read(addTransactionNotifierProvider.notifier).updateAccount(account.id);
+                          ref
+                              .read(addTransactionNotifierProvider.notifier)
+                              .updateAccount(account.id);
                           Navigator.of(context).pop();
                         },
                       ),
@@ -461,7 +502,8 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
     );
   }
 
-  void _showCategorySelector(BuildContext context, List<Category> categories, TransactionType type) {
+  void _showCategorySelector(
+      BuildContext context, List<Category> categories, TransactionType type,) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final state = ref.read(addTransactionNotifierProvider);
@@ -469,8 +511,14 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
     // Filter categories: match transaction type (income vs expense)
     final filteredCategories = categories.where((c) {
       if (c.associatedType == null) return true; // neutral category
-      if (type == TransactionType.income && c.associatedType == CategoryType.income) return true;
-      if (type == TransactionType.expense && c.associatedType == CategoryType.expense) return true;
+      if (type == TransactionType.income &&
+          c.associatedType == CategoryType.income) {
+        return true;
+      }
+      if (type == TransactionType.expense &&
+          c.associatedType == CategoryType.expense) {
+        return true;
+      }
       return false;
     }).toList();
 
@@ -497,31 +545,37 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
               Flexible(
                 child: ListView.builder(
                   shrinkWrap: true,
-                  itemCount: filteredCategories.length + 1, // +1 for "Uncategorized"
+                  itemCount:
+                      filteredCategories.length + 1, // +1 for "Uncategorized"
                   itemBuilder: (context, index) {
                     final isUncategorized = index == 0;
                     final isSelected = isUncategorized
                         ? state.categoryId == null
                         : state.categoryId == filteredCategories[index - 1].id;
 
-                    final category = isUncategorized ? null : filteredCategories[index - 1];
+                    final category =
+                        isUncategorized ? null : filteredCategories[index - 1];
                     final catColor = isUncategorized
                         ? colorScheme.onSurfaceVariant
                         : _parseHexColor(category!.color);
                     final catIcon = isUncategorized
                         ? Icons.category_rounded
                         : _getIconData(category!.icon);
-                    final catName = isUncategorized ? 'Uncategorized' : category!.name;
+                    final catName =
+                        isUncategorized ? 'Uncategorized' : category!.name;
 
                     return Container(
                       margin: const EdgeInsets.only(bottom: 10),
                       decoration: BoxDecoration(
                         color: isSelected
                             ? catColor.withValues(alpha: 0.08)
-                            : colorScheme.surfaceContainerHighest.withValues(alpha: 0.2),
+                            : colorScheme.surfaceContainerHighest
+                                .withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(14),
                         border: Border.all(
-                          color: isSelected ? catColor.withValues(alpha: 0.4) : Colors.transparent,
+                          color: isSelected
+                              ? catColor.withValues(alpha: 0.4)
+                              : Colors.transparent,
                         ),
                       ),
                       child: ListTile(
@@ -539,7 +593,9 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                             ? Icon(Icons.check_circle_rounded, color: catColor)
                             : null,
                         onTap: () {
-                          ref.read(addTransactionNotifierProvider.notifier).updateCategory(category?.id);
+                          ref
+                              .read(addTransactionNotifierProvider.notifier)
+                              .updateCategory(category?.id);
                           Navigator.of(context).pop();
                         },
                       ),
@@ -564,7 +620,8 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: Theme.of(context).colorScheme.copyWith(
-                  primary: context.financialColors.negative, // Match core branding accent
+                  primary: context
+                      .financialColors.negative, // Match core branding accent
                 ),
           ),
           child: child!,

@@ -110,9 +110,7 @@ class AuthNotifier extends AsyncNotifier<AuthStatus> {
       );
 
       state = AsyncValue.data(
-        didAuthenticate
-            ? AuthStatus.authenticated
-            : AuthStatus.unauthenticated,
+        didAuthenticate ? AuthStatus.authenticated : AuthStatus.unauthenticated,
       );
     } on PlatformException catch (e, st) {
       if (e.code == auth_error.lockedOut ||

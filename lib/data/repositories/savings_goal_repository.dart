@@ -21,7 +21,9 @@ class SavingsGoalRepository implements ISavingsGoalRepository {
   Stream<List<SavingsGoal>> watchSavingsGoals() {
     final query = _db.select(_db.savingsGoals)
       ..where((tbl) => tbl.isDeleted.equals(false));
-    return query.watch().map((rows) => rows.map(SavingsGoalMapper.fromDataClass).toList());
+    return query
+        .watch()
+        .map((rows) => rows.map(SavingsGoalMapper.fromDataClass).toList());
   }
 
   @override
@@ -46,7 +48,8 @@ class SavingsGoalRepository implements ISavingsGoalRepository {
 
   @override
   Future<void> deleteSavingsGoal(String id) async {
-    await (_db.update(_db.savingsGoals)..where((tbl) => tbl.id.equals(id))).write(
+    await (_db.update(_db.savingsGoals)..where((tbl) => tbl.id.equals(id)))
+        .write(
       const SavingsGoalsCompanion(isDeleted: Value(true)),
     );
   }

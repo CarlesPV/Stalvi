@@ -19,8 +19,7 @@ class CategoryRepository implements ICategoryRepository {
 
   @override
   Future<Category?> getCategoryById(String id) async {
-    final query = _db.select(_db.categories)
-      ..where((c) => c.id.equals(id));
+    final query = _db.select(_db.categories)..where((c) => c.id.equals(id));
     final row = await query.getSingleOrNull();
     return row?.toDomain();
   }
@@ -44,8 +43,7 @@ class CategoryRepository implements ICategoryRepository {
 
   @override
   Future<void> deleteCategory(String id) async {
-    await (_db.update(_db.categories)..where((c) => c.id.equals(id)))
-        .write(
+    await (_db.update(_db.categories)..where((c) => c.id.equals(id))).write(
       const db.CategoriesCompanion(
         isDeleted: Value(true),
       ),

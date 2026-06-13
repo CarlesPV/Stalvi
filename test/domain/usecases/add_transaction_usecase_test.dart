@@ -17,10 +17,15 @@ import 'package:konta/domain/usecases/add_transaction_usecase.dart';
 // Mocks & Fakes
 // ---------------------------------------------------------------------------
 
-class MockTransactionRepository extends Mock implements ITransactionRepository {}
+class MockTransactionRepository extends Mock
+    implements ITransactionRepository {}
+
 class MockAccountRepository extends Mock implements IAccountRepository {}
+
 class MockProfileRepository extends Mock implements IProfileRepository {}
-class MockExchangeRateRepository extends Mock implements IExchangeRateRepository {}
+
+class MockExchangeRateRepository extends Mock
+    implements IExchangeRateRepository {}
 
 class FakeTransaction extends Fake implements Transaction {}
 
@@ -75,8 +80,6 @@ AddTransactionParams _incomeParams({
   );
 }
 
-
-
 ExchangeRate _buildExchangeRate({String base = 'EUR'}) {
   return ExchangeRate(
     baseCurrency: base,
@@ -115,7 +118,8 @@ void main() {
 
   group('AddTransactionUseCase', () {
     group('success cases', () {
-      test('should create transaction without conversion when currencies match', () async {
+      test('should create transaction without conversion when currencies match',
+          () async {
         final params = _incomeParams();
         final account = _buildAccount();
         final profile = _buildProfile();
@@ -124,15 +128,15 @@ void main() {
             .thenAnswer((_) async => account);
         when(() => mockProfileRepo.getProfileById(account.userId))
             .thenAnswer((_) async => profile);
-        when(() => mockTransactionRepo.createTransaction(any()))
-            .thenAnswer((inv) async => inv.positionalArguments[0] as Transaction);
+        when(() => mockTransactionRepo.createTransaction(any())).thenAnswer(
+            (inv) async => inv.positionalArguments[0] as Transaction,);
 
         final result = await usecase.execute(params);
 
         expect(result.originalCurrency, 'EUR');
         expect(result.convertedAmount, isNull);
         expect(result.exchangeRate, isNull);
-        
+
         verifyZeroInteractions(mockExchangeRateRepo);
         verify(() => mockTransactionRepo.createTransaction(any())).called(1);
       });
@@ -141,7 +145,8 @@ void main() {
         final params = _incomeParams(amount: 1000); // 10.00 USD
         final account = _buildAccount(currency: 'USD');
         final profile = _buildProfile(defaultCurrency: 'EUR');
-        final rateSnapshot = _buildExchangeRate(base: 'EUR'); // 1 EUR = 1.08 USD
+        final rateSnapshot =
+            _buildExchangeRate(base: 'EUR'); // 1 EUR = 1.08 USD
 
         when(() => mockAccountRepo.getAccountById(params.accountId))
             .thenAnswer((_) async => account);
@@ -149,8 +154,8 @@ void main() {
             .thenAnswer((_) async => profile);
         when(() => mockExchangeRateRepo.getLatestRates(baseCurrency: 'EUR'))
             .thenAnswer((_) async => rateSnapshot);
-        when(() => mockTransactionRepo.createTransaction(any()))
-            .thenAnswer((inv) async => inv.positionalArguments[0] as Transaction);
+        when(() => mockTransactionRepo.createTransaction(any())).thenAnswer(
+            (inv) async => inv.positionalArguments[0] as Transaction,);
 
         final result = await usecase.execute(params);
 
@@ -158,7 +163,8 @@ void main() {
         expect(result.exchangeRate, 1.08);
         expect(result.convertedAmount, (1000 / 1.08).round());
 
-        verify(() => mockExchangeRateRepo.getLatestRates(baseCurrency: 'EUR')).called(1);
+        verify(() => mockExchangeRateRepo.getLatestRates(baseCurrency: 'EUR'))
+            .called(1);
       });
     });
 
@@ -169,36 +175,47 @@ void main() {
       });
 
       test('should throw ValidationException when date in future', () async {
-        final call = usecase.execute(_incomeParams(date: _now.add(const Duration(days: 1))));
+        final call = usecase
+            .execute(_incomeParams(date: _now.add(const Duration(days: 1))));
         await expectLater(() => call, throwsA(isA<ValidationException>()));
       });
 
       test('should throw NotFoundException when account not found', () async {
-        when(() => mockAccountRepo.getAccountById(any())).thenAnswer((_) async => null);
+        when(() => mockAccountRepo.getAccountById(any()))
+            .thenAnswer((_) async => null);
         final call = usecase.execute(_incomeParams());
         await expectLater(() => call, throwsA(isA<NotFoundException>()));
       });
 
       test('should throw NotFoundException when profile not found', () async {
         final account = _buildAccount();
-        when(() => mockAccountRepo.getAccountById(any())).thenAnswer((_) async => account);
-        when(() => mockProfileRepo.getProfileById(any())).thenAnswer((_) async => null);
+        when(() => mockAccountRepo.getAccountById(any()))
+            .thenAnswer((_) async => account);
+        when(() => mockProfileRepo.getProfileById(any()))
+            .thenAnswer((_) async => null);
         final call = usecase.execute(_incomeParams());
         await expectLater(() => call, throwsA(isA<NotFoundException>()));
       });
 
-      test('should throw ValidationException when rate not found for currency', () async {
+      test('should throw ValidationException when rate not found for currency',
+          () async {
         final params = _incomeParams();
         final account = _buildAccount(currency: 'JPY'); // Not in rates
         final profile = _buildProfile(defaultCurrency: 'EUR');
         final rateSnapshot = _buildExchangeRate(base: 'EUR');
 
-        when(() => mockAccountRepo.getAccountById(any())).thenAnswer((_) async => account);
-        when(() => mockProfileRepo.getProfileById(any())).thenAnswer((_) async => profile);
-        when(() => mockExchangeRateRepo.getLatestRates(baseCurrency: 'EUR')).thenAnswer((_) async => rateSnapshot);
+        when(() => mockAccountRepo.getAccountById(any()))
+            .thenAnswer((_) async => account);
+        when(() => mockProfileRepo.getProfileById(any()))
+            .thenAnswer((_) async => profile);
+        when(() => mockExchangeRateRepo.getLatestRates(baseCurrency: 'EUR'))
+            .thenAnswer((_) async => rateSnapshot);
 
         final call = usecase.execute(params);
-        await expectLater(() => call, throwsA(isA<ValidationException>().having((e) => e.code, 'code', 'RATE_NOT_FOUND')));
+        await expectLater(
+            () => call,
+            throwsA(isA<ValidationException>()
+                .having((e) => e.code, 'code', 'RATE_NOT_FOUND'),),);
       });
     });
   });

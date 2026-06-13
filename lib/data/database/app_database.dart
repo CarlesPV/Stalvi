@@ -23,6 +23,7 @@ import 'tables/tag_table.dart';
 import 'tables/transaction_table.dart';
 import 'tables/budget_table.dart';
 import 'tables/savings_goal_table.dart';
+import 'daos/statistics_dao.dart';
 
 part 'app_database.g.dart';
 
@@ -39,7 +40,18 @@ part 'app_database.g.dart';
 /// ```dart
 /// final db = await AppDatabase.create();
 /// ```
-@DriftDatabase(tables: [Profiles, Accounts, Categories, Tags, Transactions, Budgets, SavingsGoals])
+@DriftDatabase(
+  tables: [
+    Profiles,
+    Accounts,
+    Categories,
+    Tags,
+    Transactions,
+    Budgets,
+    SavingsGoals,
+  ],
+  daos: [StatisticsDao],
+)
 class AppDatabase extends _$AppDatabase {
   /// Private constructor — use the [create] factory instead.
   AppDatabase._(super.executor);

@@ -35,10 +35,11 @@ void main() {
   );
 
   group('CreateAccountUseCase', () {
-    test('should successfully create an account when all parameters are valid', () async {
+    test('should successfully create an account when all parameters are valid',
+        () async {
       // Arrange
-      when(() => mockAccountRepository.createAccount(any()))
-          .thenAnswer((invocation) async => invocation.positionalArguments[0] as Account);
+      when(() => mockAccountRepository.createAccount(any())).thenAnswer(
+          (invocation) async => invocation.positionalArguments[0] as Account,);
 
       // Act
       final result = await usecase.execute(defaultParams);
@@ -52,7 +53,8 @@ void main() {
       verifyNoMoreInteractions(mockAccountRepository);
     });
 
-    test('should throw ValidationException when initial_balance is null', () async {
+    test('should throw ValidationException when initial_balance is null',
+        () async {
       // Arrange
       const invalidParams = CreateAccountParams(
         id: 'test_id',
@@ -76,10 +78,11 @@ void main() {
       verifyZeroInteractions(mockAccountRepository);
     });
 
-    test('should set isDeleted to false and createdAt/modifiedAt properly', () async {
+    test('should set isDeleted to false and createdAt/modifiedAt properly',
+        () async {
       // Arrange
-      when(() => mockAccountRepository.createAccount(any()))
-          .thenAnswer((invocation) async => invocation.positionalArguments[0] as Account);
+      when(() => mockAccountRepository.createAccount(any())).thenAnswer(
+          (invocation) async => invocation.positionalArguments[0] as Account,);
 
       // Act
       final result = await usecase.execute(defaultParams);

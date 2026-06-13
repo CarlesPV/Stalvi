@@ -64,3 +64,20 @@ This document lists the completed phases of the Konta development roadmap, provi
   - Full AAA unit tests for Exchange Rate APIs and repository.
   - Mocked widget tests validating loading transitions, error handling, empty lists, progress animation styling, and calculations under varying locales.
   - Full regression test suite: **69 tests passed** successfully.
+
+### Phase 5: Statistics, Filters, & Exports
+* **Completion Date:** June 13, 2026
+* **Objective:** Build robust analytical aggregations in SQLite, create interactive data visualizations using charts, build reactive filters, and implement secure data export services (PDF, CSV, encrypted JSON).
+* **Accomplishments:**
+  - **SQLite Aggregations:** Implemented high-performance Drift database queries utilizing `SUM` and `GROUP BY` inside a dedicated `StatisticsDao` to compute period summaries and top-expense/income categories.
+  - **Interactive Charts (fl_chart):** Developed a sleek, custom visualizer featuring interactive pie charts with tap handlers, micro-animations, custom tooltips, dynamic surplus/deficit badges, and category legends.
+  - **Reactive Filters:** Created Riverpod state providers for filters managing date range presets (This Month, Last 3/6 Months, This Year) and Custom Date Range pickers, automatically recalculating analytical graphs on state change.
+  - **Secure Exports:** Implemented three secure export options in `ExportServiceImpl`:
+    - **PDF:** Formats monthly financial statements with clean tabular layouts, summary boxes, and metadata labels.
+    - **CSV:** Serializes transactions to formatted CSV text representation.
+    - **Encrypted JSON:** Encrypts transaction backups using AES-256-CBC with keys derived via PBKDF2-HMAC-SHA256 from user-specified passwords, incorporating random salt and IV headers.
+* **Verification:**
+  - Fixed a Linux test loader path issue by adding the proper `setUpAll` override block in the database tests.
+  - Resolved all lints and formatted the codebase with 0 errors/warnings on `flutter analyze`.
+  - Added full test coverage for statistical DAOs, use cases, export encryption/decryption, PDF formatting, and the interactive UI layout.
+  - Full regression test suite: **101 tests passed** successfully.

@@ -91,7 +91,8 @@ class AddTransactionUseCase {
 
     if (originalCurrency != profile.defaultCurrency) {
       try {
-        final rateSnapshot = await _exchangeRateRepository.getLatestRates(baseCurrency: profile.defaultCurrency);
+        final rateSnapshot = await _exchangeRateRepository.getLatestRates(
+            baseCurrency: profile.defaultCurrency,);
         exchangeRate = rateSnapshot.rateFor(originalCurrency);
         if (exchangeRate == null) {
           throw const ValidationException(

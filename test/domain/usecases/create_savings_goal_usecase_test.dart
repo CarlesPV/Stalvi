@@ -5,7 +5,8 @@ import 'package:konta/domain/entities/savings_goal.dart';
 import 'package:konta/domain/repositories/i_savings_goal_repository.dart';
 import 'package:konta/domain/usecases/create_savings_goal_usecase.dart';
 
-class MockSavingsGoalRepository extends Mock implements ISavingsGoalRepository {}
+class MockSavingsGoalRepository extends Mock
+    implements ISavingsGoalRepository {}
 
 class FakeSavingsGoal extends Fake implements SavingsGoal {}
 
@@ -35,7 +36,8 @@ void main() {
 
   group('CreateSavingsGoalUseCase', () {
     test('should successfully create savings goal', () async {
-      when(() => mockSavingsGoalRepo.createSavingsGoal(any())).thenAnswer((inv) async => inv.positionalArguments[0] as SavingsGoal);
+      when(() => mockSavingsGoalRepo.createSavingsGoal(any()))
+          .thenAnswer((inv) async => inv.positionalArguments[0] as SavingsGoal);
 
       final result = await usecase.execute(validParams);
 
@@ -55,10 +57,14 @@ void main() {
       );
 
       final call = usecase.execute(params);
-      await expectLater(() => call, throwsA(isA<ValidationException>().having((e) => e.code, 'code', 'INVALID_AMOUNT')));
+      await expectLater(
+          () => call,
+          throwsA(isA<ValidationException>()
+              .having((e) => e.code, 'code', 'INVALID_AMOUNT'),),);
     });
 
-    test('should throw validation error when target date is in the past', () async {
+    test('should throw validation error when target date is in the past',
+        () async {
       final params = CreateSavingsGoalParams(
         id: 'goal_1',
         name: 'New Car',
@@ -69,12 +75,17 @@ void main() {
       );
 
       final call = usecase.execute(params);
-      await expectLater(() => call, throwsA(isA<ValidationException>().having((e) => e.code, 'code', 'INVALID_TARGET_DATE')));
+      await expectLater(
+          () => call,
+          throwsA(isA<ValidationException>()
+              .having((e) => e.code, 'code', 'INVALID_TARGET_DATE'),),);
     });
 
-    test('should successfully create savings goal without target date', () async {
-      when(() => mockSavingsGoalRepo.createSavingsGoal(any())).thenAnswer((inv) async => inv.positionalArguments[0] as SavingsGoal);
-      
+    test('should successfully create savings goal without target date',
+        () async {
+      when(() => mockSavingsGoalRepo.createSavingsGoal(any()))
+          .thenAnswer((inv) async => inv.positionalArguments[0] as SavingsGoal);
+
       const params = CreateSavingsGoalParams(
         id: 'goal_1',
         name: 'New Car',

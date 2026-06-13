@@ -6,7 +6,8 @@ class Profiles extends Table {
   TextColumn get name => text()();
   TextColumn get username => text()();
   TextColumn get password => text()();
-  TextColumn get defaultCurrency => text().named('default_currency').withDefault(const Constant('EUR'))();
+  TextColumn get defaultCurrency =>
+      text().named('default_currency').withDefault(const Constant('EUR'))();
   DateTimeColumn get createdAt => dateTime().named('created_at')();
   DateTimeColumn get modifiedAt => dateTime().named('modified_at')();
 

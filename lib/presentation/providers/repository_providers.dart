@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:konta/data/repositories/account_repository.dart';
 import 'package:konta/data/repositories/category_repository.dart';
 import 'package:konta/data/repositories/profile_repository.dart';
+import 'package:konta/data/repositories/statistics_repository_impl.dart';
 import 'package:konta/data/repositories/transaction_repository.dart';
 import 'package:konta/data/repositories/exchange_rate_repository.dart';
 import 'package:konta/data/repositories/budget_repository.dart';
@@ -21,6 +22,7 @@ import 'package:konta/domain/repositories/i_transaction_repository.dart';
 import 'package:konta/domain/repositories/i_exchange_rate_repository.dart';
 import 'package:konta/domain/repositories/i_budget_repository.dart';
 import 'package:konta/domain/repositories/i_savings_goal_repository.dart';
+import 'package:konta/domain/repositories/i_statistics_repository.dart';
 import 'package:konta/domain/usecases/add_transaction_usecase.dart';
 import 'package:konta/presentation/providers/app_startup_provider.dart';
 
@@ -61,6 +63,12 @@ final savingsGoalRepositoryProvider = Provider<ISavingsGoalRepository>((ref) {
   return SavingsGoalRepository(db);
 });
 
+/// Provides the [IStatisticsRepository] implementation.
+final statisticsRepositoryProvider = Provider<IStatisticsRepository>((ref) {
+  final db = ref.watch(appDatabaseProvider).requireValue;
+  return StatisticsRepositoryImpl(db.statisticsDao);
+});
+
 /// Provides the [IExchangeRateRepository] implementation.
 final exchangeRateRepositoryProvider = Provider<IExchangeRateRepository>((ref) {
   final client = http.Client();
@@ -87,7 +95,8 @@ final defaultProfileProvider = FutureProvider<Profile>((ref) async {
   final db = await ref.watch(appDatabaseProvider.future);
   final rows = await db.select(db.profiles).get();
   if (rows.isEmpty) {
-    throw StateError('No profile found. Database initialization seeding may have failed.');
+    throw StateError(
+        'No profile found. Database initialization seeding may have failed.',);
   }
   return rows.first.toDomain();
 });

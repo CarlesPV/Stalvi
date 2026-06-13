@@ -96,7 +96,8 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
           }
           // Auto-present the biometric prompt once the provider first resolves
           // to [unauthenticated] (avoids making the user tap a button cold).
-          if (status == AuthStatus.unauthenticated && !_hasTriggeredInitialAuth) {
+          if (status == AuthStatus.unauthenticated &&
+              !_hasTriggeredInitialAuth) {
             _hasTriggeredInitialAuth = true;
             ref.read(authNotifierProvider.notifier).authenticate();
           }
@@ -140,8 +141,9 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
                       message: err is String
                           ? err
                           : 'An unexpected error occurred. Please try again.',
-                      onRetry: () =>
-                          ref.read(authNotifierProvider.notifier).authenticate(),
+                      onRetry: () => ref
+                          .read(authNotifierProvider.notifier)
+                          .authenticate(),
                     ),
                     data: (status) => _buildDataContent(
                       context,
@@ -160,7 +162,8 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
                   child: Text(
                     'Protected by device biometrics',
                     style: theme.textTheme.labelSmall?.copyWith(
-                      color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
+                      color:
+                          colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
                       letterSpacing: 0.4,
                     ),
                   ),
@@ -300,16 +303,15 @@ class _SpinnerContent extends StatelessWidget {
             height: 36,
             child: CircularProgressIndicator(
               strokeWidth: 2.5,
-              valueColor:
-                  AlwaysStoppedAnimation<Color>(colorScheme.primary),
+              valueColor: AlwaysStoppedAnimation<Color>(colorScheme.primary),
             ),
           ),
           const SizedBox(height: 16),
           Text(
             'Checking biometrics…',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: colorScheme.onSurfaceVariant,
-            ),
+                  color: colorScheme.onSurfaceVariant,
+                ),
           ),
         ],
       ),
@@ -369,7 +371,8 @@ class _ErrorContent extends StatelessWidget {
             onPressed: onRetry,
             icon: const Icon(Icons.refresh_rounded, size: 18),
             label: const Text('Try Again'),
-            style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(50)),
+            style:
+                FilledButton.styleFrom(minimumSize: const Size.fromHeight(50)),
           ),
         ),
       ],

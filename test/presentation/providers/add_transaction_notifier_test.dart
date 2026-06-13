@@ -63,7 +63,8 @@ void main() {
     container = ProviderContainer(
       overrides: [
         addTransactionUseCaseProvider.overrideWithValue(mockUseCase),
-        accountsListProvider.overrideWith((ref) async => accounts ?? [testAccount]),
+        accountsListProvider
+            .overrideWith((ref) async => accounts ?? [testAccount]),
         categoriesListProvider.overrideWith((ref) async => [testCategory]),
       ],
     );
@@ -84,7 +85,9 @@ void main() {
       expect(state.submissionStatus, const AsyncData<void>(null));
     });
 
-    test('initializes with the default account ID when accounts are already loaded', () async {
+    test(
+        'initializes with the default account ID when accounts are already loaded',
+        () async {
       buildContainer(accounts: [testAccount]);
 
       // Wait for accounts list to resolve to populate notifier's listener
@@ -132,7 +135,8 @@ void main() {
       notifier.updateCategory('cat_expense');
 
       // Verify category is set
-      expect(container.read(addTransactionNotifierProvider).categoryId, 'cat_expense');
+      expect(container.read(addTransactionNotifierProvider).categoryId,
+          'cat_expense',);
 
       // Change type to income
       notifier.updateType(TransactionType.income);
@@ -159,7 +163,9 @@ void main() {
   });
 
   group('AddTransactionNotifier Validation & Form Submission', () {
-    test('submit returns false and sets validation error on invalid amount format', () async {
+    test(
+        'submit returns false and sets validation error on invalid amount format',
+        () async {
       buildContainer();
 
       final notifier = container.read(addTransactionNotifierProvider.notifier);
@@ -169,14 +175,17 @@ void main() {
       final success = await notifier.submit();
 
       expect(success, isFalse);
-      final status = container.read(addTransactionNotifierProvider).submissionStatus;
+      final status =
+          container.read(addTransactionNotifierProvider).submissionStatus;
       expect(status.hasError, isTrue);
       expect(status.error, isA<ValidationException>());
       expect((status.error as ValidationException).code, 'INVALID_AMOUNT');
       verifyZeroInteractions(mockUseCase);
     });
 
-    test('submit returns false and sets validation error on negative/zero amount', () async {
+    test(
+        'submit returns false and sets validation error on negative/zero amount',
+        () async {
       buildContainer();
 
       final notifier = container.read(addTransactionNotifierProvider.notifier);
@@ -186,13 +195,16 @@ void main() {
       final success = await notifier.submit();
 
       expect(success, isFalse);
-      final status = container.read(addTransactionNotifierProvider).submissionStatus;
+      final status =
+          container.read(addTransactionNotifierProvider).submissionStatus;
       expect(status.hasError, isTrue);
       expect(status.error, isA<ValidationException>());
       verifyZeroInteractions(mockUseCase);
     });
 
-    test('submit returns false and sets validation error when account is missing', () async {
+    test(
+        'submit returns false and sets validation error when account is missing',
+        () async {
       buildContainer(accounts: []);
 
       final notifier = container.read(addTransactionNotifierProvider.notifier);
@@ -201,14 +213,17 @@ void main() {
       final success = await notifier.submit();
 
       expect(success, isFalse);
-      final status = container.read(addTransactionNotifierProvider).submissionStatus;
+      final status =
+          container.read(addTransactionNotifierProvider).submissionStatus;
       expect(status.hasError, isTrue);
       expect(status.error, isA<ValidationException>());
       expect((status.error as ValidationException).code, 'ACCOUNT_REQUIRED');
       verifyZeroInteractions(mockUseCase);
     });
 
-    test('submit calls usecase and transitions to success when inputs are valid', () async {
+    test(
+        'submit calls usecase and transitions to success when inputs are valid',
+        () async {
       buildContainer();
 
       final notifier = container.read(addTransactionNotifierProvider.notifier);
@@ -239,7 +254,9 @@ void main() {
       expect(finalState.submissionStatus.isLoading, isFalse);
       expect(finalState.submissionStatus.hasError, isFalse);
 
-      final captured = verify(() => mockUseCase.execute(captureAny())).captured.first as AddTransactionParams;
+      final captured = verify(() => mockUseCase.execute(captureAny()))
+          .captured
+          .first as AddTransactionParams;
       expect(captured.amount, 15000); // 150.00 converted to cents
       expect(captured.accountId, testAccount.id);
       expect(captured.categoryId, testCategory.id);

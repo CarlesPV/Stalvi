@@ -9,6 +9,7 @@ import 'package:konta/domain/repositories/i_category_repository.dart';
 import 'package:konta/domain/usecases/create_budget_usecase.dart';
 
 class MockBudgetRepository extends Mock implements IBudgetRepository {}
+
 class MockCategoryRepository extends Mock implements ICategoryRepository {}
 
 class FakeBudget extends Fake implements Budget {}
@@ -50,8 +51,10 @@ void main() {
 
   group('CreateBudgetUseCase', () {
     test('should successfully create budget', () async {
-      when(() => mockCategoryRepo.getCategoryById(any())).thenAnswer((_) async => validCategory);
-      when(() => mockBudgetRepo.createBudget(any())).thenAnswer((inv) async => inv.positionalArguments[0] as Budget);
+      when(() => mockCategoryRepo.getCategoryById(any()))
+          .thenAnswer((_) async => validCategory);
+      when(() => mockBudgetRepo.createBudget(any()))
+          .thenAnswer((inv) async => inv.positionalArguments[0] as Budget);
 
       final result = await usecase.execute(validParams);
 
@@ -70,10 +73,14 @@ void main() {
       );
 
       final call = usecase.execute(params);
-      await expectLater(() => call, throwsA(isA<ValidationException>().having((e) => e.code, 'code', 'INVALID_AMOUNT')));
+      await expectLater(
+          () => call,
+          throwsA(isA<ValidationException>()
+              .having((e) => e.code, 'code', 'INVALID_AMOUNT'),),);
     });
 
-    test('should throw validation error when end date is before start date', () async {
+    test('should throw validation error when end date is before start date',
+        () async {
       final params = CreateBudgetParams(
         id: 'budget_1',
         categoryId: 'cat_1',
@@ -83,11 +90,15 @@ void main() {
       );
 
       final call = usecase.execute(params);
-      await expectLater(() => call, throwsA(isA<ValidationException>().having((e) => e.code, 'code', 'INVALID_DATES')));
+      await expectLater(
+          () => call,
+          throwsA(isA<ValidationException>()
+              .having((e) => e.code, 'code', 'INVALID_DATES'),),);
     });
 
     test('should throw not found error when category does not exist', () async {
-      when(() => mockCategoryRepo.getCategoryById(any())).thenAnswer((_) async => null);
+      when(() => mockCategoryRepo.getCategoryById(any()))
+          .thenAnswer((_) async => null);
 
       final call = usecase.execute(validParams);
       await expectLater(() => call, throwsA(isA<NotFoundException>()));

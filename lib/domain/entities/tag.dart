@@ -16,22 +16,22 @@ class Tag {
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-  
+
     return other is Tag &&
-      other.id == id &&
-      other.name == name &&
-      other.isDeleted == isDeleted &&
-      other.createdAt == createdAt &&
-      other.modifiedAt == modifiedAt;
+        other.id == id &&
+        other.name == name &&
+        other.isDeleted == isDeleted &&
+        other.createdAt == createdAt &&
+        other.modifiedAt == modifiedAt;
   }
 
   @override
   int get hashCode {
     return id.hashCode ^
-      name.hashCode ^
-      isDeleted.hashCode ^
-      createdAt.hashCode ^
-      modifiedAt.hashCode;
+        name.hashCode ^
+        isDeleted.hashCode ^
+        createdAt.hashCode ^
+        modifiedAt.hashCode;
   }
 
   Tag copyWith({

@@ -37,11 +37,11 @@ For every task, the agent must perform the following cycle:
 - [x] Implement `Budget` and `Savings Goal` tables.
 - [x] Build visual progress bars for budgets and goals in the UI.
 
-## Phase 5: Statistics, Filters, & Exports
-- [ ] Build SQLite aggregation queries (`SUM`, `GROUP BY`) for dashboard totals.
-- [ ] Implement `fl_chart` for Income vs Expense and Top Categories.
-- [ ] Create dynamic filtering logic (Account, Date Range, Category).
-- [ ] Implement secure PDF, CSV/Excel, and encrypted JSON export functionality.
+## Phase 5: Statistics, Filters, & Exports (Completed)
+- [x] Build SQLite aggregation queries (`SUM`, `GROUP BY`) for dashboard totals.
+- [x] Implement `fl_chart` for Income vs Expense and Top Categories.
+- [x] Create dynamic filtering logic (Account, Date Range, Category).
+- [x] Implement secure PDF, CSV/Excel, and encrypted JSON export functionality.
 
 ## Phase 6: Polish, Testing & Compliance
 - [ ] Complete E2E testing of the application flow.

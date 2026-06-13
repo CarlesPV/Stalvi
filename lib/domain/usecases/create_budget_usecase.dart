@@ -40,7 +40,8 @@ class CreateBudgetUseCase {
       );
     }
 
-    final category = await _categoryRepository.getCategoryById(params.categoryId);
+    final category =
+        await _categoryRepository.getCategoryById(params.categoryId);
     if (category == null) {
       throw NotFoundException(
         message: 'Category with id "${params.categoryId}" not found',

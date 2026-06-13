@@ -52,7 +52,8 @@ void main() {
   }
 
   group('AccountRepository Tests', () {
-    test('createAccount saves account and getAccountById retrieves it', () async {
+    test('createAccount saves account and getAccountById retrieves it',
+        () async {
       final id = uuid.v4();
       final account = buildTestAccount(id: id);
 
@@ -66,14 +67,21 @@ void main() {
       expect(retrieved.initialBalance, 1200.0);
     });
 
-    test('getAccountsByUserId returns only non-deleted accounts for specific user', () async {
+    test(
+        'getAccountsByUserId returns only non-deleted accounts for specific user',
+        () async {
       const user1 = 'user-1';
       const user2 = 'user-2';
 
-      final acc1 = buildTestAccount(id: uuid.v4(), name: 'Acc 1').copyWith(userId: user1);
-      final acc2 = buildTestAccount(id: uuid.v4(), name: 'Acc 2').copyWith(userId: user1);
-      final accDeleted = buildTestAccount(id: uuid.v4(), name: 'Deleted Acc', isDeleted: true).copyWith(userId: user1);
-      final accOther = buildTestAccount(id: uuid.v4(), name: 'Acc Other').copyWith(userId: user2);
+      final acc1 = buildTestAccount(id: uuid.v4(), name: 'Acc 1')
+          .copyWith(userId: user1);
+      final acc2 = buildTestAccount(id: uuid.v4(), name: 'Acc 2')
+          .copyWith(userId: user1);
+      final accDeleted =
+          buildTestAccount(id: uuid.v4(), name: 'Deleted Acc', isDeleted: true)
+              .copyWith(userId: user1);
+      final accOther = buildTestAccount(id: uuid.v4(), name: 'Acc Other')
+          .copyWith(userId: user2);
 
       await repository.createAccount(acc1);
       await repository.createAccount(acc2);
@@ -94,7 +102,8 @@ void main() {
       final account = buildTestAccount(id: id, name: 'Original Name');
       await repository.createAccount(account);
 
-      final updated = account.copyWith(name: 'Updated Name', initialBalance: 5000.0);
+      final updated =
+          account.copyWith(name: 'Updated Name', initialBalance: 5000.0);
       await repository.updateAccount(updated);
 
       final retrieved = await repository.getAccountById(id);

@@ -39,22 +39,27 @@ class AppTheme {
   AppTheme._();
 
   // Color Constants - Core Brand (Financial Trust)
-  static const Color navyDark = Color(0xFF0F172A);      // Deep Navy (Slate 900)
-  static const Color navyPrimary = Color(0xFF1E293B);   // Navy Primary (Slate 800)
-  static const Color navyLight = Color(0xFF334155);     // Light Navy (Slate 700)
-  
+  static const Color navyDark = Color(0xFF0F172A); // Deep Navy (Slate 900)
+  static const Color navyPrimary =
+      Color(0xFF1E293B); // Navy Primary (Slate 800)
+  static const Color navyLight = Color(0xFF334155); // Light Navy (Slate 700)
+
   // Color Constants - Financial Status
-  static const Color mintGreenLight = Color(0xFF10B981);  // Mint Green (Emerald 500)
-  static const Color mintGreenDark = Color(0xFF34D399);   // Pastel Mint Green for Dark Mode (Emerald 400)
-  
-  static const Color coralRedLight = Color(0xFFF43F5E);   // Coral Red (Rose 500)
-  static const Color coralRedDark = Color(0xFFFB7185);    // Pastel Coral Red for Dark Mode (Rose 400)
+  static const Color mintGreenLight =
+      Color(0xFF10B981); // Mint Green (Emerald 500)
+  static const Color mintGreenDark =
+      Color(0xFF34D399); // Pastel Mint Green for Dark Mode (Emerald 400)
+
+  static const Color coralRedLight = Color(0xFFF43F5E); // Coral Red (Rose 500)
+  static const Color coralRedDark =
+      Color(0xFFFB7185); // Pastel Coral Red for Dark Mode (Rose 400)
 
   // Color Constants - Backgrounds & Surfaces
-  static const Color bgLight = Color(0xFFF8FAFC);         // Slate 50
+  static const Color bgLight = Color(0xFFF8FAFC); // Slate 50
   static const Color surfaceLight = Color(0xFFFFFFFF);
-  static const Color bgDark = Color(0xFF121212);          // Soft Charcoal
-  static const Color surfaceDark = Color(0xFF1E1E1E);     // Slightly lighter Charcoal for cards/dialogs
+  static const Color bgDark = Color(0xFF121212); // Soft Charcoal
+  static const Color surfaceDark =
+      Color(0xFF1E1E1E); // Slightly lighter Charcoal for cards/dialogs
 
   /// Light Theme Definition
   static ThemeData get lightTheme {
@@ -105,7 +110,8 @@ class AppTheme {
       useMaterial3: true,
       brightness: Brightness.dark,
       colorScheme: const ColorScheme.dark(
-        primary: Color(0xFF60A5FA), // Light Blue/Indigo accent for dark theme visibility
+        primary: Color(
+            0xFF60A5FA,), // Light Blue/Indigo accent for dark theme visibility
         onPrimary: navyDark,
         secondary: Color(0xFF38BDF8),
         onSecondary: navyDark,
@@ -149,7 +155,8 @@ class AppTheme {
 extension FinancialColorsExtension on BuildContext {
   FinancialColors get financialColors {
     final extension = Theme.of(this).extension<FinancialColors>();
-    assert(extension != null, 'FinancialColors extension is not registered in the current theme.');
+    assert(extension != null,
+        'FinancialColors extension is not registered in the current theme.',);
     return extension!;
   }
 }

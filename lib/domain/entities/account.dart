@@ -32,36 +32,36 @@ class Account {
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-  
+
     return other is Account &&
-      other.id == id &&
-      other.userId == userId &&
-      other.name == name &&
-      other.type == type &&
-      other.initialBalance == initialBalance &&
-      other.currency == currency &&
-      other.color == color &&
-      other.icon == icon &&
-      other.isDefault == isDefault &&
-      other.isDeleted == isDeleted &&
-      other.createdAt == createdAt &&
-      other.modifiedAt == modifiedAt;
+        other.id == id &&
+        other.userId == userId &&
+        other.name == name &&
+        other.type == type &&
+        other.initialBalance == initialBalance &&
+        other.currency == currency &&
+        other.color == color &&
+        other.icon == icon &&
+        other.isDefault == isDefault &&
+        other.isDeleted == isDeleted &&
+        other.createdAt == createdAt &&
+        other.modifiedAt == modifiedAt;
   }
 
   @override
   int get hashCode {
     return id.hashCode ^
-      userId.hashCode ^
-      name.hashCode ^
-      type.hashCode ^
-      initialBalance.hashCode ^
-      currency.hashCode ^
-      color.hashCode ^
-      icon.hashCode ^
-      isDefault.hashCode ^
-      isDeleted.hashCode ^
-      createdAt.hashCode ^
-      modifiedAt.hashCode;
+        userId.hashCode ^
+        name.hashCode ^
+        type.hashCode ^
+        initialBalance.hashCode ^
+        currency.hashCode ^
+        color.hashCode ^
+        icon.hashCode ^
+        isDefault.hashCode ^
+        isDeleted.hashCode ^
+        createdAt.hashCode ^
+        modifiedAt.hashCode;
   }
 
   Account copyWith({

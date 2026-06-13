@@ -24,7 +24,8 @@ void main() {
     await db.close();
   });
 
-  test('Database initialization seeds default Account and Categories', () async {
+  test('Database initialization seeds default Account and Categories',
+      () async {
     // Act: Querying the tables will trigger the onCreate migration logic
     final accounts = await db.select(db.accounts).get();
     final categories = await db.select(db.categories).get();
@@ -44,7 +45,7 @@ void main() {
 
     // Assert: Functional Categories were created
     expect(categories.length, 3);
-    
+
     final categoryNames = categories.map((c) => c.name).toList();
     expect(categoryNames, contains('Food'));
     expect(categoryNames, contains('Transport'));

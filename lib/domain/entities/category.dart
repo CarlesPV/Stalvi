@@ -26,30 +26,30 @@ class Category {
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-  
+
     return other is Category &&
-      other.id == id &&
-      other.name == name &&
-      other.associatedType == associatedType &&
-      other.icon == icon &&
-      other.color == color &&
-      other.parentCategoryId == parentCategoryId &&
-      other.isDeleted == isDeleted &&
-      other.createdAt == createdAt &&
-      other.modifiedAt == modifiedAt;
+        other.id == id &&
+        other.name == name &&
+        other.associatedType == associatedType &&
+        other.icon == icon &&
+        other.color == color &&
+        other.parentCategoryId == parentCategoryId &&
+        other.isDeleted == isDeleted &&
+        other.createdAt == createdAt &&
+        other.modifiedAt == modifiedAt;
   }
 
   @override
   int get hashCode {
     return id.hashCode ^
-      name.hashCode ^
-      associatedType.hashCode ^
-      icon.hashCode ^
-      color.hashCode ^
-      parentCategoryId.hashCode ^
-      isDeleted.hashCode ^
-      createdAt.hashCode ^
-      modifiedAt.hashCode;
+        name.hashCode ^
+        associatedType.hashCode ^
+        icon.hashCode ^
+        color.hashCode ^
+        parentCategoryId.hashCode ^
+        isDeleted.hashCode ^
+        createdAt.hashCode ^
+        modifiedAt.hashCode;
   }
 
   Category copyWith({

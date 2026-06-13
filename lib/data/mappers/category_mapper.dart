@@ -8,7 +8,8 @@ extension CategoryMapper on Category {
     return db.Category(
       id: id,
       name: name,
-      associatedType: associatedType != null ? _mapTypeToDb(associatedType!) : null,
+      associatedType:
+          associatedType != null ? _mapTypeToDb(associatedType!) : null,
       icon: icon,
       color: color,
       parentCategoryId: parentCategoryId,
@@ -33,7 +34,8 @@ extension DbCategoryMapper on db.Category {
     return Category(
       id: id,
       name: name,
-      associatedType: associatedType != null ? _mapTypeToDomain(associatedType!) : null,
+      associatedType:
+          associatedType != null ? _mapTypeToDomain(associatedType!) : null,
       icon: icon,
       color: color,
       parentCategoryId: parentCategoryId,
