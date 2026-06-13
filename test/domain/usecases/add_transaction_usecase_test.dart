@@ -75,21 +75,7 @@ AddTransactionParams _incomeParams({
   );
 }
 
-AddTransactionParams _expenseParams({
-  int amount = 500,
-  DateTime? date,
-  String accountId = 'account_1',
-}) {
-  return AddTransactionParams(
-    id: 'txn_expense_1',
-    amount: amount,
-    date: date ?? _now.subtract(const Duration(hours: 1)),
-    type: TransactionType.expense,
-    accountId: accountId,
-    categoryId: 'cat_food',
-    notes: 'Grocery shopping',
-  );
-}
+
 
 ExchangeRate _buildExchangeRate({String base = 'EUR'}) {
   return ExchangeRate(

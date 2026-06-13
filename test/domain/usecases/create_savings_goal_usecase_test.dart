@@ -75,7 +75,7 @@ void main() {
     test('should successfully create savings goal without target date', () async {
       when(() => mockSavingsGoalRepo.createSavingsGoal(any())).thenAnswer((inv) async => inv.positionalArguments[0] as SavingsGoal);
       
-      final params = CreateSavingsGoalParams(
+      const params = CreateSavingsGoalParams(
         id: 'goal_1',
         name: 'New Car',
         targetAmount: 2000000,
