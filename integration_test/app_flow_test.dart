@@ -82,6 +82,8 @@ void main() {
     // and a success SnackBar or Recent Transactions appears
     expect(find.text('Transaction created successfully!'), findsOneWidget);
     expect(
-        find.byType(FloatingActionButton), findsOneWidget); // Back to Dashboard
+      find.byType(FloatingActionButton),
+      findsOneWidget,
+    ); // Back to Dashboard
   });
 }

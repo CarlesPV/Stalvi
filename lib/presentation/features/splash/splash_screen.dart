@@ -241,74 +241,74 @@ class _SplashContent extends StatelessWidget {
         children: [
           const Spacer(flex: 5),
 
-        // ── Logo Badge ───────────────────────────────────────────────────
-        FadeTransition(
-          opacity: logoFade,
-          child: ScaleTransition(
-            scale: logoScale,
-            child: _LogoBadge(colorScheme: colorScheme),
+          // ── Logo Badge ───────────────────────────────────────────────────
+          FadeTransition(
+            opacity: logoFade,
+            child: ScaleTransition(
+              scale: logoScale,
+              child: _LogoBadge(colorScheme: colorScheme),
+            ),
           ),
-        ),
 
-        const SizedBox(height: 32),
+          const SizedBox(height: 32),
 
-        // ── Wordmark ─────────────────────────────────────────────────────
-        SlideTransition(
-          position: wordmarkSlide,
-          child: FadeTransition(
-            opacity: wordmarkFade,
-            child: Text(
-              'Konta',
-              style: theme.textTheme.displayMedium?.copyWith(
-                color: colorScheme.onSurface,
-                fontWeight: FontWeight.w800,
-                letterSpacing: -2.5,
+          // ── Wordmark ─────────────────────────────────────────────────────
+          SlideTransition(
+            position: wordmarkSlide,
+            child: FadeTransition(
+              opacity: wordmarkFade,
+              child: Text(
+                'Konta',
+                style: theme.textTheme.displayMedium?.copyWith(
+                  color: colorScheme.onSurface,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: -2.5,
+                ),
               ),
             ),
           ),
-        ),
 
-        const SizedBox(height: 10),
+          const SizedBox(height: 10),
 
-        // ── Tagline ──────────────────────────────────────────────────────
-        FadeTransition(
-          opacity: taglineFade,
-          child: Text(
-            AppLocalizations.of(context)!.splashTagline,
-            style: theme.textTheme.bodyLarge?.copyWith(
-              color: colorScheme.onSurfaceVariant,
-              letterSpacing: 0.2,
+          // ── Tagline ──────────────────────────────────────────────────────
+          FadeTransition(
+            opacity: taglineFade,
+            child: Text(
+              AppLocalizations.of(context)!.splashTagline,
+              style: theme.textTheme.bodyLarge?.copyWith(
+                color: colorScheme.onSurfaceVariant,
+                letterSpacing: 0.2,
+              ),
             ),
           ),
-        ),
 
-        const Spacer(flex: 5),
+          const Spacer(flex: 5),
 
-        // ── Progress indicator ────────────────────────────────────────────
-        FadeTransition(
-          opacity: indicatorFade,
-          child: AnimatedOpacity(
-            opacity: isLoading ? 1.0 : 0.0,
-            duration: const Duration(milliseconds: 400),
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 44),
-              child: SizedBox(
-                width: 20,
-                height: 20,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                    colorScheme.primary.withValues(alpha: 0.45),
+          // ── Progress indicator ────────────────────────────────────────────
+          FadeTransition(
+            opacity: indicatorFade,
+            child: AnimatedOpacity(
+              opacity: isLoading ? 1.0 : 0.0,
+              duration: const Duration(milliseconds: 400),
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 44),
+                child: SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      colorScheme.primary.withValues(alpha: 0.45),
+                    ),
                   ),
                 ),
               ),
             ),
           ),
-        ),
-      ],
-    ),
-  );
-}
+        ],
+      ),
+    );
+  }
 }
 
 /// The branded logo badge — square with rounded corners and a soft glow.

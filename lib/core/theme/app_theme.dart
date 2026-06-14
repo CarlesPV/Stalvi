@@ -136,7 +136,9 @@ class AppTheme {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
           side: const BorderSide(
-              color: Color(0xFF1E293B), width: 1), // Slate 800 border
+            color: Color(0xFF1E293B),
+            width: 1,
+          ), // Slate 800 border
         ),
       ),
       dividerTheme: const DividerThemeData(

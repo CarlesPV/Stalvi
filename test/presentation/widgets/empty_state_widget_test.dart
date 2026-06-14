@@ -21,7 +21,9 @@ void main() {
 
       expect(find.text('Empty Title'), findsOneWidget);
       expect(
-          find.text('Empty Subtitle description goes here.'), findsOneWidget);
+        find.text('Empty Subtitle description goes here.'),
+        findsOneWidget,
+      );
       expect(find.byIcon(Icons.account_balance_wallet_rounded), findsOneWidget);
       // Action button should not be rendered when onActionPressed is null
       expect(find.byType(FilledButton), findsNothing);
