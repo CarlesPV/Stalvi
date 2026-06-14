@@ -615,6 +615,138 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Get Started'**
   String get getStarted;
+
+  /// Title for the profile setup screen
+  ///
+  /// In en, this message translates to:
+  /// **'Create Your Profile'**
+  String get authSetupTitle;
+
+  /// Subtitle for the profile setup screen
+  ///
+  /// In en, this message translates to:
+  /// **'Set up your secure offline wallet to begin.'**
+  String get authSetupSubtitle;
+
+  /// Label for name input
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get authSetupNameLabel;
+
+  /// Label for username input
+  ///
+  /// In en, this message translates to:
+  /// **'Username'**
+  String get authSetupUsernameLabel;
+
+  /// Label for PIN input
+  ///
+  /// In en, this message translates to:
+  /// **'Set a 4-8 digit PIN'**
+  String get authSetupPinLabel;
+
+  /// Label for confirming PIN
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm PIN'**
+  String get authSetupConfirmPinLabel;
+
+  /// Label for language selection
+  ///
+  /// In en, this message translates to:
+  /// **'Default Language'**
+  String get authSetupLanguageLabel;
+
+  /// Label for terms and conditions checkbox
+  ///
+  /// In en, this message translates to:
+  /// **'I accept the Terms & Conditions'**
+  String get authSetupTermsCheckbox;
+
+  /// Button label to submit setup form
+  ///
+  /// In en, this message translates to:
+  /// **'Create Profile'**
+  String get authSetupCreateButton;
+
+  /// Validation error when PIN length is invalid
+  ///
+  /// In en, this message translates to:
+  /// **'PIN must be between 4 and 8 digits.'**
+  String get authSetupValidationErrorPinLength;
+
+  /// Validation error when PINs do not match
+  ///
+  /// In en, this message translates to:
+  /// **'PINs do not match.'**
+  String get authSetupValidationErrorPinMatch;
+
+  /// Validation error when terms are not accepted
+  ///
+  /// In en, this message translates to:
+  /// **'You must accept the Terms & Conditions to proceed.'**
+  String get authSetupValidationErrorTerms;
+
+  /// Validation error when name is empty
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a name.'**
+  String get authSetupValidationErrorName;
+
+  /// Validation error when username is empty
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a username.'**
+  String get authSetupValidationErrorUsername;
+
+  /// Prompt to enter PIN
+  ///
+  /// In en, this message translates to:
+  /// **'Enter PIN'**
+  String get authPinEnter;
+
+  /// Error message when PIN is incorrect
+  ///
+  /// In en, this message translates to:
+  /// **'Incorrect PIN. Please try again.'**
+  String get authPinIncorrect;
+
+  /// Default wallet name when user profile is initialized
+  ///
+  /// In en, this message translates to:
+  /// **'My Wallet'**
+  String get defaultWalletName;
+
+  /// Error message when accounts list fails to load
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load accounts.'**
+  String get failedLoadAccounts;
+
+  /// Title when accounts list is empty
+  ///
+  /// In en, this message translates to:
+  /// **'No accounts yet'**
+  String get noAccountsTitle;
+
+  /// Subtitle when accounts list is empty
+  ///
+  /// In en, this message translates to:
+  /// **'Create an account or wallet to start managing your assets and tracking transactions.'**
+  String get noAccountsSubtitle;
+
+  /// Label indicating an account is the default account
+  ///
+  /// In en, this message translates to:
+  /// **'Default'**
+  String get defaultAccountLabel;
+
+  /// Subtitle when there is no data to show in statistics charts
+  ///
+  /// In en, this message translates to:
+  /// **'Try adding transactions or changing the filter range to see your category breakdown.'**
+  String get statisticsNoDataSubtitle;
 }
 
 class _AppLocalizationsDelegate

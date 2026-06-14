@@ -289,4 +289,76 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get getStarted => 'Empezar';
+
+  @override
+  String get authSetupTitle => 'Crear tu perfil';
+
+  @override
+  String get authSetupSubtitle =>
+      'Configura tu cartera segura fuera de línea para comenzar.';
+
+  @override
+  String get authSetupNameLabel => 'Nombre';
+
+  @override
+  String get authSetupUsernameLabel => 'Nombre de usuario';
+
+  @override
+  String get authSetupPinLabel => 'Establecer un PIN de 4 a 8 dígitos';
+
+  @override
+  String get authSetupConfirmPinLabel => 'Confirmar PIN';
+
+  @override
+  String get authSetupLanguageLabel => 'Idioma predeterminado';
+
+  @override
+  String get authSetupTermsCheckbox => 'Acepto los Términos y Condiciones';
+
+  @override
+  String get authSetupCreateButton => 'Crear perfil';
+
+  @override
+  String get authSetupValidationErrorPinLength =>
+      'El PIN debe tener entre 4 y 8 dígitos.';
+
+  @override
+  String get authSetupValidationErrorPinMatch => 'Los PIN no coinciden.';
+
+  @override
+  String get authSetupValidationErrorTerms =>
+      'Debe aceptar los Términos y Condiciones para continuar.';
+
+  @override
+  String get authSetupValidationErrorName => 'Por favor, introduzca un nombre.';
+
+  @override
+  String get authSetupValidationErrorUsername =>
+      'Por favor, introduzca un nombre de usuario.';
+
+  @override
+  String get authPinEnter => 'Introducir PIN';
+
+  @override
+  String get authPinIncorrect => 'PIN incorrecto. Inténtelo de nuevo.';
+
+  @override
+  String get defaultWalletName => 'Mi cartera';
+
+  @override
+  String get failedLoadAccounts => 'No se pudieron cargar las cuentas.';
+
+  @override
+  String get noAccountsTitle => 'Aún no hay cuentas';
+
+  @override
+  String get noAccountsSubtitle =>
+      'Crea una cuenta o billetera para comenzar a administrar tus activos y registrar transacciones.';
+
+  @override
+  String get defaultAccountLabel => 'Predeterminada';
+
+  @override
+  String get statisticsNoDataSubtitle =>
+      'Intenta añadir transacciones o cambiar el rango del filtro para ver tu desglose de categorías.';
 }

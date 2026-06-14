@@ -1,142 +1,239 @@
-import 'package:flutter/services.dart';
+import 'dart:convert';
+import 'package:crypto/crypto.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:local_auth/local_auth.dart';
-import 'package:local_auth/error_codes.dart' as auth_error;
+import 'package:konta/infrastructure/services/biometric_auth_service.dart';
 
-/// Describes the current biometric authentication status for this session.
-///
-/// The state machine is intentionally linear:
-/// ```
-/// AsyncLoading → unauthenticated → authenticating → authenticated
-///             ↘ unavailable (auto-proceed)
-///             ↘ lockedOut   (hard block — no bypass)
-/// ```
+import 'package:konta/core/security/secure_storage_manager.dart';
+import 'package:konta/core/l10n/app_localizations.dart';
+import 'package:konta/domain/usecases/create_profile_usecase.dart';
+import 'package:konta/presentation/providers/locale_provider.dart';
+import 'package:konta/presentation/providers/repository_providers.dart';
+
+/// Describes the current authentication status for this session.
 enum AuthStatus {
-  /// Biometrics are available and enrolled but not yet verified this session.
+  /// The user has not created a profile yet (first launch).
+  setupRequired,
+
+  /// Profile setup is currently being processed.
+  setupSubmitting,
+
+  /// User needs to authenticate (either via PIN or biometrics).
   unauthenticated,
 
-  /// A biometric prompt is actively being presented to the user.
+  /// PIN/biometric authentication is in progress.
   authenticating,
 
-  /// The user has been successfully authenticated this session.
+  /// User is successfully authenticated for the current session.
   authenticated,
 
-  /// The device has no biometric hardware or no biometrics are enrolled.
-  /// The application proceeds without biometric protection.
-  unavailable,
-
-  /// The biometric sensor is temporarily or permanently locked due to
-  /// repeated failures. The user must unlock their device to continue.
-  ///
-  /// **Security invariant**: This state is NEVER silently bypassed via [skip].
+  /// Biometric hardware is temporarily or permanently locked.
   lockedOut,
 }
 
-/// [AsyncNotifier] that manages biometric authentication via [local_auth].
-///
-/// ---
-/// ### Platform setup required
-/// - **Android**: Add `USE_BIOMETRIC` and `USE_FINGERPRINT` permissions to
-///   `android/app/src/main/AndroidManifest.xml`.
-/// - **iOS**: Add `NSFaceIDUsageDescription` to `ios/Runner/Info.plist`.
-/// ---
-///
-/// ### Security invariants
-/// - [AuthStatus.lockedOut] cannot be bypassed — [skip] is a strict no-op.
-/// - All [PlatformException] error codes are handled explicitly.
-/// - Authentication state is NOT persisted; it resets on every cold start.
+/// [AsyncNotifier] that manages PIN validation, profile setup, and biometric authentication.
 class AuthNotifier extends AsyncNotifier<AuthStatus> {
-  late final LocalAuthentication _localAuth;
-
-  /// Checks hardware & enrollment availability on first access.
   @override
   Future<AuthStatus> build() async {
-    _localAuth = LocalAuthentication();
+    final secureStorage = ref.watch(secureStorageProvider);
 
-    try {
-      final isSupported = await _localAuth.isDeviceSupported();
-      if (!isSupported) return AuthStatus.unavailable;
-
-      final canCheck = await _localAuth.canCheckBiometrics;
-      if (!canCheck) return AuthStatus.unavailable;
-
-      final available = await _localAuth.getAvailableBiometrics();
-      if (available.isEmpty) return AuthStatus.unavailable;
-
-      return AuthStatus.unauthenticated;
-    } on PlatformException catch (e) {
-      if (e.code == auth_error.notAvailable ||
-          e.code == auth_error.notEnrolled ||
-          e.code == auth_error.passcodeNotSet) {
-        return AuthStatus.unavailable;
-      }
-      if (e.code == auth_error.lockedOut ||
-          e.code == auth_error.permanentlyLockedOut) {
-        return AuthStatus.lockedOut;
-      }
-      rethrow;
+    // Check if the user has already configured a PIN.
+    final hasPin = await secureStorage.hasPin();
+    if (!hasPin) {
+      return AuthStatus.setupRequired;
     }
+
+    return AuthStatus.unauthenticated;
   }
 
-  /// Presents the native biometric/device-credential prompt.
-  ///
-  /// State transitions:
-  /// - → [AsyncValue.loading] while the prompt is active
-  /// - → [AsyncData(authenticated)] on success
-  /// - → [AsyncData(unauthenticated)] if the user dismisses without verifying
-  /// - → [AsyncData(lockedOut)] on hardware lockout
-  /// - → [AsyncValue.error] on unexpected platform errors
+  /// Checks if biometric authentication is supported and enrolled on the device.
+  Future<bool> isBiometricAvailable() async {
+    final biometricService = ref.read(biometricAuthServiceProvider);
+    return biometricService.isBiometricAvailable();
+  }
+
+  /// Prompts the user to enable biometrics right after PIN setup.
+  Future<bool> promptBiometricSetup() async {
+    final biometricService = ref.read(biometricAuthServiceProvider);
+    
+    final isAvailable = await biometricService.isBiometricAvailable();
+    if (!isAvailable) {
+      return false;
+    }
+
+    try {
+      final authenticated = await biometricService.authenticate(
+        localizedReason: 'Enable biometric authentication for Konta',
+      );
+
+      if (authenticated) {
+        await biometricService.enableBiometrics();
+        return true;
+      }
+    } on BiometricLockedOutException {
+      state = const AsyncValue.data(AuthStatus.lockedOut);
+    } catch (_) {
+      // Ignore other errors and fallback to PIN
+    }
+    return false;
+  }
+
+  /// Presents the native biometric prompt to authenticate the user.
   Future<void> authenticate() async {
     final currentStatus = state.valueOrNull;
 
-    // Guard: skip if already in a terminal or in-progress state.
     if (currentStatus == AuthStatus.authenticated ||
-        currentStatus == AuthStatus.unavailable ||
         currentStatus == AuthStatus.lockedOut ||
-        currentStatus == AuthStatus.authenticating) {
+        currentStatus == AuthStatus.setupRequired ||
+        state.isLoading) {
       return;
     }
 
     state = const AsyncValue.loading();
 
     try {
-      final didAuthenticate = await _localAuth.authenticate(
+      final biometricService = ref.read(biometricAuthServiceProvider);
+      
+      final isEnabled = await biometricService.isBiometricsEnabled();
+      if (!isEnabled) {
+        state = const AsyncValue.data(AuthStatus.unauthenticated);
+        return;
+      }
+
+      final didAuthenticate = await biometricService.authenticate(
         localizedReason: 'Access your Konta financial data securely',
-        options: const AuthenticationOptions(
-          // Allow PIN/password as fallback so the user is never fully blocked.
-          biometricOnly: false,
-          stickyAuth: true,
-        ),
       );
 
       state = AsyncValue.data(
         didAuthenticate ? AuthStatus.authenticated : AuthStatus.unauthenticated,
       );
-    } on PlatformException catch (e, st) {
-      if (e.code == auth_error.lockedOut ||
-          e.code == auth_error.permanentlyLockedOut) {
-        // Honour hardware lockout — never convert to authenticated.
-        state = const AsyncValue.data(AuthStatus.lockedOut);
-      } else {
-        state = AsyncValue.error(
-          e.message ?? 'Authentication failed. Please try again.',
-          st,
-        );
-      }
+    } on BiometricLockedOutException {
+      state = const AsyncValue.data(AuthStatus.lockedOut);
     } catch (e, st) {
       state = AsyncValue.error(e, st);
     }
   }
 
-  /// Bypasses biometric auth for the current session.
-  ///
-  /// Intended for the "Skip for now" action on devices where biometrics are
-  /// inconvenient in the moment. This is a **strict no-op** when the status
-  /// is [AuthStatus.lockedOut] — that state can only be cleared by unlocking
-  /// the device at the OS level.
-  void skip() {
-    if (state.valueOrNull == AuthStatus.lockedOut) return;
-    state = const AsyncValue.data(AuthStatus.authenticated);
+  /// Validates inputs, hashes the PIN, and invokes [CreateProfileUseCase] to create/update the profile.
+  Future<void> setupProfile({
+    required String name,
+    required String username,
+    required String pin,
+    required String confirmPin,
+    required bool acceptTerms,
+    required String defaultCurrency,
+  }) async {
+    if (pin.length < 4 || pin.length > 8) {
+      state = AsyncValue.error(
+        'PIN must be between 4 and 8 digits.',
+        StackTrace.current,
+      );
+      return;
+    }
+    if (int.tryParse(pin) == null) {
+      state = AsyncValue.error(
+        'PIN must contain only numeric digits.',
+        StackTrace.current,
+      );
+      return;
+    }
+    if (pin != confirmPin) {
+      state = AsyncValue.error(
+        'PINs do not match.',
+        StackTrace.current,
+      );
+      return;
+    }
+    if (!acceptTerms) {
+      state = AsyncValue.error(
+        'You must accept the Terms & Conditions to proceed.',
+        StackTrace.current,
+      );
+      return;
+    }
+    if (name.trim().isEmpty) {
+      state = AsyncValue.error(
+        'Please enter a name.',
+        StackTrace.current,
+      );
+      return;
+    }
+    if (username.trim().isEmpty) {
+      state = AsyncValue.error(
+        'Please enter a username.',
+        StackTrace.current,
+      );
+      return;
+    }
+
+    state = const AsyncValue.loading();
+    try {
+      final createProfileUseCase = ref.read(createProfileUseCaseProvider);
+      final profile = await createProfileUseCase.execute(
+        CreateProfileParams(
+          name: name,
+          username: username,
+          pin: pin,
+          defaultCurrency: defaultCurrency,
+        ),
+      );
+
+      final locale = ref.read(localeProvider);
+      final l10n = lookupAppLocalizations(locale);
+      String walletName = 'Mi cartera';
+      try {
+        walletName = l10n.defaultWalletName;
+      } catch (_) {
+        // Fallback to spanish/generic default
+      }
+
+      final initializeDefaultDataUseCase = ref.read(initializeDefaultDataUseCaseProvider);
+      await initializeDefaultDataUseCase.execute(
+        userId: profile.id,
+        walletName: walletName,
+        currency: defaultCurrency,
+      );
+
+      state = const AsyncValue.data(AuthStatus.authenticated);
+    } catch (e, st) {
+      state = AsyncValue.error(e, st);
+    }
+  }
+
+  /// Verifies the entered PIN against the hash stored in secure storage.
+  Future<bool> verifyPin(String pin) async {
+    final currentStatus = state.valueOrNull;
+    if (currentStatus == AuthStatus.authenticated || state.isLoading) {
+      return false;
+    }
+
+    state = const AsyncValue.loading();
+    try {
+      final secureStorage = ref.read(secureStorageProvider);
+      final storedHash = await secureStorage.getPinHash();
+      final inputHash = _hashPin(pin);
+
+      if (storedHash == inputHash) {
+        state = const AsyncValue.data(AuthStatus.authenticated);
+        return true;
+      } else {
+        state = AsyncValue.error('Incorrect PIN.', StackTrace.current);
+        return false;
+      }
+    } catch (e, st) {
+      state = AsyncValue.error(e, st);
+      return false;
+    }
+  }
+
+  /// Resets the authentication status to unauthenticated (e.g. on manual retry).
+  void resetStatus() {
+    state = const AsyncValue.data(AuthStatus.unauthenticated);
+  }
+
+  String _hashPin(String pin) {
+    final bytes = utf8.encode(pin);
+    final digest = sha256.convert(bytes);
+    return digest.toString();
   }
 }
 

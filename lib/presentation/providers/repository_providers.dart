@@ -25,7 +25,10 @@ import 'package:konta/domain/repositories/i_budget_repository.dart';
 import 'package:konta/domain/repositories/i_savings_goal_repository.dart';
 import 'package:konta/domain/repositories/i_statistics_repository.dart';
 import 'package:konta/domain/usecases/add_transaction_usecase.dart';
+import 'package:konta/domain/usecases/create_profile_usecase.dart';
+import 'package:konta/domain/usecases/initialize_default_data_usecase.dart';
 import 'package:konta/presentation/providers/app_startup_provider.dart';
+import 'package:konta/presentation/providers/locale_provider.dart';
 
 /// Provides the [IProfileRepository] implementation.
 /// Requires the database to be initialized, using [appDatabaseProvider.requireValue].
@@ -89,6 +92,19 @@ final addTransactionUseCaseProvider = Provider<AddTransactionUseCase>((ref) {
     profileRepo,
     exchangeRateRepo,
   );
+});
+
+/// Provides the [CreateProfileUseCase] instance.
+final createProfileUseCaseProvider = Provider<CreateProfileUseCase>((ref) {
+  final profileRepo = ref.watch(profileRepositoryProvider);
+  final secureStorage = ref.watch(secureStorageProvider);
+  return CreateProfileUseCase(profileRepo, secureStorage);
+});
+
+/// Provides the [InitializeDefaultDataUseCase] instance.
+final initializeDefaultDataUseCaseProvider = Provider<InitializeDefaultDataUseCase>((ref) {
+  final accountRepo = ref.watch(accountRepositoryProvider);
+  return InitializeDefaultDataUseCase(accountRepo);
 });
 
 /// Fetches the default profile (usually Anonymous) seeded on DB creation.

@@ -24,6 +24,13 @@ class ProfileRepository implements IProfileRepository {
   }
 
   @override
+  Future<Profile?> getFirstProfile() async {
+    final query = _db.select(_db.profiles)..limit(1);
+    final row = await query.getSingleOrNull();
+    return row?.toDomain();
+  }
+
+  @override
   Future<Profile> updateProfile(Profile profile) async {
     final dbProfile = profile.toDb();
     await (_db.update(_db.profiles)..where((p) => p.id.equals(profile.id)))

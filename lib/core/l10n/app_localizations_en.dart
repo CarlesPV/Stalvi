@@ -284,4 +284,74 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get getStarted => 'Get Started';
+
+  @override
+  String get authSetupTitle => 'Create Your Profile';
+
+  @override
+  String get authSetupSubtitle => 'Set up your secure offline wallet to begin.';
+
+  @override
+  String get authSetupNameLabel => 'Name';
+
+  @override
+  String get authSetupUsernameLabel => 'Username';
+
+  @override
+  String get authSetupPinLabel => 'Set a 4-8 digit PIN';
+
+  @override
+  String get authSetupConfirmPinLabel => 'Confirm PIN';
+
+  @override
+  String get authSetupLanguageLabel => 'Default Language';
+
+  @override
+  String get authSetupTermsCheckbox => 'I accept the Terms & Conditions';
+
+  @override
+  String get authSetupCreateButton => 'Create Profile';
+
+  @override
+  String get authSetupValidationErrorPinLength =>
+      'PIN must be between 4 and 8 digits.';
+
+  @override
+  String get authSetupValidationErrorPinMatch => 'PINs do not match.';
+
+  @override
+  String get authSetupValidationErrorTerms =>
+      'You must accept the Terms & Conditions to proceed.';
+
+  @override
+  String get authSetupValidationErrorName => 'Please enter a name.';
+
+  @override
+  String get authSetupValidationErrorUsername => 'Please enter a username.';
+
+  @override
+  String get authPinEnter => 'Enter PIN';
+
+  @override
+  String get authPinIncorrect => 'Incorrect PIN. Please try again.';
+
+  @override
+  String get defaultWalletName => 'My Wallet';
+
+  @override
+  String get failedLoadAccounts => 'Failed to load accounts.';
+
+  @override
+  String get noAccountsTitle => 'No accounts yet';
+
+  @override
+  String get noAccountsSubtitle =>
+      'Create an account or wallet to start managing your assets and tracking transactions.';
+
+  @override
+  String get defaultAccountLabel => 'Default';
+
+  @override
+  String get statisticsNoDataSubtitle =>
+      'Try adding transactions or changing the filter range to see your category breakdown.';
 }

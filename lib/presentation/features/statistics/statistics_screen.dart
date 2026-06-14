@@ -10,6 +10,7 @@ import 'package:konta/core/utils/currency_formatter.dart';
 import 'package:konta/domain/entities/category_statistic.dart';
 import 'package:konta/domain/entities/period_summary.dart';
 import 'package:konta/presentation/providers/statistics_providers.dart';
+import 'package:konta/presentation/widgets/empty_state_widget.dart';
 
 // ─── Main Screen ──────────────────────────────────────────────────────────────
 
@@ -638,9 +639,10 @@ class _CategoryChartSectionState extends State<_CategoryChartSection> {
             error: (err, _) => _InlineError(message: err.toString()),
             data: (categories) {
               if (categories.isEmpty) {
-                return _EmptyChartState(
-                  label: widget.emptyLabel,
-                  accentColor: widget.accentColor,
+                return EmptyStateWidget(
+                  icon: Icons.pie_chart_outline_rounded,
+                  title: widget.emptyLabel,
+                  subtitle: AppLocalizations.of(context)!.statisticsNoDataSubtitle,
                 );
               }
               return _PieChartWithLegend(
@@ -1012,53 +1014,6 @@ class _ChartSkeleton extends StatelessWidget {
   }
 }
 
-class _EmptyChartState extends StatelessWidget {
-  final String label;
-  final Color accentColor;
-
-  const _EmptyChartState({required this.label, required this.accentColor});
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 36, horizontal: 20),
-      decoration: BoxDecoration(
-        color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.35),
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: colorScheme.outline.withValues(alpha: 0.08)),
-      ),
-      child: Column(
-        children: [
-          Container(
-            width: 64,
-            height: 64,
-            decoration: BoxDecoration(
-              color: accentColor.withValues(alpha: 0.1),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              Icons.pie_chart_outline_rounded,
-              size: 30,
-              color: accentColor.withValues(alpha: 0.6),
-            ),
-          ),
-          const SizedBox(height: 16),
-          Text(
-            label,
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: colorScheme.onSurfaceVariant,
-              fontWeight: FontWeight.w500,
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    );
-  }
-}
 
 class _InlineError extends StatelessWidget {
   final String message;

@@ -366,5 +366,94 @@
   "getStarted": "Get Started",
   "@getStarted": {
     "description": "Default label for empty state call-to-action button"
+  },
+  "authSetupTitle": "Create Your Profile",
+  "@authSetupTitle": {
+    "description": "Title for the profile setup screen"
+  },
+  "authSetupSubtitle": "Set up your secure offline wallet to begin.",
+  "@authSetupSubtitle": {
+    "description": "Subtitle for the profile setup screen"
+  },
+  "authSetupNameLabel": "Name",
+  "@authSetupNameLabel": {
+    "description": "Label for name input"
+  },
+  "authSetupUsernameLabel": "Username",
+  "@authSetupUsernameLabel": {
+    "description": "Label for username input"
+  },
+  "authSetupPinLabel": "Set a 4-8 digit PIN",
+  "@authSetupPinLabel": {
+    "description": "Label for PIN input"
+  },
+  "authSetupConfirmPinLabel": "Confirm PIN",
+  "@authSetupConfirmPinLabel": {
+    "description": "Label for confirming PIN"
+  },
+  "authSetupLanguageLabel": "Default Language",
+  "@authSetupLanguageLabel": {
+    "description": "Label for language selection"
+  },
+  "authSetupTermsCheckbox": "I accept the Terms & Conditions",
+  "@authSetupTermsCheckbox": {
+    "description": "Label for terms and conditions checkbox"
+  },
+  "authSetupCreateButton": "Create Profile",
+  "@authSetupCreateButton": {
+    "description": "Button label to submit setup form"
+  },
+  "authSetupValidationErrorPinLength": "PIN must be between 4 and 8 digits.",
+  "@authSetupValidationErrorPinLength": {
+    "description": "Validation error when PIN length is invalid"
+  },
+  "authSetupValidationErrorPinMatch": "PINs do not match.",
+  "@authSetupValidationErrorPinMatch": {
+    "description": "Validation error when PINs do not match"
+  },
+  "authSetupValidationErrorTerms": "You must accept the Terms & Conditions to proceed.",
+  "@authSetupValidationErrorTerms": {
+    "description": "Validation error when terms are not accepted"
+  },
+  "authSetupValidationErrorName": "Please enter a name.",
+  "@authSetupValidationErrorName": {
+    "description": "Validation error when name is empty"
+  },
+  "authSetupValidationErrorUsername": "Please enter a username.",
+  "@authSetupValidationErrorUsername": {
+    "description": "Validation error when username is empty"
+  },
+  "authPinEnter": "Enter PIN",
+  "@authPinEnter": {
+    "description": "Prompt to enter PIN"
+  },
+  "authPinIncorrect": "Incorrect PIN. Please try again.",
+  "@authPinIncorrect": {
+    "description": "Error message when PIN is incorrect"
+  },
+  "defaultWalletName": "My Wallet",
+  "@defaultWalletName": {
+    "description": "Default wallet name when user profile is initialized"
+  },
+  "failedLoadAccounts": "Failed to load accounts.",
+  "@failedLoadAccounts": {
+    "description": "Error message when accounts list fails to load"
+  },
+  "noAccountsTitle": "No accounts yet",
+  "@noAccountsTitle": {
+    "description": "Title when accounts list is empty"
+  },
+  "noAccountsSubtitle": "Create an account or wallet to start managing your assets and tracking transactions.",
+  "@noAccountsSubtitle": {
+    "description": "Subtitle when accounts list is empty"
+  },
+  "defaultAccountLabel": "Default",
+  "@defaultAccountLabel": {
+    "description": "Label indicating an account is the default account"
+  },
+  "statisticsNoDataSubtitle": "Try adding transactions or changing the filter range to see your category breakdown.",
+  "@statisticsNoDataSubtitle": {
+    "description": "Subtitle when there is no data to show in statistics charts"
   }
 }
+

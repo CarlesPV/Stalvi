@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:konta/core/l10n/app_localizations.dart';
 import 'package:konta/core/theme/app_theme.dart';
 import 'package:konta/core/utils/currency_formatter.dart';
+import 'package:konta/domain/entities/account.dart';
 import 'package:konta/domain/entities/transaction.dart';
 import 'package:konta/domain/entities/transaction_type.dart';
 import 'package:konta/presentation/features/transactions/add_transaction_screen.dart';
@@ -11,6 +12,7 @@ import 'package:konta/presentation/features/budgets_and_goals/budgets_and_goals_
 import 'package:konta/presentation/features/statistics/statistics_screen.dart';
 import 'package:konta/presentation/providers/repository_providers.dart';
 import 'package:konta/presentation/widgets/empty_state_widget.dart';
+
 
 /// The main application scaffold — shown after successful authentication.
 ///
@@ -129,7 +131,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen>
         children: [
           _OverviewTab(shimmer: _shimmer, financialColors: financialColors),
           _TransactionsTab(shimmer: _shimmer),
-          _GenericSkeletonTab(shimmer: _shimmer, itemCount: 4),
+          _AccountsTab(shimmer: _shimmer),
           _SettingsSkeletonTab(shimmer: _shimmer),
         ],
       ),
@@ -357,6 +359,174 @@ class _TransactionsTab extends ConsumerWidget {
           },
         );
       },
+    );
+  }
+}
+
+// ─── Accounts Tab ─────────────────────────────────────────────────────────────
+
+class _AccountsTab extends ConsumerWidget {
+  final Animation<double> shimmer;
+
+  const _AccountsTab({required this.shimmer});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final accountsAsync = ref.watch(accountsListProvider);
+
+    return accountsAsync.when(
+      loading: () => _GenericSkeletonTab(shimmer: shimmer, itemCount: 4),
+      error: (err, _) => Center(
+        child: Text(
+          AppLocalizations.of(context)!.failedLoadAccounts,
+          style: TextStyle(color: colorScheme.error),
+        ),
+      ),
+      data: (accounts) {
+        if (accounts.isEmpty) {
+          return EmptyStateWidget(
+            icon: Icons.account_balance_outlined,
+            title: AppLocalizations.of(context)!.noAccountsTitle,
+            subtitle: AppLocalizations.of(context)!.noAccountsSubtitle,
+          );
+        }
+
+        return ListView.builder(
+          padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
+          itemCount: accounts.length,
+          itemBuilder: (context, i) {
+            final account = accounts[i];
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: _AccountItem(account: account),
+            );
+          },
+        );
+      },
+    );
+  }
+}
+
+class _AccountItem extends StatelessWidget {
+  final Account account;
+
+  const _AccountItem({required this.account});
+
+  Color _parseHexColor(String hexString) {
+    final buffer = StringBuffer();
+    if (hexString.length == 6 || hexString.length == 7) buffer.write('ff');
+    buffer.write(hexString.replaceFirst('#', ''));
+    return Color(int.parse(buffer.toString(), radix: 16));
+  }
+
+  IconData _getIconData(String name) {
+    switch (name) {
+      case 'wallet':
+        return Icons.account_balance_wallet_rounded;
+      case 'restaurant':
+        return Icons.restaurant_rounded;
+      case 'directions_car':
+        return Icons.directions_car_rounded;
+      case 'attach_money':
+        return Icons.attach_money_rounded;
+      default:
+        return Icons.account_balance_outlined;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    final accColor = _parseHexColor(account.color);
+    final accIcon = _getIconData(account.icon);
+    final balanceStr = CurrencyFormatter.format(
+      account.initialBalance,
+      currencyCode: account.currency,
+    );
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      decoration: BoxDecoration(
+        color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: accColor.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(
+              accIcon,
+              color: accColor,
+              size: 20,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  account.name,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.w700,
+                    color: colorScheme.onSurface,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  account.type.name.toUpperCase(),
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: colorScheme.onSurfaceVariant,
+                    fontSize: 11,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 12),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                balanceStr,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  fontWeight: FontWeight.w800,
+                  color: colorScheme.onSurface,
+                ),
+              ),
+              if (account.isDefault) ...[
+                const SizedBox(height: 4),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: colorScheme.primary.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Text(
+                    AppLocalizations.of(context)!.defaultAccountLabel,
+                    style: theme.textTheme.labelSmall?.copyWith(
+                      color: colorScheme.primary,
+                      fontSize: 9,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ],
+      ),
     );
   }
 }

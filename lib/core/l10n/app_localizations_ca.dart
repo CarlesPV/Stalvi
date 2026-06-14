@@ -290,4 +290,76 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get getStarted => 'Començar';
+
+  @override
+  String get authSetupTitle => 'Crear el teu perfil';
+
+  @override
+  String get authSetupSubtitle =>
+      'Configura la teva cartera segura fora de línia per començar.';
+
+  @override
+  String get authSetupNameLabel => 'Nom';
+
+  @override
+  String get authSetupUsernameLabel => 'Nom d\'usuari';
+
+  @override
+  String get authSetupPinLabel => 'Establir un PIN de 4 a 8 dígits';
+
+  @override
+  String get authSetupConfirmPinLabel => 'Confirmar PIN';
+
+  @override
+  String get authSetupLanguageLabel => 'Idioma predeterminat';
+
+  @override
+  String get authSetupTermsCheckbox => 'Accepto els Termes i Condicions';
+
+  @override
+  String get authSetupCreateButton => 'Crear perfil';
+
+  @override
+  String get authSetupValidationErrorPinLength =>
+      'El PIN ha de tenir entre 4 i 8 dígits.';
+
+  @override
+  String get authSetupValidationErrorPinMatch => 'Els PIN no coincideixen.';
+
+  @override
+  String get authSetupValidationErrorTerms =>
+      'Heu d\'acceptar els Termes i Condicions per continuar.';
+
+  @override
+  String get authSetupValidationErrorName => 'Si us plau, introduïu un nom.';
+
+  @override
+  String get authSetupValidationErrorUsername =>
+      'Si us plau, introduïu un nom d\'usuari.';
+
+  @override
+  String get authPinEnter => 'Introduir PIN';
+
+  @override
+  String get authPinIncorrect => 'PIN incorrecte. Torneu-ho a provar.';
+
+  @override
+  String get defaultWalletName => 'La meva cartera';
+
+  @override
+  String get failedLoadAccounts => 'No s\'han pogut carregar els comptes.';
+
+  @override
+  String get noAccountsTitle => 'Encara no hi ha comptes';
+
+  @override
+  String get noAccountsSubtitle =>
+      'Crea un compte o moneder per començar a gestionar els teus actius i registrar transaccions.';
+
+  @override
+  String get defaultAccountLabel => 'Predeterminat';
+
+  @override
+  String get statisticsNoDataSubtitle =>
+      'Intenta afegir transaccions o canviar el rang del filtre per veure el teu desglossament de categories.';
 }

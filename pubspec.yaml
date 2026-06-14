@@ -61,6 +61,7 @@ dev_dependencies:
   mocktail: ^1.0.5
 
   sqlite3: any
+  mockito: ^5.4.6
 flutter:
   uses-material-design: true
   generate: true

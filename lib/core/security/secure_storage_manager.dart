@@ -35,6 +35,12 @@ class SecureStorageManager {
   /// Storage key constant for persisting the user's selected locale language code.
   static const String _kUserLocaleKey = 'konta_user_locale';
 
+  /// Storage key constant for persisting the user's PIN hash.
+  static const String _kPinHashKey = 'konta_pin_hash';
+
+  /// Storage key constant for persisting biometrics enabled status.
+  static const String _kBiometricsEnabledKey = 'konta_biometrics_enabled';
+
   /// Length of the encryption key in bytes (256 bits).
   static const int _kKeyLengthBytes = 32;
 
@@ -99,6 +105,68 @@ class SecureStorageManager {
         'Failed to save user locale to secure storage.',
         cause: e,
       );
+    }
+  }
+
+  /// Saves the user's PIN hash to secure storage.
+  Future<void> savePinHash(String pinHash) async {
+    try {
+      await _storage.write(key: _kPinHashKey, value: pinHash);
+    } on Exception catch (e) {
+      throw SecureStorageException(
+        'Failed to save PIN hash to secure storage.',
+        cause: e,
+      );
+    }
+  }
+
+  /// Retrieves the saved PIN hash from secure storage.
+  Future<String?> getPinHash() async {
+    try {
+      return await _storage.read(key: _kPinHashKey);
+    } on Exception {
+      return null;
+    }
+  }
+
+  /// Checks if a PIN hash exists in secure storage.
+  Future<bool> hasPin() async {
+    final pin = await getPinHash();
+    return pin != null && pin.isNotEmpty;
+  }
+
+  /// Deletes the PIN hash from secure storage.
+  Future<void> deletePinHash() async {
+    try {
+      await _storage.delete(key: _kPinHashKey);
+    } on Exception catch (e) {
+      throw SecureStorageException(
+        'Failed to delete PIN hash from secure storage.',
+        cause: e,
+      );
+    }
+  }
+
+  /// Persists the biometrics enabled flag to secure storage.
+  Future<void> setBiometricsEnabled(bool enabled) async {
+    try {
+      await _storage.write(
+          key: _kBiometricsEnabledKey, value: enabled.toString());
+    } on Exception catch (e) {
+      throw SecureStorageException(
+        'Failed to save biometrics status to secure storage.',
+        cause: e,
+      );
+    }
+  }
+
+  /// Checks if biometrics are enabled.
+  Future<bool> isBiometricsEnabled() async {
+    try {
+      final value = await _storage.read(key: _kBiometricsEnabledKey);
+      return value == 'true';
+    } on Exception {
+      return false;
     }
   }
 
