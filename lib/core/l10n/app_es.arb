@@ -1,0 +1,14 @@
+{
+  "@@locale": "es",
+  "dashboard": "Panel de control",
+  "transactions": "Transacciones",
+  "budgets": "Presupuestos",
+  "settings": "Ajustes",
+  "addTransaction": "Añadir transacción",
+  "income": "Ingresos",
+  "expense": "Gastos",
+  "errorGeneric": "Algo salió mal. Por favor, inténtelo de nuevo.",
+  "errorDatabase": "Ocurrió un error en la base de datos. Por favor, contacte con soporte.",
+  "errorAuth": "Autenticación fallida. Por favor, verifique sus credenciales.",
+  "errorNetwork": "Error de red. Por favor, compruebe su conexión a internet."
+}

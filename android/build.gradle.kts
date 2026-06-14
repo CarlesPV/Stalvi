@@ -19,6 +19,21 @@ subprojects {
     project.evaluationDependsOn(":app")
 }
 
+subprojects {
+    val configureAndroid = {
+        extensions.findByName("android")?.let { android ->
+            if (android is com.android.build.gradle.BaseExtension) {
+                android.compileSdkVersion(36)
+            }
+        }
+    }
+    if (state.executed) {
+        configureAndroid()
+    } else {
+        afterEvaluate { configureAndroid() }
+    }
+}
+
 tasks.register<Delete>("clean") {
     delete(rootProject.layout.buildDirectory)
 }

@@ -57,9 +57,9 @@ class AppTheme {
   // Color Constants - Backgrounds & Surfaces
   static const Color bgLight = Color(0xFFF8FAFC); // Slate 50
   static const Color surfaceLight = Color(0xFFFFFFFF);
-  static const Color bgDark = Color(0xFF121212); // Soft Charcoal
+  static const Color bgDark = Color(0xFF0B0F19); // Rich Deep Navy Blue
   static const Color surfaceDark =
-      Color(0xFF1E1E1E); // Slightly lighter Charcoal for cards/dialogs
+      Color(0xFF1E293B); // Slate 800 for cards/dialogs
 
   /// Light Theme Definition
   static ThemeData get lightTheme {
@@ -112,20 +112,20 @@ class AppTheme {
       colorScheme: const ColorScheme.dark(
         primary: Color(
             0xFF60A5FA,), // Light Blue/Indigo accent for dark theme visibility
-        onPrimary: navyDark,
+        onPrimary: bgDark,
         secondary: Color(0xFF38BDF8),
-        onSecondary: navyDark,
+        onSecondary: bgDark,
         error: coralRedDark,
-        onError: navyDark,
+        onError: bgDark,
         surface: bgDark,
-        onSurface: Color(0xFFF1F5F9), // Slate 100
-        surfaceContainerHighest: Color(0xFF2D2D2D),
-        onSurfaceVariant: Color(0xFFCBD5E1), // Slate 300
+        onSurface: Color(0xFFF8FAFC), // Slate 50
+        surfaceContainerHighest: Color(0xFF1E293B), // Slate 800
+        onSurfaceVariant: Color(0xFF94A3B8), // Slate 400
       ),
       scaffoldBackgroundColor: bgDark,
       appBarTheme: const AppBarTheme(
         backgroundColor: bgDark,
-        foregroundColor: Color(0xFFF1F5F9),
+        foregroundColor: Color(0xFFF8FAFC),
         elevation: 0,
         centerTitle: false,
       ),
@@ -134,11 +134,11 @@ class AppTheme {
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
-          side: const BorderSide(color: Color(0xFF2D2D2D), width: 1),
+          side: const BorderSide(color: Color(0xFF1E293B), width: 1), // Slate 800 border
         ),
       ),
       dividerTheme: const DividerThemeData(
-        color: Color(0xFF2D2D2D),
+        color: Color(0xFF1E293B), // Slate 800 divider
         thickness: 1,
       ),
       extensions: const [

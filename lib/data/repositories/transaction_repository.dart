@@ -173,4 +173,21 @@ class TransactionRepository implements ITransactionRepository {
       );
     }
   }
+
+  @override
+  Stream<List<domain.Transaction>> watchAllTransactions() {
+    try {
+      final query = _db.select(_db.transactions)
+        ..orderBy([
+          (t) => OrderingTerm(expression: t.date, mode: OrderingMode.desc),
+        ]);
+      return query.watch().map((rows) => rows.map((r) => r.toDomain()).toList());
+    } catch (e) {
+      throw DatabaseException(
+        message: 'Failed to watch transactions',
+        code: 'TRANSACTION_WATCH_FAILED',
+        details: e,
+      );
+    }
+  }
 }

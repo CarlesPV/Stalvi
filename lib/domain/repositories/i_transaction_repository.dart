@@ -6,4 +6,5 @@ abstract class ITransactionRepository {
   Future<List<Transaction>> getTransactionsByAccountId(String accountId);
   Future<Transaction> updateTransaction(Transaction transaction);
   Future<void> deleteTransaction(String id);
+  Stream<List<Transaction>> watchAllTransactions();
 }

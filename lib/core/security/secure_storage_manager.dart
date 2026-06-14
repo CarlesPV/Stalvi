@@ -32,6 +32,9 @@ class SecureStorageManager {
   /// Storage key constant – changing this will orphan existing databases.
   static const String _kEncryptionKeyName = 'konta_db_cipher_key';
 
+  /// Storage key constant for persisting the user's selected locale language code.
+  static const String _kUserLocaleKey = 'konta_user_locale';
+
   /// Length of the encryption key in bytes (256 bits).
   static const int _kKeyLengthBytes = 32;
 
@@ -75,6 +78,28 @@ class SecureStorageManager {
   /// flow.
   Future<void> deleteEncryptionKey() async {
     await _storage.delete(key: _kEncryptionKeyName);
+  }
+
+  /// Retrieves the saved user locale language code from secure storage.
+  /// Returns null if no locale is saved or if an exception occurs.
+  Future<String?> getUserLocale() async {
+    try {
+      return await _storage.read(key: _kUserLocaleKey);
+    } on Exception {
+      return null;
+    }
+  }
+
+  /// Persists the user locale language code to secure storage.
+  Future<void> setUserLocale(String languageCode) async {
+    try {
+      await _storage.write(key: _kUserLocaleKey, value: languageCode);
+    } on Exception catch (e) {
+      throw SecureStorageException(
+        'Failed to save user locale to secure storage.',
+        cause: e,
+      );
+    }
   }
 
   /// Generates a 256-bit key using [Random.secure] (CSPRNG) and returns it

@@ -17,7 +17,6 @@ dependencies:
 
   # Database & ORM
   drift: ^2.14.1
-  sqlite3_flutter_libs: ^0.5.18
   sqlcipher_flutter_libs: ^0.5.7 # Required for SQLCipher encryption
 
   # Security & Storage
@@ -48,6 +47,8 @@ dependencies:
 
   path: any
 dev_dependencies:
+  integration_test:
+    sdk: flutter
   flutter_test:
     sdk: flutter
   flutter_lints: ^3.0.1
@@ -62,5 +63,6 @@ dev_dependencies:
   sqlite3: any
 flutter:
   uses-material-design: true
+  generate: true
   assets:
     - .env

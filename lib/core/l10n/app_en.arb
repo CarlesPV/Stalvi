@@ -1,0 +1,47 @@
+{
+  "@@locale": "en",
+  "dashboard": "Dashboard",
+  "@dashboard": {
+    "description": "Title for the dashboard screen"
+  },
+  "transactions": "Transactions",
+  "@transactions": {
+    "description": "Title for the transactions screen or tab"
+  },
+  "budgets": "Budgets",
+  "@budgets": {
+    "description": "Title for the budgets screen or tab"
+  },
+  "settings": "Settings",
+  "@settings": {
+    "description": "Title for the settings screen or tab"
+  },
+  "addTransaction": "Add Transaction",
+  "@addTransaction": {
+    "description": "Button or title for adding a transaction"
+  },
+  "income": "Income",
+  "@income": {
+    "description": "Label for positive financial income"
+  },
+  "expense": "Expense",
+  "@expense": {
+    "description": "Label for negative financial expense"
+  },
+  "errorGeneric": "Something went wrong. Please try again.",
+  "@errorGeneric": {
+    "description": "Generic fallback error message"
+  },
+  "errorDatabase": "Database error occurred. Please contact support.",
+  "@errorDatabase": {
+    "description": "Error message when database operation fails"
+  },
+  "errorAuth": "Authentication failed. Please check your credentials.",
+  "@errorAuth": {
+    "description": "Error message when authentication fails"
+  },
+  "errorNetwork": "Network error. Please check your internet connection.",
+  "@errorNetwork": {
+    "description": "Error message when network request fails"
+  }
+}

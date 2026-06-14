@@ -15,6 +15,7 @@ import 'package:konta/domain/entities/category.dart';
 import 'package:konta/domain/entities/profile.dart';
 import 'package:konta/domain/entities/budget.dart';
 import 'package:konta/domain/entities/savings_goal.dart';
+import 'package:konta/domain/entities/transaction.dart';
 import 'package:konta/domain/repositories/i_account_repository.dart';
 import 'package:konta/domain/repositories/i_category_repository.dart';
 import 'package:konta/domain/repositories/i_profile_repository.dart';
@@ -124,4 +125,10 @@ final budgetsStreamProvider = StreamProvider<List<Budget>>((ref) {
 final savingsGoalsStreamProvider = StreamProvider<List<SavingsGoal>>((ref) {
   final repo = ref.watch(savingsGoalRepositoryProvider);
   return repo.watchSavingsGoals();
+});
+
+/// Stream of all transactions.
+final transactionsStreamProvider = StreamProvider<List<Transaction>>((ref) {
+  final repo = ref.watch(transactionRepositoryProvider);
+  return repo.watchAllTransactions();
 });

@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:konta/core/theme/app_theme.dart';
+import 'package:konta/core/utils/currency_formatter.dart';
+import 'package:konta/domain/entities/transaction.dart';
+import 'package:konta/domain/entities/transaction_type.dart';
 import 'package:konta/presentation/features/transactions/add_transaction_screen.dart';
 import 'package:konta/presentation/features/budgets_and_goals/budgets_and_goals_screen.dart';
 import 'package:konta/presentation/features/statistics/statistics_screen.dart';
+import 'package:konta/presentation/providers/repository_providers.dart';
+import 'package:konta/presentation/widgets/empty_state_widget.dart';
 
 /// The main application scaffold — shown after successful authentication.
 ///
@@ -120,7 +126,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen>
         index: _selectedIndex,
         children: [
           _OverviewTab(shimmer: _shimmer, financialColors: financialColors),
-          _GenericSkeletonTab(shimmer: _shimmer, itemCount: 8),
+          _TransactionsTab(shimmer: _shimmer),
           _GenericSkeletonTab(shimmer: _shimmer, itemCount: 4),
           _SettingsSkeletonTab(shimmer: _shimmer),
         ],
@@ -133,30 +139,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen>
       floatingActionButton: _selectedIndex == 3
           ? null
           : FloatingActionButton(
-              onPressed: () {
-                Navigator.of(context).push(
-                  PageRouteBuilder(
-                    pageBuilder: (context, animation, secondaryAnimation) =>
-                        const AddTransactionScreen(),
-                    transitionsBuilder:
-                        (context, animation, secondaryAnimation, child) {
-                      const begin = Offset(0.0, 0.1);
-                      const end = Offset.zero;
-                      const curve = Curves.easeOutCubic;
-                      final tween = Tween(begin: begin, end: end)
-                          .chain(CurveTween(curve: curve));
-                      return SlideTransition(
-                        position: animation.drive(tween),
-                        child: FadeTransition(
-                          opacity: animation,
-                          child: child,
-                        ),
-                      );
-                    },
-                    transitionDuration: const Duration(milliseconds: 300),
-                  ),
-                );
-              },
+              onPressed: () => _navigateToAddTransaction(context),
               backgroundColor: colorScheme.primary,
               foregroundColor: colorScheme.onPrimary,
               shape: RoundedRectangleBorder(
@@ -166,11 +149,36 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen>
             ),
     );
   }
+
+  void _navigateToAddTransaction(BuildContext context) {
+    Navigator.of(context).push(
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            const AddTransactionScreen(),
+        transitionsBuilder:
+            (context, animation, secondaryAnimation, child) {
+          const begin = Offset(0.0, 0.1);
+          const end = Offset.zero;
+          const curve = Curves.easeOutCubic;
+          final tween = Tween(begin: begin, end: end)
+              .chain(CurveTween(curve: curve));
+          return SlideTransition(
+            position: animation.drive(tween),
+            child: FadeTransition(
+              opacity: animation,
+              child: child,
+            ),
+          );
+        },
+        transitionDuration: const Duration(milliseconds: 300),
+      ),
+    );
+  }
 }
 
 // ─── Overview Tab ─────────────────────────────────────────────────────────────
 
-class _OverviewTab extends StatelessWidget {
+class _OverviewTab extends ConsumerWidget {
   final Animation<double> shimmer;
   final FinancialColors financialColors;
 
@@ -180,9 +188,10 @@ class _OverviewTab extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final transactionsAsync = ref.watch(transactionsStreamProvider);
 
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
@@ -239,12 +248,199 @@ class _OverviewTab extends StatelessWidget {
 
           const SizedBox(height: 14),
 
-          // ── Transaction skeletons ─────────────────────────────────────
-          ...List.generate(
-            5,
-            (i) => Padding(
+          // ── Transactions / Skeletons / Empty State ────────────────────
+          transactionsAsync.when(
+            loading: () => Column(
+              children: List.generate(
+                5,
+                (i) => Padding(
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: _TransactionSkeleton(shimmer: shimmer),
+                ),
+              ),
+            ),
+            error: (err, _) => Padding(
+              padding: const EdgeInsets.symmetric(vertical: 24),
+              child: Center(
+                child: Text(
+                  'Failed to load transactions',
+                  style: TextStyle(color: colorScheme.error),
+                ),
+              ),
+            ),
+            data: (transactions) {
+              if (transactions.isEmpty) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  child: EmptyStateWidget(
+                    icon: Icons.receipt_long_outlined,
+                    title: 'No transactions yet',
+                    subtitle: 'Add your first income or expense to see it here and start tracking.',
+                    actionLabel: 'Add transaction',
+                    onActionPressed: () {
+                      final state = context.findAncestorStateOfType<_DashboardScreenState>();
+                      if (state != null) {
+                        state._navigateToAddTransaction(context);
+                      }
+                    },
+                  ),
+                );
+              }
+
+              final recent = transactions.take(5).toList();
+              return Column(
+                children: recent.map((txn) {
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: _TransactionItem(transaction: txn),
+                  );
+                }).toList(),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ─── Transactions Tab ─────────────────────────────────────────────────────────
+
+class _TransactionsTab extends ConsumerWidget {
+  final Animation<double> shimmer;
+
+  const _TransactionsTab({required this.shimmer});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final transactionsAsync = ref.watch(transactionsStreamProvider);
+
+    return transactionsAsync.when(
+      loading: () => _GenericSkeletonTab(shimmer: shimmer, itemCount: 8),
+      error: (err, _) => Center(
+        child: Text(
+          'Failed to load transactions',
+          style: TextStyle(color: colorScheme.error),
+        ),
+      ),
+      data: (transactions) {
+        if (transactions.isEmpty) {
+          return EmptyStateWidget(
+            icon: Icons.receipt_long_outlined,
+            title: 'No transactions yet',
+            subtitle: 'Add your first income or expense to see it here and start tracking.',
+            actionLabel: 'Add transaction',
+            onActionPressed: () {
+              final state = context.findAncestorStateOfType<_DashboardScreenState>();
+              if (state != null) {
+                state._navigateToAddTransaction(context);
+              }
+            },
+          );
+        }
+
+        return ListView.builder(
+          padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
+          itemCount: transactions.length,
+          itemBuilder: (context, i) {
+            final txn = transactions[i];
+            return Padding(
               padding: const EdgeInsets.only(bottom: 12),
-              child: _TransactionSkeleton(shimmer: shimmer),
+              child: _TransactionItem(transaction: txn),
+            );
+          },
+        );
+      },
+    );
+  }
+}
+
+// ─── Real Transaction Item Widget ─────────────────────────────────────────────
+
+class _TransactionItem extends StatelessWidget {
+  final Transaction transaction;
+
+  const _TransactionItem({required this.transaction});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final financialColors = context.financialColors;
+
+    final isIncome = transaction.type == TransactionType.income;
+    final amountDouble = transaction.amount / 100.0;
+    final amountStr = CurrencyFormatter.format(
+      amountDouble,
+      currencyCode: transaction.originalCurrency,
+      showSign: true,
+    );
+    final color = isIncome ? financialColors.positive : financialColors.negative;
+
+    final icon = isIncome
+        ? Icons.trending_up_rounded
+        : (transaction.type == TransactionType.transfer
+            ? Icons.swap_horiz_rounded
+            : Icons.trending_down_rounded);
+
+    final dateStr = DateFormat('MMM d, yyyy').format(transaction.date);
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      decoration: BoxDecoration(
+        color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(
+              icon,
+              color: color,
+              size: 20,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  transaction.notes?.isNotEmpty == true
+                      ? transaction.notes!
+                      : (isIncome ? 'Income' : 'Expense'),
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.w700,
+                    color: colorScheme.onSurface,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  dateStr,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: colorScheme.onSurfaceVariant,
+                    fontSize: 11,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 12),
+          Text(
+            amountStr,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              fontWeight: FontWeight.w800,
+              color: color,
             ),
           ),
         ],
