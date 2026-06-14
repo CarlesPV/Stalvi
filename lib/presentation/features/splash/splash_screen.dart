@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:konta/core/l10n/app_localizations.dart';
 import 'package:konta/presentation/features/auth/auth_screen.dart';
 import 'package:konta/presentation/providers/app_startup_provider.dart';
 
@@ -235,9 +236,10 @@ class _SplashContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        const Spacer(flex: 5),
+    return SizedBox.expand(
+      child: Column(
+        children: [
+          const Spacer(flex: 5),
 
         // ── Logo Badge ───────────────────────────────────────────────────
         FadeTransition(
@@ -272,7 +274,7 @@ class _SplashContent extends StatelessWidget {
         FadeTransition(
           opacity: taglineFade,
           child: Text(
-            'Your finances, your way.',
+            AppLocalizations.of(context)!.splashTagline,
             style: theme.textTheme.bodyLarge?.copyWith(
               color: colorScheme.onSurfaceVariant,
               letterSpacing: 0.2,
@@ -304,8 +306,9 @@ class _SplashContent extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
+    ),
+  );
+}
 }
 
 /// The branded logo badge — square with rounded corners and a soft glow.
@@ -378,7 +381,7 @@ class _ErrorBody extends StatelessWidget {
             ),
             const SizedBox(height: 24),
             Text(
-              'Startup Failed',
+              AppLocalizations.of(context)!.splashStartupFailed,
               style: theme.textTheme.headlineSmall?.copyWith(
                 color: colorScheme.onSurface,
                 fontWeight: FontWeight.w700,
@@ -387,8 +390,7 @@ class _ErrorBody extends StatelessWidget {
             ),
             const SizedBox(height: 10),
             Text(
-              'Konta couldn\'t initialise its secure storage. '
-              'Please check available device storage and try again.',
+              AppLocalizations.of(context)!.splashSecureStorageError,
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: colorScheme.onSurfaceVariant,
                 height: 1.5,
@@ -399,7 +401,7 @@ class _ErrorBody extends StatelessWidget {
             FilledButton.icon(
               onPressed: onRetry,
               icon: const Icon(Icons.refresh_rounded, size: 18),
-              label: const Text('Try Again'),
+              label: Text(AppLocalizations.of(context)!.tryAgain),
               style: FilledButton.styleFrom(
                 minimumSize: const Size(180, 50),
               ),

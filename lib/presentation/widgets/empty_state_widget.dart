@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:konta/core/l10n/app_localizations.dart';
 
 /// A premium, reusable presentation widget designed to prevent "blank page syndrome".
 ///
@@ -101,7 +102,9 @@ class EmptyStateWidget extends StatelessWidget {
                 onPressed: onActionPressed,
                 icon: const Icon(Icons.add_rounded, size: 20),
                 label: Text(
-                  actionLabel ?? 'Get Started',
+                  actionLabel ??
+                      (AppLocalizations.of(context)?.getStarted ??
+                          'Get Started'),
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     letterSpacing: -0.1,

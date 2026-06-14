@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:konta/core/l10n/app_localizations.dart';
 import 'package:konta/presentation/features/dashboard/dashboard_screen.dart';
 import 'package:konta/presentation/providers/auth_notifier.dart';
 
@@ -140,7 +141,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
                     error: (err, _) => _ErrorContent(
                       message: err is String
                           ? err
-                          : 'An unexpected error occurred. Please try again.',
+                          : AppLocalizations.of(context)!.unexpectedError,
                       onRetry: () => ref
                           .read(authNotifierProvider.notifier)
                           .authenticate(),
@@ -160,7 +161,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
                 Padding(
                   padding: const EdgeInsets.only(bottom: 32),
                   child: Text(
-                    'Protected by device biometrics',
+                    AppLocalizations.of(context)!.authProtectedBy,
                     style: theme.textTheme.labelSmall?.copyWith(
                       color:
                           colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
@@ -308,7 +309,7 @@ class _SpinnerContent extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Text(
-            'Checking biometrics…',
+            AppLocalizations.of(context)!.authCheckingBiometrics,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: colorScheme.onSurfaceVariant,
                 ),
@@ -349,7 +350,7 @@ class _ErrorContent extends StatelessWidget {
         ),
         const SizedBox(height: 20),
         Text(
-          'Authentication Error',
+          AppLocalizations.of(context)!.authError,
           style: theme.textTheme.titleLarge?.copyWith(
             fontWeight: FontWeight.w700,
             color: colorScheme.onSurface,
@@ -370,7 +371,7 @@ class _ErrorContent extends StatelessWidget {
           child: FilledButton.icon(
             onPressed: onRetry,
             icon: const Icon(Icons.refresh_rounded, size: 18),
-            label: const Text('Try Again'),
+            label: Text(AppLocalizations.of(context)!.tryAgain),
             style:
                 FilledButton.styleFrom(minimumSize: const Size.fromHeight(50)),
           ),
@@ -410,7 +411,7 @@ class _LockedOutContent extends StatelessWidget {
         ),
         const SizedBox(height: 24),
         Text(
-          'Biometrics Locked',
+          AppLocalizations.of(context)!.authLockedTitle,
           style: theme.textTheme.titleLarge?.copyWith(
             fontWeight: FontWeight.w700,
             color: colorScheme.onSurface,
@@ -418,8 +419,7 @@ class _LockedOutContent extends StatelessWidget {
         ),
         const SizedBox(height: 10),
         Text(
-          'Too many failed attempts. Please unlock your device '
-          'from the lock screen and try again.',
+          AppLocalizations.of(context)!.authLockedMessage,
           style: theme.textTheme.bodyMedium?.copyWith(
             color: colorScheme.onSurfaceVariant,
             height: 1.5,
@@ -444,7 +444,7 @@ class _LockedOutContent extends StatelessWidget {
               ),
               const SizedBox(width: 6),
               Text(
-                'Security lockout active',
+                AppLocalizations.of(context)!.authLockoutActive,
                 style: theme.textTheme.labelMedium?.copyWith(
                   color: colorScheme.error,
                   fontWeight: FontWeight.w600,
@@ -520,7 +520,7 @@ class _BiometricContent extends StatelessWidget {
         const SizedBox(height: 24),
 
         Text(
-          'Verify Your Identity',
+          AppLocalizations.of(context)!.authVerifyIdentity,
           style: theme.textTheme.titleLarge?.copyWith(
             fontWeight: FontWeight.w700,
             color: colorScheme.onSurface,
@@ -531,7 +531,7 @@ class _BiometricContent extends StatelessWidget {
         const SizedBox(height: 8),
 
         Text(
-          'Use biometrics or your device PIN to access\nyour financial data securely.',
+          AppLocalizations.of(context)!.authVerifyMessage,
           style: theme.textTheme.bodyMedium?.copyWith(
             color: colorScheme.onSurfaceVariant,
             height: 1.5,
@@ -559,7 +559,9 @@ class _BiometricContent extends StatelessWidget {
                   )
                 : const Icon(Icons.fingerprint_rounded, size: 18),
             label: Text(
-              isAuthenticating ? 'Verifying…' : 'Authenticate',
+              isAuthenticating
+                  ? AppLocalizations.of(context)!.authVerifying
+                  : AppLocalizations.of(context)!.authAuthenticate,
             ),
             style: FilledButton.styleFrom(
               minimumSize: const Size.fromHeight(52),
@@ -575,7 +577,7 @@ class _BiometricContent extends StatelessWidget {
           child: TextButton(
             onPressed: isAuthenticating ? null : onSkip,
             child: Text(
-              'Skip for now',
+              AppLocalizations.of(context)!.authSkip,
               style: TextStyle(
                 color: isAuthenticating
                     ? colorScheme.onSurfaceVariant.withValues(alpha: 0.4)

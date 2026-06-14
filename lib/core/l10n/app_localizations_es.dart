@@ -27,7 +27,10 @@ class AppLocalizationsEs extends AppLocalizations {
   String get income => 'Ingresos';
 
   @override
-  String get expense => 'Gastos';
+  String get expense => 'Gasto';
+
+  @override
+  String get expenses => 'Gastos';
 
   @override
   String get errorGeneric => 'Algo salió mal. Por favor, inténtelo de nuevo.';
@@ -43,4 +46,247 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get errorNetwork =>
       'Error de red. Por favor, compruebe su conexión a internet.';
+
+  @override
+  String get appTitle => 'Konta';
+
+  @override
+  String get splashTagline => 'Tus finanzas, a tu manera.';
+
+  @override
+  String get splashStartupFailed => 'Error de Inicio';
+
+  @override
+  String get splashSecureStorageError =>
+      'Konta no pudo inicializar su almacenamiento seguro. Por favor, compruebe el almacenamiento disponible del dispositivo e inténtelo de nuevo.';
+
+  @override
+  String get tryAgain => 'Intentar de nuevo';
+
+  @override
+  String get authCheckingBiometrics => 'Comprobando biometría…';
+
+  @override
+  String get authError => 'Error de autenticación';
+
+  @override
+  String get authLockedTitle => 'Biometría bloqueada';
+
+  @override
+  String get authLockedMessage =>
+      'Demasiados intentos fallidos. Por favor, desbloquee su dispositivo desde la pantalla de bloqueo e inténtelo de nuevo.';
+
+  @override
+  String get authLockoutActive => 'Bloqueo de seguridad activo';
+
+  @override
+  String get authVerifyIdentity => 'Verifique su identidad';
+
+  @override
+  String get authVerifyMessage =>
+      'Use la biometría o el PIN de su dispositivo para acceder a sus datos financieros de forma segura.';
+
+  @override
+  String get authVerifying => 'Verificando…';
+
+  @override
+  String get authAuthenticate => 'Autenticar';
+
+  @override
+  String get authSkip => 'Omitir por ahora';
+
+  @override
+  String get authProtectedBy => 'Protegido por la biometría del dispositivo';
+
+  @override
+  String get unexpectedError =>
+      'Ocurrió un error inesperado. Por favor, inténtelo de nuevo.';
+
+  @override
+  String get overview => 'Resumen';
+
+  @override
+  String get accounts => 'Cuentas';
+
+  @override
+  String get recentTransactions => 'Transacciones recientes';
+
+  @override
+  String get noTransactionsTitle => 'Aún no hay transacciones';
+
+  @override
+  String get noTransactionsSubtitle =>
+      'Añada su primer ingreso o gasto para verlo aquí y comenzar el seguimiento.';
+
+  @override
+  String get failedLoadTransactions => 'Error al cargar las transacciones';
+
+  @override
+  String get settingsBudgetsGoals => 'Presupuestos y Objetivos';
+
+  @override
+  String get settingsStatistics => 'Estadísticas';
+
+  @override
+  String get balanceTotal => 'Balance total';
+
+  @override
+  String get statisticsTooltipCustomRange => 'Rango de fechas personalizado';
+
+  @override
+  String get statisticsTopSpending => 'Categorías de mayor gasto';
+
+  @override
+  String get statisticsWhereMoneyGoes => 'A dónde va su dinero';
+
+  @override
+  String get statisticsNoExpenses =>
+      'No se registraron gastos en este período.';
+
+  @override
+  String get statisticsTopIncome => 'Categorías de mayor ingreso';
+
+  @override
+  String get statisticsWhatYouEarned => 'Lo que ha ganado';
+
+  @override
+  String get statisticsNoIncome =>
+      'No se registraron ingresos en este período.';
+
+  @override
+  String get statisticsNetBalance => 'Balance neto';
+
+  @override
+  String get statisticsSurplus => 'Superávit';
+
+  @override
+  String get statisticsDeficit => 'Déficit';
+
+  @override
+  String get presetThisMonth => 'Este mes';
+
+  @override
+  String get presetLast3Months => 'Últimos 3 meses';
+
+  @override
+  String get presetLast6Months => 'Últimos 6 meses';
+
+  @override
+  String get presetThisYear => 'Este año';
+
+  @override
+  String get presetCustom => 'Personalizado';
+
+  @override
+  String get budgetsAndGoals => 'Presupuestos y Objetivos';
+
+  @override
+  String get savingsGoals => 'Objetivos de ahorro';
+
+  @override
+  String get failedLoadBudgets => 'Error al cargar los presupuestos.';
+
+  @override
+  String get noBudgetsTitle => 'Aún no se han definido presupuestos';
+
+  @override
+  String get noBudgetsSubtitle =>
+      'Establezca límites de gasto para las categorías para realizar un seguimiento de sus gastos mensuales y mantenerse dentro de sus límites.';
+
+  @override
+  String get uncategorized => 'Sin categoría';
+
+  @override
+  String budgetOverspent(String amount) {
+    return '$amount sobrepasado';
+  }
+
+  @override
+  String budgetRemaining(String amount) {
+    return '$amount restante';
+  }
+
+  @override
+  String get failedLoadSavingsGoals =>
+      'Error al cargar los objetivos de ahorro.';
+
+  @override
+  String get noSavingsGoalsTitle => 'Aún no hay objetivos de ahorro';
+
+  @override
+  String get noSavingsGoalsSubtitle =>
+      'Cree un objetivo de ahorro para planificar sus futuros sueños, viajes o grandes compras.';
+
+  @override
+  String savingsTargetDate(String date) {
+    return 'Fecha objetivo: $date';
+  }
+
+  @override
+  String get savingsNoTargetDate => 'Sin fecha objetivo';
+
+  @override
+  String savingsSavedOf(String saved, String target) {
+    return '$saved guardados de $target';
+  }
+
+  @override
+  String get savingsGoalAchieved => '¡Objetivo conseguido!';
+
+  @override
+  String get txnSuccessCreated => '¡Transacción creada con éxito!';
+
+  @override
+  String get labelAmount => 'CANTIDAD';
+
+  @override
+  String get labelAccount => 'Cuenta';
+
+  @override
+  String get labelSelectAccount => 'Seleccionar cuenta';
+
+  @override
+  String get labelCategory => 'Categoría';
+
+  @override
+  String get labelSelectCategory => 'Seleccionar categoría';
+
+  @override
+  String get labelDate => 'Fecha';
+
+  @override
+  String get labelNotes => 'Notas';
+
+  @override
+  String get labelNotesHint => 'Añada detalles sobre esta transacción...';
+
+  @override
+  String get btnSaveTransaction => 'Guardar transacción';
+
+  @override
+  String get errorInvalidAmount =>
+      'Por favor, introduzca una cantidad válida mayor que 0';
+
+  @override
+  String get errorAccountRequired => 'Por favor, seleccione una cuenta';
+
+  @override
+  String get errorFutureDate =>
+      'La fecha de la transacción no puede ser en el futuro';
+
+  @override
+  String get errorAccountNotFound => 'Cuenta no encontrada';
+
+  @override
+  String get errorProfileNotFound => 'Perfil no encontrado';
+
+  @override
+  String get errorRateNotFound =>
+      'Tipo de cambio no disponible para la moneda solicitada';
+
+  @override
+  String get errorConversionFailed => 'Error al convertir la moneda';
+
+  @override
+  String get getStarted => 'Empezar';
 }

@@ -30,6 +30,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get expense => 'Expense';
 
   @override
+  String get expenses => 'Expenses';
+
+  @override
   String get errorGeneric => 'Something went wrong. Please try again.';
 
   @override
@@ -43,4 +46,242 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get errorNetwork =>
       'Network error. Please check your internet connection.';
+
+  @override
+  String get appTitle => 'Konta';
+
+  @override
+  String get splashTagline => 'Your finances, your way.';
+
+  @override
+  String get splashStartupFailed => 'Startup Failed';
+
+  @override
+  String get splashSecureStorageError =>
+      'Konta couldn\'t initialise its secure storage. Please check available device storage and try again.';
+
+  @override
+  String get tryAgain => 'Try Again';
+
+  @override
+  String get authCheckingBiometrics => 'Checking biometrics…';
+
+  @override
+  String get authError => 'Authentication Error';
+
+  @override
+  String get authLockedTitle => 'Biometrics Locked';
+
+  @override
+  String get authLockedMessage =>
+      'Too many failed attempts. Please unlock your device from the lock screen and try again.';
+
+  @override
+  String get authLockoutActive => 'Security lockout active';
+
+  @override
+  String get authVerifyIdentity => 'Verify Your Identity';
+
+  @override
+  String get authVerifyMessage =>
+      'Use biometrics or your device PIN to access your financial data securely.';
+
+  @override
+  String get authVerifying => 'Verifying…';
+
+  @override
+  String get authAuthenticate => 'Authenticate';
+
+  @override
+  String get authSkip => 'Skip for now';
+
+  @override
+  String get authProtectedBy => 'Protected by device biometrics';
+
+  @override
+  String get unexpectedError =>
+      'An unexpected error occurred. Please try again.';
+
+  @override
+  String get overview => 'Overview';
+
+  @override
+  String get accounts => 'Accounts';
+
+  @override
+  String get recentTransactions => 'Recent Transactions';
+
+  @override
+  String get noTransactionsTitle => 'No transactions yet';
+
+  @override
+  String get noTransactionsSubtitle =>
+      'Add your first income or expense to see it here and start tracking.';
+
+  @override
+  String get failedLoadTransactions => 'Failed to load transactions';
+
+  @override
+  String get settingsBudgetsGoals => 'Budgets & Goals';
+
+  @override
+  String get settingsStatistics => 'Statistics';
+
+  @override
+  String get balanceTotal => 'Total Balance';
+
+  @override
+  String get statisticsTooltipCustomRange => 'Custom date range';
+
+  @override
+  String get statisticsTopSpending => 'Top Spending Categories';
+
+  @override
+  String get statisticsWhereMoneyGoes => 'Where your money goes';
+
+  @override
+  String get statisticsNoExpenses => 'No expenses recorded in this period.';
+
+  @override
+  String get statisticsTopIncome => 'Top Income Categories';
+
+  @override
+  String get statisticsWhatYouEarned => 'What you earned';
+
+  @override
+  String get statisticsNoIncome => 'No income recorded in this period.';
+
+  @override
+  String get statisticsNetBalance => 'Net Balance';
+
+  @override
+  String get statisticsSurplus => 'Surplus';
+
+  @override
+  String get statisticsDeficit => 'Deficit';
+
+  @override
+  String get presetThisMonth => 'This Month';
+
+  @override
+  String get presetLast3Months => 'Last 3 Months';
+
+  @override
+  String get presetLast6Months => 'Last 6 Months';
+
+  @override
+  String get presetThisYear => 'This Year';
+
+  @override
+  String get presetCustom => 'Custom';
+
+  @override
+  String get budgetsAndGoals => 'Budgets & Goals';
+
+  @override
+  String get savingsGoals => 'Savings Goals';
+
+  @override
+  String get failedLoadBudgets => 'Failed to load budgets.';
+
+  @override
+  String get noBudgetsTitle => 'No budgets set yet';
+
+  @override
+  String get noBudgetsSubtitle =>
+      'Set spending limits for categories to track your monthly expenses and stay within your limits.';
+
+  @override
+  String get uncategorized => 'Uncategorized';
+
+  @override
+  String budgetOverspent(String amount) {
+    return '$amount overspent';
+  }
+
+  @override
+  String budgetRemaining(String amount) {
+    return '$amount remaining';
+  }
+
+  @override
+  String get failedLoadSavingsGoals => 'Failed to load savings goals.';
+
+  @override
+  String get noSavingsGoalsTitle => 'No savings goals yet';
+
+  @override
+  String get noSavingsGoalsSubtitle =>
+      'Create a savings goal to plan for your future dreams, trips, or big purchases.';
+
+  @override
+  String savingsTargetDate(String date) {
+    return 'Target date: $date';
+  }
+
+  @override
+  String get savingsNoTargetDate => 'No target date';
+
+  @override
+  String savingsSavedOf(String saved, String target) {
+    return '$saved saved of $target';
+  }
+
+  @override
+  String get savingsGoalAchieved => 'Goal achieved!';
+
+  @override
+  String get txnSuccessCreated => 'Transaction created successfully!';
+
+  @override
+  String get labelAmount => 'AMOUNT';
+
+  @override
+  String get labelAccount => 'Account';
+
+  @override
+  String get labelSelectAccount => 'Select Account';
+
+  @override
+  String get labelCategory => 'Category';
+
+  @override
+  String get labelSelectCategory => 'Select Category';
+
+  @override
+  String get labelDate => 'Date';
+
+  @override
+  String get labelNotes => 'Notes';
+
+  @override
+  String get labelNotesHint => 'Add details about this transaction...';
+
+  @override
+  String get btnSaveTransaction => 'Save Transaction';
+
+  @override
+  String get errorInvalidAmount => 'Please enter a valid amount greater than 0';
+
+  @override
+  String get errorAccountRequired => 'Please select an account';
+
+  @override
+  String get errorFutureDate => 'Transaction date cannot be in the future';
+
+  @override
+  String get errorAccountNotFound => 'Account not found';
+
+  @override
+  String get errorProfileNotFound => 'Profile not found';
+
+  @override
+  String get errorRateNotFound =>
+      'Exchange rate not available for the requested currency';
+
+  @override
+  String get errorConversionFailed => 'Failed to convert currency';
+
+  @override
+  String get getStarted => 'Get Started';
 }

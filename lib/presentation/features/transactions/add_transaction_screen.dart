@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:konta/core/errors/app_exceptions.dart';
+import 'package:konta/core/l10n/app_localizations.dart';
 import 'package:konta/core/theme/app_theme.dart';
 import 'package:konta/domain/entities/account.dart';
 import 'package:konta/domain/entities/category.dart';
@@ -91,8 +92,9 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
           data: (_) {
             if (prev is AsyncLoading) {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Transaction created successfully!'),
+                SnackBar(
+                  content:
+                      Text(AppLocalizations.of(context)!.txnSuccessCreated),
                   backgroundColor: Colors.green,
                   behavior: SnackBarBehavior.floating,
                 ),
@@ -101,7 +103,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
             }
           },
           error: (err, _) {
-            final message = err is AppException ? err.message : err.toString();
+            final message = _getLocalizedError(context, err);
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(message),
@@ -140,7 +142,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Add Transaction',
+          AppLocalizations.of(context)!.addTransaction,
           style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.w800,
             letterSpacing: -0.2,
@@ -186,7 +188,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(
-                            'Expense',
+                            AppLocalizations.of(context)!.expense,
                             style: theme.textTheme.bodyMedium?.copyWith(
                               fontWeight: FontWeight.w700,
                               color: isExpense
@@ -214,7 +216,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(
-                            'Income',
+                            AppLocalizations.of(context)!.income,
                             style: theme.textTheme.bodyMedium?.copyWith(
                               fontWeight: FontWeight.w700,
                               color: !isExpense
@@ -233,7 +235,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
 
               // ── Large Amount Field ────────────────────────────────────────
               Text(
-                'AMOUNT',
+                AppLocalizations.of(context)!.labelAmount,
                 style: theme.textTheme.labelMedium?.copyWith(
                   color: colorScheme.onSurfaceVariant,
                   fontWeight: FontWeight.w600,
@@ -294,8 +296,9 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                   children: [
                     // Account Selector
                     _FormSelectorTile(
-                      label: 'Account',
-                      value: selectedAccount?.name ?? 'Select Account',
+                      label: AppLocalizations.of(context)!.labelAccount,
+                      value: selectedAccount?.name ??
+                          AppLocalizations.of(context)!.labelSelectAccount,
                       icon: selectedAccount != null
                           ? _getIconData(selectedAccount.icon)
                           : Icons.account_balance_wallet_rounded,
@@ -313,8 +316,9 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                     ),
                     // Category Selector
                     _FormSelectorTile(
-                      label: 'Category',
-                      value: selectedCategory?.name ?? 'Uncategorized',
+                      label: AppLocalizations.of(context)!.labelCategory,
+                      value: selectedCategory?.name ??
+                          AppLocalizations.of(context)!.uncategorized,
                       icon: selectedCategory != null
                           ? _getIconData(selectedCategory.icon)
                           : Icons.category_rounded,
@@ -333,7 +337,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                     ),
                     // Date Selector
                     _FormSelectorTile(
-                      label: 'Date',
+                      label: AppLocalizations.of(context)!.labelDate,
                       value: DateFormat('EEEE, MMM d, y').format(state.date),
                       icon: Icons.calendar_today_rounded,
                       iconColor: colorScheme.primary,
@@ -351,10 +355,10 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                 maxLines: 3,
                 style: theme.textTheme.bodyMedium,
                 decoration: InputDecoration(
-                  labelText: 'Notes',
+                  labelText: AppLocalizations.of(context)!.labelNotes,
                   labelStyle: TextStyle(color: colorScheme.onSurfaceVariant),
                   alignLabelWithHint: true,
-                  hintText: 'Add details about this transaction...',
+                  hintText: AppLocalizations.of(context)!.labelNotesHint,
                   hintStyle: const TextStyle(color: Colors.grey),
                   filled: true,
                   fillColor: colorScheme.surfaceContainerHighest
@@ -405,9 +409,9 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                               AlwaysStoppedAnimation<Color>(Colors.white),
                         ),
                       )
-                    : const Text(
-                        'Save Transaction',
-                        style: TextStyle(
+                    : Text(
+                        AppLocalizations.of(context)!.btnSaveTransaction,
+                        style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w700,
                         ),
@@ -440,7 +444,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(
-                'Select Account',
+                AppLocalizations.of(context)!.labelSelectAccount,
                 style: theme.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.w800,
                 ),
@@ -548,7 +552,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(
-                'Select Category',
+                AppLocalizations.of(context)!.labelSelectCategory,
                 style: theme.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.w800,
                 ),
@@ -574,8 +578,9 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                     final catIcon = isUncategorized
                         ? Icons.category_rounded
                         : _getIconData(category!.icon);
-                    final catName =
-                        isUncategorized ? 'Uncategorized' : category!.name;
+                    final catName = isUncategorized
+                        ? AppLocalizations.of(context)!.uncategorized
+                        : category!.name;
 
                     return Container(
                       margin: const EdgeInsets.only(bottom: 10),
@@ -713,4 +718,28 @@ class _FormSelectorTile extends StatelessWidget {
       ),
     );
   }
+}
+
+String _getLocalizedError(BuildContext context, Object error) {
+  final l10n = AppLocalizations.of(context)!;
+  if (error is AppException) {
+    switch (error.code) {
+      case 'INVALID_AMOUNT':
+        return l10n.errorInvalidAmount;
+      case 'ACCOUNT_REQUIRED':
+        return l10n.errorAccountRequired;
+      case 'FUTURE_DATE':
+        return l10n.errorFutureDate;
+      case 'ACCOUNT_NOT_FOUND':
+        return l10n.errorAccountNotFound;
+      case 'PROFILE_NOT_FOUND':
+        return l10n.errorProfileNotFound;
+      case 'RATE_NOT_FOUND':
+        return l10n.errorRateNotFound;
+      case 'CONVERSION_FAILED':
+        return l10n.errorConversionFailed;
+    }
+    return error.message;
+  }
+  return error.toString();
 }

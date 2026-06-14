@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:konta/core/l10n/app_localizations.dart';
 import 'package:konta/core/theme/app_theme.dart';
 import 'package:konta/core/utils/currency_formatter.dart';
 import 'package:konta/domain/entities/budget.dart';
@@ -27,7 +28,7 @@ class BudgetsAndGoalsScreen extends ConsumerWidget {
       child: Scaffold(
         appBar: AppBar(
           title: Text(
-            'Budgets & Goals',
+            AppLocalizations.of(context)!.budgetsAndGoals,
             style: theme.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.w800,
               letterSpacing: -0.2,
@@ -46,9 +47,9 @@ class BudgetsAndGoalsScreen extends ConsumerWidget {
               fontWeight: FontWeight.bold,
             ),
             unselectedLabelStyle: theme.textTheme.bodyMedium,
-            tabs: const [
-              Tab(text: 'Budgets'),
-              Tab(text: 'Savings Goals'),
+            tabs: [
+              Tab(text: AppLocalizations.of(context)!.budgets),
+              Tab(text: AppLocalizations.of(context)!.savingsGoals),
             ],
           ),
         ),
@@ -76,16 +77,15 @@ class _BudgetsTabBody extends ConsumerWidget {
         child: CircularProgressIndicator(),
       ),
       error: (err, _) => _ErrorStateWidget(
-        message: 'Failed to load budgets.',
+        message: AppLocalizations.of(context)!.failedLoadBudgets,
         errorDetails: err.toString(),
       ),
       data: (budgets) {
         if (budgets.isEmpty) {
-          return const EmptyStateWidget(
+          return EmptyStateWidget(
             icon: Icons.pie_chart_outline_rounded,
-            title: 'No budgets set yet',
-            subtitle:
-                'Set spending limits for categories to track your monthly expenses and stay within your limits.',
+            title: AppLocalizations.of(context)!.noBudgetsTitle,
+            subtitle: AppLocalizations.of(context)!.noBudgetsSubtitle,
           );
         }
 
@@ -100,7 +100,7 @@ class _BudgetsTabBody extends ConsumerWidget {
               (c) => c.id == budget.categoryId,
               orElse: () => Category(
                 id: budget.categoryId,
-                name: 'Uncategorized',
+                name: AppLocalizations.of(context)!.uncategorized,
                 icon: 'category',
                 color: '#94A3B8',
                 createdAt: DateTime.now(),
@@ -170,8 +170,9 @@ class _BudgetCard extends StatelessWidget {
         CurrencyFormatter.formatPercentage(progress, decimalDigits: 0);
 
     final isOverspent = budget.currentAmount > budget.targetAmount;
-    final statusText =
-        isOverspent ? '$remainingStr overspent' : '$remainingStr remaining';
+    final statusText = isOverspent
+        ? AppLocalizations.of(context)!.budgetOverspent(remainingStr)
+        : AppLocalizations.of(context)!.budgetRemaining(remainingStr);
     final statusColor =
         isOverspent ? financialColors.negative : colorScheme.onSurfaceVariant;
 
@@ -276,16 +277,15 @@ class _SavingsGoalsTabBody extends ConsumerWidget {
         child: CircularProgressIndicator(),
       ),
       error: (err, _) => _ErrorStateWidget(
-        message: 'Failed to load savings goals.',
+        message: AppLocalizations.of(context)!.failedLoadSavingsGoals,
         errorDetails: err.toString(),
       ),
       data: (goals) {
         if (goals.isEmpty) {
-          return const EmptyStateWidget(
+          return EmptyStateWidget(
             icon: Icons.savings_outlined,
-            title: 'No savings goals yet',
-            subtitle:
-                'Create a savings goal to plan for your future dreams, trips, or big purchases.',
+            title: AppLocalizations.of(context)!.noSavingsGoalsTitle,
+            subtitle: AppLocalizations.of(context)!.noSavingsGoalsSubtitle,
           );
         }
 
@@ -359,8 +359,9 @@ class _SavingsGoalCard extends StatelessWidget {
         CurrencyFormatter.formatPercentage(progress, decimalDigits: 0);
 
     final targetDateStr = goal.targetDate != null
-        ? 'Target date: ${DateFormat('MMM d, y').format(goal.targetDate!)}'
-        : 'No target date';
+        ? AppLocalizations.of(context)!
+            .savingsTargetDate(DateFormat('MMM d, y').format(goal.targetDate!))
+        : AppLocalizations.of(context)!.savingsNoTargetDate;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
@@ -421,7 +422,8 @@ class _SavingsGoalCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                '$savedStr saved of $targetStr',
+                AppLocalizations.of(context)!
+                    .savingsSavedOf(savedStr, targetStr),
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: colorScheme.onSurfaceVariant,
                   fontWeight: FontWeight.w500,
@@ -429,7 +431,7 @@ class _SavingsGoalCard extends StatelessWidget {
               ),
               if (progress >= 1.0)
                 Text(
-                  'Goal achieved!',
+                  AppLocalizations.of(context)!.savingsGoalAchieved,
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: financialColors.positive,
                     fontWeight: FontWeight.bold,

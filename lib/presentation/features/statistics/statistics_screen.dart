@@ -4,6 +4,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:konta/core/l10n/app_localizations.dart';
 import 'package:konta/core/theme/app_theme.dart';
 import 'package:konta/core/utils/currency_formatter.dart';
 import 'package:konta/domain/entities/category_statistic.dart';
@@ -58,7 +59,7 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Statistics',
+          AppLocalizations.of(context)!.settingsStatistics,
           style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.w800,
             letterSpacing: -0.2,
@@ -73,7 +74,8 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
             padding: const EdgeInsets.only(right: 8),
             child: IconButton(
               icon: const Icon(Icons.date_range_rounded),
-              tooltip: 'Custom date range',
+              tooltip:
+                  AppLocalizations.of(context)!.statisticsTooltipCustomRange,
               onPressed: () => _pickCustomRange(context),
             ),
           ),
@@ -109,9 +111,10 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
                 key: const ValueKey('expense_chart'),
                 shimmer: _shimmer,
                 categoriesAsync: ref.watch(topExpenseCategoriesProvider),
-                title: 'Top Spending Categories',
-                subtitle: 'Where your money goes',
-                emptyLabel: 'No expenses recorded in this period.',
+                title: AppLocalizations.of(context)!.statisticsTopSpending,
+                subtitle:
+                    AppLocalizations.of(context)!.statisticsWhereMoneyGoes,
+                emptyLabel: AppLocalizations.of(context)!.statisticsNoExpenses,
                 accentColor: context.financialColors.negative,
               ),
             ),
@@ -122,9 +125,9 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
                 key: const ValueKey('income_chart'),
                 shimmer: _shimmer,
                 categoriesAsync: ref.watch(topIncomeCategoriesProvider),
-                title: 'Top Income Categories',
-                subtitle: 'What you earned',
-                emptyLabel: 'No income recorded in this period.',
+                title: AppLocalizations.of(context)!.statisticsTopIncome,
+                subtitle: AppLocalizations.of(context)!.statisticsWhatYouEarned,
+                emptyLabel: AppLocalizations.of(context)!.statisticsNoIncome,
                 accentColor: context.financialColors.positive,
               ),
             ),
@@ -186,7 +189,7 @@ class _FilterChipsRow extends ConsumerWidget {
               duration: const Duration(milliseconds: 200),
               child: FilterChip(
                 key: ValueKey(preset.name),
-                label: Text(preset.label),
+                label: Text(preset.getLocalizedLabel(context)),
                 selected: isSelected,
                 showCheckmark: false,
                 backgroundColor: colorScheme.surfaceContainerHighest,
@@ -276,7 +279,7 @@ class _SummarySection extends ConsumerWidget {
             Expanded(
               child: _SummaryCardSkeleton(
                 shimmer: shimmer,
-                label: 'Income',
+                label: AppLocalizations.of(context)!.income,
                 accentColor: financialColors.positive,
               ),
             ),
@@ -284,7 +287,7 @@ class _SummarySection extends ConsumerWidget {
             Expanded(
               child: _SummaryCardSkeleton(
                 shimmer: shimmer,
-                label: 'Expenses',
+                label: AppLocalizations.of(context)!.expenses,
                 accentColor: financialColors.negative,
               ),
             ),
@@ -300,7 +303,7 @@ class _SummarySection extends ConsumerWidget {
               children: [
                 Expanded(
                   child: _SummaryCard(
-                    label: 'Income',
+                    label: AppLocalizations.of(context)!.income,
                     amount: summary.totalIncome / 100.0,
                     icon: Icons.trending_up_rounded,
                     accentColor: financialColors.positive,
@@ -309,7 +312,7 @@ class _SummarySection extends ConsumerWidget {
                 const SizedBox(width: 12),
                 Expanded(
                   child: _SummaryCard(
-                    label: 'Expenses',
+                    label: AppLocalizations.of(context)!.expenses,
                     amount: summary.totalExpense / 100.0,
                     icon: Icons.trending_down_rounded,
                     accentColor: financialColors.negative,
@@ -380,7 +383,7 @@ class _NetBalanceCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Net Balance',
+                  AppLocalizations.of(context)!.statisticsNetBalance,
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: colorScheme.onSurfaceVariant,
                     fontWeight: FontWeight.w500,
@@ -405,7 +408,9 @@ class _NetBalanceCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(50),
             ),
             child: Text(
-              isPositive ? '▲ Surplus' : '▼ Deficit',
+              isPositive
+                  ? '▲ ${AppLocalizations.of(context)!.statisticsSurplus}'
+                  : '▼ ${AppLocalizations.of(context)!.statisticsDeficit}',
               style: theme.textTheme.labelSmall?.copyWith(
                 color: accentColor,
                 fontWeight: FontWeight.w700,
@@ -1091,5 +1096,23 @@ class _InlineError extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+extension on StatisticsDatePreset {
+  String getLocalizedLabel(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    switch (this) {
+      case StatisticsDatePreset.thisMonth:
+        return l10n.presetThisMonth;
+      case StatisticsDatePreset.last3Months:
+        return l10n.presetLast3Months;
+      case StatisticsDatePreset.last6Months:
+        return l10n.presetLast6Months;
+      case StatisticsDatePreset.thisYear:
+        return l10n.presetThisYear;
+      case StatisticsDatePreset.custom:
+        return l10n.presetCustom;
+    }
   }
 }

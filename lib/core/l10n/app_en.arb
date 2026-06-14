@@ -28,6 +28,10 @@
   "@expense": {
     "description": "Label for negative financial expense"
   },
+  "expenses": "Expenses",
+  "@expenses": {
+    "description": "Label for plural negative financial expenses"
+  },
   "errorGeneric": "Something went wrong. Please try again.",
   "@errorGeneric": {
     "description": "Generic fallback error message"
@@ -43,5 +47,324 @@
   "errorNetwork": "Network error. Please check your internet connection.",
   "@errorNetwork": {
     "description": "Error message when network request fails"
+  },
+  "appTitle": "Konta",
+  "@appTitle": {
+    "description": "App name branding"
+  },
+  "splashTagline": "Your finances, your way.",
+  "@splashTagline": {
+    "description": "Tagline displayed on the splash screen"
+  },
+  "splashStartupFailed": "Startup Failed",
+  "@splashStartupFailed": {
+    "description": "Error title shown when app startup fails"
+  },
+  "splashSecureStorageError": "Konta couldn't initialise its secure storage. Please check available device storage and try again.",
+  "@splashSecureStorageError": {
+    "description": "Error message shown when secure storage fails to initialize"
+  },
+  "tryAgain": "Try Again",
+  "@tryAgain": {
+    "description": "General button label to retry an operation"
+  },
+  "authCheckingBiometrics": "Checking biometrics…",
+  "@authCheckingBiometrics": {
+    "description": "Loading message during biometric initialization"
+  },
+  "authError": "Authentication Error",
+  "@authError": {
+    "description": "Error title for biometric authentication failure"
+  },
+  "authLockedTitle": "Biometrics Locked",
+  "@authLockedTitle": {
+    "description": "Title when biometric lockout occurs"
+  },
+  "authLockedMessage": "Too many failed attempts. Please unlock your device from the lock screen and try again.",
+  "@authLockedMessage": {
+    "description": "Description when biometric lockout occurs"
+  },
+  "authLockoutActive": "Security lockout active",
+  "@authLockoutActive": {
+    "description": "Warning chip label for active biometric lockout"
+  },
+  "authVerifyIdentity": "Verify Your Identity",
+  "@authVerifyIdentity": {
+    "description": "Prompt title to verify identity"
+  },
+  "authVerifyMessage": "Use biometrics or your device PIN to access your financial data securely.",
+  "@authVerifyMessage": {
+    "description": "Prompt description to verify identity"
+  },
+  "authVerifying": "Verifying…",
+  "@authVerifying": {
+    "description": "Button label during verification state"
+  },
+  "authAuthenticate": "Authenticate",
+  "@authAuthenticate": {
+    "description": "Button label to trigger biometric authentication"
+  },
+  "authSkip": "Skip for now",
+  "@authSkip": {
+    "description": "Button label to skip biometric authentication"
+  },
+  "authProtectedBy": "Protected by device biometrics",
+  "@authProtectedBy": {
+    "description": "Footer text describing security"
+  },
+  "unexpectedError": "An unexpected error occurred. Please try again.",
+  "@unexpectedError": {
+    "description": "Generic fallback error message"
+  },
+  "overview": "Overview",
+  "@overview": {
+    "description": "Title/label for the overview tab"
+  },
+  "accounts": "Accounts",
+  "@accounts": {
+    "description": "Title/label for the accounts tab or section"
+  },
+  "recentTransactions": "Recent Transactions",
+  "@recentTransactions": {
+    "description": "Section header for recent transactions list"
+  },
+  "noTransactionsTitle": "No transactions yet",
+  "@noTransactionsTitle": {
+    "description": "Title when transaction list is empty"
+  },
+  "noTransactionsSubtitle": "Add your first income or expense to see it here and start tracking.",
+  "@noTransactionsSubtitle": {
+    "description": "Subtitle when transaction list is empty"
+  },
+  "failedLoadTransactions": "Failed to load transactions",
+  "@failedLoadTransactions": {
+    "description": "Error message when transactions stream fails"
+  },
+  "settingsBudgetsGoals": "Budgets & Goals",
+  "@settingsBudgetsGoals": {
+    "description": "Settings option for budgets and goals"
+  },
+  "settingsStatistics": "Statistics",
+  "@settingsStatistics": {
+    "description": "Settings option for statistics"
+  },
+  "balanceTotal": "Total Balance",
+  "@balanceTotal": {
+    "description": "Label for the total balance card"
+  },
+  "statisticsTooltipCustomRange": "Custom date range",
+  "@statisticsTooltipCustomRange": {
+    "description": "Tooltip for custom date range button"
+  },
+  "statisticsTopSpending": "Top Spending Categories",
+  "@statisticsTopSpending": {
+    "description": "Section title for top spending categories"
+  },
+  "statisticsWhereMoneyGoes": "Where your money goes",
+  "@statisticsWhereMoneyGoes": {
+    "description": "Section subtitle for top spending categories"
+  },
+  "statisticsNoExpenses": "No expenses recorded in this period.",
+  "@statisticsNoExpenses": {
+    "description": "Label when no expenses exist for statistics"
+  },
+  "statisticsTopIncome": "Top Income Categories",
+  "@statisticsTopIncome": {
+    "description": "Section title for top income categories"
+  },
+  "statisticsWhatYouEarned": "What you earned",
+  "@statisticsWhatYouEarned": {
+    "description": "Section subtitle for top income categories"
+  },
+  "statisticsNoIncome": "No income recorded in this period.",
+  "@statisticsNoIncome": {
+    "description": "Label when no income exists for statistics"
+  },
+  "statisticsNetBalance": "Net Balance",
+  "@statisticsNetBalance": {
+    "description": "Label for the net balance section"
+  },
+  "statisticsSurplus": "Surplus",
+  "@statisticsSurplus": {
+    "description": "Label for net balance surplus"
+  },
+  "statisticsDeficit": "Deficit",
+  "@statisticsDeficit": {
+    "description": "Label for net balance deficit"
+  },
+  "presetThisMonth": "This Month",
+  "@presetThisMonth": {
+    "description": "Label for this month date filter"
+  },
+  "presetLast3Months": "Last 3 Months",
+  "@presetLast3Months": {
+    "description": "Label for last 3 months date filter"
+  },
+  "presetLast6Months": "Last 6 Months",
+  "@presetLast6Months": {
+    "description": "Label for last 6 months date filter"
+  },
+  "presetThisYear": "This Year",
+  "@presetThisYear": {
+    "description": "Label for this year date filter"
+  },
+  "presetCustom": "Custom",
+  "@presetCustom": {
+    "description": "Label for custom date filter"
+  },
+  "budgetsAndGoals": "Budgets & Goals",
+  "@budgetsAndGoals": {
+    "description": "Title for the budgets and goals screen"
+  },
+  "savingsGoals": "Savings Goals",
+  "@savingsGoals": {
+    "description": "Title/label for savings goals tab or section"
+  },
+  "failedLoadBudgets": "Failed to load budgets.",
+  "@failedLoadBudgets": {
+    "description": "Error message when budgets stream fails"
+  },
+  "noBudgetsTitle": "No budgets set yet",
+  "@noBudgetsTitle": {
+    "description": "Title when budgets list is empty"
+  },
+  "noBudgetsSubtitle": "Set spending limits for categories to track your monthly expenses and stay within your limits.",
+  "@noBudgetsSubtitle": {
+    "description": "Subtitle when budgets list is empty"
+  },
+  "uncategorized": "Uncategorized",
+  "@uncategorized": {
+    "description": "Fallback name for categories without a name or value"
+  },
+  "budgetOverspent": "{amount} overspent",
+  "@budgetOverspent": {
+    "description": "Remaining budget spent description when limit is exceeded",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "budgetRemaining": "{amount} remaining",
+  "@budgetRemaining": {
+    "description": "Remaining budget spent description when within limit",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "failedLoadSavingsGoals": "Failed to load savings goals.",
+  "@failedLoadSavingsGoals": {
+    "description": "Error message when savings goals stream fails"
+  },
+  "noSavingsGoalsTitle": "No savings goals yet",
+  "@noSavingsGoalsTitle": {
+    "description": "Title when savings goals list is empty"
+  },
+  "noSavingsGoalsSubtitle": "Create a savings goal to plan for your future dreams, trips, or big purchases.",
+  "@noSavingsGoalsSubtitle": {
+    "description": "Subtitle when savings goals list is empty"
+  },
+  "savingsTargetDate": "Target date: {date}",
+  "@savingsTargetDate": {
+    "description": "Savings goal target date description",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "savingsNoTargetDate": "No target date",
+  "@savingsNoTargetDate": {
+    "description": "Description when savings goal has no target date"
+  },
+  "savingsSavedOf": "{saved} saved of {target}",
+  "@savingsSavedOf": {
+    "description": "Savings goal current progress vs target",
+    "placeholders": {
+      "saved": {
+        "type": "String"
+      },
+      "target": {
+        "type": "String"
+      }
+    }
+  },
+  "savingsGoalAchieved": "Goal achieved!",
+  "@savingsGoalAchieved": {
+    "description": "Text showing savings goal milestone completion"
+  },
+  "txnSuccessCreated": "Transaction created successfully!",
+  "@txnSuccessCreated": {
+    "description": "Success message when transaction is saved"
+  },
+  "labelAmount": "AMOUNT",
+  "@labelAmount": {
+    "description": "Label for amount input field"
+  },
+  "labelAccount": "Account",
+  "@labelAccount": {
+    "description": "Label for account field"
+  },
+  "labelSelectAccount": "Select Account",
+  "@labelSelectAccount": {
+    "description": "Prompt or header to select an account"
+  },
+  "labelCategory": "Category",
+  "@labelCategory": {
+    "description": "Label for category field"
+  },
+  "labelSelectCategory": "Select Category",
+  "@labelSelectCategory": {
+    "description": "Prompt or header to select a category"
+  },
+  "labelDate": "Date",
+  "@labelDate": {
+    "description": "Label for date field"
+  },
+  "labelNotes": "Notes",
+  "@labelNotes": {
+    "description": "Label for notes field"
+  },
+  "labelNotesHint": "Add details about this transaction...",
+  "@labelNotesHint": {
+    "description": "Hint text for notes input field"
+  },
+  "btnSaveTransaction": "Save Transaction",
+  "@btnSaveTransaction": {
+    "description": "Button label to save transaction"
+  },
+  "errorInvalidAmount": "Please enter a valid amount greater than 0",
+  "@errorInvalidAmount": {
+    "description": "Validation error for invalid transaction amount"
+  },
+  "errorAccountRequired": "Please select an account",
+  "@errorAccountRequired": {
+    "description": "Validation error when account is not selected"
+  },
+  "errorFutureDate": "Transaction date cannot be in the future",
+  "@errorFutureDate": {
+    "description": "Validation error when transaction date is in the future"
+  },
+  "errorAccountNotFound": "Account not found",
+  "@errorAccountNotFound": {
+    "description": "Error when account doesn't exist"
+  },
+  "errorProfileNotFound": "Profile not found",
+  "@errorProfileNotFound": {
+    "description": "Error when user profile doesn't exist"
+  },
+  "errorRateNotFound": "Exchange rate not available for the requested currency",
+  "@errorRateNotFound": {
+    "description": "Error when exchange rate is missing"
+  },
+  "errorConversionFailed": "Failed to convert currency",
+  "@errorConversionFailed": {
+    "description": "Error when currency conversion fails"
+  },
+  "getStarted": "Get Started",
+  "@getStarted": {
+    "description": "Default label for empty state call-to-action button"
   }
 }

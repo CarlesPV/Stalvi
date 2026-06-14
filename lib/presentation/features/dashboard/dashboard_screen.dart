@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:konta/core/l10n/app_localizations.dart';
 import 'package:konta/core/theme/app_theme.dart';
 import 'package:konta/core/utils/currency_formatter.dart';
 import 'package:konta/domain/entities/transaction.dart';
@@ -37,29 +38,6 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen>
   late final AnimationController _shimmerController;
   late final Animation<double> _shimmer;
 
-  static const _destinations = [
-    NavigationDestination(
-      icon: Icon(Icons.dashboard_outlined),
-      selectedIcon: Icon(Icons.dashboard_rounded),
-      label: 'Overview',
-    ),
-    NavigationDestination(
-      icon: Icon(Icons.receipt_long_outlined),
-      selectedIcon: Icon(Icons.receipt_long_rounded),
-      label: 'Transactions',
-    ),
-    NavigationDestination(
-      icon: Icon(Icons.account_balance_outlined),
-      selectedIcon: Icon(Icons.account_balance_rounded),
-      label: 'Accounts',
-    ),
-    NavigationDestination(
-      icon: Icon(Icons.settings_outlined),
-      selectedIcon: Icon(Icons.settings_rounded),
-      label: 'Settings',
-    ),
-  ];
-
   @override
   void initState() {
     super.initState();
@@ -86,6 +64,30 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen>
     final colorScheme = theme.colorScheme;
     final financialColors = context.financialColors;
 
+    final l10n = AppLocalizations.of(context)!;
+    final destinations = [
+      NavigationDestination(
+        icon: const Icon(Icons.dashboard_outlined),
+        selectedIcon: const Icon(Icons.dashboard_rounded),
+        label: l10n.overview,
+      ),
+      NavigationDestination(
+        icon: const Icon(Icons.receipt_long_outlined),
+        selectedIcon: const Icon(Icons.receipt_long_rounded),
+        label: l10n.transactions,
+      ),
+      NavigationDestination(
+        icon: const Icon(Icons.account_balance_outlined),
+        selectedIcon: const Icon(Icons.account_balance_rounded),
+        label: l10n.accounts,
+      ),
+      NavigationDestination(
+        icon: const Icon(Icons.settings_outlined),
+        selectedIcon: const Icon(Icons.settings_rounded),
+        label: l10n.settings,
+      ),
+    ];
+
     return Scaffold(
       appBar: AppBar(
         title: Row(
@@ -106,7 +108,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen>
             ),
             const SizedBox(width: 10),
             Text(
-              'Konta',
+              l10n.appTitle,
               style: theme.textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.w800,
                 letterSpacing: -0.5,
@@ -134,7 +136,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen>
       bottomNavigationBar: NavigationBar(
         selectedIndex: _selectedIndex,
         onDestinationSelected: (i) => setState(() => _selectedIndex = i),
-        destinations: _destinations,
+        destinations: destinations,
       ),
       floatingActionButton: _selectedIndex == 3
           ? null
@@ -211,7 +213,7 @@ class _OverviewTab extends ConsumerWidget {
             children: [
               Expanded(
                 child: _StatCard(
-                  label: 'Income',
+                  label: AppLocalizations.of(context)!.income,
                   icon: Icons.trending_up_rounded,
                   accentColor: financialColors.positive,
                   shimmer: shimmer,
@@ -222,7 +224,7 @@ class _OverviewTab extends ConsumerWidget {
               const SizedBox(width: 12),
               Expanded(
                 child: _StatCard(
-                  label: 'Expenses',
+                  label: AppLocalizations.of(context)!.expenses,
                   icon: Icons.trending_down_rounded,
                   accentColor: financialColors.negative,
                   shimmer: shimmer,
@@ -237,7 +239,7 @@ class _OverviewTab extends ConsumerWidget {
 
           // ── Section header ────────────────────────────────────────────
           Text(
-            'Recent Transactions',
+            AppLocalizations.of(context)!.recentTransactions,
             style: theme.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.w700,
               color: colorScheme.onSurface,
@@ -262,7 +264,7 @@ class _OverviewTab extends ConsumerWidget {
               padding: const EdgeInsets.symmetric(vertical: 24),
               child: Center(
                 child: Text(
-                  'Failed to load transactions',
+                  AppLocalizations.of(context)!.failedLoadTransactions,
                   style: TextStyle(color: colorScheme.error),
                 ),
               ),
@@ -273,10 +275,10 @@ class _OverviewTab extends ConsumerWidget {
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   child: EmptyStateWidget(
                     icon: Icons.receipt_long_outlined,
-                    title: 'No transactions yet',
+                    title: AppLocalizations.of(context)!.noTransactionsTitle,
                     subtitle:
-                        'Add your first income or expense to see it here and start tracking.',
-                    actionLabel: 'Add transaction',
+                        AppLocalizations.of(context)!.noTransactionsSubtitle,
+                    actionLabel: AppLocalizations.of(context)!.addTransaction,
                     onActionPressed: () {
                       final state = context
                           .findAncestorStateOfType<_DashboardScreenState>();
@@ -322,7 +324,7 @@ class _TransactionsTab extends ConsumerWidget {
       loading: () => _GenericSkeletonTab(shimmer: shimmer, itemCount: 8),
       error: (err, _) => Center(
         child: Text(
-          'Failed to load transactions',
+          AppLocalizations.of(context)!.failedLoadTransactions,
           style: TextStyle(color: colorScheme.error),
         ),
       ),
@@ -330,10 +332,9 @@ class _TransactionsTab extends ConsumerWidget {
         if (transactions.isEmpty) {
           return EmptyStateWidget(
             icon: Icons.receipt_long_outlined,
-            title: 'No transactions yet',
-            subtitle:
-                'Add your first income or expense to see it here and start tracking.',
-            actionLabel: 'Add transaction',
+            title: AppLocalizations.of(context)!.noTransactionsTitle,
+            subtitle: AppLocalizations.of(context)!.noTransactionsSubtitle,
+            actionLabel: AppLocalizations.of(context)!.addTransaction,
             onActionPressed: () {
               final state =
                   context.findAncestorStateOfType<_DashboardScreenState>();
@@ -519,7 +520,7 @@ class _SettingsSkeletonTab extends StatelessWidget {
                     const SizedBox(width: 14),
                     Expanded(
                       child: Text(
-                        'Budgets & Goals',
+                        AppLocalizations.of(context)!.settingsBudgetsGoals,
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                               fontWeight: FontWeight.w700,
                               color: colorScheme.onSurface,
@@ -566,7 +567,7 @@ class _SettingsSkeletonTab extends StatelessWidget {
                     const SizedBox(width: 14),
                     Expanded(
                       child: Text(
-                        'Statistics',
+                        AppLocalizations.of(context)!.settingsStatistics,
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                               fontWeight: FontWeight.w700,
                               color: colorScheme.onSurface,
@@ -665,7 +666,7 @@ class _BalanceCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Total Balance',
+            AppLocalizations.of(context)!.balanceTotal,
             style: theme.textTheme.bodyMedium?.copyWith(
               color: colorScheme.onPrimary.withValues(alpha: 0.75),
               fontWeight: FontWeight.w500,
@@ -708,7 +709,8 @@ class _BalanceCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(50),
             ),
             child: Text(
-              'June 2026',
+              DateFormat.yMMMM(Localizations.localeOf(context).toString())
+                  .format(DateTime(2026, 6)),
               style: theme.textTheme.labelSmall?.copyWith(
                 color: colorScheme.onPrimary.withValues(alpha: 0.85),
                 fontWeight: FontWeight.w600,

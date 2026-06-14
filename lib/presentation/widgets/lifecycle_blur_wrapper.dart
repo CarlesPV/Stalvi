@@ -40,6 +40,7 @@ class _LifecycleBlurWrapperState extends State<LifecycleBlurWrapper>
   @override
   Widget build(BuildContext context) {
     return Stack(
+      fit: StackFit.expand,
       children: [
         widget.child,
         if (_showOverlay)
