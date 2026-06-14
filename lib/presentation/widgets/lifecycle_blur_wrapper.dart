@@ -12,7 +12,8 @@ class LifecycleBlurWrapper extends StatefulWidget {
   State<LifecycleBlurWrapper> createState() => _LifecycleBlurWrapperState();
 }
 
-class _LifecycleBlurWrapperState extends State<LifecycleBlurWrapper> with WidgetsBindingObserver {
+class _LifecycleBlurWrapperState extends State<LifecycleBlurWrapper>
+    with WidgetsBindingObserver {
   bool _showOverlay = false;
 
   @override

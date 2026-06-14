@@ -19,8 +19,10 @@ class ExportEncryptedJsonUseCase {
   ///
   /// Throws a [ValidationException] if [password] is empty.
   /// Throws an [AppException] subclass on any other failure.
-  Future<ExportResult> call(String accountId,
-      {required String password,}) async {
+  Future<ExportResult> call(
+    String accountId, {
+    required String password,
+  }) async {
     if (password.isEmpty) {
       throw const ValidationException(
         message: 'A password is required for encrypted export',

@@ -58,9 +58,12 @@ void main() {
 
       final call = usecase.execute(params);
       await expectLater(
-          () => call,
-          throwsA(isA<ValidationException>()
-              .having((e) => e.code, 'code', 'INVALID_AMOUNT'),),);
+        () => call,
+        throwsA(
+          isA<ValidationException>()
+              .having((e) => e.code, 'code', 'INVALID_AMOUNT'),
+        ),
+      );
     });
 
     test('should throw validation error when target date is in the past',
@@ -76,9 +79,12 @@ void main() {
 
       final call = usecase.execute(params);
       await expectLater(
-          () => call,
-          throwsA(isA<ValidationException>()
-              .having((e) => e.code, 'code', 'INVALID_TARGET_DATE'),),);
+        () => call,
+        throwsA(
+          isA<ValidationException>()
+              .having((e) => e.code, 'code', 'INVALID_TARGET_DATE'),
+        ),
+      );
     });
 
     test('should successfully create savings goal without target date',

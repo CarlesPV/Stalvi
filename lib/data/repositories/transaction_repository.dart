@@ -181,7 +181,9 @@ class TransactionRepository implements ITransactionRepository {
         ..orderBy([
           (t) => OrderingTerm(expression: t.date, mode: OrderingMode.desc),
         ]);
-      return query.watch().map((rows) => rows.map((r) => r.toDomain()).toList());
+      return query
+          .watch()
+          .map((rows) => rows.map((r) => r.toDomain()).toList());
     } catch (e) {
       throw DatabaseException(
         message: 'Failed to watch transactions',

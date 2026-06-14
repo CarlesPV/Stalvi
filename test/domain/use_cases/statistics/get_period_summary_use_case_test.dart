@@ -22,10 +22,12 @@ void main() {
     const expectedSummary =
         PeriodSummary(totalIncome: 150000, totalExpense: 50000);
 
-    when(() => mockRepository.getPeriodSummary(
-          startDate: startDate,
-          endDate: endDate,
-        ),).thenAnswer((_) async => expectedSummary);
+    when(
+      () => mockRepository.getPeriodSummary(
+        startDate: startDate,
+        endDate: endDate,
+      ),
+    ).thenAnswer((_) async => expectedSummary);
 
     // Act
     final result =
@@ -33,10 +35,12 @@ void main() {
 
     // Assert
     expect(result, expectedSummary);
-    verify(() => mockRepository.getPeriodSummary(
-          startDate: startDate,
-          endDate: endDate,
-        ),).called(1);
+    verify(
+      () => mockRepository.getPeriodSummary(
+        startDate: startDate,
+        endDate: endDate,
+      ),
+    ).called(1);
     verifyNoMoreInteractions(mockRepository);
   });
 }

@@ -129,7 +129,8 @@ void main() {
         when(() => mockProfileRepo.getProfileById(account.userId))
             .thenAnswer((_) async => profile);
         when(() => mockTransactionRepo.createTransaction(any())).thenAnswer(
-            (inv) async => inv.positionalArguments[0] as Transaction,);
+          (inv) async => inv.positionalArguments[0] as Transaction,
+        );
 
         final result = await usecase.execute(params);
 
@@ -155,7 +156,8 @@ void main() {
         when(() => mockExchangeRateRepo.getLatestRates(baseCurrency: 'EUR'))
             .thenAnswer((_) async => rateSnapshot);
         when(() => mockTransactionRepo.createTransaction(any())).thenAnswer(
-            (inv) async => inv.positionalArguments[0] as Transaction,);
+          (inv) async => inv.positionalArguments[0] as Transaction,
+        );
 
         final result = await usecase.execute(params);
 
@@ -213,9 +215,12 @@ void main() {
 
         final call = usecase.execute(params);
         await expectLater(
-            () => call,
-            throwsA(isA<ValidationException>()
-                .having((e) => e.code, 'code', 'RATE_NOT_FOUND'),),);
+          () => call,
+          throwsA(
+            isA<ValidationException>()
+                .having((e) => e.code, 'code', 'RATE_NOT_FOUND'),
+          ),
+        );
       });
     });
   });

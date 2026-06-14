@@ -19,7 +19,8 @@ class MockAuthNotifier extends AuthNotifier {
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  testWidgets('App Flow: Bypass Auth, Add Transaction, Return to Dashboard', (WidgetTester tester) async {
+  testWidgets('App Flow: Bypass Auth, Add Transaction, Return to Dashboard',
+      (WidgetTester tester) async {
     // 1. Initialize the app with mocked authentication
     await tester.pumpWidget(
       ProviderScope(
@@ -59,7 +60,7 @@ void main() {
     // Tap the account selector tile
     await tester.tap(find.text('Account'));
     await tester.pumpAndSettle();
-    
+
     // Bottom sheet is open, tap the first account in the list
     await tester.tap(find.byType(ListTile).first);
     await tester.pumpAndSettle();
@@ -68,7 +69,7 @@ void main() {
     // Tap the category selector tile
     await tester.tap(find.text('Category'));
     await tester.pumpAndSettle();
-    
+
     // Bottom sheet is open. The first is 'Uncategorized', tap the second one (index 1)
     await tester.tap(find.byType(ListTile).at(1));
     await tester.pumpAndSettle();
@@ -77,9 +78,10 @@ void main() {
     await tester.tap(find.text('Save Transaction'));
     await tester.pumpAndSettle();
 
-    // 9. Verify that the user is returned to the Dashboard 
+    // 9. Verify that the user is returned to the Dashboard
     // and a success SnackBar or Recent Transactions appears
     expect(find.text('Transaction created successfully!'), findsOneWidget);
-    expect(find.byType(FloatingActionButton), findsOneWidget); // Back to Dashboard
+    expect(
+        find.byType(FloatingActionButton), findsOneWidget); // Back to Dashboard
   });
 }

@@ -54,8 +54,10 @@ class CurrencyFormatter {
     try {
       // Remove currency symbols, non-breaking spaces, and standard spaces
       String cleanValue = value
-          .replaceAll(RegExp(r'[^\d.,\-+]'),
-              '',) // Keep only digits, dots, commas, and signs
+          .replaceAll(
+            RegExp(r'[^\d.,\-+]'),
+            '',
+          ) // Keep only digits, dots, commas, and signs
           .trim();
 
       final hasComma = cleanValue.contains(',');

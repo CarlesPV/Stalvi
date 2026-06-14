@@ -74,9 +74,12 @@ void main() {
 
       final call = usecase.execute(params);
       await expectLater(
-          () => call,
-          throwsA(isA<ValidationException>()
-              .having((e) => e.code, 'code', 'INVALID_AMOUNT'),),);
+        () => call,
+        throwsA(
+          isA<ValidationException>()
+              .having((e) => e.code, 'code', 'INVALID_AMOUNT'),
+        ),
+      );
     });
 
     test('should throw validation error when end date is before start date',
@@ -91,9 +94,12 @@ void main() {
 
       final call = usecase.execute(params);
       await expectLater(
-          () => call,
-          throwsA(isA<ValidationException>()
-              .having((e) => e.code, 'code', 'INVALID_DATES'),),);
+        () => call,
+        throwsA(
+          isA<ValidationException>()
+              .having((e) => e.code, 'code', 'INVALID_DATES'),
+        ),
+      );
     });
 
     test('should throw not found error when category does not exist', () async {

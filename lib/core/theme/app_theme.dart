@@ -111,7 +111,8 @@ class AppTheme {
       brightness: Brightness.dark,
       colorScheme: const ColorScheme.dark(
         primary: Color(
-            0xFF60A5FA,), // Light Blue/Indigo accent for dark theme visibility
+          0xFF60A5FA,
+        ), // Light Blue/Indigo accent for dark theme visibility
         onPrimary: bgDark,
         secondary: Color(0xFF38BDF8),
         onSecondary: bgDark,
@@ -134,7 +135,8 @@ class AppTheme {
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
-          side: const BorderSide(color: Color(0xFF1E293B), width: 1), // Slate 800 border
+          side: const BorderSide(
+              color: Color(0xFF1E293B), width: 1), // Slate 800 border
         ),
       ),
       dividerTheme: const DividerThemeData(
@@ -155,8 +157,10 @@ class AppTheme {
 extension FinancialColorsExtension on BuildContext {
   FinancialColors get financialColors {
     final extension = Theme.of(this).extension<FinancialColors>();
-    assert(extension != null,
-        'FinancialColors extension is not registered in the current theme.',);
+    assert(
+      extension != null,
+      'FinancialColors extension is not registered in the current theme.',
+    );
     return extension!;
   }
 }

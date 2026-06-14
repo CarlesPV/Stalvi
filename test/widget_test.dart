@@ -20,7 +20,8 @@ void main() {
       ProviderScope(
         overrides: [
           appDatabaseProvider.overrideWith(
-              (ref) async => AppDatabase.forTesting(NativeDatabase.memory()),),
+            (ref) async => AppDatabase.forTesting(NativeDatabase.memory()),
+          ),
         ],
         child: const KontaApp(),
       ),

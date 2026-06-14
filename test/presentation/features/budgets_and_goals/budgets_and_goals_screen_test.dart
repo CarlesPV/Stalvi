@@ -164,9 +164,11 @@ void main() {
       // Budgets tab is default active. Check budgets empty state text.
       expect(find.text('No budgets set yet'), findsOneWidget);
       expect(
-          find.text(
-              'Set spending limits for categories to track your monthly expenses and stay within your limits.',),
-          findsOneWidget,);
+        find.text(
+          'Set spending limits for categories to track your monthly expenses and stay within your limits.',
+        ),
+        findsOneWidget,
+      );
 
       // Switch to Savings Goals tab
       await tester.tap(find.text('Savings Goals'));
@@ -175,9 +177,11 @@ void main() {
       // Check savings goals empty state text.
       expect(find.text('No savings goals yet'), findsOneWidget);
       expect(
-          find.text(
-              'Create a savings goal to plan for your future dreams, trips, or big purchases.',),
-          findsOneWidget,);
+        find.text(
+          'Create a savings goal to plan for your future dreams, trips, or big purchases.',
+        ),
+        findsOneWidget,
+      );
     });
 
     testWidgets(
@@ -194,8 +198,10 @@ void main() {
       await tester.pumpAndSettle();
 
       // Check Category names
-      expect(find.text('Food & Dining'),
-          findsWidgets,); // Should find two occurrences because we have two budgets with the same category
+      expect(
+        find.text('Food & Dining'),
+        findsWidgets,
+      ); // Should find two occurrences because we have two budgets with the same category
 
       // Budget 1 (Normal): Spent €80.00 of €200.00 (progress: 40%) -> remaining: €120.00
       final b1Spent = CurrencyFormatter.format(80.0);

@@ -155,13 +155,12 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen>
       PageRouteBuilder(
         pageBuilder: (context, animation, secondaryAnimation) =>
             const AddTransactionScreen(),
-        transitionsBuilder:
-            (context, animation, secondaryAnimation, child) {
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
           const begin = Offset(0.0, 0.1);
           const end = Offset.zero;
           const curve = Curves.easeOutCubic;
-          final tween = Tween(begin: begin, end: end)
-              .chain(CurveTween(curve: curve));
+          final tween =
+              Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
           return SlideTransition(
             position: animation.drive(tween),
             child: FadeTransition(
@@ -275,10 +274,12 @@ class _OverviewTab extends ConsumerWidget {
                   child: EmptyStateWidget(
                     icon: Icons.receipt_long_outlined,
                     title: 'No transactions yet',
-                    subtitle: 'Add your first income or expense to see it here and start tracking.',
+                    subtitle:
+                        'Add your first income or expense to see it here and start tracking.',
                     actionLabel: 'Add transaction',
                     onActionPressed: () {
-                      final state = context.findAncestorStateOfType<_DashboardScreenState>();
+                      final state = context
+                          .findAncestorStateOfType<_DashboardScreenState>();
                       if (state != null) {
                         state._navigateToAddTransaction(context);
                       }
@@ -330,10 +331,12 @@ class _TransactionsTab extends ConsumerWidget {
           return EmptyStateWidget(
             icon: Icons.receipt_long_outlined,
             title: 'No transactions yet',
-            subtitle: 'Add your first income or expense to see it here and start tracking.',
+            subtitle:
+                'Add your first income or expense to see it here and start tracking.',
             actionLabel: 'Add transaction',
             onActionPressed: () {
-              final state = context.findAncestorStateOfType<_DashboardScreenState>();
+              final state =
+                  context.findAncestorStateOfType<_DashboardScreenState>();
               if (state != null) {
                 state._navigateToAddTransaction(context);
               }
@@ -377,7 +380,8 @@ class _TransactionItem extends StatelessWidget {
       currencyCode: transaction.originalCurrency,
       showSign: true,
     );
-    final color = isIncome ? financialColors.positive : financialColors.negative;
+    final color =
+        isIncome ? financialColors.positive : financialColors.negative;
 
     final icon = isIncome
         ? Icons.trending_up_rounded

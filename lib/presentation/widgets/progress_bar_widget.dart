@@ -78,7 +78,8 @@ class ProgressBarWidget extends StatelessWidget {
                               if (animatedValue > 0.02)
                                 BoxShadow(
                                   color: resolvedActiveColor.withValues(
-                                      alpha: 0.25,),
+                                    alpha: 0.25,
+                                  ),
                                   blurRadius: 4,
                                   offset: const Offset(0, 1),
                                 ),

@@ -135,8 +135,10 @@ void main() {
       notifier.updateCategory('cat_expense');
 
       // Verify category is set
-      expect(container.read(addTransactionNotifierProvider).categoryId,
-          'cat_expense',);
+      expect(
+        container.read(addTransactionNotifierProvider).categoryId,
+        'cat_expense',
+      );
 
       // Change type to income
       notifier.updateType(TransactionType.income);

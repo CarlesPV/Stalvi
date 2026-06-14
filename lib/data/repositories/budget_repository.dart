@@ -37,8 +37,10 @@ class BudgetRepository implements IBudgetRepository {
   @override
   Future<List<Budget>> getBudgetsByCategoryId(String categoryId) async {
     final query = _db.select(_db.budgets)
-      ..where((tbl) =>
-          tbl.categoryId.equals(categoryId) & tbl.isDeleted.equals(false),);
+      ..where(
+        (tbl) =>
+            tbl.categoryId.equals(categoryId) & tbl.isDeleted.equals(false),
+      );
     final data = await query.get();
     return data.map(BudgetMapper.fromDataClass).toList();
   }

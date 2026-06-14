@@ -16,4 +16,5 @@ class DiscreetModeNotifier extends Notifier<bool> {
 }
 
 /// Global provider for the discreet mode state.
-final discreetModeProvider = NotifierProvider<DiscreetModeNotifier, bool>(DiscreetModeNotifier.new);
+final discreetModeProvider =
+    NotifierProvider<DiscreetModeNotifier, bool>(DiscreetModeNotifier.new);

@@ -14,7 +14,7 @@ final secureStorageProvider = Provider<SecureStorageManager>((ref) {
 /// attempts to load any user preference previously saved in secure storage.
 class LocaleNotifier extends Notifier<Locale> {
   late final SecureStorageManager _secureStorage;
-  
+
   static const List<String> supportedLanguages = ['en', 'es', 'ca'];
 
   @override
@@ -61,4 +61,5 @@ class LocaleNotifier extends Notifier<Locale> {
 }
 
 /// Global provider for the active [Locale].
-final localeProvider = NotifierProvider<LocaleNotifier, Locale>(LocaleNotifier.new);
+final localeProvider =
+    NotifierProvider<LocaleNotifier, Locale>(LocaleNotifier.new);

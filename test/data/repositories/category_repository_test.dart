@@ -65,7 +65,10 @@ void main() {
         () async {
       final catActive = buildTestCategory(id: uuid.v4(), name: 'Active Cat');
       final catDeleted = buildTestCategory(
-          id: uuid.v4(), name: 'Deleted Cat', isDeleted: true,);
+        id: uuid.v4(),
+        name: 'Deleted Cat',
+        isDeleted: true,
+      );
 
       await repository.createCategory(catActive);
       await repository.createCategory(catDeleted);

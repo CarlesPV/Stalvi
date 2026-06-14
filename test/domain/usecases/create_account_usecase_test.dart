@@ -39,7 +39,8 @@ void main() {
         () async {
       // Arrange
       when(() => mockAccountRepository.createAccount(any())).thenAnswer(
-          (invocation) async => invocation.positionalArguments[0] as Account,);
+        (invocation) async => invocation.positionalArguments[0] as Account,
+      );
 
       // Act
       final result = await usecase.execute(defaultParams);
@@ -82,7 +83,8 @@ void main() {
         () async {
       // Arrange
       when(() => mockAccountRepository.createAccount(any())).thenAnswer(
-          (invocation) async => invocation.positionalArguments[0] as Account,);
+        (invocation) async => invocation.positionalArguments[0] as Account,
+      );
 
       // Act
       final result = await usecase.execute(defaultParams);

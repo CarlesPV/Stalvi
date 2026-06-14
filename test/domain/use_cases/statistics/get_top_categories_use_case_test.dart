@@ -31,11 +31,13 @@ void main() {
       ),
     ];
 
-    when(() => mockRepository.getTopCategories(
-          startDate: startDate,
-          endDate: endDate,
-          type: TransactionType.expense,
-        ),).thenAnswer((_) async => expectedCategories);
+    when(
+      () => mockRepository.getTopCategories(
+        startDate: startDate,
+        endDate: endDate,
+        type: TransactionType.expense,
+      ),
+    ).thenAnswer((_) async => expectedCategories);
 
     // Act
     final result = await useCase.execute(
@@ -46,11 +48,13 @@ void main() {
 
     // Assert
     expect(result, expectedCategories);
-    verify(() => mockRepository.getTopCategories(
-          startDate: startDate,
-          endDate: endDate,
-          type: TransactionType.expense,
-        ),).called(1);
+    verify(
+      () => mockRepository.getTopCategories(
+        startDate: startDate,
+        endDate: endDate,
+        type: TransactionType.expense,
+      ),
+    ).called(1);
     verifyNoMoreInteractions(mockRepository);
   });
 }

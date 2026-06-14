@@ -303,11 +303,14 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                           ? _parseHexColor(selectedAccount.color)
                           : colorScheme.onSurfaceVariant,
                       onTap: () => _showAccountSelector(
-                          context, accountsAsync.valueOrNull ?? [],),
+                        context,
+                        accountsAsync.valueOrNull ?? [],
+                      ),
                     ),
                     Divider(
-                        height: 1,
-                        color: colorScheme.outline.withValues(alpha: 0.08),),
+                      height: 1,
+                      color: colorScheme.outline.withValues(alpha: 0.08),
+                    ),
                     // Category Selector
                     _FormSelectorTile(
                       label: 'Category',
@@ -318,12 +321,16 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                       iconColor: selectedCategory != null
                           ? _parseHexColor(selectedCategory.color)
                           : colorScheme.onSurfaceVariant,
-                      onTap: () => _showCategorySelector(context,
-                          categoriesAsync.valueOrNull ?? [], state.type,),
+                      onTap: () => _showCategorySelector(
+                        context,
+                        categoriesAsync.valueOrNull ?? [],
+                        state.type,
+                      ),
                     ),
                     Divider(
-                        height: 1,
-                        color: colorScheme.outline.withValues(alpha: 0.08),),
+                      height: 1,
+                      color: colorScheme.outline.withValues(alpha: 0.08),
+                    ),
                     // Date Selector
                     _FormSelectorTile(
                       label: 'Date',
@@ -466,8 +473,11 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                       child: ListTile(
                         leading: CircleAvatar(
                           backgroundColor: accColor.withValues(alpha: 0.12),
-                          child: Icon(_getIconData(account.icon),
-                              color: accColor, size: 20,),
+                          child: Icon(
+                            _getIconData(account.icon),
+                            color: accColor,
+                            size: 20,
+                          ),
                         ),
                         title: Text(
                           account.name,
@@ -503,7 +513,10 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
   }
 
   void _showCategorySelector(
-      BuildContext context, List<Category> categories, TransactionType type,) {
+    BuildContext context,
+    List<Category> categories,
+    TransactionType type,
+  ) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final state = ref.read(addTransactionNotifierProvider);

@@ -97,7 +97,8 @@ final defaultProfileProvider = FutureProvider<Profile>((ref) async {
   final rows = await db.select(db.profiles).get();
   if (rows.isEmpty) {
     throw StateError(
-        'No profile found. Database initialization seeding may have failed.',);
+      'No profile found. Database initialization seeding may have failed.',
+    );
   }
   return rows.first.toDomain();
 });

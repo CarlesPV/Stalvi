@@ -32,54 +32,58 @@ void main() {
   test('getPeriodSummary should return total income and expense', () async {
     // Arrange
     final now = DateTime.now();
-    await database.into(database.profiles).insert(ProfilesCompanion.insert(
-          id: 'profile1',
-          name: 'Test',
-          username: 'test',
-          password: '',
-          createdAt: now,
-          modifiedAt: now,
-        ),);
+    await database.into(database.profiles).insert(
+          ProfilesCompanion.insert(
+            id: 'profile1',
+            name: 'Test',
+            username: 'test',
+            password: '',
+            createdAt: now,
+            modifiedAt: now,
+          ),
+        );
 
-    await database.into(database.accounts).insert(AccountsCompanion.insert(
-          id: 'acc1',
-          userId: 'profile1',
-          name: 'Cash',
-          type: AccountType.cash,
-          initialBalance: 0,
-          currency: 'EUR',
-          color: 'red',
-          icon: 'icon',
-          isDefault: true,
-          createdAt: now,
-          modifiedAt: now,
-        ),);
+    await database.into(database.accounts).insert(
+          AccountsCompanion.insert(
+            id: 'acc1',
+            userId: 'profile1',
+            name: 'Cash',
+            type: AccountType.cash,
+            initialBalance: 0,
+            currency: 'EUR',
+            color: 'red',
+            icon: 'icon',
+            isDefault: true,
+            createdAt: now,
+            modifiedAt: now,
+          ),
+        );
 
-    await database
-        .into(database.transactions)
-        .insert(TransactionsCompanion.insert(
-          id: 't1',
-          amount: 1000,
-          date: DateTime(2023, 1, 10),
-          type: TransactionType.income,
-          accountId: 'acc1',
-          originalCurrency: 'EUR',
-          createdAt: now,
-          modifiedAt: now,
-        ),);
+    await database.into(database.transactions).insert(
+          TransactionsCompanion.insert(
+            id: 't1',
+            amount: 1000,
+            date: DateTime(2023, 1, 10),
+            type: TransactionType.income,
+            accountId: 'acc1',
+            originalCurrency: 'EUR',
+            createdAt: now,
+            modifiedAt: now,
+          ),
+        );
 
-    await database
-        .into(database.transactions)
-        .insert(TransactionsCompanion.insert(
-          id: 't2',
-          amount: 500,
-          date: DateTime(2023, 1, 15),
-          type: TransactionType.expense,
-          accountId: 'acc1',
-          originalCurrency: 'EUR',
-          createdAt: now,
-          modifiedAt: now,
-        ),);
+    await database.into(database.transactions).insert(
+          TransactionsCompanion.insert(
+            id: 't2',
+            amount: 500,
+            date: DateTime(2023, 1, 15),
+            type: TransactionType.expense,
+            accountId: 'acc1',
+            originalCurrency: 'EUR',
+            createdAt: now,
+            modifiedAt: now,
+          ),
+        );
 
     // Act
     final result =
@@ -95,97 +99,107 @@ void main() {
       () async {
     // Arrange
     final now = DateTime.now();
-    await database.into(database.profiles).insert(ProfilesCompanion.insert(
-          id: 'profile1',
-          name: 'Test',
-          username: 'test',
-          password: '',
-          createdAt: now,
-          modifiedAt: now,
-        ),);
+    await database.into(database.profiles).insert(
+          ProfilesCompanion.insert(
+            id: 'profile1',
+            name: 'Test',
+            username: 'test',
+            password: '',
+            createdAt: now,
+            modifiedAt: now,
+          ),
+        );
 
-    await database.into(database.accounts).insert(AccountsCompanion.insert(
-          id: 'acc1',
-          userId: 'profile1',
-          name: 'Cash',
-          type: AccountType.cash,
-          initialBalance: 0,
-          currency: 'EUR',
-          color: 'red',
-          icon: 'icon',
-          isDefault: true,
-          createdAt: now,
-          modifiedAt: now,
-        ),);
+    await database.into(database.accounts).insert(
+          AccountsCompanion.insert(
+            id: 'acc1',
+            userId: 'profile1',
+            name: 'Cash',
+            type: AccountType.cash,
+            initialBalance: 0,
+            currency: 'EUR',
+            color: 'red',
+            icon: 'icon',
+            isDefault: true,
+            createdAt: now,
+            modifiedAt: now,
+          ),
+        );
 
-    await database.into(database.categories).insert(CategoriesCompanion.insert(
-          id: 'cat1',
-          name: 'Food',
-          associatedType: const drift.Value(CategoryAssociatedType.expense),
-          icon: 'food',
-          color: 'red',
-          isDeleted: const drift.Value(false),
-          createdAt: now,
-          modifiedAt: now,
-        ),);
+    await database.into(database.categories).insert(
+          CategoriesCompanion.insert(
+            id: 'cat1',
+            name: 'Food',
+            associatedType: const drift.Value(CategoryAssociatedType.expense),
+            icon: 'food',
+            color: 'red',
+            isDeleted: const drift.Value(false),
+            createdAt: now,
+            modifiedAt: now,
+          ),
+        );
 
-    await database.into(database.categories).insert(CategoriesCompanion.insert(
-          id: 'cat2',
-          name: 'Transport',
-          associatedType: const drift.Value(CategoryAssociatedType.expense),
-          icon: 'car',
-          color: 'blue',
-          isDeleted: const drift.Value(false),
-          createdAt: now,
-          modifiedAt: now,
-        ),);
+    await database.into(database.categories).insert(
+          CategoriesCompanion.insert(
+            id: 'cat2',
+            name: 'Transport',
+            associatedType: const drift.Value(CategoryAssociatedType.expense),
+            icon: 'car',
+            color: 'blue',
+            isDeleted: const drift.Value(false),
+            createdAt: now,
+            modifiedAt: now,
+          ),
+        );
 
-    await database
-        .into(database.transactions)
-        .insert(TransactionsCompanion.insert(
-          id: 't1',
-          amount: 500,
-          date: DateTime(2023, 1, 10),
-          type: TransactionType.expense,
-          accountId: 'acc1',
-          categoryId: const drift.Value('cat1'),
-          originalCurrency: 'EUR',
-          createdAt: now,
-          modifiedAt: now,
-        ),);
+    await database.into(database.transactions).insert(
+          TransactionsCompanion.insert(
+            id: 't1',
+            amount: 500,
+            date: DateTime(2023, 1, 10),
+            type: TransactionType.expense,
+            accountId: 'acc1',
+            categoryId: const drift.Value('cat1'),
+            originalCurrency: 'EUR',
+            createdAt: now,
+            modifiedAt: now,
+          ),
+        );
 
-    await database
-        .into(database.transactions)
-        .insert(TransactionsCompanion.insert(
-          id: 't2',
-          amount: 300,
-          date: DateTime(2023, 1, 11),
-          type: TransactionType.expense,
-          accountId: 'acc1',
-          categoryId: const drift.Value('cat1'),
-          originalCurrency: 'EUR',
-          createdAt: now,
-          modifiedAt: now,
-        ),);
+    await database.into(database.transactions).insert(
+          TransactionsCompanion.insert(
+            id: 't2',
+            amount: 300,
+            date: DateTime(2023, 1, 11),
+            type: TransactionType.expense,
+            accountId: 'acc1',
+            categoryId: const drift.Value('cat1'),
+            originalCurrency: 'EUR',
+            createdAt: now,
+            modifiedAt: now,
+          ),
+        );
 
-    await database
-        .into(database.transactions)
-        .insert(TransactionsCompanion.insert(
-          id: 't3',
-          amount: 1000,
-          date: DateTime(2023, 1, 12),
-          type: TransactionType.expense,
-          accountId: 'acc1',
-          categoryId: const drift.Value('cat2'),
-          originalCurrency: 'EUR',
-          createdAt: now,
-          modifiedAt: now,
-        ),);
+    await database.into(database.transactions).insert(
+          TransactionsCompanion.insert(
+            id: 't3',
+            amount: 1000,
+            date: DateTime(2023, 1, 12),
+            type: TransactionType.expense,
+            accountId: 'acc1',
+            categoryId: const drift.Value('cat2'),
+            originalCurrency: 'EUR',
+            createdAt: now,
+            modifiedAt: now,
+          ),
+        );
 
     // Act
     final result = await dao.getTopCategories(
-        DateTime(2023, 1, 1), DateTime(2023, 1, 31),
-        type: TransactionType.expense,);
+      DateTime(2023, 1, 1),
+      DateTime(2023, 1, 31),
+      type: TransactionType.expense,
+    );
 
     // Assert
     expect(result.length, 2);

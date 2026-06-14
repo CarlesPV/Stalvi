@@ -28,7 +28,9 @@ class StatisticsDao extends DatabaseAccessor<AppDatabase>
 
   /// Calculates total income and total expenses within a date range
   Future<(int totalIncome, int totalExpense)> getPeriodSummary(
-      DateTime startDate, DateTime endDate,) async {
+    DateTime startDate,
+    DateTime endDate,
+  ) async {
     final amountSumExpr = transactions.amount.sum();
 
     final query = selectOnly(transactions)
@@ -56,8 +58,10 @@ class StatisticsDao extends DatabaseAccessor<AppDatabase>
 
   /// Calculates Top Categories within a Date Range
   Future<List<CategoryStatisticResult>> getTopCategories(
-      DateTime startDate, DateTime endDate,
-      {TransactionType type = TransactionType.expense,}) async {
+    DateTime startDate,
+    DateTime endDate, {
+    TransactionType type = TransactionType.expense,
+  }) async {
     final amountSum = transactions.amount.sum();
 
     final query = selectOnly(transactions)
