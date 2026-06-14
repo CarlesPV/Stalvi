@@ -1,0 +1,61 @@
+import 'package:konta/core/errors/app_exceptions.dart';
+import 'package:konta/domain/entities/account.dart';
+import 'package:konta/domain/entities/account_type.dart';
+import 'package:konta/domain/repositories/i_account_repository.dart';
+
+class CreateAccountParams {
+  final String id;
+  final String userId;
+  final String name;
+  final AccountType type;
+  final double? initialBalance;
+  final String currency;
+  final String color;
+  final String icon;
+  final bool isDefault;
+
+  const CreateAccountParams({
+    required this.id,
+    required this.userId,
+    required this.name,
+    required this.type,
+    this.initialBalance,
+    required this.currency,
+    required this.color,
+    required this.icon,
+    this.isDefault = false,
+  });
+}
+
+class CreateAccountUseCase {
+  final IAccountRepository _repository;
+
+  CreateAccountUseCase(this._repository);
+
+  Future<Account> execute(CreateAccountParams params) async {
+    if (params.initialBalance == null) {
+      throw const ValidationException(
+        message: 'initial_balance is required and cannot be null',
+      );
+    }
+
+    final now = DateTime.now();
+
+    final account = Account(
+      id: params.id,
+      userId: params.userId,
+      name: params.name,
+      type: params.type,
+      initialBalance: params.initialBalance!,
+      currency: params.currency,
+      color: params.color,
+      icon: params.icon,
+      isDefault: params.isDefault,
+      isDeleted: false,
+      createdAt: now,
+      modifiedAt: now,
+    );
+
+    return _repository.createAccount(account);
+  }
+}

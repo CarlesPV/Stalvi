@@ -1,0 +1,510 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
+import 'package:konta/core/l10n/app_localizations.dart';
+import 'package:konta/core/theme/app_theme.dart';
+import 'package:konta/core/utils/currency_formatter.dart';
+import 'package:konta/domain/entities/budget.dart';
+import 'package:konta/domain/entities/category.dart';
+import 'package:konta/domain/entities/savings_goal.dart';
+import 'package:konta/presentation/providers/repository_providers.dart';
+import 'package:konta/presentation/widgets/progress_bar_widget.dart';
+import 'package:konta/presentation/widgets/empty_state_widget.dart';
+
+/// Screen displaying Budgets and Savings Goals in a tabbed interface.
+///
+/// Shows spent-to-budget limits and savings goal milestones, utilizing
+/// the reusable [ProgressBarWidget] and styled with the app's pastel aesthetic.
+class BudgetsAndGoalsScreen extends ConsumerWidget {
+  const BudgetsAndGoalsScreen({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(
+            AppLocalizations.of(context)!.budgetsAndGoals,
+            style: theme.textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.w800,
+              letterSpacing: -0.2,
+            ),
+          ),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+          bottom: TabBar(
+            dividerColor: Colors.transparent,
+            indicatorColor: colorScheme.primary,
+            labelColor: colorScheme.onSurface,
+            unselectedLabelColor: colorScheme.onSurfaceVariant,
+            labelStyle: theme.textTheme.bodyMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+            unselectedLabelStyle: theme.textTheme.bodyMedium,
+            tabs: [
+              Tab(text: AppLocalizations.of(context)!.budgets),
+              Tab(text: AppLocalizations.of(context)!.savingsGoals),
+            ],
+          ),
+        ),
+        body: const TabBarView(
+          children: [
+            _BudgetsTabBody(),
+            _SavingsGoalsTabBody(),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _BudgetsTabBody extends ConsumerWidget {
+  const _BudgetsTabBody();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final budgetsAsync = ref.watch(budgetsStreamProvider);
+    final categoriesAsync = ref.watch(categoriesListProvider);
+
+    return budgetsAsync.when(
+      loading: () => const Center(
+        child: CircularProgressIndicator(),
+      ),
+      error: (err, _) => _ErrorStateWidget(
+        message: AppLocalizations.of(context)!.failedLoadBudgets,
+        errorDetails: err.toString(),
+      ),
+      data: (budgets) {
+        if (budgets.isEmpty) {
+          return EmptyStateWidget(
+            icon: Icons.pie_chart_outline_rounded,
+            title: AppLocalizations.of(context)!.noBudgetsTitle,
+            subtitle: AppLocalizations.of(context)!.noBudgetsSubtitle,
+          );
+        }
+
+        final categories = categoriesAsync.valueOrNull ?? [];
+
+        return ListView.builder(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          itemCount: budgets.length,
+          itemBuilder: (context, index) {
+            final budget = budgets[index];
+            final category = categories.firstWhere(
+              (c) => c.id == budget.categoryId,
+              orElse: () => Category(
+                id: budget.categoryId,
+                name: AppLocalizations.of(context)!.uncategorized,
+                icon: 'category',
+                color: '#94A3B8',
+                createdAt: DateTime.now(),
+                modifiedAt: DateTime.now(),
+              ),
+            );
+
+            return _BudgetCard(budget: budget, category: category);
+          },
+        );
+      },
+    );
+  }
+}
+
+class _BudgetCard extends StatelessWidget {
+  final Budget budget;
+  final Category category;
+
+  const _BudgetCard({
+    required this.budget,
+    required this.category,
+  });
+
+  Color _parseHexColor(String hexString) {
+    final buffer = StringBuffer();
+    if (hexString.length == 6 || hexString.length == 7) buffer.write('ff');
+    buffer.write(hexString.replaceFirst('#', ''));
+    return Color(int.parse(buffer.toString(), radix: 16));
+  }
+
+  IconData _getIconData(String name) {
+    switch (name) {
+      case 'wallet':
+        return Icons.account_balance_wallet_rounded;
+      case 'restaurant':
+        return Icons.restaurant_rounded;
+      case 'directions_car':
+        return Icons.directions_car_rounded;
+      case 'attach_money':
+        return Icons.attach_money_rounded;
+      default:
+        return Icons.category_rounded;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final financialColors = context.financialColors;
+
+    final catColor = _parseHexColor(category.color);
+    final catIcon = _getIconData(category.icon);
+
+    final double spentDouble = budget.currentAmount / 100.0;
+    final double targetDouble = budget.targetAmount / 100.0;
+    final double remainingDouble = targetDouble - spentDouble;
+    final double progress = budget.targetAmount > 0
+        ? budget.currentAmount / budget.targetAmount
+        : 0.0;
+
+    final spentStr = CurrencyFormatter.format(spentDouble);
+    final targetStr = CurrencyFormatter.format(targetDouble);
+    final remainingStr = CurrencyFormatter.format(remainingDouble.abs());
+    final progressStr =
+        CurrencyFormatter.formatPercentage(progress, decimalDigits: 0);
+
+    final isOverspent = budget.currentAmount > budget.targetAmount;
+    final statusText = isOverspent
+        ? AppLocalizations.of(context)!.budgetOverspent(remainingStr)
+        : AppLocalizations.of(context)!.budgetRemaining(remainingStr);
+    final statusColor =
+        isOverspent ? financialColors.negative : colorScheme.onSurfaceVariant;
+
+    final dateRangeStr =
+        '${DateFormat('MMM d').format(budget.startDate)} - ${DateFormat('MMM d, y').format(budget.endDate)}';
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: colorScheme.outline.withValues(alpha: 0.08),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              CircleAvatar(
+                radius: 18,
+                backgroundColor: catColor.withValues(alpha: 0.12),
+                child: Icon(catIcon, color: catColor, size: 18),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      category.name,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.w700,
+                        color: colorScheme.onSurface,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      dateRangeStr,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: colorScheme.onSurfaceVariant,
+                        fontSize: 11,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Text(
+                progressStr,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  fontWeight: FontWeight.w800,
+                  color: isOverspent
+                      ? financialColors.negative
+                      : colorScheme.onSurface,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                '$spentStr of $targetStr',
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: colorScheme.onSurfaceVariant,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              Text(
+                statusText,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: statusColor,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          ProgressBarWidget(
+            currentAmount: budget.currentAmount,
+            targetAmount: budget.targetAmount,
+            activeColor: catColor,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SavingsGoalsTabBody extends ConsumerWidget {
+  const _SavingsGoalsTabBody();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final savingsGoalsAsync = ref.watch(savingsGoalsStreamProvider);
+
+    return savingsGoalsAsync.when(
+      loading: () => const Center(
+        child: CircularProgressIndicator(),
+      ),
+      error: (err, _) => _ErrorStateWidget(
+        message: AppLocalizations.of(context)!.failedLoadSavingsGoals,
+        errorDetails: err.toString(),
+      ),
+      data: (goals) {
+        if (goals.isEmpty) {
+          return EmptyStateWidget(
+            icon: Icons.savings_outlined,
+            title: AppLocalizations.of(context)!.noSavingsGoalsTitle,
+            subtitle: AppLocalizations.of(context)!.noSavingsGoalsSubtitle,
+          );
+        }
+
+        return ListView.builder(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          itemCount: goals.length,
+          itemBuilder: (context, index) {
+            final goal = goals[index];
+            return _SavingsGoalCard(goal: goal);
+          },
+        );
+      },
+    );
+  }
+}
+
+class _SavingsGoalCard extends StatelessWidget {
+  final SavingsGoal goal;
+
+  const _SavingsGoalCard({required this.goal});
+
+  Color _parseHexColor(String hexString) {
+    final buffer = StringBuffer();
+    if (hexString.length == 6 || hexString.length == 7) buffer.write('ff');
+    buffer.write(hexString.replaceFirst('#', ''));
+    return Color(int.parse(buffer.toString(), radix: 16));
+  }
+
+  IconData _getIconData(String name) {
+    switch (name) {
+      case 'wallet':
+        return Icons.account_balance_wallet_rounded;
+      case 'restaurant':
+        return Icons.restaurant_rounded;
+      case 'directions_car':
+        return Icons.directions_car_rounded;
+      case 'attach_money':
+        return Icons.attach_money_rounded;
+      case 'savings':
+        return Icons.savings_rounded;
+      case 'home':
+        return Icons.home_rounded;
+      case 'flight':
+        return Icons.flight_rounded;
+      case 'school':
+        return Icons.school_rounded;
+      case 'shopping_cart':
+        return Icons.shopping_cart_rounded;
+      default:
+        return Icons.stars_rounded;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final financialColors = context.financialColors;
+
+    final goalColor = _parseHexColor(goal.color);
+    final goalIcon = _getIconData(goal.icon);
+
+    final double savedDouble = goal.currentAmount / 100.0;
+    final double targetDouble = goal.targetAmount / 100.0;
+    final double progress =
+        goal.targetAmount > 0 ? goal.currentAmount / goal.targetAmount : 0.0;
+
+    final savedStr = CurrencyFormatter.format(savedDouble);
+    final targetStr = CurrencyFormatter.format(targetDouble);
+    final progressStr =
+        CurrencyFormatter.formatPercentage(progress, decimalDigits: 0);
+
+    final targetDateStr = goal.targetDate != null
+        ? AppLocalizations.of(context)!
+            .savingsTargetDate(DateFormat('MMM d, y').format(goal.targetDate!))
+        : AppLocalizations.of(context)!.savingsNoTargetDate;
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: colorScheme.outline.withValues(alpha: 0.08),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              CircleAvatar(
+                radius: 18,
+                backgroundColor: goalColor.withValues(alpha: 0.12),
+                child: Icon(goalIcon, color: goalColor, size: 18),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      goal.name,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.w700,
+                        color: colorScheme.onSurface,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      targetDateStr,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: colorScheme.onSurfaceVariant,
+                        fontSize: 11,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Text(
+                progressStr,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  fontWeight: FontWeight.w800,
+                  color: progress >= 1.0
+                      ? financialColors.positive
+                      : colorScheme.onSurface,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                AppLocalizations.of(context)!
+                    .savingsSavedOf(savedStr, targetStr),
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: colorScheme.onSurfaceVariant,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              if (progress >= 1.0)
+                Text(
+                  AppLocalizations.of(context)!.savingsGoalAchieved,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: financialColors.positive,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          ProgressBarWidget(
+            currentAmount: goal.currentAmount,
+            targetAmount: goal.targetAmount,
+            activeColor: goalColor,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ErrorStateWidget extends StatelessWidget {
+  final String message;
+  final String errorDetails;
+
+  const _ErrorStateWidget({
+    required this.message,
+    required this.errorDetails,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    return Center(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 80,
+              height: 80,
+              decoration: BoxDecoration(
+                color: colorScheme.error.withValues(alpha: 0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.error_outline_rounded,
+                size: 38,
+                color: colorScheme.error,
+              ),
+            ),
+            const SizedBox(height: 24),
+            Text(
+              message,
+              style: theme.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.w800,
+                color: colorScheme.onSurface,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 10),
+            Text(
+              errorDetails,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: colorScheme.error,
+                height: 1.4,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

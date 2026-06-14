@@ -13,38 +13,38 @@ For every task, the agent must perform the following cycle:
 
 ---
 
-## Phase 1: Foundation & Security (Current)
-- [ ] Initialize directory structure (Clean Architecture).
-- [ ] Dependency resolution and native environment setup for SQLCipher.
-- [ ] Base Drift database setup and `flutter_secure_storage` key generation.
-- [ ] Core utilities: Theme definitions (Pastel aesthetics), custom error classes, and currency formatters.
+## Phase 1: Foundation & Security (Completed)
+- [x] Initialize directory structure (Clean Architecture).
+- [x] Dependency resolution and native environment setup for SQLCipher.
+- [x] Base Drift database setup and `flutter_secure_storage` key generation.
+- [x] Core utilities: Theme definitions (Pastel aesthetics), custom error classes, and currency formatters.
 
-## Phase 2: Domain Modeling & Local Storage
-- [ ] Implement `Profile` and `Account` tables in Drift.
-- [ ] Create `Account` Entities and Use Cases (mandatory initial balance).
-- [ ] Implement `Category` and `Tag` tables and seed default categories.
-- [ ] Develop Presentation layer for Onboarding (Splash -> Biometric Auth -> Dashboard).
+## Phase 2: Domain Modeling & Local Storage (Completed)
+- [x] Implement `Profile` and `Account` tables in Drift.
+- [x] Create `Account` Entities and Use Cases (mandatory initial balance).
+- [x] Implement `Category` and `Tag` tables and seed default categories.
+- [x] Develop Presentation layer for Onboarding (Splash -> Biometric Auth -> Dashboard).
 
-## Phase 3: Transaction Management (Core Engine)
-- [ ] Implement `Movement` tables and Use Cases (Income, Expense, Transfer).
-- [ ] Enforce transfer business rules (exclusion from global stats).
-- [ ] Implement Soft Delete mechanism (`is_deleted` flag) and 30-day Trash logic.
-- [ ] Build the "Add Movement" BottomSheet UI with numeric keypad priority.
+## Phase 3: Transaction Management (Core Engine) (Completed)
+- [x] Implement `Transaction` tables and Use Cases (Income, Expense).
+- [x] Enforce atomic balance updates within a Drift database transaction.
+- [x] Implement Soft Delete mechanism (`is_deleted` flag) on Account and Category.
+- [x] Build the "Add Transaction" UI screen with numeric input and customized selectors.
 
-## Phase 4: Multi-Currency & Goals
-- [ ] Integrate external Exchange Rate API (HTTPS GET only) in Data Layer.
-- [ ] Update Movement creation to save converted default currency values.
-- [ ] Implement `Budget` and `Savings Goal` tables.
-- [ ] Build visual progress bars for budgets and goals in the UI.
+## Phase 4: Multi-Currency & Goals (Completed)
+- [x] Integrate external Exchange Rate API (HTTPS GET only) in Data Layer.
+- [x] Update Movement creation to save converted default currency values.
+- [x] Implement `Budget` and `Savings Goal` tables.
+- [x] Build visual progress bars for budgets and goals in the UI.
 
-## Phase 5: Statistics, Filters, & Exports
-- [ ] Build SQLite aggregation queries (`SUM`, `GROUP BY`) for dashboard totals.
-- [ ] Implement `fl_chart` for Income vs Expense and Top Categories.
-- [ ] Create dynamic filtering logic (Account, Date Range, Category).
-- [ ] Implement secure PDF, CSV/Excel, and encrypted JSON export functionality.
+## Phase 5: Statistics, Filters, & Exports (Completed)
+- [x] Build SQLite aggregation queries (`SUM`, `GROUP BY`) for dashboard totals.
+- [x] Implement `fl_chart` for Income vs Expense and Top Categories.
+- [x] Create dynamic filtering logic (Account, Date Range, Category).
+- [x] Implement secure PDF, CSV/Excel, and encrypted JSON export functionality.
 
-## Phase 6: Polish, Testing & Compliance
-- [ ] Complete E2E testing of the application flow.
-- [ ] Validate "Discreet Mode" and App Lifecycle blurring features.
-- [ ] Prepare App Store & Google Play compliance files (Privacy mappings).
-- [ ] Final UI/UX review (Anti-blank page syndrome check, Dark Mode contrast).
+## Phase 6: Polish, Testing & Compliance (Completed)
+- [x] Complete E2E testing of the application flow.
+- [x] Validate "Discreet Mode" and App Lifecycle blurring features.
+- [x] Prepare App Store & Google Play compliance files (Privacy mappings).
+- [x] Final UI/UX review (Anti-blank page syndrome check, Dark Mode contrast).
