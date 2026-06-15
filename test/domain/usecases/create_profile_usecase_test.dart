@@ -35,6 +35,8 @@ void main() {
     username: 'carlespv',
     pin: '1234',
     defaultCurrency: 'EUR',
+    locale: 'es',
+    acceptedTerms: true,
   );
 
   String calculateHash(String input) {
@@ -45,11 +47,15 @@ void main() {
 
   group('CreateProfileUseCase Unit Tests', () {
     test(
-        'should successfully hash PIN, save it, and create a new profile when database is empty',
+        'should successfully hash PIN, save PIN and locale, and create a new profile when database is empty',
         () async {
       // Arrange
       final expectedPinHash = calculateHash('1234');
       when(() => mockSecureStorageManager.savePinHash(any()))
+          .thenAnswer((_) async {});
+      when(() => mockSecureStorageManager.setUserLocale(any()))
+          .thenAnswer((_) async {});
+      when(() => mockSecureStorageManager.savePinLength(any()))
           .thenAnswer((_) async {});
       when(() => mockProfileRepository.getFirstProfile())
           .thenAnswer((_) async => null);
@@ -68,6 +74,8 @@ void main() {
 
       verify(() => mockSecureStorageManager.savePinHash(expectedPinHash))
           .called(1);
+      verify(() => mockSecureStorageManager.setUserLocale('es')).called(1);
+      verify(() => mockSecureStorageManager.savePinLength(4)).called(1);
       verify(() => mockProfileRepository.getFirstProfile()).called(1);
       verify(() => mockProfileRepository.createProfile(any())).called(1);
       verifyNever(() => mockProfileRepository.updateProfile(any()));
@@ -90,6 +98,10 @@ void main() {
       final expectedPinHash = calculateHash('1234');
       when(() => mockSecureStorageManager.savePinHash(any()))
           .thenAnswer((_) async {});
+      when(() => mockSecureStorageManager.setUserLocale(any()))
+          .thenAnswer((_) async {});
+      when(() => mockSecureStorageManager.savePinLength(any()))
+          .thenAnswer((_) async {});
       when(() => mockProfileRepository.getFirstProfile())
           .thenAnswer((_) async => existingProfile);
       when(() => mockProfileRepository.updateProfile(any())).thenAnswer(
@@ -108,9 +120,36 @@ void main() {
 
       verify(() => mockSecureStorageManager.savePinHash(expectedPinHash))
           .called(1);
+      verify(() => mockSecureStorageManager.setUserLocale('es')).called(1);
+      verify(() => mockSecureStorageManager.savePinLength(4)).called(1);
       verify(() => mockProfileRepository.getFirstProfile()).called(1);
       verify(() => mockProfileRepository.updateProfile(any())).called(1);
       verifyNever(() => mockProfileRepository.createProfile(any()));
+    });
+
+    test('should throw ValidationException when acceptedTerms is false',
+        () async {
+      // Arrange
+      final params = CreateProfileParams(
+        name: 'Carles',
+        username: 'carlespv',
+        pin: '1234',
+        defaultCurrency: 'EUR',
+        locale: 'es',
+        acceptedTerms: false,
+      );
+
+      // Act & Assert
+      expect(
+        () => usecase.execute(params),
+        throwsA(isA<ValidationException>().having(
+          (e) => e.message,
+          'message',
+          contains('You must accept the Terms & Conditions to proceed.'),
+        )),
+      );
+      verifyZeroInteractions(mockSecureStorageManager);
+      verifyZeroInteractions(mockProfileRepository);
     });
 
     test('should throw ValidationException when PIN is too short (< 4 digits)',
@@ -121,6 +160,8 @@ void main() {
         username: 'carlespv',
         pin: '123',
         defaultCurrency: 'EUR',
+        locale: 'es',
+        acceptedTerms: true,
       );
 
       // Act & Assert
@@ -144,6 +185,8 @@ void main() {
         username: 'carlespv',
         pin: '123456789',
         defaultCurrency: 'EUR',
+        locale: 'es',
+        acceptedTerms: true,
       );
 
       // Act & Assert
@@ -168,6 +211,8 @@ void main() {
         username: 'carlespv',
         pin: '12a4',
         defaultCurrency: 'EUR',
+        locale: 'es',
+        acceptedTerms: true,
       );
 
       // Act & Assert
@@ -190,6 +235,8 @@ void main() {
         username: 'carlespv',
         pin: '1234',
         defaultCurrency: 'EUR',
+        locale: 'es',
+        acceptedTerms: true,
       );
 
       // Act & Assert
@@ -212,6 +259,8 @@ void main() {
         username: '',
         pin: '1234',
         defaultCurrency: 'EUR',
+        locale: 'es',
+        acceptedTerms: true,
       );
 
       // Act & Assert

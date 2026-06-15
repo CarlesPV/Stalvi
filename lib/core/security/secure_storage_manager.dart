@@ -38,11 +38,53 @@ class SecureStorageManager {
   /// Storage key constant for persisting the user's PIN hash.
   static const String _kPinHashKey = 'konta_pin_hash';
 
+  /// Storage key constant for persisting the user's PIN length.
+  static const String _kPinLengthKey = 'konta_pin_length';
+
   /// Storage key constant for persisting biometrics enabled status.
   static const String _kBiometricsEnabledKey = 'konta_biometrics_enabled';
 
   /// Length of the encryption key in bytes (256 bits).
   static const int _kKeyLengthBytes = 32;
+
+  Future<String?> _readWithRetry(String key) async {
+    const retries = 3;
+    for (var i = 0; i < retries; i++) {
+      try {
+        return await _storage.read(key: key);
+      } catch (_) {
+        if (i == retries - 1) rethrow;
+        await Future.delayed(const Duration(milliseconds: 150));
+      }
+    }
+    return null;
+  }
+
+  Future<void> _writeWithRetry(String key, String value) async {
+    const retries = 3;
+    for (var i = 0; i < retries; i++) {
+      try {
+        await _storage.write(key: key, value: value);
+        return;
+      } catch (_) {
+        if (i == retries - 1) rethrow;
+        await Future.delayed(const Duration(milliseconds: 150));
+      }
+    }
+  }
+
+  Future<void> _deleteWithRetry(String key) async {
+    const retries = 3;
+    for (var i = 0; i < retries; i++) {
+      try {
+        await _storage.delete(key: key);
+        return;
+      } catch (_) {
+        if (i == retries - 1) rethrow;
+        await Future.delayed(const Duration(milliseconds: 150));
+      }
+    }
+  }
 
   /// Retrieves the existing encryption key, or generates and persists a new one
   /// if no key exists yet.
@@ -54,14 +96,14 @@ class SecureStorageManager {
   /// unavailable or the read/write operation fails.
   Future<String> getOrCreateEncryptionKey() async {
     try {
-      final existingKey = await _storage.read(key: _kEncryptionKeyName);
+      final existingKey = await _readWithRetry(_kEncryptionKeyName);
 
       if (existingKey != null && existingKey.isNotEmpty) {
         return existingKey;
       }
 
       final newKey = _generateSecureKey();
-      await _storage.write(key: _kEncryptionKeyName, value: newKey);
+      await _writeWithRetry(_kEncryptionKeyName, newKey);
       return newKey;
     } on Exception catch (e) {
       throw SecureStorageException(
@@ -73,8 +115,12 @@ class SecureStorageManager {
 
   /// Checks whether an encryption key already exists in secure storage.
   Future<bool> hasEncryptionKey() async {
-    final key = await _storage.read(key: _kEncryptionKeyName);
-    return key != null && key.isNotEmpty;
+    try {
+      final key = await _readWithRetry(_kEncryptionKeyName);
+      return key != null && key.isNotEmpty;
+    } catch (_) {
+      return false;
+    }
   }
 
   /// Permanently deletes the stored encryption key.
@@ -83,14 +129,21 @@ class SecureStorageManager {
   /// permanently unreadable. Only use during a full data-wipe / factory-reset
   /// flow.
   Future<void> deleteEncryptionKey() async {
-    await _storage.delete(key: _kEncryptionKeyName);
+    try {
+      await _deleteWithRetry(_kEncryptionKeyName);
+    } on Exception catch (e) {
+      throw SecureStorageException(
+        'Failed to delete database encryption key.',
+        cause: e,
+      );
+    }
   }
 
   /// Retrieves the saved user locale language code from secure storage.
   /// Returns null if no locale is saved or if an exception occurs.
   Future<String?> getUserLocale() async {
     try {
-      return await _storage.read(key: _kUserLocaleKey);
+      return await _readWithRetry(_kUserLocaleKey);
     } on Exception {
       return null;
     }
@@ -99,7 +152,7 @@ class SecureStorageManager {
   /// Persists the user locale language code to secure storage.
   Future<void> setUserLocale(String languageCode) async {
     try {
-      await _storage.write(key: _kUserLocaleKey, value: languageCode);
+      await _writeWithRetry(_kUserLocaleKey, languageCode);
     } on Exception catch (e) {
       throw SecureStorageException(
         'Failed to save user locale to secure storage.',
@@ -111,7 +164,7 @@ class SecureStorageManager {
   /// Saves the user's PIN hash to secure storage.
   Future<void> savePinHash(String pinHash) async {
     try {
-      await _storage.write(key: _kPinHashKey, value: pinHash);
+      await _writeWithRetry(_kPinHashKey, pinHash);
     } on Exception catch (e) {
       throw SecureStorageException(
         'Failed to save PIN hash to secure storage.',
@@ -123,7 +176,7 @@ class SecureStorageManager {
   /// Retrieves the saved PIN hash from secure storage.
   Future<String?> getPinHash() async {
     try {
-      return await _storage.read(key: _kPinHashKey);
+      return await _readWithRetry(_kPinHashKey);
     } on Exception {
       return null;
     }
@@ -131,14 +184,18 @@ class SecureStorageManager {
 
   /// Checks if a PIN hash exists in secure storage.
   Future<bool> hasPin() async {
-    final pin = await getPinHash();
-    return pin != null && pin.isNotEmpty;
+    try {
+      final pin = await getPinHash();
+      return pin != null && pin.isNotEmpty;
+    } catch (_) {
+      return false;
+    }
   }
 
   /// Deletes the PIN hash from secure storage.
   Future<void> deletePinHash() async {
     try {
-      await _storage.delete(key: _kPinHashKey);
+      await _deleteWithRetry(_kPinHashKey);
     } on Exception catch (e) {
       throw SecureStorageException(
         'Failed to delete PIN hash from secure storage.',
@@ -147,11 +204,47 @@ class SecureStorageManager {
     }
   }
 
+  /// Saves the user's PIN length to secure storage.
+  Future<void> savePinLength(int length) async {
+    try {
+      await _writeWithRetry(_kPinLengthKey, length.toString());
+    } on Exception catch (e) {
+      throw SecureStorageException(
+        'Failed to save PIN length to secure storage.',
+        cause: e,
+      );
+    }
+  }
+
+  /// Retrieves the saved PIN length from secure storage.
+  Future<int?> getPinLength() async {
+    try {
+      final value = await _readWithRetry(_kPinLengthKey);
+      if (value != null) {
+        return int.tryParse(value);
+      }
+      return null;
+    } on Exception {
+      return null;
+    }
+  }
+
+  /// Deletes the PIN length from secure storage.
+  Future<void> deletePinLength() async {
+    try {
+      await _deleteWithRetry(_kPinLengthKey);
+    } on Exception catch (e) {
+      throw SecureStorageException(
+        'Failed to delete PIN length from secure storage.',
+        cause: e,
+      );
+    }
+  }
+
   /// Persists the biometrics enabled flag to secure storage.
   Future<void> setBiometricsEnabled(bool enabled) async {
     try {
-      await _storage.write(
-          key: _kBiometricsEnabledKey, value: enabled.toString());
+      await _writeWithRetry(_kBiometricsEnabledKey, enabled.toString());
     } on Exception catch (e) {
       throw SecureStorageException(
         'Failed to save biometrics status to secure storage.',
@@ -163,9 +256,19 @@ class SecureStorageManager {
   /// Checks if biometrics are enabled.
   Future<bool> isBiometricsEnabled() async {
     try {
-      final value = await _storage.read(key: _kBiometricsEnabledKey);
+      final value = await _readWithRetry(_kBiometricsEnabledKey);
       return value == 'true';
     } on Exception {
+      return false;
+    }
+  }
+
+  /// Checks if the biometrics opt-in choice was already made.
+  Future<bool> hasBiometricsChoice() async {
+    try {
+      final value = await _readWithRetry(_kBiometricsEnabledKey);
+      return value != null;
+    } catch (_) {
       return false;
     }
   }

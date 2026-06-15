@@ -97,3 +97,33 @@ This document lists the completed phases of the Konta development roadmap, provi
   - Resolved Gradle build errors and verified that Android compiles successfully into a deployable APK (`app-debug.apk`).
   - Verified the entire automated test suite: **113 tests passed** successfully.
 
+### Phase 7: Secure Onboarding, Initialization & UX
+* **Completion Date:** June 14, 2026
+* **Objective:** Implement the initial setup profile flow, secure hardware-backed biometric verification, automatic localized default wallets creation, and standardized empty states.
+* **Accomplishments:**
+  - **Profile Setup Flow:** Designed the profile creation UI featuring a 4-8 digit secure PIN input, dynamic dropdown language selection (English, Spanish, and Catalan), and explicit Terms & Conditions acceptance.
+  - **Biometrics Integration:** Integrated biometric authentication (FaceID/TouchID) checking via `local_auth` with automatic prompt on startup and fallback capabilities.
+  - **Default Wallet Creation:** Configured automatic creation of a localized default account ("Mi cartera" / "My Wallet") with a zero balance to ensure users do not start with a blank state.
+  - **Standardized UI Empty States:** Enforced `EmptyStateWidget` styling across Transactions, Accounts, Budgets, and Statistics lists when no records exist.
+* **Verification:**
+  - Completed unit tests for `CreateProfileUseCase` and `InitializeDefaultDataUseCase`.
+  - Added notifier tests verifying PIN lengths, matching validations, and terms acceptance rules.
+  - Added biometric fallback/success service verification tests.
+  - Standard static analysis pass (`flutter analyze` with 0 issues).
+  - All automated test suite regressions run successfully: **151 tests passed**.
+
+### Phase 8: Onboarding Improvements, Localization Polish & Bug Fixes
+* **Completion Date:** June 15, 2026
+* **Objective:** Resolve onboarding bugs, polish multi-language localization (EN, ES, CA), separate Terms & Conditions and Privacy Policy viewers, enable default currency selection, and refine direct routing flows.
+* **Accomplishments:**
+  - **Legal Document Split:** Implemented two distinct presentation views to display Terms & Conditions and Privacy Policy independently in the active locale, parsing local markdown assets. Accessible during registration and in settings.
+  - **Default Currency Selector:** Added selector dropdown to the profile creation screen and persisted it in profile database configurations.
+  - **First-Time Registration Fix:** Resolved the keychain/transient platform channel error during initial registration by introducing a retry-on-failure mechanism in secure storage operations.
+  - **Direct Onboarding Routing:** Configured the setup profile flow to transition directly to `AuthStatus.authenticated`, bypassing the PIN screen, and prompting the user for biometric opt-in permission dialog immediately upon landing on the Dashboard.
+  - **Default Category Seeding:** Seeded localized typical expense/income categories (Food, Transport, Salary, Housing, Utilities, Entertainment) on first-time initialization to prevent empty state crashes.
+  - **Localization Polish:** Fully translated all user-facing strings, error labels, default account names, and seed categories in English, Spanish, and Catalan.
+* **Verification:**
+  - Refactored `auth_notifier_test.dart` and `biometric_opt_in_screen_test.dart` to match the direct authentication transitions.
+  - Resolved compiler and import warnings, ensuring 0 errors and warnings on static analysis (`flutter analyze`).
+  - Re-ran the full automated test suite: **166 tests passed** (100% success rate).
+

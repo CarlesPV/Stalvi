@@ -3,7 +3,6 @@ import 'package:crypto/crypto.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:konta/infrastructure/services/biometric_auth_service.dart';
 
-import 'package:konta/core/l10n/app_localizations.dart';
 import 'package:konta/domain/usecases/create_profile_usecase.dart';
 import 'package:konta/presentation/providers/locale_provider.dart';
 import 'package:konta/presentation/providers/repository_providers.dart';
@@ -15,6 +14,9 @@ enum AuthStatus {
 
   /// Profile setup is currently being processed.
   setupSubmitting,
+
+  /// User is in the post-registration biometric opt-in flow.
+  biometricOptIn,
 
   /// User needs to authenticate (either via PIN or biometrics).
   unauthenticated,
@@ -39,6 +41,15 @@ class AuthNotifier extends AsyncNotifier<AuthStatus> {
     final hasPin = await secureStorage.hasPin();
     if (!hasPin) {
       return AuthStatus.setupRequired;
+    }
+
+    final biometricService = ref.read(biometricAuthServiceProvider);
+    final isEnabled = await biometricService.isBiometricsEnabled();
+    final isAvailable = await biometricService.isBiometricAvailable();
+
+    if (isEnabled && isAvailable) {
+      Future.microtask(() => _authenticateOnStartup());
+      return AuthStatus.authenticating;
     }
 
     return AuthStatus.unauthenticated;
@@ -166,6 +177,7 @@ class AuthNotifier extends AsyncNotifier<AuthStatus> {
 
     state = const AsyncValue.loading();
     try {
+      final locale = ref.read(localeProvider);
       final createProfileUseCase = ref.read(createProfileUseCaseProvider);
       final profile = await createProfileUseCase.execute(
         CreateProfileParams(
@@ -173,26 +185,67 @@ class AuthNotifier extends AsyncNotifier<AuthStatus> {
           username: username,
           pin: pin,
           defaultCurrency: defaultCurrency,
+          locale: locale.languageCode,
+          acceptedTerms: acceptTerms,
         ),
       );
-
-      final locale = ref.read(localeProvider);
-      final l10n = lookupAppLocalizations(locale);
-      String walletName = 'Mi cartera';
-      try {
-        walletName = l10n.defaultWalletName;
-      } catch (_) {
-        // Fallback to spanish/generic default
-      }
 
       final initializeDefaultDataUseCase =
           ref.read(initializeDefaultDataUseCaseProvider);
       await initializeDefaultDataUseCase.execute(
         userId: profile.id,
-        walletName: walletName,
         currency: defaultCurrency,
+        locale: locale.languageCode,
       );
 
+      state = const AsyncValue.data(AuthStatus.authenticated);
+    } catch (e, st) {
+      state = AsyncValue.error(e, st);
+    }
+  }
+
+  Future<void> _authenticateOnStartup() async {
+    state = const AsyncValue.loading();
+    try {
+      final biometricService = ref.read(biometricAuthServiceProvider);
+      final didAuthenticate = await biometricService.authenticate(
+        localizedReason: 'Access your Konta financial data securely',
+      );
+      state = AsyncValue.data(
+        didAuthenticate ? AuthStatus.authenticated : AuthStatus.unauthenticated,
+      );
+    } on BiometricLockedOutException {
+      state = const AsyncValue.data(AuthStatus.lockedOut);
+    } catch (_) {
+      state = const AsyncValue.data(AuthStatus.unauthenticated);
+    }
+  }
+
+  /// Enables biometrics, prompts for registration, and completes the opt-in flow.
+  Future<void> enableBiometricsOptIn() async {
+    state = const AsyncValue.loading();
+    try {
+      final success = await promptBiometricSetup();
+      if (success) {
+        state = const AsyncValue.data(AuthStatus.authenticated);
+      } else {
+        final biometricService = ref.read(biometricAuthServiceProvider);
+        await biometricService.disableBiometrics();
+        state = const AsyncValue.data(AuthStatus.authenticated);
+      }
+    } catch (_) {
+      final biometricService = ref.read(biometricAuthServiceProvider);
+      await biometricService.disableBiometrics();
+      state = const AsyncValue.data(AuthStatus.authenticated);
+    }
+  }
+
+  /// Disables biometrics and completes the opt-in flow.
+  Future<void> skipBiometricOptIn() async {
+    state = const AsyncValue.loading();
+    try {
+      final biometricService = ref.read(biometricAuthServiceProvider);
+      await biometricService.disableBiometrics();
       state = const AsyncValue.data(AuthStatus.authenticated);
     } catch (e, st) {
       state = AsyncValue.error(e, st);
@@ -228,6 +281,17 @@ class AuthNotifier extends AsyncNotifier<AuthStatus> {
   /// Resets the authentication status to unauthenticated (e.g. on manual retry).
   void resetStatus() {
     state = const AsyncValue.data(AuthStatus.unauthenticated);
+  }
+
+  /// Retrieves the required PIN length from secure storage, defaulting to 4 if not set.
+  Future<int> getRequiredPinLength() async {
+    try {
+      final secureStorage = ref.read(secureStorageProvider);
+      final length = await secureStorage.getPinLength();
+      return length ?? 4;
+    } catch (_) {
+      return 4;
+    }
   }
 
   String _hashPin(String pin) {

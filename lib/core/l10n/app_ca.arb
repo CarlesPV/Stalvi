@@ -93,11 +93,11 @@
   "authSetupPinLabel": "Establir un PIN de 4 a 8 dígits",
   "authSetupConfirmPinLabel": "Confirmar PIN",
   "authSetupLanguageLabel": "Idioma predeterminat",
-  "authSetupTermsCheckbox": "Accepto els Termes i Condicions",
+  "authSetupTermsCheckbox": "Accepto els Termes i Condicions i la Política de Privacitat",
   "authSetupCreateButton": "Crear perfil",
   "authSetupValidationErrorPinLength": "El PIN ha de tenir entre 4 i 8 dígits.",
   "authSetupValidationErrorPinMatch": "Els PIN no coincideixen.",
-  "authSetupValidationErrorTerms": "Heu d'acceptar els Termes i Condicions per continuar.",
+  "authSetupValidationErrorTerms": "Heu d'acceptar els Termes i Condicions i la Política de Privacitat per continuar.",
   "authSetupValidationErrorName": "Si us plau, introduïu un nom.",
   "authSetupValidationErrorUsername": "Si us plau, introduïu un nom d'usuari.",
   "authPinEnter": "Introduir PIN",
@@ -107,6 +107,17 @@
   "noAccountsTitle": "Encara no hi ha comptes",
   "noAccountsSubtitle": "Crea un compte o moneder per començar a gestionar els teus actius i registrar transaccions.",
   "defaultAccountLabel": "Predeterminat",
-  "statisticsNoDataSubtitle": "Intenta afegir transaccions o canviar el rang del filtre per veure el teu desglossament de categories."
+  "statisticsNoDataSubtitle": "Intenta afegir transaccions o canviar el rang del filtre per veure el teu desglossament de categories.",
+  "authBiometricOptInTitle": "Habilitar accés biomètric",
+  "authBiometricOptInSubtitle": "Utilitza la teva petjada dactilar o reconeixement facial per accedir a Konta de forma ràpida i segura en el futur.",
+  "authBiometricOptInEnable": "Habilitar biometria",
+  "authBiometricOptInSkip": "Omet de moment",
+  "noDataAvailable": "Encara no hi ha dades disponibles",
+  "termsAndConditions": "Termes i condicions",
+  "privacyPolicy": "Política de privadesa",
+  "myWallet": "La meva cartera",
+  "authSetupCurrencyLabel": "Divisa predeterminada",
+  "authSetupAcceptPrefix": "Accepto els ",
+  "authSetupAcceptAnd": " i la "
 }
 

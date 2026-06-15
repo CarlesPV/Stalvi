@@ -11,7 +11,10 @@ import 'package:konta/presentation/features/transactions/add_transaction_screen.
 import 'package:konta/presentation/features/budgets_and_goals/budgets_and_goals_screen.dart';
 import 'package:konta/presentation/features/statistics/statistics_screen.dart';
 import 'package:konta/presentation/providers/repository_providers.dart';
+import 'package:konta/presentation/providers/auth_notifier.dart';
+import 'package:konta/presentation/providers/locale_provider.dart';
 import 'package:konta/presentation/widgets/empty_state_widget.dart';
+import 'package:konta/presentation/widgets/terms_and_conditions_viewer.dart';
 
 /// The main application scaffold — shown after successful authentication.
 ///
@@ -50,6 +53,67 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen>
     _shimmer = CurvedAnimation(
       parent: _shimmerController,
       curve: Curves.easeInOut,
+    );
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkBiometricOptIn();
+    });
+  }
+
+  Future<void> _checkBiometricOptIn() async {
+    final notifier = ref.read(authNotifierProvider.notifier);
+    final secureStorage = ref.read(secureStorageProvider);
+
+    final isAvailable = await notifier.isBiometricAvailable();
+    if (!isAvailable) return;
+
+    final hasChoice = await secureStorage.hasBiometricsChoice();
+    if (hasChoice) return;
+
+    if (!mounted) return;
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        final l10n = AppLocalizations.of(context)!;
+        final colorScheme = Theme.of(context).colorScheme;
+
+        return AlertDialog(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+          title: Row(
+            children: [
+              Icon(Icons.fingerprint_rounded,
+                  color: colorScheme.primary, size: 28),
+              const SizedBox(width: 12),
+              Expanded(child: Text(l10n.authBiometricOptInTitle)),
+            ],
+          ),
+          content: Text(l10n.authBiometricOptInSubtitle),
+          actionsPadding:
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          actions: [
+            TextButton(
+              onPressed: () async {
+                Navigator.of(context).pop();
+                await notifier.skipBiometricOptIn();
+              },
+              child: Text(
+                l10n.authBiometricOptInSkip,
+                style: TextStyle(color: colorScheme.onSurfaceVariant),
+              ),
+            ),
+            FilledButton(
+              onPressed: () async {
+                Navigator.of(context).pop();
+                await notifier.enableBiometricsOptIn();
+              },
+              child: Text(l10n.authBiometricOptInEnable),
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -738,6 +802,102 @@ class _SettingsSkeletonTab extends StatelessWidget {
                     Expanded(
                       child: Text(
                         AppLocalizations.of(context)!.settingsStatistics,
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.w700,
+                              color: colorScheme.onSurface,
+                            ),
+                      ),
+                    ),
+                    Icon(
+                      Icons.chevron_right_rounded,
+                      color:
+                          colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        }
+
+        if (i == 2) {
+          return Container(
+            height: 60,
+            decoration: BoxDecoration(
+              color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: InkWell(
+              borderRadius: BorderRadius.circular(14),
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const TermsAndConditionsViewer(
+                        showPrivacyPolicy: false),
+                  ),
+                );
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.description_rounded,
+                      color: colorScheme.tertiary,
+                      size: 22,
+                    ),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Text(
+                        AppLocalizations.of(context)!.termsAndConditions,
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.w700,
+                              color: colorScheme.onSurface,
+                            ),
+                      ),
+                    ),
+                    Icon(
+                      Icons.chevron_right_rounded,
+                      color:
+                          colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        }
+
+        if (i == 3) {
+          return Container(
+            height: 60,
+            decoration: BoxDecoration(
+              color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: InkWell(
+              borderRadius: BorderRadius.circular(14),
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        const TermsAndConditionsViewer(showPrivacyPolicy: true),
+                  ),
+                );
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.privacy_tip_rounded,
+                      color: colorScheme.primary,
+                      size: 22,
+                    ),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Text(
+                        AppLocalizations.of(context)!.privacyPolicy,
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                               fontWeight: FontWeight.w700,
                               color: colorScheme.onSurface,

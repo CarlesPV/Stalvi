@@ -93,11 +93,11 @@
   "authSetupPinLabel": "Establecer un PIN de 4 a 8 dígitos",
   "authSetupConfirmPinLabel": "Confirmar PIN",
   "authSetupLanguageLabel": "Idioma predeterminado",
-  "authSetupTermsCheckbox": "Acepto los Términos y Condiciones",
+  "authSetupTermsCheckbox": "Acepto los Términos y Condiciones y la Política de Privacidad",
   "authSetupCreateButton": "Crear perfil",
   "authSetupValidationErrorPinLength": "El PIN debe tener entre 4 y 8 dígitos.",
   "authSetupValidationErrorPinMatch": "Los PIN no coinciden.",
-  "authSetupValidationErrorTerms": "Debe aceptar los Términos y Condiciones para continuar.",
+  "authSetupValidationErrorTerms": "Debe aceptar los Términos y Condiciones y la Política de Privacidad para continuar.",
   "authSetupValidationErrorName": "Por favor, introduzca un nombre.",
   "authSetupValidationErrorUsername": "Por favor, introduzca un nombre de usuario.",
   "authPinEnter": "Introducir PIN",
@@ -107,6 +107,17 @@
   "noAccountsTitle": "Aún no hay cuentas",
   "noAccountsSubtitle": "Crea una cuenta o billetera para comenzar a administrar tus activos y registrar transacciones.",
   "defaultAccountLabel": "Predeterminada",
-  "statisticsNoDataSubtitle": "Intenta añadir transacciones o cambiar el rango del filtro para ver tu desglose de categorías."
+  "statisticsNoDataSubtitle": "Intenta añadir transacciones o cambiar el rango del filtro para ver tu desglose de categorías.",
+  "authBiometricOptInTitle": "Habilitar acceso biométrico",
+  "authBiometricOptInSubtitle": "Usa tu huella dactilar o reconocimiento facial para acceder a Konta de forma rápida y segura en el futuro.",
+  "authBiometricOptInEnable": "Habilitar biometría",
+  "authBiometricOptInSkip": "Omitir por ahora",
+  "noDataAvailable": "Aún no hay datos disponibles",
+  "termsAndConditions": "Términos y condiciones",
+  "privacyPolicy": "Política de privacidad",
+  "myWallet": "Mi cartera",
+  "authSetupCurrencyLabel": "Moneda predeterminada",
+  "authSetupAcceptPrefix": "Acepto los ",
+  "authSetupAcceptAnd": " y la "
 }
 

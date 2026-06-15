@@ -12,12 +12,16 @@ class CreateProfileParams {
   final String username;
   final String pin;
   final String defaultCurrency;
+  final String locale;
+  final bool acceptedTerms;
 
   const CreateProfileParams({
     required this.name,
     required this.username,
     required this.pin,
     required this.defaultCurrency,
+    required this.locale,
+    required this.acceptedTerms,
   });
 }
 
@@ -28,7 +32,14 @@ class CreateProfileUseCase {
   CreateProfileUseCase(this._profileRepository, this._secureStorageManager);
 
   Future<Profile> execute(CreateProfileParams params) async {
-    // 1. PIN length and numeric validation
+    // 1. Terms acceptance check
+    if (!params.acceptedTerms) {
+      throw const ValidationException(
+        message: 'You must accept the Terms & Conditions to proceed.',
+      );
+    }
+
+    // 2. PIN length and numeric validation
     final pin = params.pin;
     if (pin.length < 4 || pin.length > 8) {
       throw const ValidationException(
@@ -53,13 +64,15 @@ class CreateProfileUseCase {
       );
     }
 
-    // 2. Hash PIN with SHA-256
+    // 3. Hash PIN with SHA-256
     final pinHash = _hashPin(pin);
 
-    // 3. Save PIN hash in secure storage
+    // 4. Save PIN hash, user locale, and PIN length in secure storage
     await _secureStorageManager.savePinHash(pinHash);
+    await _secureStorageManager.setUserLocale(params.locale);
+    await _secureStorageManager.savePinLength(pin.length);
 
-    // 4. Update seeded profile or create a new one
+    // 5. Update seeded profile or create a new one
     final existing = await _profileRepository.getFirstProfile();
     final Profile profile;
     final now = DateTime.now();

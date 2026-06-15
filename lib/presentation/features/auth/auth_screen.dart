@@ -1,11 +1,14 @@
 import 'dart:ui';
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:konta/core/l10n/app_localizations.dart';
 import 'package:konta/presentation/features/dashboard/dashboard_screen.dart';
+import 'package:konta/presentation/features/auth/biometric_opt_in_screen.dart';
 import 'package:konta/presentation/providers/auth_notifier.dart';
 import 'package:konta/presentation/providers/locale_provider.dart';
+import 'package:konta/presentation/widgets/terms_and_conditions_viewer.dart';
 
 class AuthScreen extends ConsumerStatefulWidget {
   const AuthScreen({super.key});
@@ -17,7 +20,6 @@ class AuthScreen extends ConsumerStatefulWidget {
 class _AuthScreenState extends ConsumerState<AuthScreen>
     with SingleTickerProviderStateMixin {
   bool _hasNavigated = false;
-  bool _hasTriggeredInitialAuth = false;
   bool _biometricsAvailable = false;
 
   // Text inputs for setup
@@ -27,9 +29,11 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
   final _pinController = TextEditingController();
   final _confirmPinController = TextEditingController();
   bool _acceptTerms = false;
+  String _selectedCurrency = 'EUR';
 
   // Entered PIN state for login
   String _enteredPin = '';
+  int _requiredPinLength = 4; // default, loaded asynchronously
 
   // Pulsing animation for the biometric icon
   late final AnimationController _pulseController;
@@ -60,7 +64,18 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
           });
         }
       });
+      _loadPinLength();
     });
+  }
+
+  Future<void> _loadPinLength() async {
+    final length =
+        await ref.read(authNotifierProvider.notifier).getRequiredPinLength();
+    if (mounted) {
+      setState(() {
+        _requiredPinLength = length;
+      });
+    }
   }
 
   @override
@@ -92,6 +107,25 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
     );
   }
 
+  void _navigateToBiometricOptIn() {
+    if (_hasNavigated || !mounted) return;
+    _hasNavigated = true;
+
+    Navigator.of(context).pushReplacement(
+      PageRouteBuilder(
+        pageBuilder: (_, __, ___) => const BiometricOptInScreen(),
+        transitionsBuilder: (_, animation, __, child) => FadeTransition(
+          opacity: CurvedAnimation(
+            parent: animation,
+            curve: Curves.easeInOut,
+          ),
+          child: child,
+        ),
+        transitionDuration: const Duration(milliseconds: 500),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -106,12 +140,12 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
             _navigateToDashboard();
             return;
           }
-          // Auto-present biometric prompt on first resolution to unauthenticated
-          if (status == AuthStatus.unauthenticated &&
-              !_hasTriggeredInitialAuth &&
-              _biometricsAvailable) {
-            _hasTriggeredInitialAuth = true;
-            ref.read(authNotifierProvider.notifier).authenticate();
+          if (status == AuthStatus.biometricOptIn) {
+            _navigateToBiometricOptIn();
+            return;
+          }
+          if (status == AuthStatus.unauthenticated) {
+            _loadPinLength();
           }
         },
       );
@@ -265,7 +299,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
           ),
           const SizedBox(height: 8),
           DropdownButtonFormField<String>(
-            value: activeLocale.languageCode,
+            initialValue: activeLocale.languageCode,
             decoration: InputDecoration(
               filled: true,
               fillColor: colorScheme.surfaceContainerLow.withValues(alpha: 0.6),
@@ -290,6 +324,55 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
             onChanged: (langCode) {
               if (langCode != null) {
                 ref.read(localeProvider.notifier).setLocale(Locale(langCode));
+              }
+            },
+          ),
+          const SizedBox(height: 16),
+
+          // Currency Selector
+          Text(
+            l10n.authSetupCurrencyLabel,
+            style: theme.textTheme.labelMedium?.copyWith(
+              fontWeight: FontWeight.w700,
+              color: colorScheme.onSurfaceVariant,
+            ),
+          ),
+          const SizedBox(height: 8),
+          DropdownButtonFormField<String>(
+            initialValue: _selectedCurrency,
+            decoration: InputDecoration(
+              filled: true,
+              fillColor: colorScheme.surfaceContainerLow.withValues(alpha: 0.6),
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(
+                    color: colorScheme.outlineVariant.withValues(alpha: 0.4)),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(
+                    color: colorScheme.outlineVariant.withValues(alpha: 0.4)),
+              ),
+            ),
+            items: const [
+              DropdownMenuItem(value: 'EUR', child: Text('Euro (EUR)')),
+              DropdownMenuItem(value: 'USD', child: Text('US Dollar (USD)')),
+              DropdownMenuItem(
+                  value: 'GBP', child: Text('British Pound (GBP)')),
+              DropdownMenuItem(value: 'JPY', child: Text('Japanese Yen (JPY)')),
+              DropdownMenuItem(value: 'CHF', child: Text('Swiss Franc (CHF)')),
+              DropdownMenuItem(
+                  value: 'CAD', child: Text('Canadian Dollar (CAD)')),
+              DropdownMenuItem(
+                  value: 'AUD', child: Text('Australian Dollar (AUD)')),
+            ],
+            onChanged: (currency) {
+              if (currency != null) {
+                setState(() {
+                  _selectedCurrency = currency;
+                });
               }
             },
           ),
@@ -403,10 +486,69 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
                         },
                       ),
                       Expanded(
-                        child: Text(
-                          l10n.authSetupTermsCheckbox,
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            color: colorScheme.onSurface,
+                        child: RichText(
+                          text: TextSpan(
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: colorScheme.onSurface,
+                            ),
+                            children: [
+                              TextSpan(text: l10n.authSetupAcceptPrefix),
+                              TextSpan(
+                                text: l10n.termsAndConditions,
+                                style: TextStyle(
+                                  color: colorScheme.primary,
+                                  fontWeight: FontWeight.bold,
+                                  decoration: TextDecoration.underline,
+                                ),
+                                recognizer: TapGestureRecognizer()
+                                  ..onTap = () {
+                                    Navigator.of(context).push(
+                                      PageRouteBuilder(
+                                        pageBuilder: (_, animation, __) =>
+                                            const TermsAndConditionsViewer(
+                                          showPrivacyPolicy: false,
+                                        ),
+                                        transitionsBuilder:
+                                            (_, animation, __, child) =>
+                                                FadeTransition(
+                                          opacity: animation,
+                                          child: child,
+                                        ),
+                                        transitionDuration:
+                                            const Duration(milliseconds: 300),
+                                      ),
+                                    );
+                                  },
+                              ),
+                              TextSpan(text: l10n.authSetupAcceptAnd),
+                              TextSpan(
+                                text: l10n.privacyPolicy,
+                                style: TextStyle(
+                                  color: colorScheme.primary,
+                                  fontWeight: FontWeight.bold,
+                                  decoration: TextDecoration.underline,
+                                ),
+                                recognizer: TapGestureRecognizer()
+                                  ..onTap = () {
+                                    Navigator.of(context).push(
+                                      PageRouteBuilder(
+                                        pageBuilder: (_, animation, __) =>
+                                            const TermsAndConditionsViewer(
+                                          showPrivacyPolicy: true,
+                                        ),
+                                        transitionsBuilder:
+                                            (_, animation, __, child) =>
+                                                FadeTransition(
+                                          opacity: animation,
+                                          child: child,
+                                        ),
+                                        transitionDuration:
+                                            const Duration(milliseconds: 300),
+                                      ),
+                                    );
+                                  },
+                              ),
+                            ],
                           ),
                         ),
                       ),
@@ -442,7 +584,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
                         pin: _pinController.text,
                         confirmPin: _confirmPinController.text,
                         acceptTerms: _acceptTerms,
-                        defaultCurrency: 'EUR',
+                        defaultCurrency: _selectedCurrency,
                       );
                 }
               },
@@ -485,10 +627,10 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
         ),
         const SizedBox(height: 20),
 
-        // Display Dots for Entered PIN digits (min 4, max 8)
+        // Display Dots for Entered PIN digits (dynamic length)
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: List.generate(8, (index) {
+          children: List.generate(_requiredPinLength, (index) {
             final isFilled = index < _enteredPin.length;
             return Container(
               margin: const EdgeInsets.symmetric(horizontal: 8),
@@ -555,7 +697,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
         margin: const EdgeInsets.all(6),
         child: InkWell(
           onTap: () {
-            if (_enteredPin.length < 8) {
+            if (_enteredPin.length < _requiredPinLength) {
               setState(() {
                 if (ref.read(authNotifierProvider).hasError) {
                   ref.read(authNotifierProvider.notifier).resetStatus();
@@ -563,8 +705,8 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
                 _enteredPin += digit;
               });
 
-              // Auto-submit if PIN hits maximum length limit
-              if (_enteredPin.length == 8) {
+              // Auto-submit if PIN hits required length
+              if (_enteredPin.length == _requiredPinLength) {
                 _submitPin();
               }
             }
@@ -585,20 +727,6 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
   }
 
   Widget _bottomLeftKey(ColorScheme colorScheme) {
-    if (_enteredPin.length >= 4) {
-      return AspectRatio(
-        aspectRatio: 1.5,
-        child: Container(
-          margin: const EdgeInsets.all(6),
-          child: IconButton(
-            icon: Icon(Icons.check_circle_outline_rounded,
-                size: 36, color: colorScheme.primary),
-            onPressed: _submitPin,
-          ),
-        ),
-      );
-    }
-
     if (_biometricsAvailable) {
       return AspectRatio(
         aspectRatio: 1.5,

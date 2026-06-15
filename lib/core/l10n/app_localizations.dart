@@ -661,7 +661,7 @@ abstract class AppLocalizations {
   /// Label for terms and conditions checkbox
   ///
   /// In en, this message translates to:
-  /// **'I accept the Terms & Conditions'**
+  /// **'I accept the Terms & Conditions and Privacy Policy'**
   String get authSetupTermsCheckbox;
 
   /// Button label to submit setup form
@@ -685,7 +685,7 @@ abstract class AppLocalizations {
   /// Validation error when terms are not accepted
   ///
   /// In en, this message translates to:
-  /// **'You must accept the Terms & Conditions to proceed.'**
+  /// **'You must accept the Terms & Conditions and Privacy Policy to proceed.'**
   String get authSetupValidationErrorTerms;
 
   /// Validation error when name is empty
@@ -747,6 +747,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Try adding transactions or changing the filter range to see your category breakdown.'**
   String get statisticsNoDataSubtitle;
+
+  /// Title for the biometric opt-in screen
+  ///
+  /// In en, this message translates to:
+  /// **'Enable Biometric Login'**
+  String get authBiometricOptInTitle;
+
+  /// Subtitle for the biometric opt-in screen
+  ///
+  /// In en, this message translates to:
+  /// **'Use Fingerprint or FaceID to quickly and securely access your Konta account in the future.'**
+  String get authBiometricOptInSubtitle;
+
+  /// Button label to enable biometric login
+  ///
+  /// In en, this message translates to:
+  /// **'Enable Biometrics'**
+  String get authBiometricOptInEnable;
+
+  /// Button label to skip biometric login
+  ///
+  /// In en, this message translates to:
+  /// **'Skip for Now'**
+  String get authBiometricOptInSkip;
+
+  /// Default label for empty state when no data is found
+  ///
+  /// In en, this message translates to:
+  /// **'No data available yet'**
+  String get noDataAvailable;
+
+  /// Title for the Terms and Conditions screen
+  ///
+  /// In en, this message translates to:
+  /// **'Terms and Conditions'**
+  String get termsAndConditions;
+
+  /// Title for the Privacy Policy screen
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy Policy'**
+  String get privacyPolicy;
+
+  /// General localized label for My Wallet
+  ///
+  /// In en, this message translates to:
+  /// **'My Wallet'**
+  String get myWallet;
+
+  /// Label for default currency selector during setup
+  ///
+  /// In en, this message translates to:
+  /// **'Default Currency'**
+  String get authSetupCurrencyLabel;
+
+  /// Prefix text for terms acceptance checkbox
+  ///
+  /// In en, this message translates to:
+  /// **'I accept the '**
+  String get authSetupAcceptPrefix;
+
+  /// Conjunction text for terms and privacy acceptance checkbox
+  ///
+  /// In en, this message translates to:
+  /// **' and the '**
+  String get authSetupAcceptAnd;
 }
 
 class _AppLocalizationsDelegate

@@ -4,7 +4,6 @@ import 'package:local_auth/local_auth.dart';
 import 'package:local_auth/error_codes.dart' as auth_error;
 import 'package:konta/core/security/secure_storage_manager.dart';
 import 'package:konta/presentation/providers/locale_provider.dart';
-import 'package:konta/presentation/providers/repository_providers.dart';
 
 class BiometricAuthService {
   BiometricAuthService(this._localAuth, this._secureStorage);

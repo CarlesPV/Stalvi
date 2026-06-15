@@ -395,7 +395,7 @@
   "@authSetupLanguageLabel": {
     "description": "Label for language selection"
   },
-  "authSetupTermsCheckbox": "I accept the Terms & Conditions",
+  "authSetupTermsCheckbox": "I accept the Terms & Conditions and Privacy Policy",
   "@authSetupTermsCheckbox": {
     "description": "Label for terms and conditions checkbox"
   },
@@ -411,7 +411,7 @@
   "@authSetupValidationErrorPinMatch": {
     "description": "Validation error when PINs do not match"
   },
-  "authSetupValidationErrorTerms": "You must accept the Terms & Conditions to proceed.",
+  "authSetupValidationErrorTerms": "You must accept the Terms & Conditions and Privacy Policy to proceed.",
   "@authSetupValidationErrorTerms": {
     "description": "Validation error when terms are not accepted"
   },
@@ -454,6 +454,50 @@
   "statisticsNoDataSubtitle": "Try adding transactions or changing the filter range to see your category breakdown.",
   "@statisticsNoDataSubtitle": {
     "description": "Subtitle when there is no data to show in statistics charts"
+  },
+  "authBiometricOptInTitle": "Enable Biometric Login",
+  "@authBiometricOptInTitle": {
+    "description": "Title for the biometric opt-in screen"
+  },
+  "authBiometricOptInSubtitle": "Use Fingerprint or FaceID to quickly and securely access your Konta account in the future.",
+  "@authBiometricOptInSubtitle": {
+    "description": "Subtitle for the biometric opt-in screen"
+  },
+  "authBiometricOptInEnable": "Enable Biometrics",
+  "@authBiometricOptInEnable": {
+    "description": "Button label to enable biometric login"
+  },
+  "authBiometricOptInSkip": "Skip for Now",
+  "@authBiometricOptInSkip": {
+    "description": "Button label to skip biometric login"
+  },
+  "noDataAvailable": "No data available yet",
+  "@noDataAvailable": {
+    "description": "Default label for empty state when no data is found"
+  },
+  "termsAndConditions": "Terms and Conditions",
+  "@termsAndConditions": {
+    "description": "Title for the Terms and Conditions screen"
+  },
+  "privacyPolicy": "Privacy Policy",
+  "@privacyPolicy": {
+    "description": "Title for the Privacy Policy screen"
+  },
+  "myWallet": "My Wallet",
+  "@myWallet": {
+    "description": "General localized label for My Wallet"
+  },
+  "authSetupCurrencyLabel": "Default Currency",
+  "@authSetupCurrencyLabel": {
+    "description": "Label for default currency selector during setup"
+  },
+  "authSetupAcceptPrefix": "I accept the ",
+  "@authSetupAcceptPrefix": {
+    "description": "Prefix text for terms acceptance checkbox"
+  },
+  "authSetupAcceptAnd": " and the ",
+  "@authSetupAcceptAnd": {
+    "description": "Conjunction text for terms and privacy acceptance checkbox"
   }
 }
 

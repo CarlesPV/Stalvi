@@ -313,7 +313,8 @@ class AppLocalizationsEs extends AppLocalizations {
   String get authSetupLanguageLabel => 'Idioma predeterminado';
 
   @override
-  String get authSetupTermsCheckbox => 'Acepto los Términos y Condiciones';
+  String get authSetupTermsCheckbox =>
+      'Acepto los Términos y Condiciones y la Política de Privacidad';
 
   @override
   String get authSetupCreateButton => 'Crear perfil';
@@ -327,7 +328,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get authSetupValidationErrorTerms =>
-      'Debe aceptar los Términos y Condiciones para continuar.';
+      'Debe aceptar los Términos y Condiciones y la Política de Privacidad para continuar.';
 
   @override
   String get authSetupValidationErrorName => 'Por favor, introduzca un nombre.';
@@ -361,4 +362,38 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get statisticsNoDataSubtitle =>
       'Intenta añadir transacciones o cambiar el rango del filtro para ver tu desglose de categorías.';
+
+  @override
+  String get authBiometricOptInTitle => 'Habilitar acceso biométrico';
+
+  @override
+  String get authBiometricOptInSubtitle =>
+      'Usa tu huella dactilar o reconocimiento facial para acceder a Konta de forma rápida y segura en el futuro.';
+
+  @override
+  String get authBiometricOptInEnable => 'Habilitar biometría';
+
+  @override
+  String get authBiometricOptInSkip => 'Omitir por ahora';
+
+  @override
+  String get noDataAvailable => 'Aún no hay datos disponibles';
+
+  @override
+  String get termsAndConditions => 'Términos y condiciones';
+
+  @override
+  String get privacyPolicy => 'Política de privacidad';
+
+  @override
+  String get myWallet => 'Mi cartera';
+
+  @override
+  String get authSetupCurrencyLabel => 'Moneda predeterminada';
+
+  @override
+  String get authSetupAcceptPrefix => 'Acepto los ';
+
+  @override
+  String get authSetupAcceptAnd => ' y la ';
 }

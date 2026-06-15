@@ -105,7 +105,8 @@ final createProfileUseCaseProvider = Provider<CreateProfileUseCase>((ref) {
 final initializeDefaultDataUseCaseProvider =
     Provider<InitializeDefaultDataUseCase>((ref) {
   final accountRepo = ref.watch(accountRepositoryProvider);
-  return InitializeDefaultDataUseCase(accountRepo);
+  final categoryRepo = ref.watch(categoryRepositoryProvider);
+  return InitializeDefaultDataUseCase(accountRepo, categoryRepo);
 });
 
 /// Fetches the default profile (usually Anonymous) seeded on DB creation.

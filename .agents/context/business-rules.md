@@ -2,9 +2,28 @@
 
 ## Epic 1: Onboarding & Accounts
 **User Story 1.1:** As a new user, I want the app to initialize with a default account and categories so I can start logging transactions immediately.
-* **Acceptance Criteria:** * App creates "Mi Cartera" (My Wallet) automatically.
-  * App generates a baseline tree of common categories.
-  * Initial balance must be mandatory upon manual account creation.
+* **Acceptance Criteria:**
+  - App automatically seeds a default account (e.g., "Mi cartera" / "My Wallet" / "La meva cartera") with a balance of exactly 0.0.
+  - App generates a baseline set of common typical categories.
+  - Initial balance must be mandatory upon manual account creation.
+  - All default seeded entities (account name, category names) must be localized in the selected app language (EN, ES, CA).
+
+**User Story 1.2: Legal Documents Review:** As a user, I want to view the Terms & Conditions and the Privacy Policy separately, in my app's language, during registration or in the settings screen.
+* **Acceptance Criteria:**
+  - Terms & Conditions and Privacy Policy must be distinct documents and checkbox items.
+  - Both documents must be fully localized in English, Spanish, and Catalan.
+  - Both documents must be accessible from links during profile creation and via settings.
+
+**User Story 1.3: Default Currency Selector:** As a new user, I want to select my default currency when creating my profile.
+* **Acceptance Criteria:**
+  - The profile creation form must display a dropdown selector for the default currency.
+  - The chosen currency must be persisted in the user profile and used as the base currency for all conversions/calculations.
+
+**User Story 1.4: Seamless Direct Entry & Biometrics Opt-In:** As a new user, I want to access the app immediately after profile creation without entering my PIN, and choose whether to enable biometric unlock.
+* **Acceptance Criteria:**
+  - The app must bypass the login screen immediately after successful profile creation and navigate directly to the Dashboard.
+  - A biometric opt-in prompt/dialog must appear on the Dashboard for first-time users.
+  - Opt-in preference (enable/disable biometric unlock) must be saved securely.
 
 ## Epic 2: Transactions & Movements
 **User Story 2.1:** As a user, I want to transfer money between accounts without affecting my global income/expense statistics.

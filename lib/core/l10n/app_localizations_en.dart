@@ -307,7 +307,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get authSetupLanguageLabel => 'Default Language';
 
   @override
-  String get authSetupTermsCheckbox => 'I accept the Terms & Conditions';
+  String get authSetupTermsCheckbox =>
+      'I accept the Terms & Conditions and Privacy Policy';
 
   @override
   String get authSetupCreateButton => 'Create Profile';
@@ -321,7 +322,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get authSetupValidationErrorTerms =>
-      'You must accept the Terms & Conditions to proceed.';
+      'You must accept the Terms & Conditions and Privacy Policy to proceed.';
 
   @override
   String get authSetupValidationErrorName => 'Please enter a name.';
@@ -354,4 +355,38 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get statisticsNoDataSubtitle =>
       'Try adding transactions or changing the filter range to see your category breakdown.';
+
+  @override
+  String get authBiometricOptInTitle => 'Enable Biometric Login';
+
+  @override
+  String get authBiometricOptInSubtitle =>
+      'Use Fingerprint or FaceID to quickly and securely access your Konta account in the future.';
+
+  @override
+  String get authBiometricOptInEnable => 'Enable Biometrics';
+
+  @override
+  String get authBiometricOptInSkip => 'Skip for Now';
+
+  @override
+  String get noDataAvailable => 'No data available yet';
+
+  @override
+  String get termsAndConditions => 'Terms and Conditions';
+
+  @override
+  String get privacyPolicy => 'Privacy Policy';
+
+  @override
+  String get myWallet => 'My Wallet';
+
+  @override
+  String get authSetupCurrencyLabel => 'Default Currency';
+
+  @override
+  String get authSetupAcceptPrefix => 'I accept the ';
+
+  @override
+  String get authSetupAcceptAnd => ' and the ';
 }
