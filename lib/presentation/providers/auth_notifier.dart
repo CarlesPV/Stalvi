@@ -3,7 +3,6 @@ import 'package:crypto/crypto.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:konta/infrastructure/services/biometric_auth_service.dart';
 
-import 'package:konta/core/security/secure_storage_manager.dart';
 import 'package:konta/core/l10n/app_localizations.dart';
 import 'package:konta/domain/usecases/create_profile_usecase.dart';
 import 'package:konta/presentation/providers/locale_provider.dart';
@@ -54,7 +53,7 @@ class AuthNotifier extends AsyncNotifier<AuthStatus> {
   /// Prompts the user to enable biometrics right after PIN setup.
   Future<bool> promptBiometricSetup() async {
     final biometricService = ref.read(biometricAuthServiceProvider);
-    
+
     final isAvailable = await biometricService.isBiometricAvailable();
     if (!isAvailable) {
       return false;
@@ -92,7 +91,7 @@ class AuthNotifier extends AsyncNotifier<AuthStatus> {
 
     try {
       final biometricService = ref.read(biometricAuthServiceProvider);
-      
+
       final isEnabled = await biometricService.isBiometricsEnabled();
       if (!isEnabled) {
         state = const AsyncValue.data(AuthStatus.unauthenticated);
@@ -186,7 +185,8 @@ class AuthNotifier extends AsyncNotifier<AuthStatus> {
         // Fallback to spanish/generic default
       }
 
-      final initializeDefaultDataUseCase = ref.read(initializeDefaultDataUseCaseProvider);
+      final initializeDefaultDataUseCase =
+          ref.read(initializeDefaultDataUseCaseProvider);
       await initializeDefaultDataUseCase.execute(
         userId: profile.id,
         walletName: walletName,

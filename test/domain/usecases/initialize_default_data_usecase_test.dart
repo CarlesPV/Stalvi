@@ -24,7 +24,9 @@ void main() {
   });
 
   group('InitializeDefaultDataUseCase Unit Tests', () {
-    test('should create default wallet named "Mi cartera" with 0.0 balance if user has no existing accounts', () async {
+    test(
+        'should create default wallet named "Mi cartera" with 0.0 balance if user has no existing accounts',
+        () async {
       // Arrange
       const userId = 'user_123';
       const walletName = 'Mi cartera';
@@ -33,8 +35,8 @@ void main() {
       when(() => mockAccountRepository.getAccountsByUserId(userId))
           .thenAnswer((_) async => <Account>[]);
 
-      when(() => mockAccountRepository.createAccount(any()))
-          .thenAnswer((invocation) async => invocation.positionalArguments[0] as Account);
+      when(() => mockAccountRepository.createAccount(any())).thenAnswer(
+          (invocation) async => invocation.positionalArguments[0] as Account);
 
       // Act
       await useCase.execute(
@@ -46,7 +48,10 @@ void main() {
       // Assert
       verify(() => mockAccountRepository.getAccountsByUserId(userId)).called(1);
 
-      final capturedAccount = verify(() => mockAccountRepository.createAccount(captureAny())).captured.first as Account;
+      final capturedAccount =
+          verify(() => mockAccountRepository.createAccount(captureAny()))
+              .captured
+              .first as Account;
       expect(capturedAccount.userId, userId);
       expect(capturedAccount.name, walletName);
       expect(capturedAccount.type, AccountType.cash);
@@ -62,7 +67,9 @@ void main() {
       verifyNoMoreInteractions(mockAccountRepository);
     });
 
-    test('should return early and NOT create default wallet if user already has accounts', () async {
+    test(
+        'should return early and NOT create default wallet if user already has accounts',
+        () async {
       // Arrange
       const userId = 'user_123';
       const walletName = 'Mi cartera';

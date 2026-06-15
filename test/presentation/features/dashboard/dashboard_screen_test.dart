@@ -102,7 +102,8 @@ void main() {
   }
 
   group('DashboardScreen Widget Tests', () {
-    testWidgets('renders empty state in Overview tab when transactions list is empty',
+    testWidgets(
+        'renders empty state in Overview tab when transactions list is empty',
         (WidgetTester tester) async {
       await tester.pumpWidget(
         createTestWidget(
@@ -118,12 +119,14 @@ void main() {
       expect(find.byType(EmptyStateWidget), findsOneWidget);
       expect(find.text('No transactions yet'), findsOneWidget);
       expect(
-        find.text('Add your first income or expense to see it here and start tracking.'),
+        find.text(
+            'Add your first income or expense to see it here and start tracking.'),
         findsOneWidget,
       );
     });
 
-    testWidgets('renders empty state in Transactions tab when transactions list is empty',
+    testWidgets(
+        'renders empty state in Transactions tab when transactions list is empty',
         (WidgetTester tester) async {
       await tester.pumpWidget(
         createTestWidget(
@@ -145,7 +148,8 @@ void main() {
       expect(find.text('No transactions yet'), findsOneWidget);
     });
 
-    testWidgets('renders empty state in Accounts tab when accounts list is empty',
+    testWidgets(
+        'renders empty state in Accounts tab when accounts list is empty',
         (WidgetTester tester) async {
       await tester.pumpWidget(
         createTestWidget(
@@ -165,12 +169,14 @@ void main() {
       expect(find.byType(EmptyStateWidget), findsOneWidget);
       expect(find.text('No accounts yet'), findsOneWidget);
       expect(
-        find.text('Create an account or wallet to start managing your assets and tracking transactions.'),
+        find.text(
+            'Create an account or wallet to start managing your assets and tracking transactions.'),
         findsOneWidget,
       );
     });
 
-    testWidgets('renders lists of transactions and accounts when data is available',
+    testWidgets(
+        'renders lists of transactions and accounts when data is available',
         (WidgetTester tester) async {
       await tester.pumpWidget(
         createTestWidget(

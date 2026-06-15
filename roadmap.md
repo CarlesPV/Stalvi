@@ -8,14 +8,15 @@
 - [x] **Phase 5:** Development of Management Screens (Transactions, Accounts, Budgets).
 - [x] **Phase 6:** Statistics Module and Data Export/Import Engine.
 
+- [x] **Phase 7: Secure Onboarding, Initialization & User Experience (UX)**
+  - [x] Implement initial profile account creation (4-8 digit PIN, language selection, terms and conditions).
+  - [x] Integrate biometric authentication request and validation (FaceID/TouchID).
+  - [x] Automatic generation of the default account ("Mi cartera" / "My Wallet" with 0.0 balance) after registration.
+  - [x] Apply and standardize `EmptyStateWidget` across all screens with empty lists.
+
 ## Current Phase
-- [ ] **Phase 7: Secure Onboarding, Initialization & User Experience (UX)**
-  - [ ] Implement initial profile account creation (4-8 digit PIN, language selection, terms and conditions).
-  - [ ] Integrate biometric authentication request and validation (FaceID/TouchID).
-  - [ ] Automatic generation of the default account ("Mi cartera" / "My Wallet" with 0.0 balance) after registration.
-  - [ ] Apply and standardize `EmptyStateWidget` across all screens with empty lists.
+- [ ] **Phase 8: Advanced Settings Management (Manual/system dark/light mode, 30-day recycle bin)**
 
 ## Upcoming Phases
-- [ ] **Phase 8:** Advanced Settings Management (Manual/system dark/light mode, 30-day recycle bin).
 - [ ] **Phase 9:** Synchronization, Backups, and Import/Export Validations.
 - [ ] **Phase 10:** Integration Testing (E2E), final security audit, and store preparation.

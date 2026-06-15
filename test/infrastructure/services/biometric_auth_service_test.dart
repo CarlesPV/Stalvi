@@ -7,6 +7,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:local_auth/error_codes.dart' as auth_error;
 
 class MockLocalAuthentication extends Mock implements LocalAuthentication {}
+
 class MockSecureStorageManager extends Mock implements SecureStorageManager {}
 
 void main() {
@@ -21,13 +22,16 @@ void main() {
   setUp(() {
     mockLocalAuth = MockLocalAuthentication();
     mockSecureStorage = MockSecureStorageManager();
-    biometricAuthService = BiometricAuthService(mockLocalAuth, mockSecureStorage);
+    biometricAuthService =
+        BiometricAuthService(mockLocalAuth, mockSecureStorage);
   });
 
   group('isBiometricAvailable', () {
     test('returns true when biometrics are supported and enrolled', () async {
-      when(() => mockLocalAuth.isDeviceSupported()).thenAnswer((_) async => true);
-      when(() => mockLocalAuth.canCheckBiometrics).thenAnswer((_) async => true);
+      when(() => mockLocalAuth.isDeviceSupported())
+          .thenAnswer((_) async => true);
+      when(() => mockLocalAuth.canCheckBiometrics)
+          .thenAnswer((_) async => true);
       when(() => mockLocalAuth.getAvailableBiometrics())
           .thenAnswer((_) async => [BiometricType.fingerprint]);
 
@@ -36,23 +40,28 @@ void main() {
     });
 
     test('returns false when device is not supported', () async {
-      when(() => mockLocalAuth.isDeviceSupported()).thenAnswer((_) async => false);
+      when(() => mockLocalAuth.isDeviceSupported())
+          .thenAnswer((_) async => false);
 
       final result = await biometricAuthService.isBiometricAvailable();
       expect(result, isFalse);
     });
 
     test('returns false when biometrics cannot be checked', () async {
-      when(() => mockLocalAuth.isDeviceSupported()).thenAnswer((_) async => true);
-      when(() => mockLocalAuth.canCheckBiometrics).thenAnswer((_) async => false);
+      when(() => mockLocalAuth.isDeviceSupported())
+          .thenAnswer((_) async => true);
+      when(() => mockLocalAuth.canCheckBiometrics)
+          .thenAnswer((_) async => false);
 
       final result = await biometricAuthService.isBiometricAvailable();
       expect(result, isFalse);
     });
 
     test('returns false when no biometrics are enrolled', () async {
-      when(() => mockLocalAuth.isDeviceSupported()).thenAnswer((_) async => true);
-      when(() => mockLocalAuth.canCheckBiometrics).thenAnswer((_) async => true);
+      when(() => mockLocalAuth.isDeviceSupported())
+          .thenAnswer((_) async => true);
+      when(() => mockLocalAuth.canCheckBiometrics)
+          .thenAnswer((_) async => true);
       when(() => mockLocalAuth.getAvailableBiometrics())
           .thenAnswer((_) async => []);
 
@@ -61,7 +70,8 @@ void main() {
     });
 
     test('returns false on exception', () async {
-      when(() => mockLocalAuth.isDeviceSupported()).thenThrow(Exception('Error'));
+      when(() => mockLocalAuth.isDeviceSupported())
+          .thenThrow(Exception('Error'));
 
       final result = await biometricAuthService.isBiometricAvailable();
       expect(result, isFalse);
@@ -71,29 +81,33 @@ void main() {
   group('authenticate', () {
     test('returns true when authentication succeeds', () async {
       when(() => mockLocalAuth.authenticate(
-        localizedReason: any(named: 'localizedReason'),
-        options: any(named: 'options'),
-      )).thenAnswer((_) async => true);
+            localizedReason: any(named: 'localizedReason'),
+            options: any(named: 'options'),
+          )).thenAnswer((_) async => true);
 
-      final result = await biometricAuthService.authenticate(localizedReason: 'Test');
+      final result =
+          await biometricAuthService.authenticate(localizedReason: 'Test');
       expect(result, isTrue);
     });
 
     test('returns false when authentication fails normally', () async {
       when(() => mockLocalAuth.authenticate(
-        localizedReason: any(named: 'localizedReason'),
-        options: any(named: 'options'),
-      )).thenAnswer((_) async => false);
+            localizedReason: any(named: 'localizedReason'),
+            options: any(named: 'options'),
+          )).thenAnswer((_) async => false);
 
-      final result = await biometricAuthService.authenticate(localizedReason: 'Test');
+      final result =
+          await biometricAuthService.authenticate(localizedReason: 'Test');
       expect(result, isFalse);
     });
 
     test('throws BiometricLockedOutException when locked out', () async {
       when(() => mockLocalAuth.authenticate(
-        localizedReason: any(named: 'localizedReason'),
-        options: any(named: 'options'),
-      )).thenThrow(PlatformException(code: auth_error.lockedOut, message: 'Locked out'));
+                localizedReason: any(named: 'localizedReason'),
+                options: any(named: 'options'),
+              ))
+          .thenThrow(PlatformException(
+              code: auth_error.lockedOut, message: 'Locked out'));
 
       expect(
         () => biometricAuthService.authenticate(localizedReason: 'Test'),
@@ -103,9 +117,10 @@ void main() {
 
     test('throws BiometricException for other PlatformExceptions', () async {
       when(() => mockLocalAuth.authenticate(
-        localizedReason: any(named: 'localizedReason'),
-        options: any(named: 'options'),
-      )).thenThrow(PlatformException(code: 'other', message: 'Other error'));
+                localizedReason: any(named: 'localizedReason'),
+                options: any(named: 'options'),
+              ))
+          .thenThrow(PlatformException(code: 'other', message: 'Other error'));
 
       expect(
         () => biometricAuthService.authenticate(localizedReason: 'Test'),
@@ -115,9 +130,9 @@ void main() {
 
     test('throws BiometricException for general Exception', () async {
       when(() => mockLocalAuth.authenticate(
-        localizedReason: any(named: 'localizedReason'),
-        options: any(named: 'options'),
-      )).thenThrow(Exception('General error'));
+            localizedReason: any(named: 'localizedReason'),
+            options: any(named: 'options'),
+          )).thenThrow(Exception('General error'));
 
       expect(
         () => biometricAuthService.authenticate(localizedReason: 'Test'),
@@ -128,19 +143,22 @@ void main() {
 
   group('biometrics enabled state', () {
     test('enableBiometrics sets state to true', () async {
-      when(() => mockSecureStorage.setBiometricsEnabled(true)).thenAnswer((_) async {});
+      when(() => mockSecureStorage.setBiometricsEnabled(true))
+          .thenAnswer((_) async {});
       await biometricAuthService.enableBiometrics();
       verify(() => mockSecureStorage.setBiometricsEnabled(true)).called(1);
     });
 
     test('disableBiometrics sets state to false', () async {
-      when(() => mockSecureStorage.setBiometricsEnabled(false)).thenAnswer((_) async {});
+      when(() => mockSecureStorage.setBiometricsEnabled(false))
+          .thenAnswer((_) async {});
       await biometricAuthService.disableBiometrics();
       verify(() => mockSecureStorage.setBiometricsEnabled(false)).called(1);
     });
 
     test('isBiometricsEnabled returns current state', () async {
-      when(() => mockSecureStorage.isBiometricsEnabled()).thenAnswer((_) async => true);
+      when(() => mockSecureStorage.isBiometricsEnabled())
+          .thenAnswer((_) async => true);
       final result = await biometricAuthService.isBiometricsEnabled();
       expect(result, isTrue);
     });

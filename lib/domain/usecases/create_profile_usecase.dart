@@ -78,7 +78,8 @@ class CreateProfileUseCase {
         id: id,
         name: params.name,
         username: params.username,
-        password: '', // Kept empty as authentication is managed via secure keystore
+        password:
+            '', // Kept empty as authentication is managed via secure keystore
         defaultCurrency: params.defaultCurrency,
         createdAt: now,
         modifiedAt: now,

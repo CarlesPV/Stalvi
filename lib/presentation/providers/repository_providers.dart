@@ -102,7 +102,8 @@ final createProfileUseCaseProvider = Provider<CreateProfileUseCase>((ref) {
 });
 
 /// Provides the [InitializeDefaultDataUseCase] instance.
-final initializeDefaultDataUseCaseProvider = Provider<InitializeDefaultDataUseCase>((ref) {
+final initializeDefaultDataUseCaseProvider =
+    Provider<InitializeDefaultDataUseCase>((ref) {
   final accountRepo = ref.watch(accountRepositoryProvider);
   return InitializeDefaultDataUseCase(accountRepo);
 });

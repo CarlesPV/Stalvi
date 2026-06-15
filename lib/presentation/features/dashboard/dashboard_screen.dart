@@ -13,7 +13,6 @@ import 'package:konta/presentation/features/statistics/statistics_screen.dart';
 import 'package:konta/presentation/providers/repository_providers.dart';
 import 'package:konta/presentation/widgets/empty_state_widget.dart';
 
-
 /// The main application scaffold — shown after successful authentication.
 ///
 /// Currently a **skeleton** that demonstrates the navigation structure and
@@ -508,7 +507,8 @@ class _AccountItem extends StatelessWidget {
               if (account.isDefault) ...[
                 const SizedBox(height: 4),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                   decoration: BoxDecoration(
                     color: colorScheme.primary.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(4),

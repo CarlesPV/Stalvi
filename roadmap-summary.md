@@ -97,3 +97,19 @@ This document lists the completed phases of the Konta development roadmap, provi
   - Resolved Gradle build errors and verified that Android compiles successfully into a deployable APK (`app-debug.apk`).
   - Verified the entire automated test suite: **113 tests passed** successfully.
 
+### Phase 7: Secure Onboarding, Initialization & UX
+* **Completion Date:** June 14, 2026
+* **Objective:** Implement the initial setup profile flow, secure hardware-backed biometric verification, automatic localized default wallets creation, and standardized empty states.
+* **Accomplishments:**
+  - **Profile Setup Flow:** Designed the profile creation UI featuring a 4-8 digit secure PIN input, dynamic dropdown language selection (English, Spanish, and Catalan), and explicit Terms & Conditions acceptance.
+  - **Biometrics Integration:** Integrated biometric authentication (FaceID/TouchID) checking via `local_auth` with automatic prompt on startup and fallback capabilities.
+  - **Default Wallet Creation:** Configured automatic creation of a localized default account ("Mi cartera" / "My Wallet") with a zero balance to ensure users do not start with a blank state.
+  - **Standardized UI Empty States:** Enforced `EmptyStateWidget` styling across Transactions, Accounts, Budgets, and Statistics lists when no records exist.
+* **Verification:**
+  - Completed unit tests for `CreateProfileUseCase` and `InitializeDefaultDataUseCase`.
+  - Added notifier tests verifying PIN lengths, matching validations, and terms acceptance rules.
+  - Added biometric fallback/success service verification tests.
+  - Standard static analysis pass (`flutter analyze` with 0 issues).
+  - All automated test suite regressions run successfully: **151 tests passed**.
+
+

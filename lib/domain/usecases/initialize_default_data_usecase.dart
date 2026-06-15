@@ -22,7 +22,8 @@ class InitializeDefaultDataUseCase {
     required String walletName,
     required String currency,
   }) async {
-    final existingAccounts = await _accountRepository.getAccountsByUserId(userId);
+    final existingAccounts =
+        await _accountRepository.getAccountsByUserId(userId);
     if (existingAccounts.isNotEmpty) {
       return;
     }

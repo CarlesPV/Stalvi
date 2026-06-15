@@ -642,7 +642,8 @@ class _CategoryChartSectionState extends State<_CategoryChartSection> {
                 return EmptyStateWidget(
                   icon: Icons.pie_chart_outline_rounded,
                   title: widget.emptyLabel,
-                  subtitle: AppLocalizations.of(context)!.statisticsNoDataSubtitle,
+                  subtitle:
+                      AppLocalizations.of(context)!.statisticsNoDataSubtitle,
                 );
               }
               return _PieChartWithLegend(
@@ -1013,7 +1014,6 @@ class _ChartSkeleton extends StatelessWidget {
     );
   }
 }
-
 
 class _InlineError extends StatelessWidget {
   final String message;

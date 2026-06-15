@@ -50,7 +50,10 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
 
     // Determine if biometrics are available to show the icon on the dialpad
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(authNotifierProvider.notifier).isBiometricAvailable().then((available) {
+      ref
+          .read(authNotifierProvider.notifier)
+          .isBiometricAvailable()
+          .then((available) {
         if (mounted) {
           setState(() {
             _biometricsAvailable = available;
@@ -143,25 +146,34 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
                     child: authState.when(
                       loading: () => const _SpinnerContent(),
                       error: (err, _) {
-                        final errorText = err is String ? err : l10n.unexpectedError;
+                        final errorText =
+                            err is String ? err : l10n.unexpectedError;
                         // Determine where the error came from
                         final status = authState.valueOrNull;
-                        if (status == AuthStatus.setupRequired || status == AuthStatus.setupSubmitting) {
+                        if (status == AuthStatus.setupRequired ||
+                            status == AuthStatus.setupSubmitting) {
                           // Error in setup
-                          return _buildSetupForm(context, theme, colorScheme, l10n, error: errorText);
+                          return _buildSetupForm(
+                              context, theme, colorScheme, l10n,
+                              error: errorText);
                         } else {
                           // Error in login
-                          return _buildLoginForm(context, theme, colorScheme, l10n, error: errorText);
+                          return _buildLoginForm(
+                              context, theme, colorScheme, l10n,
+                              error: errorText);
                         }
                       },
                       data: (status) {
                         if (status == AuthStatus.setupRequired ||
                             status == AuthStatus.setupSubmitting) {
-                          return _buildSetupForm(context, theme, colorScheme, l10n);
+                          return _buildSetupForm(
+                              context, theme, colorScheme, l10n);
                         } else if (status == AuthStatus.lockedOut) {
-                          return _LockedOutContent(colorScheme: colorScheme, theme: theme);
+                          return _LockedOutContent(
+                              colorScheme: colorScheme, theme: theme);
                         } else {
-                          return _buildLoginForm(context, theme, colorScheme, l10n);
+                          return _buildLoginForm(
+                              context, theme, colorScheme, l10n);
                         }
                       },
                     ),
@@ -170,7 +182,8 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
                   Text(
                     l10n.authProtectedBy,
                     style: theme.textTheme.labelSmall?.copyWith(
-                      color: colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
+                      color:
+                          colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
                       letterSpacing: 0.4,
                     ),
                   ),
@@ -222,7 +235,8 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
               decoration: BoxDecoration(
                 color: colorScheme.errorContainer.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: colorScheme.error.withValues(alpha: 0.3)),
+                border:
+                    Border.all(color: colorScheme.error.withValues(alpha: 0.3)),
               ),
               child: Row(
                 children: [
@@ -231,7 +245,8 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
                   Expanded(
                     child: Text(
                       error,
-                      style: theme.textTheme.bodySmall?.copyWith(color: colorScheme.error),
+                      style: theme.textTheme.bodySmall
+                          ?.copyWith(color: colorScheme.error),
                     ),
                   ),
                 ],
@@ -254,14 +269,17 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
             decoration: InputDecoration(
               filled: true,
               fillColor: colorScheme.surfaceContainerLow.withValues(alpha: 0.6),
-              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: colorScheme.outlineVariant.withValues(alpha: 0.4)),
+                borderSide: BorderSide(
+                    color: colorScheme.outlineVariant.withValues(alpha: 0.4)),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: colorScheme.outlineVariant.withValues(alpha: 0.4)),
+                borderSide: BorderSide(
+                    color: colorScheme.outlineVariant.withValues(alpha: 0.4)),
               ),
             ),
             items: const [
@@ -286,7 +304,8 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
               prefixIcon: const Icon(Icons.person_outline),
               filled: true,
               fillColor: colorScheme.surfaceContainerLow.withValues(alpha: 0.6),
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+              border:
+                  OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
             ),
             validator: (val) => (val == null || val.trim().isEmpty)
                 ? l10n.authSetupValidationErrorName
@@ -302,7 +321,8 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
               prefixIcon: const Icon(Icons.alternate_email),
               filled: true,
               fillColor: colorScheme.surfaceContainerLow.withValues(alpha: 0.6),
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+              border:
+                  OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
             ),
             validator: (val) => (val == null || val.trim().isEmpty)
                 ? l10n.authSetupValidationErrorUsername
@@ -321,7 +341,8 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
               prefixIcon: const Icon(Icons.lock_outline),
               filled: true,
               fillColor: colorScheme.surfaceContainerLow.withValues(alpha: 0.6),
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+              border:
+                  OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
               counterText: '',
             ),
             validator: (val) {
@@ -347,7 +368,8 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
               prefixIcon: const Icon(Icons.lock_outline),
               filled: true,
               fillColor: colorScheme.surfaceContainerLow.withValues(alpha: 0.6),
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+              border:
+                  OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
               counterText: '',
             ),
             validator: (val) {
@@ -362,7 +384,8 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
           // Terms Checkbox
           FormField<bool>(
             initialValue: _acceptTerms,
-            validator: (val) => (val != true) ? l10n.authSetupValidationErrorTerms : null,
+            validator: (val) =>
+                (val != true) ? l10n.authSetupValidationErrorTerms : null,
             builder: (formFieldState) {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -394,7 +417,8 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
                       padding: const EdgeInsets.only(left: 12, top: 4),
                       child: Text(
                         formFieldState.errorText ?? '',
-                        style: theme.textTheme.bodySmall?.copyWith(color: colorScheme.error),
+                        style: theme.textTheme.bodySmall
+                            ?.copyWith(color: colorScheme.error),
                       ),
                     ),
                 ],
@@ -424,11 +448,13 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
               },
               style: FilledButton.styleFrom(
                 minimumSize: const Size.fromHeight(50),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12)),
               ),
               child: Text(
                 l10n.authSetupCreateButton,
-                style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
+                style:
+                    const TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
               ),
             ),
           ),
@@ -494,7 +520,8 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
             ),
             child: Text(
               error == 'Incorrect PIN.' ? l10n.authPinIncorrect : error,
-              style: theme.textTheme.bodySmall?.copyWith(color: colorScheme.error),
+              style:
+                  theme.textTheme.bodySmall?.copyWith(color: colorScheme.error),
               textAlign: TextAlign.center,
             ),
           ),
@@ -564,7 +591,8 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
         child: Container(
           margin: const EdgeInsets.all(6),
           child: IconButton(
-            icon: Icon(Icons.check_circle_outline_rounded, size: 36, color: colorScheme.primary),
+            icon: Icon(Icons.check_circle_outline_rounded,
+                size: 36, color: colorScheme.primary),
             onPressed: _submitPin,
           ),
         ),
@@ -579,7 +607,8 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
           child: ScaleTransition(
             scale: _pulseScale,
             child: IconButton(
-              icon: Icon(Icons.fingerprint_rounded, size: 36, color: colorScheme.primary),
+              icon: Icon(Icons.fingerprint_rounded,
+                  size: 36, color: colorScheme.primary),
               onPressed: () {
                 ref.read(authNotifierProvider.notifier).resetStatus();
                 ref.read(authNotifierProvider.notifier).authenticate();
@@ -602,7 +631,8 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
       child: Container(
         margin: const EdgeInsets.all(6),
         child: IconButton(
-          icon: Icon(Icons.backspace_outlined, size: 24, color: colorScheme.onSurfaceVariant),
+          icon: Icon(Icons.backspace_outlined,
+              size: 24, color: colorScheme.onSurfaceVariant),
           onPressed: () {
             if (_enteredPin.isNotEmpty) {
               setState(() {
@@ -640,13 +670,13 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
   void didUpdateWidget(covariant AuthScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
     // If PIN entry length meets verification, submit PIN on a checkmark dial-key or verify
-    // But since we clear or auto-trigger, let's keep it simple: we trigger verification when 
+    // But since we clear or auto-trigger, let's keep it simple: we trigger verification when
     // the user clicks or wait for auto-triggers. In this custom UI, let's also trigger PIN
     // verification when it changes between 4 and 8 and user pauses, or we can just add a verification
     // action. Wait, since PIN can be 4-8 digits, we don't know if they want 4 or more digits.
     // So if the user enters a PIN, we should verify when they tap a checkmark OR if they enter 8 digits.
     // Wait, let's look at the dial-pad. We have an empty key if biometrics is not supported.
-    // Let's add a "Verify" key or automatically submit when they enter 4 digits or more and stop, 
+    // Let's add a "Verify" key or automatically submit when they enter 4 digits or more and stop,
     // or let's use the checkmark key instead of empty biometric.
     // Wait! Let's make the third column bottom key a "Checkmark" (Verify) button if they have 4+ digits!
     // That way, for 4-to-7 digit PINs, they can tap "Checkmark" to submit. For 8 digits, we can auto-submit.
