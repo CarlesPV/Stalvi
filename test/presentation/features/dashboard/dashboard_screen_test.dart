@@ -12,6 +12,7 @@ import 'package:konta/domain/entities/transaction_type.dart';
 import 'package:konta/presentation/features/dashboard/dashboard_screen.dart';
 import 'package:konta/presentation/providers/repository_providers.dart';
 import 'package:konta/presentation/widgets/empty_state_widget.dart';
+import 'package:konta/presentation/providers/locale_provider.dart';
 
 class NeverStream<T> extends Stream<T> {
   const NeverStream();
@@ -85,18 +86,24 @@ void main() {
         transactionsStreamProvider.overrideWith((ref) => transactionsStream),
         accountsListProvider.overrideWith((ref) => accountsFuture),
       ],
-      child: MaterialApp(
-        theme: AppTheme.lightTheme,
-        darkTheme: AppTheme.darkTheme,
-        themeMode: ThemeMode.light,
-        localizationsDelegates: const [
-          AppLocalizations.delegate,
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-        ],
-        supportedLocales: AppLocalizations.supportedLocales,
-        home: const DashboardScreen(),
+      child: Consumer(
+        builder: (context, ref, child) {
+          final activeLocale = ref.watch(localeProvider);
+          return MaterialApp(
+            theme: AppTheme.lightTheme,
+            darkTheme: AppTheme.darkTheme,
+            themeMode: ThemeMode.light,
+            locale: activeLocale,
+            localizationsDelegates: const [
+              AppLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            supportedLocales: AppLocalizations.supportedLocales,
+            home: const DashboardScreen(),
+          );
+        },
       ),
     );
   }
@@ -120,7 +127,8 @@ void main() {
       expect(find.text('No transactions yet'), findsOneWidget);
       expect(
         find.text(
-            'Add your first income or expense to see it here and start tracking.'),
+          'Add your first income or expense to see it here and start tracking.',
+        ),
         findsOneWidget,
       );
     });
@@ -170,7 +178,8 @@ void main() {
       expect(find.text('No accounts yet'), findsOneWidget);
       expect(
         find.text(
-            'Create an account or wallet to start managing your assets and tracking transactions.'),
+          'Create an account or wallet to start managing your assets and tracking transactions.',
+        ),
         findsOneWidget,
       );
     });
@@ -207,6 +216,45 @@ void main() {
       expect(find.text('CASH'), findsOneWidget);
       expect(find.text('Default'), findsOneWidget);
       expect(find.byType(EmptyStateWidget), findsNothing);
+    });
+
+    testWidgets(
+        'renders language settings dropdown and switches language correctly',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(
+        createTestWidget(
+          transactionsStream: Stream.value([testTransaction]),
+          accountsFuture: Future.value([testAccount]),
+        ),
+      );
+
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 200));
+
+      // Tap on Settings tab
+      await tester.tap(find.text('Settings'));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 200));
+
+      // Expect to see the Language dropdown row
+      expect(find.text('Language'), findsOneWidget);
+
+      // Verify the active language is English initially
+      expect(find.text('English'), findsAtLeastNWidgets(1));
+
+      // Tap the Language Dropdown to open it
+      await tester.tap(find.text('English').first);
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 200));
+
+      // Tap on 'Català'
+      await tester.tap(find.text('Català').last);
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 200));
+
+      // Expect the settings label at the bottom/tab bar to change to Catalan 'Ajustos'
+      expect(find.text('Ajustos'), findsOneWidget);
+      expect(find.text('Idioma'), findsOneWidget);
     });
   });
 }

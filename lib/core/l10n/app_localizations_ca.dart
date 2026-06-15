@@ -397,4 +397,95 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get authSetupAcceptAnd => ' i la ';
+
+  @override
+  String get settingsThemeMode => 'Mode de tema';
+
+  @override
+  String get themeModeSystem => 'Sistema';
+
+  @override
+  String get themeModeLight => 'Clar';
+
+  @override
+  String get themeModeDark => 'Fosc';
+
+  @override
+  String get profileSettingsTitle => 'Perfil i Seguretat';
+
+  @override
+  String get changePinButton => 'Canviar PIN';
+
+  @override
+  String get deleteAllDataButton => 'Esborrar totes les dades';
+
+  @override
+  String get oldPinLabel => 'PIN antic';
+
+  @override
+  String get newPinLabel => 'Nou PIN';
+
+  @override
+  String get confirmPinLabel => 'Confirmar nou PIN';
+
+  @override
+  String get incorrectOldPin => 'PIN antic incorrecte.';
+
+  @override
+  String get pinsDoNotMatch => 'Els PINs no coincideixen.';
+
+  @override
+  String get pinUpdatedSuccessfully => 'PIN actualitzat correctament.';
+
+  @override
+  String get deleteAllDataWarning =>
+      'Estàs segur que vols esborrar totes les dades? Això no es pot desfer.';
+
+  @override
+  String get settingsLanguage => 'Idioma';
+
+  @override
+  String get usernameLabel => 'Nom d\'usuari';
+
+  @override
+  String get btnCancel => 'Cancel·lar';
+
+  @override
+  String get btnSave => 'Desar';
+
+  @override
+  String get btnDelete => 'Eliminar';
+
+  @override
+  String get btnNext => 'Següent';
+
+  @override
+  String get recycleBinTitle => 'Paperera de reciclatge';
+
+  @override
+  String get recycleBinEmpty => 'La paperera de reciclatge és buida.';
+
+  @override
+  String get recycleBinRestoreTooltip => 'Restaurar';
+
+  @override
+  String get recycleBinDeleteTooltip => 'Eliminar permanentment';
+
+  @override
+  String get recycleBinDeleteConfirmTitle => 'Eliminació permanent';
+
+  @override
+  String get recycleBinDeleteConfirmMessage =>
+      'Segur que voleu eliminar permanentment aquest element? Aquesta acció no es pot desfer.';
+
+  @override
+  String get recycleBinRestoredMessage => 'Element restaurat';
+
+  @override
+  String get recycleBinDeletedMessage => 'Element eliminat permanentment';
+
+  @override
+  String recycleBinDaysRemaining(int days) {
+    return 'Expira en $days dies';
+  }
 }

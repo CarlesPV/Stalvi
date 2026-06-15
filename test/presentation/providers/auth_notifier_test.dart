@@ -77,8 +77,10 @@ void main() {
       final container = createContainer();
 
       // Initially it should be loading
-      expect(container.read(authNotifierProvider),
-          const AsyncValue<AuthStatus>.loading());
+      expect(
+        container.read(authNotifierProvider),
+        const AsyncValue<AuthStatus>.loading(),
+      );
 
       // Wait for build() to complete
       await container.read(authNotifierProvider.future);
@@ -121,8 +123,10 @@ void main() {
 
         final state = container.read(authNotifierProvider);
         expect(state.hasError, true);
-        expect(state.error.toString(),
-            contains('PIN must be between 4 and 8 digits'));
+        expect(
+          state.error.toString(),
+          contains('PIN must be between 4 and 8 digits'),
+        );
       });
 
       test('sets error state if PIN is more than 8 digits', () async {
@@ -142,8 +146,10 @@ void main() {
 
         final state = container.read(authNotifierProvider);
         expect(state.hasError, true);
-        expect(state.error.toString(),
-            contains('PIN must be between 4 and 8 digits'));
+        expect(
+          state.error.toString(),
+          contains('PIN must be between 4 and 8 digits'),
+        );
       });
 
       test('sets error state if PIN contains non-numeric characters', () async {
@@ -163,8 +169,10 @@ void main() {
 
         final state = container.read(authNotifierProvider);
         expect(state.hasError, true);
-        expect(state.error.toString(),
-            contains('PIN must contain only numeric digits'));
+        expect(
+          state.error.toString(),
+          contains('PIN must contain only numeric digits'),
+        );
       });
 
       test('sets error state if PINs do not match', () async {
@@ -205,7 +213,9 @@ void main() {
         final state = container.read(authNotifierProvider);
         expect(state.hasError, true);
         expect(
-            state.error.toString(), contains('accept the Terms & Conditions'));
+          state.error.toString(),
+          contains('accept the Terms & Conditions'),
+        );
       });
 
       test('sets error state if Name is empty', () async {
@@ -254,21 +264,24 @@ void main() {
         () async {
       // Arrange
       when(() => mockSecureStorage.hasPin()).thenAnswer((_) async => false);
-      when(() => mockCreateProfileUseCase.execute(any()))
-          .thenAnswer((_) async => Profile(
-                id: 'uuid',
-                name: 'Carles',
-                username: 'carlespv',
-                password: '',
-                defaultCurrency: 'EUR',
-                createdAt: DateTime.now(),
-                modifiedAt: DateTime.now(),
-              ));
-      when(() => mockInitializeDefaultDataUseCase.execute(
-            userId: any(named: 'userId'),
-            currency: any(named: 'currency'),
-            locale: any(named: 'locale'),
-          )).thenAnswer((_) async => {});
+      when(() => mockCreateProfileUseCase.execute(any())).thenAnswer(
+        (_) async => Profile(
+          id: 'uuid',
+          name: 'Carles',
+          username: 'carlespv',
+          password: '',
+          defaultCurrency: 'EUR',
+          createdAt: DateTime.now(),
+          modifiedAt: DateTime.now(),
+        ),
+      );
+      when(
+        () => mockInitializeDefaultDataUseCase.execute(
+          userId: any(named: 'userId'),
+          currency: any(named: 'currency'),
+          locale: any(named: 'locale'),
+        ),
+      ).thenAnswer((_) async => {});
 
       final container = createContainer();
       await container.read(authNotifierProvider.future);
@@ -287,11 +300,13 @@ void main() {
       final state = container.read(authNotifierProvider);
       expect(state.value, equals(AuthStatus.authenticated));
       verify(() => mockCreateProfileUseCase.execute(any())).called(1);
-      verify(() => mockInitializeDefaultDataUseCase.execute(
-            userId: 'uuid',
-            currency: 'EUR',
-            locale: any(named: 'locale'),
-          )).called(1);
+      verify(
+        () => mockInitializeDefaultDataUseCase.execute(
+          userId: 'uuid',
+          currency: 'EUR',
+          locale: any(named: 'locale'),
+        ),
+      ).called(1);
     });
 
     group('verifyPin Login Tests', () {
@@ -299,7 +314,7 @@ void main() {
           'verifyPin with correct PIN sets state to authenticated and returns true',
           () async {
         // Arrange
-        final pin = '1234';
+        const pin = '1234';
         final pinHash = calculateHash(pin);
         when(() => mockSecureStorage.hasPin()).thenAnswer((_) async => true);
         when(() => mockSecureStorage.getPinHash())
@@ -321,7 +336,7 @@ void main() {
       test('verifyPin with incorrect PIN sets error state and returns false',
           () async {
         // Arrange
-        final correctPin = '1234';
+        const correctPin = '1234';
         final correctPinHash = calculateHash(correctPin);
         when(() => mockSecureStorage.hasPin()).thenAnswer((_) async => true);
         when(() => mockSecureStorage.getPinHash())
@@ -351,21 +366,24 @@ void main() {
         when(() => mockSecureStorage.hasPin()).thenAnswer((_) async => false);
         when(() => mockBiometricAuth.isBiometricAvailable())
             .thenAnswer((_) async => true);
-        when(() => mockCreateProfileUseCase.execute(any()))
-            .thenAnswer((_) async => Profile(
-                  id: 'uuid',
-                  name: 'Carles',
-                  username: 'carlespv',
-                  password: '',
-                  defaultCurrency: 'EUR',
-                  createdAt: DateTime.now(),
-                  modifiedAt: DateTime.now(),
-                ));
-        when(() => mockInitializeDefaultDataUseCase.execute(
-              userId: any(named: 'userId'),
-              currency: any(named: 'currency'),
-              locale: any(named: 'locale'),
-            )).thenAnswer((_) async => {});
+        when(() => mockCreateProfileUseCase.execute(any())).thenAnswer(
+          (_) async => Profile(
+            id: 'uuid',
+            name: 'Carles',
+            username: 'carlespv',
+            password: '',
+            defaultCurrency: 'EUR',
+            createdAt: DateTime.now(),
+            modifiedAt: DateTime.now(),
+          ),
+        );
+        when(
+          () => mockInitializeDefaultDataUseCase.execute(
+            userId: any(named: 'userId'),
+            currency: any(named: 'currency'),
+            locale: any(named: 'locale'),
+          ),
+        ).thenAnswer((_) async => {});
 
         final container = createContainer();
         await container.read(authNotifierProvider.future);
@@ -392,9 +410,11 @@ void main() {
         when(() => mockSecureStorage.hasPin()).thenAnswer((_) async => true);
         when(() => mockBiometricAuth.isBiometricAvailable())
             .thenAnswer((_) async => true);
-        when(() => mockBiometricAuth.authenticate(
-                localizedReason: any(named: 'localizedReason')))
-            .thenAnswer((_) async => true);
+        when(
+          () => mockBiometricAuth.authenticate(
+            localizedReason: any(named: 'localizedReason'),
+          ),
+        ).thenAnswer((_) async => true);
         when(() => mockBiometricAuth.enableBiometrics())
             .thenAnswer((_) async => {});
 
@@ -443,9 +463,11 @@ void main() {
             .thenAnswer((_) async => true);
         when(() => mockBiometricAuth.isBiometricAvailable())
             .thenAnswer((_) async => true);
-        when(() => mockBiometricAuth.authenticate(
-                localizedReason: any(named: 'localizedReason')))
-            .thenAnswer((_) async => true);
+        when(
+          () => mockBiometricAuth.authenticate(
+            localizedReason: any(named: 'localizedReason'),
+          ),
+        ).thenAnswer((_) async => true);
 
         final container = createContainer();
 

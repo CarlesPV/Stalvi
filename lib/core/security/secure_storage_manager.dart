@@ -44,6 +44,9 @@ class SecureStorageManager {
   /// Storage key constant for persisting biometrics enabled status.
   static const String _kBiometricsEnabledKey = 'konta_biometrics_enabled';
 
+  /// Storage key constant for persisting the user's selected theme mode.
+  static const String _kThemeModeKey = 'konta_theme_mode';
+
   /// Length of the encryption key in bytes (256 bits).
   static const int _kKeyLengthBytes = 32;
 
@@ -273,6 +276,28 @@ class SecureStorageManager {
     }
   }
 
+  /// Retrieves the saved user theme mode from secure storage.
+  /// Returns null if no theme is saved or if an exception occurs.
+  Future<String?> getThemeMode() async {
+    try {
+      return await _readWithRetry(_kThemeModeKey);
+    } on Exception {
+      return null;
+    }
+  }
+
+  /// Persists the user theme mode to secure storage.
+  Future<void> setThemeMode(String themeMode) async {
+    try {
+      await _writeWithRetry(_kThemeModeKey, themeMode);
+    } on Exception catch (e) {
+      throw SecureStorageException(
+        'Failed to save theme mode to secure storage.',
+        cause: e,
+      );
+    }
+  }
+
   /// Generates a 256-bit key using [Random.secure] (CSPRNG) and returns it
   /// as a lowercase hexadecimal string.
   String _generateSecureKey() {
@@ -284,6 +309,24 @@ class SecureStorageManager {
     // Encode as hex – avoids null-byte issues that base64 can introduce when
     // passed through C-string APIs (e.g. SQLCipher).
     return keyBytes.map((b) => b.toRadixString(16).padLeft(2, '0')).join();
+  }
+
+  /// Wipes all data stored in secure storage.
+  Future<void> deleteAll() async {
+    const retries = 3;
+    for (var i = 0; i < retries; i++) {
+      try {
+        await _storage.deleteAll();
+        return;
+      } catch (_) {
+        if (i == retries - 1) {
+          throw const SecureStorageException(
+            'Failed to delete all secure storage keys.',
+          );
+        }
+        await Future.delayed(const Duration(milliseconds: 150));
+      }
+    }
   }
 }
 

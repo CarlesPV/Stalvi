@@ -12,7 +12,9 @@ import 'package:konta/presentation/features/budgets_and_goals/budgets_and_goals_
 import 'package:konta/presentation/features/statistics/statistics_screen.dart';
 import 'package:konta/presentation/providers/repository_providers.dart';
 import 'package:konta/presentation/providers/auth_notifier.dart';
+import 'package:konta/presentation/features/settings/profile_settings_screen.dart';
 import 'package:konta/presentation/providers/locale_provider.dart';
+import 'package:konta/presentation/providers/theme_provider.dart';
 import 'package:konta/presentation/widgets/empty_state_widget.dart';
 import 'package:konta/presentation/widgets/terms_and_conditions_viewer.dart';
 
@@ -84,8 +86,11 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen>
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
           title: Row(
             children: [
-              Icon(Icons.fingerprint_rounded,
-                  color: colorScheme.primary, size: 28),
+              Icon(
+                Icons.fingerprint_rounded,
+                color: colorScheme.primary,
+                size: 28,
+              ),
               const SizedBox(width: 12),
               Expanded(child: Text(l10n.authBiometricOptInTitle)),
             ],
@@ -182,12 +187,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen>
             ),
           ],
         ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16),
-            child: _SkeletonAvatar(shimmer: _shimmer, colorScheme: colorScheme),
-          ),
-        ],
+        actions: const [],
       ),
       body: IndexedStack(
         index: _selectedIndex,
@@ -712,13 +712,13 @@ class _GenericSkeletonTab extends StatelessWidget {
 
 // ─── Settings skeleton tab ────────────────────────────────────────────────────
 
-class _SettingsSkeletonTab extends StatelessWidget {
+class _SettingsSkeletonTab extends ConsumerWidget {
   final Animation<double> shimmer;
 
   const _SettingsSkeletonTab({required this.shimmer});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final colorScheme = Theme.of(context).colorScheme;
 
     return ListView.separated(
@@ -832,8 +832,204 @@ class _SettingsSkeletonTab extends StatelessWidget {
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
+                    builder: (context) => const ProfileSettingsScreen(),
+                  ),
+                );
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.manage_accounts_rounded,
+                      color: colorScheme.primary,
+                      size: 22,
+                    ),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Text(
+                        AppLocalizations.of(context)!.profileSettingsTitle,
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.w700,
+                              color: colorScheme.onSurface,
+                            ),
+                      ),
+                    ),
+                    Icon(
+                      Icons.chevron_right_rounded,
+                      color:
+                          colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        }
+
+        if (i == 3) {
+          final activeThemeMode = ref.watch(themeProvider);
+          final l10n = AppLocalizations.of(context)!;
+
+          String themeModeLabel(ThemeMode mode) {
+            switch (mode) {
+              case ThemeMode.system:
+                return l10n.themeModeSystem;
+              case ThemeMode.light:
+                return l10n.themeModeLight;
+              case ThemeMode.dark:
+                return l10n.themeModeDark;
+            }
+          }
+
+          return Container(
+            height: 60,
+            decoration: BoxDecoration(
+              color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.palette_rounded,
+                    color: colorScheme.primary,
+                    size: 22,
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Text(
+                      l10n.settingsThemeMode,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.w700,
+                            color: colorScheme.onSurface,
+                          ),
+                    ),
+                  ),
+                  DropdownButton<ThemeMode>(
+                    value: activeThemeMode,
+                    dropdownColor: colorScheme.surfaceContainerHighest,
+                    borderRadius: BorderRadius.circular(12),
+                    underline: const SizedBox(),
+                    icon: Icon(
+                      Icons.arrow_drop_down_rounded,
+                      color: colorScheme.onSurfaceVariant,
+                    ),
+                    onChanged: (ThemeMode? newMode) {
+                      if (newMode != null) {
+                        ref.read(themeProvider.notifier).setThemeMode(newMode);
+                      }
+                    },
+                    items: ThemeMode.values.map((ThemeMode mode) {
+                      return DropdownMenuItem<ThemeMode>(
+                        value: mode,
+                        child: Text(
+                          themeModeLabel(mode),
+                          style:
+                              Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    color: colorScheme.onSurface,
+                                  ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+
+        if (i == 4) {
+          final activeLocale = ref.watch(localeProvider);
+          final l10n = AppLocalizations.of(context)!;
+
+          return Container(
+            height: 60,
+            decoration: BoxDecoration(
+              color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.language_rounded,
+                    color: colorScheme.primary,
+                    size: 22,
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Text(
+                      l10n.settingsLanguage,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.w700,
+                            color: colorScheme.onSurface,
+                          ),
+                    ),
+                  ),
+                  DropdownButton<String>(
+                    value: activeLocale.languageCode,
+                    dropdownColor: colorScheme.surfaceContainerHighest,
+                    borderRadius: BorderRadius.circular(12),
+                    underline: const SizedBox(),
+                    icon: Icon(
+                      Icons.arrow_drop_down_rounded,
+                      color: colorScheme.onSurfaceVariant,
+                    ),
+                    onChanged: (String? newLang) {
+                      if (newLang != null) {
+                        ref
+                            .read(localeProvider.notifier)
+                            .setLocale(Locale(newLang));
+                      }
+                    },
+                    items: const [
+                      DropdownMenuItem<String>(
+                        value: 'en',
+                        child: Text(
+                          'English',
+                          style: TextStyle(fontSize: 14),
+                        ),
+                      ),
+                      DropdownMenuItem<String>(
+                        value: 'es',
+                        child: Text(
+                          'Español',
+                          style: TextStyle(fontSize: 14),
+                        ),
+                      ),
+                      DropdownMenuItem<String>(
+                        value: 'ca',
+                        child: Text(
+                          'Català',
+                          style: TextStyle(fontSize: 14),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+
+        if (i == 5) {
+          return Container(
+            height: 60,
+            decoration: BoxDecoration(
+              color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: InkWell(
+              borderRadius: BorderRadius.circular(14),
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
                     builder: (context) => const TermsAndConditionsViewer(
-                        showPrivacyPolicy: false),
+                      showPrivacyPolicy: false,
+                    ),
                   ),
                 );
               },
@@ -868,7 +1064,7 @@ class _SettingsSkeletonTab extends StatelessWidget {
           );
         }
 
-        if (i == 3) {
+        if (i == 6) {
           return Container(
             height: 60,
             decoration: BoxDecoration(
@@ -1225,37 +1421,6 @@ class _SkeletonBlock extends StatelessWidget {
           ),
         );
       },
-    );
-  }
-}
-
-/// A pulsing circular avatar placeholder for the AppBar.
-class _SkeletonAvatar extends StatelessWidget {
-  final Animation<double> shimmer;
-  final ColorScheme colorScheme;
-
-  const _SkeletonAvatar({
-    required this.shimmer,
-    required this.colorScheme,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: shimmer,
-      builder: (_, __) => CircleAvatar(
-        radius: 18,
-        backgroundColor: Color.lerp(
-          colorScheme.surfaceContainerHighest,
-          colorScheme.onSurface.withValues(alpha: 0.12),
-          shimmer.value,
-        ),
-        child: Icon(
-          Icons.person_rounded,
-          size: 20,
-          color: colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
-        ),
-      ),
     );
   }
 }

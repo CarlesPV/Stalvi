@@ -396,4 +396,95 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get authSetupAcceptAnd => ' y la ';
+
+  @override
+  String get settingsThemeMode => 'Modo de tema';
+
+  @override
+  String get themeModeSystem => 'Sistema';
+
+  @override
+  String get themeModeLight => 'Claro';
+
+  @override
+  String get themeModeDark => 'Oscuro';
+
+  @override
+  String get profileSettingsTitle => 'Perfil y Seguridad';
+
+  @override
+  String get changePinButton => 'Cambiar PIN';
+
+  @override
+  String get deleteAllDataButton => 'Borrar todos los datos';
+
+  @override
+  String get oldPinLabel => 'PIN antiguo';
+
+  @override
+  String get newPinLabel => 'Nuevo PIN';
+
+  @override
+  String get confirmPinLabel => 'Confirmar nuevo PIN';
+
+  @override
+  String get incorrectOldPin => 'PIN antiguo incorrecto.';
+
+  @override
+  String get pinsDoNotMatch => 'Los PINs no coinciden.';
+
+  @override
+  String get pinUpdatedSuccessfully => 'PIN actualizado correctamente.';
+
+  @override
+  String get deleteAllDataWarning =>
+      '¿Estás seguro de que quieres borrar todos los datos? Esto no se puede deshacer.';
+
+  @override
+  String get settingsLanguage => 'Idioma';
+
+  @override
+  String get usernameLabel => 'Nombre de usuario';
+
+  @override
+  String get btnCancel => 'Cancelar';
+
+  @override
+  String get btnSave => 'Guardar';
+
+  @override
+  String get btnDelete => 'Eliminar';
+
+  @override
+  String get btnNext => 'Siguiente';
+
+  @override
+  String get recycleBinTitle => 'Papelera de reciclaje';
+
+  @override
+  String get recycleBinEmpty => 'La papelera de reciclaje está vacía.';
+
+  @override
+  String get recycleBinRestoreTooltip => 'Restaurar';
+
+  @override
+  String get recycleBinDeleteTooltip => 'Eliminar permanentemente';
+
+  @override
+  String get recycleBinDeleteConfirmTitle => 'Eliminación permanente';
+
+  @override
+  String get recycleBinDeleteConfirmMessage =>
+      '¿Está seguro de que desea eliminar permanentemente este elemento? Esta acción no se puede deshacer.';
+
+  @override
+  String get recycleBinRestoredMessage => 'Elemento restaurado';
+
+  @override
+  String get recycleBinDeletedMessage => 'Elemento eliminado permanentemente';
+
+  @override
+  String recycleBinDaysRemaining(int days) {
+    return 'Expira en $days días';
+  }
 }

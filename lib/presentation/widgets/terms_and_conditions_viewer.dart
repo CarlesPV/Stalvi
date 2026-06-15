@@ -228,7 +228,10 @@ class _LegalDocumentView extends StatelessWidget {
 
   /// Formats text containing simple markdown elements like bolding (`**text**`).
   Widget _buildFormattedText(
-      String text, ThemeData theme, ColorScheme colorScheme) {
+    String text,
+    ThemeData theme,
+    ColorScheme colorScheme,
+  ) {
     final regex = RegExp(r'\*\*(.*?)\*\*');
     final matches = regex.allMatches(text);
     if (matches.isEmpty) {

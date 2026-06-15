@@ -813,6 +813,180 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **' and the '**
   String get authSetupAcceptAnd;
+
+  /// Label for theme mode selection in settings
+  ///
+  /// In en, this message translates to:
+  /// **'Theme Mode'**
+  String get settingsThemeMode;
+
+  /// System theme option
+  ///
+  /// In en, this message translates to:
+  /// **'System'**
+  String get themeModeSystem;
+
+  /// Light theme option
+  ///
+  /// In en, this message translates to:
+  /// **'Light'**
+  String get themeModeLight;
+
+  /// Dark theme option
+  ///
+  /// In en, this message translates to:
+  /// **'Dark'**
+  String get themeModeDark;
+
+  /// Title for the profile and security settings screen
+  ///
+  /// In en, this message translates to:
+  /// **'Profile & Security'**
+  String get profileSettingsTitle;
+
+  /// Button to change PIN
+  ///
+  /// In en, this message translates to:
+  /// **'Change PIN'**
+  String get changePinButton;
+
+  /// Button to delete all application data
+  ///
+  /// In en, this message translates to:
+  /// **'Delete All Data'**
+  String get deleteAllDataButton;
+
+  /// Label for old PIN input
+  ///
+  /// In en, this message translates to:
+  /// **'Old PIN'**
+  String get oldPinLabel;
+
+  /// Label for new PIN input
+  ///
+  /// In en, this message translates to:
+  /// **'New PIN'**
+  String get newPinLabel;
+
+  /// Label for confirm new PIN input
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm New PIN'**
+  String get confirmPinLabel;
+
+  /// Error message for incorrect old PIN
+  ///
+  /// In en, this message translates to:
+  /// **'Incorrect Old PIN.'**
+  String get incorrectOldPin;
+
+  /// Error message when new PINs do not match
+  ///
+  /// In en, this message translates to:
+  /// **'PINs do not match.'**
+  String get pinsDoNotMatch;
+
+  /// Success message after updating PIN
+  ///
+  /// In en, this message translates to:
+  /// **'PIN updated successfully.'**
+  String get pinUpdatedSuccessfully;
+
+  /// Warning message before deleting all data
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete all data? This cannot be undone.'**
+  String get deleteAllDataWarning;
+
+  /// Label for language selection in settings
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get settingsLanguage;
+
+  /// Label for username input
+  ///
+  /// In en, this message translates to:
+  /// **'Username'**
+  String get usernameLabel;
+
+  /// General cancel button label
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get btnCancel;
+
+  /// General save button label
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get btnSave;
+
+  /// General delete button label
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get btnDelete;
+
+  /// General next button label
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get btnNext;
+
+  /// Title for the Recycle Bin screen
+  ///
+  /// In en, this message translates to:
+  /// **'Recycle Bin'**
+  String get recycleBinTitle;
+
+  /// Text shown when the recycle bin is empty
+  ///
+  /// In en, this message translates to:
+  /// **'Recycle bin is empty.'**
+  String get recycleBinEmpty;
+
+  /// Tooltip text for restoring an item
+  ///
+  /// In en, this message translates to:
+  /// **'Restore'**
+  String get recycleBinRestoreTooltip;
+
+  /// Tooltip text for permanently deleting an item
+  ///
+  /// In en, this message translates to:
+  /// **'Permanently Delete'**
+  String get recycleBinDeleteTooltip;
+
+  /// Title for the permanent delete confirmation dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Permanent Delete'**
+  String get recycleBinDeleteConfirmTitle;
+
+  /// Message for the permanent delete confirmation dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to permanently delete this item? This action cannot be undone.'**
+  String get recycleBinDeleteConfirmMessage;
+
+  /// Snackbar message shown when an item is successfully restored
+  ///
+  /// In en, this message translates to:
+  /// **'Item restored'**
+  String get recycleBinRestoredMessage;
+
+  /// Snackbar message shown when an item is permanently deleted
+  ///
+  /// In en, this message translates to:
+  /// **'Item permanently deleted'**
+  String get recycleBinDeletedMessage;
+
+  /// Days remaining until item in recycle bin is deleted
+  ///
+  /// In en, this message translates to:
+  /// **'Expires in {days} days'**
+  String recycleBinDaysRemaining(int days);
 }
 
 class _AppLocalizationsDelegate

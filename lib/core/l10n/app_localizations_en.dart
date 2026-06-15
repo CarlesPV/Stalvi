@@ -389,4 +389,95 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get authSetupAcceptAnd => ' and the ';
+
+  @override
+  String get settingsThemeMode => 'Theme Mode';
+
+  @override
+  String get themeModeSystem => 'System';
+
+  @override
+  String get themeModeLight => 'Light';
+
+  @override
+  String get themeModeDark => 'Dark';
+
+  @override
+  String get profileSettingsTitle => 'Profile & Security';
+
+  @override
+  String get changePinButton => 'Change PIN';
+
+  @override
+  String get deleteAllDataButton => 'Delete All Data';
+
+  @override
+  String get oldPinLabel => 'Old PIN';
+
+  @override
+  String get newPinLabel => 'New PIN';
+
+  @override
+  String get confirmPinLabel => 'Confirm New PIN';
+
+  @override
+  String get incorrectOldPin => 'Incorrect Old PIN.';
+
+  @override
+  String get pinsDoNotMatch => 'PINs do not match.';
+
+  @override
+  String get pinUpdatedSuccessfully => 'PIN updated successfully.';
+
+  @override
+  String get deleteAllDataWarning =>
+      'Are you sure you want to delete all data? This cannot be undone.';
+
+  @override
+  String get settingsLanguage => 'Language';
+
+  @override
+  String get usernameLabel => 'Username';
+
+  @override
+  String get btnCancel => 'Cancel';
+
+  @override
+  String get btnSave => 'Save';
+
+  @override
+  String get btnDelete => 'Delete';
+
+  @override
+  String get btnNext => 'Next';
+
+  @override
+  String get recycleBinTitle => 'Recycle Bin';
+
+  @override
+  String get recycleBinEmpty => 'Recycle bin is empty.';
+
+  @override
+  String get recycleBinRestoreTooltip => 'Restore';
+
+  @override
+  String get recycleBinDeleteTooltip => 'Permanently Delete';
+
+  @override
+  String get recycleBinDeleteConfirmTitle => 'Permanent Delete';
+
+  @override
+  String get recycleBinDeleteConfirmMessage =>
+      'Are you sure you want to permanently delete this item? This action cannot be undone.';
+
+  @override
+  String get recycleBinRestoredMessage => 'Item restored';
+
+  @override
+  String get recycleBinDeletedMessage => 'Item permanently deleted';
+
+  @override
+  String recycleBinDaysRemaining(int days) {
+    return 'Expires in $days days';
+  }
 }

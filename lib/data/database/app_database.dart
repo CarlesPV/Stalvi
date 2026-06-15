@@ -24,6 +24,7 @@ import 'tables/transaction_table.dart';
 import 'tables/budget_table.dart';
 import 'tables/savings_goal_table.dart';
 import 'daos/statistics_dao.dart';
+import 'daos/trash_dao.dart';
 
 part 'app_database.g.dart';
 
@@ -50,7 +51,7 @@ part 'app_database.g.dart';
     Budgets,
     SavingsGoals,
   ],
-  daos: [StatisticsDao],
+  daos: [StatisticsDao, TrashDao],
 )
 class AppDatabase extends _$AppDatabase {
   /// Private constructor — use the [create] factory instead.
@@ -75,7 +76,7 @@ class AppDatabase extends _$AppDatabase {
 
   /// Bump this version whenever you add, modify, or remove tables.
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 4;
 
   @override
   MigrationStrategy get migration {
@@ -161,6 +162,9 @@ class AppDatabase extends _$AppDatabase {
         if (from < 3) {
           await m.createTable(budgets);
           await m.createTable(savingsGoals);
+        }
+        if (from < 4) {
+          await m.addColumn(transactions, transactions.isDeleted);
         }
       },
     );

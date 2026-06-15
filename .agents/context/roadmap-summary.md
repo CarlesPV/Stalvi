@@ -120,7 +120,7 @@ This document lists the completed phases of the Konta development roadmap, provi
   - **Default Currency Selector:** Added selector dropdown to the profile creation screen and persisted it in profile database configurations.
   - **First-Time Registration Fix:** Resolved the keychain/transient platform channel error during initial registration by introducing a retry-on-failure mechanism in secure storage operations.
   - **Direct Onboarding Routing:** Configured the setup profile flow to transition directly to `AuthStatus.authenticated`, bypassing the PIN screen, and prompting the user for biometric opt-in permission dialog immediately upon landing on the Dashboard.
-  - **Default Category Seeding:** Seeded localized typical expense/income categories (Food, Transport, Salary, Housing, Utilities, Entertainment) on first-time initialization to prevent empty state crashes.
+  - **Default Seeding:** Seeded a default account ("Mi cartera" / "My Wallet" / "La meva cartera") with a 0.0 balance, 13 default typical categories, and 6 default typical tags localized in English, Spanish, and Catalan to prevent empty state screens and guide the user.
   - **Localization Polish:** Fully translated all user-facing strings, error labels, default account names, and seed categories in English, Spanish, and Catalan.
 * **Verification:**
   - Refactored `auth_notifier_test.dart` and `biometric_opt_in_screen_test.dart` to match the direct authentication transitions.

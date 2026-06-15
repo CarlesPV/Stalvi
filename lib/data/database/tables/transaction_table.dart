@@ -26,6 +26,8 @@ class Transactions extends Table {
   RealColumn get exchangeRate => real().named('exchange_rate').nullable()();
   DateTimeColumn get createdAt => dateTime().named('created_at')();
   DateTimeColumn get modifiedAt => dateTime().named('modified_at')();
+  BoolColumn get isDeleted =>
+      boolean().named('is_deleted').withDefault(const Constant(false))();
 
   @override
   Set<Column> get primaryKey => {id};

@@ -498,6 +498,127 @@
   "authSetupAcceptAnd": " and the ",
   "@authSetupAcceptAnd": {
     "description": "Conjunction text for terms and privacy acceptance checkbox"
+  },
+  "settingsThemeMode": "Theme Mode",
+  "@settingsThemeMode": {
+    "description": "Label for theme mode selection in settings"
+  },
+  "themeModeSystem": "System",
+  "@themeModeSystem": {
+    "description": "System theme option"
+  },
+  "themeModeLight": "Light",
+  "@themeModeLight": {
+    "description": "Light theme option"
+  },
+  "themeModeDark": "Dark",
+  "@themeModeDark": {
+    "description": "Dark theme option"
+  },
+  "profileSettingsTitle": "Profile & Security",
+  "@profileSettingsTitle": {
+    "description": "Title for the profile and security settings screen"
+  },
+  "changePinButton": "Change PIN",
+  "@changePinButton": {
+    "description": "Button to change PIN"
+  },
+  "deleteAllDataButton": "Delete All Data",
+  "@deleteAllDataButton": {
+    "description": "Button to delete all application data"
+  },
+  "oldPinLabel": "Old PIN",
+  "@oldPinLabel": {
+    "description": "Label for old PIN input"
+  },
+  "newPinLabel": "New PIN",
+  "@newPinLabel": {
+    "description": "Label for new PIN input"
+  },
+  "confirmPinLabel": "Confirm New PIN",
+  "@confirmPinLabel": {
+    "description": "Label for confirm new PIN input"
+  },
+  "incorrectOldPin": "Incorrect Old PIN.",
+  "@incorrectOldPin": {
+    "description": "Error message for incorrect old PIN"
+  },
+  "pinsDoNotMatch": "PINs do not match.",
+  "@pinsDoNotMatch": {
+    "description": "Error message when new PINs do not match"
+  },
+  "pinUpdatedSuccessfully": "PIN updated successfully.",
+  "@pinUpdatedSuccessfully": {
+    "description": "Success message after updating PIN"
+  },
+  "deleteAllDataWarning": "Are you sure you want to delete all data? This cannot be undone.",
+  "@deleteAllDataWarning": {
+    "description": "Warning message before deleting all data"
+  },
+  "settingsLanguage": "Language",
+  "@settingsLanguage": {
+    "description": "Label for language selection in settings"
+  },
+  "usernameLabel": "Username",
+  "@usernameLabel": {
+    "description": "Label for username input"
+  },
+  "btnCancel": "Cancel",
+  "@btnCancel": {
+    "description": "General cancel button label"
+  },
+  "btnSave": "Save",
+  "@btnSave": {
+    "description": "General save button label"
+  },
+  "btnDelete": "Delete",
+  "@btnDelete": {
+    "description": "General delete button label"
+  },
+  "btnNext": "Next",
+  "@btnNext": {
+    "description": "General next button label"
+  },
+  "recycleBinTitle": "Recycle Bin",
+  "@recycleBinTitle": {
+    "description": "Title for the Recycle Bin screen"
+  },
+  "recycleBinEmpty": "Recycle bin is empty.",
+  "@recycleBinEmpty": {
+    "description": "Text shown when the recycle bin is empty"
+  },
+  "recycleBinRestoreTooltip": "Restore",
+  "@recycleBinRestoreTooltip": {
+    "description": "Tooltip text for restoring an item"
+  },
+  "recycleBinDeleteTooltip": "Permanently Delete",
+  "@recycleBinDeleteTooltip": {
+    "description": "Tooltip text for permanently deleting an item"
+  },
+  "recycleBinDeleteConfirmTitle": "Permanent Delete",
+  "@recycleBinDeleteConfirmTitle": {
+    "description": "Title for the permanent delete confirmation dialog"
+  },
+  "recycleBinDeleteConfirmMessage": "Are you sure you want to permanently delete this item? This action cannot be undone.",
+  "@recycleBinDeleteConfirmMessage": {
+    "description": "Message for the permanent delete confirmation dialog"
+  },
+  "recycleBinRestoredMessage": "Item restored",
+  "@recycleBinRestoredMessage": {
+    "description": "Snackbar message shown when an item is successfully restored"
+  },
+  "recycleBinDeletedMessage": "Item permanently deleted",
+  "@recycleBinDeletedMessage": {
+    "description": "Snackbar message shown when an item is permanently deleted"
+  },
+  "recycleBinDaysRemaining": "Expires in {days} days",
+  "@recycleBinDaysRemaining": {
+    "description": "Days remaining until item in recycle bin is deleted",
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
   }
 }
 

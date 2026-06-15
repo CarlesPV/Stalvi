@@ -18,6 +18,7 @@ extension TransactionMapper on Transaction {
       exchangeRate: exchangeRate,
       createdAt: createdAt,
       modifiedAt: modifiedAt,
+      isDeleted: false,
     );
   }
 

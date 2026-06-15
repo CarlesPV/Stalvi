@@ -1,23 +1,28 @@
-# Active Task: Phase 9 - Advanced Settings Management
+# Active Task: Phase 10 - Default Data Seeding & UX Improvements
 
 ## Objective
-Implement advanced settings management features, specifically manual/system dark/light mode theme selection, and movement soft-delete 30-day recycle bin management.
+Implement improvements to the default seeding logic during onboarding, ensuring the user is provided with a localized default account, multiple default typical transaction categories, and multiple default typical tags in English, Spanish, and Catalan, preventing the "empty screen" syndrome on startup.
 
 ## Current Context
-The project has successfully implemented Phase 8 (Onboarding Improvements, Localization Polish & Bug Fixes) with all tests passing. The onboarding experience, multi-language seeding, separate legal viewers, and secure storage resiliency are in place. The next milestone is to enable users to control their theme mode preferences and manage their soft-deleted transactions in a trash/recycle bin.
+Phases 1-9 are fully completed. Advanced settings, Recycle Bin, dynamic onboarding PIN validation, and biometric auth are all implemented and verified. We have expanded the default seeding logic to populate a default zero-balance wallet, 13 typical transaction categories, and 6 typical tags in the user's selected language.
 
 ## Atomic Steps
-1. **Theme Mode Selection (Manual/System)**:
-   - Expand the settings panel to allow the user to select between System, Light, and Dark theme mode preferences.
-   - Persist user theme preference in the profile / local settings database structure.
-   - Implement dynamic state provider in Riverpod to rebuild the application layout when the theme mode updates.
-2. **30-Day Recycle Bin (Soft-delete Trash)**:
-   - Develop a "Recycle Bin" visual viewer in Settings displaying transactions marked as `isDeleted` with their remaining days before permanent erasure (based on `modifiedAt` / deletion timestamp).
-   - Add action items to either "Restore" transactions (resetting `isDeleted` to false) or "Delete Permanently" (removing the database row entirely).
-   - Implement an automatic purging routine at startup or database instantiation to permanently delete items where the deletion age exceeds 30 days.
+1. **Repository Implementation for Tags**:
+   - Create a `TagRepository` implementing `ITagRepository` contract using Drift.
+   - Register `tagRepositoryProvider` in `repository_providers.dart`.
+
+2. **Seeding Logic Extension**:
+   - Update `InitializeDefaultDataUseCase` to take `ITagRepository` as a dependency.
+   - Expand `categoryTranslations` and `defaultCategoryConfigs` with new typical categories: Shopping, Health, Education, Subscriptions, Travel, Investments, Gifts.
+   - Add default tags seeding (Essential, Leisure, Work, Personal, Recurring, Subscription) localized in English, Spanish, and Catalan.
+   - Ensure the default wallet name resolves to the correct locale-specific name with 0.0 balance.
+
+3. **Verify and Test**:
+   - Update `initialize_default_data_usecase_test.dart` to mock the tag repository and assert that 13 categories and 6 tags are seeded correctly in Spanish.
+   - Resolve existing Linux test environment failures (missing sqlite3 dynamic library loading overrides).
+   - Ensure all 177 unit tests in the codebase pass.
 
 ## Rules
-- Follow Clean Architecture pattern structures strictly.
-- Utilize Riverpod for state notifications in the settings presentation controllers.
-- Ensure proper ARB localization coverage for all new UI text, labels, and buttons.
-- Update/add unit and widget tests to cover theme persistence and recycling validations.
+- Maintain Clean Architecture strictly.
+- Perform all seeding in English, Spanish, and Catalan.
+- Keep tests updated to cover new dependencies and scenarios.

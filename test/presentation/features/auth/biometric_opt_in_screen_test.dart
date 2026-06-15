@@ -7,10 +7,8 @@ import 'package:konta/core/l10n/app_localizations.dart';
 import 'package:konta/core/security/secure_storage_manager.dart';
 import 'package:konta/infrastructure/services/biometric_auth_service.dart';
 import 'package:konta/presentation/features/auth/biometric_opt_in_screen.dart';
-import 'package:konta/presentation/providers/auth_notifier.dart';
 import 'package:konta/presentation/providers/locale_provider.dart';
 import 'package:konta/core/theme/app_theme.dart';
-import 'package:konta/presentation/providers/repository_providers.dart';
 
 class MockSecureStorageManager extends Mock implements SecureStorageManager {}
 
@@ -69,9 +67,11 @@ void main() {
       // Verify texts are rendered
       expect(find.text('Enable Biometric Login'), findsOneWidget);
       expect(
-          find.text(
-              'Use Fingerprint or FaceID to quickly and securely access your Konta account in the future.'),
-          findsOneWidget);
+        find.text(
+          'Use Fingerprint or FaceID to quickly and securely access your Konta account in the future.',
+        ),
+        findsOneWidget,
+      );
       expect(find.text('Enable Biometrics'), findsOneWidget);
       expect(find.text('Skip for Now'), findsOneWidget);
       expect(find.byIcon(Icons.fingerprint_rounded), findsOneWidget);
@@ -80,9 +80,11 @@ void main() {
     testWidgets(
         'clicking Enable Biometrics triggers authentication setup and enables it',
         (WidgetTester tester) async {
-      when(() => mockBiometricAuth.authenticate(
-              localizedReason: any(named: 'localizedReason')))
-          .thenAnswer((_) async => true);
+      when(
+        () => mockBiometricAuth.authenticate(
+          localizedReason: any(named: 'localizedReason'),
+        ),
+      ).thenAnswer((_) async => true);
       when(() => mockBiometricAuth.enableBiometrics())
           .thenAnswer((_) async => {});
 
@@ -99,9 +101,11 @@ void main() {
       await tester.tap(find.text('Enable Biometrics'));
       await tester.pump();
 
-      verify(() => mockBiometricAuth.authenticate(
-            localizedReason: 'Enable biometric authentication for Konta',
-          )).called(1);
+      verify(
+        () => mockBiometricAuth.authenticate(
+          localizedReason: 'Enable biometric authentication for Konta',
+        ),
+      ).called(1);
       verify(() => mockBiometricAuth.enableBiometrics()).called(1);
     });
 

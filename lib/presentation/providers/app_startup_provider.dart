@@ -1,5 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/foundation.dart';
 import 'package:konta/data/database/app_database.dart';
+import 'package:konta/domain/usecases/auto_purge_usecase.dart';
 
 /// Provides the singleton [AppDatabase] instance.
 ///
@@ -11,6 +13,12 @@ final appDatabaseProvider = FutureProvider<AppDatabase>((ref) async {
   final db = await AppDatabase.create();
   ref.onDispose(db.close);
   return db;
+});
+
+/// Provides the [AutoPurgeUseCase] instance.
+final autoPurgeUseCaseProvider = Provider<AutoPurgeUseCase>((ref) {
+  final db = ref.watch(appDatabaseProvider).requireValue;
+  return AutoPurgeUseCase(db.trashDao);
 });
 
 /// App-wide startup gate.
@@ -25,4 +33,12 @@ final appDatabaseProvider = FutureProvider<AppDatabase>((ref) async {
 final appStartupProvider = FutureProvider<void>((ref) async {
   // Critical path — open the encrypted Drift/SQLCipher database.
   await ref.watch(appDatabaseProvider.future);
+
+  // Auto-purge old trash items
+  try {
+    await ref.read(autoPurgeUseCaseProvider).execute();
+  } catch (e) {
+    // If the database is still initializing or there's an error, log it but don't crash startup.
+    debugPrint('AutoPurge failed during startup: $e');
+  }
 });

@@ -112,8 +112,10 @@ void main() {
       final result = await usecase.execute(defaultParams);
 
       // Assert
-      expect(result.id,
-          existingProfile.id); // Must retain the same ID to protect references
+      expect(
+        result.id,
+        existingProfile.id,
+      ); // Must retain the same ID to protect references
       expect(result.name, defaultParams.name);
       expect(result.username, defaultParams.username);
       expect(result.defaultCurrency, defaultParams.defaultCurrency);
@@ -130,7 +132,7 @@ void main() {
     test('should throw ValidationException when acceptedTerms is false',
         () async {
       // Arrange
-      final params = CreateProfileParams(
+      const params = CreateProfileParams(
         name: 'Carles',
         username: 'carlespv',
         pin: '1234',
@@ -142,11 +144,13 @@ void main() {
       // Act & Assert
       expect(
         () => usecase.execute(params),
-        throwsA(isA<ValidationException>().having(
-          (e) => e.message,
-          'message',
-          contains('You must accept the Terms & Conditions to proceed.'),
-        )),
+        throwsA(
+          isA<ValidationException>().having(
+            (e) => e.message,
+            'message',
+            contains('You must accept the Terms & Conditions to proceed.'),
+          ),
+        ),
       );
       verifyZeroInteractions(mockSecureStorageManager);
       verifyZeroInteractions(mockProfileRepository);
@@ -155,7 +159,7 @@ void main() {
     test('should throw ValidationException when PIN is too short (< 4 digits)',
         () async {
       // Arrange
-      final params = CreateProfileParams(
+      const params = CreateProfileParams(
         name: 'Carles',
         username: 'carlespv',
         pin: '123',
@@ -167,11 +171,13 @@ void main() {
       // Act & Assert
       expect(
         () => usecase.execute(params),
-        throwsA(isA<ValidationException>().having(
-          (e) => e.message,
-          'message',
-          contains('PIN must be between 4 and 8 digits'),
-        )),
+        throwsA(
+          isA<ValidationException>().having(
+            (e) => e.message,
+            'message',
+            contains('PIN must be between 4 and 8 digits'),
+          ),
+        ),
       );
       verifyZeroInteractions(mockSecureStorageManager);
       verifyZeroInteractions(mockProfileRepository);
@@ -180,7 +186,7 @@ void main() {
     test('should throw ValidationException when PIN is too long (> 8 digits)',
         () async {
       // Arrange
-      final params = CreateProfileParams(
+      const params = CreateProfileParams(
         name: 'Carles',
         username: 'carlespv',
         pin: '123456789',
@@ -192,11 +198,13 @@ void main() {
       // Act & Assert
       expect(
         () => usecase.execute(params),
-        throwsA(isA<ValidationException>().having(
-          (e) => e.message,
-          'message',
-          contains('PIN must be between 4 and 8 digits'),
-        )),
+        throwsA(
+          isA<ValidationException>().having(
+            (e) => e.message,
+            'message',
+            contains('PIN must be between 4 and 8 digits'),
+          ),
+        ),
       );
       verifyZeroInteractions(mockSecureStorageManager);
       verifyZeroInteractions(mockProfileRepository);
@@ -206,7 +214,7 @@ void main() {
         'should throw ValidationException when PIN contains non-numeric characters',
         () async {
       // Arrange
-      final params = CreateProfileParams(
+      const params = CreateProfileParams(
         name: 'Carles',
         username: 'carlespv',
         pin: '12a4',
@@ -218,11 +226,13 @@ void main() {
       // Act & Assert
       expect(
         () => usecase.execute(params),
-        throwsA(isA<ValidationException>().having(
-          (e) => e.message,
-          'message',
-          contains('PIN must contain only numeric digits'),
-        )),
+        throwsA(
+          isA<ValidationException>().having(
+            (e) => e.message,
+            'message',
+            contains('PIN must contain only numeric digits'),
+          ),
+        ),
       );
       verifyZeroInteractions(mockSecureStorageManager);
       verifyZeroInteractions(mockProfileRepository);
@@ -230,7 +240,7 @@ void main() {
 
     test('should throw ValidationException when Name is empty', () async {
       // Arrange
-      final params = CreateProfileParams(
+      const params = CreateProfileParams(
         name: '   ',
         username: 'carlespv',
         pin: '1234',
@@ -242,11 +252,13 @@ void main() {
       // Act & Assert
       expect(
         () => usecase.execute(params),
-        throwsA(isA<ValidationException>().having(
-          (e) => e.message,
-          'message',
-          contains('Name cannot be empty'),
-        )),
+        throwsA(
+          isA<ValidationException>().having(
+            (e) => e.message,
+            'message',
+            contains('Name cannot be empty'),
+          ),
+        ),
       );
       verifyZeroInteractions(mockSecureStorageManager);
       verifyZeroInteractions(mockProfileRepository);
@@ -254,7 +266,7 @@ void main() {
 
     test('should throw ValidationException when Username is empty', () async {
       // Arrange
-      final params = CreateProfileParams(
+      const params = CreateProfileParams(
         name: 'Carles',
         username: '',
         pin: '1234',
@@ -266,11 +278,13 @@ void main() {
       // Act & Assert
       expect(
         () => usecase.execute(params),
-        throwsA(isA<ValidationException>().having(
-          (e) => e.message,
-          'message',
-          contains('Username cannot be empty'),
-        )),
+        throwsA(
+          isA<ValidationException>().having(
+            (e) => e.message,
+            'message',
+            contains('Username cannot be empty'),
+          ),
+        ),
       );
       verifyZeroInteractions(mockSecureStorageManager);
       verifyZeroInteractions(mockProfileRepository);

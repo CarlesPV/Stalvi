@@ -6,6 +6,7 @@ import 'package:konta/core/l10n/app_localizations.dart';
 import 'package:konta/core/theme/app_theme.dart';
 import 'package:konta/presentation/features/splash/splash_screen.dart';
 import 'package:konta/presentation/providers/locale_provider.dart';
+import 'package:konta/presentation/providers/theme_provider.dart';
 import 'package:konta/presentation/widgets/lifecycle_blur_wrapper.dart';
 
 /// Entry point for the Konta application.
@@ -38,13 +39,14 @@ class KontaApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final activeLocale = ref.watch(localeProvider);
+    final activeThemeMode = ref.watch(themeProvider);
 
     return MaterialApp(
       title: 'Konta',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.system,
+      themeMode: activeThemeMode,
       locale: activeLocale,
       localizationsDelegates: const [
         AppLocalizations.delegate,

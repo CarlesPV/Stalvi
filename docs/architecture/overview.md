@@ -11,7 +11,7 @@ Konta is a local-first financial application designed to help users track their 
 * **Theming:** Must support both Light and Dark modes.
 * **Responsiveness:** The UI must be fully responsive across different screen sizes.
 * **Usability:** Highly intuitive interface with clear, user-friendly error messages and notifications.
-* **Anti-Blank Page Syndrome:** The app will initialize with a default account named "Mi Cartera" (My Wallet) and a set of default categories to guide new users.
+* **Anti-Blank Page Syndrome:** The app will initialize with a default account named "Mi Cartera" (My Wallet) at 0.0 balance, 13 typical default categories, and 6 typical default tags in the user's locale to prevent empty states and guide new users.
 * **Development Standards:** * Use the latest stable and secure technologies (avoiding unstable betas).
     * Future-proof architecture allowing easy modifications and feature additions.
     * All code documentation, variables, functions, and comments must be in **English**.

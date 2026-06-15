@@ -188,26 +188,44 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
                             status == AuthStatus.setupSubmitting) {
                           // Error in setup
                           return _buildSetupForm(
-                              context, theme, colorScheme, l10n,
-                              error: errorText);
+                            context,
+                            theme,
+                            colorScheme,
+                            l10n,
+                            error: errorText,
+                          );
                         } else {
                           // Error in login
                           return _buildLoginForm(
-                              context, theme, colorScheme, l10n,
-                              error: errorText);
+                            context,
+                            theme,
+                            colorScheme,
+                            l10n,
+                            error: errorText,
+                          );
                         }
                       },
                       data: (status) {
                         if (status == AuthStatus.setupRequired ||
                             status == AuthStatus.setupSubmitting) {
                           return _buildSetupForm(
-                              context, theme, colorScheme, l10n);
+                            context,
+                            theme,
+                            colorScheme,
+                            l10n,
+                          );
                         } else if (status == AuthStatus.lockedOut) {
                           return _LockedOutContent(
-                              colorScheme: colorScheme, theme: theme);
+                            colorScheme: colorScheme,
+                            theme: theme,
+                          );
                         } else {
                           return _buildLoginForm(
-                              context, theme, colorScheme, l10n);
+                            context,
+                            theme,
+                            colorScheme,
+                            l10n,
+                          );
                         }
                       },
                     ),
@@ -308,12 +326,14 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide(
-                    color: colorScheme.outlineVariant.withValues(alpha: 0.4)),
+                  color: colorScheme.outlineVariant.withValues(alpha: 0.4),
+                ),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide(
-                    color: colorScheme.outlineVariant.withValues(alpha: 0.4)),
+                  color: colorScheme.outlineVariant.withValues(alpha: 0.4),
+                ),
               ),
             ),
             items: const [
@@ -348,25 +368,33 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide(
-                    color: colorScheme.outlineVariant.withValues(alpha: 0.4)),
+                  color: colorScheme.outlineVariant.withValues(alpha: 0.4),
+                ),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide(
-                    color: colorScheme.outlineVariant.withValues(alpha: 0.4)),
+                  color: colorScheme.outlineVariant.withValues(alpha: 0.4),
+                ),
               ),
             ),
             items: const [
               DropdownMenuItem(value: 'EUR', child: Text('Euro (EUR)')),
               DropdownMenuItem(value: 'USD', child: Text('US Dollar (USD)')),
               DropdownMenuItem(
-                  value: 'GBP', child: Text('British Pound (GBP)')),
+                value: 'GBP',
+                child: Text('British Pound (GBP)'),
+              ),
               DropdownMenuItem(value: 'JPY', child: Text('Japanese Yen (JPY)')),
               DropdownMenuItem(value: 'CHF', child: Text('Swiss Franc (CHF)')),
               DropdownMenuItem(
-                  value: 'CAD', child: Text('Canadian Dollar (CAD)')),
+                value: 'CAD',
+                child: Text('Canadian Dollar (CAD)'),
+              ),
               DropdownMenuItem(
-                  value: 'AUD', child: Text('Australian Dollar (AUD)')),
+                value: 'AUD',
+                child: Text('Australian Dollar (AUD)'),
+              ),
             ],
             onChanged: (currency) {
               if (currency != null) {
@@ -591,7 +619,8 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
               style: FilledButton.styleFrom(
                 minimumSize: const Size.fromHeight(50),
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12)),
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
               child: Text(
                 l10n.authSetupCreateButton,
@@ -676,11 +705,13 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
             TableRow(children: [_dialKey('1'), _dialKey('2'), _dialKey('3')]),
             TableRow(children: [_dialKey('4'), _dialKey('5'), _dialKey('6')]),
             TableRow(children: [_dialKey('7'), _dialKey('8'), _dialKey('9')]),
-            TableRow(children: [
-              _bottomLeftKey(colorScheme),
-              _dialKey('0'),
-              _backspaceKey(colorScheme)
-            ]),
+            TableRow(
+              children: [
+                _bottomLeftKey(colorScheme),
+                _dialKey('0'),
+                _backspaceKey(colorScheme),
+              ],
+            ),
           ],
         ),
       ],
@@ -735,8 +766,11 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
           child: ScaleTransition(
             scale: _pulseScale,
             child: IconButton(
-              icon: Icon(Icons.fingerprint_rounded,
-                  size: 36, color: colorScheme.primary),
+              icon: Icon(
+                Icons.fingerprint_rounded,
+                size: 36,
+                color: colorScheme.primary,
+              ),
               onPressed: () {
                 ref.read(authNotifierProvider.notifier).resetStatus();
                 ref.read(authNotifierProvider.notifier).authenticate();
@@ -759,8 +793,11 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
       child: Container(
         margin: const EdgeInsets.all(6),
         child: IconButton(
-          icon: Icon(Icons.backspace_outlined,
-              size: 24, color: colorScheme.onSurfaceVariant),
+          icon: Icon(
+            Icons.backspace_outlined,
+            size: 24,
+            color: colorScheme.onSurfaceVariant,
+          ),
           onPressed: () {
             if (_enteredPin.isNotEmpty) {
               setState(() {

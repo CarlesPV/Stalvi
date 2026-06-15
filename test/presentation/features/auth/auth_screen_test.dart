@@ -124,7 +124,9 @@ void main() {
       // Since mockSecureStorage has the correct pin hash, it will succeed and set state to authenticated.
       await tester.pump(const Duration(milliseconds: 200));
       expect(
-          container.read(authNotifierProvider).value, AuthStatus.authenticated);
+        container.read(authNotifierProvider).value,
+        AuthStatus.authenticated,
+      );
     });
 
     testWidgets(
@@ -182,7 +184,9 @@ void main() {
       // Assert: Validation triggered automatically
       await tester.pump(const Duration(milliseconds: 200));
       expect(
-          container.read(authNotifierProvider).value, AuthStatus.authenticated);
+        container.read(authNotifierProvider).value,
+        AuthStatus.authenticated,
+      );
     });
   });
 }

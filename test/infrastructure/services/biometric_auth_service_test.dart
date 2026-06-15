@@ -80,10 +80,12 @@ void main() {
 
   group('authenticate', () {
     test('returns true when authentication succeeds', () async {
-      when(() => mockLocalAuth.authenticate(
-            localizedReason: any(named: 'localizedReason'),
-            options: any(named: 'options'),
-          )).thenAnswer((_) async => true);
+      when(
+        () => mockLocalAuth.authenticate(
+          localizedReason: any(named: 'localizedReason'),
+          options: any(named: 'options'),
+        ),
+      ).thenAnswer((_) async => true);
 
       final result =
           await biometricAuthService.authenticate(localizedReason: 'Test');
@@ -91,10 +93,12 @@ void main() {
     });
 
     test('returns false when authentication fails normally', () async {
-      when(() => mockLocalAuth.authenticate(
-            localizedReason: any(named: 'localizedReason'),
-            options: any(named: 'options'),
-          )).thenAnswer((_) async => false);
+      when(
+        () => mockLocalAuth.authenticate(
+          localizedReason: any(named: 'localizedReason'),
+          options: any(named: 'options'),
+        ),
+      ).thenAnswer((_) async => false);
 
       final result =
           await biometricAuthService.authenticate(localizedReason: 'Test');
@@ -102,12 +106,17 @@ void main() {
     });
 
     test('throws BiometricLockedOutException when locked out', () async {
-      when(() => mockLocalAuth.authenticate(
-                localizedReason: any(named: 'localizedReason'),
-                options: any(named: 'options'),
-              ))
-          .thenThrow(PlatformException(
-              code: auth_error.lockedOut, message: 'Locked out'));
+      when(
+        () => mockLocalAuth.authenticate(
+          localizedReason: any(named: 'localizedReason'),
+          options: any(named: 'options'),
+        ),
+      ).thenThrow(
+        PlatformException(
+          code: auth_error.lockedOut,
+          message: 'Locked out',
+        ),
+      );
 
       expect(
         () => biometricAuthService.authenticate(localizedReason: 'Test'),
@@ -116,11 +125,12 @@ void main() {
     });
 
     test('throws BiometricException for other PlatformExceptions', () async {
-      when(() => mockLocalAuth.authenticate(
-                localizedReason: any(named: 'localizedReason'),
-                options: any(named: 'options'),
-              ))
-          .thenThrow(PlatformException(code: 'other', message: 'Other error'));
+      when(
+        () => mockLocalAuth.authenticate(
+          localizedReason: any(named: 'localizedReason'),
+          options: any(named: 'options'),
+        ),
+      ).thenThrow(PlatformException(code: 'other', message: 'Other error'));
 
       expect(
         () => biometricAuthService.authenticate(localizedReason: 'Test'),
@@ -129,10 +139,12 @@ void main() {
     });
 
     test('throws BiometricException for general Exception', () async {
-      when(() => mockLocalAuth.authenticate(
-            localizedReason: any(named: 'localizedReason'),
-            options: any(named: 'options'),
-          )).thenThrow(Exception('General error'));
+      when(
+        () => mockLocalAuth.authenticate(
+          localizedReason: any(named: 'localizedReason'),
+          options: any(named: 'options'),
+        ),
+      ).thenThrow(Exception('General error'));
 
       expect(
         () => biometricAuthService.authenticate(localizedReason: 'Test'),

@@ -8,38 +8,61 @@ import 'package:konta/domain/usecases/initialize_default_data_usecase.dart';
 
 import 'package:konta/domain/entities/category.dart';
 import 'package:konta/domain/repositories/i_category_repository.dart';
+import 'package:konta/domain/entities/tag.dart';
+import 'package:konta/domain/repositories/i_tag_repository.dart';
 
 class MockAccountRepository extends Mock implements IAccountRepository {}
 
 class MockCategoryRepository extends Mock implements ICategoryRepository {}
 
+class MockTagRepository extends Mock implements ITagRepository {}
+
 class FakeAccount extends Fake implements Account {}
 
 class FakeCategory extends Fake implements Category {}
+
+class FakeTag extends Fake implements Tag {}
 
 void main() {
   late InitializeDefaultDataUseCase useCase;
   late MockAccountRepository mockAccountRepository;
   late MockCategoryRepository mockCategoryRepository;
+  late MockTagRepository mockTagRepository;
 
   setUpAll(() {
     registerFallbackValue(FakeAccount());
     registerFallbackValue(FakeCategory());
+    registerFallbackValue(FakeTag());
   });
 
   setUp(() {
     mockAccountRepository = MockAccountRepository();
     mockCategoryRepository = MockCategoryRepository();
+    mockTagRepository = MockTagRepository();
     useCase = InitializeDefaultDataUseCase(
-        mockAccountRepository, mockCategoryRepository);
+      mockAccountRepository,
+      mockCategoryRepository,
+      mockTagRepository,
+    );
 
     // Default stubbing for category calls to make existing tests pass without modification
     when(() => mockCategoryRepository.getAllCategories())
         .thenAnswer((_) async => <Category>[]);
     when(() => mockCategoryRepository.createCategory(any())).thenAnswer(
-        (invocation) async => invocation.positionalArguments[0] as Category);
+      (invocation) async => invocation.positionalArguments[0] as Category,
+    );
     when(() => mockCategoryRepository.updateCategory(any())).thenAnswer(
-        (invocation) async => invocation.positionalArguments[0] as Category);
+      (invocation) async => invocation.positionalArguments[0] as Category,
+    );
+
+    // Default stubbing for tag calls
+    when(() => mockTagRepository.getAllTags()).thenAnswer((_) async => <Tag>[]);
+    when(() => mockTagRepository.createTag(any())).thenAnswer(
+      (invocation) async => invocation.positionalArguments[0] as Tag,
+    );
+    when(() => mockTagRepository.updateTag(any())).thenAnswer(
+      (invocation) async => invocation.positionalArguments[0] as Tag,
+    );
   });
 
   group('InitializeDefaultDataUseCase Unit Tests', () {
@@ -55,7 +78,8 @@ void main() {
           .thenAnswer((_) async => <Account>[]);
 
       when(() => mockAccountRepository.createAccount(any())).thenAnswer(
-          (invocation) async => invocation.positionalArguments[0] as Account);
+        (invocation) async => invocation.positionalArguments[0] as Account,
+      );
 
       // Act
       await useCase.execute(
@@ -135,7 +159,8 @@ void main() {
       when(() => mockAccountRepository.getAccountsByUserId(userId))
           .thenAnswer((_) async => <Account>[]);
       when(() => mockAccountRepository.createAccount(any())).thenAnswer(
-          (invocation) async => invocation.positionalArguments[0] as Account);
+        (invocation) async => invocation.positionalArguments[0] as Account,
+      );
 
       // Act
       await useCase.execute(
@@ -162,7 +187,8 @@ void main() {
       when(() => mockAccountRepository.getAccountsByUserId(userId))
           .thenAnswer((_) async => <Account>[]);
       when(() => mockAccountRepository.createAccount(any())).thenAnswer(
-          (invocation) async => invocation.positionalArguments[0] as Account);
+        (invocation) async => invocation.positionalArguments[0] as Account,
+      );
 
       // Act
       await useCase.execute(
@@ -189,7 +215,8 @@ void main() {
       when(() => mockAccountRepository.getAccountsByUserId(userId))
           .thenAnswer((_) async => <Account>[]);
       when(() => mockAccountRepository.createAccount(any())).thenAnswer(
-          (invocation) async => invocation.positionalArguments[0] as Account);
+        (invocation) async => invocation.positionalArguments[0] as Account,
+      );
 
       // Act
       await useCase.execute(
@@ -215,7 +242,8 @@ void main() {
       when(() => mockAccountRepository.getAccountsByUserId(userId))
           .thenAnswer((_) async => <Account>[]);
       when(() => mockAccountRepository.createAccount(any())).thenAnswer(
-          (invocation) async => invocation.positionalArguments[0] as Account);
+        (invocation) async => invocation.positionalArguments[0] as Account,
+      );
 
       // Act
       await useCase.execute(
@@ -243,7 +271,8 @@ void main() {
       when(() => mockAccountRepository.getAccountsByUserId(userId))
           .thenAnswer((_) async => <Account>[]);
       when(() => mockAccountRepository.createAccount(any())).thenAnswer(
-          (invocation) async => invocation.positionalArguments[0] as Account);
+        (invocation) async => invocation.positionalArguments[0] as Account,
+      );
 
       // Act
       await useCase.execute(
@@ -257,6 +286,62 @@ void main() {
               .captured
               .first as Account;
       expect(capturedAccount.name, 'Mi cartera');
+    });
+
+    test(
+        'should seed default typical categories and typical tags in selected locale',
+        () async {
+      // Arrange
+      const userId = 'user_123';
+      const currency = 'EUR';
+      const locale = 'es';
+
+      when(() => mockAccountRepository.getAccountsByUserId(userId))
+          .thenAnswer((_) async => <Account>[]);
+      when(() => mockAccountRepository.createAccount(any())).thenAnswer(
+        (invocation) async => invocation.positionalArguments[0] as Account,
+      );
+
+      // Act
+      await useCase.execute(
+        userId: userId,
+        currency: currency,
+        locale: locale,
+      );
+
+      // Assert
+      final capturedCategories =
+          verify(() => mockCategoryRepository.createCategory(captureAny()))
+              .captured;
+      expect(capturedCategories.length, 13);
+
+      final names =
+          capturedCategories.map((c) => (c as Category).name).toList();
+      expect(names, contains('Comida'));
+      expect(names, contains('Transporte'));
+      expect(names, contains('Salario'));
+      expect(names, contains('Vivienda'));
+      expect(names, contains('Servicios'));
+      expect(names, contains('Entretenimiento'));
+      expect(names, contains('Compras'));
+      expect(names, contains('Salud'));
+      expect(names, contains('Educación'));
+      expect(names, contains('Suscripciones'));
+      expect(names, contains('Viajes'));
+      expect(names, contains('Inversiones'));
+      expect(names, contains('Regalos'));
+
+      final capturedTags =
+          verify(() => mockTagRepository.createTag(captureAny())).captured;
+      expect(capturedTags.length, 6);
+
+      final tagNames = capturedTags.map((t) => (t as Tag).name).toList();
+      expect(tagNames, contains('Esencial'));
+      expect(tagNames, contains('Ocio'));
+      expect(tagNames, contains('Trabajo'));
+      expect(tagNames, contains('Personal'));
+      expect(tagNames, contains('Recurrente'));
+      expect(tagNames, contains('Suscripción'));
     });
   });
 }

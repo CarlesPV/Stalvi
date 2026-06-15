@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:konta/data/repositories/account_repository.dart';
 import 'package:konta/data/repositories/category_repository.dart';
+import 'package:konta/data/repositories/tag_repository.dart';
 import 'package:konta/data/repositories/profile_repository.dart';
 import 'package:konta/data/repositories/statistics_repository_impl.dart';
 import 'package:konta/data/repositories/transaction_repository.dart';
@@ -18,6 +19,7 @@ import 'package:konta/domain/entities/savings_goal.dart';
 import 'package:konta/domain/entities/transaction.dart';
 import 'package:konta/domain/repositories/i_account_repository.dart';
 import 'package:konta/domain/repositories/i_category_repository.dart';
+import 'package:konta/domain/repositories/i_tag_repository.dart';
 import 'package:konta/domain/repositories/i_profile_repository.dart';
 import 'package:konta/domain/repositories/i_transaction_repository.dart';
 import 'package:konta/domain/repositories/i_exchange_rate_repository.dart';
@@ -27,6 +29,9 @@ import 'package:konta/domain/repositories/i_statistics_repository.dart';
 import 'package:konta/domain/usecases/add_transaction_usecase.dart';
 import 'package:konta/domain/usecases/create_profile_usecase.dart';
 import 'package:konta/domain/usecases/initialize_default_data_usecase.dart';
+import 'package:konta/domain/usecases/update_credentials_usecase.dart';
+import 'package:konta/domain/usecases/wipe_all_data_usecase.dart';
+import 'package:konta/domain/usecases/trash_usecases.dart';
 import 'package:konta/presentation/providers/app_startup_provider.dart';
 import 'package:konta/presentation/providers/locale_provider.dart';
 
@@ -47,6 +52,12 @@ final accountRepositoryProvider = Provider<IAccountRepository>((ref) {
 final categoryRepositoryProvider = Provider<ICategoryRepository>((ref) {
   final db = ref.watch(appDatabaseProvider).requireValue;
   return CategoryRepository(db);
+});
+
+/// Provides the [ITagRepository] implementation.
+final tagRepositoryProvider = Provider<ITagRepository>((ref) {
+  final db = ref.watch(appDatabaseProvider).requireValue;
+  return TagRepository(db);
 });
 
 /// Provides the [ITransactionRepository] implementation.
@@ -106,7 +117,28 @@ final initializeDefaultDataUseCaseProvider =
     Provider<InitializeDefaultDataUseCase>((ref) {
   final accountRepo = ref.watch(accountRepositoryProvider);
   final categoryRepo = ref.watch(categoryRepositoryProvider);
-  return InitializeDefaultDataUseCase(accountRepo, categoryRepo);
+  final tagRepo = ref.watch(tagRepositoryProvider);
+  return InitializeDefaultDataUseCase(accountRepo, categoryRepo, tagRepo);
+});
+
+/// Provides the [UpdateCredentialsUseCase] instance.
+final updateCredentialsUseCaseProvider =
+    Provider<UpdateCredentialsUseCase>((ref) {
+  final secureStorage = ref.watch(secureStorageProvider);
+  return UpdateCredentialsUseCase(secureStorage);
+});
+
+/// Provides the [WipeAllDataUseCase] instance.
+final wipeAllDataUseCaseProvider = Provider<WipeAllDataUseCase>((ref) {
+  final secureStorage = ref.watch(secureStorageProvider);
+  final db = ref.watch(appDatabaseProvider).requireValue;
+  return WipeAllDataUseCase(secureStorage, db);
+});
+
+/// Provides the [TrashUsecases] instance.
+final trashUsecasesProvider = Provider<TrashUsecases>((ref) {
+  final db = ref.watch(appDatabaseProvider).requireValue;
+  return TrashUsecases(db.trashDao);
 });
 
 /// Fetches the default profile (usually Anonymous) seeded on DB creation.
