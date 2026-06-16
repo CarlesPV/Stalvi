@@ -34,6 +34,14 @@ class AccountRepository implements IAccountRepository {
   }
 
   @override
+  Stream<List<Account>> watchAccountsByUserId(String userId) {
+    final query = _db.select(_db.accounts)
+      ..where((a) => a.userId.equals(userId) & a.isDeleted.equals(false))
+      ..orderBy([(a) => OrderingTerm(expression: a.name)]);
+    return query.watch().map((rows) => rows.map((r) => r.toDomain()).toList());
+  }
+
+  @override
   Future<Account> updateAccount(Account account) async {
     final dbAccount = account.toDb();
     await (_db.update(_db.accounts)..where((a) => a.id.equals(account.id)))

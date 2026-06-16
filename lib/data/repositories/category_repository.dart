@@ -34,6 +34,14 @@ class CategoryRepository implements ICategoryRepository {
   }
 
   @override
+  Stream<List<Category>> watchAllCategories() {
+    final query = _db.select(_db.categories)
+      ..where((c) => c.isDeleted.equals(false))
+      ..orderBy([(c) => OrderingTerm(expression: c.name)]);
+    return query.watch().map((rows) => rows.map((r) => r.toDomain()).toList());
+  }
+
+  @override
   Future<Category> updateCategory(Category category) async {
     final dbCategory = category.toDb();
     await (_db.update(_db.categories)..where((c) => c.id.equals(category.id)))

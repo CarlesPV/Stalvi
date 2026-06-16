@@ -56,6 +56,13 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final filter = ref.watch(statisticsFilterProvider);
+    final summaryAsync = ref.watch(periodSummaryProvider);
+
+    final isEmpty = summaryAsync.when(
+      data: (s) => s.totalIncome == 0 && s.totalExpense == 0,
+      loading: () => false,
+      error: (_, __) => false,
+    );
 
     return Scaffold(
       appBar: AppBar(
@@ -101,40 +108,59 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
               child: _PeriodHeader(dateRange: filter.dateRange),
             ),
 
-            // ── Income vs. Expense summary ────────────────────────────────
-            SliverToBoxAdapter(
-              child: _SummarySection(shimmer: _shimmer),
-            ),
-
-            // ── Top Expense Categories ─────────────────────────────────────
-            SliverToBoxAdapter(
-              child: _CategoryChartSection(
-                key: const ValueKey('expense_chart'),
-                shimmer: _shimmer,
-                categoriesAsync: ref.watch(topExpenseCategoriesProvider),
-                title: AppLocalizations.of(context)!.statisticsTopSpending,
-                subtitle:
-                    AppLocalizations.of(context)!.statisticsWhereMoneyGoes,
-                emptyLabel: AppLocalizations.of(context)!.statisticsNoExpenses,
-                accentColor: context.financialColors.negative,
+            if (isEmpty)
+              SliverFillRemaining(
+                hasScrollBody: false,
+                child: Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Center(
+                    child: EmptyStateWidget(
+                      icon: Icons.bar_chart_rounded,
+                      title: AppLocalizations.of(context)!.noDataAvailable,
+                      subtitle: AppLocalizations.of(context)!
+                          .statisticsNoDataSubtitle,
+                    ),
+                  ),
+                ),
+              )
+            else ...[
+              // ── Income vs. Expense summary ────────────────────────────────
+              SliverToBoxAdapter(
+                child: _SummarySection(shimmer: _shimmer),
               ),
-            ),
 
-            // ── Top Income Categories ──────────────────────────────────────
-            SliverToBoxAdapter(
-              child: _CategoryChartSection(
-                key: const ValueKey('income_chart'),
-                shimmer: _shimmer,
-                categoriesAsync: ref.watch(topIncomeCategoriesProvider),
-                title: AppLocalizations.of(context)!.statisticsTopIncome,
-                subtitle: AppLocalizations.of(context)!.statisticsWhatYouEarned,
-                emptyLabel: AppLocalizations.of(context)!.statisticsNoIncome,
-                accentColor: context.financialColors.positive,
+              // ── Top Expense Categories ─────────────────────────────────────
+              SliverToBoxAdapter(
+                child: _CategoryChartSection(
+                  key: const ValueKey('expense_chart'),
+                  shimmer: _shimmer,
+                  categoriesAsync: ref.watch(topExpenseCategoriesProvider),
+                  title: AppLocalizations.of(context)!.statisticsTopSpending,
+                  subtitle:
+                      AppLocalizations.of(context)!.statisticsWhereMoneyGoes,
+                  emptyLabel:
+                      AppLocalizations.of(context)!.statisticsNoExpenses,
+                  accentColor: context.financialColors.negative,
+                ),
               ),
-            ),
 
-            // Bottom padding
-            const SliverToBoxAdapter(child: SizedBox(height: 40)),
+              // ── Top Income Categories ──────────────────────────────────────
+              SliverToBoxAdapter(
+                child: _CategoryChartSection(
+                  key: const ValueKey('income_chart'),
+                  shimmer: _shimmer,
+                  categoriesAsync: ref.watch(topIncomeCategoriesProvider),
+                  title: AppLocalizations.of(context)!.statisticsTopIncome,
+                  subtitle:
+                      AppLocalizations.of(context)!.statisticsWhatYouEarned,
+                  emptyLabel: AppLocalizations.of(context)!.statisticsNoIncome,
+                  accentColor: context.financialColors.positive,
+                ),
+              ),
+
+              // Bottom padding
+              const SliverToBoxAdapter(child: SizedBox(height: 40)),
+            ],
           ],
         ),
       ),

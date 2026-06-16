@@ -31,27 +31,25 @@ class StatisticsDao extends DatabaseAccessor<AppDatabase>
     DateTime startDate,
     DateTime endDate,
   ) async {
-    final amountSumExpr = transactions.amount.sum();
+    final incomeSum = transactions.amount.sum();
+    final incomeQuery = selectOnly(transactions)
+      ..addColumns([incomeSum])
+      ..where(
+        transactions.date.isBetweenValues(startDate, endDate) &
+            transactions.type.equalsValue(TransactionType.income),
+      );
+    final incomeResult = await incomeQuery.getSingle();
+    final totalIncome = incomeResult.read(incomeSum) ?? 0;
 
-    final query = selectOnly(transactions)
-      ..addColumns([transactions.type, amountSumExpr])
-      ..where(transactions.date.isBetweenValues(startDate, endDate));
-
-    query.groupBy([transactions.type]);
-    final results = await query.get();
-
-    int totalIncome = 0;
-    int totalExpense = 0;
-
-    for (final row in results) {
-      final typeVal = row.read(transactions.type);
-      final sum = row.read(amountSumExpr) ?? 0;
-      if (typeVal == TransactionType.income.index) {
-        totalIncome = sum;
-      } else if (typeVal == TransactionType.expense.index) {
-        totalExpense = sum;
-      }
-    }
+    final expenseSum = transactions.amount.sum();
+    final expenseQuery = selectOnly(transactions)
+      ..addColumns([expenseSum])
+      ..where(
+        transactions.date.isBetweenValues(startDate, endDate) &
+            transactions.type.equalsValue(TransactionType.expense),
+      );
+    final expenseResult = await expenseQuery.getSingle();
+    final totalExpense = expenseResult.read(expenseSum) ?? 0;
 
     return (totalIncome, totalExpense);
   }
@@ -90,10 +88,10 @@ class StatisticsDao extends DatabaseAccessor<AppDatabase>
 
     return results.map((row) {
       return CategoryStatisticResult(
-        categoryId: row.read(categories.id)!,
-        categoryName: row.read(categories.name)!,
-        categoryIcon: row.read(categories.icon)!,
-        categoryColor: row.read(categories.color)!,
+        categoryId: row.read(categories.id) ?? '',
+        categoryName: row.read(categories.name) ?? '',
+        categoryIcon: row.read(categories.icon) ?? '',
+        categoryColor: row.read(categories.color) ?? '',
         totalAmount: row.read(amountSum) ?? 0,
       );
     }).toList();

@@ -77,7 +77,7 @@ void main() {
           biometricAuthServiceProvider.overrideWithValue(mockBiometricAuth),
           transactionsStreamProvider
               .overrideWith((ref) => Stream.value(<Transaction>[])),
-          accountsListProvider.overrideWith((ref) => Future.value(<Account>[])),
+          accountsListProvider.overrideWith((ref) => Stream.value(<Account>[])),
         ],
       );
 
@@ -144,7 +144,7 @@ void main() {
           biometricAuthServiceProvider.overrideWithValue(mockBiometricAuth),
           transactionsStreamProvider
               .overrideWith((ref) => Stream.value(<Transaction>[])),
-          accountsListProvider.overrideWith((ref) => Future.value(<Account>[])),
+          accountsListProvider.overrideWith((ref) => Stream.value(<Account>[])),
         ],
       );
 

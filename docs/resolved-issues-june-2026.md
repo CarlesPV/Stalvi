@@ -65,5 +65,32 @@ The application had multiple hardcoded strings in the splash page, biometric log
    Configured all widget tests to initialize localization delegates (`localizationsDelegates` and `supportedLocales` in test `MaterialApp` wrappers) so they build correctly without throwing null check exceptions.
 
 ### Future Prevention Guideline
-- Never use hardcoded string literals for user-facing UI text in screen or widget implementations.
 - Always add strings to the three language `.arb` templates and run `flutter gen-l10n` to rebuild localizations before using them in code.
+
+---
+
+## 4. Statistics Screen Aggregation Queries and Empty Database Null Reference Errors
+
+### Problem Description
+When the database was fresh or empty (no transactions recorded), navigating to the Statistics screen would throw null reference errors or fail to load data, causing a bad user experience. Additionally, mapping between raw database aggregation outputs and domain entities was error-prone when SQL aggregations returned null values.
+
+### Root Causes
+1. **Drift SQLite Aggregations on Empty Tables**:
+   Running a `selectOnly` query with `sum()` projection on Drift tables without any matches returns a single row containing a `null` value for the projection. Attempting to parse or read this value directly without null-safety fallbacks led to runtime mapping errors.
+2. **Missing UI State Handling**:
+   The `StatisticsScreen` was not prepared to handle empty dataset results or loading/error states properly, which could result in blank pages or infinite loader spinners when no transaction data existed.
+
+### Solution Applied
+1. **Robust Aggregation in StatisticsDao**:
+   - Rewrote `getPeriodSummary` to perform isolated `SUM` queries on income and expense transactions. Incorporated a null-coalescing operator (`?? 0`) on the result of `read(sum)` projection to guarantee that an integer of `0` is returned when no matching rows are found.
+   - Refactored `getTopCategories` query to fetch sums grouped by category and gracefully fall back to default values for null fields.
+2. **Standardized Empty States and Loader States in UI**:
+   - Integrated check in `StatisticsScreen` showing a localized `EmptyStateWidget` if the period summary has both 0 income and 0 expenses.
+   - Updated the Riverpod `AsyncValue` bindings to handle loading (`CircularProgressIndicator`) and error (`Center(child: Text(error))`) states correctly.
+3. **Database Integration Testing**:
+   - Added in-memory Drift database tests validating correct grouping, category sorting by total amount, and validation on empty databases.
+
+### Future Prevention Guideline
+- Always anticipate that SQL aggregates like `SUM`, `AVG`, or `MAX` can return `null` on empty databases or zero matches. Always use null-coalescing fallbacks (`?? 0` or `.read(sum) ?? 0`) when processing aggregate results.
+- Always implement an explicit empty state layout utilizing `EmptyStateWidget` when displaying listings or analytical details that rely on user-generated data.
+

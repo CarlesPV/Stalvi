@@ -343,5 +343,47 @@ void main() {
       expect(tagNames, contains('Recurrente'));
       expect(tagNames, contains('Suscripción'));
     });
+
+    test(
+        'should catch and silence exceptions during initialization to prevent app lockup',
+        () async {
+      // Arrange
+      const userId = 'user_123';
+      const currency = 'EUR';
+
+      when(() => mockAccountRepository.getAccountsByUserId(userId))
+          .thenAnswer((_) async => <Account>[]);
+
+      // Throw exception for first category, but succeed for others
+      int categoryCallCount = 0;
+      when(() => mockCategoryRepository.createCategory(any())).thenAnswer(
+        (invocation) async {
+          categoryCallCount++;
+          if (categoryCallCount == 1) {
+            throw Exception('Already exists');
+          }
+          return invocation.positionalArguments[0] as Category;
+        },
+      );
+
+      when(() => mockAccountRepository.createAccount(any()))
+          .thenThrow(Exception('Account exists'));
+
+      when(() => mockTagRepository.createTag(any()))
+          .thenThrow(Exception('Tag exists'));
+
+      // Act
+      // If it throws, the test will fail. If it succeeds, it means exceptions were silenced.
+      await useCase.execute(
+        userId: userId,
+        currency: currency,
+      );
+
+      // Assert
+      verify(() => mockAccountRepository.createAccount(any())).called(1);
+      // English is default: 13 categories and 6 tags
+      verify(() => mockCategoryRepository.createCategory(any())).called(13);
+      verify(() => mockTagRepository.createTag(any())).called(6);
+    });
   });
 }

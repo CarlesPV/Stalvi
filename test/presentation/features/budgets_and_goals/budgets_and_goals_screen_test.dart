@@ -102,13 +102,13 @@ void main() {
   Widget createTestWidget({
     required Stream<List<Budget>> budgetsStream,
     required Stream<List<SavingsGoal>> savingsGoalsStream,
-    required Future<List<Category>> categoriesFuture,
+    required Stream<List<Category>> categoriesStream,
   }) {
     return ProviderScope(
       overrides: [
         budgetsStreamProvider.overrideWith((ref) => budgetsStream),
         savingsGoalsStreamProvider.overrideWith((ref) => savingsGoalsStream),
-        categoriesListProvider.overrideWith((ref) => categoriesFuture),
+        categoriesListProvider.overrideWith((ref) => categoriesStream),
       ],
       child: MaterialApp(
         theme: AppTheme.lightTheme,
@@ -133,8 +133,7 @@ void main() {
         createTestWidget(
           budgetsStream: const NeverStream<List<Budget>>(),
           savingsGoalsStream: const NeverStream<List<SavingsGoal>>(),
-          categoriesFuture: Completer<List<Category>>()
-              .future, // A future that never resolves to stay in loading
+          categoriesStream: const NeverStream<List<Category>>(),
         ),
       );
 
@@ -148,7 +147,7 @@ void main() {
         createTestWidget(
           budgetsStream: Stream<List<Budget>>.error(Exception('Db error')),
           savingsGoalsStream: Stream.value([testSavingsGoal]),
-          categoriesFuture: Future.value([testCategory]),
+          categoriesStream: Stream.value([testCategory]),
         ),
       );
 
@@ -164,7 +163,7 @@ void main() {
         createTestWidget(
           budgetsStream: Stream.value(<Budget>[]),
           savingsGoalsStream: Stream.value(<SavingsGoal>[]),
-          categoriesFuture: Future.value([testCategory]),
+          categoriesStream: Stream.value([testCategory]),
         ),
       );
 
@@ -200,7 +199,7 @@ void main() {
         createTestWidget(
           budgetsStream: Stream.value([testBudgetNormal, testBudgetExceeded]),
           savingsGoalsStream: Stream.value([testSavingsGoal]),
-          categoriesFuture: Future.value([testCategory]),
+          categoriesStream: Stream.value([testCategory]),
         ),
       );
 
@@ -239,7 +238,7 @@ void main() {
         createTestWidget(
           budgetsStream: Stream.value([testBudgetNormal]),
           savingsGoalsStream: Stream.value([testSavingsGoal]),
-          categoriesFuture: Future.value([testCategory]),
+          categoriesStream: Stream.value([testCategory]),
         ),
       );
 

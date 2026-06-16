@@ -44,21 +44,29 @@
   - [x] Apply and standardize `EmptyStateWidget` across all screens with empty lists.
 
 - [x] **Phase 8: Onboarding Improvements, Localization Polish & Bug Fixes**
-  - [x] **Legal Document Split:** Separate Terms & Conditions and Privacy Policy viewers, localized in the app's language, accessible during onboarding and in settings.
-  - [x] **Default Currency Selector:** Allow choosing the default currency during the profile creation flow.
-  - [x] **First-Time Registration Fix:** Resolve the initialization bug where the first login/registration attempt fails and requires a retry.
-  - [x] **Direct Onboarding Routing:** Bypass the PIN screen immediately after profile creation, redirecting to Dashboard, and prompt for biometric opt-in permissions.
-  - [x] **Default Seeding:** Pre-populate a default account ("Mi cartera" / "My Wallet" / "La meva cartera") at 0.0 balance, 13 typical default categories, and 6 default typical tags localized in English, Spanish, and Catalan to prevent empty states.
-  - [x] **3-Language Coverage:** Ensure complete translation of all text, buttons, errors, default categories, and initial account name in English, Spanish, and Catalan.
+  - [x] Separate Terms & Conditions and Privacy Policy viewers, localized in the active language.
+  - [x] Enable default currency selection in profile setup flow.
+  - [x] Resolve the onboarding bug where first-time login/registration fails.
+  - [x] Implement direct onboarding routing to Dashboard with prompt for biometric opt-in.
+  - [x] Pre-populate default account, categories, and tags localized in English, Spanish, and Catalan.
 
-- [x] **Phase 9: Advanced Settings Management (Manual/system dark/light mode, 30-day recycle bin, app language selection, and settings reorganization)**
-  - [x] **Theme Mode Management:** Enforce selectable system, light, and dark mode settings with state persistence via SharedPreferences.
-  - [x] **30-day Recycle Bin:** Track soft-deleted transactions, accounts, and categories via a dedicated `TrashDao`, purge older database records (>30 days) automatically on startup, and build a Recycle Bin management screen.
-  - [x] **Settings Reorganization:** Remove the redundant top-right profile avatar from the dashboard screen, remove language settings from the Profile screen, and reorganize the settings list into a cleaner, prioritized order.
-  - [x] **Recycle Bin & PIN Flow Localization:** Audit and fully localize all hardcoded strings (Recycle Bin, PIN settings) across all three supported languages (English, Spanish, Catalan).
+- [x] **Phase 9: Advanced Settings Management**
+  - [x] Enforce system, light, and dark mode theme selection with persistence.
+  - [x] Build the 30-day Recycle Bin with TrashDao, AutoPurgeUseCase, and RecycleBinScreen UI.
+  - [x] Reorganize settings screen list and remove redundant top-right profile avatar.
+  - [x] Localize all Recycle Bin and PIN flow strings in English, Spanish, and Catalan.
+
+- [x] **Phase 10: Statistics Screen & Aggregation Query Robustness**
+  - [x] Rewrote SQLite aggregation queries in `StatisticsDao` (using explicit isolated SUM statements and null-coalescing operators) to prevent null reference errors on empty databases.
+  - [x] Refactored mapping between database results and domain entities (`CategoryStatistic` and `PeriodSummary`).
+  - [x] Updated the Statistics UI to handle `AsyncError` and `AsyncLoading` states and render `EmptyStateWidget` when no transactions are recorded.
+  - [x] Added unit tests for `StatisticsDao` using an in-memory Drift database with mock transaction data and grouping validations.
 
 ## Current Phase
-- [ ] **Phase 10:** Synchronization, Backups, and Import/Export Validations.
+- [ ] **Phase 11: Synchronization, Backups, and Import/Export Validations**
+  - [ ] Implement cloud synchronization options.
+  - [ ] Add encrypted automatic local backup features.
+  - [ ] Validate cross-platform imports/exports.
 
 ## Upcoming Phases
-- [ ] **Phase 11:** Integration Testing (E2E), final security audit, and store preparation.
+- [ ] **Phase 12: Integration Testing (E2E), final security audit, and store preparation.**

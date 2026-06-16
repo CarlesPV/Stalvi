@@ -64,8 +64,9 @@ void main() {
       overrides: [
         addTransactionUseCaseProvider.overrideWithValue(mockUseCase),
         accountsListProvider
-            .overrideWith((ref) async => accounts ?? [testAccount]),
-        categoriesListProvider.overrideWith((ref) async => [testCategory]),
+            .overrideWith((ref) => Stream.value(accounts ?? [testAccount])),
+        categoriesListProvider
+            .overrideWith((ref) => Stream.value([testCategory])),
       ],
     );
   }

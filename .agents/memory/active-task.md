@@ -1,28 +1,14 @@
-# Active Task: Phase 10 - Default Data Seeding & UX Improvements
+# Active Task: Phase 8 - Core Integration & Settings Refinement
 
-## Objective
-Implement improvements to the default seeding logic during onboarding, ensuring the user is provided with a localized default account, multiple default typical transaction categories, and multiple default typical tags in English, Spanish, and Catalan, preventing the "empty screen" syndrome on startup.
+## Current Objective
+Resolve critical integration bugs preventing the app from functioning correctly, fix infinite loading states, and refine the Security & Profile settings.
 
-## Current Context
-Phases 1-9 are fully completed. Advanced settings, Recycle Bin, dynamic onboarding PIN validation, and biometric auth are all implemented and verified. We have expanded the default seeding logic to populate a default zero-balance wallet, 13 typical transaction categories, and 6 typical tags in the user's selected language.
+## Sub-tasks
+1. **Profile Currency**: Add currency selection to `Profile` entity, DB table, mapper, and UI.
+2. **i18n Biometrics & Errors**: Update `.arb` files to include biometric prompts and security error messages (EN, ES, CA). Inject localizations into the biometric service.
+3. **PIN Flow Refactor**: Modify the PIN change logic in `profile_settings_screen` and its controller to validate the old PIN sequentially.
+4. **App Hydration Fix**: Debug and fix `initialize_default_data_usecase.dart` and `dashboard_screen.dart` providers. Ensure the default wallet and categories are created and displayed. Fix statistics screen rendering errors.
 
-## Atomic Steps
-1. **Repository Implementation for Tags**:
-   - Create a `TagRepository` implementing `ITagRepository` contract using Drift.
-   - Register `tagRepositoryProvider` in `repository_providers.dart`.
-
-2. **Seeding Logic Extension**:
-   - Update `InitializeDefaultDataUseCase` to take `ITagRepository` as a dependency.
-   - Expand `categoryTranslations` and `defaultCategoryConfigs` with new typical categories: Shopping, Health, Education, Subscriptions, Travel, Investments, Gifts.
-   - Add default tags seeding (Essential, Leisure, Work, Personal, Recurring, Subscription) localized in English, Spanish, and Catalan.
-   - Ensure the default wallet name resolves to the correct locale-specific name with 0.0 balance.
-
-3. **Verify and Test**:
-   - Update `initialize_default_data_usecase_test.dart` to mock the tag repository and assert that 13 categories and 6 tags are seeded correctly in Spanish.
-   - Resolve existing Linux test environment failures (missing sqlite3 dynamic library loading overrides).
-   - Ensure all 177 unit tests in the codebase pass.
-
-## Rules
-- Maintain Clean Architecture strictly.
-- Perform all seeding in English, Spanish, and Catalan.
-- Keep tests updated to cover new dependencies and scenarios.
+## Context Notes
+- **Architecture**: Clean Architecture + Riverpod + Drift (SQLCipher).
+- **Rules**: Always write unit tests for UseCases and Providers. Ensure UI correctly watches `StreamProvider` without getting stuck in `AsyncLoading`.

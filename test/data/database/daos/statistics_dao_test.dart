@@ -208,4 +208,11 @@ void main() {
     expect(result[1].categoryId, 'cat1');
     expect(result[1].totalAmount, 800);
   });
+
+  test('getPeriodSummary should return 0 when DB is empty', () async {
+    final result =
+        await dao.getPeriodSummary(DateTime(2023, 1, 1), DateTime(2023, 1, 31));
+    expect(result.$1, 0);
+    expect(result.$2, 0);
+  });
 }

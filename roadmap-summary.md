@@ -144,3 +144,17 @@ This document lists the completed phases of the Konta development roadmap, provi
   - Standard static analysis pass (`flutter analyze`) with 0 errors/warnings on code modifications.
   - Re-ran the full automated test suite: **178 tests passed** successfully.
 
+### Phase 10: Statistics Screen & Aggregation Query Robustness
+* **Completion Date:** June 16, 2026
+* **Objective:** Ensure robust SQLite data aggregation, prevent null reference errors on empty databases, map database results safely to domain models, update Statistics screen visual states, and cover logic with unit tests.
+* **Accomplishments:**
+  - **SQLite Aggregation Improvements:** Rewrote `StatisticsDao.getPeriodSummary` and `getTopCategories` queries using separate SELECT queries, explicit sum projections, and null-coalescing operations (`?? 0`) to prevent null reference and mapping failures when the database is empty.
+  - **Entity Mapping:** Refactored domain mapping structures to match the updated database outputs for `CategoryStatistic` and `PeriodSummary`.
+  - **UI/UX States:** Updated the `StatisticsScreen` layout to handle loading, error, and empty result states gracefully, showing the localized `EmptyStateWidget` if no transactions are recorded.
+* **Verification:**
+  - Added Drift in-memory database tests in `test/data/database/daos/statistics_dao_test.dart` to verify SQL execution on empty databases and correct grouping/aggregation logic.
+  - Ran the full test suite and verified that all tests (including budget, dashboard, auth, and statistics tests) pass without errors.
+  - Static analysis (`flutter analyze`) passes with 0 issues.
+  - Verification test suite: **189 tests passed** successfully.
+
+

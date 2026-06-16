@@ -79,12 +79,12 @@ void main() {
 
   Widget createTestWidget({
     required Stream<List<Transaction>> transactionsStream,
-    required Future<List<Account>> accountsFuture,
+    required Stream<List<Account>> accountsStream,
   }) {
     return ProviderScope(
       overrides: [
         transactionsStreamProvider.overrideWith((ref) => transactionsStream),
-        accountsListProvider.overrideWith((ref) => accountsFuture),
+        accountsListProvider.overrideWith((ref) => accountsStream),
       ],
       child: Consumer(
         builder: (context, ref, child) {
@@ -115,7 +115,7 @@ void main() {
       await tester.pumpWidget(
         createTestWidget(
           transactionsStream: Stream.value(<Transaction>[]),
-          accountsFuture: Future.value([testAccount]),
+          accountsStream: Stream.value([testAccount]),
         ),
       );
 
@@ -139,7 +139,7 @@ void main() {
       await tester.pumpWidget(
         createTestWidget(
           transactionsStream: Stream.value(<Transaction>[]),
-          accountsFuture: Future.value([testAccount]),
+          accountsStream: Stream.value([testAccount]),
         ),
       );
 
@@ -162,7 +162,7 @@ void main() {
       await tester.pumpWidget(
         createTestWidget(
           transactionsStream: Stream.value([testTransaction]),
-          accountsFuture: Future.value(<Account>[]),
+          accountsStream: Stream.value(<Account>[]),
         ),
       );
 
@@ -190,7 +190,7 @@ void main() {
       await tester.pumpWidget(
         createTestWidget(
           transactionsStream: Stream.value([testTransaction]),
-          accountsFuture: Future.value([testAccount]),
+          accountsStream: Stream.value([testAccount]),
         ),
       );
 
@@ -224,7 +224,7 @@ void main() {
       await tester.pumpWidget(
         createTestWidget(
           transactionsStream: Stream.value([testTransaction]),
-          accountsFuture: Future.value([testAccount]),
+          accountsStream: Stream.value([testAccount]),
         ),
       );
 

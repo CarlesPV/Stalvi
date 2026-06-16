@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:konta/core/l10n/app_localizations.dart';
 import 'package:konta/core/errors/app_exceptions.dart';
+import 'package:konta/infrastructure/services/biometric_auth_service.dart';
 import 'package:konta/presentation/features/settings/profile_settings_controller.dart';
 import 'package:konta/presentation/features/splash/splash_screen.dart';
 
@@ -42,6 +43,60 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                       .read(profileSettingsControllerProvider.notifier)
                       .updateUsername(controller.text);
                 }
+                Navigator.of(context).pop();
+              },
+              child: Text(l10n.btnSave),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _editCurrency(BuildContext context, String currentCurrency) {
+    final l10n = AppLocalizations.of(context)!;
+    final currencies = ['EUR', '\$', '£', '¥'];
+    String selected = currencies.contains(currentCurrency)
+        ? currentCurrency
+        : currencies.first;
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Select Currency'),
+          content: StatefulBuilder(
+            builder: (context, setState) {
+              return DropdownButtonFormField<String>(
+                initialValue: selected,
+                items: currencies.map((c) {
+                  return DropdownMenuItem(
+                    value: c,
+                    child: Text(c),
+                  );
+                }).toList(),
+                onChanged: (val) {
+                  if (val != null) {
+                    setState(() => selected = val);
+                  }
+                },
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Default Currency',
+                ),
+              );
+            },
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text(l10n.btnCancel),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                ref
+                    .read(profileSettingsControllerProvider.notifier)
+                    .updateCurrency(selected);
                 Navigator.of(context).pop();
               },
               child: Text(l10n.btnSave),
@@ -113,9 +168,37 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                     onPressed: currentController.text.length >= 4
                         ? () async {
                             if (step == 0) {
-                              setState(() {
-                                step = 1;
-                              });
+                              try {
+                                await ref
+                                    .read(profileSettingsControllerProvider
+                                        .notifier)
+                                    .verifyOldPin(oldPinController.text);
+                                if (context.mounted) {
+                                  setState(() {
+                                    step = 1;
+                                  });
+                                }
+                              } on ValidationException catch (e) {
+                                if (context.mounted) {
+                                  String errorMessage = e.message;
+                                  if (errorMessage == 'old_pin_incorrect' ||
+                                      errorMessage == 'Incorrect Old PIN.') {
+                                    errorMessage = l10n.incorrectOldPin;
+                                  }
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text(errorMessage)),
+                                  );
+                                  setState(() {
+                                    oldPinController.clear();
+                                  });
+                                }
+                              } catch (e) {
+                                if (context.mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text(e.toString())),
+                                  );
+                                }
+                              }
                             } else if (step == 1) {
                               setState(() {
                                 step = 2;
@@ -149,8 +232,13 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                                 }
                               } on ValidationException catch (e) {
                                 if (context.mounted) {
+                                  String errorMessage = e.message;
+                                  if (errorMessage == 'old_pin_incorrect' ||
+                                      errorMessage == 'Incorrect Old PIN.') {
+                                    errorMessage = l10n.incorrectOldPin;
+                                  }
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text(e.message)),
+                                    SnackBar(content: Text(errorMessage)),
                                   );
                                   // Reset
                                   setState(() {
@@ -205,6 +293,31 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
               ),
               onPressed: () async {
                 Navigator.of(context).pop();
+
+                final biometricService = ref.read(biometricAuthServiceProvider);
+                final isBiometricsEnabled =
+                    await biometricService.isBiometricsEnabled();
+                if (isBiometricsEnabled) {
+                  try {
+                    final didAuthenticate = await biometricService.authenticate(
+                      localizedReason: l10n.authVerifyMessage,
+                      lockedOutMessage: l10n.authLockedTitle,
+                      authFailedMessage: l10n.authError,
+                      unknownErrorMessage: l10n.unexpectedError,
+                    );
+                    if (!didAuthenticate) {
+                      return; // Cancelled
+                    }
+                  } catch (e) {
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(e.toString())),
+                      );
+                    }
+                    return; // Abort
+                  }
+                }
+
                 await ref
                     .read(profileSettingsControllerProvider.notifier)
                     .wipeAllData();
@@ -247,6 +360,15 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                     trailing: const Icon(Icons.edit),
                     onTap: () =>
                         _editUsername(context, state.profile!.username),
+                  ),
+                  const Divider(),
+                  ListTile(
+                    leading: const Icon(Icons.currency_exchange),
+                    title: const Text('Default Currency'),
+                    subtitle: Text(state.profile!.defaultCurrency),
+                    trailing: const Icon(Icons.edit),
+                    onTap: () =>
+                        _editCurrency(context, state.profile!.defaultCurrency),
                   ),
                   const Divider(),
                 ],

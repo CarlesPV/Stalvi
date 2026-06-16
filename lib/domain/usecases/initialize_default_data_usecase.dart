@@ -63,7 +63,9 @@ class InitializeDefaultDataUseCase {
         createdAt: now,
         modifiedAt: now,
       );
-      await _accountRepository.createAccount(defaultAccount);
+      try {
+        await _accountRepository.createAccount(defaultAccount);
+      } catch (_) {}
     }
 
     final now = DateTime.now();
@@ -231,9 +233,13 @@ class InitializeDefaultDataUseCase {
           name: localizedName,
           modifiedAt: now,
         );
-        await _categoryRepository.updateCategory(updatedCat);
+        try {
+          await _categoryRepository.updateCategory(updatedCat);
+        } catch (_) {}
       } else {
-        await _categoryRepository.createCategory(match);
+        try {
+          await _categoryRepository.createCategory(match);
+        } catch (_) {}
       }
     }
 
@@ -298,9 +304,13 @@ class InitializeDefaultDataUseCase {
           name: localizedName,
           modifiedAt: now,
         );
-        await _tagRepository.updateTag(updatedTag);
+        try {
+          await _tagRepository.updateTag(updatedTag);
+        } catch (_) {}
       } else {
-        await _tagRepository.createTag(match);
+        try {
+          await _tagRepository.createTag(match);
+        } catch (_) {}
       }
     }
   }

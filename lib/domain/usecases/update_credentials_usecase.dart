@@ -19,17 +19,21 @@ class UpdateCredentialsUseCase {
 
   UpdateCredentialsUseCase(this._secureStorageManager);
 
-  Future<void> execute(UpdateCredentialsParams params) async {
-    // 1. Validate old PIN against stored hash
+  Future<void> verifyOldPin(String oldPin) async {
     final storedHash = await _secureStorageManager.getPinHash();
     if (storedHash == null) {
       throw const ValidationException(message: 'No PIN is currently set.');
     }
 
-    final oldPinHash = _hashPin(params.oldPin);
+    final oldPinHash = _hashPin(oldPin);
     if (oldPinHash != storedHash) {
-      throw const ValidationException(message: 'Incorrect Old PIN.');
+      throw const ValidationException(message: 'old_pin_incorrect');
     }
+  }
+
+  Future<void> execute(UpdateCredentialsParams params) async {
+    // 1. Validate old PIN against stored hash
+    await verifyOldPin(params.oldPin);
 
     // 2. Validate new PIN length and numeric format
     final newPin = params.newPin;

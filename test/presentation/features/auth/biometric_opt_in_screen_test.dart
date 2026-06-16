@@ -83,6 +83,9 @@ void main() {
       when(
         () => mockBiometricAuth.authenticate(
           localizedReason: any(named: 'localizedReason'),
+          lockedOutMessage: any(named: 'lockedOutMessage'),
+          authFailedMessage: any(named: 'authFailedMessage'),
+          unknownErrorMessage: any(named: 'unknownErrorMessage'),
         ),
       ).thenAnswer((_) async => true);
       when(() => mockBiometricAuth.enableBiometrics())
@@ -103,7 +106,10 @@ void main() {
 
       verify(
         () => mockBiometricAuth.authenticate(
-          localizedReason: 'Enable biometric authentication for Konta',
+          localizedReason: any(named: 'localizedReason'),
+          lockedOutMessage: any(named: 'lockedOutMessage'),
+          authFailedMessage: any(named: 'authFailedMessage'),
+          unknownErrorMessage: any(named: 'unknownErrorMessage'),
         ),
       ).called(1);
       verify(() => mockBiometricAuth.enableBiometrics()).called(1);

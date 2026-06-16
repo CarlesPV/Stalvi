@@ -87,8 +87,12 @@ void main() {
         ),
       ).thenAnswer((_) async => true);
 
-      final result =
-          await biometricAuthService.authenticate(localizedReason: 'Test');
+      final result = await biometricAuthService.authenticate(
+        localizedReason: 'Test',
+        lockedOutMessage: 'Locked out',
+        authFailedMessage: 'Auth failed',
+        unknownErrorMessage: 'Unknown error',
+      );
       expect(result, isTrue);
     });
 
@@ -100,8 +104,12 @@ void main() {
         ),
       ).thenAnswer((_) async => false);
 
-      final result =
-          await biometricAuthService.authenticate(localizedReason: 'Test');
+      final result = await biometricAuthService.authenticate(
+        localizedReason: 'Test',
+        lockedOutMessage: 'Locked out',
+        authFailedMessage: 'Auth failed',
+        unknownErrorMessage: 'Unknown error',
+      );
       expect(result, isFalse);
     });
 
@@ -119,7 +127,12 @@ void main() {
       );
 
       expect(
-        () => biometricAuthService.authenticate(localizedReason: 'Test'),
+        () => biometricAuthService.authenticate(
+          localizedReason: 'Test',
+          lockedOutMessage: 'Locked out',
+          authFailedMessage: 'Auth failed',
+          unknownErrorMessage: 'Unknown error',
+        ),
         throwsA(isA<BiometricLockedOutException>()),
       );
     });
@@ -133,7 +146,12 @@ void main() {
       ).thenThrow(PlatformException(code: 'other', message: 'Other error'));
 
       expect(
-        () => biometricAuthService.authenticate(localizedReason: 'Test'),
+        () => biometricAuthService.authenticate(
+          localizedReason: 'Test',
+          lockedOutMessage: 'Locked out',
+          authFailedMessage: 'Auth failed',
+          unknownErrorMessage: 'Unknown error',
+        ),
         throwsA(isA<BiometricException>()),
       );
     });
@@ -147,7 +165,12 @@ void main() {
       ).thenThrow(Exception('General error'));
 
       expect(
-        () => biometricAuthService.authenticate(localizedReason: 'Test'),
+        () => biometricAuthService.authenticate(
+          localizedReason: 'Test',
+          lockedOutMessage: 'Locked out',
+          authFailedMessage: 'Auth failed',
+          unknownErrorMessage: 'Unknown error',
+        ),
         throwsA(isA<BiometricException>()),
       );
     });

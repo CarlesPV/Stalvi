@@ -6,6 +6,7 @@ import 'package:konta/infrastructure/services/biometric_auth_service.dart';
 import 'package:konta/domain/usecases/create_profile_usecase.dart';
 import 'package:konta/presentation/providers/locale_provider.dart';
 import 'package:konta/presentation/providers/repository_providers.dart';
+import 'package:konta/core/l10n/app_localizations.dart';
 
 /// Describes the current authentication status for this session.
 enum AuthStatus {
@@ -71,8 +72,13 @@ class AuthNotifier extends AsyncNotifier<AuthStatus> {
     }
 
     try {
+      final locale = ref.read(localeProvider);
+      final l10n = lookupAppLocalizations(locale);
       final authenticated = await biometricService.authenticate(
-        localizedReason: 'Enable biometric authentication for Konta',
+        localizedReason: l10n.authVerifyMessage,
+        lockedOutMessage: l10n.authLockedTitle,
+        authFailedMessage: l10n.authError,
+        unknownErrorMessage: l10n.unexpectedError,
       );
 
       if (authenticated) {
@@ -109,8 +115,13 @@ class AuthNotifier extends AsyncNotifier<AuthStatus> {
         return;
       }
 
+      final locale = ref.read(localeProvider);
+      final l10n = lookupAppLocalizations(locale);
       final didAuthenticate = await biometricService.authenticate(
-        localizedReason: 'Access your Konta financial data securely',
+        localizedReason: l10n.authVerifyMessage,
+        lockedOutMessage: l10n.authLockedTitle,
+        authFailedMessage: l10n.authError,
+        unknownErrorMessage: l10n.unexpectedError,
       );
 
       state = AsyncValue.data(
@@ -198,6 +209,8 @@ class AuthNotifier extends AsyncNotifier<AuthStatus> {
         locale: locale.languageCode,
       );
 
+      ref.invalidate(defaultProfileProvider);
+
       state = const AsyncValue.data(AuthStatus.authenticated);
     } catch (e, st) {
       state = AsyncValue.error(e, st);
@@ -208,8 +221,13 @@ class AuthNotifier extends AsyncNotifier<AuthStatus> {
     state = const AsyncValue.loading();
     try {
       final biometricService = ref.read(biometricAuthServiceProvider);
+      final locale = ref.read(localeProvider);
+      final l10n = lookupAppLocalizations(locale);
       final didAuthenticate = await biometricService.authenticate(
-        localizedReason: 'Access your Konta financial data securely',
+        localizedReason: l10n.authVerifyMessage,
+        lockedOutMessage: l10n.authLockedTitle,
+        authFailedMessage: l10n.authError,
+        unknownErrorMessage: l10n.unexpectedError,
       );
       state = AsyncValue.data(
         didAuthenticate ? AuthStatus.authenticated : AuthStatus.unauthenticated,

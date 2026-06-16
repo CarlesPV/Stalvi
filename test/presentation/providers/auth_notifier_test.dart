@@ -413,6 +413,9 @@ void main() {
         when(
           () => mockBiometricAuth.authenticate(
             localizedReason: any(named: 'localizedReason'),
+            lockedOutMessage: any(named: 'lockedOutMessage'),
+            authFailedMessage: any(named: 'authFailedMessage'),
+            unknownErrorMessage: any(named: 'unknownErrorMessage'),
           ),
         ).thenAnswer((_) async => true);
         when(() => mockBiometricAuth.enableBiometrics())
@@ -466,6 +469,9 @@ void main() {
         when(
           () => mockBiometricAuth.authenticate(
             localizedReason: any(named: 'localizedReason'),
+            lockedOutMessage: any(named: 'lockedOutMessage'),
+            authFailedMessage: any(named: 'authFailedMessage'),
+            unknownErrorMessage: any(named: 'unknownErrorMessage'),
           ),
         ).thenAnswer((_) async => true);
 

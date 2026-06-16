@@ -154,16 +154,16 @@ final defaultProfileProvider = FutureProvider<Profile>((ref) async {
 });
 
 /// Fetches the list of accounts associated with the default profile.
-final accountsListProvider = FutureProvider<List<Account>>((ref) async {
+final accountsListProvider = StreamProvider<List<Account>>((ref) async* {
   final profile = await ref.watch(defaultProfileProvider.future);
   final repo = ref.watch(accountRepositoryProvider);
-  return repo.getAccountsByUserId(profile.id);
+  yield* repo.watchAccountsByUserId(profile.id);
 });
 
 /// Fetches the list of all categories.
-final categoriesListProvider = FutureProvider<List<Category>>((ref) async {
+final categoriesListProvider = StreamProvider<List<Category>>((ref) {
   final repo = ref.watch(categoryRepositoryProvider);
-  return repo.getAllCategories();
+  return repo.watchAllCategories();
 });
 
 /// Stream of all active budgets.

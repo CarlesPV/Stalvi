@@ -26,7 +26,12 @@ class BiometricAuthService {
     }
   }
 
-  Future<bool> authenticate({required String localizedReason}) async {
+  Future<bool> authenticate({
+    required String localizedReason,
+    required String lockedOutMessage,
+    required String authFailedMessage,
+    required String unknownErrorMessage,
+  }) async {
     try {
       return await _localAuth.authenticate(
         localizedReason: localizedReason,
@@ -38,11 +43,11 @@ class BiometricAuthService {
     } on PlatformException catch (e) {
       if (e.code == auth_error.lockedOut ||
           e.code == auth_error.permanentlyLockedOut) {
-        throw BiometricLockedOutException(e.message ?? 'Locked out');
+        throw BiometricLockedOutException(lockedOutMessage);
       }
-      throw BiometricException(e.message ?? 'Authentication failed', e);
+      throw BiometricException(authFailedMessage, e);
     } catch (e) {
-      throw BiometricException('Unknown error occurred', e);
+      throw BiometricException(unknownErrorMessage, e);
     }
   }
 
