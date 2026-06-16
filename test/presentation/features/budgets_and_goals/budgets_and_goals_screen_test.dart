@@ -109,6 +109,8 @@ void main() {
         budgetsStreamProvider.overrideWith((ref) => budgetsStream),
         savingsGoalsStreamProvider.overrideWith((ref) => savingsGoalsStream),
         categoriesListProvider.overrideWith((ref) => categoriesStream),
+        currencyFormatterProvider
+            .overrideWith((ref) => CurrencyFormatter(currencyCode: 'EUR')),
       ],
       child: MaterialApp(
         theme: AppTheme.lightTheme,
@@ -212,17 +214,17 @@ void main() {
       ); // Should find two occurrences because we have two budgets with the same category
 
       // Budget 1 (Normal): Spent €80.00 of €200.00 (progress: 40%) -> remaining: €120.00
-      final b1Spent = CurrencyFormatter.format(80.0);
-      final b1Target = CurrencyFormatter.format(200.0);
-      final b1Remaining = CurrencyFormatter.format(120.0);
+      final b1Spent = CurrencyFormatter().format(80.0);
+      final b1Target = CurrencyFormatter().format(200.0);
+      final b1Remaining = CurrencyFormatter().format(120.0);
       expect(find.text('$b1Spent of $b1Target'), findsOneWidget);
       expect(find.text('$b1Remaining remaining'), findsOneWidget);
       expect(find.text('40%'), findsOneWidget);
 
       // Budget 2 (Exceeded): Spent €120.00 of €100.00 (progress: 120%) -> overspent: €20.00
-      final b2Spent = CurrencyFormatter.format(120.0);
-      final b2Target = CurrencyFormatter.format(100.0);
-      final b2Overspent = CurrencyFormatter.format(20.0);
+      final b2Spent = CurrencyFormatter().format(120.0);
+      final b2Target = CurrencyFormatter().format(100.0);
+      final b2Overspent = CurrencyFormatter().format(20.0);
       expect(find.text('$b2Spent of $b2Target'), findsOneWidget);
       expect(find.text('$b2Overspent overspent'), findsOneWidget);
       expect(find.text('120%'), findsOneWidget);
@@ -250,8 +252,8 @@ void main() {
 
       // Check Savings Goal Details
       expect(find.text('New Electric Car'), findsOneWidget);
-      final sgSaved = CurrencyFormatter.format(15000.0);
-      final sgTarget = CurrencyFormatter.format(30000.0);
+      final sgSaved = CurrencyFormatter().format(15000.0);
+      final sgTarget = CurrencyFormatter().format(30000.0);
       expect(find.text('$sgSaved saved of $sgTarget'), findsOneWidget);
       expect(find.text('50%'), findsOneWidget);
       expect(find.text('Target date: Dec 31, 2027'), findsOneWidget);

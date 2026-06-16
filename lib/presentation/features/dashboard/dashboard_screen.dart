@@ -12,23 +12,18 @@ import 'package:konta/presentation/features/budgets_and_goals/budgets_and_goals_
 import 'package:konta/presentation/features/statistics/statistics_screen.dart';
 import 'package:konta/presentation/providers/repository_providers.dart';
 import 'package:konta/presentation/providers/auth_notifier.dart';
-import 'package:konta/presentation/features/settings/profile_settings_screen.dart';
 import 'package:konta/presentation/providers/locale_provider.dart';
-import 'package:konta/presentation/providers/theme_provider.dart';
+import 'package:konta/presentation/features/settings/profile_settings_screen.dart';
+import 'package:konta/presentation/features/recycle_bin/recycle_bin_screen.dart';
 import 'package:konta/presentation/widgets/empty_state_widget.dart';
-import 'package:konta/presentation/widgets/terms_and_conditions_viewer.dart';
 
 /// The main application scaffold — shown after successful authentication.
 ///
-/// Currently a **skeleton** that demonstrates the navigation structure and
-/// overall visual hierarchy. Each tab body uses animated shimmer placeholders
-/// that will be replaced with real data widgets in subsequent phases.
-///
-/// Tab layout:
-/// 1. Overview    — balance card + income/expense stats + recent transactions
-/// 2. Transactions — full transaction list
-/// 3. Accounts    — account cards
-/// 4. Settings    — settings rows
+/// Contains the tabs:
+/// 1. Overview    — balance card + income/expense stats + recent transactions (using real data).
+/// 2. Transactions — full transaction list with filters and details.
+/// 3. Accounts    — account cards, balance tracking, and default indicator.
+/// 4. Settings    — settings list (Budgets/Goals, Statistics, Profile & Security, and Recycle Bin).
 class DashboardScreen extends ConsumerStatefulWidget {
   const DashboardScreen({super.key});
 
@@ -453,6 +448,10 @@ class _AccountsTab extends ConsumerWidget {
             icon: Icons.account_balance_outlined,
             title: AppLocalizations.of(context)!.noAccountsTitle,
             subtitle: AppLocalizations.of(context)!.noAccountsSubtitle,
+            actionLabel: AppLocalizations.of(context)!.getStarted,
+            onActionPressed: () {
+              // TODO: Implement navigation to account creation
+            },
           );
         }
 
@@ -472,7 +471,7 @@ class _AccountsTab extends ConsumerWidget {
   }
 }
 
-class _AccountItem extends StatelessWidget {
+class _AccountItem extends ConsumerWidget {
   final Account account;
 
   const _AccountItem({required this.account});
@@ -500,13 +499,15 @@ class _AccountItem extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
     final accColor = _parseHexColor(account.color);
     final accIcon = _getIconData(account.icon);
-    final balanceStr = CurrencyFormatter.format(
+
+    final formatter = ref.watch(currencyFormatterProvider);
+    final balanceStr = formatter.format(
       account.initialBalance,
       currencyCode: account.currency,
     );
@@ -597,20 +598,22 @@ class _AccountItem extends StatelessWidget {
 
 // ─── Real Transaction Item Widget ─────────────────────────────────────────────
 
-class _TransactionItem extends StatelessWidget {
+class _TransactionItem extends ConsumerWidget {
   final Transaction transaction;
 
   const _TransactionItem({required this.transaction});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final financialColors = context.financialColors;
 
     final isIncome = transaction.type == TransactionType.income;
     final amountDouble = transaction.amount / 100.0;
-    final amountStr = CurrencyFormatter.format(
+
+    final formatter = ref.watch(currencyFormatterProvider);
+    final amountStr = formatter.format(
       amountDouble,
       currencyCode: transaction.originalCurrency,
       showSign: true,
@@ -723,7 +726,7 @@ class _SettingsSkeletonTab extends ConsumerWidget {
 
     return ListView.separated(
       padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
-      itemCount: 7,
+      itemCount: 4,
       separatorBuilder: (_, __) => const SizedBox(height: 12),
       itemBuilder: (context, i) {
         if (i == 0) {
@@ -868,154 +871,6 @@ class _SettingsSkeletonTab extends ConsumerWidget {
         }
 
         if (i == 3) {
-          final activeThemeMode = ref.watch(themeProvider);
-          final l10n = AppLocalizations.of(context)!;
-
-          String themeModeLabel(ThemeMode mode) {
-            switch (mode) {
-              case ThemeMode.system:
-                return l10n.themeModeSystem;
-              case ThemeMode.light:
-                return l10n.themeModeLight;
-              case ThemeMode.dark:
-                return l10n.themeModeDark;
-            }
-          }
-
-          return Container(
-            height: 60,
-            decoration: BoxDecoration(
-              color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
-              borderRadius: BorderRadius.circular(14),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.palette_rounded,
-                    color: colorScheme.primary,
-                    size: 22,
-                  ),
-                  const SizedBox(width: 14),
-                  Expanded(
-                    child: Text(
-                      l10n.settingsThemeMode,
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            fontWeight: FontWeight.w700,
-                            color: colorScheme.onSurface,
-                          ),
-                    ),
-                  ),
-                  DropdownButton<ThemeMode>(
-                    value: activeThemeMode,
-                    dropdownColor: colorScheme.surfaceContainerHighest,
-                    borderRadius: BorderRadius.circular(12),
-                    underline: const SizedBox(),
-                    icon: Icon(
-                      Icons.arrow_drop_down_rounded,
-                      color: colorScheme.onSurfaceVariant,
-                    ),
-                    onChanged: (ThemeMode? newMode) {
-                      if (newMode != null) {
-                        ref.read(themeProvider.notifier).setThemeMode(newMode);
-                      }
-                    },
-                    items: ThemeMode.values.map((ThemeMode mode) {
-                      return DropdownMenuItem<ThemeMode>(
-                        value: mode,
-                        child: Text(
-                          themeModeLabel(mode),
-                          style:
-                              Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                    color: colorScheme.onSurface,
-                                  ),
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                ],
-              ),
-            ),
-          );
-        }
-
-        if (i == 4) {
-          final activeLocale = ref.watch(localeProvider);
-          final l10n = AppLocalizations.of(context)!;
-
-          return Container(
-            height: 60,
-            decoration: BoxDecoration(
-              color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
-              borderRadius: BorderRadius.circular(14),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.language_rounded,
-                    color: colorScheme.primary,
-                    size: 22,
-                  ),
-                  const SizedBox(width: 14),
-                  Expanded(
-                    child: Text(
-                      l10n.settingsLanguage,
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            fontWeight: FontWeight.w700,
-                            color: colorScheme.onSurface,
-                          ),
-                    ),
-                  ),
-                  DropdownButton<String>(
-                    value: activeLocale.languageCode,
-                    dropdownColor: colorScheme.surfaceContainerHighest,
-                    borderRadius: BorderRadius.circular(12),
-                    underline: const SizedBox(),
-                    icon: Icon(
-                      Icons.arrow_drop_down_rounded,
-                      color: colorScheme.onSurfaceVariant,
-                    ),
-                    onChanged: (String? newLang) {
-                      if (newLang != null) {
-                        ref
-                            .read(localeProvider.notifier)
-                            .setLocale(Locale(newLang));
-                      }
-                    },
-                    items: const [
-                      DropdownMenuItem<String>(
-                        value: 'en',
-                        child: Text(
-                          'English',
-                          style: TextStyle(fontSize: 14),
-                        ),
-                      ),
-                      DropdownMenuItem<String>(
-                        value: 'es',
-                        child: Text(
-                          'Español',
-                          style: TextStyle(fontSize: 14),
-                        ),
-                      ),
-                      DropdownMenuItem<String>(
-                        value: 'ca',
-                        child: Text(
-                          'Català',
-                          style: TextStyle(fontSize: 14),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          );
-        }
-
-        if (i == 5) {
           return Container(
             height: 60,
             decoration: BoxDecoration(
@@ -1027,9 +882,7 @@ class _SettingsSkeletonTab extends ConsumerWidget {
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => const TermsAndConditionsViewer(
-                      showPrivacyPolicy: false,
-                    ),
+                    builder: (context) => const RecycleBinScreen(),
                   ),
                 );
               },
@@ -1038,62 +891,14 @@ class _SettingsSkeletonTab extends ConsumerWidget {
                 child: Row(
                   children: [
                     Icon(
-                      Icons.description_rounded,
-                      color: colorScheme.tertiary,
+                      Icons.delete_outline_rounded,
+                      color: colorScheme.error,
                       size: 22,
                     ),
                     const SizedBox(width: 14),
                     Expanded(
                       child: Text(
-                        AppLocalizations.of(context)!.termsAndConditions,
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              fontWeight: FontWeight.w700,
-                              color: colorScheme.onSurface,
-                            ),
-                      ),
-                    ),
-                    Icon(
-                      Icons.chevron_right_rounded,
-                      color:
-                          colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          );
-        }
-
-        if (i == 6) {
-          return Container(
-            height: 60,
-            decoration: BoxDecoration(
-              color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
-              borderRadius: BorderRadius.circular(14),
-            ),
-            child: InkWell(
-              borderRadius: BorderRadius.circular(14),
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) =>
-                        const TermsAndConditionsViewer(showPrivacyPolicy: true),
-                  ),
-                );
-              },
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.privacy_tip_rounded,
-                      color: colorScheme.primary,
-                      size: 22,
-                    ),
-                    const SizedBox(width: 14),
-                    Expanded(
-                      child: Text(
-                        AppLocalizations.of(context)!.privacyPolicy,
+                        AppLocalizations.of(context)!.recycleBinTitle,
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                               fontWeight: FontWeight.w700,
                               color: colorScheme.onSurface,

@@ -354,13 +354,13 @@ class _SummarySection extends ConsumerWidget {
   }
 }
 
-class _NetBalanceCard extends StatelessWidget {
+class _NetBalanceCard extends ConsumerWidget {
   final PeriodSummary summary;
 
   const _NetBalanceCard({required this.summary});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final financialColors = context.financialColors;
@@ -418,7 +418,9 @@ class _NetBalanceCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  CurrencyFormatter.format(net.abs(), showSign: false),
+                  ref
+                      .watch(currencyFormatterProvider)
+                      .format(net.abs(), showSign: false),
                   style: theme.textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.w800,
                     color: accentColor,
@@ -450,7 +452,7 @@ class _NetBalanceCard extends StatelessWidget {
   }
 }
 
-class _SummaryCard extends StatelessWidget {
+class _SummaryCard extends ConsumerWidget {
   final String label;
   final double amount;
   final IconData icon;
@@ -464,7 +466,7 @@ class _SummaryCard extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
@@ -502,7 +504,7 @@ class _SummaryCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  CurrencyFormatter.format(amount),
+                  ref.watch(currencyFormatterProvider).format(amount),
                   style: theme.textTheme.titleSmall?.copyWith(
                     fontWeight: FontWeight.w800,
                     color: accentColor,
@@ -688,7 +690,7 @@ class _CategoryChartSectionState extends State<_CategoryChartSection> {
 
 // ─── Pie chart ────────────────────────────────────────────────────────────────
 
-class _PieChartWithLegend extends StatelessWidget {
+class _PieChartWithLegend extends ConsumerWidget {
   final List<CategoryStatistic> categories;
   final int touchedIndex;
   final ValueChanged<int> onTouch;
@@ -709,7 +711,7 @@ class _PieChartWithLegend extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final total = categories.fold<int>(0, (s, c) => s + c.totalAmount);
@@ -853,7 +855,9 @@ class _PieChartWithLegend extends StatelessWidget {
                       ),
                       const SizedBox(width: 12),
                       Text(
-                        CurrencyFormatter.format(cat.totalAmount / 100.0),
+                        ref
+                            .watch(currencyFormatterProvider)
+                            .format(cat.totalAmount / 100.0),
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: catColor,
                           fontWeight: FontWeight.w700,
@@ -888,7 +892,9 @@ class _PieChartWithLegend extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  CurrencyFormatter.format(otherTotal / 100.0),
+                  ref
+                      .watch(currencyFormatterProvider)
+                      .format(otherTotal / 100.0),
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: colorScheme.onSurfaceVariant,
                     fontWeight: FontWeight.w600,
@@ -903,7 +909,7 @@ class _PieChartWithLegend extends StatelessWidget {
   }
 }
 
-class _TouchedCategoryInfo extends StatelessWidget {
+class _TouchedCategoryInfo extends ConsumerWidget {
   final CategoryStatistic category;
   final int total;
   final Color Function(String) parseColor;
@@ -915,7 +921,7 @@ class _TouchedCategoryInfo extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final catColor = parseColor(category.categoryColor);
     final percentage = total > 0
@@ -965,7 +971,9 @@ class _TouchedCategoryInfo extends StatelessWidget {
             ),
             const SizedBox(width: 8),
             Text(
-              CurrencyFormatter.format(category.totalAmount / 100.0),
+              ref
+                  .watch(currencyFormatterProvider)
+                  .format(category.totalAmount / 100.0),
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: catColor,
                 fontWeight: FontWeight.w700,

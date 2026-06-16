@@ -4,7 +4,7 @@ import 'package:konta/core/utils/currency_formatter.dart';
 void main() {
   group('CurrencyFormatter Tests', () {
     test('format formats correctly', () {
-      final formatted = CurrencyFormatter.format(
+      final formatted = CurrencyFormatter().format(
         1234.56,
         locale: 'en_US',
         currencyCode: 'EUR',
@@ -13,7 +13,7 @@ void main() {
     });
 
     test('format with sign prepends plus sign for positive values', () {
-      final formatted = CurrencyFormatter.format(
+      final formatted = CurrencyFormatter().format(
         1234.56,
         locale: 'en_US',
         currencyCode: 'USD',
@@ -23,7 +23,7 @@ void main() {
     });
 
     test('format compact formats correctly', () {
-      final formatted = CurrencyFormatter.formatCompact(
+      final formatted = CurrencyFormatter().formatCompact(
         1200000,
         locale: 'en_US',
         currencyCode: 'USD',

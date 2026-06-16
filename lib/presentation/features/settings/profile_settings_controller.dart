@@ -3,32 +3,36 @@ import 'package:konta/domain/entities/profile.dart';
 import 'package:konta/domain/usecases/update_credentials_usecase.dart';
 import 'package:konta/presentation/providers/repository_providers.dart';
 
-enum PinChangeState { enterOld, enterNew }
+enum PinChangeStep { verifyOld, enterNew }
 
 class ProfileSettingsState {
   final Profile? profile;
   final bool isLoading;
   final String? error;
-  final PinChangeState pinChangeState;
+  final PinChangeStep pinChangeStep;
+  final int failedAttempts;
 
   const ProfileSettingsState({
     this.profile,
     this.isLoading = false,
     this.error,
-    this.pinChangeState = PinChangeState.enterOld,
+    this.pinChangeStep = PinChangeStep.verifyOld,
+    this.failedAttempts = 0,
   });
 
   ProfileSettingsState copyWith({
     Profile? profile,
     bool? isLoading,
     String? error,
-    PinChangeState? pinChangeState,
+    PinChangeStep? pinChangeStep,
+    int? failedAttempts,
   }) {
     return ProfileSettingsState(
       profile: profile ?? this.profile,
       isLoading: isLoading ?? this.isLoading,
       error: error,
-      pinChangeState: pinChangeState ?? this.pinChangeState,
+      pinChangeStep: pinChangeStep ?? this.pinChangeStep,
+      failedAttempts: failedAttempts ?? this.failedAttempts,
     );
   }
 }
@@ -93,16 +97,26 @@ class ProfileSettingsController extends StateNotifier<ProfileSettingsState> {
   }
 
   Future<void> verifyOldPin(String oldPin) async {
+    if (state.failedAttempts >= 6) {
+      throw Exception('Maximum PIN attempts reached. Please try again later.');
+    }
+
     state = state.copyWith(isLoading: true, error: null);
     try {
       final useCase = _ref.read(updateCredentialsUseCaseProvider);
       await useCase.verifyOldPin(oldPin);
       state = state.copyWith(
         isLoading: false,
-        pinChangeState: PinChangeState.enterNew,
+        pinChangeStep: PinChangeStep.enterNew,
+        failedAttempts: 0,
       );
     } catch (e) {
-      state = state.copyWith(isLoading: false, error: e.toString());
+      final newAttempts = state.failedAttempts + 1;
+      state = state.copyWith(
+        isLoading: false,
+        error: e.toString(),
+        failedAttempts: newAttempts,
+      );
       rethrow;
     }
   }
@@ -115,7 +129,7 @@ class ProfileSettingsController extends StateNotifier<ProfileSettingsState> {
           .execute(UpdateCredentialsParams(oldPin: oldPin, newPin: newPin));
       state = state.copyWith(
         isLoading: false,
-        pinChangeState: PinChangeState.enterOld,
+        pinChangeStep: PinChangeStep.verifyOld,
       );
     } catch (e) {
       state = state.copyWith(isLoading: false, error: e.toString());
@@ -125,8 +139,9 @@ class ProfileSettingsController extends StateNotifier<ProfileSettingsState> {
 
   void resetPinChangeState() {
     state = state.copyWith(
-      pinChangeState: PinChangeState.enterOld,
+      pinChangeStep: PinChangeStep.verifyOld,
       error: null,
+      failedAttempts: 0,
     );
   }
 

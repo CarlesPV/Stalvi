@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:konta/core/l10n/app_localizations.dart';
-import 'package:konta/core/errors/app_exceptions.dart';
 import 'package:konta/infrastructure/services/biometric_auth_service.dart';
 import 'package:konta/presentation/features/settings/profile_settings_controller.dart';
 import 'package:konta/presentation/features/splash/splash_screen.dart';
+import 'package:konta/presentation/providers/locale_provider.dart';
+import 'package:konta/presentation/providers/theme_provider.dart';
+import 'package:konta/presentation/widgets/terms_and_conditions_viewer.dart';
 
 class ProfileSettingsScreen extends ConsumerStatefulWidget {
   const ProfileSettingsScreen({super.key});
@@ -109,11 +111,22 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
 
   void _changePinFlow(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final currentState = ref.read(profileSettingsControllerProvider);
+
+    if (currentState.failedAttempts >= 6) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.authLockedTitle)),
+      );
+      return;
+    }
+
+    ref.read(profileSettingsControllerProvider.notifier).resetPinChangeState();
+
     final oldPinController = TextEditingController();
     final newPinController = TextEditingController();
     final confirmPinController = TextEditingController();
 
-    int step = 0; // 0: Old PIN, 1: New PIN, 2: Confirm PIN
+    int localStep = 0;
 
     showModalBottomSheet(
       context: context,
@@ -121,148 +134,186 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
       builder: (context) {
         return StatefulBuilder(
           builder: (context, setState) {
-            String title = l10n.oldPinLabel;
-            TextEditingController currentController = oldPinController;
-            if (step == 1) {
-              title = l10n.newPinLabel;
-              currentController = newPinController;
-            } else if (step == 2) {
-              title = l10n.confirmPinLabel;
-              currentController = confirmPinController;
-            }
+            return Consumer(
+              builder: (context, ref, child) {
+                final state = ref.watch(profileSettingsControllerProvider);
 
-            return Padding(
-              padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).viewInsets.bottom,
-                left: 24,
-                right: 24,
-                top: 24,
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    title,
-                    style: Theme.of(context).textTheme.titleLarge,
+                if (state.failedAttempts >= 6) {
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    if (Navigator.of(context).canPop()) {
+                      Navigator.of(context).pop();
+                    }
+                  });
+                }
+
+                String title = l10n.oldPinLabel;
+                TextEditingController currentController = oldPinController;
+
+                if (state.pinChangeStep == PinChangeStep.enterNew) {
+                  if (localStep < 1) localStep = 1;
+                  if (localStep == 1) {
+                    title = l10n.newPinLabel;
+                    currentController = newPinController;
+                  } else if (localStep == 2) {
+                    title = l10n.confirmPinLabel;
+                    currentController = confirmPinController;
+                  }
+                }
+
+                return Padding(
+                  padding: EdgeInsets.only(
+                    bottom: MediaQuery.of(context).viewInsets.bottom,
+                    left: 24,
+                    right: 24,
+                    top: 24,
                   ),
-                  const SizedBox(height: 24),
-                  TextField(
-                    controller: currentController,
-                    keyboardType: TextInputType.number,
-                    obscureText: true,
-                    autofocus: true,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(letterSpacing: 8, fontSize: 24),
-                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                    maxLength: 8,
-                    decoration: const InputDecoration(
-                      counterText: '',
-                      border: OutlineInputBorder(),
-                    ),
-                    onChanged: (val) {
-                      setState(() {});
-                    },
-                  ),
-                  const SizedBox(height: 24),
-                  ElevatedButton(
-                    onPressed: currentController.text.length >= 4
-                        ? () async {
-                            if (step == 0) {
-                              try {
-                                await ref
-                                    .read(profileSettingsControllerProvider
-                                        .notifier)
-                                    .verifyOldPin(oldPinController.text);
-                                if (context.mounted) {
-                                  setState(() {
-                                    step = 1;
-                                  });
-                                }
-                              } on ValidationException catch (e) {
-                                if (context.mounted) {
-                                  String errorMessage = e.message;
-                                  if (errorMessage == 'old_pin_incorrect' ||
-                                      errorMessage == 'Incorrect Old PIN.') {
-                                    errorMessage = l10n.incorrectOldPin;
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        title,
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
+                      const SizedBox(height: 16),
+                      if (state.error != null)
+                        Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: Colors.red.shade100,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Row(
+                            children: [
+                              const Icon(
+                                Icons.error_outline,
+                                color: Colors.red,
+                              ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  (state.error!.contains('old_pin_incorrect') ||
+                                          state.error!
+                                              .contains('Incorrect Old PIN.'))
+                                      ? l10n.incorrectOldPin
+                                      : state.error!,
+                                  style: const TextStyle(
+                                    color: Colors.red,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      const SizedBox(height: 16),
+                      TextField(
+                        controller: currentController,
+                        keyboardType: TextInputType.number,
+                        obscureText: true,
+                        autofocus: true,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(letterSpacing: 8, fontSize: 24),
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                        ],
+                        maxLength: 8,
+                        decoration: const InputDecoration(
+                          counterText: '',
+                          border: OutlineInputBorder(),
+                        ),
+                        onChanged: (val) {
+                          setState(() {});
+                        },
+                      ),
+                      const SizedBox(height: 24),
+                      if (state.isLoading)
+                        const CircularProgressIndicator()
+                      else
+                        ElevatedButton(
+                          onPressed: currentController.text.length >= 4
+                              ? () async {
+                                  if (state.pinChangeStep ==
+                                      PinChangeStep.verifyOld) {
+                                    try {
+                                      await ref
+                                          .read(
+                                            profileSettingsControllerProvider
+                                                .notifier,
+                                          )
+                                          .verifyOldPin(oldPinController.text);
+                                    } catch (_) {
+                                      oldPinController.clear();
+                                      setState(() {});
+                                    }
+                                  } else {
+                                    if (localStep == 1) {
+                                      setState(() {
+                                        localStep = 2;
+                                      });
+                                    } else if (localStep == 2) {
+                                      if (newPinController.text !=
+                                          confirmPinController.text) {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          SnackBar(
+                                            content: Text(
+                                              l10n.pinsDoNotMatch,
+                                            ),
+                                          ),
+                                        );
+                                        return;
+                                      }
+                                      try {
+                                        await ref
+                                            .read(
+                                              profileSettingsControllerProvider
+                                                  .notifier,
+                                            )
+                                            .changePin(
+                                              oldPinController.text,
+                                              newPinController.text,
+                                            );
+                                        if (context.mounted) {
+                                          Navigator.of(context).pop();
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(
+                                            SnackBar(
+                                              content: Text(
+                                                l10n.pinUpdatedSuccessfully,
+                                              ),
+                                            ),
+                                          );
+                                        }
+                                      } catch (e) {
+                                        if (context.mounted) {
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(
+                                            SnackBar(
+                                              content: Text(
+                                                e.toString(),
+                                              ),
+                                            ),
+                                          );
+                                          setState(() {
+                                            localStep = 1;
+                                            newPinController.clear();
+                                            confirmPinController.clear();
+                                          });
+                                        }
+                                      }
+                                    }
                                   }
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text(errorMessage)),
-                                  );
-                                  setState(() {
-                                    oldPinController.clear();
-                                  });
                                 }
-                              } catch (e) {
-                                if (context.mounted) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text(e.toString())),
-                                  );
-                                }
-                              }
-                            } else if (step == 1) {
-                              setState(() {
-                                step = 2;
-                              });
-                            } else if (step == 2) {
-                              if (newPinController.text !=
-                                  confirmPinController.text) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text(l10n.pinsDoNotMatch)),
-                                );
-                                return;
-                              }
-                              try {
-                                await ref
-                                    .read(
-                                      profileSettingsControllerProvider
-                                          .notifier,
-                                    )
-                                    .changePin(
-                                      oldPinController.text,
-                                      newPinController.text,
-                                    );
-                                if (context.mounted) {
-                                  Navigator.of(context).pop();
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content:
-                                          Text(l10n.pinUpdatedSuccessfully),
-                                    ),
-                                  );
-                                }
-                              } on ValidationException catch (e) {
-                                if (context.mounted) {
-                                  String errorMessage = e.message;
-                                  if (errorMessage == 'old_pin_incorrect' ||
-                                      errorMessage == 'Incorrect Old PIN.') {
-                                    errorMessage = l10n.incorrectOldPin;
-                                  }
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text(errorMessage)),
-                                  );
-                                  // Reset
-                                  setState(() {
-                                    step = 0;
-                                    oldPinController.clear();
-                                    newPinController.clear();
-                                    confirmPinController.clear();
-                                  });
-                                }
-                              } catch (e) {
-                                if (context.mounted) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text(e.toString())),
-                                  );
-                                }
-                              }
-                            }
-                          }
-                        : null,
-                    child: Text(step == 2 ? l10n.btnSave : l10n.btnNext),
+                              : null,
+                          child: Text(
+                            localStep == 2 ? l10n.btnSave : l10n.btnNext,
+                          ),
+                        ),
+                      const SizedBox(height: 24),
+                    ],
                   ),
-                  const SizedBox(height: 24),
-                ],
-              ),
+                );
+              },
             );
           },
         );
@@ -377,6 +428,120 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                   title: Text(l10n.changePinButton),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () => _changePinFlow(context),
+                ),
+                const Divider(),
+                ListTile(
+                  leading: const Icon(Icons.palette_rounded),
+                  title: Text(l10n.settingsThemeMode),
+                  trailing: DropdownButton<ThemeMode>(
+                    value: ref.watch(themeProvider),
+                    dropdownColor:
+                        Theme.of(context).colorScheme.surfaceContainerHighest,
+                    borderRadius: BorderRadius.circular(12),
+                    underline: const SizedBox(),
+                    icon: Icon(
+                      Icons.arrow_drop_down_rounded,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                    onChanged: (ThemeMode? newMode) {
+                      if (newMode != null) {
+                        ref.read(themeProvider.notifier).setThemeMode(newMode);
+                      }
+                    },
+                    items: ThemeMode.values.map((ThemeMode mode) {
+                      String label;
+                      switch (mode) {
+                        case ThemeMode.system:
+                          label = l10n.themeModeSystem;
+                          break;
+                        case ThemeMode.light:
+                          label = l10n.themeModeLight;
+                          break;
+                        case ThemeMode.dark:
+                          label = l10n.themeModeDark;
+                          break;
+                      }
+                      return DropdownMenuItem<ThemeMode>(
+                        value: mode,
+                        child: Text(
+                          label,
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyMedium
+                              ?.copyWith(
+                                color: Theme.of(context).colorScheme.onSurface,
+                              ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ),
+                const Divider(),
+                ListTile(
+                  leading: const Icon(Icons.language_rounded),
+                  title: Text(l10n.settingsLanguage),
+                  trailing: DropdownButton<String>(
+                    value: ref.watch(localeProvider).languageCode,
+                    dropdownColor:
+                        Theme.of(context).colorScheme.surfaceContainerHighest,
+                    borderRadius: BorderRadius.circular(12),
+                    underline: const SizedBox(),
+                    icon: Icon(
+                      Icons.arrow_drop_down_rounded,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                    onChanged: (String? newLang) {
+                      if (newLang != null) {
+                        ref
+                            .read(localeProvider.notifier)
+                            .setLocale(Locale(newLang));
+                      }
+                    },
+                    items: const [
+                      DropdownMenuItem<String>(
+                        value: 'en',
+                        child: Text('English', style: TextStyle(fontSize: 14)),
+                      ),
+                      DropdownMenuItem<String>(
+                        value: 'es',
+                        child: Text('Español', style: TextStyle(fontSize: 14)),
+                      ),
+                      DropdownMenuItem<String>(
+                        value: 'ca',
+                        child: Text('Català', style: TextStyle(fontSize: 14)),
+                      ),
+                    ],
+                  ),
+                ),
+                const Divider(),
+                ListTile(
+                  leading: const Icon(Icons.description_rounded),
+                  title: Text(l10n.termsAndConditions),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const TermsAndConditionsViewer(
+                          showPrivacyPolicy: false,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+                const Divider(),
+                ListTile(
+                  leading: const Icon(Icons.privacy_tip_rounded),
+                  title: Text(l10n.privacyPolicy),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const TermsAndConditionsViewer(
+                          showPrivacyPolicy: true,
+                        ),
+                      ),
+                    );
+                  },
                 ),
                 const SizedBox(height: 48),
                 ElevatedButton.icon(

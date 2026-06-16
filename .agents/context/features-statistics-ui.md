@@ -29,4 +29,5 @@
 5. **Budgets & Goals:**
    * Progress bars. Green if on track, turning yellow/red as the user approaches the budget limit.
 6. **Settings & Security:**
-   * Toggles for Dark Mode, Biometrics, Export/Import data menus, and Trash (Recycle Bin).
+   * Main settings list features: Budgets & Goals, Statistics, Profile & Security, and Recycle Bin (with 30-day soft deleted item management).
+   * Profile & Security menu consolidates: Biometrics toggle, secure PIN changes, language selector, Theme Mode selector (System, Light, Dark), and legal documents (Terms & Conditions, Privacy Policy).

@@ -34,6 +34,8 @@ enum AuthStatus {
 
 /// [AsyncNotifier] that manages PIN validation, profile setup, and biometric authentication.
 class AuthNotifier extends AsyncNotifier<AuthStatus> {
+  int failedAttempts = 0;
+
   @override
   Future<AuthStatus> build() async {
     final secureStorage = ref.watch(secureStorageProvider);
@@ -273,7 +275,14 @@ class AuthNotifier extends AsyncNotifier<AuthStatus> {
   /// Verifies the entered PIN against the hash stored in secure storage.
   Future<bool> verifyPin(String pin) async {
     final currentStatus = state.valueOrNull;
-    if (currentStatus == AuthStatus.authenticated || state.isLoading) {
+    if (currentStatus == AuthStatus.authenticated ||
+        currentStatus == AuthStatus.lockedOut ||
+        state.isLoading) {
+      return false;
+    }
+
+    if (failedAttempts >= 6) {
+      state = const AsyncValue.data(AuthStatus.lockedOut);
       return false;
     }
 
@@ -284,10 +293,16 @@ class AuthNotifier extends AsyncNotifier<AuthStatus> {
       final inputHash = _hashPin(pin);
 
       if (storedHash == inputHash) {
+        failedAttempts = 0;
         state = const AsyncValue.data(AuthStatus.authenticated);
         return true;
       } else {
-        state = AsyncValue.error('Incorrect PIN.', StackTrace.current);
+        failedAttempts++;
+        if (failedAttempts >= 6) {
+          state = const AsyncValue.data(AuthStatus.lockedOut);
+        } else {
+          state = AsyncValue.error('Incorrect PIN.', StackTrace.current);
+        }
         return false;
       }
     } catch (e, st) {

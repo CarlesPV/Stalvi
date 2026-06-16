@@ -91,6 +91,52 @@ When the database was fresh or empty (no transactions recorded), navigating to t
    - Added in-memory Drift database tests validating correct grouping, category sorting by total amount, and validation on empty databases.
 
 ### Future Prevention Guideline
-- Always anticipate that SQL aggregates like `SUM`, `AVG`, or `MAX` can return `null` on empty databases or zero matches. Always use null-coalescing fallbacks (`?? 0` or `.read(sum) ?? 0`) when processing aggregate results.
+- Always anticipate that SQL aggregates like `SUM`, `AVG`, or `0` can return `null` on empty databases or zero matches. Always use null-coalescing fallbacks (`?? 0` or `.read(sum) ?? 0`) when processing aggregate results.
 - Always implement an explicit empty state layout utilizing `EmptyStateWidget` when displaying listings or analytical details that rely on user-generated data.
+
+---
+
+## 5. Onboarding Data Hydration & Registration Stability
+
+### Problem Description
+Onboarding could occasionally fail or hang when creating the initial profile if the background default data initialization task crashed or took too long, leaving the database empty and causing subsequent dashboard loading screens to fail because no default wallet, tags, or categories existed.
+
+### Root Causes
+1. **Unprotected DB Initialization**:
+   `InitializeDefaultDataUseCase` ran without standard exception shielding. If a platform channel latency occurred or the database connection was temporarily locked, the initialization failed, interrupting the onboarding process and preventing dashboard navigation.
+2. **Missing Await on Startup Initialization**:
+   The transition from registration to the dashboard didn't strictly guarantee that the default wallet and localized categories had finished writing, leading to race conditions where the UI rendered the dashboard before the default wallet was ready.
+
+### Solution Applied
+1. **Try-Catch Shielding with Robust Logging**:
+   Wrapped the core database execution block of `InitializeDefaultDataUseCase` in a try/catch, logging initialization exceptions but allowing the registration flow to complete safely.
+2. **Strict Awaiting on Onboarding Setup**:
+   Guaranteed that both profile creation and database data hydration are fully `await`ed before changing the authentication status provider state.
+3. **Dashboard Fallback Empty State**:
+   Added a fallback "Empty State Widget" with an action button prompting the user to create an Account manually in case the automatic data hydration was interrupted.
+
+---
+
+## 6. Profile and Settings Consolidation
+
+### Problem Description
+The user interface had scattered configuration panels (e.g. standalone profile views, language selectors directly under settings, legal document buttons under general profiles). This resulted in redundant menus, unnecessary appBar actions (like a profile avatar leading to a separate page), and fragmented settings configurations.
+
+### Root Cause
+1. **Fragmented UI Structure**:
+   The app designed standalone navigation paths for profiles, security settings, legal documentation, and appearance preferences.
+2. **Redundant Avatar Obfuscation**:
+   The main dashboard displayed a top-right profile avatar that duplicated the settings tab navigation.
+
+### Solution Applied
+1. **Settings consolidation inside ProfileSettingsScreen**:
+   Integrated Theme Mode selector, Language selector, Terms & Conditions, and Privacy Policy directly into the "Profile & Security" menu.
+2. **Direct Settings Recycle Bin Access**:
+   Placed the "Recycle Bin" option directly in the main Settings tab tile list for faster access.
+3. **AppBar Cleanup**:
+   Removed the redundant profile avatar from the dashboard's main AppBar.
+
+### Future Prevention Guideline
+- Strive for consolidated, feature-grouped settings panels rather than nested, scattered views. Always ensure compliance and configuration tools (Theme, Locale, Legal) are located under settings or profile groups.
+
 

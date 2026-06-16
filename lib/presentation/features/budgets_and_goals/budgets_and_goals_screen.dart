@@ -116,7 +116,7 @@ class _BudgetsTabBody extends ConsumerWidget {
   }
 }
 
-class _BudgetCard extends StatelessWidget {
+class _BudgetCard extends ConsumerWidget {
   final Budget budget;
   final Category category;
 
@@ -148,7 +148,7 @@ class _BudgetCard extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final financialColors = context.financialColors;
@@ -163,9 +163,11 @@ class _BudgetCard extends StatelessWidget {
         ? budget.currentAmount / budget.targetAmount
         : 0.0;
 
-    final spentStr = CurrencyFormatter.format(spentDouble);
-    final targetStr = CurrencyFormatter.format(targetDouble);
-    final remainingStr = CurrencyFormatter.format(remainingDouble.abs());
+    final formatter = ref.watch(currencyFormatterProvider);
+
+    final spentStr = formatter.format(spentDouble);
+    final targetStr = formatter.format(targetDouble);
+    final remainingStr = formatter.format(remainingDouble.abs());
     final progressStr =
         CurrencyFormatter.formatPercentage(progress, decimalDigits: 0);
 
@@ -302,7 +304,7 @@ class _SavingsGoalsTabBody extends ConsumerWidget {
   }
 }
 
-class _SavingsGoalCard extends StatelessWidget {
+class _SavingsGoalCard extends ConsumerWidget {
   final SavingsGoal goal;
 
   const _SavingsGoalCard({required this.goal});
@@ -340,7 +342,7 @@ class _SavingsGoalCard extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final financialColors = context.financialColors;
@@ -353,8 +355,10 @@ class _SavingsGoalCard extends StatelessWidget {
     final double progress =
         goal.targetAmount > 0 ? goal.currentAmount / goal.targetAmount : 0.0;
 
-    final savedStr = CurrencyFormatter.format(savedDouble);
-    final targetStr = CurrencyFormatter.format(targetDouble);
+    final formatter = ref.watch(currencyFormatterProvider);
+
+    final savedStr = formatter.format(savedDouble);
+    final targetStr = formatter.format(targetDouble);
     final progressStr =
         CurrencyFormatter.formatPercentage(progress, decimalDigits: 0);
 

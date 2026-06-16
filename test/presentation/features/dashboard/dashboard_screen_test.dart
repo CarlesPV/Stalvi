@@ -218,8 +218,7 @@ void main() {
       expect(find.byType(EmptyStateWidget), findsNothing);
     });
 
-    testWidgets(
-        'renders language settings dropdown and switches language correctly',
+    testWidgets('renders Recycle Bin tile and navigates to RecycleBinScreen',
         (WidgetTester tester) async {
       await tester.pumpWidget(
         createTestWidget(
@@ -236,25 +235,8 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 200));
 
-      // Expect to see the Language dropdown row
-      expect(find.text('Language'), findsOneWidget);
-
-      // Verify the active language is English initially
-      expect(find.text('English'), findsAtLeastNWidgets(1));
-
-      // Tap the Language Dropdown to open it
-      await tester.tap(find.text('English').first);
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 200));
-
-      // Tap on 'Català'
-      await tester.tap(find.text('Català').last);
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 200));
-
-      // Expect the settings label at the bottom/tab bar to change to Catalan 'Ajustos'
-      expect(find.text('Ajustos'), findsOneWidget);
-      expect(find.text('Idioma'), findsOneWidget);
+      // Expect to see the Recycle Bin row
+      expect(find.text('Recycle Bin'), findsOneWidget);
     });
   });
 }

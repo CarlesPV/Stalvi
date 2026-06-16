@@ -62,11 +62,21 @@
   - [x] Updated the Statistics UI to handle `AsyncError` and `AsyncLoading` states and render `EmptyStateWidget` when no transactions are recorded.
   - [x] Added unit tests for `StatisticsDao` using an in-memory Drift database with mock transaction data and grouping validations.
 
+- [x] **Phase 11: Data Hydration & Empty State Handling**
+  - [x] Wrap default data initialization in robust try/catch blocks with detailed logging.
+  - [x] Await database and seed data initialization before dashboard routing.
+  - [x] Implement highly visible empty-state fallbacks with user action buttons for manual account creation.
+
+- [x] **Phase 12: Profile and Settings Consolidation**
+  - [x] Remove standalone profile tab and consolidate Theme, Language, Terms, and Privacy Policy settings into a single "Profile & Security" screen.
+  - [x] Move Recycle Bin trigger directly to the primary Settings tab list.
+  - [x] Clean up dashboard screens, menus, and appBar actions to streamline configuration settings.
+
 ## Current Phase
-- [ ] **Phase 11: Synchronization, Backups, and Import/Export Validations**
+- [ ] **Phase 13: Synchronization, Backups, and Import/Export Validations**
   - [ ] Implement cloud synchronization options.
   - [ ] Add encrypted automatic local backup features.
   - [ ] Validate cross-platform imports/exports.
 
 ## Upcoming Phases
-- [ ] **Phase 12: Integration Testing (E2E), final security audit, and store preparation.**
+- [ ] **Phase 14: Integration Testing (E2E), final security audit, and store preparation.**

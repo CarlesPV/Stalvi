@@ -1,14 +1,14 @@
-# Active Task: Phase 8 - Core Integration & Settings Refinement
+# Active Task: Documentation & Validation Pass
 
 ## Current Objective
-Resolve critical integration bugs preventing the app from functioning correctly, fix infinite loading states, and refine the Security & Profile settings.
+Perform a final comprehensive documentation, architecture, and roadmap update, ensuring all tests, lints, and static analysis pass perfectly across the repository.
 
 ## Sub-tasks
-1. **Profile Currency**: Add currency selection to `Profile` entity, DB table, mapper, and UI.
-2. **i18n Biometrics & Errors**: Update `.arb` files to include biometric prompts and security error messages (EN, ES, CA). Inject localizations into the biometric service.
-3. **PIN Flow Refactor**: Modify the PIN change logic in `profile_settings_screen` and its controller to validate the old PIN sequentially.
-4. **App Hydration Fix**: Debug and fix `initialize_default_data_usecase.dart` and `dashboard_screen.dart` providers. Ensure the default wallet and categories are created and displayed. Fix statistics screen rendering errors.
+1. **Settings Consolidation Documentation**: Ensure `roadmap.md`, `roadmap-summary.md`, `overview.md`, and business rules reflect the removal of the standalone profile section and the introduction of the unified "Profile & Security" settings screen and Recycle Bin layout.
+2. **Glossary Clean Up**: Align glossary terms with actual codebase symbols (e.g. `Transaction` instead of `Movement`).
+3. **Lint & Style Fixes**: Clean up any remaining trailing comma issues or static analysis lints in consolidated widgets.
+4. **Automated Testing Validation**: Re-run the full Flutter test suite (190+ tests) to guarantee 100% test passing rate before release.
 
 ## Context Notes
-- **Architecture**: Clean Architecture + Riverpod + Drift (SQLCipher).
-- **Rules**: Always write unit tests for UseCases and Providers. Ensure UI correctly watches `StreamProvider` without getting stuck in `AsyncLoading`.
+- **Architecture**: Clean Architecture + Riverpod + Drift (SQLCipher) offline-first database.
+- **Project State**: Completed Phase 12 (Profile and Settings Consolidation), transitioning to Phase 13 (Synchronization & Backups).

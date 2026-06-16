@@ -67,9 +67,10 @@ void main() {
   });
 
   group('ProfileSettingsController PIN change flow', () {
-    test('initial state should be PinChangeState.enterOld', () async {
+    test('initial state should be PinChangeStep.verifyOld', () async {
       final state = container.read(profileSettingsControllerProvider);
-      expect(state.pinChangeState, PinChangeState.enterOld);
+      expect(state.pinChangeStep, PinChangeStep.verifyOld);
+      expect(state.failedAttempts, 0);
     });
 
     test('verifyOldPin moves state to enterNew on success', () async {
@@ -78,11 +79,13 @@ void main() {
       await controller.verifyOldPin('1234');
 
       final state = container.read(profileSettingsControllerProvider);
-      expect(state.pinChangeState, PinChangeState.enterNew);
+      expect(state.pinChangeStep, PinChangeStep.enterNew);
       expect(state.error, isNull);
+      expect(state.failedAttempts, 0);
     });
 
-    test('verifyOldPin keeps state at enterOld and sets error on failure',
+    test(
+        'verifyOldPin keeps state at verifyOld, sets error, and increments failedAttempts on failure',
         () async {
       fakeUpdateCredentialsUseCase.shouldFailVerify = true;
       final controller =
@@ -96,23 +99,51 @@ void main() {
       }
 
       final state = container.read(profileSettingsControllerProvider);
-      expect(state.pinChangeState, PinChangeState.enterOld);
+      expect(state.pinChangeStep, PinChangeStep.verifyOld);
       expect(state.error, contains('old_pin_incorrect'));
+      expect(state.failedAttempts, 1);
     });
 
-    test('changePin sets state back to enterOld on success', () async {
+    test('changePin sets state back to verifyOld on success', () async {
       final controller =
           container.read(profileSettingsControllerProvider.notifier);
       await controller.verifyOldPin('1234');
 
-      expect(container.read(profileSettingsControllerProvider).pinChangeState,
-          PinChangeState.enterNew);
+      expect(
+        container.read(profileSettingsControllerProvider).pinChangeStep,
+        PinChangeStep.enterNew,
+      );
 
       await controller.changePin('1234', '5678');
 
       final state = container.read(profileSettingsControllerProvider);
-      expect(state.pinChangeState, PinChangeState.enterOld);
+      expect(state.pinChangeStep, PinChangeStep.verifyOld);
       expect(state.error, isNull);
+    });
+
+    test('verifyOldPin blocks after 6 failed attempts', () async {
+      fakeUpdateCredentialsUseCase.shouldFailVerify = true;
+      final controller =
+          container.read(profileSettingsControllerProvider.notifier);
+
+      // Fail 6 times
+      for (int i = 0; i < 6; i++) {
+        try {
+          await controller.verifyOldPin('wrong');
+        } catch (_) {}
+      }
+
+      final state = container.read(profileSettingsControllerProvider);
+      expect(state.failedAttempts, 6);
+
+      // 7th attempt should throw generic exception
+      try {
+        await controller.verifyOldPin('wrong');
+        fail('Should throw Exception');
+      } catch (e) {
+        expect(e, isA<Exception>());
+        expect(e.toString(), contains('Maximum PIN attempts reached'));
+      }
     });
   });
 }

@@ -49,3 +49,10 @@
   * App fetches daily exchange rates via free API.
   * Transactions save the local currency, original amount, and the exchange rate at the time of creation.
   * Summation for charts only uses the converted default currency value.
+
+## Epic 5: Consolidated Settings & Profile & Security
+**User Story 5.1:** As a user, I want all configuration, layout, and compliance options organized under a unified settings layout, consolidating profile-related settings under 'Profile & Security' and placing system-wide utilities like the Recycle Bin at the top level of the Settings tab.
+* **Acceptance Criteria:**
+  - Theme Mode, Language selection, Terms & Conditions, and Privacy Policy options are housed under the "Profile & Security" settings menu.
+  - The Recycle Bin is accessible directly via a dedicated tile on the primary Settings tab list.
+  - Redundant or standalone Profile navigation options and avatars are removed from the main AppBar and screens to focus on a clean dashboard structure.

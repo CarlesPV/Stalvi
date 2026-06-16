@@ -157,4 +157,28 @@ This document lists the completed phases of the Konta development roadmap, provi
   - Static analysis (`flutter analyze`) passes with 0 issues.
   - Verification test suite: **189 tests passed** successfully.
 
+### Phase 11: Data Hydration & Empty State Handling
+* **Completion Date:** June 16, 2026
+* **Objective:** Ensure robust default data hydration during initial profile setup and prevent empty, unusable states when starting the app.
+* **Accomplishments:**
+  - **Data Hydration UseCase Try/Catch:** Wrapped `InitializeDefaultDataUseCase` execution in a robust try/catch block with logs so errors do not crash the onboarding process.
+  - **Awaited Onboarding Setup:** Guaranteed that profile creation and data seeding are fully `await`ed before navigating to the main dashboard.
+  - **Highly Visible Fallback in Dashboard:** Added a visible fallback "Empty State Widget" with an action button prompting the user to create an Account manually in case data hydration was interrupted.
+* **Verification:**
+  - Standard static analysis pass (`flutter analyze` with 0 issues).
+  - All automated test suites (including dashboard widget tests and initialization unit tests) pass successfully.
 
+
+
+
+### Phase 12: Profile and Settings Consolidation
+* **Completion Date:** June 16, 2026
+* **Objective:** Remove the concept of a separate "Profile Account" main section by consolidating Theme, Language, Terms & Conditions, and Privacy Policy directly into the "Profile & Security" settings screen.
+* **Accomplishments:**
+  - **Settings Consolidation:** Moved Theme Mode, Language selection, Terms & Conditions, and Privacy Policy from the main Settings tab into the `ProfileSettingsScreen`.
+  - **Recycle Bin Access:** Added a dedicated button for the `RecycleBinScreen` directly in the main Settings tab.
+  - **Code Cleanup:** Simplified the `DashboardScreen`'s Settings tab builder to exclusively list top-level modules (Budgets & Goals, Statistics, Profile & Security, Recycle Bin).
+* **Verification:**
+  - Verified static analysis (`flutter analyze` with 0 issues).
+  - Updated widget tests in `dashboard_screen_test.dart` to assert the presence of the Recycle Bin tile instead of the Language dropdown.
+  - Ran full test suite, all tests passing successfully.

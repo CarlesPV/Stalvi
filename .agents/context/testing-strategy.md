@@ -11,13 +11,24 @@
 - **Data Layer:** Verify that `is_deleted` items are successfully filtered out of default read queries.
 
 ## Example
-```dart
-test('should throw Exception if movement amount is negative', () {
+test('should throw ValidationException if transaction amount is negative', () {
   // Arrange
-  final useCase = AddMovementUseCase(mockRepository);
+  final useCase = AddTransactionUseCase(
+    mockTransactionRepository,
+    mockAccountRepository,
+    mockProfileRepository,
+    mockExchangeRateRepository,
+  );
+  final params = AddTransactionParams(
+    id: 'test-id',
+    amount: -5000, // in cents
+    date: DateTime.now(),
+    type: TransactionType.expense,
+    accountId: 'account-id',
+  );
   // Act & Assert
   expect(
-    () => useCase.execute(amount: -50.0, type: MovementType.expense),
-    throwsA(isA<DomainException>()),
+    () => useCase.execute(params),
+    throwsA(isA<ValidationException>()),
   );
 });

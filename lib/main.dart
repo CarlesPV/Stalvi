@@ -25,11 +25,9 @@ void main() {
   );
 }
 
-/// Root widget of the Konta application.
-///
 /// Configures:
 /// - [AppTheme.lightTheme] / [AppTheme.darkTheme] from the design system.
-/// - [ThemeMode.system] so the OS light/dark preference is respected.
+/// - [themeProvider] to watch and dynamically change the application theme mode (light, dark, system).
 /// - [localeProvider] to watch and dynamically change application language.
 /// - [AppLocalizations.delegate] and other material/cupertino l10n delegates.
 /// - [SplashScreen] as the initial route (Splash → Auth → Dashboard).

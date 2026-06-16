@@ -10,8 +10,9 @@ import 'package:path_provider/path_provider.dart';
 // Import sqlcipher_flutter_libs to ensure the SQLCipher native library is
 // bundled and loaded at runtime. The package replaces the default sqlite3
 // library with one that includes SQLCipher support.
-// ignore: unused_import
 import 'package:sqlcipher_flutter_libs/sqlcipher_flutter_libs.dart';
+// ignore: depend_on_referenced_packages
+import 'package:sqlite3/open.dart';
 
 import 'package:uuid/uuid.dart';
 
@@ -180,6 +181,11 @@ class AppDatabase extends _$AppDatabase {
   ) async {
     final dbFolder = await getApplicationDocumentsDirectory();
     final dbFile = File(p.join(dbFolder.path, 'konta.db'));
+
+    // Apply SQLite initialization workaround for SQLCipher
+    open.overrideFor(OperatingSystem.android, openCipherOnAndroid);
+    // Note: Desktop platforms (Windows/macOS/Linux) require manual
+    // library installation/linking of sqlcipher.
 
     return NativeDatabase.createInBackground(
       dbFile,

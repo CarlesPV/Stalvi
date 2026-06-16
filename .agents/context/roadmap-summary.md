@@ -127,3 +127,58 @@ This document lists the completed phases of the Konta development roadmap, provi
   - Resolved compiler and import warnings, ensuring 0 errors and warnings on static analysis (`flutter analyze`).
   - Re-ran the full automated test suite: **166 tests passed** (100% success rate).
 
+### Phase 9: Advanced Settings Management
+* **Completion Date:** June 15, 2026
+* **Objective:** Implement manual/system dark and light theme mode configuration, a 30-day Recycle Bin, settings list reorganization with top-right profile avatar removal, and a full localization translation audit.
+* **Accomplishments:**
+  - **Theme Mode Management:** Developed system, light, and dark mode selection controlled by a Riverpod notifier and persisted via `SharedPreferences`.
+  - **Drift DB Update:** Added the `isDeleted` flag to the `Transactions` table and incremented the schema version to 4.
+  - **TrashDao:** Built `TrashDao` for querying soft-deleted transactions, accounts, and categories.
+  - **AutoPurgeUseCase & Hook:** Implemented `AutoPurgeUseCase` that finds and hard-deletes soft-deleted records older than 30 days from the database. Wired it securely into `AppStartupProvider` to execute on app launch.
+  - **RecycleBinScreen UI:** Developed a new settings screen UI visualizing the items inside the Recycle Bin, their remaining days to expiration (using red text alerts for items expiring within 3 days), and actions to Restore (which switches `isDeleted` back to false) or Permanently Delete.
+  - **Settings Reorganization:** Reordered settings options inside the settings tab for better user flow (Budgets/Goals, Statistics, Profile/Security, Theme Mode, Language, Terms, Privacy Policy), removed the language setting from `ProfileSettingsScreen` (keeping it solely under its dedicated settings tab tile), and removed the redundant top-right profile avatar from the Dashboard app bar.
+  - **Full Translation Audit:** Removed hardcoded user-facing strings in `ProfileSettingsScreen` (such as the "Next" button in the PIN flow) and fully localized the Recycle Bin screen (including screen titles, empty states, tooltips, dialogs, and parameterized days-remaining messages) across English, Spanish, and Catalan.
+* **Verification:**
+  - Wrote comprehensive unit tests for `TrashDao` and `AutoPurgeUseCase` verifying soft-delete retrieval, restoration, and deletion threshold calculations (keeping 29-day-old records, deleting 31-day-old records).
+  - Fixed the infinite shimmer animation timeout in the language settings widget tests by refactoring `pumpAndSettle` to discrete `pump` steps and adding `Consumer` widget binding for the active locale.
+  - Standard static analysis pass (`flutter analyze`) with 0 errors/warnings on code modifications.
+  - Re-ran the full automated test suite: **178 tests passed** successfully.
+
+### Phase 10: Statistics Screen & Aggregation Query Robustness
+* **Completion Date:** June 16, 2026
+* **Objective:** Ensure robust SQLite data aggregation, prevent null reference errors on empty databases, map database results safely to domain models, update Statistics screen visual states, and cover logic with unit tests.
+* **Accomplishments:**
+  - **SQLite Aggregation Improvements:** Rewrote `StatisticsDao.getPeriodSummary` and `getTopCategories` queries using separate SELECT queries, explicit sum projections, and null-coalescing operations (`?? 0`) to prevent null reference and mapping failures when the database is empty.
+  - **Entity Mapping:** Refactored domain mapping structures to match the updated database outputs for `CategoryStatistic` and `PeriodSummary`.
+  - **UI/UX States:** Updated the `StatisticsScreen` layout to handle loading, error, and empty result states gracefully, showing the localized `EmptyStateWidget` if no transactions are recorded.
+* **Verification:**
+  - Added Drift in-memory database tests in `test/data/database/daos/statistics_dao_test.dart` to verify SQL execution on empty databases and correct grouping/aggregation logic.
+  - Ran the full test suite and verified that all tests (including budget, dashboard, auth, and statistics tests) pass without errors.
+  - Static analysis (`flutter analyze`) passes with 0 issues.
+  - Verification test suite: **189 tests passed** successfully.
+
+### Phase 11: Data Hydration & Empty State Handling
+* **Completion Date:** June 16, 2026
+* **Objective:** Ensure robust default data hydration during initial profile setup and prevent empty, unusable states when starting the app.
+* **Accomplishments:**
+  - **Data Hydration UseCase Try/Catch:** Wrapped `InitializeDefaultDataUseCase` execution in a robust try/catch block with logs so errors do not crash the onboarding process.
+  - **Awaited Onboarding Setup:** Guaranteed that profile creation and data seeding are fully `await`ed before navigating to the main dashboard.
+  - **Highly Visible Fallback in Dashboard:** Added a visible fallback "Empty State Widget" with an action button prompting the user to create an Account manually in case data hydration was interrupted.
+* **Verification:**
+  - Standard static analysis pass (`flutter analyze` with 0 issues).
+  - All automated test suites (including dashboard widget tests and initialization unit tests) pass successfully.
+
+
+
+
+### Phase 12: Profile and Settings Consolidation
+* **Completion Date:** June 16, 2026
+* **Objective:** Remove the concept of a separate "Profile Account" main section by consolidating Theme, Language, Terms & Conditions, and Privacy Policy directly into the "Profile & Security" settings screen.
+* **Accomplishments:**
+  - **Settings Consolidation:** Moved Theme Mode, Language selection, Terms & Conditions, and Privacy Policy from the main Settings tab into the `ProfileSettingsScreen`.
+  - **Recycle Bin Access:** Added a dedicated button for the `RecycleBinScreen` directly in the main Settings tab.
+  - **Code Cleanup:** Simplified the `DashboardScreen`'s Settings tab builder to exclusively list top-level modules (Budgets & Goals, Statistics, Profile & Security, Recycle Bin).
+* **Verification:**
+  - Verified static analysis (`flutter analyze` with 0 issues).
+  - Updated widget tests in `dashboard_screen_test.dart` to assert the presence of the Recycle Bin tile instead of the Language dropdown.
+  - Ran full test suite, all tests passing successfully.
