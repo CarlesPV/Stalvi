@@ -342,6 +342,11 @@ class AppLocalizationsCa extends AppLocalizations {
   String get authPinEnter => 'Introduir PIN';
 
   @override
+  String authPinAttemptsRemaining(int attempts) {
+    return 'Queden $attempts intents';
+  }
+
+  @override
   String get authPinIncorrect => 'PIN incorrecte. Torneu-ho a provar.';
 
   @override
@@ -488,4 +493,48 @@ class AppLocalizationsCa extends AppLocalizations {
   String recycleBinDaysRemaining(int days) {
     return 'Expira en $days dies';
   }
+
+  @override
+  String get optional => 'Opcional';
+
+  @override
+  String get errorCategoryRequired => 'Si us plau, seleccioneu una categoria';
+
+  @override
+  String get errorCurrencyRequired => 'Si us plau, seleccioneu una moneda';
+
+  @override
+  String get labelCurrency => 'Moneda';
+
+  @override
+  String get labelSelectCurrency => 'Seleccionar moneda';
+
+  @override
+  String get labelTag => 'Etiqueta';
+
+  @override
+  String get labelSelectTag => 'Seleccionar etiqueta';
+
+  @override
+  String get noTag => 'Cap';
+
+  @override
+  String get optionalPlaceholder => '(Opcional)';
+
+  @override
+  String get fallbackIncome => 'Ingrés';
+
+  @override
+  String get fallbackExpense => 'Despesa';
+
+  @override
+  String get errorMaxPinAttempts =>
+      'S\'ha assolit el nombre màxim d\'intents de PIN. Si us plau, torneu-ho a provar més tard.';
+
+  @override
+  String get errorPinNotNumeric =>
+      'El PIN ha de contenir només dígits numèrics.';
+
+  @override
+  String get errorNoPinSet => 'No hi ha cap PIN configurat actualment.';
 }

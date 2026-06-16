@@ -341,6 +341,11 @@ class AppLocalizationsEs extends AppLocalizations {
   String get authPinEnter => 'Introducir PIN';
 
   @override
+  String authPinAttemptsRemaining(int attempts) {
+    return 'Quedan $attempts intentos';
+  }
+
+  @override
   String get authPinIncorrect => 'PIN incorrecto. Inténtelo de nuevo.';
 
   @override
@@ -487,4 +492,48 @@ class AppLocalizationsEs extends AppLocalizations {
   String recycleBinDaysRemaining(int days) {
     return 'Expira en $days días';
   }
+
+  @override
+  String get optional => 'Opcional';
+
+  @override
+  String get errorCategoryRequired => 'Por favor, seleccione una categoría';
+
+  @override
+  String get errorCurrencyRequired => 'Por favor, seleccione una moneda';
+
+  @override
+  String get labelCurrency => 'Moneda';
+
+  @override
+  String get labelSelectCurrency => 'Seleccionar moneda';
+
+  @override
+  String get labelTag => 'Etiqueta';
+
+  @override
+  String get labelSelectTag => 'Seleccionar etiqueta';
+
+  @override
+  String get noTag => 'Ninguna';
+
+  @override
+  String get optionalPlaceholder => '(Opcional)';
+
+  @override
+  String get fallbackIncome => 'Ingreso';
+
+  @override
+  String get fallbackExpense => 'Gasto';
+
+  @override
+  String get errorMaxPinAttempts =>
+      'Se ha alcanzado el número máximo de intentos de PIN. Por favor, inténtelo de nuevo más tarde.';
+
+  @override
+  String get errorPinNotNumeric =>
+      'El PIN debe contener solo dígitos numéricos.';
+
+  @override
+  String get errorNoPinSet => 'No hay ningún PIN configurado actualmente.';
 }

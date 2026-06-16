@@ -1,12 +1,12 @@
 # Functional Specifications & Business Rules
 
 ## Epic 1: Onboarding & Accounts
-**User Story 1.1:** As a new user, I want the app to initialize with a default account and categories so I can start logging transactions immediately.
+**User Story 1.1:** As a new user, I want the app to initialize with a default account, categories, and tags so I can start logging transactions immediately.
 * **Acceptance Criteria:**
   - App automatically seeds a default account (e.g., "Mi cartera" / "My Wallet" / "La meva cartera") with a balance of exactly 0.0.
-  - App generates a baseline set of common typical categories.
+  - App generates a baseline set of 13 typical categories and 6 event/organization-based default tags (Summer Trip, Event, Project, Wedding, Birthday, Business Trip).
   - Initial balance must be mandatory upon manual account creation.
-  - All default seeded entities (account name, category names) must be localized in the selected app language (EN, ES, CA).
+  - All default seeded entities (account name, category names, tag names) must be localized in the selected app language (EN, ES, CA) and dynamically translated when the language is changed.
 
 **User Story 1.2: Legal Documents Review:** As a user, I want to view the Terms & Conditions and the Privacy Policy separately, in my app's language, during registration or in the settings screen.
 * **Acceptance Criteria:**

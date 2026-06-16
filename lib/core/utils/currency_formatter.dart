@@ -28,6 +28,30 @@ class CurrencyFormatter {
     int decimalDigits = 2,
     bool showSign = false,
   }) {
+    final format = NumberFormat.simpleCurrency(
+      locale: locale,
+      name: currencyCode ?? this.currencyCode,
+      decimalDigits: decimalDigits,
+    );
+
+    final result = format.format(amount);
+
+    if (showSign && amount > 0) {
+      return '+$result';
+    }
+
+    return result;
+  }
+
+  /// Formats a double value to a currency string with the currency code.
+  /// Used primarily in the Settings screen.
+  String formatWithCode(
+    double amount, {
+    String? locale,
+    String? currencyCode,
+    int decimalDigits = 2,
+    bool showSign = false,
+  }) {
     final format = NumberFormat.currency(
       locale: locale,
       name: currencyCode ?? this.currencyCode,
@@ -49,7 +73,7 @@ class CurrencyFormatter {
     String? locale,
     String? currencyCode,
   }) {
-    final format = NumberFormat.compactCurrency(
+    final format = NumberFormat.compactSimpleCurrency(
       locale: locale,
       name: currencyCode ?? this.currencyCode,
     );

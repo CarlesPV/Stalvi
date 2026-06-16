@@ -66,7 +66,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Select Currency'),
+          title: Text(l10n.labelSelectCurrency),
           content: StatefulBuilder(
             builder: (context, setState) {
               return DropdownButtonFormField<String>(
@@ -82,9 +82,9 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                     setState(() => selected = val);
                   }
                 },
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Default Currency',
+                decoration: InputDecoration(
+                  border: const OutlineInputBorder(),
+                  labelText: l10n.authSetupCurrencyLabel,
                 ),
               );
             },
@@ -115,7 +115,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
 
     if (currentState.failedAttempts >= 6) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.authLockedTitle)),
+        SnackBar(content: Text(l10n.errorMaxPinAttempts)),
       );
       return;
     }
@@ -127,6 +127,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
     final confirmPinController = TextEditingController();
 
     int localStep = 0;
+    String? localError;
 
     showModalBottomSheet(
       context: context,
@@ -175,37 +176,6 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                         style: Theme.of(context).textTheme.titleLarge,
                       ),
                       const SizedBox(height: 16),
-                      if (state.error != null)
-                        Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: Colors.red.shade100,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Row(
-                            children: [
-                              const Icon(
-                                Icons.error_outline,
-                                color: Colors.red,
-                              ),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: Text(
-                                  (state.error!.contains('old_pin_incorrect') ||
-                                          state.error!
-                                              .contains('Incorrect Old PIN.'))
-                                      ? l10n.incorrectOldPin
-                                      : state.error!,
-                                  style: const TextStyle(
-                                    color: Colors.red,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      const SizedBox(height: 16),
                       TextField(
                         controller: currentController,
                         keyboardType: TextInputType.number,
@@ -222,9 +192,49 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                           border: OutlineInputBorder(),
                         ),
                         onChanged: (val) {
-                          setState(() {});
+                          setState(() {
+                            localError = null;
+                          });
                         },
                       ),
+                      const SizedBox(height: 16),
+                      if (state.error != null || localError != null)
+                        Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: Colors.red.shade100,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Row(
+                            children: [
+                              const Icon(
+                                Icons.error_outline,
+                                color: Colors.red,
+                              ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  localError ??
+                                      ((state.error!.contains(
+                                                  'old_pin_incorrect') ||
+                                              state.error!.contains(
+                                                  'Incorrect Old PIN.'))
+                                          ? '${l10n.incorrectOldPin}\n${l10n.authPinAttemptsRemaining(6 - state.failedAttempts)}'
+                                          : (state.error!.contains(
+                                                      'maximum_pin_attempts') ||
+                                                  state.error!.contains(
+                                                      'Maximum PIN attempts'))
+                                              ? l10n.errorMaxPinAttempts
+                                              : state.error!),
+                                  style: const TextStyle(
+                                    color: Colors.red,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       const SizedBox(height: 24),
                       if (state.isLoading)
                         const CircularProgressIndicator()
@@ -253,14 +263,12 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                                     } else if (localStep == 2) {
                                       if (newPinController.text !=
                                           confirmPinController.text) {
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(
-                                          SnackBar(
-                                            content: Text(
-                                              l10n.pinsDoNotMatch,
-                                            ),
-                                          ),
-                                        );
+                                        setState(() {
+                                          localError = l10n.pinsDoNotMatch;
+                                          newPinController.clear();
+                                          confirmPinController.clear();
+                                          localStep = 1;
+                                        });
                                         return;
                                       }
                                       try {
@@ -286,12 +294,30 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                                         }
                                       } catch (e) {
                                         if (context.mounted) {
+                                          final errorMsg = e.toString();
+                                          String displayError = errorMsg;
+                                          if (errorMsg.contains(
+                                                  'pin_length_invalid') ||
+                                              errorMsg.contains(
+                                                  'between 4 and 8')) {
+                                            displayError = l10n
+                                                .authSetupValidationErrorPinLength;
+                                          } else if (errorMsg.contains(
+                                                  'pin_not_numeric') ||
+                                              errorMsg.contains(
+                                                  'only numeric digits')) {
+                                            displayError =
+                                                l10n.errorPinNotNumeric;
+                                          } else if (errorMsg
+                                                  .contains('no_pin_set') ||
+                                              errorMsg.contains(
+                                                  'No PIN is currently set')) {
+                                            displayError = l10n.errorNoPinSet;
+                                          }
                                           ScaffoldMessenger.of(context)
                                               .showSnackBar(
                                             SnackBar(
-                                              content: Text(
-                                                e.toString(),
-                                              ),
+                                              content: Text(displayError),
                                             ),
                                           );
                                           setState(() {
@@ -415,7 +441,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                   const Divider(),
                   ListTile(
                     leading: const Icon(Icons.currency_exchange),
-                    title: const Text('Default Currency'),
+                    title: Text(l10n.authSetupCurrencyLabel),
                     subtitle: Text(state.profile!.defaultCurrency),
                     trailing: const Icon(Icons.edit),
                     onTap: () =>

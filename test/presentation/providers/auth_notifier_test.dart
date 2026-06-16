@@ -356,6 +356,37 @@ void main() {
         expect(state.hasError, true);
         expect(state.error.toString(), contains('Incorrect PIN'));
       });
+
+      test('verifyPin with 5 incorrect PIN attempts triggers lockout',
+          () async {
+        // Arrange
+        const correctPin = '1234';
+        final correctPinHash = calculateHash(correctPin);
+        when(() => mockSecureStorage.hasPin()).thenAnswer((_) async => true);
+        when(() => mockSecureStorage.getPinHash())
+            .thenAnswer((_) async => correctPinHash);
+
+        final container = createContainer();
+        await container.read(authNotifierProvider.future);
+
+        final notifier = container.read(authNotifierProvider.notifier);
+
+        // Act & Assert
+        for (int i = 0; i < 4; i++) {
+          final result = await notifier.verifyPin('1111');
+          expect(result, false);
+          expect(notifier.remainingPinAttempts, 4 - i);
+          final state = container.read(authNotifierProvider);
+          expect(state.hasError, true);
+        }
+
+        // 5th attempt should trigger lockout
+        final finalResult = await notifier.verifyPin('1111');
+        expect(finalResult, false);
+        expect(notifier.remainingPinAttempts, 0);
+        final finalState = container.read(authNotifierProvider);
+        expect(finalState.value, equals(AuthStatus.lockedOut));
+      });
     });
 
     group('Biometric Flow Tests', () {

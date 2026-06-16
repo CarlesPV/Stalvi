@@ -91,7 +91,7 @@ void main() {
     await tester.pumpAndSettle();
 
     // Verify error is shown and we are still at Old PIN step
-    expect(find.text('Incorrect Old PIN.'), findsWidgets);
+    expect(find.textContaining('Incorrect Old PIN.'), findsWidgets);
     expect(find.text('Old PIN'), findsWidgets);
   });
 

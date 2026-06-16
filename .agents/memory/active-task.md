@@ -1,14 +1,19 @@
-# Active Task: SQLCipher Isolate FFI Binding Fix & Verification Pass
+# Active Task: Phase 14 - Security Hardening, UX Polish & Localization
 
 ## Current Objective
-Perform a comprehensive documentation, architecture, and roadmap update following the successful resolution of the SQLCipher FFI binding isolate boundary crash issue.
+Implement critical security validations, input sanitization, dynamic privacy controls, and comprehensive localization fixes to ensure strict production-readiness before proceeding with network/cloud features.
 
 ## Sub-tasks
-1. **FFI Isolate Fix Documentation**: Document the resolution of the `failed to load dynamic library libsqlite3.so` crash by replacing `NativeDatabase.createInBackground` with the standard `NativeDatabase` constructor.
-2. **Roadmap & Known Issues Update**: Reflect the completed Phase 13 and update resolved issues documentation.
-3. **Lint & Style Fixes**: Clean up any remaining trailing comma issues or static analysis lints in database files.
-4. **Automated Testing Validation**: Verify that the database setup remains robust under all automated unit/integration tests.
+1. **Input Sanitization & Limits**: Implement plain-text sanitization for all text inputs. Enforce a strict 20-character limit on transaction notes at the UI and Domain level.
+2. **Dashboard Discreet Mode**: Refactor Dashboard balance, income, and expense widgets to be blurred by default on every load. Add a toggleable eye icon to reveal the numbers temporarily.
+3. **Transaction Form Enhancements**: 
+   - Add a Currency selector (defaulting to user settings) and a Tag selector.
+   - Enforce mandatory fields: Value, Account, Category, Date, Currency.
+   - Set optional fields (Notes, Tag) with an explicit "(Optional)" localized placeholder.
+   - Remove hardcoded "Income"/"Expense" fallbacks and replace them with fully localized strings based on the active locale.
+4. **Authentication & PIN UX**: Add state tracking for remaining PIN attempts during unlock and PIN changes. Fix the settings UI bug by moving error messages inside the popup/dialog to prevent keyboard overlap.
+5. **Formatting & 100% L10n**: Update `CurrencyFormatter` to display currency symbols (e.g., €, $) globally, reserving ISO codes (EUR, USD) exclusively for settings. Conduct a complete audit to eliminate any remaining hardcoded text.
 
 ## Context Notes
-- **Architecture**: Clean Architecture + Riverpod + Drift (SQLCipher) offline-first database.
-- **Project State**: Completed Phase 13 (SQLCipher FFI Binding & Isolate Crash Fix), transitioning to Phase 14 (Synchronization & Backups).
+- **Architecture**: Clean Architecture + Riverpod + Drift (SQLCipher) offline-first.
+- **Project State**: Overriding old Phase 14 to prioritize offline security, privacy features, and UI/UX stability.

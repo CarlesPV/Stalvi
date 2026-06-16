@@ -16,6 +16,9 @@ import 'package:konta/presentation/providers/locale_provider.dart';
 import 'package:konta/presentation/features/settings/profile_settings_screen.dart';
 import 'package:konta/presentation/features/recycle_bin/recycle_bin_screen.dart';
 import 'package:konta/presentation/widgets/empty_state_widget.dart';
+import 'package:konta/presentation/providers/discreet_mode_provider.dart';
+import 'package:konta/presentation/widgets/obfuscated_text.dart';
+import 'package:konta/presentation/providers/statistics_providers.dart';
 
 /// The main application scaffold — shown after successful authentication.
 ///
@@ -32,7 +35,7 @@ class DashboardScreen extends ConsumerStatefulWidget {
 }
 
 class _DashboardScreenState extends ConsumerState<DashboardScreen>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, WidgetsBindingObserver {
   int _selectedIndex = 0;
 
   // Shared shimmer animation for all skeleton elements.
@@ -42,6 +45,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen>
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
+
     _shimmerController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1100),
@@ -53,8 +58,23 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen>
     );
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(discreetModeProvider.notifier).setDiscreet(true);
       _checkBiometricOptIn();
     });
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _shimmerController.dispose();
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      ref.read(discreetModeProvider.notifier).setDiscreet(true);
+    }
   }
 
   Future<void> _checkBiometricOptIn() async {
@@ -115,12 +135,6 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen>
         );
       },
     );
-  }
-
-  @override
-  void dispose() {
-    _shimmerController.dispose();
-    super.dispose();
   }
 
   @override
@@ -279,6 +293,7 @@ class _OverviewTab extends ConsumerWidget {
                   shimmer: shimmer,
                   colorScheme: colorScheme,
                   theme: theme,
+                  isIncome: true,
                 ),
               ),
               const SizedBox(width: 12),
@@ -290,6 +305,7 @@ class _OverviewTab extends ConsumerWidget {
                   shimmer: shimmer,
                   colorScheme: colorScheme,
                   theme: theme,
+                  isIncome: false,
                 ),
               ),
             ],
@@ -658,7 +674,9 @@ class _TransactionItem extends ConsumerWidget {
                 Text(
                   transaction.notes?.isNotEmpty == true
                       ? transaction.notes!
-                      : (isIncome ? 'Income' : 'Expense'),
+                      : (isIncome
+                          ? AppLocalizations.of(context)!.fallbackIncome
+                          : AppLocalizations.of(context)!.fallbackExpense),
                   style: theme.textTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.w700,
                     color: colorScheme.onSurface,
@@ -959,7 +977,7 @@ class _SettingsSkeletonTab extends ConsumerWidget {
 // ─── Card widgets ─────────────────────────────────────────────────────────────
 
 /// Hero balance card with gradient fill and shimmer placeholders.
-class _BalanceCard extends StatelessWidget {
+class _BalanceCard extends ConsumerWidget {
   final Animation<double> shimmer;
   final ColorScheme colorScheme;
   final ThemeData theme;
@@ -971,7 +989,10 @@ class _BalanceCard extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isDiscreet = ref.watch(discreetModeProvider);
+    final accountsAsync = ref.watch(accountsListProvider);
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(24),
@@ -996,40 +1017,101 @@ class _BalanceCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            AppLocalizations.of(context)!.balanceTotal,
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: colorScheme.onPrimary.withValues(alpha: 0.75),
-              fontWeight: FontWeight.w500,
-              letterSpacing: 0.2,
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                AppLocalizations.of(context)!.balanceTotal,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: colorScheme.onPrimary.withValues(alpha: 0.75),
+                  fontWeight: FontWeight.w500,
+                  letterSpacing: 0.2,
+                ),
+              ),
+              IconButton(
+                key: const ValueKey('discreetModeIconButton'),
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(),
+                icon: Icon(
+                  isDiscreet ? Icons.visibility_off : Icons.visibility,
+                  color: colorScheme.onPrimary.withValues(alpha: 0.85),
+                  size: 20,
+                ),
+                onPressed: () {
+                  ref.read(discreetModeProvider.notifier).toggle();
+                },
+              ),
+            ],
           ),
           const SizedBox(height: 14),
-          // Skeleton amount placeholder
-          AnimatedBuilder(
-            animation: shimmer,
-            builder: (_, __) => Container(
-              width: 170,
-              height: 34,
-              decoration: BoxDecoration(
-                color: colorScheme.onPrimary
-                    .withValues(alpha: 0.18 + 0.12 * shimmer.value),
-                borderRadius: BorderRadius.circular(8),
+          accountsAsync.when(
+            loading: () => AnimatedBuilder(
+              animation: shimmer,
+              builder: (_, __) => Container(
+                width: 170,
+                height: 34,
+                decoration: BoxDecoration(
+                  color: colorScheme.onPrimary
+                      .withValues(alpha: 0.18 + 0.12 * shimmer.value),
+                  borderRadius: BorderRadius.circular(8),
+                ),
               ),
             ),
+            error: (_, __) => Text(
+              '--',
+              style: theme.textTheme.headlineMedium?.copyWith(
+                color: colorScheme.onPrimary,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+            data: (accounts) {
+              final profile = ref.watch(defaultProfileProvider).valueOrNull;
+              final currency = profile?.defaultCurrency ?? 'EUR';
+              final totalBalance = accounts.fold<double>(
+                0.0,
+                (sum, acc) => sum + acc.initialBalance,
+              );
+              final formatter = ref.watch(currencyFormatterProvider);
+              final balanceStr = formatter.format(
+                totalBalance,
+                currencyCode: currency,
+              );
+              return ObfuscatedText(
+                balanceStr,
+                style: theme.textTheme.headlineMedium?.copyWith(
+                  color: colorScheme.onPrimary,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: -0.5,
+                ),
+              );
+            },
           ),
           const SizedBox(height: 10),
-          AnimatedBuilder(
-            animation: shimmer,
-            builder: (_, __) => Container(
-              width: 110,
-              height: 15,
-              decoration: BoxDecoration(
-                color: colorScheme.onPrimary
-                    .withValues(alpha: 0.12 + 0.08 * shimmer.value),
-                borderRadius: BorderRadius.circular(4),
+          accountsAsync.when(
+            loading: () => AnimatedBuilder(
+              animation: shimmer,
+              builder: (_, __) => Container(
+                width: 110,
+                height: 15,
+                decoration: BoxDecoration(
+                  color: colorScheme.onPrimary
+                      .withValues(alpha: 0.12 + 0.08 * shimmer.value),
+                  borderRadius: BorderRadius.circular(4),
+                ),
               ),
             ),
+            error: (_, __) => const SizedBox(height: 15),
+            data: (accounts) {
+              return Text(
+                accounts.length == 1
+                    ? 'Across 1 account'
+                    : 'Across ${accounts.length} accounts',
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: colorScheme.onPrimary.withValues(alpha: 0.75),
+                  fontWeight: FontWeight.w500,
+                ),
+              );
+            },
           ),
           const SizedBox(height: 20),
           // Mini month label
@@ -1055,13 +1137,14 @@ class _BalanceCard extends StatelessWidget {
 }
 
 /// Income / Expense stat card with accent colour from [FinancialColors].
-class _StatCard extends StatelessWidget {
+class _StatCard extends ConsumerWidget {
   final String label;
   final IconData icon;
   final Color accentColor;
   final Animation<double> shimmer;
   final ColorScheme colorScheme;
   final ThemeData theme;
+  final bool isIncome;
 
   const _StatCard({
     required this.label,
@@ -1070,10 +1153,16 @@ class _StatCard extends StatelessWidget {
     required this.shimmer,
     required this.colorScheme,
     required this.theme,
+    required this.isIncome,
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final summaryAsync = ref.watch(periodSummaryProvider);
+    final profile = ref.watch(defaultProfileProvider).valueOrNull;
+    final currency = profile?.defaultCurrency ?? 'EUR';
+    final formatter = ref.watch(currencyFormatterProvider);
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -1100,12 +1189,8 @@ class _StatCard extends StatelessWidget {
               ),
               const Spacer(),
               // Trend placeholder
-              _SkeletonBlock(
-                shimmer: shimmer,
-                width: 36,
-                height: 14,
-                borderRadius: 4,
-              ),
+              // TODO: Implement actual trend indicator instead of a permanent skeleton
+              const SizedBox(width: 36, height: 14),
             ],
           ),
           const SizedBox(height: 14),
@@ -1117,11 +1202,34 @@ class _StatCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 6),
-          _SkeletonBlock(
-            shimmer: shimmer,
-            width: double.infinity,
-            height: 20,
-            borderRadius: 5,
+          summaryAsync.when(
+            loading: () => _SkeletonBlock(
+              shimmer: shimmer,
+              width: double.infinity,
+              height: 20,
+              borderRadius: 5,
+            ),
+            error: (_, __) => Text(
+              '--',
+              style: theme.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.w800,
+                color: accentColor,
+              ),
+            ),
+            data: (summary) {
+              final amount =
+                  (isIncome ? summary.totalIncome : summary.totalExpense) /
+                      100.0;
+              final amountStr =
+                  formatter.format(amount, currencyCode: currency);
+              return ObfuscatedText(
+                amountStr,
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w800,
+                  color: accentColor,
+                ),
+              );
+            },
           ),
         ],
       ),

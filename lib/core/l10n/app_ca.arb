@@ -101,6 +101,7 @@
   "authSetupValidationErrorName": "Si us plau, introduïu un nom.",
   "authSetupValidationErrorUsername": "Si us plau, introduïu un nom d'usuari.",
   "authPinEnter": "Introduir PIN",
+  "authPinAttemptsRemaining": "Queden {attempts} intents",
   "authPinIncorrect": "PIN incorrecte. Torneu-ho a provar.",
   "defaultWalletName": "La meva cartera",
   "failedLoadAccounts": "No s'han pogut carregar els comptes.",
@@ -147,6 +148,20 @@
   "recycleBinDeleteConfirmMessage": "Segur que voleu eliminar permanentment aquest element? Aquesta acció no es pot desfer.",
   "recycleBinRestoredMessage": "Element restaurat",
   "recycleBinDeletedMessage": "Element eliminat permanentment",
-  "recycleBinDaysRemaining": "Expira en {days} dies"
+  "recycleBinDaysRemaining": "Expira en {days} dies",
+  "optional": "Opcional",
+  "errorCategoryRequired": "Si us plau, seleccioneu una categoria",
+  "errorCurrencyRequired": "Si us plau, seleccioneu una moneda",
+  "labelCurrency": "Moneda",
+  "labelSelectCurrency": "Seleccionar moneda",
+  "labelTag": "Etiqueta",
+  "labelSelectTag": "Seleccionar etiqueta",
+  "noTag": "Cap",
+  "optionalPlaceholder": "(Opcional)",
+  "fallbackIncome": "Ingrés",
+  "fallbackExpense": "Despesa",
+  "errorMaxPinAttempts": "S'ha assolit el nombre màxim d'intents de PIN. Si us plau, torneu-ho a provar més tard.",
+  "errorPinNotNumeric": "El PIN ha de contenir només dígits numèrics.",
+  "errorNoPinSet": "No hi ha cap PIN configurat actualment."
 }
 

@@ -427,6 +427,15 @@
   "@authPinEnter": {
     "description": "Prompt to enter PIN"
   },
+  "authPinAttemptsRemaining": "{attempts} attempts remaining",
+  "@authPinAttemptsRemaining": {
+    "description": "Message indicating how many PIN attempts are remaining before lockout",
+    "placeholders": {
+      "attempts": {
+        "type": "int"
+      }
+    }
+  },
   "authPinIncorrect": "Incorrect PIN. Please try again.",
   "@authPinIncorrect": {
     "description": "Error message when PIN is incorrect"
@@ -619,6 +628,62 @@
         "type": "int"
       }
     }
+  },
+  "optional": "Optional",
+  "@optional": {
+    "description": "Label indicating an input field is optional"
+  },
+  "errorCategoryRequired": "Please select a category",
+  "@errorCategoryRequired": {
+    "description": "Validation error when category is not selected"
+  },
+  "errorCurrencyRequired": "Please select a currency",
+  "@errorCurrencyRequired": {
+    "description": "Validation error when currency is not selected"
+  },
+  "labelCurrency": "Currency",
+  "@labelCurrency": {
+    "description": "Label for currency selector field"
+  },
+  "labelSelectCurrency": "Select Currency",
+  "@labelSelectCurrency": {
+    "description": "Header or prompt to select a currency"
+  },
+  "labelTag": "Tag",
+  "@labelTag": {
+    "description": "Label for tag selector field"
+  },
+  "labelSelectTag": "Select Tag",
+  "@labelSelectTag": {
+    "description": "Header or prompt to select a tag"
+  },
+  "noTag": "None",
+  "@noTag": {
+    "description": "Label when no tag is selected"
+  },
+  "optionalPlaceholder": "(Optional)",
+  "@optionalPlaceholder": {
+    "description": "Optional label formatted with parentheses"
+  },
+  "fallbackIncome": "Income",
+  "@fallbackIncome": {
+    "description": "Fallback name for empty income transaction notes"
+  },
+  "fallbackExpense": "Expense",
+  "@fallbackExpense": {
+    "description": "Fallback name for empty expense transaction notes"
+  },
+  "errorMaxPinAttempts": "Maximum PIN attempts reached. Please try again later.",
+  "@errorMaxPinAttempts": {
+    "description": "Error message when PIN attempts exceed limit"
+  },
+  "errorPinNotNumeric": "PIN must contain only numeric digits.",
+  "@errorPinNotNumeric": {
+    "description": "Error message when PIN contains non-numeric characters"
+  },
+  "errorNoPinSet": "No PIN is currently set.",
+  "@errorNoPinSet": {
+    "description": "Error message when trying to verify a PIN but none is configured"
   }
 }
 

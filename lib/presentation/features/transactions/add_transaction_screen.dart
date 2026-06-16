@@ -6,6 +6,7 @@ import 'package:konta/core/l10n/app_localizations.dart';
 import 'package:konta/core/theme/app_theme.dart';
 import 'package:konta/domain/entities/account.dart';
 import 'package:konta/domain/entities/category.dart';
+import 'package:konta/domain/entities/tag.dart';
 import 'package:konta/domain/entities/category_type.dart';
 import 'package:konta/domain/entities/transaction_type.dart';
 import 'package:konta/presentation/providers/add_transaction_notifier.dart';
@@ -120,6 +121,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
     // Watch data lists
     final accountsAsync = ref.watch(accountsListProvider);
     final categoriesAsync = ref.watch(categoriesListProvider);
+    final tagsAsync = ref.watch(tagsListProvider);
 
     final accounts = accountsAsync.valueOrNull ?? [];
     final selectedAccount = accounts.isEmpty
@@ -135,6 +137,14 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
         : categories.firstWhere(
             (c) => c.id == state.categoryId,
             orElse: () => categories.first,
+          );
+
+    final tags = tagsAsync.valueOrNull ?? [];
+    final selectedTag = state.tagId == null
+        ? null
+        : tags.firstWhere(
+            (t) => t.id == state.tagId,
+            orElse: () => tags.first,
           );
 
     final isLoading = state.submissionStatus.isLoading;
@@ -250,7 +260,9 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                 textBaseline: TextBaseline.alphabetic,
                 children: [
                   Text(
-                    '€',
+                    NumberFormat.simpleCurrency(
+                      name: state.currency ?? 'EUR',
+                    ).currencySymbol,
                     style: theme.textTheme.displaySmall?.copyWith(
                       color: activeColor,
                       fontWeight: FontWeight.w600,
@@ -343,6 +355,34 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                       iconColor: colorScheme.primary,
                       onTap: () => _selectDate(context, state.date),
                     ),
+                    Divider(
+                      height: 1,
+                      color: colorScheme.outline.withValues(alpha: 0.08),
+                    ),
+                    // Currency Selector
+                    _FormSelectorTile(
+                      label: AppLocalizations.of(context)!.labelCurrency,
+                      value: state.currency ??
+                          AppLocalizations.of(context)!.labelSelectCurrency,
+                      icon: Icons.monetization_on_rounded,
+                      iconColor: colorScheme.secondary,
+                      onTap: () => _showCurrencySelector(context),
+                    ),
+                    Divider(
+                      height: 1,
+                      color: colorScheme.outline.withValues(alpha: 0.08),
+                    ),
+                    // Tag Selector
+                    _FormSelectorTile(
+                      label:
+                          "${AppLocalizations.of(context)!.labelTag} ${AppLocalizations.of(context)!.optionalPlaceholder}",
+                      value: selectedTag != null
+                          ? selectedTag.name
+                          : "${AppLocalizations.of(context)!.labelSelectTag} ${AppLocalizations.of(context)!.optionalPlaceholder}",
+                      icon: Icons.local_offer_rounded,
+                      iconColor: colorScheme.tertiary,
+                      onTap: () => _showTagSelector(context, tags),
+                    ),
                   ],
                 ),
               ),
@@ -353,12 +393,15 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
               TextField(
                 controller: _notesController,
                 maxLines: 3,
+                maxLength: 20,
                 style: theme.textTheme.bodyMedium,
                 decoration: InputDecoration(
-                  labelText: AppLocalizations.of(context)!.labelNotes,
+                  labelText:
+                      "${AppLocalizations.of(context)!.labelNotes} ${AppLocalizations.of(context)!.optionalPlaceholder}",
                   labelStyle: TextStyle(color: colorScheme.onSurfaceVariant),
                   alignLabelWithHint: true,
-                  hintText: AppLocalizations.of(context)!.labelNotesHint,
+                  hintText:
+                      "${AppLocalizations.of(context)!.labelNotesHint} ${AppLocalizations.of(context)!.optionalPlaceholder}",
                   hintStyle: const TextStyle(color: Colors.grey),
                   filled: true,
                   fillColor: colorScheme.surfaceContainerHighest
@@ -651,6 +694,199 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
       ref.read(addTransactionNotifierProvider.notifier).updateDate(pickedDate);
     }
   }
+
+  void _showCurrencySelector(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final state = ref.read(addTransactionNotifierProvider);
+
+    final currencies = {
+      'EUR': 'Euro (EUR)',
+      'USD': 'US Dollar (USD)',
+      'GBP': 'British Pound (GBP)',
+      'JPY': 'Japanese Yen (JPY)',
+      'CHF': 'Swiss Franc (CHF)',
+      'CAD': 'Canadian Dollar (CAD)',
+      'AUD': 'Australian Dollar (AUD)',
+    };
+
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (context) {
+        return Container(
+          padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                AppLocalizations.of(context)!.labelSelectCurrency,
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w800,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 16),
+              Flexible(
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: currencies.length,
+                  itemBuilder: (context, index) {
+                    final code = currencies.keys.elementAt(index);
+                    final name = currencies[code]!;
+                    final isSelected = state.currency == code;
+
+                    return Container(
+                      margin: const EdgeInsets.only(bottom: 10),
+                      decoration: BoxDecoration(
+                        color: isSelected
+                            ? colorScheme.primary.withValues(alpha: 0.08)
+                            : colorScheme.surfaceContainerHighest
+                                .withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(14),
+                        border: Border.all(
+                          color: isSelected
+                              ? colorScheme.primary.withValues(alpha: 0.4)
+                              : Colors.transparent,
+                        ),
+                      ),
+                      child: ListTile(
+                        leading: CircleAvatar(
+                          backgroundColor:
+                              colorScheme.primary.withValues(alpha: 0.12),
+                          child: Text(
+                            NumberFormat.simpleCurrency(name: code)
+                                .currencySymbol,
+                            style: TextStyle(
+                              color: colorScheme.primary,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        title: Text(
+                          name,
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        trailing: isSelected
+                            ? Icon(Icons.check_circle_rounded,
+                                color: colorScheme.primary)
+                            : null,
+                        onTap: () {
+                          ref
+                              .read(addTransactionNotifierProvider.notifier)
+                              .updateCurrency(code);
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _showTagSelector(BuildContext context, List<Tag> tags) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final state = ref.read(addTransactionNotifierProvider);
+
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (context) {
+        return Container(
+          padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                AppLocalizations.of(context)!.labelSelectTag,
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w800,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 16),
+              Flexible(
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: tags.length + 1, // +1 for "None"
+                  itemBuilder: (context, index) {
+                    final isNone = index == 0;
+                    final isSelected = isNone
+                        ? state.tagId == null
+                        : state.tagId == tags[index - 1].id;
+
+                    final tag = isNone ? null : tags[index - 1];
+                    final tagName = isNone
+                        ? AppLocalizations.of(context)!.noTag
+                        : tag!.name;
+
+                    return Container(
+                      margin: const EdgeInsets.only(bottom: 10),
+                      decoration: BoxDecoration(
+                        color: isSelected
+                            ? colorScheme.tertiary.withValues(alpha: 0.08)
+                            : colorScheme.surfaceContainerHighest
+                                .withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(14),
+                        border: Border.all(
+                          color: isSelected
+                              ? colorScheme.tertiary.withValues(alpha: 0.4)
+                              : Colors.transparent,
+                        ),
+                      ),
+                      child: ListTile(
+                        leading: CircleAvatar(
+                          backgroundColor:
+                              colorScheme.tertiary.withValues(alpha: 0.12),
+                          child: Icon(
+                            isNone
+                                ? Icons.block_rounded
+                                : Icons.local_offer_rounded,
+                            color: colorScheme.tertiary,
+                            size: 20,
+                          ),
+                        ),
+                        title: Text(
+                          tagName,
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        trailing: isSelected
+                            ? Icon(Icons.check_circle_rounded,
+                                color: colorScheme.tertiary)
+                            : null,
+                        onTap: () {
+                          ref
+                              .read(addTransactionNotifierProvider.notifier)
+                              .updateTag(tag?.id);
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
 }
 
 /// A custom list tile row used as form inputs for selectors.
@@ -728,6 +964,10 @@ String _getLocalizedError(BuildContext context, Object error) {
         return l10n.errorInvalidAmount;
       case 'ACCOUNT_REQUIRED':
         return l10n.errorAccountRequired;
+      case 'CATEGORY_REQUIRED':
+        return l10n.errorCategoryRequired;
+      case 'CURRENCY_REQUIRED':
+        return l10n.errorCurrencyRequired;
       case 'FUTURE_DATE':
         return l10n.errorFutureDate;
       case 'ACCOUNT_NOT_FOUND':

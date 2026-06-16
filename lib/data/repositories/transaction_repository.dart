@@ -109,6 +109,7 @@ class TransactionRepository implements ITransactionRepository {
         ..where((t) => t.accountId.equals(accountId))
         ..orderBy([
           (t) => OrderingTerm(expression: t.date, mode: OrderingMode.desc),
+          (t) => OrderingTerm(expression: t.createdAt, mode: OrderingMode.desc),
         ]);
       final rows = await query.get();
       return rows.map((r) => r.toDomain()).toList();
@@ -180,6 +181,7 @@ class TransactionRepository implements ITransactionRepository {
       final query = _db.select(_db.transactions)
         ..orderBy([
           (t) => OrderingTerm(expression: t.date, mode: OrderingMode.desc),
+          (t) => OrderingTerm(expression: t.createdAt, mode: OrderingMode.desc),
         ]);
       return query
           .watch()

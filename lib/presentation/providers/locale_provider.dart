@@ -1,6 +1,8 @@
 import 'dart:ui';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:konta/core/security/secure_storage_manager.dart';
+import 'package:konta/presentation/providers/repository_providers.dart';
+import 'package:konta/presentation/providers/app_startup_provider.dart';
 
 /// Provider for the [SecureStorageManager] dependencies.
 /// This is exposed as a separate provider to allow mocking during tests.
@@ -54,6 +56,25 @@ class LocaleNotifier extends Notifier<Locale> {
     state = newLocale;
     try {
       await _secureStorage.setUserLocale(newLocale.languageCode);
+
+      // Update default categories and tags to the new locale dynamically if database is ready
+      final dbAsync = ref.read(appDatabaseProvider);
+      if (dbAsync.hasValue) {
+        try {
+          final profile = await ref.read(defaultProfileProvider.future);
+          final initializeUseCase =
+              ref.read(initializeDefaultDataUseCaseProvider);
+          await initializeUseCase.execute(
+            userId: profile.id,
+            currency: profile.defaultCurrency,
+            locale: newLocale.languageCode,
+          );
+          // Invalidate tagsListProvider so the UI re-fetches tag names in the new language
+          ref.invalidate(tagsListProvider);
+        } catch (_) {
+          // Safe to ignore if profile not setup yet
+        }
+      }
     } catch (_) {
       // Secure storage write error; keep the in-memory state updated regardless.
     }

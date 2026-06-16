@@ -193,3 +193,21 @@ This document lists the completed phases of the Konta development roadmap, provi
   - Standard static analysis pass (`flutter analyze` with 0 issues).
   - Validated that the app launches successfully on Android without library loading failures.
 
+### Phase 14: PIN UX, Dashboard Polish, Transaction Sorting, and Tag/Category Localization
+* **Completion Date:** June 16, 2026
+* **Objective:** Polish user settings flows (popup errors), dashboard layouts (flicker bug), transactions order (date and time sorting), default tags usability (event/organization categories), and dynamic database localization for the 3 supported languages.
+* **Accomplishments:**
+  - **PIN UX Improvement:** Refactored the PIN change flow to display "PINs do not match" inside the dialog popup instead of a floating Snackbar to match other input error notifications.
+  - **Dashboard Loading Animation Fix:** Removed the flickering loading/skeleton trend trend box that remained permanently visible under some states on the dashboard.
+  - **Transaction Sorting Order:** Updated the Drift transaction query sorting to order movements strictly by `date` (descending) and `createdAt` (descending) to avoid ordering issues for multiple transactions on the same day.
+  - **Default Tags Redo:** Replaced the previous generic tags with purpose-driven tags for event and organization groupings (Summer Trip, Event, Project, Wedding, Birthday, Business Trip).
+  - **Dynamic Localization & Seeding:**
+    - Updated default categories and tags to use stable hardcoded UUIDs.
+    - Implemented cleanup logic to purge old default tags and duplicates created under random UUIDs.
+    - Updated app startup provider and locale setting transitions to invoke translation checks, translating default database category and tag entries dynamically to the active locale (English, Spanish, and Catalan) on the fly.
+* **Verification:**
+  - Added repository mock stubs and verified tests in `initialize_default_data_usecase_test.dart`.
+  - Guarded locale database updates to prevent test suite compilation hangs under widget scopes.
+  - Re-ran the full automated test suite: **201 tests passed** (100% success rate).
+  - Verified compilation and static analysis (`flutter analyze` with 0 issues).
+

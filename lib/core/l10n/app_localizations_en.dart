@@ -334,6 +334,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get authPinEnter => 'Enter PIN';
 
   @override
+  String authPinAttemptsRemaining(int attempts) {
+    return '$attempts attempts remaining';
+  }
+
+  @override
   String get authPinIncorrect => 'Incorrect PIN. Please try again.';
 
   @override
@@ -480,4 +485,47 @@ class AppLocalizationsEn extends AppLocalizations {
   String recycleBinDaysRemaining(int days) {
     return 'Expires in $days days';
   }
+
+  @override
+  String get optional => 'Optional';
+
+  @override
+  String get errorCategoryRequired => 'Please select a category';
+
+  @override
+  String get errorCurrencyRequired => 'Please select a currency';
+
+  @override
+  String get labelCurrency => 'Currency';
+
+  @override
+  String get labelSelectCurrency => 'Select Currency';
+
+  @override
+  String get labelTag => 'Tag';
+
+  @override
+  String get labelSelectTag => 'Select Tag';
+
+  @override
+  String get noTag => 'None';
+
+  @override
+  String get optionalPlaceholder => '(Optional)';
+
+  @override
+  String get fallbackIncome => 'Income';
+
+  @override
+  String get fallbackExpense => 'Expense';
+
+  @override
+  String get errorMaxPinAttempts =>
+      'Maximum PIN attempts reached. Please try again later.';
+
+  @override
+  String get errorPinNotNumeric => 'PIN must contain only numeric digits.';
+
+  @override
+  String get errorNoPinSet => 'No PIN is currently set.';
 }

@@ -13,6 +13,7 @@ import 'package:http/http.dart' as http;
 import 'package:konta/data/mappers/profile_mapper.dart';
 import 'package:konta/domain/entities/account.dart';
 import 'package:konta/domain/entities/category.dart';
+import 'package:konta/domain/entities/tag.dart';
 import 'package:konta/domain/entities/profile.dart';
 import 'package:konta/domain/entities/budget.dart';
 import 'package:konta/domain/entities/savings_goal.dart';
@@ -182,4 +183,10 @@ final savingsGoalsStreamProvider = StreamProvider<List<SavingsGoal>>((ref) {
 final transactionsStreamProvider = StreamProvider<List<Transaction>>((ref) {
   final repo = ref.watch(transactionRepositoryProvider);
   return repo.watchAllTransactions();
+});
+
+/// Fetches the list of all tags.
+final tagsListProvider = FutureProvider<List<Tag>>((ref) {
+  final repo = ref.watch(tagRepositoryProvider);
+  return repo.getAllTags();
 });

@@ -14,6 +14,8 @@ class AddTransactionState {
   final String? categoryId;
   final String notes;
   final DateTime date;
+  final String? currency;
+  final String? tagId;
   final AsyncValue<void> submissionStatus;
 
   const AddTransactionState({
@@ -23,6 +25,8 @@ class AddTransactionState {
     required this.categoryId,
     required this.notes,
     required this.date,
+    this.currency,
+    this.tagId,
     required this.submissionStatus,
   });
 
@@ -34,6 +38,8 @@ class AddTransactionState {
       categoryId: null,
       notes: '',
       date: DateTime.now(),
+      currency: null,
+      tagId: null,
       submissionStatus: const AsyncData<void>(null),
     );
   }
@@ -45,6 +51,8 @@ class AddTransactionState {
     String? Function()? categoryId,
     String? notes,
     DateTime? date,
+    String? Function()? currency,
+    String? Function()? tagId,
     AsyncValue<void>? submissionStatus,
   }) {
     return AddTransactionState(
@@ -54,6 +62,8 @@ class AddTransactionState {
       categoryId: categoryId != null ? categoryId() : this.categoryId,
       notes: notes ?? this.notes,
       date: date ?? this.date,
+      currency: currency != null ? currency() : this.currency,
+      tagId: tagId != null ? tagId() : this.tagId,
       submissionStatus: submissionStatus ?? this.submissionStatus,
     );
   }
@@ -92,8 +102,24 @@ class AddTransactionNotifier extends AutoDisposeNotifier<AddTransactionState> {
       }
     }
 
+    // Default to the user's default setting for currency.
+    ref.listen(defaultProfileProvider, (previous, next) {
+      next.whenData((profile) {
+        if (state.currency == null) {
+          state = state.copyWith(currency: () => profile.defaultCurrency);
+        }
+      });
+    });
+
+    final profileAsyncValue = ref.read(defaultProfileProvider);
+    String? initialCurrency;
+    if (profileAsyncValue.hasValue) {
+      initialCurrency = profileAsyncValue.value!.defaultCurrency;
+    }
+
     return AddTransactionState.initial().copyWith(
       accountId: initialAccountId,
+      currency: initialCurrency != null ? () => initialCurrency : null,
     );
   }
 
@@ -134,6 +160,16 @@ class AddTransactionNotifier extends AutoDisposeNotifier<AddTransactionState> {
     state = state.copyWith(date: date);
   }
 
+  /// Update currency.
+  void updateCurrency(String currency) {
+    state = state.copyWith(currency: () => currency);
+  }
+
+  /// Update tag.
+  void updateTag(String? tagId) {
+    state = state.copyWith(tagId: () => tagId);
+  }
+
   /// Validates the form state and attempts to execute the use case.
   /// Returns `true` on success and `false` on failure.
   Future<bool> submit() async {
@@ -164,6 +200,46 @@ class AddTransactionNotifier extends AutoDisposeNotifier<AddTransactionState> {
       return false;
     }
 
+    if (state.categoryId == null) {
+      state = state.copyWith(
+        submissionStatus: AsyncValue.error(
+          const ValidationException(
+            message: 'Please select a category',
+            code: 'CATEGORY_REQUIRED',
+          ),
+          StackTrace.current,
+        ),
+      );
+      return false;
+    }
+
+    final now = DateTime.now();
+    if (state.date.isAfter(now)) {
+      state = state.copyWith(
+        submissionStatus: AsyncValue.error(
+          const ValidationException(
+            message: 'Transaction date cannot be in the future',
+            code: 'FUTURE_DATE',
+          ),
+          StackTrace.current,
+        ),
+      );
+      return false;
+    }
+
+    if (state.currency == null || state.currency!.trim().isEmpty) {
+      state = state.copyWith(
+        submissionStatus: AsyncValue.error(
+          const ValidationException(
+            message: 'Please select a currency',
+            code: 'CURRENCY_REQUIRED',
+          ),
+          StackTrace.current,
+        ),
+      );
+      return false;
+    }
+
     state = state.copyWith(submissionStatus: const AsyncValue.loading());
 
     try {
@@ -179,7 +255,8 @@ class AddTransactionNotifier extends AutoDisposeNotifier<AddTransactionState> {
           type: state.type,
           accountId: state.accountId!,
           categoryId: state.categoryId,
-          notes: state.notes.trim().isEmpty ? null : state.notes.trim(),
+          notes: state.notes.trim(),
+          currency: state.currency,
         ),
       );
 

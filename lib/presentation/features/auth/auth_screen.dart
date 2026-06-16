@@ -690,7 +690,9 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
               borderRadius: BorderRadius.circular(8),
             ),
             child: Text(
-              error == 'Incorrect PIN.' ? l10n.authPinIncorrect : error,
+              error == 'Incorrect PIN.'
+                  ? '${l10n.authPinIncorrect}\n${l10n.authPinAttemptsRemaining(ref.read(authNotifierProvider.notifier).remainingPinAttempts)}'
+                  : error,
               style:
                   theme.textTheme.bodySmall?.copyWith(color: colorScheme.error),
               textAlign: TextAlign.center,

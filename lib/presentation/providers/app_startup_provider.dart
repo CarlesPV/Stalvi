@@ -2,6 +2,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/foundation.dart';
 import 'package:konta/data/database/app_database.dart';
 import 'package:konta/domain/usecases/auto_purge_usecase.dart';
+import 'package:konta/presentation/providers/locale_provider.dart';
+import 'package:konta/presentation/providers/repository_providers.dart';
 
 /// Provides the singleton [AppDatabase] instance.
 ///
@@ -40,5 +42,23 @@ final appStartupProvider = FutureProvider<void>((ref) async {
   } catch (e) {
     // If the database is still initializing or there's an error, log it but don't crash startup.
     debugPrint('AutoPurge failed during startup: $e');
+  }
+
+  // Sync and update/translate default categories/tags on startup if profile exists
+  try {
+    final profile = await ref.read(defaultProfileProvider.future);
+    final locale = ref.read(localeProvider);
+    final initializeDefaultDataUseCase =
+        ref.read(initializeDefaultDataUseCaseProvider);
+    await initializeDefaultDataUseCase.execute(
+      userId: profile.id,
+      currency: profile.defaultCurrency,
+      locale: locale.languageCode,
+    );
+  } catch (e) {
+    // Safe to ignore if profile is not setup yet (e.g., first launch)
+    debugPrint(
+      'Default data synchronization skipped or failed during startup: $e',
+    );
   }
 });

@@ -5,6 +5,7 @@ import 'package:konta/domain/repositories/i_account_repository.dart';
 import 'package:konta/domain/repositories/i_profile_repository.dart';
 import 'package:konta/domain/repositories/i_exchange_rate_repository.dart';
 import 'package:konta/domain/repositories/i_transaction_repository.dart';
+import 'package:konta/core/utils/input_sanitizer.dart';
 
 /// Parameters required to add a new transaction.
 class AddTransactionParams {
@@ -15,6 +16,7 @@ class AddTransactionParams {
   final String accountId;
   final String? categoryId;
   final String? notes;
+  final String? currency;
 
   const AddTransactionParams({
     required this.id,
@@ -24,6 +26,7 @@ class AddTransactionParams {
     required this.accountId,
     this.categoryId,
     this.notes,
+    this.currency,
   });
 }
 
@@ -87,7 +90,7 @@ class AddTransactionUseCase {
 
     int? convertedAmount;
     double? exchangeRate;
-    final String originalCurrency = account.currency;
+    final String originalCurrency = params.currency ?? account.currency;
 
     if (originalCurrency != profile.defaultCurrency) {
       try {
@@ -112,6 +115,14 @@ class AddTransactionUseCase {
       }
     }
 
+    String? sanitizedNotes;
+    if (params.notes != null) {
+      sanitizedNotes = InputSanitizer.sanitizeToPlainText(params.notes!);
+      if (sanitizedNotes!.length > 20) {
+        sanitizedNotes = sanitizedNotes!.substring(0, 20);
+      }
+    }
+
     final transaction = Transaction(
       id: params.id,
       amount: params.amount,
@@ -119,7 +130,7 @@ class AddTransactionUseCase {
       type: params.type,
       accountId: params.accountId,
       categoryId: params.categoryId,
-      notes: params.notes,
+      notes: sanitizedNotes,
       originalCurrency: originalCurrency,
       convertedAmount: convertedAmount,
       exchangeRate: exchangeRate,

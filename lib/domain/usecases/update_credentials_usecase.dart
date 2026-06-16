@@ -22,7 +22,7 @@ class UpdateCredentialsUseCase {
   Future<void> verifyOldPin(String oldPin) async {
     final storedHash = await _secureStorageManager.getPinHash();
     if (storedHash == null) {
-      throw const ValidationException(message: 'No PIN is currently set.');
+      throw const ValidationException(message: 'no_pin_set');
     }
 
     final oldPinHash = _hashPin(oldPin);
@@ -39,12 +39,12 @@ class UpdateCredentialsUseCase {
     final newPin = params.newPin;
     if (newPin.length < 4 || newPin.length > 8) {
       throw const ValidationException(
-        message: 'New PIN must be between 4 and 8 digits.',
+        message: 'pin_length_invalid',
       );
     }
     if (int.tryParse(newPin) == null) {
       throw const ValidationException(
-        message: 'New PIN must contain only numeric digits.',
+        message: 'pin_not_numeric',
       );
     }
 

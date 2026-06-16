@@ -48,6 +48,10 @@ void main() {
     // Default stubbing for category calls to make existing tests pass without modification
     when(() => mockCategoryRepository.getAllCategories())
         .thenAnswer((_) async => <Category>[]);
+    when(() => mockCategoryRepository.getCategoryById(any()))
+        .thenAnswer((_) async => null);
+    when(() => mockCategoryRepository.deleteCategory(any()))
+        .thenAnswer((_) async {});
     when(() => mockCategoryRepository.createCategory(any())).thenAnswer(
       (invocation) async => invocation.positionalArguments[0] as Category,
     );
@@ -57,6 +61,9 @@ void main() {
 
     // Default stubbing for tag calls
     when(() => mockTagRepository.getAllTags()).thenAnswer((_) async => <Tag>[]);
+    when(() => mockTagRepository.getTagById(any()))
+        .thenAnswer((_) async => null);
+    when(() => mockTagRepository.deleteTag(any())).thenAnswer((_) async {});
     when(() => mockTagRepository.createTag(any())).thenAnswer(
       (invocation) async => invocation.positionalArguments[0] as Tag,
     );
@@ -336,12 +343,12 @@ void main() {
       expect(capturedTags.length, 6);
 
       final tagNames = capturedTags.map((t) => (t as Tag).name).toList();
-      expect(tagNames, contains('Esencial'));
-      expect(tagNames, contains('Ocio'));
-      expect(tagNames, contains('Trabajo'));
-      expect(tagNames, contains('Personal'));
-      expect(tagNames, contains('Recurrente'));
-      expect(tagNames, contains('Suscripción'));
+      expect(tagNames, contains('Viaje de verano'));
+      expect(tagNames, contains('Evento'));
+      expect(tagNames, contains('Proyecto'));
+      expect(tagNames, contains('Boda'));
+      expect(tagNames, contains('Cumpleaños'));
+      expect(tagNames, contains('Viaje de negocios'));
     });
 
     test(

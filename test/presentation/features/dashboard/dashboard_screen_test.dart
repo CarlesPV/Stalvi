@@ -13,6 +13,9 @@ import 'package:konta/presentation/features/dashboard/dashboard_screen.dart';
 import 'package:konta/presentation/providers/repository_providers.dart';
 import 'package:konta/presentation/widgets/empty_state_widget.dart';
 import 'package:konta/presentation/providers/locale_provider.dart';
+import 'package:konta/domain/entities/profile.dart';
+import 'package:konta/domain/entities/period_summary.dart';
+import 'package:konta/presentation/providers/statistics_providers.dart';
 
 class NeverStream<T> extends Stream<T> {
   const NeverStream();
@@ -80,11 +83,32 @@ void main() {
   Widget createTestWidget({
     required Stream<List<Transaction>> transactionsStream,
     required Stream<List<Account>> accountsStream,
+    Profile? profile,
+    PeriodSummary? periodSummary,
   }) {
+    final mockProfile = profile ??
+        Profile(
+          id: 'user_1',
+          name: 'Anonymous',
+          username: 'anon',
+          password: 'pw',
+          defaultCurrency: 'EUR',
+          createdAt: DateTime(2026, 6, 1),
+          modifiedAt: DateTime(2026, 6, 1),
+        );
+
+    final mockPeriodSummary = periodSummary ??
+        const PeriodSummary(
+          totalIncome: 10000, // €100.00
+          totalExpense: 5000, // €50.00
+        );
+
     return ProviderScope(
       overrides: [
         transactionsStreamProvider.overrideWith((ref) => transactionsStream),
         accountsListProvider.overrideWith((ref) => accountsStream),
+        defaultProfileProvider.overrideWith((ref) => mockProfile),
+        periodSummaryProvider.overrideWith((ref) => mockPeriodSummary),
       ],
       child: Consumer(
         builder: (context, ref, child) {
@@ -237,6 +261,36 @@ void main() {
 
       // Expect to see the Recycle Bin row
       expect(find.text('Recycle Bin'), findsOneWidget);
+    });
+
+    testWidgets(
+        'obfuscates amounts by default on loading, and reveals them when eye icon is tapped',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(
+        createTestWidget(
+          transactionsStream: Stream.value([testTransaction]),
+          accountsStream: Stream.value([testAccount]),
+        ),
+      );
+
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 200));
+
+      // 1. Verify that the obfuscation string is shown by default
+      expect(find.text('***'), findsWidgets);
+
+      // Verify that the actual amount (e.g. 500.00) is NOT visible yet
+      expect(find.textContaining('500.00'), findsNothing);
+
+      // 2. Find the eye icon button and tap it to toggle discreet mode
+      final eyeButton = find.byKey(const ValueKey('discreetModeIconButton'));
+      expect(eyeButton, findsOneWidget);
+      await tester.tap(eyeButton);
+      await tester.pump();
+
+      // 3. Verify that the obfuscated string is gone, and the actual values are visible
+      expect(find.text('***'), findsNothing);
+      expect(find.textContaining('500.00'), findsOneWidget);
     });
   });
 }

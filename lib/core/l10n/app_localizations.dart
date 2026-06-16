@@ -706,6 +706,12 @@ abstract class AppLocalizations {
   /// **'Enter PIN'**
   String get authPinEnter;
 
+  /// Message indicating how many PIN attempts are remaining before lockout
+  ///
+  /// In en, this message translates to:
+  /// **'{attempts} attempts remaining'**
+  String authPinAttemptsRemaining(int attempts);
+
   /// Error message when PIN is incorrect
   ///
   /// In en, this message translates to:
@@ -987,6 +993,90 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Expires in {days} days'**
   String recycleBinDaysRemaining(int days);
+
+  /// Label indicating an input field is optional
+  ///
+  /// In en, this message translates to:
+  /// **'Optional'**
+  String get optional;
+
+  /// Validation error when category is not selected
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a category'**
+  String get errorCategoryRequired;
+
+  /// Validation error when currency is not selected
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a currency'**
+  String get errorCurrencyRequired;
+
+  /// Label for currency selector field
+  ///
+  /// In en, this message translates to:
+  /// **'Currency'**
+  String get labelCurrency;
+
+  /// Header or prompt to select a currency
+  ///
+  /// In en, this message translates to:
+  /// **'Select Currency'**
+  String get labelSelectCurrency;
+
+  /// Label for tag selector field
+  ///
+  /// In en, this message translates to:
+  /// **'Tag'**
+  String get labelTag;
+
+  /// Header or prompt to select a tag
+  ///
+  /// In en, this message translates to:
+  /// **'Select Tag'**
+  String get labelSelectTag;
+
+  /// Label when no tag is selected
+  ///
+  /// In en, this message translates to:
+  /// **'None'**
+  String get noTag;
+
+  /// Optional label formatted with parentheses
+  ///
+  /// In en, this message translates to:
+  /// **'(Optional)'**
+  String get optionalPlaceholder;
+
+  /// Fallback name for empty income transaction notes
+  ///
+  /// In en, this message translates to:
+  /// **'Income'**
+  String get fallbackIncome;
+
+  /// Fallback name for empty expense transaction notes
+  ///
+  /// In en, this message translates to:
+  /// **'Expense'**
+  String get fallbackExpense;
+
+  /// Error message when PIN attempts exceed limit
+  ///
+  /// In en, this message translates to:
+  /// **'Maximum PIN attempts reached. Please try again later.'**
+  String get errorMaxPinAttempts;
+
+  /// Error message when PIN contains non-numeric characters
+  ///
+  /// In en, this message translates to:
+  /// **'PIN must contain only numeric digits.'**
+  String get errorPinNotNumeric;
+
+  /// Error message when trying to verify a PIN but none is configured
+  ///
+  /// In en, this message translates to:
+  /// **'No PIN is currently set.'**
+  String get errorNoPinSet;
 }
 
 class _AppLocalizationsDelegate

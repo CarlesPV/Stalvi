@@ -77,11 +77,18 @@
   - [x] Revert to main-thread `NativeDatabase` initialization to preserve `open.overrideFor` FFI configuration for SQLCipher loading.
   - [x] Ensure performance remains high while stabilizing database connection establishment.
 
+- [x] **Phase 14: PIN UX, Dashboard Polish, Transaction Sorting, and Tag/Category Localization**
+  - [x] Integrate inline error notifications inside the Change PIN popup.
+  - [x] Remove the flickering skeletal trend loader block to resolve the visual loading bug on Dashboard.
+  - [x] Enforce date and createdAt order sorting for transactions list.
+  - [x] Redo default tags to represent event and organization use cases (Summer Trip, Event, Project, Wedding, Birthday, Business Trip).
+  - [x] Implement dynamic database category/tag translation updates on app startup and locale changes, using stable IDs and cleaning up duplicate/old entries.
+
 ## Current Phase
-- [ ] **Phase 14: Synchronization, Backups, and Import/Export Validations**
+- [ ] **Phase 15: Synchronization, Backups, and Import/Export Validations**
   - [ ] Implement cloud synchronization options.
   - [ ] Add encrypted automatic local backup features.
   - [ ] Validate cross-platform imports/exports.
 
 ## Upcoming Phases
-- [ ] **Phase 15: Integration Testing (E2E), final security audit, and store preparation.**
+- [ ] **Phase 16: Integration Testing (E2E), final security audit, and store preparation.**

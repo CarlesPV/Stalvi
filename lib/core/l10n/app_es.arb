@@ -101,6 +101,7 @@
   "authSetupValidationErrorName": "Por favor, introduzca un nombre.",
   "authSetupValidationErrorUsername": "Por favor, introduzca un nombre de usuario.",
   "authPinEnter": "Introducir PIN",
+  "authPinAttemptsRemaining": "Quedan {attempts} intentos",
   "authPinIncorrect": "PIN incorrecto. Inténtelo de nuevo.",
   "defaultWalletName": "Mi cartera",
   "failedLoadAccounts": "No se pudieron cargar las cuentas.",
@@ -147,6 +148,20 @@
   "recycleBinDeleteConfirmMessage": "¿Está seguro de que desea eliminar permanentemente este elemento? Esta acción no se puede deshacer.",
   "recycleBinRestoredMessage": "Elemento restaurado",
   "recycleBinDeletedMessage": "Elemento eliminado permanentemente",
-  "recycleBinDaysRemaining": "Expira en {days} días"
+  "recycleBinDaysRemaining": "Expira en {days} días",
+  "optional": "Opcional",
+  "errorCategoryRequired": "Por favor, seleccione una categoría",
+  "errorCurrencyRequired": "Por favor, seleccione una moneda",
+  "labelCurrency": "Moneda",
+  "labelSelectCurrency": "Seleccionar moneda",
+  "labelTag": "Etiqueta",
+  "labelSelectTag": "Seleccionar etiqueta",
+  "noTag": "Ninguna",
+  "optionalPlaceholder": "(Opcional)",
+  "fallbackIncome": "Ingreso",
+  "fallbackExpense": "Gasto",
+  "errorMaxPinAttempts": "Se ha alcanzado el número máximo de intentos de PIN. Por favor, inténtelo de nuevo más tarde.",
+  "errorPinNotNumeric": "El PIN debe contener solo dígitos numéricos.",
+  "errorNoPinSet": "No hay ningún PIN configurado actualmente."
 }
 

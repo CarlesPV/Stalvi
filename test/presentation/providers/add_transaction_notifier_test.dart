@@ -6,6 +6,7 @@ import 'package:konta/domain/entities/account.dart';
 import 'package:konta/domain/entities/account_type.dart';
 import 'package:konta/domain/entities/category.dart';
 import 'package:konta/domain/entities/category_type.dart';
+import 'package:konta/domain/entities/profile.dart';
 import 'package:konta/domain/entities/transaction.dart';
 import 'package:konta/domain/entities/transaction_type.dart';
 import 'package:konta/domain/usecases/add_transaction_usecase.dart';
@@ -51,6 +52,16 @@ void main() {
     modifiedAt: DateTime.now(),
   );
 
+  final testProfile = Profile(
+    id: 'user_1',
+    name: 'Test User',
+    username: 'test_user',
+    password: '',
+    defaultCurrency: 'EUR',
+    createdAt: DateTime.now(),
+    modifiedAt: DateTime.now(),
+  );
+
   setUp(() {
     mockUseCase = MockAddTransactionUseCase();
   });
@@ -59,7 +70,7 @@ void main() {
     container.dispose();
   });
 
-  void buildContainer({List<Account>? accounts}) {
+  void buildContainer({List<Account>? accounts, Profile? profile}) {
     container = ProviderContainer(
       overrides: [
         addTransactionUseCaseProvider.overrideWithValue(mockUseCase),
@@ -67,6 +78,7 @@ void main() {
             .overrideWith((ref) => Stream.value(accounts ?? [testAccount])),
         categoriesListProvider
             .overrideWith((ref) => Stream.value([testCategory])),
+        defaultProfileProvider.overrideWith((ref) => profile ?? testProfile),
       ],
     );
   }
@@ -83,6 +95,8 @@ void main() {
       expect(state.categoryId, isNull);
       expect(state.notes, '');
       expect(state.date, isA<DateTime>());
+      expect(state.currency, 'EUR');
+      expect(state.tagId, isNull);
       expect(state.submissionStatus, const AsyncData<void>(null));
     });
 
@@ -125,6 +139,19 @@ void main() {
       final state = container.read(addTransactionNotifierProvider);
       expect(state.accountId, 'acc_custom');
       expect(state.categoryId, 'cat_custom');
+    });
+
+    test('updates currency and tag correctly', () {
+      buildContainer();
+
+      final notifier = container.read(addTransactionNotifierProvider.notifier);
+
+      notifier.updateCurrency('USD');
+      notifier.updateTag('tag_123');
+
+      final state = container.read(addTransactionNotifierProvider);
+      expect(state.currency, 'USD');
+      expect(state.tagId, 'tag_123');
     });
 
     test('resets category selection when transaction type changes', () {
@@ -225,6 +252,50 @@ void main() {
     });
 
     test(
+        'submit returns false and sets validation error when category is missing',
+        () async {
+      buildContainer();
+
+      final notifier = container.read(addTransactionNotifierProvider.notifier);
+      notifier.updateAmount('10.00');
+      notifier.updateAccount(testAccount.id);
+      // category is missing
+
+      final success = await notifier.submit();
+
+      expect(success, isFalse);
+      final status =
+          container.read(addTransactionNotifierProvider).submissionStatus;
+      expect(status.hasError, isTrue);
+      expect(status.error, isA<ValidationException>());
+      expect((status.error as ValidationException).code, 'CATEGORY_REQUIRED');
+      verifyZeroInteractions(mockUseCase);
+    });
+
+    test(
+        'submit returns false and sets validation error when currency is missing',
+        () async {
+      buildContainer();
+
+      final notifier = container.read(addTransactionNotifierProvider.notifier);
+      notifier.updateAmount('10.00');
+      notifier.updateAccount(testAccount.id);
+      notifier.updateCategory(testCategory.id);
+      // Remove currency to trigger error
+      notifier.updateCurrency('');
+
+      final success = await notifier.submit();
+
+      expect(success, isFalse);
+      final status =
+          container.read(addTransactionNotifierProvider).submissionStatus;
+      expect(status.hasError, isTrue);
+      expect(status.error, isA<ValidationException>());
+      expect((status.error as ValidationException).code, 'CURRENCY_REQUIRED');
+      verifyZeroInteractions(mockUseCase);
+    });
+
+    test(
         'submit calls usecase and transitions to success when inputs are valid',
         () async {
       buildContainer();
@@ -233,6 +304,7 @@ void main() {
       notifier.updateAmount('150.00');
       notifier.updateAccount(testAccount.id);
       notifier.updateCategory(testCategory.id);
+      notifier.updateCurrency('EUR');
       notifier.updateNotes('   Weekly grocery   ');
 
       when(() => mockUseCase.execute(any())).thenAnswer(
@@ -264,6 +336,7 @@ void main() {
       expect(captured.accountId, testAccount.id);
       expect(captured.categoryId, testCategory.id);
       expect(captured.notes, 'Weekly grocery'); // Trimmed notes
+      expect(captured.currency, 'EUR');
     });
 
     test('submit sets error when usecase throws an exception', () async {
@@ -272,6 +345,8 @@ void main() {
       final notifier = container.read(addTransactionNotifierProvider.notifier);
       notifier.updateAmount('10.00');
       notifier.updateAccount(testAccount.id);
+      notifier.updateCategory(testCategory.id);
+      notifier.updateCurrency('EUR');
 
       const testException =
           DatabaseException(message: 'Disk error', code: 'WRITE_ERROR');
