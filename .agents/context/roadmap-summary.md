@@ -182,3 +182,14 @@ This document lists the completed phases of the Konta development roadmap, provi
   - Verified static analysis (`flutter analyze` with 0 issues).
   - Updated widget tests in `dashboard_screen_test.dart` to assert the presence of the Recycle Bin tile instead of the Language dropdown.
   - Ran full test suite, all tests passing successfully.
+
+### Phase 13: SQLCipher FFI Binding & Isolate Crash Fix
+* **Completion Date:** June 16, 2026
+* **Objective:** Resolve dynamic library loading failure (`libsqlite3.so`) caused by isolate boundary FFI configuration issues in SQLCipher.
+* **Accomplishments:**
+  - **FFI Binding Fix:** Replaced `NativeDatabase.createInBackground` with the standard `NativeDatabase` constructor. This forces SQLCipher database connections to initialize on the main thread where the native library override (`open.overrideFor(OperatingSystem.android, openCipherOnAndroid)`) was configured.
+  - **Thread-Safety & Performance:** Preserved Drift's asynchronous query architecture while ensuring library load operations run reliably without spawning thread contexts that fail to inherit native overrides.
+* **Verification:**
+  - Standard static analysis pass (`flutter analyze` with 0 issues).
+  - Validated that the app launches successfully on Android without library loading failures.
+

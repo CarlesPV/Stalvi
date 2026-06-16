@@ -72,11 +72,16 @@
   - [x] Move Recycle Bin trigger directly to the primary Settings tab list.
   - [x] Clean up dashboard screens, menus, and appBar actions to streamline configuration settings.
 
+- [x] **Phase 13: SQLCipher FFI Binding & Isolate Crash Fix**
+  - [x] Resolve Android launch crash caused by `NativeDatabase.createInBackground` isolate boundary issues.
+  - [x] Revert to main-thread `NativeDatabase` initialization to preserve `open.overrideFor` FFI configuration for SQLCipher loading.
+  - [x] Ensure performance remains high while stabilizing database connection establishment.
+
 ## Current Phase
-- [ ] **Phase 13: Synchronization, Backups, and Import/Export Validations**
+- [ ] **Phase 14: Synchronization, Backups, and Import/Export Validations**
   - [ ] Implement cloud synchronization options.
   - [ ] Add encrypted automatic local backup features.
   - [ ] Validate cross-platform imports/exports.
 
 ## Upcoming Phases
-- [ ] **Phase 14: Integration Testing (E2E), final security audit, and store preparation.**
+- [ ] **Phase 15: Integration Testing (E2E), final security audit, and store preparation.**

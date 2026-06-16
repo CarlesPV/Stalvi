@@ -57,7 +57,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
 
   void _editCurrency(BuildContext context, String currentCurrency) {
     final l10n = AppLocalizations.of(context)!;
-    final currencies = ['EUR', '\$', '£', '¥'];
+    final currencies = ['EUR', 'USD', 'GBP', 'JPY'];
     String selected = currencies.contains(currentCurrency)
         ? currentCurrency
         : currencies.first;

@@ -139,4 +139,27 @@ The user interface had scattered configuration panels (e.g. standalone profile v
 ### Future Prevention Guideline
 - Strive for consolidated, feature-grouped settings panels rather than nested, scattered views. Always ensure compliance and configuration tools (Theme, Locale, Legal) are located under settings or profile groups.
 
+---
+
+## 7. SQLCipher Isolate FFI Binding Dynamic Library Load Crash
+
+### Problem Description
+When starting the application, the app would crash with the error:
+`failed to load dynamic library libsqlite3.so`
+on Android devices, preventing the database from loading and blocking app launch.
+
+### Root Causes
+1. **Isolate Boundary for FFI Configurations**:
+   The app previously used `NativeDatabase.createInBackground` to initialize the database in a background isolate.
+2. **Override Configuration Loss**:
+   The native library override logic `open.overrideFor(OperatingSystem.android, openCipherOnAndroid)` was configured on the main thread. Because dynamic library override settings are isolate-specific, when Drift spawned the background isolate, that isolate did not inherit the `open.overrideFor` configuration and fell back to loading the default SQLite library, failing to find `libsqlite3.so` (as only SQLCipher is bundled).
+
+### Solution Applied
+- Replaced the asynchronous initialization `NativeDatabase.createInBackground` with the standard `NativeDatabase` constructor in `_openEncryptedDatabase` inside [app_database.dart](file:///home/carlesp/Proyectos/Konta/lib/data/database/app_database.dart).
+- Running on the main thread guarantees the FFI overrides are correctly applied. Drift's queries will still be run asynchronously, maintaining high performance while ensuring a stable SQLCipher initialization.
+
+### Future Prevention Guideline
+- Do not initialize database connections inside background isolates (`createInBackground`) when using custom native FFI library overrides like SQLCipher, unless overrides are explicitly set up inside the spawned isolate's initialization phase.
+
+
 

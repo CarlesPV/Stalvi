@@ -179,25 +179,21 @@ class AppDatabase extends _$AppDatabase {
   static Future<QueryExecutor> _openEncryptedDatabase(
     String cipherKey,
   ) async {
+    // 1. Override the native library to use SQLCipher
+    if (Platform.isAndroid) {
+      open.overrideFor(OperatingSystem.android, openCipherOnAndroid);
+    }
+
     final dbFolder = await getApplicationDocumentsDirectory();
     final dbFile = File(p.join(dbFolder.path, 'konta.db'));
 
-    // Apply SQLite initialization workaround for SQLCipher
-    open.overrideFor(OperatingSystem.android, openCipherOnAndroid);
-    // Note: Desktop platforms (Windows/macOS/Linux) require manual
-    // library installation/linking of sqlcipher.
-
-    return NativeDatabase.createInBackground(
+    // CRITICAL FIX: Use NativeDatabase instead of NativeDatabase.createInBackground.
+    // createInBackground spawns an isolate that does not inherit the open.overrideFor
+    // FFI configuration, causing the dynamic library loader to fail.
+    return NativeDatabase(
       dbFile,
       setup: (rawDb) {
-        // Apply the SQLCipher encryption key. Must be the FIRST statement
-        // executed on the connection. The key is hex-encoded, so we use the
-        // x'' literal syntax that SQLCipher expects for raw key bytes.
         rawDb.execute("PRAGMA key = \"x'$cipherKey'\";");
-
-        // Verify the key is correct by attempting to read the database.
-        // If the key is wrong, this will throw an exception immediately
-        // rather than failing silently on the first real query.
         rawDb.execute('SELECT count(*) FROM sqlite_master;');
       },
     );
