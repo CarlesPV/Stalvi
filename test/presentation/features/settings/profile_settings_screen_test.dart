@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:konta/core/errors/app_exceptions.dart';
-import 'package:konta/core/l10n/app_localizations.dart';
-import 'package:konta/domain/entities/profile.dart';
-import 'package:konta/domain/repositories/i_profile_repository.dart';
-import 'package:konta/domain/usecases/update_credentials_usecase.dart';
-import 'package:konta/presentation/features/settings/profile_settings_screen.dart';
-import 'package:konta/presentation/providers/repository_providers.dart';
+import 'package:stalvi/core/errors/app_exceptions.dart';
+import 'package:stalvi/core/l10n/app_localizations.dart';
+import 'package:stalvi/domain/entities/profile.dart';
+import 'package:stalvi/domain/repositories/i_profile_repository.dart';
+import 'package:stalvi/domain/usecases/update_credentials_usecase.dart';
+import 'package:stalvi/presentation/features/settings/profile_settings_screen.dart';
+import 'package:stalvi/presentation/providers/repository_providers.dart';
 
 class FakeProfileRepository implements IProfileRepository {
   @override

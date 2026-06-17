@@ -2,15 +2,15 @@ import 'dart:developer';
 import 'package:flutter/widgets.dart';
 import 'package:uuid/uuid.dart';
 
-import 'package:konta/core/l10n/app_localizations.dart';
-import 'package:konta/domain/entities/account.dart';
-import 'package:konta/domain/entities/account_type.dart';
-import 'package:konta/domain/repositories/i_account_repository.dart';
-import 'package:konta/domain/entities/category.dart';
-import 'package:konta/domain/entities/category_type.dart';
-import 'package:konta/domain/repositories/i_category_repository.dart';
-import 'package:konta/domain/entities/tag.dart';
-import 'package:konta/domain/repositories/i_tag_repository.dart';
+import 'package:stalvi/core/l10n/app_localizations.dart';
+import 'package:stalvi/domain/entities/account.dart';
+import 'package:stalvi/domain/entities/account_type.dart';
+import 'package:stalvi/domain/repositories/i_account_repository.dart';
+import 'package:stalvi/domain/entities/category.dart';
+import 'package:stalvi/domain/entities/category_type.dart';
+import 'package:stalvi/domain/repositories/i_category_repository.dart';
+import 'package:stalvi/domain/entities/tag.dart';
+import 'package:stalvi/domain/repositories/i_tag_repository.dart';
 
 /// Use case that automatically initializes a user's default data.
 ///
@@ -38,14 +38,14 @@ class InitializeDefaultDataUseCase {
       final existingAccounts =
           await _accountRepository.getAccountsByUserId(userId);
       if (existingAccounts.isEmpty) {
-        String resolvedWalletName = walletName ?? 'Mi cartera';
+        String resolvedWalletName = walletName ?? 'Main Account';
         if (walletName == null && locale != null) {
           try {
             final appLoc = lookupAppLocalizations(Locale(locale));
-            resolvedWalletName = appLoc.defaultWalletName;
+            resolvedWalletName = appLoc.defaultAccountName;
           } catch (_) {
-            if (locale == 'es') resolvedWalletName = 'Mi cartera';
-            if (locale == 'ca') resolvedWalletName = 'La meva cartera';
+            if (locale == 'es') resolvedWalletName = 'Cuenta principal';
+            if (locale == 'ca') resolvedWalletName = 'Compte principal';
           }
         }
 

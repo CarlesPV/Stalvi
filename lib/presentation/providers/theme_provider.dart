@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:konta/core/security/secure_storage_manager.dart';
-import 'package:konta/presentation/providers/locale_provider.dart';
+import 'package:stalvi/core/security/secure_storage_manager.dart';
+import 'package:stalvi/presentation/providers/locale_provider.dart';
 
 /// A [Notifier] that manages the active [ThemeMode] of the application.
 ///

@@ -1,11 +1,12 @@
 import 'package:drift/drift.dart';
 
-import 'package:konta/core/errors/app_exceptions.dart';
-import 'package:konta/data/database/app_database.dart' as db;
-import 'package:konta/data/mappers/transaction_mapper.dart';
-import 'package:konta/domain/entities/transaction.dart' as domain;
-import 'package:konta/domain/entities/transaction_type.dart' as domain;
-import 'package:konta/domain/repositories/i_transaction_repository.dart';
+import 'package:stalvi/core/errors/app_exceptions.dart';
+import 'package:stalvi/data/database/app_database.dart' as db;
+import 'package:stalvi/data/database/tables/transaction_table.dart' as db_table;
+import 'package:stalvi/data/mappers/transaction_mapper.dart';
+import 'package:stalvi/domain/entities/transaction.dart' as domain;
+import 'package:stalvi/domain/entities/transaction_type.dart' as domain;
+import 'package:stalvi/domain/repositories/i_transaction_repository.dart';
 
 /// Concrete implementation of [ITransactionRepository] backed by Drift.
 ///
@@ -106,7 +107,9 @@ class TransactionRepository implements ITransactionRepository {
   ) async {
     try {
       final query = _db.select(_db.transactions)
-        ..where((t) => t.accountId.equals(accountId))
+        ..where(
+          (t) => t.accountId.equals(accountId) & t.isDeleted.equals(false),
+        )
         ..orderBy([
           (t) => OrderingTerm(expression: t.date, mode: OrderingMode.desc),
           (t) => OrderingTerm(expression: t.createdAt, mode: OrderingMode.desc),
@@ -154,16 +157,58 @@ class TransactionRepository implements ITransactionRepository {
   @override
   Future<void> deleteTransaction(String id) async {
     try {
-      final deleted = await (_db.delete(_db.transactions)
-            ..where((t) => t.id.equals(id)))
-          .go();
+      await _db.transaction(() async {
+        // 1. Fetch transaction
+        final txn = await (_db.select(_db.transactions)
+              ..where((t) => t.id.equals(id)))
+            .getSingleOrNull();
+        if (txn == null) {
+          throw NotFoundException(
+            message: 'Transaction with id "$id" not found',
+            code: 'TRANSACTION_NOT_FOUND',
+          );
+        }
+        if (txn.isDeleted) return; // Already soft-deleted
 
-      if (deleted == 0) {
-        throw NotFoundException(
-          message: 'Transaction with id "$id" not found',
-          code: 'TRANSACTION_NOT_FOUND',
+        // 2. Fetch account
+        final accountRow = await (_db.select(_db.accounts)
+              ..where((a) => a.id.equals(txn.accountId)))
+            .getSingleOrNull();
+        if (accountRow == null) {
+          throw NotFoundException(
+            message: 'Account with id "${txn.accountId}" not found',
+            code: 'ACCOUNT_NOT_FOUND',
+          );
+        }
+
+        // 3. Revert balance modification (since we are DELETING the transaction)
+        final double delta = txn.amount / 100.0;
+        final double newBalance;
+        if (txn.type == db_table.TransactionType.income) {
+          newBalance = accountRow.initialBalance - delta;
+        } else {
+          newBalance = accountRow.initialBalance + delta;
+        }
+
+        // 4. Update account balance
+        await (_db.update(_db.accounts)
+              ..where((a) => a.id.equals(txn.accountId)))
+            .write(
+          db.AccountsCompanion(
+            initialBalance: Value(newBalance),
+            modifiedAt: Value(DateTime.now()),
+          ),
         );
-      }
+
+        // 5. Soft delete transaction
+        await (_db.update(_db.transactions)..where((t) => t.id.equals(id)))
+            .write(
+          db.TransactionsCompanion(
+            isDeleted: const Value(true),
+            modifiedAt: Value(DateTime.now()),
+          ),
+        );
+      });
     } on AppException {
       rethrow;
     } catch (e) {
@@ -179,6 +224,7 @@ class TransactionRepository implements ITransactionRepository {
   Stream<List<domain.Transaction>> watchAllTransactions() {
     try {
       final query = _db.select(_db.transactions)
+        ..where((t) => t.isDeleted.equals(false))
         ..orderBy([
           (t) => OrderingTerm(expression: t.date, mode: OrderingMode.desc),
           (t) => OrderingTerm(expression: t.createdAt, mode: OrderingMode.desc),
@@ -192,6 +238,100 @@ class TransactionRepository implements ITransactionRepository {
         code: 'TRANSACTION_WATCH_FAILED',
         details: e,
       );
+    }
+  }
+
+  /// Streams [domain.Transaction] rows matching all non-null dimensions in
+  /// [filter] concurrently.
+  ///
+  /// Filter application strategy:
+  /// - All conditions are ANDed together (every active dimension must match).
+  /// - `isDeleted = false` is always enforced.
+  /// - [TransactionQueryFilter.tag] is matched as a case-insensitive LIKE
+  ///   substring against the `notes` column.
+  @override
+  Stream<List<domain.Transaction>> watchFilteredTransactions(
+    TransactionQueryFilter filter,
+  ) {
+    try {
+      final t = _db.transactions;
+      final query = _db.select(t);
+
+      // Always exclude soft-deleted rows.
+      Expression<bool> conditions = t.isDeleted.equals(false);
+
+      // ── Type ──────────────────────────────────────────────────────────────────
+      if (filter.type != null) {
+        final dbType = _mapDomainTypeToDB(filter.type!);
+        conditions = conditions & t.type.equalsValue(dbType);
+      }
+
+      // ── Category ──────────────────────────────────────────────────────────────
+      if (filter.categoryId != null) {
+        conditions = conditions & t.categoryId.equals(filter.categoryId!);
+      }
+
+      // ── Date range ────────────────────────────────────────────────────────────
+      if (filter.dateRange != null) {
+        conditions = conditions &
+            t.date.isBetweenValues(
+              filter.dateRange!.start,
+              filter.dateRange!.end,
+            );
+      }
+
+      // ── Amount range ──────────────────────────────────────────────────────────
+      if (filter.minAmountCents != null) {
+        conditions =
+            conditions & t.amount.isBiggerOrEqualValue(filter.minAmountCents!);
+      }
+      if (filter.maxAmountCents != null) {
+        conditions =
+            conditions & t.amount.isSmallerOrEqualValue(filter.maxAmountCents!);
+      }
+
+      // ── Tag (case-insensitive substring match on notes) ───────────────────────
+      // SQLite LIKE is case-insensitive for ASCII by default – no extra flag needed.
+      if (filter.tag != null && filter.tag!.isNotEmpty) {
+        conditions = conditions & t.notes.like('%${filter.tag!}%');
+      }
+
+      // ── Currency ──────────────────────────────────────────────────────────────
+      if (filter.currency != null) {
+        conditions = conditions & t.originalCurrency.equals(filter.currency!);
+      }
+
+      query
+        ..where((_) => conditions)
+        ..orderBy([
+          (t) => OrderingTerm(expression: t.date, mode: OrderingMode.desc),
+          (t) => OrderingTerm(expression: t.createdAt, mode: OrderingMode.desc),
+        ]);
+
+      return query
+          .watch()
+          .map((rows) => rows.map((r) => r.toDomain()).toList());
+    } catch (e) {
+      throw DatabaseException(
+        message: 'Failed to watch filtered transactions',
+        code: 'TRANSACTION_WATCH_FAILED',
+        details: e,
+      );
+    }
+  }
+
+  // ── Helpers ──────────────────────────────────────────────────────────────────
+
+  db_table.TransactionType _mapDomainTypeToDB(
+    domain.TransactionType domainType,
+  ) {
+    switch (domainType) {
+      case domain.TransactionType.income:
+        return db_table.TransactionType.income;
+      case domain.TransactionType.expense:
+        return db_table.TransactionType.expense;
+      case domain.TransactionType.transfer:
+        return db_table.TransactionType.transfer;
     }
   }
 }

@@ -1,7 +1,7 @@
-import 'package:konta/core/errors/app_exceptions.dart';
-import 'package:konta/domain/entities/budget.dart';
-import 'package:konta/domain/repositories/i_budget_repository.dart';
-import 'package:konta/domain/repositories/i_category_repository.dart';
+import 'package:stalvi/core/errors/app_exceptions.dart';
+import 'package:stalvi/domain/entities/budget.dart';
+import 'package:stalvi/domain/repositories/i_budget_repository.dart';
+import 'package:stalvi/domain/repositories/i_category_repository.dart';
 
 class CreateBudgetParams {
   final String id;

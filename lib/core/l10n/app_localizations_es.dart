@@ -48,7 +48,7 @@ class AppLocalizationsEs extends AppLocalizations {
       'Error de red. Por favor, compruebe su conexión a internet.';
 
   @override
-  String get appTitle => 'Konta';
+  String get appTitle => 'Stalvi';
 
   @override
   String get splashTagline => 'Tus finanzas, a tu manera.';
@@ -58,7 +58,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get splashSecureStorageError =>
-      'Konta no pudo inicializar su almacenamiento seguro. Por favor, compruebe el almacenamiento disponible del dispositivo e inténtelo de nuevo.';
+      'Stalvi no pudo inicializar su almacenamiento seguro. Por favor, compruebe el almacenamiento disponible del dispositivo e inténtelo de nuevo.';
 
   @override
   String get tryAgain => 'Intentar de nuevo';
@@ -373,7 +373,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get authBiometricOptInSubtitle =>
-      'Usa tu huella dactilar o reconocimiento facial para acceder a Konta de forma rápida y segura en el futuro.';
+      'Usa tu huella dactilar o reconocimiento facial para acceder a Stalvi de forma rápida y segura en el futuro.';
 
   @override
   String get authBiometricOptInEnable => 'Habilitar biometría';
@@ -536,4 +536,97 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get errorNoPinSet => 'No hay ningún PIN configurado actualmente.';
+
+  @override
+  String get authPinLockedTitle => 'Demasiados intentos fallidos';
+
+  @override
+  String get authPinLockedMessage =>
+      'El acceso ha sido bloqueado temporalmente tras demasiadas entradas incorrectas del PIN.';
+
+  @override
+  String get authPinLockedCountdown => 'segundos restantes';
+
+  @override
+  String get authPinLockedRetry => 'Ahora puede intentarlo de nuevo';
+
+  @override
+  String get authSignInTitle => 'Verificar identidad';
+
+  @override
+  String get defaultAccountName => 'Cuenta principal';
+
+  @override
+  String get filterAll => 'Todos';
+
+  @override
+  String get filterIncome => 'Ingresos';
+
+  @override
+  String get filterExpense => 'Gastos';
+
+  @override
+  String get filterTransfer => 'Transferencia';
+
+  @override
+  String get createAccountTitle => 'Crear nueva cuenta';
+
+  @override
+  String get createAccountNameLabel => 'Nombre de la cuenta';
+
+  @override
+  String get createAccountNameHint => 'ej. Tarjeta Personal, Efectivo, etc.';
+
+  @override
+  String get createAccountInitialBalanceLabel => 'Saldo inicial';
+
+  @override
+  String get createAccountTypeLabel => 'Tipo de cuenta';
+
+  @override
+  String get createAccountColorThemeLabel => 'Tema de color';
+
+  @override
+  String get createAccountIconLabel => 'Icono';
+
+  @override
+  String get createAccountSuccess => 'Cuenta creada con éxito';
+
+  @override
+  String get createAccountErrorName =>
+      'Por favor ingresa un nombre para la cuenta';
+
+  @override
+  String get createAccountErrorFailed => 'Fallo al crear la cuenta';
+
+  @override
+  String get accountTypeOther => 'Otro';
+
+  @override
+  String get accountTypeCash => 'Efectivo';
+
+  @override
+  String get accountTypeBank => 'Banco';
+
+  @override
+  String get accountTypeSavings => 'Ahorros';
+
+  @override
+  String get accountTypeCard => 'Tarjeta';
+
+  @override
+  String get deleteTransactionTitle => '¿Eliminar transacción?';
+
+  @override
+  String get transactionMovedToRecycleBin => 'Transacción movida a la papelera';
+
+  @override
+  String get errorDeleteTransaction => 'Error al eliminar la transacción';
+
+  @override
+  String get deleteTransactionConfirmation =>
+      '¿Estás seguro de que quieres eliminar esta transacción? Se moverá a la papelera de reciclaje.';
+
+  @override
+  String get btnClose => 'Cerrar';
 }

@@ -1,13 +1,13 @@
 # Resolved Issues Documentation - June 2026
 
-This document provides a detailed breakdown of the bugs resolved in the Konta mobile application in June 2026, including their causes, technical solutions, and design guidelines for future reference.
+This document provides a detailed breakdown of the bugs resolved in the Stalvi mobile application in June 2026, including their causes, technical solutions, and design guidelines for future reference.
 
 ---
 
 ## 1. Splash Screen Layout Issue (Cut-off Width)
 
 ### Problem Description
-Upon launching the application, the Konta loading/splash content was displayed in a narrow vertical column spanning only about 1/3 of the screen width and aligned to the left side, instead of filling the entire screen width.
+Upon launching the application, the Stalvi loading/splash content was displayed in a narrow vertical column spanning only about 1/3 of the screen width and aligned to the left side, instead of filling the entire screen width.
 
 ### Root Causes
 1. **Loose Constraints in MaterialApp Builder**:
@@ -17,9 +17,9 @@ Upon launching the application, the Konta loading/splash content was displayed i
 
 ### Solution Applied
 1. **Stack Fit Constraint Expansion**:
-   Updated `LifecycleBlurWrapper` (in [lifecycle_blur_wrapper.dart](file:///home/carlesp/Proyectos/Konta/lib/presentation/widgets/lifecycle_blur_wrapper.dart)) to use `fit: StackFit.expand` on its `Stack` widget. This forces the child `Navigator` and subsequent app views to occupy the full dimensions of the screen.
+   Updated `LifecycleBlurWrapper` (in [lifecycle_blur_wrapper.dart](file:///home/carlesp/Proyectos/Stalvi/lib/presentation/widgets/lifecycle_blur_wrapper.dart)) to use `fit: StackFit.expand` on its `Stack` widget. This forces the child `Navigator` and subsequent app views to occupy the full dimensions of the screen.
 2. **Explicit Splash Bounds**:
-   Wrapped the `Column` widget inside the `_SplashContent` build method (in [splash_screen.dart](file:///home/carlesp/Proyectos/Konta/lib/presentation/features/splash/splash_screen.dart)) in a `SizedBox.expand`. This forces the splash screen body to expand to the full screen width and height, centering the logo and text horizontally.
+   Wrapped the `Column` widget inside the `_SplashContent` build method (in [splash_screen.dart](file:///home/carlesp/Proyectos/Stalvi/lib/presentation/features/splash/splash_screen.dart)) in a `SizedBox.expand`. This forces the splash screen body to expand to the full screen width and height, centering the logo and text horizontally.
 
 ### Future Prevention Guideline
 - Always wrap screen-level root widgets or views inside `Scaffold` bodies in widgets that occupy the full width (e.g., `SizedBox.expand` or `Center` with a width constraint) if the widgets inside utilize collapsing components like `Column` or `Row`.
@@ -37,7 +37,7 @@ When running on Android and attempting biometric login at startup, the app faile
 The `local_auth` Flutter plugin uses native Android APIs to present biometrics dialogs. Because these dialogs rely on modern Android jetpack components, the host `Activity` class must be a `FragmentActivity` rather than the standard `FlutterActivity`.
 
 ### Solution Applied
-Modified the Kotlin entrypoint [MainActivity.kt](file:///home/carlesp/Proyectos/Konta/android/app/src/main/kotlin/com/example/konta/MainActivity.kt) to inherit from `FlutterFragmentActivity` instead of `FlutterActivity`.
+Modified the Kotlin entrypoint [MainActivity.kt](file:///home/carlesp/Proyectos/Stalvi/android/app/src/main/kotlin/com/example/stalvi/MainActivity.kt) to inherit from `FlutterFragmentActivity` instead of `FlutterActivity`.
 
 ### Future Prevention Guideline
 - Keep `MainActivity` subclassed from `FlutterFragmentActivity` as long as biometric verification (`local_auth`) is a feature in the application.
@@ -52,9 +52,9 @@ The application had multiple hardcoded strings in the splash page, biometric log
 ### Solution Applied
 1. **Key Extraction**:
    Created and updated key-value pairs representing all user-visible headings, tooltips, validation messages, and buttons in:
-   - [app_en.arb](file:///home/carlesp/Proyectos/Konta/lib/core/l10n/app_en.arb)
-   - [app_es.arb](file:///home/carlesp/Proyectos/Konta/lib/core/l10n/app_es.arb)
-   - [app_ca.arb](file:///home/carlesp/Proyectos/Konta/lib/core/l10n/app_ca.arb)
+   - [app_en.arb](file:///home/carlesp/Proyectos/Stalvi/lib/core/l10n/app_en.arb)
+   - [app_es.arb](file:///home/carlesp/Proyectos/Stalvi/lib/core/l10n/app_es.arb)
+   - [app_ca.arb](file:///home/carlesp/Proyectos/Stalvi/lib/core/l10n/app_ca.arb)
 2. **Clean UI Replacement**:
    Integrated `AppLocalizations.of(context)!` across all screens to resolve text entries dynamically based on the current locale.
 3. **Domain Error Translation**:
@@ -155,7 +155,7 @@ on Android devices, preventing the database from loading and blocking app launch
    The native library override logic `open.overrideFor(OperatingSystem.android, openCipherOnAndroid)` was configured on the main thread. Because dynamic library override settings are isolate-specific, when Drift spawned the background isolate, that isolate did not inherit the `open.overrideFor` configuration and fell back to loading the default SQLite library, failing to find `libsqlite3.so` (as only SQLCipher is bundled).
 
 ### Solution Applied
-- Replaced the asynchronous initialization `NativeDatabase.createInBackground` with the standard `NativeDatabase` constructor in `_openEncryptedDatabase` inside [app_database.dart](file:///home/carlesp/Proyectos/Konta/lib/data/database/app_database.dart).
+- Replaced the asynchronous initialization `NativeDatabase.createInBackground` with the standard `NativeDatabase` constructor in `_openEncryptedDatabase` inside [app_database.dart](file:///home/carlesp/Proyectos/Stalvi/lib/data/database/app_database.dart).
 - Running on the main thread guarantees the FFI overrides are correctly applied. Drift's queries will still be run asynchronously, maintaining high performance while ensuring a stable SQLCipher initialization.
 
 ### Future Prevention Guideline

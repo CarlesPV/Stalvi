@@ -48,7 +48,7 @@
   "@errorNetwork": {
     "description": "Error message when network request fails"
   },
-  "appTitle": "Konta",
+  "appTitle": "Stalvi",
   "@appTitle": {
     "description": "App name branding"
   },
@@ -60,7 +60,7 @@
   "@splashStartupFailed": {
     "description": "Error title shown when app startup fails"
   },
-  "splashSecureStorageError": "Konta couldn't initialise its secure storage. Please check available device storage and try again.",
+  "splashSecureStorageError": "Stalvi couldn't initialise its secure storage. Please check available device storage and try again.",
   "@splashSecureStorageError": {
     "description": "Error message shown when secure storage fails to initialize"
   },
@@ -468,7 +468,7 @@
   "@authBiometricOptInTitle": {
     "description": "Title for the biometric opt-in screen"
   },
-  "authBiometricOptInSubtitle": "Use Fingerprint or FaceID to quickly and securely access your Konta account in the future.",
+  "authBiometricOptInSubtitle": "Use Fingerprint or FaceID to quickly and securely access your Stalvi account in the future.",
   "@authBiometricOptInSubtitle": {
     "description": "Subtitle for the biometric opt-in screen"
   },
@@ -684,6 +684,125 @@
   "errorNoPinSet": "No PIN is currently set.",
   "@errorNoPinSet": {
     "description": "Error message when trying to verify a PIN but none is configured"
+  },
+  "authPinLockedTitle": "Too Many Failed Attempts",
+  "@authPinLockedTitle": {
+    "description": "Title shown during the PIN brute-force lockout screen"
+  },
+  "authPinLockedMessage": "Access has been temporarily blocked after too many incorrect PIN entries.",
+  "@authPinLockedMessage": {
+    "description": "Description shown during the PIN brute-force lockout screen"
+  },
+  "authPinLockedCountdown": "seconds remaining",
+  "@authPinLockedCountdown": {
+    "description": "Label shown below the countdown ring during PIN lockout"
+  },
+  "authPinLockedRetry": "You may now try again",
+  "@authPinLockedRetry": {
+    "description": "Label shown after PIN lockout expires, granting one more attempt"
+  },
+  "authSignInTitle": "Verify identity",
+  "@authSignInTitle": {
+    "description": "Title for the biometric sign-in prompt"
+  },
+  "defaultAccountName": "Main Account",
+  "@defaultAccountName": {
+    "description": "Default name for the main cash account created during setup"
+  },
+  "filterAll": "All",
+  "@filterAll": {
+    "description": "Filter option to show all transactions"
+  },
+  "filterIncome": "Income",
+  "@filterIncome": {
+    "description": "Filter option to show only income transactions"
+  },
+  "filterExpense": "Expense",
+  "@filterExpense": {
+    "description": "Filter option to show only expense transactions"
+  },
+  "filterTransfer": "Transfer",
+  "@filterTransfer": {
+    "description": "Filter option to show only transfer transactions"
+  },
+  "createAccountTitle": "Create New Account",
+  "@createAccountTitle": {
+    "description": "Title for the create account dialog"
+  },
+  "createAccountNameLabel": "Account Name",
+  "@createAccountNameLabel": {
+    "description": "Label for account name input"
+  },
+  "createAccountNameHint": "e.g. Personal Card, Cash, etc.",
+  "@createAccountNameHint": {
+    "description": "Hint text for account name input"
+  },
+  "createAccountInitialBalanceLabel": "Initial Balance",
+  "@createAccountInitialBalanceLabel": {
+    "description": "Label for initial balance input"
+  },
+  "createAccountTypeLabel": "Account Type",
+  "@createAccountTypeLabel": {
+    "description": "Label for account type selection"
+  },
+  "createAccountColorThemeLabel": "Color Theme",
+  "@createAccountColorThemeLabel": {
+    "description": "Label for color theme selection"
+  },
+  "createAccountIconLabel": "Icon",
+  "@createAccountIconLabel": {
+    "description": "Label for icon selection"
+  },
+  "createAccountSuccess": "Account created successfully",
+  "@createAccountSuccess": {
+    "description": "Success message after account creation"
+  },
+  "createAccountErrorName": "Please enter an account name",
+  "@createAccountErrorName": {
+    "description": "Error message when account name is empty"
+  },
+  "createAccountErrorFailed": "Failed to create account",
+  "@createAccountErrorFailed": {
+    "description": "Error message when account creation fails"
+  },
+  "accountTypeOther": "Other",
+  "@accountTypeOther": {
+    "description": "Account type: Other"
+  },
+  "accountTypeCash": "Cash",
+  "@accountTypeCash": {
+    "description": "Account type: Cash"
+  },
+  "accountTypeBank": "Bank",
+  "@accountTypeBank": {
+    "description": "Account type: Bank"
+  },
+  "accountTypeSavings": "Savings",
+  "@accountTypeSavings": {
+    "description": "Account type: Savings"
+  },
+  "accountTypeCard": "Card",
+  "@accountTypeCard": {
+    "description": "Account type: Card"
+  },
+  "deleteTransactionTitle": "Delete Transaction?",
+  "@deleteTransactionTitle": {
+    "description": "Title for the delete transaction dialog"
+  },
+  "transactionMovedToRecycleBin": "Transaction moved to recycle bin",
+  "@transactionMovedToRecycleBin": {
+    "description": "Success message when transaction is deleted"
+  },
+  "errorDeleteTransaction": "Failed to delete transaction",
+  "@errorDeleteTransaction": {
+    "description": "Error message when transaction deletion fails"
+  },
+  "deleteTransactionConfirmation": "Are you sure you want to delete this transaction? This will move it to the recycle bin.",
+  "@deleteTransactionConfirmation": {
+    "description": "Message confirming the deletion of a transaction"
+  },
+  "btnClose": "Close",
+  "@btnClose": {
+    "description": "Close button label"
   }
 }
-

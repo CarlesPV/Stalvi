@@ -1,4 +1,4 @@
-/// Base class for all custom exceptions in the Konta application.
+/// Base class for all custom exceptions in the Stalvi application.
 abstract class AppException implements Exception {
   final String message;
   final String? code;

@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:konta/core/errors/app_exceptions.dart';
-import 'package:konta/core/l10n/app_localizations.dart';
-import 'package:konta/core/theme/app_theme.dart';
-import 'package:konta/domain/entities/account.dart';
-import 'package:konta/domain/entities/category.dart';
-import 'package:konta/domain/entities/tag.dart';
-import 'package:konta/domain/entities/category_type.dart';
-import 'package:konta/domain/entities/transaction_type.dart';
-import 'package:konta/presentation/providers/add_transaction_notifier.dart';
-import 'package:konta/presentation/providers/repository_providers.dart';
+import 'package:stalvi/core/errors/app_exceptions.dart';
+import 'package:stalvi/core/l10n/app_localizations.dart';
+import 'package:stalvi/core/theme/app_theme.dart';
+import 'package:stalvi/domain/entities/account.dart';
+import 'package:stalvi/domain/entities/category.dart';
+import 'package:stalvi/domain/entities/tag.dart';
+import 'package:stalvi/domain/entities/category_type.dart';
+import 'package:stalvi/domain/entities/transaction_type.dart';
+import 'package:stalvi/presentation/providers/add_transaction_notifier.dart';
+import 'package:stalvi/presentation/providers/repository_providers.dart';
+
+import 'package:stalvi/core/utils/icon_helper.dart';
 
 /// Screen containing the transaction creation form.
 ///
-/// Fully stylized according to the Konta core brand aesthetics, leveraging the
+/// Fully stylized according to the Stalvi core brand aesthetics, leveraging the
 /// custom semantic colors from [FinancialColors] for positive/negative states.
 class AddTransactionScreen extends ConsumerStatefulWidget {
   const AddTransactionScreen({super.key});
@@ -53,18 +55,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
 
   /// Maps seeded icon name strings to standard [IconData] constants.
   IconData _getIconData(String name) {
-    switch (name) {
-      case 'wallet':
-        return Icons.account_balance_wallet_rounded;
-      case 'restaurant':
-        return Icons.restaurant_rounded;
-      case 'directions_car':
-        return Icons.directions_car_rounded;
-      case 'attach_money':
-        return Icons.attach_money_rounded;
-      default:
-        return Icons.category_rounded;
-    }
+    return getIconData(name);
   }
 
   Color _parseHexColor(String hexString) {
@@ -350,7 +341,9 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                     // Date Selector
                     _FormSelectorTile(
                       label: AppLocalizations.of(context)!.labelDate,
-                      value: DateFormat('EEEE, MMM d, y').format(state.date),
+                      value: DateFormat.yMMMMEEEEd(
+                        Localizations.localeOf(context).toString(),
+                      ).format(state.date),
                       icon: Icons.calendar_today_rounded,
                       iconColor: colorScheme.primary,
                       onTap: () => _selectDate(context, state.date),
@@ -773,8 +766,10 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                           ),
                         ),
                         trailing: isSelected
-                            ? Icon(Icons.check_circle_rounded,
-                                color: colorScheme.primary)
+                            ? Icon(
+                                Icons.check_circle_rounded,
+                                color: colorScheme.primary,
+                              )
                             : null,
                         onTap: () {
                           ref
@@ -867,8 +862,10 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                           ),
                         ),
                         trailing: isSelected
-                            ? Icon(Icons.check_circle_rounded,
-                                color: colorScheme.tertiary)
+                            ? Icon(
+                                Icons.check_circle_rounded,
+                                color: colorScheme.tertiary,
+                              )
                             : null,
                         onTap: () {
                           ref

@@ -1,4 +1,4 @@
-package com.example.konta
+package com.example.stalvi
 
 import io.flutter.embedding.android.FlutterFragmentActivity
 

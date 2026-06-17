@@ -1,5 +1,5 @@
-import 'package:konta/domain/entities/profile.dart';
-import 'package:konta/data/database/app_database.dart' as db;
+import 'package:stalvi/domain/entities/profile.dart';
+import 'package:stalvi/data/database/app_database.dart' as db;
 
 extension ProfileMapper on Profile {
   db.Profile toDb() {

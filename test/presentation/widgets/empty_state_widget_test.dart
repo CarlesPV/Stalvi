@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:konta/core/theme/app_theme.dart';
-import 'package:konta/presentation/widgets/empty_state_widget.dart';
+import 'package:stalvi/core/theme/app_theme.dart';
+import 'package:stalvi/presentation/widgets/empty_state_widget.dart';
 
 void main() {
   group('EmptyStateWidget Tests', () {

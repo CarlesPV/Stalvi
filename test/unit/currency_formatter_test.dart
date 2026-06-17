@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:konta/core/utils/currency_formatter.dart';
+import 'package:stalvi/core/utils/currency_formatter.dart';
 
 void main() {
   group('CurrencyFormatter Tests', () {

@@ -1,11 +1,11 @@
 import 'dart:ffi';
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:konta/data/database/app_database.dart';
-import 'package:konta/data/database/daos/statistics_dao.dart';
-import 'package:konta/data/database/tables/account_table.dart';
-import 'package:konta/data/database/tables/transaction_table.dart';
-import 'package:konta/data/database/tables/category_table.dart';
+import 'package:stalvi/data/database/app_database.dart';
+import 'package:stalvi/data/database/daos/statistics_dao.dart';
+import 'package:stalvi/data/database/tables/account_table.dart';
+import 'package:stalvi/data/database/tables/transaction_table.dart';
+import 'package:stalvi/data/database/tables/category_table.dart';
 import 'package:drift/drift.dart' as drift;
 // ignore: depend_on_referenced_packages
 import 'package:sqlite3/open.dart';
@@ -214,5 +214,101 @@ void main() {
         await dao.getPeriodSummary(DateTime(2023, 1, 1), DateTime(2023, 1, 31));
     expect(result.$1, 0);
     expect(result.$2, 0);
+  });
+
+  test(
+      'getPeriodSummary should ignore soft-deleted transactions and transactions of soft-deleted accounts',
+      () async {
+    final now = DateTime.now();
+    await database.into(database.profiles).insert(
+          ProfilesCompanion.insert(
+            id: 'profile2',
+            name: 'Test2',
+            username: 'test2',
+            password: '',
+            createdAt: now,
+            modifiedAt: now,
+          ),
+        );
+
+    await database.into(database.accounts).insert(
+          AccountsCompanion.insert(
+            id: 'acc_active',
+            userId: 'profile2',
+            name: 'Active Account',
+            type: AccountType.cash,
+            initialBalance: 0,
+            currency: 'EUR',
+            color: 'red',
+            icon: 'icon',
+            isDefault: true,
+            createdAt: now,
+            modifiedAt: now,
+          ),
+        );
+
+    await database.into(database.accounts).insert(
+          AccountsCompanion.insert(
+            id: 'acc_deleted',
+            userId: 'profile2',
+            name: 'Deleted Account',
+            type: AccountType.cash,
+            initialBalance: 0,
+            currency: 'EUR',
+            color: 'red',
+            icon: 'icon',
+            isDefault: false,
+            isDeleted: const drift.Value(true),
+            createdAt: now,
+            modifiedAt: now,
+          ),
+        );
+
+    // 1. Transaction active in active account
+    await database.into(database.transactions).insert(
+          TransactionsCompanion.insert(
+            id: 't_active',
+            amount: 1000,
+            date: DateTime(2023, 1, 10),
+            type: TransactionType.income,
+            accountId: 'acc_active',
+            originalCurrency: 'EUR',
+            createdAt: now,
+            modifiedAt: now,
+          ),
+        );
+
+    // 2. Transaction soft-deleted in active account
+    await database.into(database.transactions).insert(
+          TransactionsCompanion.insert(
+            id: 't_soft_deleted',
+            amount: 2000,
+            date: DateTime(2023, 1, 10),
+            type: TransactionType.income,
+            accountId: 'acc_active',
+            originalCurrency: 'EUR',
+            isDeleted: const drift.Value(true),
+            createdAt: now,
+            modifiedAt: now,
+          ),
+        );
+
+    // 3. Transaction active in soft-deleted account
+    await database.into(database.transactions).insert(
+          TransactionsCompanion.insert(
+            id: 't_deleted_acc',
+            amount: 4000,
+            date: DateTime(2023, 1, 10),
+            type: TransactionType.income,
+            accountId: 'acc_deleted',
+            originalCurrency: 'EUR',
+            createdAt: now,
+            modifiedAt: now,
+          ),
+        );
+
+    final result =
+        await dao.getPeriodSummary(DateTime(2023, 1, 1), DateTime(2023, 1, 31));
+    expect(result.$1, 1000); // Only t_active is counted
   });
 }

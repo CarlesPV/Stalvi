@@ -5,16 +5,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:konta/core/l10n/app_localizations.dart';
-import 'package:konta/core/security/secure_storage_manager.dart';
-import 'package:konta/infrastructure/services/biometric_auth_service.dart';
-import 'package:konta/presentation/features/auth/auth_screen.dart';
-import 'package:konta/presentation/providers/auth_notifier.dart';
-import 'package:konta/presentation/providers/locale_provider.dart';
-import 'package:konta/core/theme/app_theme.dart';
-import 'package:konta/presentation/providers/repository_providers.dart';
-import 'package:konta/domain/entities/transaction.dart';
-import 'package:konta/domain/entities/account.dart';
+import 'package:stalvi/core/l10n/app_localizations.dart';
+import 'package:stalvi/core/security/secure_storage_manager.dart';
+import 'package:stalvi/infrastructure/services/biometric_auth_service.dart';
+import 'package:stalvi/presentation/features/auth/auth_screen.dart';
+import 'package:stalvi/presentation/providers/auth_notifier.dart';
+import 'package:stalvi/presentation/providers/locale_provider.dart';
+import 'package:stalvi/core/theme/app_theme.dart';
+import 'package:stalvi/presentation/providers/repository_providers.dart';
+import 'package:stalvi/domain/entities/transaction.dart';
+import 'package:stalvi/domain/entities/account.dart';
 
 class MockSecureStorageManager extends Mock implements SecureStorageManager {}
 
@@ -32,6 +32,12 @@ void main() {
     when(() => mockSecureStorage.getUserLocale()).thenAnswer((_) async => 'en');
     when(() => mockSecureStorage.isBiometricsEnabled())
         .thenAnswer((_) async => false);
+    when(() => mockSecureStorage.getLockoutTimestamp())
+        .thenAnswer((_) async => null);
+    when(() => mockSecureStorage.deleteLockoutTimestamp())
+        .thenAnswer((_) async => {});
+    when(() => mockSecureStorage.saveLockoutTimestamp(any()))
+        .thenAnswer((_) async => {});
     when(() => mockBiometricAuth.isBiometricAvailable())
         .thenAnswer((_) async => false);
     when(() => mockBiometricAuth.isBiometricsEnabled())

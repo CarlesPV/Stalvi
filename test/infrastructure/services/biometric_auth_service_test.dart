@@ -1,8 +1,10 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:konta/infrastructure/services/biometric_auth_service.dart';
-import 'package:konta/core/security/secure_storage_manager.dart';
+import 'package:stalvi/infrastructure/services/biometric_auth_service.dart';
+import 'package:stalvi/core/security/secure_storage_manager.dart';
 import 'package:local_auth/local_auth.dart';
+// ignore: depend_on_referenced_packages
+import 'package:local_auth_platform_interface/local_auth_platform_interface.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:local_auth/error_codes.dart' as auth_error;
 
@@ -17,6 +19,7 @@ void main() {
 
   setUpAll(() {
     registerFallbackValue(const AuthenticationOptions());
+    registerFallbackValue(<AuthMessages>[]);
   });
 
   setUp(() {
@@ -84,6 +87,7 @@ void main() {
         () => mockLocalAuth.authenticate(
           localizedReason: any(named: 'localizedReason'),
           options: any(named: 'options'),
+          authMessages: any(named: 'authMessages'),
         ),
       ).thenAnswer((_) async => true);
 
@@ -101,6 +105,7 @@ void main() {
         () => mockLocalAuth.authenticate(
           localizedReason: any(named: 'localizedReason'),
           options: any(named: 'options'),
+          authMessages: any(named: 'authMessages'),
         ),
       ).thenAnswer((_) async => false);
 
@@ -118,6 +123,7 @@ void main() {
         () => mockLocalAuth.authenticate(
           localizedReason: any(named: 'localizedReason'),
           options: any(named: 'options'),
+          authMessages: any(named: 'authMessages'),
         ),
       ).thenThrow(
         PlatformException(
@@ -142,6 +148,7 @@ void main() {
         () => mockLocalAuth.authenticate(
           localizedReason: any(named: 'localizedReason'),
           options: any(named: 'options'),
+          authMessages: any(named: 'authMessages'),
         ),
       ).thenThrow(PlatformException(code: 'other', message: 'Other error'));
 
@@ -161,6 +168,7 @@ void main() {
         () => mockLocalAuth.authenticate(
           localizedReason: any(named: 'localizedReason'),
           options: any(named: 'options'),
+          authMessages: any(named: 'authMessages'),
         ),
       ).thenThrow(Exception('General error'));
 

@@ -4,10 +4,10 @@ import 'package:drift/native.dart';
 // ignore: depend_on_referenced_packages
 import 'package:sqlite3/open.dart';
 import 'package:uuid/uuid.dart';
-import 'package:konta/data/database/app_database.dart' as db_data;
-import 'package:konta/data/repositories/account_repository.dart';
-import 'package:konta/domain/entities/account.dart';
-import 'package:konta/domain/entities/account_type.dart';
+import 'package:stalvi/data/database/app_database.dart' as db_data;
+import 'package:stalvi/data/repositories/account_repository.dart';
+import 'package:stalvi/domain/entities/account.dart';
+import 'package:stalvi/domain/entities/account_type.dart';
 
 void main() {
   setUpAll(() {

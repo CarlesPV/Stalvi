@@ -1,4 +1,4 @@
-import 'package:konta/domain/entities/category_type.dart';
+import 'package:stalvi/domain/entities/category_type.dart';
 
 class Category {
   final String id;

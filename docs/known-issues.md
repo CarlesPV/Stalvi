@@ -1,6 +1,6 @@
 # Known Issues
 
-This document tracks known issues in the Konta application that require resolution.
+This document tracks known issues in the Stalvi application that require resolution.
 
 ## Active Issues
 *No active runtime issues are currently known.*

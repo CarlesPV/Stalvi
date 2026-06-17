@@ -1,6 +1,6 @@
-# Project Overview: Konta
+# Project Overview: Stalvi
 
-**Name:** Konta
+**Name:** Stalvi
 **Objective:** A local-first, highly secure financial application to track income, expenses, budgets, and savings goals.
 **Tech Stack:** Flutter (Dart), Riverpod, Drift (SQLite), SQLCipher.
 

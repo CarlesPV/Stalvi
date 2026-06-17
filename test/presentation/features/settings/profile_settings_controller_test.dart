@@ -1,11 +1,11 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:konta/core/errors/app_exceptions.dart';
-import 'package:konta/domain/entities/profile.dart';
-import 'package:konta/domain/repositories/i_profile_repository.dart';
-import 'package:konta/domain/usecases/update_credentials_usecase.dart';
-import 'package:konta/presentation/features/settings/profile_settings_controller.dart';
-import 'package:konta/presentation/providers/repository_providers.dart';
+import 'package:stalvi/core/errors/app_exceptions.dart';
+import 'package:stalvi/domain/entities/profile.dart';
+import 'package:stalvi/domain/repositories/i_profile_repository.dart';
+import 'package:stalvi/domain/usecases/update_credentials_usecase.dart';
+import 'package:stalvi/presentation/features/settings/profile_settings_controller.dart';
+import 'package:stalvi/presentation/providers/repository_providers.dart';
 
 class FakeProfileRepository implements IProfileRepository {
   @override
@@ -144,6 +144,93 @@ void main() {
         expect(e, isA<Exception>());
         expect(e.toString(), contains('Maximum PIN attempts reached'));
       }
+    });
+  });
+
+  group('ProfileSettingsController delete all data PIN flow', () {
+    test('initial state failedDeleteAttempts should be 0', () async {
+      final state = container.read(profileSettingsControllerProvider);
+      expect(state.failedDeleteAttempts, 0);
+    });
+
+    test('verifyDeleteDataPin returns true on success', () async {
+      final controller =
+          container.read(profileSettingsControllerProvider.notifier);
+      final ok = await controller.verifyDeleteDataPin('1234');
+
+      expect(ok, isTrue);
+      final state = container.read(profileSettingsControllerProvider);
+      expect(state.failedDeleteAttempts, 0);
+    });
+
+    test('verifyDeleteDataPin returns false and increments attempts on failure',
+        () async {
+      fakeUpdateCredentialsUseCase.shouldFailVerify = true;
+      final controller =
+          container.read(profileSettingsControllerProvider.notifier);
+      final ok = await controller.verifyDeleteDataPin('wrong');
+
+      expect(ok, isFalse);
+      final state = container.read(profileSettingsControllerProvider);
+      expect(state.failedDeleteAttempts, 1);
+    });
+
+    test('verifyDeleteDataPin blocks and returns false after 6 failed attempts',
+        () async {
+      fakeUpdateCredentialsUseCase.shouldFailVerify = true;
+      final controller =
+          container.read(profileSettingsControllerProvider.notifier);
+
+      for (int i = 0; i < 6; i++) {
+        await controller.verifyDeleteDataPin('wrong');
+      }
+
+      final state = container.read(profileSettingsControllerProvider);
+      expect(state.failedDeleteAttempts, 6);
+
+      final ok = await controller.verifyDeleteDataPin('1234');
+      expect(ok, isFalse);
+    });
+
+    test('resetDeleteDataState resets failedDeleteAttempts if less than 6',
+        () async {
+      fakeUpdateCredentialsUseCase.shouldFailVerify = true;
+      final controller =
+          container.read(profileSettingsControllerProvider.notifier);
+
+      await controller.verifyDeleteDataPin('wrong');
+      expect(
+        container.read(profileSettingsControllerProvider).failedDeleteAttempts,
+        1,
+      );
+
+      controller.resetDeleteDataState();
+      expect(
+        container.read(profileSettingsControllerProvider).failedDeleteAttempts,
+        0,
+      );
+    });
+
+    test(
+        'resetDeleteDataState does not reset failedDeleteAttempts if already 6 or more',
+        () async {
+      fakeUpdateCredentialsUseCase.shouldFailVerify = true;
+      final controller =
+          container.read(profileSettingsControllerProvider.notifier);
+
+      for (int i = 0; i < 6; i++) {
+        await controller.verifyDeleteDataPin('wrong');
+      }
+      expect(
+        container.read(profileSettingsControllerProvider).failedDeleteAttempts,
+        6,
+      );
+
+      controller.resetDeleteDataState();
+      expect(
+        container.read(profileSettingsControllerProvider).failedDeleteAttempts,
+        6,
+      );
     });
   });
 }

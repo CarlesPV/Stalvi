@@ -3,12 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:konta/core/l10n/app_localizations.dart';
-import 'package:konta/core/security/secure_storage_manager.dart';
-import 'package:konta/infrastructure/services/biometric_auth_service.dart';
-import 'package:konta/presentation/features/auth/biometric_opt_in_screen.dart';
-import 'package:konta/presentation/providers/locale_provider.dart';
-import 'package:konta/core/theme/app_theme.dart';
+import 'package:stalvi/core/l10n/app_localizations.dart';
+import 'package:stalvi/core/security/secure_storage_manager.dart';
+import 'package:stalvi/infrastructure/services/biometric_auth_service.dart';
+import 'package:stalvi/presentation/features/auth/biometric_opt_in_screen.dart';
+import 'package:stalvi/presentation/providers/locale_provider.dart';
+import 'package:stalvi/core/theme/app_theme.dart';
 
 class MockSecureStorageManager extends Mock implements SecureStorageManager {}
 
@@ -68,7 +68,7 @@ void main() {
       expect(find.text('Enable Biometric Login'), findsOneWidget);
       expect(
         find.text(
-          'Use Fingerprint or FaceID to quickly and securely access your Konta account in the future.',
+          'Use Fingerprint or FaceID to quickly and securely access your Stalvi account in the future.',
         ),
         findsOneWidget,
       );
@@ -86,6 +86,8 @@ void main() {
           lockedOutMessage: any(named: 'lockedOutMessage'),
           authFailedMessage: any(named: 'authFailedMessage'),
           unknownErrorMessage: any(named: 'unknownErrorMessage'),
+          signInTitle: any(named: 'signInTitle'),
+          cancelButton: any(named: 'cancelButton'),
         ),
       ).thenAnswer((_) async => true);
       when(() => mockBiometricAuth.enableBiometrics())
@@ -110,6 +112,8 @@ void main() {
           lockedOutMessage: any(named: 'lockedOutMessage'),
           authFailedMessage: any(named: 'authFailedMessage'),
           unknownErrorMessage: any(named: 'unknownErrorMessage'),
+          signInTitle: any(named: 'signInTitle'),
+          cancelButton: any(named: 'cancelButton'),
         ),
       ).called(1);
       verify(() => mockBiometricAuth.enableBiometrics()).called(1);

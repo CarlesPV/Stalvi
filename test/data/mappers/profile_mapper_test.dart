@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:konta/domain/entities/profile.dart';
-import 'package:konta/data/database/app_database.dart' as db;
-import 'package:konta/data/mappers/profile_mapper.dart';
+import 'package:stalvi/domain/entities/profile.dart';
+import 'package:stalvi/data/database/app_database.dart' as db;
+import 'package:stalvi/data/mappers/profile_mapper.dart';
 
 void main() {
   group('ProfileMapper', () {

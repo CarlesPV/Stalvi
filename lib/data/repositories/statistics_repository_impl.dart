@@ -1,9 +1,9 @@
-import 'package:konta/data/database/daos/statistics_dao.dart';
-import 'package:konta/data/database/tables/transaction_table.dart';
-import 'package:konta/data/mappers/statistics_mapper.dart';
-import 'package:konta/domain/entities/category_statistic.dart';
-import 'package:konta/domain/entities/period_summary.dart';
-import 'package:konta/domain/repositories/i_statistics_repository.dart';
+import 'package:stalvi/data/database/daos/statistics_dao.dart';
+import 'package:stalvi/data/database/tables/transaction_table.dart';
+import 'package:stalvi/data/mappers/statistics_mapper.dart';
+import 'package:stalvi/domain/entities/category_statistic.dart';
+import 'package:stalvi/domain/entities/period_summary.dart';
+import 'package:stalvi/domain/repositories/i_statistics_repository.dart';
 
 class StatisticsRepositoryImpl implements IStatisticsRepository {
   final StatisticsDao _dao;

@@ -3,8 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
-import 'package:konta/main.dart';
-import 'package:konta/presentation/providers/auth_notifier.dart';
+import 'package:stalvi/main.dart';
+import 'package:stalvi/presentation/providers/auth_notifier.dart';
 
 /// A mock for AuthNotifier that bypasses biometric authentication
 /// by starting the app in an authenticated state.
@@ -27,7 +27,7 @@ void main() {
         overrides: [
           authNotifierProvider.overrideWith(() => MockAuthNotifier()),
         ],
-        child: const KontaApp(),
+        child: const StalviApp(),
       ),
     );
 
@@ -35,7 +35,7 @@ void main() {
     await tester.pumpAndSettle();
 
     // 2. Verify we are on the Dashboard
-    expect(find.text('Konta'), findsWidgets); // App bar title
+    expect(find.text('Stalvi'), findsWidgets); // App bar title
     expect(find.byType(FloatingActionButton), findsOneWidget);
 
     // 3. Tap the Floating Action Button to open "Add Transaction"

@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:konta/core/l10n/app_localizations.dart';
-import 'package:konta/core/theme/app_theme.dart';
-import 'package:konta/core/utils/currency_formatter.dart';
-import 'package:konta/domain/entities/budget.dart';
-import 'package:konta/domain/entities/category.dart';
-import 'package:konta/domain/entities/savings_goal.dart';
-import 'package:konta/presentation/providers/repository_providers.dart';
-import 'package:konta/presentation/widgets/progress_bar_widget.dart';
-import 'package:konta/presentation/widgets/empty_state_widget.dart';
+import 'package:stalvi/core/l10n/app_localizations.dart';
+import 'package:stalvi/core/theme/app_theme.dart';
+import 'package:stalvi/core/utils/currency_formatter.dart';
+import 'package:stalvi/domain/entities/budget.dart';
+import 'package:stalvi/domain/entities/category.dart';
+import 'package:stalvi/domain/entities/savings_goal.dart';
+import 'package:stalvi/presentation/providers/repository_providers.dart';
+import 'package:stalvi/presentation/widgets/progress_bar_widget.dart';
+import 'package:stalvi/presentation/widgets/empty_state_widget.dart';
+import 'package:stalvi/core/utils/icon_helper.dart';
 
 /// Screen displaying Budgets and Savings Goals in a tabbed interface.
 ///
@@ -133,18 +134,7 @@ class _BudgetCard extends ConsumerWidget {
   }
 
   IconData _getIconData(String name) {
-    switch (name) {
-      case 'wallet':
-        return Icons.account_balance_wallet_rounded;
-      case 'restaurant':
-        return Icons.restaurant_rounded;
-      case 'directions_car':
-        return Icons.directions_car_rounded;
-      case 'attach_money':
-        return Icons.attach_money_rounded;
-      default:
-        return Icons.category_rounded;
-    }
+    return getIconData(name);
   }
 
   @override
@@ -178,8 +168,9 @@ class _BudgetCard extends ConsumerWidget {
     final statusColor =
         isOverspent ? financialColors.negative : colorScheme.onSurfaceVariant;
 
+    final locale = Localizations.localeOf(context).toString();
     final dateRangeStr =
-        '${DateFormat('MMM d').format(budget.startDate)} - ${DateFormat('MMM d, y').format(budget.endDate)}';
+        '${DateFormat.MMMd(locale).format(budget.startDate)} - ${DateFormat.yMMMd(locale).format(budget.endDate)}';
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
@@ -317,28 +308,7 @@ class _SavingsGoalCard extends ConsumerWidget {
   }
 
   IconData _getIconData(String name) {
-    switch (name) {
-      case 'wallet':
-        return Icons.account_balance_wallet_rounded;
-      case 'restaurant':
-        return Icons.restaurant_rounded;
-      case 'directions_car':
-        return Icons.directions_car_rounded;
-      case 'attach_money':
-        return Icons.attach_money_rounded;
-      case 'savings':
-        return Icons.savings_rounded;
-      case 'home':
-        return Icons.home_rounded;
-      case 'flight':
-        return Icons.flight_rounded;
-      case 'school':
-        return Icons.school_rounded;
-      case 'shopping_cart':
-        return Icons.shopping_cart_rounded;
-      default:
-        return Icons.stars_rounded;
-    }
+    return getIconData(name);
   }
 
   @override
@@ -363,8 +333,9 @@ class _SavingsGoalCard extends ConsumerWidget {
         CurrencyFormatter.formatPercentage(progress, decimalDigits: 0);
 
     final targetDateStr = goal.targetDate != null
-        ? AppLocalizations.of(context)!
-            .savingsTargetDate(DateFormat('MMM d, y').format(goal.targetDate!))
+        ? AppLocalizations.of(context)!.savingsTargetDate(
+            DateFormat.yMMMd(Localizations.localeOf(context).toString())
+                .format(goal.targetDate!))
         : AppLocalizations.of(context)!.savingsNoTargetDate;
 
     return Container(

@@ -2,11 +2,11 @@ import 'dart:convert';
 import 'package:crypto/crypto.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:konta/core/errors/app_exceptions.dart';
-import 'package:konta/core/security/secure_storage_manager.dart';
-import 'package:konta/domain/entities/profile.dart';
-import 'package:konta/domain/repositories/i_profile_repository.dart';
-import 'package:konta/domain/usecases/create_profile_usecase.dart';
+import 'package:stalvi/core/errors/app_exceptions.dart';
+import 'package:stalvi/core/security/secure_storage_manager.dart';
+import 'package:stalvi/domain/entities/profile.dart';
+import 'package:stalvi/domain/repositories/i_profile_repository.dart';
+import 'package:stalvi/domain/usecases/create_profile_usecase.dart';
 
 class MockProfileRepository extends Mock implements IProfileRepository {}
 

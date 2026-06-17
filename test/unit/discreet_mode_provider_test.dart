@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:konta/presentation/providers/discreet_mode_provider.dart';
+import 'package:stalvi/presentation/providers/discreet_mode_provider.dart';
 
 void main() {
   group('DiscreetModeNotifier', () {

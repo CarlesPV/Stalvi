@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:konta/presentation/providers/repository_providers.dart';
+import 'package:stalvi/presentation/providers/repository_providers.dart';
 
 /// Provider for CurrencyFormatter that uses the user's preferred currency.
 final currencyFormatterProvider = Provider<CurrencyFormatter>((ref) {

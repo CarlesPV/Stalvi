@@ -1,24 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:konta/core/l10n/app_localizations.dart';
-import 'package:konta/core/theme/app_theme.dart';
-import 'package:konta/core/utils/currency_formatter.dart';
-import 'package:konta/domain/entities/account.dart';
-import 'package:konta/domain/entities/transaction.dart';
-import 'package:konta/domain/entities/transaction_type.dart';
-import 'package:konta/presentation/features/transactions/add_transaction_screen.dart';
-import 'package:konta/presentation/features/budgets_and_goals/budgets_and_goals_screen.dart';
-import 'package:konta/presentation/features/statistics/statistics_screen.dart';
-import 'package:konta/presentation/providers/repository_providers.dart';
-import 'package:konta/presentation/providers/auth_notifier.dart';
-import 'package:konta/presentation/providers/locale_provider.dart';
-import 'package:konta/presentation/features/settings/profile_settings_screen.dart';
-import 'package:konta/presentation/features/recycle_bin/recycle_bin_screen.dart';
-import 'package:konta/presentation/widgets/empty_state_widget.dart';
-import 'package:konta/presentation/providers/discreet_mode_provider.dart';
-import 'package:konta/presentation/widgets/obfuscated_text.dart';
-import 'package:konta/presentation/providers/statistics_providers.dart';
+import 'package:stalvi/core/l10n/app_localizations.dart';
+import 'package:stalvi/core/theme/app_theme.dart';
+import 'package:stalvi/core/utils/currency_formatter.dart';
+import 'package:stalvi/domain/entities/account.dart';
+import 'package:stalvi/domain/entities/account_type.dart';
+import 'package:stalvi/domain/entities/transaction.dart';
+import 'package:stalvi/domain/entities/transaction_type.dart';
+import 'package:stalvi/presentation/features/transactions/add_transaction_screen.dart';
+import 'package:stalvi/presentation/features/budgets_and_goals/budgets_and_goals_screen.dart';
+import 'package:stalvi/presentation/features/statistics/statistics_screen.dart';
+import 'package:stalvi/presentation/providers/repository_providers.dart';
+import 'package:stalvi/presentation/providers/auth_notifier.dart';
+import 'package:stalvi/presentation/providers/locale_provider.dart';
+import 'package:stalvi/presentation/features/settings/profile_settings_screen.dart';
+import 'package:stalvi/presentation/features/recycle_bin/recycle_bin_screen.dart';
+import 'package:stalvi/presentation/widgets/empty_state_widget.dart';
+import 'package:stalvi/presentation/providers/discreet_mode_provider.dart';
+import 'package:stalvi/presentation/widgets/obfuscated_text.dart';
+import 'package:stalvi/presentation/providers/statistics_providers.dart';
+import 'package:stalvi/presentation/widgets/create_account_dialog.dart';
+import 'package:stalvi/presentation/widgets/edit_account_dialog.dart';
+import 'package:stalvi/presentation/features/transactions/transaction_details_dialog.dart';
+import 'package:stalvi/core/utils/icon_helper.dart';
 
 /// The main application scaffold — shown after successful authentication.
 ///
@@ -215,7 +220,13 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen>
       floatingActionButton: _selectedIndex == 3
           ? null
           : FloatingActionButton(
-              onPressed: () => _navigateToAddTransaction(context),
+              onPressed: () {
+                if (_selectedIndex == 2) {
+                  CreateAccountDialog.show(context);
+                } else {
+                  _navigateToAddTransaction(context);
+                }
+              },
               backgroundColor: colorScheme.primary,
               foregroundColor: colorScheme.onPrimary,
               shape: RoundedRectangleBorder(
@@ -371,7 +382,10 @@ class _OverviewTab extends ConsumerWidget {
                 children: recent.map((txn) {
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 12),
-                    child: _TransactionItem(transaction: txn),
+                    child: _TransactionItem(
+                      key: ValueKey('recent_transaction_${txn.id}'),
+                      transaction: txn,
+                    ),
                   );
                 }).toList(),
               );
@@ -385,22 +399,59 @@ class _OverviewTab extends ConsumerWidget {
 
 // ─── Transactions Tab ─────────────────────────────────────────────────────────
 
-class _TransactionsTab extends ConsumerWidget {
+class _TransactionsTab extends ConsumerStatefulWidget {
   final Animation<double> shimmer;
 
   const _TransactionsTab({required this.shimmer});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<_TransactionsTab> createState() => _TransactionsTabState();
+}
+
+class _TransactionsTabState extends ConsumerState<_TransactionsTab> {
+  TransactionType? _filter;
+
+  Widget _buildFilterChip(
+    String label,
+    TransactionType? type,
+    ColorScheme colorScheme,
+  ) {
+    final isSelected = _filter == type;
+    return FilterChip(
+      label: Text(label),
+      selected: isSelected,
+      showCheckmark: false,
+      backgroundColor: colorScheme.surfaceContainerHighest,
+      selectedColor: colorScheme.primary,
+      labelStyle: Theme.of(context).textTheme.labelMedium?.copyWith(
+            color: isSelected
+                ? colorScheme.onPrimary
+                : colorScheme.onSurfaceVariant,
+            fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+          ),
+      side: BorderSide(
+        color: isSelected
+            ? Colors.transparent
+            : colorScheme.outline.withValues(alpha: 0.2),
+      ),
+      onSelected: (_) {
+        setState(() => _filter = type);
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final transactionsAsync = ref.watch(transactionsStreamProvider);
+    final l10n = AppLocalizations.of(context)!;
 
     return transactionsAsync.when(
-      loading: () => _GenericSkeletonTab(shimmer: shimmer, itemCount: 8),
+      loading: () => _GenericSkeletonTab(shimmer: widget.shimmer, itemCount: 8),
       error: (err, _) => Center(
         child: Text(
-          AppLocalizations.of(context)!.failedLoadTransactions,
+          l10n.failedLoadTransactions,
           style: TextStyle(color: colorScheme.error),
         ),
       ),
@@ -408,9 +459,9 @@ class _TransactionsTab extends ConsumerWidget {
         if (transactions.isEmpty) {
           return EmptyStateWidget(
             icon: Icons.receipt_long_outlined,
-            title: AppLocalizations.of(context)!.noTransactionsTitle,
-            subtitle: AppLocalizations.of(context)!.noTransactionsSubtitle,
-            actionLabel: AppLocalizations.of(context)!.addTransaction,
+            title: l10n.noTransactionsTitle,
+            subtitle: l10n.noTransactionsSubtitle,
+            actionLabel: l10n.addTransaction,
             onActionPressed: () {
               final state =
                   context.findAncestorStateOfType<_DashboardScreenState>();
@@ -421,16 +472,65 @@ class _TransactionsTab extends ConsumerWidget {
           );
         }
 
-        return ListView.builder(
-          padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
-          itemCount: transactions.length,
-          itemBuilder: (context, i) {
-            final txn = transactions[i];
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: _TransactionItem(transaction: txn),
-            );
-          },
+        final filtered = _filter == null
+            ? transactions
+            : transactions.where((t) => t.type == _filter).toList();
+
+        return Column(
+          children: [
+            SizedBox(
+              height: 56,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                children: [
+                  _buildFilterChip(l10n.filterAll, null, colorScheme),
+                  const SizedBox(width: 8),
+                  _buildFilterChip(
+                    l10n.filterIncome,
+                    TransactionType.income,
+                    colorScheme,
+                  ),
+                  const SizedBox(width: 8),
+                  _buildFilterChip(
+                    l10n.filterExpense,
+                    TransactionType.expense,
+                    colorScheme,
+                  ),
+                  const SizedBox(width: 8),
+                  _buildFilterChip(
+                    l10n.filterTransfer,
+                    TransactionType.transfer,
+                    colorScheme,
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: filtered.isEmpty
+                  ? Center(
+                      child: Text(
+                        l10n.noDataAvailable,
+                        style: TextStyle(color: colorScheme.onSurfaceVariant),
+                      ),
+                    )
+                  : ListView.builder(
+                      padding: const EdgeInsets.fromLTRB(20, 10, 20, 24),
+                      itemCount: filtered.length,
+                      itemBuilder: (context, i) {
+                        final txn = filtered[i];
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 12),
+                          child: _TransactionItem(
+                            key: ValueKey('all_transaction_${txn.id}'),
+                            transaction: txn,
+                          ),
+                        );
+                      },
+                    ),
+            ),
+          ],
         );
       },
     );
@@ -466,7 +566,7 @@ class _AccountsTab extends ConsumerWidget {
             subtitle: AppLocalizations.of(context)!.noAccountsSubtitle,
             actionLabel: AppLocalizations.of(context)!.getStarted,
             onActionPressed: () {
-              // TODO: Implement navigation to account creation
+              CreateAccountDialog.show(context);
             },
           );
         }
@@ -500,17 +600,22 @@ class _AccountItem extends ConsumerWidget {
   }
 
   IconData _getIconData(String name) {
-    switch (name) {
-      case 'wallet':
-        return Icons.account_balance_wallet_rounded;
-      case 'restaurant':
-        return Icons.restaurant_rounded;
-      case 'directions_car':
-        return Icons.directions_car_rounded;
-      case 'attach_money':
-        return Icons.attach_money_rounded;
-      default:
-        return Icons.account_balance_outlined;
+    return getIconData(name);
+  }
+
+  String _getLocalizedAccountType(BuildContext context, AccountType type) {
+    final l10n = AppLocalizations.of(context)!;
+    switch (type) {
+      case AccountType.cash:
+        return l10n.accountTypeCash;
+      case AccountType.bank:
+        return l10n.accountTypeBank;
+      case AccountType.savings:
+        return l10n.accountTypeSavings;
+      case AccountType.card:
+        return l10n.accountTypeCard;
+      case AccountType.other:
+        return l10n.accountTypeOther;
     }
   }
 
@@ -528,85 +633,89 @@ class _AccountItem extends ConsumerWidget {
       currencyCode: account.currency,
     );
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-      decoration: BoxDecoration(
-        color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
-        borderRadius: BorderRadius.circular(14),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: accColor.withValues(alpha: 0.12),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Icon(
-              accIcon,
-              color: accColor,
-              size: 20,
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  account.name,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.w700,
-                    color: colorScheme.onSurface,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  account.type.name.toUpperCase(),
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: colorScheme.onSurfaceVariant,
-                    fontSize: 11,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(width: 12),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                balanceStr,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.w800,
-                  color: colorScheme.onSurface,
-                ),
+    return GestureDetector(
+      onTap: () => EditAccountDialog.show(context, account),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        decoration: BoxDecoration(
+          color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+          borderRadius: BorderRadius.circular(14),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: accColor.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(12),
               ),
-              if (account.isDefault) ...[
-                const SizedBox(height: 4),
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: colorScheme.primary.withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(4),
+              child: Icon(
+                accIcon,
+                color: accColor,
+                size: 20,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    account.name,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.w700,
+                      color: colorScheme.onSurface,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  child: Text(
-                    AppLocalizations.of(context)!.defaultAccountLabel,
-                    style: theme.textTheme.labelSmall?.copyWith(
-                      color: colorScheme.primary,
-                      fontSize: 9,
-                      fontWeight: FontWeight.bold,
+                  const SizedBox(height: 4),
+                  Text(
+                    _getLocalizedAccountType(context, account.type)
+                        .toUpperCase(),
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: colorScheme.onSurfaceVariant,
+                      fontSize: 11,
                     ),
                   ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 12),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(
+                  balanceStr,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.w800,
+                    color: colorScheme.onSurface,
+                  ),
                 ),
+                if (account.isDefault) ...[
+                  const SizedBox(height: 4),
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: colorScheme.primary.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Text(
+                      AppLocalizations.of(context)!.defaultAccountLabel,
+                      style: theme.textTheme.labelSmall?.copyWith(
+                        color: colorScheme.primary,
+                        fontSize: 9,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
               ],
-            ],
-          ),
-        ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -617,7 +726,10 @@ class _AccountItem extends ConsumerWidget {
 class _TransactionItem extends ConsumerWidget {
   final Transaction transaction;
 
-  const _TransactionItem({required this.transaction});
+  const _TransactionItem({
+    super.key,
+    required this.transaction,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -643,67 +755,74 @@ class _TransactionItem extends ConsumerWidget {
             ? Icons.swap_horiz_rounded
             : Icons.trending_down_rounded);
 
-    final dateStr = DateFormat('MMM d, yyyy').format(transaction.date);
+    final dateStr = DateFormat.yMMMd(Localizations.localeOf(context).toString())
+        .format(transaction.date);
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-      decoration: BoxDecoration(
-        color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
-        borderRadius: BorderRadius.circular(14),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.12),
-              borderRadius: BorderRadius.circular(12),
+    return InkWell(
+      onTap: () {
+        TransactionDetailsDialog.show(context, transaction);
+      },
+      borderRadius: BorderRadius.circular(14),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        decoration: BoxDecoration(
+          color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+          borderRadius: BorderRadius.circular(14),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: color.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(
+                icon,
+                color: color,
+                size: 20,
+              ),
             ),
-            child: Icon(
-              icon,
-              color: color,
-              size: 20,
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  transaction.notes?.isNotEmpty == true
-                      ? transaction.notes!
-                      : (isIncome
-                          ? AppLocalizations.of(context)!.fallbackIncome
-                          : AppLocalizations.of(context)!.fallbackExpense),
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.w700,
-                    color: colorScheme.onSurface,
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    transaction.notes?.isNotEmpty == true
+                        ? transaction.notes!
+                        : (isIncome
+                            ? AppLocalizations.of(context)!.fallbackIncome
+                            : AppLocalizations.of(context)!.fallbackExpense),
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.w700,
+                      color: colorScheme.onSurface,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  dateStr,
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: colorScheme.onSurfaceVariant,
-                    fontSize: 11,
+                  const SizedBox(height: 4),
+                  Text(
+                    dateStr,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: colorScheme.onSurfaceVariant,
+                      fontSize: 11,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          const SizedBox(width: 12),
-          Text(
-            amountStr,
-            style: theme.textTheme.bodyMedium?.copyWith(
-              fontWeight: FontWeight.w800,
-              color: color,
+            const SizedBox(width: 12),
+            Text(
+              amountStr,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                fontWeight: FontWeight.w800,
+                color: color,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

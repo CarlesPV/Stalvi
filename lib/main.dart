@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:konta/core/l10n/app_localizations.dart';
+import 'package:stalvi/core/l10n/app_localizations.dart';
 
-import 'package:konta/core/theme/app_theme.dart';
-import 'package:konta/presentation/features/splash/splash_screen.dart';
-import 'package:konta/presentation/providers/locale_provider.dart';
-import 'package:konta/presentation/providers/theme_provider.dart';
-import 'package:konta/presentation/widgets/lifecycle_blur_wrapper.dart';
+import 'package:stalvi/core/theme/app_theme.dart';
+import 'package:stalvi/presentation/features/splash/splash_screen.dart';
+import 'package:stalvi/presentation/providers/locale_provider.dart';
+import 'package:stalvi/presentation/providers/theme_provider.dart';
+import 'package:stalvi/presentation/widgets/lifecycle_blur_wrapper.dart';
 
-/// Entry point for the Konta application.
+/// Entry point for the Stalvi application.
 ///
 /// [WidgetsFlutterBinding.ensureInitialized] is called to guarantee that all
 /// Flutter engine bindings (required by plugins such as [local_auth] and
@@ -20,7 +20,7 @@ void main() {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(
     const ProviderScope(
-      child: KontaApp(),
+      child: StalviApp(),
     ),
   );
 }
@@ -31,8 +31,8 @@ void main() {
 /// - [localeProvider] to watch and dynamically change application language.
 /// - [AppLocalizations.delegate] and other material/cupertino l10n delegates.
 /// - [SplashScreen] as the initial route (Splash → Auth → Dashboard).
-class KontaApp extends ConsumerWidget {
-  const KontaApp({super.key});
+class StalviApp extends ConsumerWidget {
+  const StalviApp({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -40,7 +40,7 @@ class KontaApp extends ConsumerWidget {
     final activeThemeMode = ref.watch(themeProvider);
 
     return MaterialApp(
-      title: 'Konta',
+      title: 'Stalvi',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,

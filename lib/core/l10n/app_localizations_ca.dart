@@ -49,7 +49,7 @@ class AppLocalizationsCa extends AppLocalizations {
       'Error de xarxa. Si us plau, comproveu la vostra connexió a internet.';
 
   @override
-  String get appTitle => 'Konta';
+  String get appTitle => 'Stalvi';
 
   @override
   String get splashTagline => 'Les teves finances, a la teva manera.';
@@ -59,7 +59,7 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get splashSecureStorageError =>
-      'Konta no ha pogut inicialitzar el seu emmagatzematge segur. Si us plau, comproveu l\'espai disponible al dispositiu i torneu-ho a provar.';
+      'Stalvi no ha pogut inicialitzar el seu emmagatzematge segur. Si us plau, comproveu l\'espai disponible al dispositiu i torneu-ho a provar.';
 
   @override
   String get tryAgain => 'Torna-ho a provar';
@@ -374,7 +374,7 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get authBiometricOptInSubtitle =>
-      'Utilitza la teva petjada dactilar o reconeixement facial per accedir a Konta de forma ràpida i segura en el futur.';
+      'Utilitza la teva petjada dactilar o reconeixement facial per accedir a Stalvi de forma ràpida i segura en el futur.';
 
   @override
   String get authBiometricOptInEnable => 'Habilitar biometria';
@@ -537,4 +537,97 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get errorNoPinSet => 'No hi ha cap PIN configurat actualment.';
+
+  @override
+  String get authPinLockedTitle => 'Masses intents fallits';
+
+  @override
+  String get authPinLockedMessage =>
+      'L\'accés ha estat bloquejat temporalment després de masses entrades incorrectes del PIN.';
+
+  @override
+  String get authPinLockedCountdown => 'segons restants';
+
+  @override
+  String get authPinLockedRetry => 'Ara podeu tornar-ho a provar';
+
+  @override
+  String get authSignInTitle => 'Verificar identitat';
+
+  @override
+  String get defaultAccountName => 'Compte principal';
+
+  @override
+  String get filterAll => 'Tots';
+
+  @override
+  String get filterIncome => 'Ingressos';
+
+  @override
+  String get filterExpense => 'Despeses';
+
+  @override
+  String get filterTransfer => 'Transferència';
+
+  @override
+  String get createAccountTitle => 'Crear nou compte';
+
+  @override
+  String get createAccountNameLabel => 'Nom del compte';
+
+  @override
+  String get createAccountNameHint => 'ex. Targeta Personal, Efectiu, etc.';
+
+  @override
+  String get createAccountInitialBalanceLabel => 'Saldo inicial';
+
+  @override
+  String get createAccountTypeLabel => 'Tipus de compte';
+
+  @override
+  String get createAccountColorThemeLabel => 'Tema de color';
+
+  @override
+  String get createAccountIconLabel => 'Icona';
+
+  @override
+  String get createAccountSuccess => 'Compte creat amb èxit';
+
+  @override
+  String get createAccountErrorName =>
+      'Si us plau, introdueix un nom per al compte';
+
+  @override
+  String get createAccountErrorFailed => 'Error al crear el compte';
+
+  @override
+  String get accountTypeOther => 'Altre';
+
+  @override
+  String get accountTypeCash => 'Efectiu';
+
+  @override
+  String get accountTypeBank => 'Banc';
+
+  @override
+  String get accountTypeSavings => 'Estalvis';
+
+  @override
+  String get accountTypeCard => 'Targeta';
+
+  @override
+  String get deleteTransactionTitle => 'Eliminar transacció?';
+
+  @override
+  String get transactionMovedToRecycleBin => 'Transacció moguda a la paperera';
+
+  @override
+  String get errorDeleteTransaction => 'Error al eliminar la transacció';
+
+  @override
+  String get deleteTransactionConfirmation =>
+      'Estàs segur que vols eliminar aquesta transacció? Es mourà a la paperera de reciclatge.';
+
+  @override
+  String get btnClose => 'Tancar';
 }

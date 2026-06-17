@@ -1,12 +1,12 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:konta/core/errors/app_exceptions.dart';
-import 'package:konta/domain/entities/budget.dart';
-import 'package:konta/domain/entities/category.dart';
-import 'package:konta/domain/entities/category_type.dart';
-import 'package:konta/domain/repositories/i_budget_repository.dart';
-import 'package:konta/domain/repositories/i_category_repository.dart';
-import 'package:konta/domain/usecases/create_budget_usecase.dart';
+import 'package:stalvi/core/errors/app_exceptions.dart';
+import 'package:stalvi/domain/entities/budget.dart';
+import 'package:stalvi/domain/entities/category.dart';
+import 'package:stalvi/domain/entities/category_type.dart';
+import 'package:stalvi/domain/repositories/i_budget_repository.dart';
+import 'package:stalvi/domain/repositories/i_category_repository.dart';
+import 'package:stalvi/domain/usecases/create_budget_usecase.dart';
 
 class MockBudgetRepository extends Mock implements IBudgetRepository {}
 

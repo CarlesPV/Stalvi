@@ -1,4 +1,4 @@
-import 'package:konta/domain/entities/category.dart';
+import 'package:stalvi/domain/entities/category.dart';
 
 abstract class ICategoryRepository {
   Future<Category> createCategory(Category category);

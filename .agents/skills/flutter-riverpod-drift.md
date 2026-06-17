@@ -1,6 +1,6 @@
 # Skill: Flutter, Riverpod, and Drift
 
-When generating code for Konta using Flutter, Riverpod, and Drift, follow these strict rules:
+When generating code for Stalvi using Flutter, Riverpod, and Drift, follow these strict rules:
 
 ## 1. Riverpod (State Management)
 - **Use `@riverpod` annotations:** Always use the code-generation approach (`riverpod_generator`). Avoid manual `Provider` or `StateNotifierProvider` definitions unless strictly necessary.

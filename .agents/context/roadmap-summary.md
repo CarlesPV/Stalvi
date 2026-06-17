@@ -1,6 +1,6 @@
-# Konta Roadmap Summary
+# Stalvi Roadmap Summary
 
-This document lists the completed phases of the Konta development roadmap, providing a concise summary of accomplishments and verification status for each milestone.
+This document lists the completed phases of the Stalvi development roadmap, providing a concise summary of accomplishments and verification status for each milestone.
 
 ## Completed Phases
 
@@ -210,4 +210,32 @@ This document lists the completed phases of the Konta development roadmap, provi
   - Guarded locale database updates to prevent test suite compilation hangs under widget scopes.
   - Re-ran the full automated test suite: **201 tests passed** (100% success rate).
   - Verified compilation and static analysis (`flutter analyze` with 0 issues).
+
+### Phase 15: Advanced Transaction Filtering & Statistics Eager Initialization
+* **Completion Date:** June 17, 2026
+* **Objective:** Implement a robust multi-dimensional transaction filtering state/engine and eliminate statistics screen load latency.
+* **Accomplishments:**
+  - **Transaction Filter State Management:** Developed the `TransactionFilter` model and `TransactionFilterNotifier` (Riverpod) managing concurrent parameters: Type, Category, Date Range, Amount Range, Tag, and Currency.
+  - **Drift DB Filter Query Engine:** Added the repository layer method `watchFilteredTransactions(TransactionQueryFilter)` with custom helper mapping and dynamic logical-AND expression builders to enforce multiple filter constraints simultaneously in SQLite.
+  - **Eager Statistics Loading (Pre-warming):** Refactored statistics future providers to auto-dispose, using `initState` post-frame callback bindings to eagerly read them, achieving sub-second initial loads on screen mount without visual lag.
+* **Verification:**
+  - Standard static analysis pass (`flutter analyze` with 0 issues).
+  - Wrote a dedicated suite of 21 test scenarios in `test/data/database/daos/transaction_filter_query_test.dart` checking all concurrent permutations of filters against an in-memory database.
+  - Verified that the entire regression test suite passes cleanly.
+
+### Phase 16: Rebranding, Filter Integration, and UX Enhancements
+* **Completion Date:** June 17, 2026
+* **Objective:** Rename the application globally from "Konta" to "Stalvi", integrate transaction filters directly in the dashboard UI, improve account type & icon settings, and enforce statistics updates on screen entry.
+* **Accomplishments:**
+  - **Global Rebranding:** Executed a full project rename from "Konta" to "Stalvi". Updated Gradle config (`build.gradle.kts`), AndroidManifest, MainActivity package declarations/path, iOS `.pbxproj` configurations, Xcode schemas, pubspec configurations, ARB translations, legal docs, and developer assets.
+  - **Transaction Tab Filters:** Added inline `FilterChip` widgets within the main dashboard transactions tab to support filtering on-the-fly by transaction type (All, Income, Expense, Transfer) in all supported languages.
+  - **Account Customization & "Other" Option:** Expanded the `AccountType` enum with the `other` case, updated Drift mapping logic, updated database tables, and updated `create_account_dialog.dart` to offer an "Other" option. Replaced unrelated/confusing account icons with appropriate wallet, business, savings, and credit card icons.
+  - **Forced Recalculation:** Configured `statistics_screen.dart`'s `initState` to invalidate period statistics and top categories providers, ensuring the analytical charts and metrics are computed fresh every time the screen is loaded.
+  - **Localization Compliance:** Eliminated hardcoded strings in the create account dialog and transaction details popup, adding corresponding localization strings in English, Spanish, and Catalan.
+* **Verification:**
+  - Re-generated all locale bundles (`flutter gen-l10n`) and updated build files via `build_runner`.
+  - Verified that `flutter analyze` runs without critical warnings.
+  - Ran the entire test suite and verified all 244 test specifications pass successfully.
+
+
 

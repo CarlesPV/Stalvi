@@ -4,13 +4,13 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:konta/core/l10n/app_localizations.dart';
-import 'package:konta/core/theme/app_theme.dart';
-import 'package:konta/core/utils/currency_formatter.dart';
-import 'package:konta/domain/entities/category_statistic.dart';
-import 'package:konta/domain/entities/period_summary.dart';
-import 'package:konta/presentation/providers/statistics_providers.dart';
-import 'package:konta/presentation/widgets/empty_state_widget.dart';
+import 'package:stalvi/core/l10n/app_localizations.dart';
+import 'package:stalvi/core/theme/app_theme.dart';
+import 'package:stalvi/core/utils/currency_formatter.dart';
+import 'package:stalvi/domain/entities/category_statistic.dart';
+import 'package:stalvi/domain/entities/period_summary.dart';
+import 'package:stalvi/presentation/providers/statistics_providers.dart';
+import 'package:stalvi/presentation/widgets/empty_state_widget.dart';
 
 // ─── Main Screen ──────────────────────────────────────────────────────────────
 
@@ -43,6 +43,27 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
       parent: _shimmerController,
       curve: Curves.easeInOut,
     );
+
+    // Pre-warm all data providers immediately on mount so that data begins
+    // fetching within milliseconds of screen insertion – before the first
+    // build() frame calls ref.watch(). Without this, autoDispose providers
+    // are not subscribed until the first widget build, which can add a full
+    // frame of latency. Using a post-frame callback ensures the ProviderScope
+    // is fully ready before we read.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+
+      ref.invalidate(periodSummaryProvider);
+      ref.invalidate(topExpenseCategoriesProvider);
+      ref.invalidate(topIncomeCategoriesProvider);
+
+      // Reading (not watching) subscribes to the provider and triggers the
+      // Future without rebuilding – the watch() calls in build() will pick up
+      // the already-running future and show data as soon as it resolves.
+      ref.read(periodSummaryProvider.future).ignore();
+      ref.read(topExpenseCategoriesProvider.future).ignore();
+      ref.read(topIncomeCategoriesProvider.future).ignore();
+    });
   }
 
   @override
@@ -260,8 +281,9 @@ class _PeriodHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final locale = Localizations.localeOf(context).toString();
     final formatted =
-        '${DateFormat('MMM d').format(dateRange.start)} – ${DateFormat('MMM d, y').format(dateRange.end)}';
+        '${DateFormat.MMMd(locale).format(dateRange.start)} – ${DateFormat.yMMMd(locale).format(dateRange.end)}';
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 4, 20, 0),

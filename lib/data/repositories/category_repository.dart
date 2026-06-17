@@ -1,8 +1,8 @@
 import 'package:drift/drift.dart';
-import 'package:konta/data/database/app_database.dart' as db;
-import 'package:konta/data/mappers/category_mapper.dart';
-import 'package:konta/domain/entities/category.dart';
-import 'package:konta/domain/repositories/i_category_repository.dart';
+import 'package:stalvi/data/database/app_database.dart' as db;
+import 'package:stalvi/data/mappers/category_mapper.dart';
+import 'package:stalvi/domain/entities/category.dart';
+import 'package:stalvi/domain/repositories/i_category_repository.dart';
 
 /// Concrete implementation of [ICategoryRepository] backed by Drift.
 class CategoryRepository implements ICategoryRepository {

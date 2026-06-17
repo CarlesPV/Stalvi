@@ -1,10 +1,10 @@
-# App Store & Google Play Compliance - Konta Mobile Application
+# App Store & Google Play Compliance - Stalvi Mobile Application
 
 **Document Version:** 1.0.0  
 **Effective Date:** June 14, 2026  
 **Status:** Approved  
 
-This document serves as the guide for answering the App Store Connect App Privacy Questionnaire and the Google Play Console Data Safety Form for the Konta mobile application.
+This document serves as the guide for answering the App Store Connect App Privacy Questionnaire and the Google Play Console Data Safety Form for the Stalvi mobile application.
 
 ---
 
@@ -12,7 +12,7 @@ This document serves as the guide for answering the App Store Connect App Privac
 
 ### 1.1. App Privacy Questionnaire (Nutrition Labels)
 
-When submitting or updating Konta on App Store Connect, complete the **App Privacy** section as follows:
+When submitting or updating Stalvi on App Store Connect, complete the **App Privacy** section as follows:
 
 | Questionnaire Section | Required Selection / Answer | Compliance Justification |
 | :--- | :--- | :--- |
@@ -20,17 +20,17 @@ When submitting or updating Konta on App Store Connect, complete the **App Priva
 | **Third-Party Partners** | **No** | The application does not integrate third-party software development kits (SDKs) that track users or collect data (such as advertising networks or analytics trackers). |
 
 > [!NOTE]
-> Since we answer "No" to data collection, a simplified Privacy Nutrition Label will show that "No Data is Collected" when users view Konta on the App Store.
+> Since we answer "No" to data collection, a simplified Privacy Nutrition Label will show that "No Data is Collected" when users view Stalvi on the App Store.
 
 ### 1.2. Device Permissions Justification
 
 | Permission | Usage Purpose | App Store Description String (`Info.plist`) |
 | :--- | :--- | :--- |
-| `NSFaceIDUsageDescription` | Required to securely unlock the app when Biometric Lock is enabled. | "Konta uses Face ID to securely unlock your financial data and protect your privacy." |
+| `NSFaceIDUsageDescription` | Required to securely unlock the app when Biometric Lock is enabled. | "Stalvi uses Face ID to securely unlock your financial data and protect your privacy." |
 
 ### 1.3. Export Compliance (ITSAppUsesNonExemptEncryption)
 
-Konta uses SQLCipher, which implements AES-256 encryption for protecting the database at rest.
+Stalvi uses SQLCipher, which implements AES-256 encryption for protecting the database at rest.
 * **Recommendation:** Set `ITSAppUsesNonExemptEncryption` to `NO` in `ios/Runner/Info.plist`.
 * **Justification:** Under US Export Administration Regulations (EAR), apps that use encryption limited to intellectual property protection, user authentication, or security of personal/financial data stored locally on the device (and not exported/transmitted to servers) are exempt from export registration.
 
@@ -40,7 +40,7 @@ Konta uses SQLCipher, which implements AES-256 encryption for protecting the dat
 
 ### 2.1. Data Safety Questionnaire
 
-When submitting or updating Konta in the Google Play Console, answer the **Data Safety** form with the following selections:
+When submitting or updating Stalvi in the Google Play Console, answer the **Data Safety** form with the following selections:
 
 #### Section 1: Data Collection and Sharing
 * **Does your app collect or share any of the required user data types?**  
@@ -68,7 +68,7 @@ When submitting or updating Konta in the Google Play Console, answer the **Data 
 
 ## 3. Compliance Summary Table
 
-The following table summarizes the privacy posture of the Konta app across both platforms:
+The following table summarizes the privacy posture of the Stalvi app across both platforms:
 
 | Privacy / Security Check | App Store Status | Google Play Status | Technical Implementation Details |
 | :--- | :--- | :--- | :--- |

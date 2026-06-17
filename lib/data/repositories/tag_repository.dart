@@ -1,8 +1,8 @@
 import 'package:drift/drift.dart';
-import 'package:konta/data/database/app_database.dart' as db;
-import 'package:konta/data/mappers/tag_mapper.dart';
-import 'package:konta/domain/entities/tag.dart';
-import 'package:konta/domain/repositories/i_tag_repository.dart';
+import 'package:stalvi/data/database/app_database.dart' as db;
+import 'package:stalvi/data/mappers/tag_mapper.dart';
+import 'package:stalvi/domain/entities/tag.dart';
+import 'package:stalvi/domain/repositories/i_tag_repository.dart';
 
 /// Concrete implementation of [ITagRepository] backed by Drift.
 class TagRepository implements ITagRepository {

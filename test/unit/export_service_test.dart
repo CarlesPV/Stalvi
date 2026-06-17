@@ -3,10 +3,10 @@ import 'dart:typed_data';
 
 import 'package:encrypt/encrypt.dart' as enc;
 import 'package:flutter_test/flutter_test.dart';
-import 'package:konta/data/repositories/export_service_impl.dart';
-import 'package:konta/domain/entities/period_summary.dart';
-import 'package:konta/domain/entities/transaction.dart';
-import 'package:konta/domain/entities/transaction_type.dart';
+import 'package:stalvi/data/repositories/export_service_impl.dart';
+import 'package:stalvi/domain/entities/period_summary.dart';
+import 'package:stalvi/domain/entities/transaction.dart';
+import 'package:stalvi/domain/entities/transaction_type.dart';
 
 // ──────────────────────────────────────────────────────────────────────────────
 // Test helpers

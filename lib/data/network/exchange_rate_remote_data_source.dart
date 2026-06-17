@@ -3,8 +3,8 @@ import 'dart:io';
 
 import 'package:http/http.dart' as http;
 
-import 'package:konta/core/errors/app_exceptions.dart';
-import 'package:konta/data/models/exchange_rate_model.dart';
+import 'package:stalvi/core/errors/app_exceptions.dart';
+import 'package:stalvi/data/models/exchange_rate_model.dart';
 
 // ---------------------------------------------------------------------------
 // Abstract interface

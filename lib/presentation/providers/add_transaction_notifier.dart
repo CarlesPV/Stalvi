@@ -1,10 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
-import 'package:konta/core/errors/app_exceptions.dart';
-import 'package:konta/core/utils/currency_formatter.dart';
-import 'package:konta/domain/entities/transaction_type.dart';
-import 'package:konta/domain/usecases/add_transaction_usecase.dart';
-import 'package:konta/presentation/providers/repository_providers.dart';
+import 'package:stalvi/core/errors/app_exceptions.dart';
+import 'package:stalvi/core/utils/currency_formatter.dart';
+import 'package:stalvi/domain/entities/transaction_type.dart';
+import 'package:stalvi/domain/usecases/add_transaction_usecase.dart';
+import 'package:stalvi/presentation/providers/repository_providers.dart';
 
 /// State representation for the Add Transaction form.
 class AddTransactionState {

@@ -82,12 +82,38 @@ class TrashDao extends DatabaseAccessor<AppDatabase> with _$TrashDaoMixin {
 
     switch (type) {
       case TrashItemType.transaction:
-        await (update(transactions)..where((t) => t.id.equals(id))).write(
-          TransactionsCompanion(
-            isDeleted: const Value(false),
-            modifiedAt: Value(now),
-          ),
-        );
+        await transaction(() async {
+          final txn = await (select(transactions)
+                ..where((t) => t.id.equals(id)))
+              .getSingleOrNull();
+          if (txn != null && txn.isDeleted) {
+            final accountRow = await (select(accounts)
+                  ..where((a) => a.id.equals(txn.accountId)))
+                .getSingleOrNull();
+            if (accountRow != null) {
+              final double delta = txn.amount / 100.0;
+              final double newBalance;
+              if (txn.type == TransactionType.income) {
+                newBalance = accountRow.initialBalance + delta;
+              } else {
+                newBalance = accountRow.initialBalance - delta;
+              }
+              await (update(accounts)..where((a) => a.id.equals(txn.accountId)))
+                  .write(
+                AccountsCompanion(
+                  initialBalance: Value(newBalance),
+                  modifiedAt: Value(now),
+                ),
+              );
+            }
+            await (update(transactions)..where((t) => t.id.equals(id))).write(
+              TransactionsCompanion(
+                isDeleted: const Value(false),
+                modifiedAt: Value(now),
+              ),
+            );
+          }
+        });
         break;
       case TrashItemType.category:
         await (update(categories)..where((c) => c.id.equals(id))).write(

@@ -3,15 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:konta/core/l10n/app_localizations.dart';
-import 'package:konta/core/theme/app_theme.dart';
-import 'package:konta/domain/entities/budget.dart';
-import 'package:konta/domain/entities/category.dart';
-import 'package:konta/domain/entities/savings_goal.dart';
-import 'package:konta/presentation/features/budgets_and_goals/budgets_and_goals_screen.dart';
-import 'package:konta/presentation/providers/repository_providers.dart';
-import 'package:konta/core/utils/currency_formatter.dart';
-import 'package:konta/presentation/widgets/progress_bar_widget.dart';
+import 'package:stalvi/core/l10n/app_localizations.dart';
+import 'package:stalvi/core/theme/app_theme.dart';
+import 'package:stalvi/domain/entities/budget.dart';
+import 'package:stalvi/domain/entities/category.dart';
+import 'package:stalvi/domain/entities/savings_goal.dart';
+import 'package:stalvi/presentation/features/budgets_and_goals/budgets_and_goals_screen.dart';
+import 'package:stalvi/presentation/providers/repository_providers.dart';
+import 'package:stalvi/core/utils/currency_formatter.dart';
+import 'package:stalvi/presentation/widgets/progress_bar_widget.dart';
 
 /// A completely passive, synchronous Stream that never emits any values and never completes.
 /// Useful for testing loading states without scheduling any event loop tasks.

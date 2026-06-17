@@ -1,7 +1,7 @@
-# Threat Model: Konta Application
+# Threat Model: Stalvi Application
 
 ## 1. System Overview
-Konta is a local-first mobile application (iOS/Android). All sensitive financial data is stored locally on the device. The app communicates with the internet solely to fetch daily currency exchange rates.
+Stalvi is a local-first mobile application (iOS/Android). All sensitive financial data is stored locally on the device. The app communicates with the internet solely to fetch daily currency exchange rates.
 
 ## 2. Assets to Protect
 1. **User Financial Data:** Transaction history, account balances, budgets.
@@ -11,7 +11,7 @@ Konta is a local-first mobile application (iOS/Android). All sensitive financial
 
 ## 3. Threat Agents
 - **Physical Attacker:** Someone who gains physical access to the unlocked or locked device.
-- **Malicious Application:** Malware installed on the same device attempting to read Konta's memory or storage.
+- **Malicious Application:** Malware installed on the same device attempting to read Stalvi's memory or storage.
 - **Network Eavesdropper (MitM):** Attacker intercepting network traffic (low risk due to no cloud sync, but relevant for API calls).
 
 ## 4. STRIDE Analysis & Mitigations

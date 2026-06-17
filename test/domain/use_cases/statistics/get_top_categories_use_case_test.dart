@@ -1,9 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:konta/data/database/tables/transaction_table.dart';
-import 'package:konta/domain/entities/category_statistic.dart';
-import 'package:konta/domain/repositories/i_statistics_repository.dart';
-import 'package:konta/domain/use_cases/statistics/get_top_categories_use_case.dart';
+import 'package:stalvi/data/database/tables/transaction_table.dart';
+import 'package:stalvi/domain/entities/category_statistic.dart';
+import 'package:stalvi/domain/repositories/i_statistics_repository.dart';
+import 'package:stalvi/domain/use_cases/statistics/get_top_categories_use_case.dart';
 
 class MockStatisticsRepository extends Mock implements IStatisticsRepository {}
 

@@ -1,6 +1,6 @@
-import 'package:konta/core/errors/app_exceptions.dart';
-import 'package:konta/domain/repositories/i_export_service.dart';
-import 'package:konta/domain/repositories/i_transaction_repository.dart';
+import 'package:stalvi/core/errors/app_exceptions.dart';
+import 'package:stalvi/domain/repositories/i_export_service.dart';
+import 'package:stalvi/domain/repositories/i_transaction_repository.dart';
 
 /// Use case that retrieves all transactions for an account and produces an
 /// AES-256-CBC-encrypted JSON export secured by a user-supplied [password].

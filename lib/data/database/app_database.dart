@@ -16,7 +16,7 @@ import 'package:sqlite3/open.dart';
 
 import 'package:uuid/uuid.dart';
 
-import 'package:konta/core/security/secure_storage_manager.dart';
+import 'package:stalvi/core/security/secure_storage_manager.dart';
 import 'tables/profile_table.dart';
 import 'tables/account_table.dart';
 import 'tables/category_table.dart';
@@ -29,7 +29,7 @@ import 'daos/trash_dao.dart';
 
 part 'app_database.g.dart';
 
-/// The base Drift database for Konta.
+/// The base Drift database for Stalvi.
 ///
 /// Uses SQLCipher (via [sqlcipher_flutter_libs]) to encrypt the database file
 /// at rest. The cipher key is sourced from [SecureStorageManager], which keeps
@@ -185,7 +185,7 @@ class AppDatabase extends _$AppDatabase {
     }
 
     final dbFolder = await getApplicationDocumentsDirectory();
-    final dbFile = File(p.join(dbFolder.path, 'konta.db'));
+    final dbFile = File(p.join(dbFolder.path, 'stalvi.db'));
 
     // CRITICAL FIX: Use NativeDatabase instead of NativeDatabase.createInBackground.
     // createInBackground spawns an isolate that does not inherit the open.overrideFor

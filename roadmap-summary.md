@@ -1,6 +1,6 @@
-# Konta Roadmap Summary
+# Stalvi Roadmap Summary
 
-This document lists the completed phases of the Konta development roadmap, providing a concise summary of accomplishments and verification status for each milestone.
+This document lists the completed phases of the Stalvi development roadmap, providing a concise summary of accomplishments and verification status for each milestone.
 
 ## Completed Phases
 
@@ -210,4 +210,31 @@ This document lists the completed phases of the Konta development roadmap, provi
   - Guarded locale database updates to prevent test suite compilation hangs under widget scopes.
   - Re-ran the full automated test suite: **201 tests passed** (100% success rate).
   - Verified compilation and static analysis (`flutter analyze` with 0 issues).
+
+### Phase 15: Advanced Transaction Filtering & Statistics Eager Initialization
+* **Completion Date:** June 17, 2026
+* **Objective:** Implement a robust multi-dimensional transaction filtering state/engine and eliminate statistics screen load latency.
+* **Accomplishments:**
+  - **Transaction Filter State Management:** Developed the `TransactionFilter` model and `TransactionFilterNotifier` (Riverpod) managing concurrent parameters: Type, Category, Date Range, Amount Range, Tag, and Currency.
+  - **Drift DB Filter Query Engine:** Added the repository layer method `watchFilteredTransactions(TransactionQueryFilter)` with custom helper mapping and dynamic logical-AND expression builders to enforce multiple filter constraints simultaneously in SQLite.
+  - **Eager Statistics Loading (Pre-warming):** Refactored statistics future providers to auto-dispose, using `initState` post-frame callback bindings to eagerly read them, achieving sub-second initial loads on screen mount without visual lag.
+* **Verification:**
+  - Standard static analysis pass (`flutter analyze` with 0 issues).
+  - Wrote a dedicated suite of 21 test scenarios in `test/data/database/daos/transaction_filter_query_test.dart` checking all concurrent permutations of filters against an in-memory database.
+  - Verified that the entire regression test suite passes cleanly.
+
+### Phase 16: UI, Localization, and Soft-Deleted Data Fixes
+* **Completion Date:** June 17, 2026
+* **Objective:** Fix validation error displays in dialogs, resolve ChoiceChip text layout clipping and update the generic "Other" type icon, support multi-language locale-aware date displays, implement dashboard account clicks for updates/deletion, and ensure soft-deleted database entities are excluded from statistical aggregates.
+* **Accomplishments:**
+  - **Validation Inline Errors:** Configured name inputs in `CreateAccountDialog` and `EditAccountDialog` to display validation failures inline via the standard `errorText` field.
+  - **Account Types UI Polish:** Heightened choice chip containers to `56` to avoid vertical layout clipping. Replaced `Icons.more_horiz_rounded` with `Icons.monetization_on_rounded` for the "Other" account type choice.
+  - **Account Details & Updates:** Integrated `EditAccountDialog` triggers directly on account tap list gestures from the primary dashboard scope, permitting full name/type/color customization and soft-deletes (Recycle Bin moves).
+  - **Soft-Deleted Balance Synchronization:** Enforced database transaction logic in `TransactionRepository.deleteTransaction` and `TrashDao.restoreItem` to revert/re-apply financial amounts to parent accounts dynamically on delete or restore.
+  - **Exclusions in Statistics:** Updated SQLite aggregation projections inside `StatisticsDao` to join with the `Accounts` table and filter out soft-deleted items across transactions, categories, and accounts.
+* **Verification:**
+  - Integrated dedicated tests inside `statistics_dao_test.dart` and `trash_dao_test.dart` verifying exclusions and balance restoration actions.
+  - Regenerated code wrappers (`build_runner` and `gen-l10n`) cleanly.
+  - Achieved 100% test pass rate with all 246 tests passing successfully.
+
 

@@ -2,9 +2,10 @@ import 'dart:ffi';
 import 'package:drift/drift.dart' hide isNull, isNotNull;
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:konta/data/database/app_database.dart';
-import 'package:konta/data/database/tables/account_table.dart';
-import 'package:konta/domain/entities/trash_item.dart';
+import 'package:stalvi/data/database/app_database.dart';
+import 'package:stalvi/data/database/tables/account_table.dart';
+import 'package:stalvi/domain/entities/trash_item.dart';
+import 'package:stalvi/data/database/tables/transaction_table.dart';
 // ignore: depend_on_referenced_packages
 import 'package:sqlite3/open.dart';
 import 'package:uuid/uuid.dart';
@@ -154,5 +155,66 @@ void main() {
           ..where((c) => c.id.equals(id)))
         .getSingleOrNull();
     expect(category, isNull);
+  });
+
+  test('restoring transaction updates account balance', () async {
+    const uuid = Uuid();
+    final userId = uuid.v4();
+    final accountId = uuid.v4();
+    final transactionId = uuid.v4();
+    final now = DateTime.now();
+
+    await db.into(db.profiles).insert(
+          ProfilesCompanion.insert(
+            id: userId,
+            name: 'Test',
+            username: 'test',
+            password: '',
+            createdAt: now,
+            modifiedAt: now,
+          ),
+        );
+
+    await db.into(db.accounts).insert(
+          AccountsCompanion.insert(
+            id: accountId,
+            userId: userId,
+            name: 'Main Account',
+            type: AccountType.cash,
+            initialBalance: 100.0,
+            currency: 'EUR',
+            color: 'red',
+            icon: 'icon',
+            isDefault: true,
+            createdAt: now,
+            modifiedAt: now,
+          ),
+        );
+
+    await db.into(db.transactions).insert(
+          TransactionsCompanion.insert(
+            id: transactionId,
+            amount: 3000,
+            date: now,
+            type: TransactionType.expense,
+            accountId: accountId,
+            originalCurrency: 'EUR',
+            isDeleted: const Value(true),
+            createdAt: now,
+            modifiedAt: now,
+          ),
+        );
+
+    await db.trashDao.restoreItem(transactionId, TrashItemType.transaction);
+
+    final account = await (db.select(db.accounts)
+          ..where((a) => a.id.equals(accountId)))
+        .getSingle();
+    expect(account.initialBalance, 70.0);
+
+    final txn = await (db.select(db.transactions)
+          ..where((t) => t.id.equals(transactionId)))
+        .getSingle();
+    expect(txn.isDeleted, false);
   });
 }

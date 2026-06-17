@@ -1,11 +1,11 @@
-import 'package:konta/core/errors/app_exceptions.dart';
-import 'package:konta/domain/entities/transaction.dart';
-import 'package:konta/domain/entities/transaction_type.dart';
-import 'package:konta/domain/repositories/i_account_repository.dart';
-import 'package:konta/domain/repositories/i_profile_repository.dart';
-import 'package:konta/domain/repositories/i_exchange_rate_repository.dart';
-import 'package:konta/domain/repositories/i_transaction_repository.dart';
-import 'package:konta/core/utils/input_sanitizer.dart';
+import 'package:stalvi/core/errors/app_exceptions.dart';
+import 'package:stalvi/domain/entities/transaction.dart';
+import 'package:stalvi/domain/entities/transaction_type.dart';
+import 'package:stalvi/domain/repositories/i_account_repository.dart';
+import 'package:stalvi/domain/repositories/i_profile_repository.dart';
+import 'package:stalvi/domain/repositories/i_exchange_rate_repository.dart';
+import 'package:stalvi/domain/repositories/i_transaction_repository.dart';
+import 'package:stalvi/core/utils/input_sanitizer.dart';
 
 /// Parameters required to add a new transaction.
 class AddTransactionParams {
@@ -118,8 +118,8 @@ class AddTransactionUseCase {
     String? sanitizedNotes;
     if (params.notes != null) {
       sanitizedNotes = InputSanitizer.sanitizeToPlainText(params.notes!);
-      if (sanitizedNotes!.length > 20) {
-        sanitizedNotes = sanitizedNotes!.substring(0, 20);
+      if (sanitizedNotes.length > 20) {
+        sanitizedNotes = sanitizedNotes.substring(0, 20);
       }
     }
 

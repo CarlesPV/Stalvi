@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:konta/domain/entities/profile.dart';
-import 'package:konta/domain/usecases/update_credentials_usecase.dart';
-import 'package:konta/presentation/providers/repository_providers.dart';
+import 'package:stalvi/domain/entities/profile.dart';
+import 'package:stalvi/domain/usecases/update_credentials_usecase.dart';
+import 'package:stalvi/presentation/providers/repository_providers.dart';
 
 enum PinChangeStep { verifyOld, enterNew }
 
@@ -11,6 +11,7 @@ class ProfileSettingsState {
   final String? error;
   final PinChangeStep pinChangeStep;
   final int failedAttempts;
+  final int failedDeleteAttempts;
 
   const ProfileSettingsState({
     this.profile,
@@ -18,6 +19,7 @@ class ProfileSettingsState {
     this.error,
     this.pinChangeStep = PinChangeStep.verifyOld,
     this.failedAttempts = 0,
+    this.failedDeleteAttempts = 0,
   });
 
   ProfileSettingsState copyWith({
@@ -26,6 +28,7 @@ class ProfileSettingsState {
     String? error,
     PinChangeStep? pinChangeStep,
     int? failedAttempts,
+    int? failedDeleteAttempts,
   }) {
     return ProfileSettingsState(
       profile: profile ?? this.profile,
@@ -33,6 +36,7 @@ class ProfileSettingsState {
       error: error,
       pinChangeStep: pinChangeStep ?? this.pinChangeStep,
       failedAttempts: failedAttempts ?? this.failedAttempts,
+      failedDeleteAttempts: failedDeleteAttempts ?? this.failedDeleteAttempts,
     );
   }
 }
@@ -143,6 +147,39 @@ class ProfileSettingsController extends StateNotifier<ProfileSettingsState> {
       error: null,
       failedAttempts: 0,
     );
+  }
+
+  void resetDeleteDataState() {
+    state = state.copyWith(
+      error: null,
+      failedDeleteAttempts:
+          state.failedDeleteAttempts >= 6 ? state.failedDeleteAttempts : 0,
+    );
+  }
+
+  Future<bool> verifyDeleteDataPin(String pin) async {
+    if (state.failedDeleteAttempts >= 6) {
+      return false;
+    }
+
+    state = state.copyWith(isLoading: true, error: null);
+    try {
+      final useCase = _ref.read(updateCredentialsUseCaseProvider);
+      await useCase.verifyOldPin(pin);
+      state = state.copyWith(
+        isLoading: false,
+        failedDeleteAttempts: 0,
+      );
+      return true;
+    } catch (e) {
+      final newAttempts = state.failedDeleteAttempts + 1;
+      state = state.copyWith(
+        isLoading: false,
+        error: e.toString(),
+        failedDeleteAttempts: newAttempts,
+      );
+      return false;
+    }
   }
 
   Future<void> wipeAllData() async {

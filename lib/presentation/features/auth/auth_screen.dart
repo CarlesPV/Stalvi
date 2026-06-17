@@ -3,12 +3,12 @@ import 'dart:ui';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:konta/core/l10n/app_localizations.dart';
-import 'package:konta/presentation/features/dashboard/dashboard_screen.dart';
-import 'package:konta/presentation/features/auth/biometric_opt_in_screen.dart';
-import 'package:konta/presentation/providers/auth_notifier.dart';
-import 'package:konta/presentation/providers/locale_provider.dart';
-import 'package:konta/presentation/widgets/terms_and_conditions_viewer.dart';
+import 'package:stalvi/core/l10n/app_localizations.dart';
+import 'package:stalvi/presentation/features/dashboard/dashboard_screen.dart';
+import 'package:stalvi/presentation/features/auth/biometric_opt_in_screen.dart';
+import 'package:stalvi/presentation/providers/auth_notifier.dart';
+import 'package:stalvi/presentation/providers/locale_provider.dart';
+import 'package:stalvi/presentation/widgets/terms_and_conditions_viewer.dart';
 
 class AuthScreen extends ConsumerStatefulWidget {
   const AuthScreen({super.key});
@@ -218,6 +218,14 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
                           return _LockedOutContent(
                             colorScheme: colorScheme,
                             theme: theme,
+                          );
+                        } else if (status == AuthStatus.pinLockedOut) {
+                          return _PinLockoutContent(
+                            colorScheme: colorScheme,
+                            theme: theme,
+                            secondsRemaining: ref
+                                .read(authNotifierProvider.notifier)
+                                .pinLockoutSecondsRemaining,
                           );
                         } else {
                           return _buildLoginForm(
@@ -929,7 +937,7 @@ class _BrandHeader extends StatelessWidget {
         ),
         const SizedBox(height: 12),
         Text(
-          'Konta',
+          'Stalvi',
           style: theme.textTheme.headlineSmall?.copyWith(
             fontWeight: FontWeight.w800,
             letterSpacing: -1,
@@ -1046,6 +1054,129 @@ class _LockedOutContent extends StatelessWidget {
             ],
           ),
         ),
+      ],
+    );
+  }
+}
+
+// ─── PIN Brute-force Lockout Content (with countdown timer) ──────────────────
+
+class _PinLockoutContent extends StatelessWidget {
+  final ColorScheme colorScheme;
+  final ThemeData theme;
+  final int secondsRemaining;
+
+  const _PinLockoutContent({
+    required this.colorScheme,
+    required this.theme,
+    required this.secondsRemaining,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final isCountingDown = secondsRemaining > 0;
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        // Lock icon with animated pulse using an opacity effect
+        Container(
+          width: 64,
+          height: 64,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: colorScheme.error.withValues(alpha: 0.15),
+            border: Border.all(
+              color: colorScheme.error.withValues(alpha: 0.4),
+              width: 2,
+            ),
+          ),
+          child: Icon(
+            Icons.timer_rounded,
+            size: 32,
+            color: colorScheme.error,
+          ),
+        ),
+        const SizedBox(height: 20),
+        Text(
+          l10n.authPinLockedTitle,
+          style: theme.textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.w700,
+            color: colorScheme.onSurface,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: 10),
+        Text(
+          l10n.authPinLockedMessage,
+          style: theme.textTheme.bodyMedium?.copyWith(
+            color: colorScheme.onSurfaceVariant,
+            height: 1.5,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: 24),
+        if (isCountingDown) ...[
+          // Countdown ring
+          SizedBox(
+            width: 80,
+            height: 80,
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                CircularProgressIndicator(
+                  value: secondsRemaining / 30,
+                  strokeWidth: 5,
+                  backgroundColor: colorScheme.error.withValues(alpha: 0.12),
+                  valueColor: AlwaysStoppedAnimation<Color>(colorScheme.error),
+                ),
+                Center(
+                  child: Text(
+                    '$secondsRemaining',
+                    style: theme.textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.w800,
+                      color: colorScheme.error,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 12),
+          Text(
+            l10n.authPinLockedCountdown,
+            style: theme.textTheme.labelMedium?.copyWith(
+              color: colorScheme.onSurfaceVariant,
+            ),
+          ),
+        ] else ...[
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+            decoration: BoxDecoration(
+              color: colorScheme.primary.withValues(alpha: 0.10),
+              borderRadius: BorderRadius.circular(50),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.check_circle_rounded,
+                  size: 14,
+                  color: colorScheme.primary,
+                ),
+                const SizedBox(width: 6),
+                Text(
+                  l10n.authPinLockedRetry,
+                  style: theme.textTheme.labelMedium?.copyWith(
+                    color: colorScheme.primary,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ],
     );
   }

@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:konta/domain/entities/period_summary.dart';
-import 'package:konta/domain/repositories/i_statistics_repository.dart';
-import 'package:konta/domain/use_cases/statistics/get_period_summary_use_case.dart';
+import 'package:stalvi/domain/entities/period_summary.dart';
+import 'package:stalvi/domain/repositories/i_statistics_repository.dart';
+import 'package:stalvi/domain/use_cases/statistics/get_period_summary_use_case.dart';
 
 class MockStatisticsRepository extends Mock implements IStatisticsRepository {}
 

@@ -1,7 +1,7 @@
-# Product Requirements Document (PRD): Konta
+# Product Requirements Document (PRD): Stalvi
 
 ## 1. Overview
-Konta is a local-first, highly secure financial application designed to help users track their income, expenses, budgets, and savings goals. It focuses heavily on data privacy, multi-currency support, performance, and an intuitive user experience with minimalist pastel aesthetics.
+Stalvi is a local-first, highly secure financial application designed to help users track their income, expenses, budgets, and savings goals. It focuses heavily on data privacy, multi-currency support, performance, and an intuitive user experience with minimalist pastel aesthetics.
 
 ## 2. Target Audience
 Individuals who want complete control over their personal finances without relying on cloud synchronization, prioritizing privacy, offline access, and detailed statistical analysis.

@@ -1,40 +1,41 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:konta/data/repositories/account_repository.dart';
-import 'package:konta/data/repositories/category_repository.dart';
-import 'package:konta/data/repositories/tag_repository.dart';
-import 'package:konta/data/repositories/profile_repository.dart';
-import 'package:konta/data/repositories/statistics_repository_impl.dart';
-import 'package:konta/data/repositories/transaction_repository.dart';
-import 'package:konta/data/repositories/exchange_rate_repository.dart';
-import 'package:konta/data/repositories/budget_repository.dart';
-import 'package:konta/data/repositories/savings_goal_repository.dart';
-import 'package:konta/data/network/exchange_rate_remote_data_source.dart';
+import 'package:stalvi/data/repositories/account_repository.dart';
+import 'package:stalvi/data/repositories/category_repository.dart';
+import 'package:stalvi/data/repositories/tag_repository.dart';
+import 'package:stalvi/data/repositories/profile_repository.dart';
+import 'package:stalvi/data/repositories/statistics_repository_impl.dart';
+import 'package:stalvi/data/repositories/transaction_repository.dart';
+import 'package:stalvi/data/repositories/exchange_rate_repository.dart';
+import 'package:stalvi/data/repositories/budget_repository.dart';
+import 'package:stalvi/data/repositories/savings_goal_repository.dart';
+import 'package:stalvi/data/network/exchange_rate_remote_data_source.dart';
 import 'package:http/http.dart' as http;
-import 'package:konta/data/mappers/profile_mapper.dart';
-import 'package:konta/domain/entities/account.dart';
-import 'package:konta/domain/entities/category.dart';
-import 'package:konta/domain/entities/tag.dart';
-import 'package:konta/domain/entities/profile.dart';
-import 'package:konta/domain/entities/budget.dart';
-import 'package:konta/domain/entities/savings_goal.dart';
-import 'package:konta/domain/entities/transaction.dart';
-import 'package:konta/domain/repositories/i_account_repository.dart';
-import 'package:konta/domain/repositories/i_category_repository.dart';
-import 'package:konta/domain/repositories/i_tag_repository.dart';
-import 'package:konta/domain/repositories/i_profile_repository.dart';
-import 'package:konta/domain/repositories/i_transaction_repository.dart';
-import 'package:konta/domain/repositories/i_exchange_rate_repository.dart';
-import 'package:konta/domain/repositories/i_budget_repository.dart';
-import 'package:konta/domain/repositories/i_savings_goal_repository.dart';
-import 'package:konta/domain/repositories/i_statistics_repository.dart';
-import 'package:konta/domain/usecases/add_transaction_usecase.dart';
-import 'package:konta/domain/usecases/create_profile_usecase.dart';
-import 'package:konta/domain/usecases/initialize_default_data_usecase.dart';
-import 'package:konta/domain/usecases/update_credentials_usecase.dart';
-import 'package:konta/domain/usecases/wipe_all_data_usecase.dart';
-import 'package:konta/domain/usecases/trash_usecases.dart';
-import 'package:konta/presentation/providers/app_startup_provider.dart';
-import 'package:konta/presentation/providers/locale_provider.dart';
+import 'package:stalvi/data/mappers/profile_mapper.dart';
+import 'package:stalvi/domain/entities/account.dart';
+import 'package:stalvi/domain/entities/category.dart';
+import 'package:stalvi/domain/entities/tag.dart';
+import 'package:stalvi/domain/entities/profile.dart';
+import 'package:stalvi/domain/entities/budget.dart';
+import 'package:stalvi/domain/entities/savings_goal.dart';
+import 'package:stalvi/domain/entities/transaction.dart';
+import 'package:stalvi/domain/repositories/i_account_repository.dart';
+import 'package:stalvi/domain/repositories/i_category_repository.dart';
+import 'package:stalvi/domain/repositories/i_tag_repository.dart';
+import 'package:stalvi/domain/repositories/i_profile_repository.dart';
+import 'package:stalvi/domain/repositories/i_transaction_repository.dart';
+import 'package:stalvi/domain/repositories/i_exchange_rate_repository.dart';
+import 'package:stalvi/domain/repositories/i_budget_repository.dart';
+import 'package:stalvi/domain/repositories/i_savings_goal_repository.dart';
+import 'package:stalvi/domain/repositories/i_statistics_repository.dart';
+import 'package:stalvi/domain/usecases/add_transaction_usecase.dart';
+import 'package:stalvi/domain/usecases/create_profile_usecase.dart';
+import 'package:stalvi/domain/usecases/initialize_default_data_usecase.dart';
+import 'package:stalvi/domain/usecases/update_credentials_usecase.dart';
+import 'package:stalvi/domain/usecases/wipe_all_data_usecase.dart';
+import 'package:stalvi/domain/usecases/trash_usecases.dart';
+import 'package:stalvi/domain/usecases/create_account_usecase.dart';
+import 'package:stalvi/presentation/providers/app_startup_provider.dart';
+import 'package:stalvi/presentation/providers/locale_provider.dart';
 
 /// Provides the [IProfileRepository] implementation.
 /// Requires the database to be initialized, using [appDatabaseProvider.requireValue].
@@ -120,6 +121,12 @@ final initializeDefaultDataUseCaseProvider =
   final categoryRepo = ref.watch(categoryRepositoryProvider);
   final tagRepo = ref.watch(tagRepositoryProvider);
   return InitializeDefaultDataUseCase(accountRepo, categoryRepo, tagRepo);
+});
+
+/// Provides the [CreateAccountUseCase] instance.
+final createAccountUseCaseProvider = Provider<CreateAccountUseCase>((ref) {
+  final accountRepo = ref.watch(accountRepositoryProvider);
+  return CreateAccountUseCase(accountRepo);
 });
 
 /// Provides the [UpdateCredentialsUseCase] instance.

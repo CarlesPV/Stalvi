@@ -1,17 +1,17 @@
-# Privacy Policy & Data Map - Konta Mobile Application
+# Privacy Policy & Data Map - Stalvi Mobile Application
 
 **Document Version:** 1.0.0  
 **Effective Date:** June 14, 2026  
 **Status:** Approved  
 
-This document provides a comprehensive mapping of data handling, storage mechanisms, encryption, and network communication in the Konta mobile application. It serves as the source of truth for store compliance, privacy policy disclosures, and security audits.
+This document provides a comprehensive mapping of data handling, storage mechanisms, encryption, and network communication in the Stalvi mobile application. It serves as the source of truth for store compliance, privacy policy disclosures, and security audits.
 
 ---
 
 ## 1. Core Privacy Architecture
 
-Konta is designed as a **local-first, zero-knowledge** application. 
-- The developers of Konta do not maintain any central servers for user accounts or financial ledger data.
+Stalvi is designed as a **local-first, zero-knowledge** application. 
+- The developers of Stalvi do not maintain any central servers for user accounts or financial ledger data.
 - The developers and third parties have no technical ability to access, view, or modify user financial records, account lists, budgets, or profiles.
 
 ---
@@ -63,7 +63,7 @@ The only network activity initiated by the app is query traffic to fetch live or
 
 ## 5. Data Deletion and Portability
 
-* **Application Uninstallation:** Uninstalling the Konta application from the device deletes the local database file as well as the database key stored in the iOS Keychain or Android Keystore. This permanently renders the data unrecoverable.
+* **Application Uninstallation:** Uninstalling the Stalvi application from the device deletes the local database file as well as the database key stored in the iOS Keychain or Android Keystore. This permanently renders the data unrecoverable.
 * **Data Portability:** Users can trigger a manual export of their financial logs. This export is processed entirely locally on the device.
 
 ---
@@ -71,5 +71,5 @@ The only network activity initiated by the app is query traffic to fetch live or
 ## 6. Compliance Certification
 
 We certify that:
-1. Financial entries are never processed, cached, or transferred through any server owned or controlled by Konta or its third-party processors.
+1. Financial entries are never processed, cached, or transferred through any server owned or controlled by Stalvi or its third-party processors.
 2. The user holds sole ownership and custody of their financial logs.

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:konta/data/database/tables/transaction_table.dart';
-import 'package:konta/domain/entities/category_statistic.dart';
-import 'package:konta/domain/entities/period_summary.dart';
-import 'package:konta/domain/use_cases/statistics/get_period_summary_use_case.dart';
-import 'package:konta/domain/use_cases/statistics/get_top_categories_use_case.dart';
-import 'package:konta/presentation/providers/repository_providers.dart';
+import 'package:stalvi/data/database/tables/transaction_table.dart';
+import 'package:stalvi/domain/entities/category_statistic.dart';
+import 'package:stalvi/domain/entities/period_summary.dart';
+import 'package:stalvi/domain/use_cases/statistics/get_period_summary_use_case.dart';
+import 'package:stalvi/domain/use_cases/statistics/get_top_categories_use_case.dart';
+import 'package:stalvi/presentation/providers/repository_providers.dart';
 
 // ─── Use-case providers ───────────────────────────────────────────────────────
 
@@ -148,8 +148,16 @@ final statisticsFilterProvider =
 // ─── Data providers ───────────────────────────────────────────────────────────
 
 /// Watches the current filter and fetches a [PeriodSummary] for the active date range.
-/// Re-evaluates automatically whenever [statisticsFilterProvider] changes.
-final periodSummaryProvider = FutureProvider<PeriodSummary>((ref) async {
+///
+/// Uses [FutureProvider.autoDispose] so the provider cleans up when no widget
+/// is listening, but the first subscription (triggered eagerly from
+/// [_StatisticsScreenState.initState] via `ref.read`) guarantees data is
+/// fetched within milliseconds of screen mount.
+final periodSummaryProvider =
+    FutureProvider.autoDispose<PeriodSummary>((ref) async {
+  // keepAlive prevents disposal while the user is on the screen and has
+  // just switched filter tabs, avoiding unnecessary flickering.
+  ref.keepAlive();
   final filter = ref.watch(statisticsFilterProvider);
   final useCase = ref.watch(getPeriodSummaryUseCaseProvider);
   return useCase.execute(
@@ -159,9 +167,9 @@ final periodSummaryProvider = FutureProvider<PeriodSummary>((ref) async {
 });
 
 /// Watches the current filter and fetches top-expense categories.
-/// Re-evaluates automatically whenever [statisticsFilterProvider] changes.
 final topExpenseCategoriesProvider =
-    FutureProvider<List<CategoryStatistic>>((ref) async {
+    FutureProvider.autoDispose<List<CategoryStatistic>>((ref) async {
+  ref.keepAlive();
   final filter = ref.watch(statisticsFilterProvider);
   final useCase = ref.watch(getTopCategoriesUseCaseProvider);
   return useCase.execute(
@@ -172,9 +180,9 @@ final topExpenseCategoriesProvider =
 });
 
 /// Watches the current filter and fetches top-income categories.
-/// Re-evaluates automatically whenever [statisticsFilterProvider] changes.
 final topIncomeCategoriesProvider =
-    FutureProvider<List<CategoryStatistic>>((ref) async {
+    FutureProvider.autoDispose<List<CategoryStatistic>>((ref) async {
+  ref.keepAlive();
   final filter = ref.watch(statisticsFilterProvider);
   final useCase = ref.watch(getTopCategoriesUseCaseProvider);
   return useCase.execute(

@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'package:crypto/crypto.dart';
 
-import 'package:konta/core/errors/app_exceptions.dart';
-import 'package:konta/core/security/secure_storage_manager.dart';
+import 'package:stalvi/core/errors/app_exceptions.dart';
+import 'package:stalvi/core/security/secure_storage_manager.dart';
 
 class UpdateCredentialsParams {
   final String oldPin;

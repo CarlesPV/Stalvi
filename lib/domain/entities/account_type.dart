@@ -3,4 +3,5 @@ enum AccountType {
   bank,
   savings,
   card,
+  other,
 }

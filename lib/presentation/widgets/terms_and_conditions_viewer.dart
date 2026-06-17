@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
-import 'package:konta/core/l10n/app_localizations.dart';
+import 'package:stalvi/core/l10n/app_localizations.dart';
 
 /// A premium, stateless presentation viewer for legal texts (Terms and Conditions / Privacy Policy).
 ///
@@ -58,12 +58,12 @@ class TermsAndConditionsViewer extends StatelessWidget {
 
   String _getTermsFallback() {
     return '# Terms and Conditions\n\n'
-        'Welcome to Konta. These Terms and Conditions govern your use of the Konta offline mobile application. By creating a profile and using this application, you agree to these terms.\n\n'
+        'Welcome to Stalvi. These Terms and Conditions govern your use of the Stalvi offline mobile application. By creating a profile and using this application, you agree to these terms.\n\n'
         '## 1. Local-First Storage\n'
-        '* **Local Data**: Konta stores all your financial data, accounts, transactions, and categories locally on your device.\n'
+        '* **Local Data**: Stalvi stores all your financial data, accounts, transactions, and categories locally on your device.\n'
         '* **Security & Encryption**: Your data is secured on-device using SQLCipher database encryption and Flutter Secure Storage.\n\n'
         '## 2. User Responsibility\n'
-        '* **Device Backup**: Since Konta is a local-first application and does not upload your data to any remote server, you are solely responsible for backing up your device and database files.\n'
+        '* **Device Backup**: Since Stalvi is a local-first application and does not upload your data to any remote server, you are solely responsible for backing up your device and database files.\n'
         '* **Loss of Data**: If you lose your device or reset it without a backup, your financial records cannot be recovered.\n\n'
         '## 3. Privacy\n'
         'We do not collect, transmit, or sell your personal or financial data. Your data belongs entirely to you.\n\n'
@@ -73,17 +73,17 @@ class TermsAndConditionsViewer extends StatelessWidget {
 
   String _getPrivacyFallback() {
     return '# Privacy Policy\n\n'
-        'Your privacy is extremely important to us. This Privacy Policy explains how Konta handles your information.\n\n'
+        'Your privacy is extremely important to us. This Privacy Policy explains how Stalvi handles your information.\n\n'
         '## 1. Zero Data Collection\n'
         '* **Personal Data**: We do not collect any personal data such as name, username, or contact information.\n'
         '* **Financial Data**: All transaction logs, account balances, and budgets are kept strictly on your device. We have no backend server and no access to your financial data.\n\n'
         '## 2. Security\n'
-        '* **Device Authentication**: Konta uses device PIN and biometric authentication (Fingerprint or FaceID) to secure access to the app.\n'
+        '* **Device Authentication**: Stalvi uses device PIN and biometric authentication (Fingerprint or FaceID) to secure access to the app.\n'
         '* **Encryption**: The local database is encrypted using SQLCipher with a cryptographic key generated and stored securely in the device\'s keychain/Keystore.\n\n'
         '## 3. Third-Party Services\n'
         'We do not use any tracking tools, analytics, or third-party advertising SDKs that collect or share your data.\n\n'
         '## 4. Contact Us\n'
-        'If you have any questions or feedback regarding our privacy practices, you can contact us at privacy@konta.app.';
+        'If you have any questions or feedback regarding our privacy practices, you can contact us at privacy@stalvi.app.';
   }
 }
 

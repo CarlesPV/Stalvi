@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:konta/core/l10n/app_localizations.dart';
+import 'package:stalvi/core/l10n/app_localizations.dart';
 
 /// A premium, reusable presentation widget designed to prevent "blank page syndrome".
 ///

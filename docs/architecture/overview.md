@@ -1,8 +1,8 @@
-# Konta - Financial Management App
+# Stalvi - Financial Management App
 ## Project Documentation
 
 ### 1. Overview
-Konta is a local-first financial application designed to help users track their income, expenses, budgets, and savings goals. It supports multiple currencies, provides detailed statistics, and focuses heavily on data security, performance, and an intuitive user experience.
+Stalvi is a local-first financial application designed to help users track their income, expenses, budgets, and savings goals. It supports multiple currencies, provides detailed statistics, and focuses heavily on data security, performance, and an intuitive user experience.
 
 ---
 

@@ -1,7 +1,7 @@
-import 'package:konta/domain/entities/account.dart';
-import 'package:konta/domain/entities/account_type.dart';
-import 'package:konta/data/database/app_database.dart' as db;
-import 'package:konta/data/database/tables/account_table.dart' as db_table;
+import 'package:stalvi/domain/entities/account.dart';
+import 'package:stalvi/domain/entities/account_type.dart';
+import 'package:stalvi/data/database/app_database.dart' as db;
+import 'package:stalvi/data/database/tables/account_table.dart' as db_table;
 
 extension AccountMapper on Account {
   db.Account toDb() {
@@ -31,6 +31,8 @@ extension AccountMapper on Account {
         return db_table.AccountType.savings;
       case AccountType.card:
         return db_table.AccountType.card;
+      case AccountType.other:
+        return db_table.AccountType.other;
     }
   }
 }
@@ -63,6 +65,8 @@ extension DbAccountMapper on db.Account {
         return AccountType.savings;
       case db_table.AccountType.card:
         return AccountType.card;
+      case db_table.AccountType.other:
+        return AccountType.other;
     }
   }
 }

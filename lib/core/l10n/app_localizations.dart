@@ -175,7 +175,7 @@ abstract class AppLocalizations {
   /// App name branding
   ///
   /// In en, this message translates to:
-  /// **'Konta'**
+  /// **'Stalvi'**
   String get appTitle;
 
   /// Tagline displayed on the splash screen
@@ -193,7 +193,7 @@ abstract class AppLocalizations {
   /// Error message shown when secure storage fails to initialize
   ///
   /// In en, this message translates to:
-  /// **'Konta couldn\'t initialise its secure storage. Please check available device storage and try again.'**
+  /// **'Stalvi couldn\'t initialise its secure storage. Please check available device storage and try again.'**
   String get splashSecureStorageError;
 
   /// General button label to retry an operation
@@ -763,7 +763,7 @@ abstract class AppLocalizations {
   /// Subtitle for the biometric opt-in screen
   ///
   /// In en, this message translates to:
-  /// **'Use Fingerprint or FaceID to quickly and securely access your Konta account in the future.'**
+  /// **'Use Fingerprint or FaceID to quickly and securely access your Stalvi account in the future.'**
   String get authBiometricOptInSubtitle;
 
   /// Button label to enable biometric login
@@ -1077,6 +1077,186 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No PIN is currently set.'**
   String get errorNoPinSet;
+
+  /// Title shown during the PIN brute-force lockout screen
+  ///
+  /// In en, this message translates to:
+  /// **'Too Many Failed Attempts'**
+  String get authPinLockedTitle;
+
+  /// Description shown during the PIN brute-force lockout screen
+  ///
+  /// In en, this message translates to:
+  /// **'Access has been temporarily blocked after too many incorrect PIN entries.'**
+  String get authPinLockedMessage;
+
+  /// Label shown below the countdown ring during PIN lockout
+  ///
+  /// In en, this message translates to:
+  /// **'seconds remaining'**
+  String get authPinLockedCountdown;
+
+  /// Label shown after PIN lockout expires, granting one more attempt
+  ///
+  /// In en, this message translates to:
+  /// **'You may now try again'**
+  String get authPinLockedRetry;
+
+  /// Title for the biometric sign-in prompt
+  ///
+  /// In en, this message translates to:
+  /// **'Verify identity'**
+  String get authSignInTitle;
+
+  /// Default name for the main cash account created during setup
+  ///
+  /// In en, this message translates to:
+  /// **'Main Account'**
+  String get defaultAccountName;
+
+  /// Filter option to show all transactions
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get filterAll;
+
+  /// Filter option to show only income transactions
+  ///
+  /// In en, this message translates to:
+  /// **'Income'**
+  String get filterIncome;
+
+  /// Filter option to show only expense transactions
+  ///
+  /// In en, this message translates to:
+  /// **'Expense'**
+  String get filterExpense;
+
+  /// Filter option to show only transfer transactions
+  ///
+  /// In en, this message translates to:
+  /// **'Transfer'**
+  String get filterTransfer;
+
+  /// Title for the create account dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Create New Account'**
+  String get createAccountTitle;
+
+  /// Label for account name input
+  ///
+  /// In en, this message translates to:
+  /// **'Account Name'**
+  String get createAccountNameLabel;
+
+  /// Hint text for account name input
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Personal Card, Cash, etc.'**
+  String get createAccountNameHint;
+
+  /// Label for initial balance input
+  ///
+  /// In en, this message translates to:
+  /// **'Initial Balance'**
+  String get createAccountInitialBalanceLabel;
+
+  /// Label for account type selection
+  ///
+  /// In en, this message translates to:
+  /// **'Account Type'**
+  String get createAccountTypeLabel;
+
+  /// Label for color theme selection
+  ///
+  /// In en, this message translates to:
+  /// **'Color Theme'**
+  String get createAccountColorThemeLabel;
+
+  /// Label for icon selection
+  ///
+  /// In en, this message translates to:
+  /// **'Icon'**
+  String get createAccountIconLabel;
+
+  /// Success message after account creation
+  ///
+  /// In en, this message translates to:
+  /// **'Account created successfully'**
+  String get createAccountSuccess;
+
+  /// Error message when account name is empty
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter an account name'**
+  String get createAccountErrorName;
+
+  /// Error message when account creation fails
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to create account'**
+  String get createAccountErrorFailed;
+
+  /// Account type: Other
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get accountTypeOther;
+
+  /// Account type: Cash
+  ///
+  /// In en, this message translates to:
+  /// **'Cash'**
+  String get accountTypeCash;
+
+  /// Account type: Bank
+  ///
+  /// In en, this message translates to:
+  /// **'Bank'**
+  String get accountTypeBank;
+
+  /// Account type: Savings
+  ///
+  /// In en, this message translates to:
+  /// **'Savings'**
+  String get accountTypeSavings;
+
+  /// Account type: Card
+  ///
+  /// In en, this message translates to:
+  /// **'Card'**
+  String get accountTypeCard;
+
+  /// Title for the delete transaction dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Transaction?'**
+  String get deleteTransactionTitle;
+
+  /// Success message when transaction is deleted
+  ///
+  /// In en, this message translates to:
+  /// **'Transaction moved to recycle bin'**
+  String get transactionMovedToRecycleBin;
+
+  /// Error message when transaction deletion fails
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to delete transaction'**
+  String get errorDeleteTransaction;
+
+  /// Message confirming the deletion of a transaction
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this transaction? This will move it to the recycle bin.'**
+  String get deleteTransactionConfirmation;
+
+  /// Close button label
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get btnClose;
 }
 
 class _AppLocalizationsDelegate

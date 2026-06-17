@@ -1,4 +1,4 @@
-name: Konta Flutter CI
+name: Stalvi Flutter CI
 
 on:
   push:

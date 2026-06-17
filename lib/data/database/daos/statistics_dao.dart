@@ -2,6 +2,7 @@ import 'package:drift/drift.dart';
 import '../app_database.dart';
 import '../tables/transaction_table.dart';
 import '../tables/category_table.dart';
+import '../tables/account_table.dart';
 
 part 'statistics_dao.g.dart';
 
@@ -21,7 +22,7 @@ class CategoryStatisticResult {
   });
 }
 
-@DriftAccessor(tables: [Transactions, Categories])
+@DriftAccessor(tables: [Transactions, Categories, Accounts])
 class StatisticsDao extends DatabaseAccessor<AppDatabase>
     with _$StatisticsDaoMixin {
   StatisticsDao(super.db);
@@ -34,9 +35,17 @@ class StatisticsDao extends DatabaseAccessor<AppDatabase>
     final incomeSum = transactions.amount.sum();
     final incomeQuery = selectOnly(transactions)
       ..addColumns([incomeSum])
+      ..join([
+        innerJoin(
+          accounts,
+          accounts.id.equalsExp(transactions.accountId),
+        ),
+      ])
       ..where(
         transactions.date.isBetweenValues(startDate, endDate) &
-            transactions.type.equalsValue(TransactionType.income),
+            transactions.type.equalsValue(TransactionType.income) &
+            transactions.isDeleted.equals(false) &
+            accounts.isDeleted.equals(false),
       );
     final incomeResult = await incomeQuery.getSingle();
     final totalIncome = incomeResult.read(incomeSum) ?? 0;
@@ -44,9 +53,17 @@ class StatisticsDao extends DatabaseAccessor<AppDatabase>
     final expenseSum = transactions.amount.sum();
     final expenseQuery = selectOnly(transactions)
       ..addColumns([expenseSum])
+      ..join([
+        innerJoin(
+          accounts,
+          accounts.id.equalsExp(transactions.accountId),
+        ),
+      ])
       ..where(
         transactions.date.isBetweenValues(startDate, endDate) &
-            transactions.type.equalsValue(TransactionType.expense),
+            transactions.type.equalsValue(TransactionType.expense) &
+            transactions.isDeleted.equals(false) &
+            accounts.isDeleted.equals(false),
       );
     final expenseResult = await expenseQuery.getSingle();
     final totalExpense = expenseResult.read(expenseSum) ?? 0;
@@ -75,11 +92,17 @@ class StatisticsDao extends DatabaseAccessor<AppDatabase>
           categories,
           categories.id.equalsExp(transactions.categoryId),
         ),
+        innerJoin(
+          accounts,
+          accounts.id.equalsExp(transactions.accountId),
+        ),
       ])
       ..where(
         transactions.date.isBetweenValues(startDate, endDate) &
             transactions.type.equalsValue(type) &
-            categories.isDeleted.equals(false),
+            transactions.isDeleted.equals(false) &
+            categories.isDeleted.equals(false) &
+            accounts.isDeleted.equals(false),
       )
       ..groupBy([categories.id])
       ..orderBy([OrderingTerm(expression: amountSum, mode: OrderingMode.desc)]);

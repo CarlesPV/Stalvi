@@ -1,6 +1,6 @@
-import 'package:konta/core/errors/app_exceptions.dart';
-import 'package:konta/domain/repositories/i_export_service.dart';
-import 'package:konta/domain/repositories/i_transaction_repository.dart';
+import 'package:stalvi/core/errors/app_exceptions.dart';
+import 'package:stalvi/domain/repositories/i_export_service.dart';
+import 'package:stalvi/domain/repositories/i_transaction_repository.dart';
 
 /// Use case that retrieves **all non-deleted transactions** and packages them
 /// into a CSV [ExportResult].

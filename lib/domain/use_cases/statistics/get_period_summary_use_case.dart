@@ -1,5 +1,5 @@
-import 'package:konta/domain/entities/period_summary.dart';
-import 'package:konta/domain/repositories/i_statistics_repository.dart';
+import 'package:stalvi/domain/entities/period_summary.dart';
+import 'package:stalvi/domain/repositories/i_statistics_repository.dart';
 
 class GetPeriodSummaryUseCase {
   final IStatisticsRepository _repository;

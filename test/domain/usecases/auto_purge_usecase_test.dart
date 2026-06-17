@@ -2,8 +2,8 @@ import 'dart:ffi';
 import 'package:drift/drift.dart' hide isNull, isNotNull;
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:konta/data/database/app_database.dart';
-import 'package:konta/domain/usecases/auto_purge_usecase.dart';
+import 'package:stalvi/data/database/app_database.dart';
+import 'package:stalvi/domain/usecases/auto_purge_usecase.dart';
 // ignore: depend_on_referenced_packages
 import 'package:sqlite3/open.dart';
 import 'package:uuid/uuid.dart';

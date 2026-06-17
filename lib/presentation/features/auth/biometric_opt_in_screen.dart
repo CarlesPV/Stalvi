@@ -1,9 +1,9 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:konta/core/l10n/app_localizations.dart';
-import 'package:konta/presentation/features/dashboard/dashboard_screen.dart';
-import 'package:konta/presentation/providers/auth_notifier.dart';
+import 'package:stalvi/core/l10n/app_localizations.dart';
+import 'package:stalvi/presentation/features/dashboard/dashboard_screen.dart';
+import 'package:stalvi/presentation/providers/auth_notifier.dart';
 
 class BiometricOptInScreen extends ConsumerStatefulWidget {
   const BiometricOptInScreen({super.key});
@@ -270,7 +270,7 @@ class _BrandHeader extends StatelessWidget {
         ),
         const SizedBox(height: 12),
         Text(
-          'Konta',
+          'Stalvi',
           style: theme.textTheme.headlineSmall?.copyWith(
             fontWeight: FontWeight.w800,
             letterSpacing: -1,

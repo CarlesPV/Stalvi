@@ -1,4 +1,4 @@
-import 'package:konta/domain/entities/tag.dart';
+import 'package:stalvi/domain/entities/tag.dart';
 
 abstract class ITagRepository {
   Future<Tag> createTag(Tag tag);

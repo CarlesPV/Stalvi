@@ -1,4 +1,4 @@
-# Konta Project Roadmap
+# Stalvi Project Roadmap
 
 ## Completed Phases
 - [x] **Phase 1: Foundation & Security**
@@ -84,11 +84,25 @@
   - [x] Redo default tags to represent event and organization use cases (Summer Trip, Event, Project, Wedding, Birthday, Business Trip).
   - [x] Implement dynamic database category/tag translation updates on app startup and locale changes, using stable IDs and cleaning up duplicate/old entries.
 
+- [x] **Phase 15: Advanced Transaction Filtering & Statistics Eager Initialization**
+  - [x] Implement multi-dimensional `TransactionFilter` model and provider state notifier.
+  - [x] Create domain-level `TransactionQueryFilter` supporting concurrency across 6 fields (Type, Category, Date Range, Amount Range, Tag, Currency).
+  - [x] Implement database-level `watchFilteredTransactions` using Drift expressions.
+  - [x] Pre-warm statistics future providers on screen mounting (`initState`) to eliminate initialization latency.
+  - [x] Write comprehensive suite of 21 tests covering concurrent filter combinations.
+
+- [x] **Phase 16: UI, Localization, and Soft-Deleted Data Fixes**
+  - [x] Implement local inline validation error message display on Name field for Create/Edit Account Dialogs.
+  - [x] Fix Account Type selector text clipping by increasing height constraint, and update the "Other" type icon to a context-related monetization coin.
+  - [x] Exclude soft-deleted transactions, accounts, and categories from period summary and top categories statistics aggregations.
+  - [x] Enforce automated account balance updates when deleting and restoring transactions (reverting/re-applying financial impacts).
+  - [x] Fix compilation issues and achieve 100% automated test suite pass rate.
+
 ## Current Phase
-- [ ] **Phase 15: Synchronization, Backups, and Import/Export Validations**
+- [ ] **Phase 17: Synchronization, Backups, and Import/Export Validations**
   - [ ] Implement cloud synchronization options.
   - [ ] Add encrypted automatic local backup features.
   - [ ] Validate cross-platform imports/exports.
 
 ## Upcoming Phases
-- [ ] **Phase 16: Integration Testing (E2E), final security audit, and store preparation.**
+- [ ] **Phase 18: Integration Testing (E2E), final security audit, and store preparation.**

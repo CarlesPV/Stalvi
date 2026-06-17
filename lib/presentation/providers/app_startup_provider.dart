@@ -1,9 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/foundation.dart';
-import 'package:konta/data/database/app_database.dart';
-import 'package:konta/domain/usecases/auto_purge_usecase.dart';
-import 'package:konta/presentation/providers/locale_provider.dart';
-import 'package:konta/presentation/providers/repository_providers.dart';
+import 'package:stalvi/data/database/app_database.dart';
+import 'package:stalvi/domain/usecases/auto_purge_usecase.dart';
+import 'package:stalvi/presentation/providers/locale_provider.dart';
+import 'package:stalvi/presentation/providers/repository_providers.dart';
 
 /// Provides the singleton [AppDatabase] instance.
 ///

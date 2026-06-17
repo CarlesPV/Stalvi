@@ -2,9 +2,9 @@ import 'dart:ffi';
 import 'package:drift/native.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:konta/data/database/app_database.dart';
-import 'package:konta/main.dart';
-import 'package:konta/presentation/providers/app_startup_provider.dart';
+import 'package:stalvi/data/database/app_database.dart';
+import 'package:stalvi/main.dart';
+import 'package:stalvi/presentation/providers/app_startup_provider.dart';
 // ignore: depend_on_referenced_packages
 import 'package:sqlite3/open.dart';
 
@@ -15,7 +15,8 @@ void main() {
     });
   });
 
-  testWidgets('KontaApp renders without crashing', (WidgetTester tester) async {
+  testWidgets('StalviApp renders without crashing',
+      (WidgetTester tester) async {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
@@ -23,11 +24,11 @@ void main() {
             (ref) async => AppDatabase.forTesting(NativeDatabase.memory()),
           ),
         ],
-        child: const KontaApp(),
+        child: const StalviApp(),
       ),
     );
-    // Verify the Konta wordmark appears on the splash screen.
-    expect(find.text('Konta'), findsWidgets);
+    // Verify the Stalvi wordmark appears on the splash screen.
+    expect(find.text('Stalvi'), findsWidgets);
 
     // Let the splash screen timer (2200ms) and animations run to transition to AuthScreen,
     // avoiding pumpAndSettle timeout since AuthScreen has an infinite pulsing animation.

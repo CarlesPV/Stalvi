@@ -30,22 +30,26 @@ class SecureStorageManager {
   final FlutterSecureStorage _storage;
 
   /// Storage key constant – changing this will orphan existing databases.
-  static const String _kEncryptionKeyName = 'konta_db_cipher_key';
+  static const String _kEncryptionKeyName = 'stalvi_db_cipher_key';
 
   /// Storage key constant for persisting the user's selected locale language code.
-  static const String _kUserLocaleKey = 'konta_user_locale';
+  static const String _kUserLocaleKey = 'stalvi_user_locale';
 
   /// Storage key constant for persisting the user's PIN hash.
-  static const String _kPinHashKey = 'konta_pin_hash';
+  static const String _kPinHashKey = 'stalvi_pin_hash';
 
   /// Storage key constant for persisting the user's PIN length.
-  static const String _kPinLengthKey = 'konta_pin_length';
+  static const String _kPinLengthKey = 'stalvi_pin_length';
 
   /// Storage key constant for persisting biometrics enabled status.
-  static const String _kBiometricsEnabledKey = 'konta_biometrics_enabled';
+  static const String _kBiometricsEnabledKey = 'stalvi_biometrics_enabled';
 
   /// Storage key constant for persisting the user's selected theme mode.
-  static const String _kThemeModeKey = 'konta_theme_mode';
+  static const String _kThemeModeKey = 'stalvi_theme_mode';
+
+  /// Storage key constant for persisting the PIN brute-force lockout timestamp
+  /// (milliseconds since epoch, stored as a decimal string).
+  static const String _kPinLockoutTimestampKey = 'stalvi_pin_lockout_ts';
 
   /// Length of the encryption key in bytes (256 bits).
   static const int _kKeyLengthBytes = 32;
@@ -293,6 +297,45 @@ class SecureStorageManager {
     } on Exception catch (e) {
       throw SecureStorageException(
         'Failed to save theme mode to secure storage.',
+        cause: e,
+      );
+    }
+  }
+
+  // ── PIN lockout timestamp ─────────────────────────────────────────────────
+
+  /// Persists the epoch timestamp (ms) at which the PIN lockout started.
+  Future<void> saveLockoutTimestamp(int epochMs) async {
+    try {
+      await _writeWithRetry(_kPinLockoutTimestampKey, epochMs.toString());
+    } on Exception catch (e) {
+      throw SecureStorageException(
+        'Failed to save PIN lockout timestamp to secure storage.',
+        cause: e,
+      );
+    }
+  }
+
+  /// Retrieves the persisted lockout timestamp in milliseconds since epoch.
+  /// Returns [null] if no lockout is currently stored.
+  Future<int?> getLockoutTimestamp() async {
+    try {
+      final value = await _readWithRetry(_kPinLockoutTimestampKey);
+      if (value != null) return int.tryParse(value);
+      return null;
+    } on Exception {
+      return null;
+    }
+  }
+
+  /// Removes the persisted lockout timestamp, effectively clearing any
+  /// stored lockout state.
+  Future<void> deleteLockoutTimestamp() async {
+    try {
+      await _deleteWithRetry(_kPinLockoutTimestampKey);
+    } on Exception catch (e) {
+      throw SecureStorageException(
+        'Failed to delete PIN lockout timestamp from secure storage.',
         cause: e,
       );
     }

@@ -1,15 +1,15 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
-import 'package:konta/domain/entities/account.dart';
-import 'package:konta/domain/entities/account_type.dart';
-import 'package:konta/domain/repositories/i_account_repository.dart';
-import 'package:konta/domain/usecases/initialize_default_data_usecase.dart';
+import 'package:stalvi/domain/entities/account.dart';
+import 'package:stalvi/domain/entities/account_type.dart';
+import 'package:stalvi/domain/repositories/i_account_repository.dart';
+import 'package:stalvi/domain/usecases/initialize_default_data_usecase.dart';
 
-import 'package:konta/domain/entities/category.dart';
-import 'package:konta/domain/repositories/i_category_repository.dart';
-import 'package:konta/domain/entities/tag.dart';
-import 'package:konta/domain/repositories/i_tag_repository.dart';
+import 'package:stalvi/domain/entities/category.dart';
+import 'package:stalvi/domain/repositories/i_category_repository.dart';
+import 'package:stalvi/domain/entities/tag.dart';
+import 'package:stalvi/domain/repositories/i_tag_repository.dart';
 
 class MockAccountRepository extends Mock implements IAccountRepository {}
 
@@ -157,7 +157,7 @@ void main() {
     });
 
     test(
-        'should resolve localized wallet name to "My Wallet" when locale is "en"',
+        'should resolve localized wallet name to "Main Account" when locale is "en"',
         () async {
       // Arrange
       const userId = 'user_123';
@@ -181,11 +181,11 @@ void main() {
           verify(() => mockAccountRepository.createAccount(captureAny()))
               .captured
               .first as Account;
-      expect(capturedAccount.name, 'My Wallet');
+      expect(capturedAccount.name, 'Main Account');
     });
 
     test(
-        'should resolve localized wallet name to "La meva cartera" when locale is "ca"',
+        'should resolve localized wallet name to "Compte principal" when locale is "ca"',
         () async {
       // Arrange
       const userId = 'user_123';
@@ -209,11 +209,11 @@ void main() {
           verify(() => mockAccountRepository.createAccount(captureAny()))
               .captured
               .first as Account;
-      expect(capturedAccount.name, 'La meva cartera');
+      expect(capturedAccount.name, 'Compte principal');
     });
 
     test(
-        'should resolve localized wallet name to "Mi cartera" when locale is "es"',
+        'should resolve localized wallet name to "Cuenta principal" when locale is "es"',
         () async {
       // Arrange
       const userId = 'user_123';
@@ -237,10 +237,10 @@ void main() {
           verify(() => mockAccountRepository.createAccount(captureAny()))
               .captured
               .first as Account;
-      expect(capturedAccount.name, 'Mi cartera');
+      expect(capturedAccount.name, 'Cuenta principal');
     });
 
-    test('should fallback to default "Mi cartera" when locale is unsupported',
+    test('should fallback to default "Main Account" when locale is unsupported',
         () async {
       // Arrange
       const userId = 'user_123';
@@ -265,11 +265,11 @@ void main() {
           verify(() => mockAccountRepository.createAccount(captureAny()))
               .captured
               .first as Account;
-      expect(capturedAccount.name, 'Mi cartera');
+      expect(capturedAccount.name, 'Main Account');
     });
 
     test(
-        'should fallback to default "Mi cartera" when locale is null and walletName is null',
+        'should fallback to default "Main Account" when locale is null and walletName is null',
         () async {
       // Arrange
       const userId = 'user_123';
@@ -292,7 +292,7 @@ void main() {
           verify(() => mockAccountRepository.createAccount(captureAny()))
               .captured
               .first as Account;
-      expect(capturedAccount.name, 'Mi cartera');
+      expect(capturedAccount.name, 'Main Account');
     });
 
     test(
