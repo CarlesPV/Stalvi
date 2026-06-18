@@ -15,6 +15,15 @@ class Transaction {
   final DateTime createdAt;
   final DateTime modifiedAt;
 
+  /// Shared identifier linking both legs of a transfer pair.
+  ///
+  /// When a transfer is recorded, two [Transaction] rows are created:
+  ///   - Origin account  → negative amount, type = transfer, transferId = X
+  ///   - Destination account → positive amount, type = transfer, transferId = X
+  ///
+  /// `null` for income / expense transactions.
+  final String? transferId;
+
   const Transaction({
     required this.id,
     required this.amount,
@@ -28,6 +37,7 @@ class Transaction {
     this.exchangeRate,
     required this.createdAt,
     required this.modifiedAt,
+    this.transferId,
   });
 
   @override
@@ -46,7 +56,8 @@ class Transaction {
         other.convertedAmount == convertedAmount &&
         other.exchangeRate == exchangeRate &&
         other.createdAt == createdAt &&
-        other.modifiedAt == modifiedAt;
+        other.modifiedAt == modifiedAt &&
+        other.transferId == transferId;
   }
 
   @override
@@ -62,7 +73,8 @@ class Transaction {
         convertedAmount.hashCode ^
         exchangeRate.hashCode ^
         createdAt.hashCode ^
-        modifiedAt.hashCode;
+        modifiedAt.hashCode ^
+        transferId.hashCode;
   }
 
   Transaction copyWith({
@@ -78,6 +90,8 @@ class Transaction {
     double? exchangeRate,
     DateTime? createdAt,
     DateTime? modifiedAt,
+    String? transferId,
+    bool clearTransferId = false,
   }) {
     return Transaction(
       id: id ?? this.id,
@@ -92,6 +106,7 @@ class Transaction {
       exchangeRate: exchangeRate ?? this.exchangeRate,
       createdAt: createdAt ?? this.createdAt,
       modifiedAt: modifiedAt ?? this.modifiedAt,
+      transferId: clearTransferId ? null : (transferId ?? this.transferId),
     );
   }
 }

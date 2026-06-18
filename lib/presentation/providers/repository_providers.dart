@@ -148,7 +148,9 @@ final wipeAllDataUseCaseProvider = Provider<WipeAllDataUseCase>((ref) {
 /// Provides the [TrashUsecases] instance.
 final trashUsecasesProvider = Provider<TrashUsecases>((ref) {
   final db = ref.watch(appDatabaseProvider).requireValue;
-  return TrashUsecases(db.trashDao);
+  final transactionRepo = ref.watch(transactionRepositoryProvider);
+  final accountRepo = ref.watch(accountRepositoryProvider);
+  return TrashUsecases(db.trashDao, transactionRepo, accountRepo);
 });
 
 /// Fetches the default profile (usually Anonymous) seeded on DB creation.

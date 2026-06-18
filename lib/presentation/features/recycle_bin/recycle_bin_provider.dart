@@ -2,17 +2,20 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../domain/entities/trash_item.dart';
 import '../../../domain/usecases/trash_usecases.dart';
 import '../../providers/repository_providers.dart';
+import '../../providers/statistics_providers.dart';
 
 final recycleBinProvider =
     StateNotifierProvider<RecycleBinNotifier, AsyncValue<List<TrashItem>>>(
         (ref) {
-  return RecycleBinNotifier(ref.watch(trashUsecasesProvider));
+  return RecycleBinNotifier(ref.watch(trashUsecasesProvider), ref);
 });
 
 class RecycleBinNotifier extends StateNotifier<AsyncValue<List<TrashItem>>> {
   final TrashUsecases _trashUsecases;
+  final Ref ref;
 
-  RecycleBinNotifier(this._trashUsecases) : super(const AsyncValue.loading()) {
+  RecycleBinNotifier(this._trashUsecases, this.ref)
+      : super(const AsyncValue.loading()) {
     loadItems();
   }
 
@@ -30,6 +33,11 @@ class RecycleBinNotifier extends StateNotifier<AsyncValue<List<TrashItem>>> {
     try {
       await _trashUsecases.restoreItem(id, type);
       await loadItems(); // Refresh the list
+      ref.invalidate(accountsListProvider);
+      ref.invalidate(transactionsStreamProvider);
+      ref.invalidate(periodSummaryProvider);
+      ref.invalidate(topExpenseCategoriesProvider);
+      ref.invalidate(topIncomeCategoriesProvider);
     } catch (e, st) {
       // Typically, one might handle the error with a snackbar or similar.
       // For this implementation, we just set the error state.
@@ -41,6 +49,11 @@ class RecycleBinNotifier extends StateNotifier<AsyncValue<List<TrashItem>>> {
     try {
       await _trashUsecases.deleteItemPermanently(id, type);
       await loadItems(); // Refresh the list
+      ref.invalidate(accountsListProvider);
+      ref.invalidate(transactionsStreamProvider);
+      ref.invalidate(periodSummaryProvider);
+      ref.invalidate(topExpenseCategoriesProvider);
+      ref.invalidate(topIncomeCategoriesProvider);
     } catch (e, st) {
       state = AsyncValue.error(e, st);
     }

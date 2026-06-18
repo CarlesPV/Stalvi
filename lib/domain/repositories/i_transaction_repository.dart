@@ -32,14 +32,59 @@ class TransactionQueryFilter {
   });
 }
 
+// ─── Transfer result value object ─────────────────────────────────────────────
+
+/// Holds the two mirrored transactions produced by a transfer operation.
+class TransferPair {
+  /// The outflow leg (origin account, negative amount).
+  final Transaction origin;
+
+  /// The inflow leg (destination account, positive amount).
+  final Transaction destination;
+
+  const TransferPair({required this.origin, required this.destination});
+}
+
 // ─── Repository interface ──────────────────────────────────────────────────────
 
 abstract class ITransactionRepository {
   Future<Transaction> createTransaction(Transaction transaction);
+
+  /// Atomically creates both legs of a transfer and updates both account
+  /// balances inside a single Drift `transaction()` block.
+  Future<TransferPair> createTransferPair({
+    required Transaction originTransaction,
+    required Transaction destinationTransaction,
+  });
+
   Future<Transaction?> getTransactionById(String id);
   Future<List<Transaction>> getTransactionsByAccountId(String accountId);
   Future<Transaction> updateTransaction(Transaction transaction);
+
+  /// Soft-deletes a single transaction.
+  ///
+  /// If the transaction belongs to a transfer pair, this method also
+  /// soft-deletes its mirrored counterpart atomically.
   Future<void> deleteTransaction(String id);
+
+  /// Permanently hard-deletes a transaction row from the database.
+  ///
+  /// If the transaction belongs to a transfer pair, its mirror is also
+  /// permanently deleted atomically.
+  Future<void> hardDeleteTransaction(String id);
+
+  /// Restores a soft-deleted transaction (sets isDeleted = false).
+  ///
+  /// If the transaction belongs to a transfer pair, its mirror is also
+  /// restored atomically.
+  Future<void> restoreTransaction(String id);
+
+  /// Soft-deletes all non-deleted transactions belonging to [accountId].
+  Future<void> softDeleteTransactionsByAccountId(String accountId);
+
+  /// Permanently hard-deletes all transactions belonging to [accountId].
+  Future<void> hardDeleteTransactionsByAccountId(String accountId);
+
   Stream<List<Transaction>> watchAllTransactions();
 
   /// Streams transactions matching all non-null filter dimensions concurrently.

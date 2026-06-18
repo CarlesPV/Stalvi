@@ -5,6 +5,7 @@ import 'package:stalvi/core/utils/currency_formatter.dart';
 import 'package:stalvi/domain/entities/transaction_type.dart';
 import 'package:stalvi/domain/usecases/add_transaction_usecase.dart';
 import 'package:stalvi/presentation/providers/repository_providers.dart';
+import 'package:stalvi/presentation/providers/statistics_providers.dart';
 
 /// State representation for the Add Transaction form.
 /// State representation for the Add Transaction form.
@@ -334,6 +335,10 @@ class AddTransactionNotifier extends AutoDisposeNotifier<AddTransactionState> {
 
       // Successfully saved transaction, invalidate account list to refresh balances
       ref.invalidate(accountsListProvider);
+      ref.invalidate(transactionsStreamProvider);
+      ref.invalidate(periodSummaryProvider);
+      ref.invalidate(topExpenseCategoriesProvider);
+      ref.invalidate(topIncomeCategoriesProvider);
 
       state = state.copyWith(submissionStatus: const AsyncValue.data(null));
       return true;

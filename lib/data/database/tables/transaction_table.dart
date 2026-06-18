@@ -29,6 +29,9 @@ class Transactions extends Table {
   BoolColumn get isDeleted =>
       boolean().named('is_deleted').withDefault(const Constant(false))();
 
+  /// Links both legs of a transfer pair. Null for income/expense rows.
+  TextColumn get transferId => text().named('transfer_id').nullable()();
+
   @override
   Set<Column> get primaryKey => {id};
 }

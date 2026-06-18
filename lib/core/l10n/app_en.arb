@@ -92,7 +92,7 @@
   "@authVerifyIdentity": {
     "description": "Prompt title to verify identity"
   },
-  "authVerifyMessage": "Use biometrics or your device PIN to access your financial data securely.",
+  "authVerifyMessage": "Use biometrics or your device PIN to continue.",
   "@authVerifyMessage": {
     "description": "Prompt description to verify identity"
   },
@@ -914,5 +914,153 @@
   "labelDestinationAccount": "Destination Account",
   "@labelDestinationAccount": {
     "description": "Label for the destination account of a transfer"
+  },
+  "errorCannotDeleteLastAccount": "Cannot delete the last existing account.",
+  "@errorCannotDeleteLastAccount": {
+    "description": "Error message when attempting to delete the last remaining account"
+  },
+  "categoriesAndTags": "Categories & Tags",
+  "@categoriesAndTags": {
+    "description": "Title or label for Categories & Tags section"
+  },
+  "setAsDefault": "Set as Default",
+  "@setAsDefault": {
+    "description": "Switch label to set an account as default"
+  },
+  "warning": "Warning",
+  "@warning": {
+    "description": "Warning dialog title"
+  },
+  "replaceDefaultAccountConfirm": "The previous default account will be replaced. Continue?",
+  "@replaceDefaultAccountConfirm": {
+    "description": "Confirmation message when replacing the default account"
+  },
+  "btnContinue": "Continue",
+  "@btnContinue": {
+    "description": "Label for continue button"
+  },
+  "unknownAccount": "Unknown Account",
+  "@unknownAccount": {
+    "description": "Fallback label when account is not found"
+  },
+  "editAccountDetails": "Edit account details",
+  "@editAccountDetails": {
+    "description": "Subtitle for editing account details"
+  },
+  "markAccountAsDefault": "Mark this account as the default for new transactions",
+  "@markAccountAsDefault": {
+    "description": "Subtitle for setting account as default"
+  },
+  "alreadyDefaultAccount": "This is already the default account",
+  "@alreadyDefaultAccount": {
+    "description": "Subtitle indicating account is already default"
+  },
+  "categories": "Categories",
+  "@categories": {
+    "description": "Label for categories tab or section"
+  },
+  "tags": "Tags",
+  "@tags": {
+    "description": "Label for tags tab or section"
+  },
+  "deleteCategoryTitle": "Delete Category?",
+  "@deleteCategoryTitle": {
+    "description": "Title for delete category confirmation dialog"
+  },
+  "deleteCategoryConfirm": "Are you sure you want to delete {name}?",
+  "@deleteCategoryConfirm": {
+    "description": "Message to confirm deleting a category",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "deleteTagTitle": "Delete Tag?",
+  "@deleteTagTitle": {
+    "description": "Title for delete tag confirmation dialog"
+  },
+  "deleteTagConfirm": "Are you sure you want to delete {name}?",
+  "@deleteTagConfirm": {
+    "description": "Message to confirm deleting a tag",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "errorNoOtherCategories": "No other categories to reassign transactions to.",
+  "@errorNoOtherCategories": {
+    "description": "Error message when no other categories are available for reassignment"
+  },
+  "errorNoOtherTags": "No other tags to reassign transactions to.",
+  "@errorNoOtherTags": {
+    "description": "Error message when no other tags are available for reassignment"
+  },
+  "categoryInUseTitle": "Category in Use",
+  "@categoryInUseTitle": {
+    "description": "Title for category in use warning dialog"
+  },
+  "tagInUseTitle": "Tag in Use",
+  "@tagInUseTitle": {
+    "description": "Title for tag in use warning dialog"
+  },
+  "categoryInUseMessage": "{name} is used by existing transactions. Please select a category to reassign them to:",
+  "@categoryInUseMessage": {
+    "description": "Message explaining that a category is in use and prompting for reassignment",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "tagInUseMessage": "{name} is used by existing transactions. Please select a tag to reassign them to:",
+  "@tagInUseMessage": {
+    "description": "Message explaining that a tag is in use and prompting for reassignment",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "btnReassignAndDelete": "Reassign & Delete",
+  "@btnReassignAndDelete": {
+    "description": "Button label to reassign items and delete the original"
+  },
+  "noCategories": "No categories yet",
+  "@noCategories": {
+    "description": "Message shown when categories list is empty"
+  },
+  "noTags": "No tags yet",
+  "@noTags": {
+    "description": "Message shown when tags list is empty"
+  },
+  "addCategoryTitle": "Add Category",
+  "@addCategoryTitle": {
+    "description": "Title for adding a category"
+  },
+  "editCategoryTitle": "Edit Category",
+  "@editCategoryTitle": {
+    "description": "Title for editing a category"
+  },
+  "addTagTitle": "Add Tag",
+  "@addTagTitle": {
+    "description": "Title for adding a tag"
+  },
+  "editTagTitle": "Edit Tag",
+  "@editTagTitle": {
+    "description": "Title for editing a tag"
+  },
+  "labelCategoryName": "Category Name",
+  "@labelCategoryName": {
+    "description": "Label for category name input field"
+  },
+  "labelTagName": "Tag Name",
+  "@labelTagName": {
+    "description": "Label for tag name input field"
+  },
+  "labelIcon": "Icon",
+  "@labelIcon": {
+    "description": "Label for icon picker or display"
   }
 }

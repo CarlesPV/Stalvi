@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:stalvi/core/l10n/app_localizations.dart';
 import 'package:stalvi/domain/entities/category.dart';
 import 'package:stalvi/domain/entities/tag.dart';
 import 'package:stalvi/presentation/providers/repository_providers.dart';
@@ -41,16 +42,17 @@ class _CategoriesTagsManagementScreenState
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Categories & Tags',
-        ), // Assuming hardcoded or we can use l10n
+        title: Text(
+          l10n.categoriesAndTags,
+        ),
         bottom: TabBar(
           controller: _tabController,
-          tabs: const [
-            Tab(text: 'Categories'),
-            Tab(text: 'Tags'),
+          tabs: [
+            Tab(text: l10n.categories),
+            Tab(text: l10n.tags),
           ],
         ),
       ),
@@ -84,6 +86,7 @@ class _CategoriesTab extends ConsumerWidget {
     Category category,
     List<Category> allCategories,
   ) async {
+    final l10n = AppLocalizations.of(context)!;
     final inUse = await ref
         .read(deleteAndReassignCategoryUseCaseProvider)
         .isCategoryInUse(category.id);
@@ -99,16 +102,17 @@ class _CategoriesTab extends ConsumerWidget {
       final confirm = await showDialog<bool>(
         context: context,
         builder: (ctx) => AlertDialog(
-          title: const Text('Delete Category?'),
-          content: Text('Are you sure you want to delete ${category.name}?'),
+          title: Text(l10n.deleteCategoryTitle),
+          content: Text(l10n.deleteCategoryConfirm(category.name)),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(ctx, false),
-              child: const Text('Cancel'),
+              child: Text(l10n.btnCancel),
             ),
             TextButton(
               onPressed: () => Navigator.pop(ctx, true),
-              child: const Text('Delete', style: TextStyle(color: Colors.red)),
+              child: Text(l10n.btnDelete,
+                  style: const TextStyle(color: Colors.red),),
             ),
           ],
         ),
@@ -125,13 +129,14 @@ class _CategoriesTab extends ConsumerWidget {
     Category categoryToDel,
     List<Category> replacementCategories,
   ) {
+    final l10n = AppLocalizations.of(context)!;
     String? selectedNewCategoryId;
     final otherCategories = replacementCategories;
 
     if (otherCategories.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('No other categories to reassign transactions to.'),
+        SnackBar(
+          content: Text(l10n.errorNoOtherCategories),
         ),
       );
       return;
@@ -145,12 +150,12 @@ class _CategoriesTab extends ConsumerWidget {
         return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
-              title: const Text('Category in use'),
+              title: Text(l10n.categoryInUseTitle),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    '${categoryToDel.name} is used by existing transactions. Please select a category to reassign them to:',
+                    l10n.categoryInUseMessage(categoryToDel.name),
                   ),
                   const SizedBox(height: 16),
                   DropdownButtonFormField<String>(
@@ -158,7 +163,9 @@ class _CategoriesTab extends ConsumerWidget {
                     items: otherCategories
                         .map(
                           (c) => DropdownMenuItem(
-                              value: c.id, child: Text(c.name)),
+                            value: c.id,
+                            child: Text(c.name),
+                          ),
                         )
                         .toList(),
                     onChanged: (val) {
@@ -170,7 +177,7 @@ class _CategoriesTab extends ConsumerWidget {
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(ctx),
-                  child: const Text('Cancel'),
+                  child: Text(l10n.btnCancel),
                 ),
                 ElevatedButton(
                   onPressed: () async {
@@ -184,7 +191,7 @@ class _CategoriesTab extends ConsumerWidget {
                       if (context.mounted) Navigator.pop(ctx);
                     }
                   },
-                  child: const Text('Reassign & Delete'),
+                  child: Text(l10n.btnReassignAndDelete),
                 ),
               ],
             );
@@ -196,11 +203,12 @@ class _CategoriesTab extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final categoriesAsync = ref.watch(categoriesListProvider);
     return categoriesAsync.when(
       data: (categories) {
         if (categories.isEmpty) {
-          return const Center(child: Text('No categories'));
+          return Center(child: Text(l10n.noCategories));
         }
         return ListView.builder(
           itemCount: categories.length,
@@ -240,7 +248,7 @@ class _CategoriesTab extends ConsumerWidget {
         );
       },
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (e, st) => Center(child: Text('Error: $e')),
+      error: (e, st) => Center(child: Text('${l10n.unexpectedError}: $e')),
     );
   }
 }
@@ -254,6 +262,7 @@ class _TagsTab extends ConsumerWidget {
     Tag tag,
     List<Tag> allTags,
   ) async {
+    final l10n = AppLocalizations.of(context)!;
     final inUse =
         await ref.read(deleteAndReassignTagUseCaseProvider).isTagInUse(tag.id);
     if (!context.mounted) return;
@@ -264,16 +273,17 @@ class _TagsTab extends ConsumerWidget {
       final confirm = await showDialog<bool>(
         context: context,
         builder: (ctx) => AlertDialog(
-          title: const Text('Delete Tag?'),
-          content: Text('Are you sure you want to delete ${tag.name}?'),
+          title: Text(l10n.deleteTagTitle),
+          content: Text(l10n.deleteTagConfirm(tag.name)),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(ctx, false),
-              child: const Text('Cancel'),
+              child: Text(l10n.btnCancel),
             ),
             TextButton(
               onPressed: () => Navigator.pop(ctx, true),
-              child: const Text('Delete', style: TextStyle(color: Colors.red)),
+              child: Text(l10n.btnDelete,
+                  style: const TextStyle(color: Colors.red),),
             ),
           ],
         ),
@@ -291,13 +301,14 @@ class _TagsTab extends ConsumerWidget {
     Tag tagToDel,
     List<Tag> allTags,
   ) {
+    final l10n = AppLocalizations.of(context)!;
     String? selectedNewTagId;
     final otherTags = allTags.where((t) => t.id != tagToDel.id).toList();
 
     if (otherTags.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('No other tags to reassign transactions to.'),
+        SnackBar(
+          content: Text(l10n.errorNoOtherTags),
         ),
       );
       return;
@@ -311,12 +322,12 @@ class _TagsTab extends ConsumerWidget {
         return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
-              title: const Text('Tag in use'),
+              title: Text(l10n.tagInUseTitle),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    '${tagToDel.name} is used by existing transactions. Please select a tag to reassign them to:',
+                    l10n.tagInUseMessage(tagToDel.name),
                   ),
                   const SizedBox(height: 16),
                   DropdownButtonFormField<String>(
@@ -324,7 +335,9 @@ class _TagsTab extends ConsumerWidget {
                     items: otherTags
                         .map(
                           (t) => DropdownMenuItem(
-                              value: t.id, child: Text(t.name)),
+                            value: t.id,
+                            child: Text(t.name),
+                          ),
                         )
                         .toList(),
                     onChanged: (val) {
@@ -336,7 +349,7 @@ class _TagsTab extends ConsumerWidget {
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(ctx),
-                  child: const Text('Cancel'),
+                  child: Text(l10n.btnCancel),
                 ),
                 ElevatedButton(
                   onPressed: () async {
@@ -351,7 +364,7 @@ class _TagsTab extends ConsumerWidget {
                       if (context.mounted) Navigator.pop(ctx);
                     }
                   },
-                  child: const Text('Reassign & Delete'),
+                  child: Text(l10n.btnReassignAndDelete),
                 ),
               ],
             );
@@ -363,10 +376,11 @@ class _TagsTab extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final tagsAsync = ref.watch(tagsListProvider);
     return tagsAsync.when(
       data: (tags) {
-        if (tags.isEmpty) return const Center(child: Text('No tags'));
+        if (tags.isEmpty) return Center(child: Text(l10n.noTags));
         return ListView.builder(
           itemCount: tags.length,
           itemBuilder: (context, index) {
@@ -392,7 +406,7 @@ class _TagsTab extends ConsumerWidget {
         );
       },
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (e, st) => Center(child: Text('Error: $e')),
+      error: (e, st) => Center(child: Text('${l10n.unexpectedError}: $e')),
     );
   }
 }
@@ -440,6 +454,7 @@ class _CategoryDialogState extends State<_CategoryDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Padding(
       padding: EdgeInsets.fromLTRB(
         24,
@@ -451,15 +466,17 @@ class _CategoryDialogState extends State<_CategoryDialog> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            widget.category == null ? 'Add Category' : 'Edit Category',
+            widget.category == null
+                ? l10n.addCategoryTitle
+                : l10n.editCategoryTitle,
             style: Theme.of(context).textTheme.titleLarge,
           ),
           const SizedBox(height: 16),
           TextField(
             controller: _nameController,
-            decoration: const InputDecoration(
-              labelText: 'Category Name',
-              border: OutlineInputBorder(),
+            decoration: InputDecoration(
+              labelText: l10n.labelCategoryName,
+              border: const OutlineInputBorder(),
             ),
           ),
           const SizedBox(height: 16),
@@ -484,7 +501,7 @@ class _CategoryDialogState extends State<_CategoryDialog> {
           Align(
             alignment: Alignment.centerLeft,
             child: Text(
-              'Icon',
+              l10n.labelIcon,
               style: Theme.of(context).textTheme.labelLarge,
             ),
           ),
@@ -521,7 +538,7 @@ class _CategoryDialogState extends State<_CategoryDialog> {
               }
               if (context.mounted) Navigator.pop(context);
             },
-            child: const Text('Save'),
+            child: Text(l10n.btnSave),
           ),
         ],
       ),
@@ -559,6 +576,7 @@ class _TagDialogState extends State<_TagDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Padding(
       padding: EdgeInsets.fromLTRB(
         24,
@@ -570,15 +588,15 @@ class _TagDialogState extends State<_TagDialog> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            widget.tag == null ? 'Add Tag' : 'Edit Tag',
+            widget.tag == null ? l10n.addTagTitle : l10n.editTagTitle,
             style: Theme.of(context).textTheme.titleLarge,
           ),
           const SizedBox(height: 16),
           TextField(
             controller: _nameController,
-            decoration: const InputDecoration(
-              labelText: 'Tag Name',
-              border: OutlineInputBorder(),
+            decoration: InputDecoration(
+              labelText: l10n.labelTagName,
+              border: const OutlineInputBorder(),
             ),
           ),
           const SizedBox(height: 24),
@@ -606,7 +624,7 @@ class _TagDialogState extends State<_TagDialog> {
               widget.ref.invalidate(tagsListProvider);
               if (context.mounted) Navigator.pop(context);
             },
-            child: const Text('Save'),
+            child: Text(l10n.btnSave),
           ),
         ],
       ),

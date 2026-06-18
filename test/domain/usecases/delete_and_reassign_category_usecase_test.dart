@@ -35,6 +35,8 @@ class FakeTransaction extends Fake implements Transaction {
     double? exchangeRate,
     DateTime? createdAt,
     DateTime? modifiedAt,
+    String? transferId,
+    bool clearTransferId = false,
   }) {
     return FakeTransaction(
       id: id ?? this.id,
@@ -157,7 +159,8 @@ void main() {
       );
 
       when(() => mockCategoryRepo.watchAllCategories()).thenAnswer(
-          (_) => Stream.value([catIncome, catExpense, catCustom, catCustom2]));
+        (_) => Stream.value([catIncome, catExpense, catCustom, catCustom2]),
+      );
 
       // Deleting income category should return other income cats + custom cats
       final replacementsIncome =

@@ -112,11 +112,22 @@
   - [x] Resolve `ListTile` theme ancestor dependency issues in test runs by adding `Material` wrappers to dialog layouts.
   - [x] Complete sweeping UI checks and fix all unit tests to achieve 100% pass rate.
 
+- [x] **Phase 19: Complex Cascades, Riverpod Reactivity & Deep UX Polish**
+  - [x] Implement transfer mirroring logic (atomic dual-movement pairs with linked transferId).
+  - [x] Polish transaction details UI modal (hide empty notes and display dynamic localized titles).
+  - [x] Reorganize Settings tab screen modules (Categories & Tags placement).
+  - [x] Display delete last account error inline in the dialog.
+  - [x] Enforce real-time reactivity with Riverpod invalidations on transaction mutations.
+  - [x] Cascade account deletion to all child transactions.
+  - [x] Implement app wipe database purge and cold app restart via SystemNavigator.
+  - [x] Complete global localization audit and replace all remaining hardcoded texts in Spanish, English, and Catalan.
+  - [x] Update CI/CD pipelines to run `flutter gen-l10n` on build.
+
 ## Current Phase
-- [ ] **Phase 19: Synchronization, Backups, and Import/Export Validations**
+- [ ] **Phase 20: Synchronization, Backups, and Import/Export Validations**
   - [ ] Implement cloud synchronization options.
   - [ ] Add encrypted automatic local backup features.
   - [ ] Validate cross-platform imports/exports.
 
 ## Upcoming Phases
-- [ ] **Phase 20: Integration Testing (E2E), final security audit, and store preparation.**
+- [ ] **Phase 21: Integration Testing (E2E), final security audit, and store preparation.**

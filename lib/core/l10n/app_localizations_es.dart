@@ -716,4 +716,113 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get labelDestinationAccount => 'Cuenta de destino';
+
+  @override
+  String get errorCannotDeleteLastAccount =>
+      'No se puede eliminar la única cuenta existente.';
+
+  @override
+  String get categoriesAndTags => 'Categorías y Etiquetas';
+
+  @override
+  String get setAsDefault => 'Establecer como predeterminada';
+
+  @override
+  String get warning => 'Advertencia';
+
+  @override
+  String get replaceDefaultAccountConfirm =>
+      'La cuenta predeterminada anterior será reemplazada. ¿Continuar?';
+
+  @override
+  String get btnContinue => 'Continuar';
+
+  @override
+  String get unknownAccount => 'Cuenta desconocida';
+
+  @override
+  String get editAccountDetails => 'Editar detalles de la cuenta';
+
+  @override
+  String get markAccountAsDefault =>
+      'Marcar esta cuenta como predeterminada para nuevas transacciones';
+
+  @override
+  String get alreadyDefaultAccount => 'Esta ya es la cuenta predeterminada';
+
+  @override
+  String get categories => 'Categorías';
+
+  @override
+  String get tags => 'Etiquetas';
+
+  @override
+  String get deleteCategoryTitle => '¿Eliminar categoría?';
+
+  @override
+  String deleteCategoryConfirm(String name) {
+    return '¿Está seguro de que desea eliminar $name?';
+  }
+
+  @override
+  String get deleteTagTitle => '¿Eliminar etiqueta?';
+
+  @override
+  String deleteTagConfirm(String name) {
+    return '¿Está seguro de que desea eliminar $name?';
+  }
+
+  @override
+  String get errorNoOtherCategories =>
+      'No hay otras categorías para reasignar transacciones.';
+
+  @override
+  String get errorNoOtherTags =>
+      'No hay otras etiquetas para reasignar transacciones.';
+
+  @override
+  String get categoryInUseTitle => 'Categoría en uso';
+
+  @override
+  String get tagInUseTitle => 'Etiqueta en uso';
+
+  @override
+  String categoryInUseMessage(String name) {
+    return '$name está en uso en transacciones existentes. Por favor, seleccione una categoría para reasignarlas:';
+  }
+
+  @override
+  String tagInUseMessage(String name) {
+    return '$name está en uso en transacciones existentes. Por favor, seleccione una etiqueta para reasignarlas:';
+  }
+
+  @override
+  String get btnReassignAndDelete => 'Reasignar y eliminar';
+
+  @override
+  String get noCategories => 'Aún no hay categorías';
+
+  @override
+  String get noTags => 'Aún no hay etiquetas';
+
+  @override
+  String get addCategoryTitle => 'Añadir categoría';
+
+  @override
+  String get editCategoryTitle => 'Editar categoría';
+
+  @override
+  String get addTagTitle => 'Añadir etiqueta';
+
+  @override
+  String get editTagTitle => 'Editar etiqueta';
+
+  @override
+  String get labelCategoryName => 'Nombre de la categoría';
+
+  @override
+  String get labelTagName => 'Nombre de la etiqueta';
+
+  @override
+  String get labelIcon => 'Icono';
 }

@@ -9,7 +9,6 @@ import 'package:stalvi/presentation/providers/auth_notifier.dart';
 import 'package:stalvi/presentation/providers/locale_provider.dart';
 import 'package:stalvi/presentation/providers/theme_provider.dart';
 import 'package:stalvi/presentation/widgets/terms_and_conditions_viewer.dart';
-import 'package:stalvi/presentation/features/settings/categories_tags_management_screen.dart';
 
 class ProfileSettingsScreen extends ConsumerStatefulWidget {
   const ProfileSettingsScreen({super.key});
@@ -433,21 +432,53 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
       showDialog(
         context: context,
         builder: (dialogCtx) {
+          final theme = Theme.of(context);
+          final colorScheme = theme.colorScheme;
           return AlertDialog(
-            title: Text(
-              l10n.deleteAllDataButton,
-              style: const TextStyle(color: Colors.red),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(24),
             ),
-            content: Text(l10n.deleteAllDataWarning),
+            title: Row(
+              children: [
+                Icon(
+                  Icons.warning_amber_rounded,
+                  color: colorScheme.error,
+                  size: 28,
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    l10n.deleteAllDataButton,
+                    style: TextStyle(
+                      color: colorScheme.error,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            content: Text(
+              l10n.deleteAllDataWarning,
+              style: theme.textTheme.bodyMedium,
+            ),
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(dialogCtx).pop(),
-                child: Text(l10n.btnCancel),
+                child: Text(
+                  l10n.btnCancel,
+                  style: TextStyle(
+                    color: colorScheme.onSurfaceVariant,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
-                  foregroundColor: Colors.white,
+              FilledButton(
+                style: FilledButton.styleFrom(
+                  backgroundColor: colorScheme.error,
+                  foregroundColor: colorScheme.onError,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
                 ),
                 onPressed: () async {
                   Navigator.of(dialogCtx).pop();
@@ -469,7 +500,10 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                     );
                   }
                 },
-                child: Text(l10n.deleteAllDataButton),
+                child: Text(
+                  l10n.deleteAllDataButton,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
               ),
             ],
           );
@@ -492,21 +526,6 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
           : ListView(
               padding: const EdgeInsets.all(24),
               children: [
-                // ── Categories & Tags (top-level, above Profile & Security) ─
-                ListTile(
-                  leading: const Icon(Icons.category_rounded),
-                  title: const Text('Categories & Tags Management'),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            const CategoriesTagsManagementScreen(),
-                      ),
-                    );
-                  },
-                ),
-                const Divider(),
                 // ── Profile & Security ────────────────────────────────────
                 if (state.profile != null) ...[
                   ListTile(

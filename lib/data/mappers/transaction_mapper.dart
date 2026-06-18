@@ -19,6 +19,7 @@ extension TransactionMapper on Transaction {
       createdAt: createdAt,
       modifiedAt: modifiedAt,
       isDeleted: false,
+      transferId: transferId,
     );
   }
 
@@ -49,6 +50,7 @@ extension DbTransactionMapper on db.Transaction {
       exchangeRate: exchangeRate,
       createdAt: createdAt,
       modifiedAt: modifiedAt,
+      transferId: transferId,
     );
   }
 

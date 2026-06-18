@@ -29,6 +29,8 @@ class MockExchangeRateRepository extends Mock
 
 class FakeTransaction extends Fake implements Transaction {}
 
+class FakeTransferPair extends Fake implements TransferPair {}
+
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
@@ -47,17 +49,22 @@ Profile _buildProfile({String id = 'user_1', String defaultCurrency = 'EUR'}) {
   );
 }
 
-Account _buildAccount({String id = 'account_1', String currency = 'EUR'}) {
+Account _buildAccount({
+  String id = 'account_1',
+  String currency = 'EUR',
+  String userId = 'user_1',
+  bool isDefault = true,
+}) {
   return Account(
     id: id,
-    userId: 'user_1',
+    userId: userId,
     name: 'Mi Cartera',
     type: AccountType.cash,
     initialBalance: 5000.0,
     currency: currency,
     color: '#4CAF50',
     icon: 'wallet',
-    isDefault: true,
+    isDefault: isDefault,
     isDeleted: false,
     createdAt: _now,
     modifiedAt: _now,
@@ -80,11 +87,48 @@ AddTransactionParams _incomeParams({
   );
 }
 
+AddTransactionParams _transferParams({
+  int amount = 500,
+  String originAccountId = 'account_1',
+  String destinationAccountId = 'account_2',
+  DateTime? date,
+}) {
+  return AddTransactionParams(
+    id: 'txn_transfer_1',
+    amount: amount,
+    date: date ?? _now.subtract(const Duration(hours: 1)),
+    type: TransactionType.transfer,
+    accountId: originAccountId,
+    destinationAccountId: destinationAccountId,
+    notes: 'Transfer test',
+  );
+}
+
 ExchangeRate _buildExchangeRate({String base = 'EUR'}) {
   return ExchangeRate(
     baseCurrency: base,
     date: _now,
     rates: {'USD': 1.08, 'GBP': 0.85},
+  );
+}
+
+Transaction _buildTransaction({
+  String id = 'txn_1',
+  int amount = 1000,
+  TransactionType type = TransactionType.income,
+  String accountId = 'account_1',
+  String? transferId,
+}) {
+  return Transaction(
+    id: id,
+    amount: amount,
+    date: _now.subtract(const Duration(hours: 1)),
+    type: type,
+    accountId: accountId,
+    originalCurrency: 'EUR',
+    createdAt: _now,
+    modifiedAt: _now,
+    transferId: transferId,
   );
 }
 
@@ -101,6 +145,7 @@ void main() {
 
   setUpAll(() {
     registerFallbackValue(FakeTransaction());
+    registerFallbackValue(FakeTransferPair());
   });
 
   setUp(() {
@@ -117,8 +162,9 @@ void main() {
   });
 
   group('AddTransactionUseCase', () {
-    group('success cases', () {
-      test('should create transaction without conversion when currencies match',
+    // ── Income / Expense success ─────────────────────────────────────────────
+    group('income/expense — success cases', () {
+      test('creates transaction without conversion when currencies match',
           () async {
         final params = _incomeParams();
         final account = _buildAccount();
@@ -142,7 +188,7 @@ void main() {
         verify(() => mockTransactionRepo.createTransaction(any())).called(1);
       });
 
-      test('should calculate convertedAmount when currencies differ', () async {
+      test('calculates convertedAmount when currencies differ', () async {
         final params = _incomeParams(amount: 1000); // 10.00 USD
         final account = _buildAccount(currency: 'USD');
         final profile = _buildProfile(defaultCurrency: 'EUR');
@@ -165,31 +211,329 @@ void main() {
         expect(result.exchangeRate, 1.08);
         expect(result.convertedAmount, (1000 / 1.08).round());
 
-        verify(() => mockExchangeRateRepo.getLatestRates(baseCurrency: 'EUR'))
-            .called(1);
+        verify(
+          () => mockExchangeRateRepo.getLatestRates(baseCurrency: 'EUR'),
+        ).called(1);
       });
     });
 
-    group('failure cases', () {
-      test('should throw ValidationException when amount <= 0', () async {
+    // ── Transfer success ─────────────────────────────────────────────────────
+    group('transfer — success cases', () {
+      test('creates TWO mirrored transactions via createTransferPair',
+          () async {
+        final params = _transferParams();
+        final originAccount = _buildAccount(id: 'account_1');
+        final destAccount = _buildAccount(id: 'account_2', isDefault: false);
+        final profile = _buildProfile();
+
+        when(() => mockAccountRepo.getAccountById('account_1'))
+            .thenAnswer((_) async => originAccount);
+        when(() => mockAccountRepo.getAccountById('account_2'))
+            .thenAnswer((_) async => destAccount);
+        when(() => mockProfileRepo.getProfileById(originAccount.userId))
+            .thenAnswer((_) async => profile);
+
+        final fakeOrigin = _buildTransaction(
+          id: 'txn_transfer_1',
+          type: TransactionType.transfer,
+          accountId: 'account_1',
+          transferId: 'shared-tid',
+        );
+        final fakeDest = _buildTransaction(
+          id: 'txn_transfer_1_dst',
+          type: TransactionType.transfer,
+          accountId: 'account_2',
+          transferId: 'shared-tid',
+        );
+
+        when(
+          () => mockTransactionRepo.createTransferPair(
+            originTransaction: any(named: 'originTransaction'),
+            destinationTransaction: any(named: 'destinationTransaction'),
+          ),
+        ).thenAnswer(
+          (_) async => TransferPair(origin: fakeOrigin, destination: fakeDest),
+        );
+
+        final result = await usecase.execute(params);
+
+        // Returns origin leg.
+        expect(result.accountId, 'account_1');
+        expect(result.type, TransactionType.transfer);
+        expect(result.transferId, isNotNull);
+
+        // Verify createTransferPair was called, NOT createTransaction.
+        verify(
+          () => mockTransactionRepo.createTransferPair(
+            originTransaction: any(named: 'originTransaction'),
+            destinationTransaction: any(named: 'destinationTransaction'),
+          ),
+        ).called(1);
+        verifyNever(() => mockTransactionRepo.createTransaction(any()));
+      });
+
+      test('both legs share the same transferId', () async {
+        final params = _transferParams();
+        final originAccount = _buildAccount(id: 'account_1');
+        final destAccount = _buildAccount(id: 'account_2', isDefault: false);
+        final profile = _buildProfile();
+
+        when(() => mockAccountRepo.getAccountById('account_1'))
+            .thenAnswer((_) async => originAccount);
+        when(() => mockAccountRepo.getAccountById('account_2'))
+            .thenAnswer((_) async => destAccount);
+        when(() => mockProfileRepo.getProfileById(originAccount.userId))
+            .thenAnswer((_) async => profile);
+
+        // Capture both transaction args to verify shared transferId.
+        Transaction? capturedOrigin;
+        Transaction? capturedDest;
+
+        when(
+          () => mockTransactionRepo.createTransferPair(
+            originTransaction: any(named: 'originTransaction'),
+            destinationTransaction: any(named: 'destinationTransaction'),
+          ),
+        ).thenAnswer((inv) async {
+          capturedOrigin =
+              inv.namedArguments[#originTransaction] as Transaction;
+          capturedDest =
+              inv.namedArguments[#destinationTransaction] as Transaction;
+          return TransferPair(
+            origin: capturedOrigin!,
+            destination: capturedDest!,
+          );
+        });
+
+        await usecase.execute(params);
+
+        expect(capturedOrigin, isNotNull);
+        expect(capturedDest, isNotNull);
+        expect(capturedOrigin!.transferId, isNotNull);
+        expect(capturedOrigin!.transferId, equals(capturedDest!.transferId));
+      });
+
+      test('origin leg has origin accountId, destination has dest accountId',
+          () async {
+        final params = _transferParams();
+        final originAccount = _buildAccount(id: 'account_1');
+        final destAccount = _buildAccount(id: 'account_2', isDefault: false);
+        final profile = _buildProfile();
+
+        when(() => mockAccountRepo.getAccountById('account_1'))
+            .thenAnswer((_) async => originAccount);
+        when(() => mockAccountRepo.getAccountById('account_2'))
+            .thenAnswer((_) async => destAccount);
+        when(() => mockProfileRepo.getProfileById(originAccount.userId))
+            .thenAnswer((_) async => profile);
+
+        Transaction? capturedOrigin;
+        Transaction? capturedDest;
+
+        when(
+          () => mockTransactionRepo.createTransferPair(
+            originTransaction: any(named: 'originTransaction'),
+            destinationTransaction: any(named: 'destinationTransaction'),
+          ),
+        ).thenAnswer((inv) async {
+          capturedOrigin =
+              inv.namedArguments[#originTransaction] as Transaction;
+          capturedDest =
+              inv.namedArguments[#destinationTransaction] as Transaction;
+          return TransferPair(
+            origin: capturedOrigin!,
+            destination: capturedDest!,
+          );
+        });
+
+        await usecase.execute(params);
+
+        expect(capturedOrigin!.accountId, 'account_1');
+        expect(capturedDest!.accountId, 'account_2');
+      });
+
+      test('both legs have the same amount and date', () async {
+        final params = _transferParams(amount: 2500);
+        final originAccount = _buildAccount(id: 'account_1');
+        final destAccount = _buildAccount(id: 'account_2', isDefault: false);
+        final profile = _buildProfile();
+
+        when(() => mockAccountRepo.getAccountById('account_1'))
+            .thenAnswer((_) async => originAccount);
+        when(() => mockAccountRepo.getAccountById('account_2'))
+            .thenAnswer((_) async => destAccount);
+        when(() => mockProfileRepo.getProfileById(originAccount.userId))
+            .thenAnswer((_) async => profile);
+
+        Transaction? capturedOrigin;
+        Transaction? capturedDest;
+
+        when(
+          () => mockTransactionRepo.createTransferPair(
+            originTransaction: any(named: 'originTransaction'),
+            destinationTransaction: any(named: 'destinationTransaction'),
+          ),
+        ).thenAnswer((inv) async {
+          capturedOrigin =
+              inv.namedArguments[#originTransaction] as Transaction;
+          capturedDest =
+              inv.namedArguments[#destinationTransaction] as Transaction;
+          return TransferPair(
+            origin: capturedOrigin!,
+            destination: capturedDest!,
+          );
+        });
+
+        await usecase.execute(params);
+
+        expect(capturedOrigin!.amount, 2500);
+        expect(capturedDest!.amount, 2500);
+        expect(capturedOrigin!.date, capturedDest!.date);
+      });
+
+      test('uses "Transfer" as default notes when none supplied', () async {
+        final params = AddTransactionParams(
+          id: 'txn_t',
+          amount: 100,
+          date: _now.subtract(const Duration(hours: 1)),
+          type: TransactionType.transfer,
+          accountId: 'account_1',
+          destinationAccountId: 'account_2',
+          // no notes
+        );
+        final originAccount = _buildAccount(id: 'account_1');
+        final destAccount = _buildAccount(id: 'account_2', isDefault: false);
+        final profile = _buildProfile();
+
+        when(() => mockAccountRepo.getAccountById('account_1'))
+            .thenAnswer((_) async => originAccount);
+        when(() => mockAccountRepo.getAccountById('account_2'))
+            .thenAnswer((_) async => destAccount);
+        when(() => mockProfileRepo.getProfileById(originAccount.userId))
+            .thenAnswer((_) async => profile);
+
+        Transaction? capturedOrigin;
+        when(
+          () => mockTransactionRepo.createTransferPair(
+            originTransaction: any(named: 'originTransaction'),
+            destinationTransaction: any(named: 'destinationTransaction'),
+          ),
+        ).thenAnswer((inv) async {
+          capturedOrigin =
+              inv.namedArguments[#originTransaction] as Transaction;
+          final dest =
+              inv.namedArguments[#destinationTransaction] as Transaction;
+          return TransferPair(origin: capturedOrigin!, destination: dest);
+        });
+
+        await usecase.execute(params);
+
+        expect(capturedOrigin!.notes, 'Transfer');
+      });
+    });
+
+    // ── Transfer validation failures ─────────────────────────────────────────
+    group('transfer — validation failures', () {
+      test(
+          'throws ValidationException when destinationAccountId is missing for transfer',
+          () async {
+        final params = AddTransactionParams(
+          id: 'txn_t',
+          amount: 100,
+          date: _now.subtract(const Duration(hours: 1)),
+          type: TransactionType.transfer,
+          accountId: 'account_1',
+          // destinationAccountId omitted
+        );
+        final account = _buildAccount();
+        final profile = _buildProfile();
+
+        when(() => mockAccountRepo.getAccountById(params.accountId))
+            .thenAnswer((_) async => account);
+        when(() => mockProfileRepo.getProfileById(account.userId))
+            .thenAnswer((_) async => profile);
+
+        await expectLater(
+          () => usecase.execute(params),
+          throwsA(
+            isA<ValidationException>()
+                .having((e) => e.code, 'code', 'MISSING_DESTINATION_ACCOUNT'),
+          ),
+        );
+      });
+
+      test(
+          'throws ValidationException when origin and destination are the same account',
+          () async {
+        final params = AddTransactionParams(
+          id: 'txn_t',
+          amount: 100,
+          date: _now.subtract(const Duration(hours: 1)),
+          type: TransactionType.transfer,
+          accountId: 'account_1',
+          destinationAccountId: 'account_1', // same!
+        );
+        final account = _buildAccount();
+        final profile = _buildProfile();
+
+        when(() => mockAccountRepo.getAccountById(params.accountId))
+            .thenAnswer((_) async => account);
+        when(() => mockProfileRepo.getProfileById(account.userId))
+            .thenAnswer((_) async => profile);
+
+        await expectLater(
+          () => usecase.execute(params),
+          throwsA(
+            isA<ValidationException>()
+                .having((e) => e.code, 'code', 'SAME_ACCOUNT_TRANSFER'),
+          ),
+        );
+      });
+
+      test('throws NotFoundException when destination account does not exist',
+          () async {
+        final params = _transferParams();
+        final originAccount = _buildAccount(id: 'account_1');
+        final profile = _buildProfile();
+
+        when(() => mockAccountRepo.getAccountById('account_1'))
+            .thenAnswer((_) async => originAccount);
+        when(() => mockAccountRepo.getAccountById('account_2'))
+            .thenAnswer((_) async => null); // not found
+        when(() => mockProfileRepo.getProfileById(originAccount.userId))
+            .thenAnswer((_) async => profile);
+
+        await expectLater(
+          () => usecase.execute(params),
+          throwsA(
+            isA<NotFoundException>()
+                .having((e) => e.code, 'code', 'DESTINATION_ACCOUNT_NOT_FOUND'),
+          ),
+        );
+      });
+    });
+
+    // ── Common validation failures ───────────────────────────────────────────
+    group('common — failure cases', () {
+      test('throws ValidationException when amount <= 0', () async {
         final call = usecase.execute(_incomeParams(amount: 0));
         await expectLater(() => call, throwsA(isA<ValidationException>()));
       });
 
-      test('should throw ValidationException when date in future', () async {
+      test('throws ValidationException when date in future', () async {
         final call = usecase
             .execute(_incomeParams(date: _now.add(const Duration(days: 1))));
         await expectLater(() => call, throwsA(isA<ValidationException>()));
       });
 
-      test('should throw NotFoundException when account not found', () async {
+      test('throws NotFoundException when account not found', () async {
         when(() => mockAccountRepo.getAccountById(any()))
             .thenAnswer((_) async => null);
         final call = usecase.execute(_incomeParams());
         await expectLater(() => call, throwsA(isA<NotFoundException>()));
       });
 
-      test('should throw NotFoundException when profile not found', () async {
+      test('throws NotFoundException when profile not found', () async {
         final account = _buildAccount();
         when(() => mockAccountRepo.getAccountById(any()))
             .thenAnswer((_) async => account);
@@ -199,7 +543,7 @@ void main() {
         await expectLater(() => call, throwsA(isA<NotFoundException>()));
       });
 
-      test('should throw ValidationException when rate not found for currency',
+      test('throws ValidationException when rate not found for currency',
           () async {
         final params = _incomeParams();
         final account = _buildAccount(currency: 'JPY'); // Not in rates

@@ -6,14 +6,23 @@ import 'package:stalvi/domain/repositories/i_profile_repository.dart';
 import 'package:stalvi/domain/repositories/i_exchange_rate_repository.dart';
 import 'package:stalvi/domain/repositories/i_transaction_repository.dart';
 import 'package:stalvi/core/utils/input_sanitizer.dart';
+import 'package:uuid/uuid.dart';
 
 /// Parameters required to add a new transaction.
+///
+/// For [TransactionType.transfer], supply both [accountId] (origin) and
+/// [destinationAccountId]. The use case will create two mirrored rows
+/// atomically.
 class AddTransactionParams {
   final String id;
   final int amount; // in cents (minor units)
   final DateTime date;
   final TransactionType type;
   final String accountId;
+
+  /// Required when [type] is [TransactionType.transfer].
+  final String? destinationAccountId;
+
   final String? categoryId;
   final String? notes;
   final String? currency;
@@ -24,6 +33,7 @@ class AddTransactionParams {
     required this.date,
     required this.type,
     required this.accountId,
+    this.destinationAccountId,
     this.categoryId,
     this.notes,
     this.currency,
@@ -36,15 +46,27 @@ class AddTransactionParams {
 /// 1. `amount` must be greater than 0.
 /// 2. `date` must not be in the future (recommended guard-rail).
 /// 3. The referenced `accountId` must exist.
+/// 4. For transfers: `destinationAccountId` must be provided, must exist, and
+///    must differ from `accountId`.
 ///
-/// If validation passes, the transaction is delegated to
-/// [ITransactionRepository.createTransaction], which handles the atomic
-/// balance update internally.
+/// **Transfer handling:**
+/// When `type == TransactionType.transfer` the use case creates **two** paired
+/// [Transaction] rows atomically via [ITransactionRepository.createTransferPair]:
+///   - Origin leg  : negative amount (outflow) from the origin account.
+///   - Destination : positive amount (inflow) into the destination account.
+///
+/// Both rows share the same `transferId` (derived from [params.id]) so that
+/// the trash / restore logic can always locate the counterpart.
+///
+/// The method returns the **origin** transaction. Callers that need both legs
+/// should use [ITransactionRepository.createTransferPair] directly.
 class AddTransactionUseCase {
   final ITransactionRepository _transactionRepository;
   final IAccountRepository _accountRepository;
   final IProfileRepository _profileRepository;
   final IExchangeRateRepository _exchangeRateRepository;
+
+  static const _uuid = Uuid();
 
   AddTransactionUseCase(
     this._transactionRepository,
@@ -88,6 +110,31 @@ class AddTransactionUseCase {
       );
     }
 
+    // Transfer-specific validation.
+    if (params.type == TransactionType.transfer) {
+      if (params.destinationAccountId == null) {
+        throw const ValidationException(
+          message: 'destinationAccountId is required for transfer transactions',
+          code: 'MISSING_DESTINATION_ACCOUNT',
+        );
+      }
+      if (params.destinationAccountId == params.accountId) {
+        throw const ValidationException(
+          message: 'Origin and destination accounts must be different',
+          code: 'SAME_ACCOUNT_TRANSFER',
+        );
+      }
+      final destinationAccount =
+          await _accountRepository.getAccountById(params.destinationAccountId!);
+      if (destinationAccount == null) {
+        throw NotFoundException(
+          message:
+              'Destination account with id "${params.destinationAccountId}" not found',
+          code: 'DESTINATION_ACCOUNT_NOT_FOUND',
+        );
+      }
+    }
+
     int? convertedAmount;
     double? exchangeRate;
     final String originalCurrency = params.currency ?? account.currency;
@@ -123,6 +170,55 @@ class AddTransactionUseCase {
       }
     }
 
+    // ── Transfer: create two mirrored legs atomically ─────────────────────────
+    if (params.type == TransactionType.transfer) {
+      // A shared transferId links the two rows; derived deterministically from
+      // the origin id so callers can recreate it if needed.
+      final transferId = _uuid.v5(Namespace.url.value, params.id);
+      final destinationTxnId =
+          _uuid.v5(Namespace.url.value, '${params.id}_dst');
+
+      final originTxn = Transaction(
+        id: params.id,
+        amount: params.amount,
+        date: params.date,
+        type: TransactionType.transfer,
+        accountId: params.accountId,
+        categoryId: params.categoryId,
+        // "Transfer" title stored in notes if none supplied, kept ≤ 20 chars.
+        notes: sanitizedNotes ?? 'Transfer',
+        originalCurrency: originalCurrency,
+        convertedAmount: convertedAmount,
+        exchangeRate: exchangeRate,
+        createdAt: now,
+        modifiedAt: now,
+        transferId: transferId,
+      );
+
+      final destinationTxn = Transaction(
+        id: destinationTxnId,
+        amount: params.amount,
+        date: params.date,
+        type: TransactionType.transfer,
+        accountId: params.destinationAccountId!,
+        categoryId: params.categoryId,
+        notes: sanitizedNotes ?? 'Transfer',
+        originalCurrency: originalCurrency,
+        convertedAmount: convertedAmount,
+        exchangeRate: exchangeRate,
+        createdAt: now,
+        modifiedAt: now,
+        transferId: transferId,
+      );
+
+      final pair = await _transactionRepository.createTransferPair(
+        originTransaction: originTxn,
+        destinationTransaction: destinationTxn,
+      );
+      return pair.origin;
+    }
+
+    // ── Standard income / expense ─────────────────────────────────────────────
     final transaction = Transaction(
       id: params.id,
       amount: params.amount,

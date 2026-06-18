@@ -178,8 +178,10 @@ class _CreateAccountDialogState extends ConsumerState<CreateAccountDialog> {
                   ),
                   child: Row(
                     children: [
-                      Icon(Icons.error_outline_rounded,
-                          color: colorScheme.error),
+                      Icon(
+                        Icons.error_outline_rounded,
+                        color: colorScheme.error,
+                      ),
                       const SizedBox(width: 12),
                       Expanded(
                         child: Text(
@@ -205,7 +207,8 @@ class _CreateAccountDialogState extends ConsumerState<CreateAccountDialog> {
                   hintText: l10n.createAccountNameHint,
                   errorText: _nameError,
                   border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16)),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
                 ),
               ),
               const SizedBox(height: 16),
@@ -220,7 +223,8 @@ class _CreateAccountDialogState extends ConsumerState<CreateAccountDialog> {
                   labelText: l10n.createAccountInitialBalanceLabel,
                   hintText: '0.00',
                   border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16)),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
                 ),
               ),
               const SizedBox(height: 20),
@@ -303,7 +307,8 @@ class _CreateAccountDialogState extends ConsumerState<CreateAccountDialog> {
                 decoration: InputDecoration(
                   labelText: l10n.labelCurrency,
                   border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16)),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
                 ),
                 items: ['EUR', 'USD', 'GBP', 'JPY', 'CHF']
                     .map(
@@ -357,8 +362,11 @@ class _CreateAccountDialogState extends ConsumerState<CreateAccountDialog> {
                             : null,
                       ),
                       child: isSelected
-                          ? const Icon(Icons.check,
-                              color: Colors.white, size: 18)
+                          ? const Icon(
+                              Icons.check,
+                              color: Colors.white,
+                              size: 18,
+                            )
                           : null,
                     ),
                   );
@@ -412,16 +420,17 @@ class _CreateAccountDialogState extends ConsumerState<CreateAccountDialog> {
               ),
               // Set as Default switch
               SwitchListTile(
-                title: const Text('Set as Default'),
+                title: Text(l10n.setAsDefault),
                 value: _isDefault,
                 onChanged: (val) async {
                   if (val) {
                     final confirm = await showDialog<bool>(
                       context: context,
                       builder: (ctx) => AlertDialog(
-                        title: const Text('Warning'),
-                        content: const Text(
-                            'The previous default account will be replaced. Continue?'),
+                        title: Text(l10n.warning),
+                        content: Text(
+                          l10n.replaceDefaultAccountConfirm,
+                        ),
                         actions: [
                           TextButton(
                             onPressed: () => Navigator.pop(ctx, false),
@@ -429,7 +438,7 @@ class _CreateAccountDialogState extends ConsumerState<CreateAccountDialog> {
                           ),
                           FilledButton(
                             onPressed: () => Navigator.pop(ctx, true),
-                            child: const Text('Continue'),
+                            child: Text(l10n.btnContinue),
                           ),
                         ],
                       ),

@@ -263,5 +263,27 @@ This document lists the completed phases of the Stalvi development roadmap, prov
   - Clean build generation and l10n compilation (`flutter gen-l10n`).
   - Achieved 100% test pass rate with all 322 tests passing successfully.
 
+### Phase 19: Complex Cascades, Riverpod Reactivity & Deep UX Polish
+* **Completion Date:** June 18, 2026
+* **Objective:** Implement referential integrity (cascading deletes), double-entry transaction mirroring for transfers, real-time provider invalidations, system wipe and cold restart, UI/UX details refinements, dynamic menu structures, global localization coverage audit, and CI workflow compilation safety.
+* **Accomplishments:**
+  - **Transfer Mirroring Logic:** Built transfer creation logic generating paired database records linked by `transferId` (representing origin and destination accounts). Ensured that soft-deleting, hard-deleting, or restoring one leg of a transfer automatically performs the same action on the other leg.
+  - **Reactivity & Provider Invalidation:** Ensured creating, editing, restoring, or deleting transactions/accounts immediately invalidates target providers (e.g. accountsListProvider, transactionsStreamProvider, periodSummaryProvider, categoriesListProvider) to guarantee real-time UI updates.
+  - **UI/UX Refinements:**
+    - Hidden empty "Notes" section inside the transaction details sheet.
+    - Standardized modal sheets title to show the localized transaction type (Income, Expense, Transfer) instead of a generic header.
+    -consistently formatted all inputs/errors inline.
+  - **Reorganization of Settings:** Moved "Categories & Tags" out of "Profile & Security" screen and placed it directly as a main Settings page option, located between "Statistics" and "Profile & Security".
+  - **Cascading Deletes:** Deleting or trashing an account cascades trashing to all associated transactions, automatically adjusting account balances and keeping totals synchronized.
+  - **Recycle Bin Hard Delete Refresh:** Configured permanent deletes in the Recycle Bin to force a global provider refresh, updating accounts and statistics immediately.
+  - **App Wipe and Cold Restart:** Modified "Delete all data" action to completely drop the database and call `SystemNavigator.pop()` to trigger a cold application exit.
+  - **Global Localization Audit:** Fully localized the category/tag management sheets, delete error warnings, and reassign forms. Replaced all remaining hardcoded labels in `DashboardScreen`, `CategoriesTagsManagementScreen`, `EditAccountDialog`, `CreateAccountDialog`, and `TransactionDetailsDialog`.
+  - **CI/CD Integration:** Integrated `flutter gen-l10n` build steps into the Stalvi Flutter CI (`ci.yml`) and Security Audit (`security.yml`) workflows.
+* **Verification:**
+  - Standard static analysis pass (`flutter analyze` with 0 issues).
+  - Clean build generation and l10n compilation (`flutter gen-l10n`).
+  - Fixed 54 auto-fixable lint issues (trailing commas) and cleaned up unused declarations/imports in tests.
+  - Achieved 100% test pass rate with all 351 tests passing successfully.
+
 
 

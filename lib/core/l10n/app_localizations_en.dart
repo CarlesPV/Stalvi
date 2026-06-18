@@ -705,4 +705,112 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get labelDestinationAccount => 'Destination Account';
+
+  @override
+  String get errorCannotDeleteLastAccount =>
+      'Cannot delete the last existing account.';
+
+  @override
+  String get categoriesAndTags => 'Categories & Tags';
+
+  @override
+  String get setAsDefault => 'Set as Default';
+
+  @override
+  String get warning => 'Warning';
+
+  @override
+  String get replaceDefaultAccountConfirm =>
+      'The previous default account will be replaced. Continue?';
+
+  @override
+  String get btnContinue => 'Continue';
+
+  @override
+  String get unknownAccount => 'Unknown Account';
+
+  @override
+  String get editAccountDetails => 'Edit account details';
+
+  @override
+  String get markAccountAsDefault =>
+      'Mark this account as the default for new transactions';
+
+  @override
+  String get alreadyDefaultAccount => 'This is already the default account';
+
+  @override
+  String get categories => 'Categories';
+
+  @override
+  String get tags => 'Tags';
+
+  @override
+  String get deleteCategoryTitle => 'Delete Category?';
+
+  @override
+  String deleteCategoryConfirm(String name) {
+    return 'Are you sure you want to delete $name?';
+  }
+
+  @override
+  String get deleteTagTitle => 'Delete Tag?';
+
+  @override
+  String deleteTagConfirm(String name) {
+    return 'Are you sure you want to delete $name?';
+  }
+
+  @override
+  String get errorNoOtherCategories =>
+      'No other categories to reassign transactions to.';
+
+  @override
+  String get errorNoOtherTags => 'No other tags to reassign transactions to.';
+
+  @override
+  String get categoryInUseTitle => 'Category in Use';
+
+  @override
+  String get tagInUseTitle => 'Tag in Use';
+
+  @override
+  String categoryInUseMessage(String name) {
+    return '$name is used by existing transactions. Please select a category to reassign them to:';
+  }
+
+  @override
+  String tagInUseMessage(String name) {
+    return '$name is used by existing transactions. Please select a tag to reassign them to:';
+  }
+
+  @override
+  String get btnReassignAndDelete => 'Reassign & Delete';
+
+  @override
+  String get noCategories => 'No categories yet';
+
+  @override
+  String get noTags => 'No tags yet';
+
+  @override
+  String get addCategoryTitle => 'Add Category';
+
+  @override
+  String get editCategoryTitle => 'Edit Category';
+
+  @override
+  String get addTagTitle => 'Add Tag';
+
+  @override
+  String get editTagTitle => 'Edit Tag';
+
+  @override
+  String get labelCategoryName => 'Category Name';
+
+  @override
+  String get labelTagName => 'Tag Name';
+
+  @override
+  String get labelIcon => 'Icon';
 }

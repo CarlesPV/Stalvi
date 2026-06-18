@@ -87,10 +87,16 @@ class WipeAllDataUseCase {
     }
 
     // 4. Close the app
-    if (Platform.isIOS) {
-      exit(0);
-    } else {
-      SystemNavigator.pop();
+    if (!Platform.environment.containsKey('FLUTTER_TEST')) {
+      if (Platform.isIOS) {
+        exit(0);
+      } else {
+        try {
+          await SystemNavigator.pop();
+        } catch (_) {}
+        await Future.delayed(const Duration(milliseconds: 300));
+        exit(0);
+      }
     }
   }
 }

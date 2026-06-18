@@ -9,6 +9,7 @@ import 'package:stalvi/domain/entities/category.dart';
 import 'package:stalvi/domain/entities/transaction.dart';
 import 'package:stalvi/domain/entities/transaction_type.dart';
 import 'package:stalvi/presentation/providers/repository_providers.dart';
+import 'package:stalvi/presentation/providers/statistics_providers.dart';
 
 import 'package:stalvi/core/utils/icon_helper.dart';
 
@@ -136,7 +137,9 @@ class TransactionDetailsDialog extends ConsumerWidget {
 
           // Header title
           Text(
-            l10n.recentTransactions,
+            isTransfer
+                ? l10n.filterTransfer
+                : (isIncome ? l10n.filterIncome : l10n.filterExpense),
             style: theme.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.w800,
               color: colorScheme.onSurfaceVariant,
@@ -192,7 +195,7 @@ class TransactionDetailsDialog extends ConsumerWidget {
                   _DetailRow(
                     label: l10n.labelOriginAccount,
                     valueWidget: Text(
-                      account?.name ?? 'Unknown Account',
+                      account?.name ?? l10n.unknownAccount,
                       style: theme.textTheme.bodyMedium
                           ?.copyWith(fontWeight: FontWeight.bold),
                     ),
@@ -210,7 +213,7 @@ class TransactionDetailsDialog extends ConsumerWidget {
                   _DetailRow(
                     label: l10n.labelDestinationAccount,
                     valueWidget: Text(
-                      destinationAccount?.name ?? 'Unknown Account',
+                      destinationAccount?.name ?? l10n.unknownAccount,
                       style: theme.textTheme.bodyMedium
                           ?.copyWith(fontWeight: FontWeight.bold),
                     ),
@@ -225,7 +228,7 @@ class TransactionDetailsDialog extends ConsumerWidget {
                   _DetailRow(
                     label: l10n.labelAccount,
                     valueWidget: Text(
-                      account?.name ?? 'Unknown Account',
+                      account?.name ?? l10n.unknownAccount,
                       style: theme.textTheme.bodyMedium
                           ?.copyWith(fontWeight: FontWeight.bold),
                     ),
@@ -391,6 +394,12 @@ class TransactionDetailsDialog extends ConsumerWidget {
                   await ref
                       .read(transactionRepositoryProvider)
                       .deleteTransaction(transaction.id);
+
+                  ref.invalidate(accountsListProvider);
+                  ref.invalidate(transactionsStreamProvider);
+                  ref.invalidate(periodSummaryProvider);
+                  ref.invalidate(topExpenseCategoriesProvider);
+                  ref.invalidate(topIncomeCategoriesProvider);
 
                   if (context.mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(

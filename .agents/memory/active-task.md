@@ -1,21 +1,21 @@
-# Active Task: Phase 18 - UX/UI Polish, Edge-Case Business Rules & Dynamic L10n
+# Active Task: Phase 19 - Complex Cascades, Riverpod Reactivity & Deep UX Polish
 
 ## Current Status
-- Clean Architecture, Riverpod, and Drift (SQLCipher) implementation stable.
-- Core CRUD operations for transactions, accounts, and categories are functional.
-- Pending UX/UI standardization, translation dynamic injection, and complex deletion rules.
+- Phase 18 completed: Core UI, dynamic l10n, and basic CRUD are stable.
+- Pending critical business rules regarding referential integrity (cascading deletes), complex transaction mapping (transfers), global state reactivity, and comprehensive localization coverage.
 
 ## Objectives for Current Phase
-1. **Settings Reorganization:** Move "Categories & Tags" outside and above the "Profile & Security" section in `profile_settings_screen.dart`.
-2. **Transfer Entity UI:** Enforce the transfer icon strictly for all transfer transactions. Show Origin, Destination, Amount, Date, and Notes in `transaction_details_dialog.dart`.
-3. **Category Reassignment Logic:** Upon deleting an in-use category, prompt reassignment matching the transaction type (income/expense) + all user-created categories.
-4. **Category Icon Management:** Implement an icon picker in category edition/creation with a strict selection of 128 unique, finance/lifestyle relevant Material icons.
-5. **Filter UX:** Update the clear filter icon to a broom (`Icons.cleaning_services` or similar).
-6. **Dynamic L10n Initialization:** Translate the default wallet name ("La meva cartera", "Mi cartera", "My wallet") dynamically during user creation in `initialize_default_data_usecase.dart`.
-7. **Account Management Rules:** Allow setting an account as 'Default' (warning user). Prevent deletion of the last account. Auto-reassign default status to the oldest available account if the current default is deleted.
-8. **App Wipe & Exit:** Ensure "Delete all data" cleans the database completely and forces app closure (`SystemNavigator.pop()` or `exit(0)`).
-9. **Global L10n Check:** Verify complete translation across ca, es, en.
+1. **Transfer Mirroring Logic:** A transfer must generate 2 linked transactions (origin account: negative amount, destination account: positive amount). Deleting or restoring one must apply the same action to its mirrored counterpart.
+2. **UI Polish - Transaction Details:** Hide the "Notes" field if it is empty. The title of the modal must dynamically display the localized Transaction Type name, not a generic "Recent Transactions" string.
+3. **Settings Reorganization:** Move "Categories & Tags" out of the "Profile & Security" screen and place it directly on the main Settings page, positioned exactly between "Statistics" and "Profile & Security".
+4. **Inline Error Handling:** When attempting to delete the last remaining account, display the error directly inside the confirmation Dialog/Pop-up instead of a Snackbar hidden by the keyboard.
+5. **Real-time Reactivity:** Ensure that creating, editing, or deleting a transaction forces an immediate invalidation/refresh of the Dashboard statistics and account balances.
+6. **Cascading Account Deletion:** When an account is permanently deleted (or moved to trash), all associated transactions must logically follow the same state.
+7. **Hard Delete Refresh:** Permanently deleting items from the Recycle Bin must trigger a global provider invalidation to refresh UI elements (statistics, category lists, accounts).
+8. **App Wipe & System Kill:** Executing "Delete all data" must completely wipe the database and invoke `SystemNavigator.pop()` or `exit(0)` to force a cold restart of the application.
+9. **Global Localization Audit:** Ensure all new strings, transaction types, error messages, and buttons are mapped in the `.arb` files (ca, es, en).
 
 ## Architectural Guidelines
-- **Strict Clean Architecture:** UI must not contain business logic. Deletion and reassignment rules belong in UseCases.
+- **Database Atomicity:** Mirrored transfer operations MUST be executed within a `db.transaction(() async { ... })` block.
+- **State Invalidation:** Use `ref.invalidate()` or `ref.refresh()` in Notifiers immediately after a successful UseCase execution.
 - **Direct Modification:** Agents must modify files directly without outputting code explanations in the chat.

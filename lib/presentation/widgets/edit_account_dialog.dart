@@ -4,6 +4,7 @@ import 'package:stalvi/domain/entities/account.dart';
 import 'package:stalvi/domain/entities/account_type.dart';
 import 'package:stalvi/presentation/providers/repository_providers.dart';
 import 'package:stalvi/core/l10n/app_localizations.dart';
+import 'package:stalvi/core/errors/app_exceptions.dart';
 
 class EditAccountDialog extends ConsumerStatefulWidget {
   final Account account;
@@ -136,75 +137,120 @@ class _EditAccountDialogState extends ConsumerState<EditAccountDialog> {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
+    String? dialogError;
+    bool isDeleting = false;
+
     // Show delete confirmation dialog
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) {
-        return AlertDialog(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-          title: Row(
-            children: [
-              Icon(
-                Icons.warning_amber_rounded,
-                color: colorScheme.error,
-                size: 28,
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(24),
               ),
-              const SizedBox(width: 12),
-              Expanded(child: Text(l10n.btnDelete)),
-            ],
-          ),
-          content: Text(
-            l10n.deleteAllDataWarning,
-          ), // General delete warning is fine, or we can use another key
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(dialogContext).pop(false),
-              child: Text(
-                l10n.btnCancel,
-                style: TextStyle(color: colorScheme.onSurfaceVariant),
+              title: Row(
+                children: [
+                  Icon(
+                    Icons.warning_amber_rounded,
+                    color: colorScheme.error,
+                    size: 28,
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(child: Text(l10n.btnDelete)),
+                ],
               ),
-            ),
-            FilledButton(
-              onPressed: () => Navigator.of(dialogContext).pop(true),
-              style: FilledButton.styleFrom(backgroundColor: colorScheme.error),
-              child: Text(l10n.btnDelete),
-            ),
-          ],
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(
+                    l10n.deleteAllDataWarning,
+                  ),
+                  if (dialogError != null) ...[
+                    const SizedBox(height: 16),
+                    Text(
+                      dialogError!,
+                      style: TextStyle(
+                        color: colorScheme.error,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: isDeleting
+                      ? null
+                      : () => Navigator.of(dialogContext).pop(false),
+                  child: Text(
+                    l10n.btnCancel,
+                    style: TextStyle(color: colorScheme.onSurfaceVariant),
+                  ),
+                ),
+                FilledButton(
+                  onPressed: isDeleting
+                      ? null
+                      : () async {
+                          setDialogState(() {
+                            isDeleting = true;
+                            dialogError = null;
+                          });
+                          try {
+                            await ref
+                                .read(accountRepositoryProvider)
+                                .deleteAccount(widget.account.id);
+                            if (dialogContext.mounted) {
+                              Navigator.of(dialogContext).pop(true);
+                            }
+                          } on ValidationException catch (e) {
+                            if (dialogContext.mounted) {
+                              setDialogState(() {
+                                isDeleting = false;
+                                if (e.code == 'LAST_ACCOUNT') {
+                                  dialogError =
+                                      l10n.errorCannotDeleteLastAccount;
+                                } else {
+                                  dialogError = e.message;
+                                }
+                              });
+                            }
+                          } catch (e) {
+                            if (dialogContext.mounted) {
+                              setDialogState(() {
+                                isDeleting = false;
+                                dialogError =
+                                    e.toString().replaceAll('Exception: ', '');
+                              });
+                            }
+                          }
+                        },
+                  style: FilledButton.styleFrom(
+                    backgroundColor: colorScheme.error,
+                  ),
+                  child: isDeleting
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
+                        )
+                      : Text(l10n.btnDelete),
+                ),
+              ],
+            );
+          },
         );
       },
     );
 
-    if (confirmed != true) return;
-
-    setState(() => _isLoading = true);
-
-    try {
-      await ref
-          .read(accountRepositoryProvider)
-          .deleteAccount(widget.account.id);
+    if (confirmed == true) {
       if (mounted) {
         Navigator.of(context).pop(); // Close bottom sheet
-      }
-    } on Exception catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(e.toString().replaceAll('Exception: ', '')),
-            backgroundColor: colorScheme.error,
-          ),
-        );
-        setState(() => _isLoading = false);
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() {
-          _errorMessage = '${l10n.createAccountErrorFailed}: $e';
-        });
-      }
-    } finally {
-      if (mounted && _isLoading) {
-        setState(() => _isLoading = false);
       }
     }
   }
@@ -275,8 +321,10 @@ class _EditAccountDialogState extends ConsumerState<EditAccountDialog> {
                   ),
                   child: Row(
                     children: [
-                      Icon(Icons.error_outline_rounded,
-                          color: colorScheme.error),
+                      Icon(
+                        Icons.error_outline_rounded,
+                        color: colorScheme.error,
+                      ),
                       const SizedBox(width: 12),
                       Expanded(
                         child: Text(
@@ -301,7 +349,8 @@ class _EditAccountDialogState extends ConsumerState<EditAccountDialog> {
                   hintText: l10n.createAccountNameHint,
                   errorText: _nameError,
                   border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16)),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
                 ),
               ),
               const SizedBox(height: 16),
@@ -315,7 +364,8 @@ class _EditAccountDialogState extends ConsumerState<EditAccountDialog> {
                   labelText: l10n.createAccountInitialBalanceLabel,
                   hintText: '0.00',
                   border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16)),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
                 ),
               ),
               const SizedBox(height: 20),
@@ -398,7 +448,8 @@ class _EditAccountDialogState extends ConsumerState<EditAccountDialog> {
                 decoration: InputDecoration(
                   labelText: l10n.labelCurrency,
                   border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16)),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
                 ),
                 items: ['EUR', 'USD', 'GBP', 'JPY', 'CHF']
                     .map(
@@ -452,8 +503,11 @@ class _EditAccountDialogState extends ConsumerState<EditAccountDialog> {
                             : null,
                       ),
                       child: isSelected
-                          ? const Icon(Icons.check,
-                              color: Colors.white, size: 18)
+                          ? const Icon(
+                              Icons.check,
+                              color: Colors.white,
+                              size: 18,
+                            )
                           : null,
                     ),
                   );
@@ -507,16 +561,17 @@ class _EditAccountDialogState extends ConsumerState<EditAccountDialog> {
               ),
               // Set as Default switch
               SwitchListTile(
-                title: const Text('Set as Default'),
+                title: Text(l10n.setAsDefault),
                 value: _isDefault,
                 onChanged: (val) async {
                   if (val) {
                     final confirm = await showDialog<bool>(
                       context: context,
                       builder: (ctx) => AlertDialog(
-                        title: const Text('Warning'),
-                        content: const Text(
-                            'The previous default account will be replaced. Continue?'),
+                        title: Text(l10n.warning),
+                        content: Text(
+                          l10n.replaceDefaultAccountConfirm,
+                        ),
                         actions: [
                           TextButton(
                             onPressed: () => Navigator.pop(ctx, false),
@@ -524,7 +579,7 @@ class _EditAccountDialogState extends ConsumerState<EditAccountDialog> {
                           ),
                           FilledButton(
                             onPressed: () => Navigator.pop(ctx, true),
-                            child: const Text('Continue'),
+                            child: Text(l10n.btnContinue),
                           ),
                         ],
                       ),

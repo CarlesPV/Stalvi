@@ -11,15 +11,17 @@ import 'package:stalvi/domain/repositories/i_transaction_repository.dart';
 
 /// Concrete implementation of [ITransactionRepository] backed by Drift.
 ///
-/// **Critical business rule**: [createTransaction] runs inside a Drift
-/// `.transaction()` block so that inserting the transaction row **and**
-/// updating the associated account balance succeed or fail atomically.
+/// **Critical business rule**: write operations run inside Drift
+/// `.transaction()` blocks so that row mutations **and** balance updates
+/// succeed or fail atomically.
 class TransactionRepository implements ITransactionRepository {
   final db.AppDatabase _db;
 
   TransactionRepository(this._db);
 
   TransactionDao get _transactionDao => _db.transactionDao;
+
+  // ── Single-transaction CRUD ───────────────────────────────────────────────
 
   @override
   Future<domain.Transaction> createTransaction(
@@ -31,54 +33,18 @@ class TransactionRepository implements ITransactionRepository {
         final dbTransaction = transaction.toDb();
         await _db.into(_db.transactions).insert(dbTransaction);
 
-        // 2. Fetch the associated account to read its current balance.
-        final accountQuery = _db.select(_db.accounts)
-          ..where((a) => a.id.equals(transaction.accountId));
-        final accountRow = await accountQuery.getSingleOrNull();
-
-        if (accountRow == null) {
-          throw NotFoundException(
-            message: 'Account with id "${transaction.accountId}" not found',
-            code: 'ACCOUNT_NOT_FOUND',
-          );
-        }
-
-        // 3. Calculate the new balance based on transaction type.
-        //    Transaction.amount is stored in cents (int).
-        //    Account.initialBalance is stored as a double.
-        final double delta = transaction.amount / 100.0;
-        final double newBalance;
-
-        switch (transaction.type) {
-          case domain.TransactionType.income:
-            newBalance = accountRow.initialBalance + delta;
-            break;
-          case domain.TransactionType.expense:
-            newBalance = accountRow.initialBalance - delta;
-            break;
-          case domain.TransactionType.transfer:
-            // Transfers are handled by a dedicated use case that creates
-            // two paired transactions. A single transfer transaction
-            // behaves as an expense (outflow) from this account.
-            newBalance = accountRow.initialBalance - delta;
-            break;
-        }
-
-        // 4. Update the account balance atomically.
-        await (_db.update(_db.accounts)
-              ..where((a) => a.id.equals(transaction.accountId)))
-            .write(
-          db.AccountsCompanion(
-            initialBalance: Value(newBalance),
-            modifiedAt: Value(DateTime.now()),
-          ),
+        // 2. Adjust account balance.
+        await _adjustBalance(
+          transaction.accountId,
+          transaction.amount,
+          transaction.type,
+          _BalanceOp.add,
         );
 
-        // 5. Return the inserted transaction as a domain entity.
+        // 3. Return the inserted transaction as a domain entity.
         return transaction;
       });
     } on AppException {
-      // Re-throw our own exceptions without wrapping.
       rethrow;
     } catch (e) {
       throw DatabaseException(
@@ -88,6 +54,57 @@ class TransactionRepository implements ITransactionRepository {
       );
     }
   }
+
+  // ── Transfer pair ─────────────────────────────────────────────────────────
+
+  /// Atomically inserts both legs of a transfer and adjusts both account
+  /// balances within a single Drift `.transaction()` block.
+  ///
+  /// Origin account is debited (outflow); destination account is credited.
+  @override
+  Future<TransferPair> createTransferPair({
+    required domain.Transaction originTransaction,
+    required domain.Transaction destinationTransaction,
+  }) async {
+    try {
+      return await _db.transaction(() async {
+        // Insert origin leg.
+        await _db.into(_db.transactions).insert(originTransaction.toDb());
+        // Debit origin account.
+        await _adjustBalance(
+          originTransaction.accountId,
+          originTransaction.amount,
+          domain.TransactionType.expense,
+          _BalanceOp.add,
+        );
+
+        // Insert destination leg.
+        await _db.into(_db.transactions).insert(destinationTransaction.toDb());
+        // Credit destination account.
+        await _adjustBalance(
+          destinationTransaction.accountId,
+          destinationTransaction.amount,
+          domain.TransactionType.income,
+          _BalanceOp.add,
+        );
+
+        return TransferPair(
+          origin: originTransaction,
+          destination: destinationTransaction,
+        );
+      });
+    } on AppException {
+      rethrow;
+    } catch (e) {
+      throw DatabaseException(
+        message: 'Failed to create transfer pair',
+        code: 'TRANSFER_INSERT_FAILED',
+        details: e,
+      );
+    }
+  }
+
+  // ── Queries ───────────────────────────────────────────────────────────────
 
   @override
   Future<domain.Transaction?> getTransactionById(String id) async {
@@ -157,60 +174,31 @@ class TransactionRepository implements ITransactionRepository {
     }
   }
 
+  // ── Soft delete ───────────────────────────────────────────────────────────
+
+  /// Soft-deletes a transaction. If it belongs to a transfer pair, its
+  /// mirror counterpart is also soft-deleted atomically.
   @override
   Future<void> deleteTransaction(String id) async {
     try {
       await _db.transaction(() async {
-        // 1. Fetch transaction
-        final txn = await (_db.select(_db.transactions)
-              ..where((t) => t.id.equals(id)))
-            .getSingleOrNull();
-        if (txn == null) {
-          throw NotFoundException(
-            message: 'Transaction with id "$id" not found',
-            code: 'TRANSACTION_NOT_FOUND',
-          );
+        final txn = await _fetchOrThrow(id);
+        if (txn.isDeleted) return;
+
+        // Revert balance for this leg.
+        await _revertBalance(txn);
+
+        // Soft-delete this row.
+        await _softDelete(id);
+
+        // Mirror: if part of a transfer, soft-delete counterpart too.
+        if (txn.transferId != null) {
+          final mirror = await _findMirror(txn.id, txn.transferId!);
+          if (mirror != null && !mirror.isDeleted) {
+            await _revertBalance(mirror);
+            await _softDelete(mirror.id);
+          }
         }
-        if (txn.isDeleted) return; // Already soft-deleted
-
-        // 2. Fetch account
-        final accountRow = await (_db.select(_db.accounts)
-              ..where((a) => a.id.equals(txn.accountId)))
-            .getSingleOrNull();
-        if (accountRow == null) {
-          throw NotFoundException(
-            message: 'Account with id "${txn.accountId}" not found',
-            code: 'ACCOUNT_NOT_FOUND',
-          );
-        }
-
-        // 3. Revert balance modification (since we are DELETING the transaction)
-        final double delta = txn.amount / 100.0;
-        final double newBalance;
-        if (txn.type == db_table.TransactionType.income) {
-          newBalance = accountRow.initialBalance - delta;
-        } else {
-          newBalance = accountRow.initialBalance + delta;
-        }
-
-        // 4. Update account balance
-        await (_db.update(_db.accounts)
-              ..where((a) => a.id.equals(txn.accountId)))
-            .write(
-          db.AccountsCompanion(
-            initialBalance: Value(newBalance),
-            modifiedAt: Value(DateTime.now()),
-          ),
-        );
-
-        // 5. Soft delete transaction
-        await (_db.update(_db.transactions)..where((t) => t.id.equals(id)))
-            .write(
-          db.TransactionsCompanion(
-            isDeleted: const Value(true),
-            modifiedAt: Value(DateTime.now()),
-          ),
-        );
       });
     } on AppException {
       rethrow;
@@ -222,6 +210,128 @@ class TransactionRepository implements ITransactionRepository {
       );
     }
   }
+
+  // ── Hard delete ───────────────────────────────────────────────────────────
+
+  /// Permanently removes a transaction. Its transfer mirror (if any) is also
+  /// permanently removed atomically.
+  @override
+  Future<void> hardDeleteTransaction(String id) async {
+    try {
+      await _db.transaction(() async {
+        final txn = await _fetchOrThrow(id);
+
+        // Find mirror before deletion.
+        db.Transaction? mirror;
+        if (txn.transferId != null) {
+          mirror = await _findMirror(txn.id, txn.transferId!);
+        }
+
+        // Hard delete this row.
+        await (_db.delete(_db.transactions)..where((t) => t.id.equals(id)))
+            .go();
+
+        // Hard delete mirror if found.
+        if (mirror != null) {
+          await (_db.delete(_db.transactions)
+                ..where((t) => t.id.equals(mirror!.id)))
+              .go();
+        }
+      });
+    } on AppException {
+      rethrow;
+    } catch (e) {
+      throw DatabaseException(
+        message: 'Failed to hard-delete transaction "$id"',
+        code: 'TRANSACTION_HARD_DELETE_FAILED',
+        details: e,
+      );
+    }
+  }
+
+  // ── Restore ───────────────────────────────────────────────────────────────
+
+  /// Restores a soft-deleted transaction. Its transfer mirror (if any) is
+  /// also restored atomically and both account balances are re-applied.
+  @override
+  Future<void> restoreTransaction(String id) async {
+    try {
+      await _db.transaction(() async {
+        final txn = await _fetchOrThrow(id);
+        if (!txn.isDeleted) return;
+
+        // Re-apply balance for this leg.
+        await _applyBalance(txn);
+
+        // Restore this row.
+        await _restore(id);
+
+        // Mirror: restore counterpart too.
+        if (txn.transferId != null) {
+          final mirror = await _findMirror(txn.id, txn.transferId!);
+          if (mirror != null && mirror.isDeleted) {
+            await _applyBalance(mirror);
+            await _restore(mirror.id);
+          }
+        }
+      });
+    } on AppException {
+      rethrow;
+    } catch (e) {
+      throw DatabaseException(
+        message: 'Failed to restore transaction "$id"',
+        code: 'TRANSACTION_RESTORE_FAILED',
+        details: e,
+      );
+    }
+  }
+
+  // ── Account-level cascade operations ─────────────────────────────────────
+
+  /// Soft-deletes all non-deleted transactions belonging to [accountId].
+  ///
+  /// **Does not** revert account balances because the account itself is being
+  /// soft-deleted; balance consistency is maintained at the account level.
+  @override
+  Future<void> softDeleteTransactionsByAccountId(String accountId) async {
+    try {
+      final now = DateTime.now();
+      await (_db.update(_db.transactions)
+            ..where(
+              (t) => t.accountId.equals(accountId) & t.isDeleted.equals(false),
+            ))
+          .write(
+        db.TransactionsCompanion(
+          isDeleted: const Value(true),
+          modifiedAt: Value(now),
+        ),
+      );
+    } catch (e) {
+      throw DatabaseException(
+        message: 'Failed to soft-delete transactions for account "$accountId"',
+        code: 'CASCADE_SOFT_DELETE_FAILED',
+        details: e,
+      );
+    }
+  }
+
+  /// Permanently hard-deletes all transactions belonging to [accountId].
+  @override
+  Future<void> hardDeleteTransactionsByAccountId(String accountId) async {
+    try {
+      await (_db.delete(_db.transactions)
+            ..where((t) => t.accountId.equals(accountId)))
+          .go();
+    } catch (e) {
+      throw DatabaseException(
+        message: 'Failed to hard-delete transactions for account "$accountId"',
+        code: 'CASCADE_HARD_DELETE_FAILED',
+        details: e,
+      );
+    }
+  }
+
+  // ── Streams ───────────────────────────────────────────────────────────────
 
   @override
   Stream<List<domain.Transaction>> watchAllTransactions() {
@@ -276,7 +386,209 @@ class TransactionRepository implements ITransactionRepository {
     }
   }
 
-  // ── Helpers ──────────────────────────────────────────────────────────────────
+  // ── Private helpers ───────────────────────────────────────────────────────
+
+  /// Fetches a [db.Transaction] row by [id], throwing [NotFoundException] if
+  /// it does not exist.
+  Future<db.Transaction> _fetchOrThrow(String id) async {
+    final row = await (_db.select(_db.transactions)
+          ..where((t) => t.id.equals(id)))
+        .getSingleOrNull();
+    if (row == null) {
+      throw NotFoundException(
+        message: 'Transaction with id "$id" not found',
+        code: 'TRANSACTION_NOT_FOUND',
+      );
+    }
+    return row;
+  }
+
+  /// Finds the counterpart row of a transfer pair.
+  ///
+  /// Returns `null` if the mirror no longer exists.
+  Future<db.Transaction?> _findMirror(
+    String selfId,
+    String transferId,
+  ) async {
+    return (_db.select(_db.transactions)
+          ..where(
+            (t) => t.transferId.equals(transferId) & t.id.isNotValue(selfId),
+          ))
+        .getSingleOrNull();
+  }
+
+  /// Marks a transaction row as soft-deleted.
+  Future<void> _softDelete(String id) async {
+    await (_db.update(_db.transactions)..where((t) => t.id.equals(id))).write(
+      db.TransactionsCompanion(
+        isDeleted: const Value(true),
+        modifiedAt: Value(DateTime.now()),
+      ),
+    );
+  }
+
+  /// Clears the isDeleted flag of a transaction row (restores it).
+  Future<void> _restore(String id) async {
+    await (_db.update(_db.transactions)..where((t) => t.id.equals(id))).write(
+      db.TransactionsCompanion(
+        isDeleted: const Value(false),
+        modifiedAt: Value(DateTime.now()),
+      ),
+    );
+  }
+
+  /// Adjusts the balance of [accountId] by [amountCents] according to [type].
+  ///
+  /// [op] controls the direction: [_BalanceOp.add] applies the transaction
+  /// (income → +, expense/transfer-out → −), [_BalanceOp.revert] undoes it.
+  Future<void> _adjustBalance(
+    String accountId,
+    int amountCents,
+    domain.TransactionType type,
+    _BalanceOp op,
+  ) async {
+    final accountRow = await (_db.select(_db.accounts)
+          ..where((a) => a.id.equals(accountId)))
+        .getSingleOrNull();
+    if (accountRow == null) {
+      throw NotFoundException(
+        message: 'Account with id "$accountId" not found',
+        code: 'ACCOUNT_NOT_FOUND',
+      );
+    }
+
+    final double delta = amountCents / 100.0;
+    final bool applying = op == _BalanceOp.add;
+    double newBalance;
+
+    switch (type) {
+      case domain.TransactionType.income:
+        newBalance = applying
+            ? accountRow.initialBalance + delta
+            : accountRow.initialBalance - delta;
+        break;
+      case domain.TransactionType.expense:
+      case domain.TransactionType.transfer:
+        newBalance = applying
+            ? accountRow.initialBalance - delta
+            : accountRow.initialBalance + delta;
+        break;
+    }
+
+    await (_db.update(_db.accounts)..where((a) => a.id.equals(accountId)))
+        .write(
+      db.AccountsCompanion(
+        initialBalance: Value(newBalance),
+        modifiedAt: Value(DateTime.now()),
+      ),
+    );
+  }
+
+  /// Reverts the balance impact of [txn] based on its type.
+  Future<void> _revertBalance(db.Transaction txn) async {
+    final domainType = _mapDbTypeToDomain(txn.type);
+    // For a transfer-destination leg the amount was credited (income direction),
+    // so reverting it uses expense direction — but we stored it with the
+    // income sign convention. We detect destination legs by checking whether
+    // another row with the same transferId debited a different account.
+    // Simpler approach: origin leg behaves as expense on delete, destination
+    // as income on delete. We rely on how createTransferPair recorded the
+    // balance adjustments.
+    // Since transfer origin was debited and destination credited, we just
+    // re-route via domain type which is always `transfer` for both legs.
+    // The repo used `expense` direction for origin and `income` for destination
+    // when creating. We need to mirror that here.
+    if (txn.type == db_table.TransactionType.transfer &&
+        txn.transferId != null) {
+      // Determine leg direction by checking if this account was debited or
+      // credited. We do this by finding the mirror row.
+      final mirror = await _findMirror(txn.id, txn.transferId!);
+      if (mirror != null) {
+        // If mirror's accountId != txn.accountId we know they're on different
+        // accounts. Origin was debited (expense dir), destination was credited.
+        // To revert: check if txn is origin or destination.
+        // Convention: the origin id matches params.id (no _dst suffix).
+        // Simpler: try to see if balance logic used +delta or -delta.
+        // The safest approach here is: revert origin by adding back (income),
+        // revert destination by subtracting (expense).
+        // We infer which leg this is by looking at the account balance history.
+        // Since we can't know at this layer, we track by the `id` suffix
+        // convention set in AddTransactionUseCase (originId vs originId_dst).
+        // However that is a fragile coupling. Instead we record direction via
+        // a balance peek:
+        // If removing delta (treating as income revert) or adding (expense revert).
+        // DECISION: Keep it simple — treat origin as expense (debit), destination
+        // as income (credit). A transfer mirror found means this IS the other leg.
+        // Check which account was debited: we'll compute from the stored amounts.
+        // Both legs have the same `amount`. The origin was debited, destination
+        // credited. We distinguish by ID ordering – whichever was inserted first
+        // (chronologically earlier createdAt) is the origin.
+        final isOrigin = txn.createdAt.isBefore(mirror.createdAt) ||
+            txn.createdAt.isAtSameMomentAs(mirror.createdAt) &&
+                txn.id.compareTo(mirror.id) < 0;
+
+        if (isOrigin) {
+          // Was debited; revert by adding back (income direction).
+          await _adjustBalance(
+            txn.accountId,
+            txn.amount,
+            domain.TransactionType.income,
+            _BalanceOp.add,
+          );
+        } else {
+          // Was credited; revert by subtracting (expense direction).
+          await _adjustBalance(
+            txn.accountId,
+            txn.amount,
+            domain.TransactionType.expense,
+            _BalanceOp.add,
+          );
+        }
+        return;
+      }
+      // Mirror not found – fall through to normal revert logic.
+    }
+
+    await _adjustBalance(
+      txn.accountId,
+      txn.amount,
+      domainType,
+      _BalanceOp.revert,
+    );
+  }
+
+  /// Re-applies the balance impact of [txn] based on its type (used in restore).
+  Future<void> _applyBalance(db.Transaction txn) async {
+    final domainType = _mapDbTypeToDomain(txn.type);
+    if (txn.type == db_table.TransactionType.transfer &&
+        txn.transferId != null) {
+      final mirror = await _findMirror(txn.id, txn.transferId!);
+      if (mirror != null) {
+        final isOrigin = txn.createdAt.isBefore(mirror.createdAt) ||
+            txn.createdAt.isAtSameMomentAs(mirror.createdAt) &&
+                txn.id.compareTo(mirror.id) < 0;
+
+        if (isOrigin) {
+          await _adjustBalance(
+            txn.accountId,
+            txn.amount,
+            domain.TransactionType.expense,
+            _BalanceOp.add,
+          );
+        } else {
+          await _adjustBalance(
+            txn.accountId,
+            txn.amount,
+            domain.TransactionType.income,
+            _BalanceOp.add,
+          );
+        }
+        return;
+      }
+    }
+
+    await _adjustBalance(txn.accountId, txn.amount, domainType, _BalanceOp.add);
+  }
 
   db_table.TransactionType _mapDomainTypeToDB(
     domain.TransactionType domainType,
@@ -290,4 +602,21 @@ class TransactionRepository implements ITransactionRepository {
         return db_table.TransactionType.transfer;
     }
   }
+
+  domain.TransactionType _mapDbTypeToDomain(
+    db_table.TransactionType dbType,
+  ) {
+    switch (dbType) {
+      case db_table.TransactionType.income:
+        return domain.TransactionType.income;
+      case db_table.TransactionType.expense:
+        return domain.TransactionType.expense;
+      case db_table.TransactionType.transfer:
+        return domain.TransactionType.transfer;
+    }
+  }
 }
+
+/// Internal enum to express whether a balance adjustment should apply
+/// ([_BalanceOp.add]) or revert ([_BalanceOp.revert]) a transaction's effect.
+enum _BalanceOp { add, revert }

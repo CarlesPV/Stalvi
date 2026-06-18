@@ -1407,6 +1407,198 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Destination Account'**
   String get labelDestinationAccount;
+
+  /// Error message when attempting to delete the last remaining account
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot delete the last existing account.'**
+  String get errorCannotDeleteLastAccount;
+
+  /// Title or label for Categories & Tags section
+  ///
+  /// In en, this message translates to:
+  /// **'Categories & Tags'**
+  String get categoriesAndTags;
+
+  /// Switch label to set an account as default
+  ///
+  /// In en, this message translates to:
+  /// **'Set as Default'**
+  String get setAsDefault;
+
+  /// Warning dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Warning'**
+  String get warning;
+
+  /// Confirmation message when replacing the default account
+  ///
+  /// In en, this message translates to:
+  /// **'The previous default account will be replaced. Continue?'**
+  String get replaceDefaultAccountConfirm;
+
+  /// Label for continue button
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get btnContinue;
+
+  /// Fallback label when account is not found
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown Account'**
+  String get unknownAccount;
+
+  /// Subtitle for editing account details
+  ///
+  /// In en, this message translates to:
+  /// **'Edit account details'**
+  String get editAccountDetails;
+
+  /// Subtitle for setting account as default
+  ///
+  /// In en, this message translates to:
+  /// **'Mark this account as the default for new transactions'**
+  String get markAccountAsDefault;
+
+  /// Subtitle indicating account is already default
+  ///
+  /// In en, this message translates to:
+  /// **'This is already the default account'**
+  String get alreadyDefaultAccount;
+
+  /// Label for categories tab or section
+  ///
+  /// In en, this message translates to:
+  /// **'Categories'**
+  String get categories;
+
+  /// Label for tags tab or section
+  ///
+  /// In en, this message translates to:
+  /// **'Tags'**
+  String get tags;
+
+  /// Title for delete category confirmation dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Category?'**
+  String get deleteCategoryTitle;
+
+  /// Message to confirm deleting a category
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete {name}?'**
+  String deleteCategoryConfirm(String name);
+
+  /// Title for delete tag confirmation dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Tag?'**
+  String get deleteTagTitle;
+
+  /// Message to confirm deleting a tag
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete {name}?'**
+  String deleteTagConfirm(String name);
+
+  /// Error message when no other categories are available for reassignment
+  ///
+  /// In en, this message translates to:
+  /// **'No other categories to reassign transactions to.'**
+  String get errorNoOtherCategories;
+
+  /// Error message when no other tags are available for reassignment
+  ///
+  /// In en, this message translates to:
+  /// **'No other tags to reassign transactions to.'**
+  String get errorNoOtherTags;
+
+  /// Title for category in use warning dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Category in Use'**
+  String get categoryInUseTitle;
+
+  /// Title for tag in use warning dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Tag in Use'**
+  String get tagInUseTitle;
+
+  /// Message explaining that a category is in use and prompting for reassignment
+  ///
+  /// In en, this message translates to:
+  /// **'{name} is used by existing transactions. Please select a category to reassign them to:'**
+  String categoryInUseMessage(String name);
+
+  /// Message explaining that a tag is in use and prompting for reassignment
+  ///
+  /// In en, this message translates to:
+  /// **'{name} is used by existing transactions. Please select a tag to reassign them to:'**
+  String tagInUseMessage(String name);
+
+  /// Button label to reassign items and delete the original
+  ///
+  /// In en, this message translates to:
+  /// **'Reassign & Delete'**
+  String get btnReassignAndDelete;
+
+  /// Message shown when categories list is empty
+  ///
+  /// In en, this message translates to:
+  /// **'No categories yet'**
+  String get noCategories;
+
+  /// Message shown when tags list is empty
+  ///
+  /// In en, this message translates to:
+  /// **'No tags yet'**
+  String get noTags;
+
+  /// Title for adding a category
+  ///
+  /// In en, this message translates to:
+  /// **'Add Category'**
+  String get addCategoryTitle;
+
+  /// Title for editing a category
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Category'**
+  String get editCategoryTitle;
+
+  /// Title for adding a tag
+  ///
+  /// In en, this message translates to:
+  /// **'Add Tag'**
+  String get addTagTitle;
+
+  /// Title for editing a tag
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Tag'**
+  String get editTagTitle;
+
+  /// Label for category name input field
+  ///
+  /// In en, this message translates to:
+  /// **'Category Name'**
+  String get labelCategoryName;
+
+  /// Label for tag name input field
+  ///
+  /// In en, this message translates to:
+  /// **'Tag Name'**
+  String get labelTagName;
+
+  /// Label for icon picker or display
+  ///
+  /// In en, this message translates to:
+  /// **'Icon'**
+  String get labelIcon;
 }
 
 class _AppLocalizationsDelegate

@@ -16,6 +16,7 @@ import 'package:stalvi/presentation/providers/repository_providers.dart';
 import 'package:stalvi/presentation/providers/auth_notifier.dart';
 import 'package:stalvi/presentation/providers/locale_provider.dart';
 import 'package:stalvi/presentation/features/settings/profile_settings_screen.dart';
+import 'package:stalvi/presentation/features/settings/categories_tags_management_screen.dart';
 import 'package:stalvi/presentation/features/recycle_bin/recycle_bin_screen.dart';
 import 'package:stalvi/presentation/widgets/empty_state_widget.dart';
 import 'package:stalvi/presentation/providers/discreet_mode_provider.dart';
@@ -530,7 +531,7 @@ class _TransactionsTabState extends ConsumerState<_TransactionsTab> {
                                     .read(transactionFilterProvider.notifier)
                                     .clearAll(),
                                 icon: const Icon(
-                                  Icons.clear_all_rounded,
+                                  Icons.cleaning_services,
                                   size: 16,
                                 ),
                                 label: Text(l10n.filterSheetClearAll),
@@ -873,7 +874,7 @@ class _AccountItem extends ConsumerWidget {
                     style: TextStyle(color: colorScheme.onSurface),
                   ),
                   subtitle: Text(
-                    'Edit account details',
+                    l10n.editAccountDetails,
                     style: TextStyle(
                       color: colorScheme.onSurfaceVariant,
                       fontSize: 12,
@@ -900,7 +901,7 @@ class _AccountItem extends ConsumerWidget {
                       style: TextStyle(color: colorScheme.onSurface),
                     ),
                     subtitle: Text(
-                      'Mark this account as the default for new transactions',
+                      l10n.markAccountAsDefault,
                       style: TextStyle(
                         color: colorScheme.onSurfaceVariant,
                         fontSize: 12,
@@ -928,7 +929,7 @@ class _AccountItem extends ConsumerWidget {
                       ),
                     ),
                     subtitle: Text(
-                      'This is already the default account',
+                      l10n.alreadyDefaultAccount,
                       style: TextStyle(
                         color: colorScheme.onSurfaceVariant,
                         fontSize: 12,
@@ -1090,7 +1091,7 @@ class _SettingsSkeletonTab extends ConsumerWidget {
 
     return ListView.separated(
       padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
-      itemCount: 4,
+      itemCount: 5,
       separatorBuilder: (_, __) => const SizedBox(height: 12),
       itemBuilder: (context, i) {
         if (i == 0) {
@@ -1199,6 +1200,54 @@ class _SettingsSkeletonTab extends ConsumerWidget {
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
+                    builder: (context) =>
+                        const CategoriesTagsManagementScreen(),
+                  ),
+                );
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.category_rounded,
+                      color: colorScheme.tertiary,
+                      size: 22,
+                    ),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Text(
+                        AppLocalizations.of(context)!.categoriesAndTags,
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.w700,
+                              color: colorScheme.onSurface,
+                            ),
+                      ),
+                    ),
+                    Icon(
+                      Icons.chevron_right_rounded,
+                      color:
+                          colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        }
+
+        if (i == 3) {
+          return Container(
+            height: 60,
+            decoration: BoxDecoration(
+              color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: InkWell(
+              borderRadius: BorderRadius.circular(14),
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
                     builder: (context) => const ProfileSettingsScreen(),
                   ),
                 );
@@ -1234,7 +1283,7 @@ class _SettingsSkeletonTab extends ConsumerWidget {
           );
         }
 
-        if (i == 3) {
+        if (i == 4) {
           return Container(
             height: 60,
             decoration: BoxDecoration(

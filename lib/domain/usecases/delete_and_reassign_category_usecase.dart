@@ -22,7 +22,8 @@ class DeleteAndReassignCategoryUseCase {
   /// a) Default categories matching the specific transaction type (Income or Expense).
   /// b) ALL user-created custom categories (since they are type-agnostic).
   Future<List<Category>> getReplacementCategories(
-      Category categoryToDelete) async {
+    Category categoryToDelete,
+  ) async {
     final allCategories = await _categoryRepo.watchAllCategories().first;
 
     return allCategories.where((c) {
