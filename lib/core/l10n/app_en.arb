@@ -906,5 +906,13 @@
   "filterSheetTransferType": "Transfer",
   "@filterSheetTransferType": {
     "description": "Label for transfer type in filter sheet"
+  },
+  "labelOriginAccount": "Origin Account",
+  "@labelOriginAccount": {
+    "description": "Label for the origin account of a transfer"
+  },
+  "labelDestinationAccount": "Destination Account",
+  "@labelDestinationAccount": {
+    "description": "Label for the destination account of a transfer"
   }
 }

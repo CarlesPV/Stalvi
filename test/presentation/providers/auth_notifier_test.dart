@@ -285,6 +285,7 @@ void main() {
         () => mockInitializeDefaultDataUseCase.execute(
           userId: any(named: 'userId'),
           currency: any(named: 'currency'),
+          walletName: any(named: 'walletName'),
           locale: any(named: 'locale'),
         ),
       ).thenAnswer((_) async => {});
@@ -310,6 +311,7 @@ void main() {
         () => mockInitializeDefaultDataUseCase.execute(
           userId: 'uuid',
           currency: 'EUR',
+          walletName: any(named: 'walletName'),
           locale: any(named: 'locale'),
         ),
       ).called(1);
@@ -418,6 +420,7 @@ void main() {
           () => mockInitializeDefaultDataUseCase.execute(
             userId: any(named: 'userId'),
             currency: any(named: 'currency'),
+            walletName: any(named: 'walletName'),
             locale: any(named: 'locale'),
           ),
         ).thenAnswer((_) async => {});

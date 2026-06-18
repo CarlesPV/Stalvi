@@ -1,6 +1,8 @@
 import 'dart:io';
+import 'package:flutter/services.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:stalvi/data/database/app_database.dart';
 import 'package:stalvi/core/security/secure_storage_manager.dart';
@@ -14,6 +16,10 @@ class WipeAllDataUseCase {
   Future<void> execute() async {
     // 1. Clear secure storage (encryption key, PIN, settings, etc.)
     await _secureStorageManager.deleteAll();
+
+    // 1.b Clear shared preferences
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
 
     // 2. Clear all tables explicitly
     try {
@@ -78,6 +84,13 @@ class WipeAllDataUseCase {
     final dbShmFile = File(p.join(dbFolder.path, 'stalvi.db-shm'));
     if (await dbShmFile.exists()) {
       await dbShmFile.delete();
+    }
+
+    // 4. Close the app
+    if (Platform.isIOS) {
+      exit(0);
+    } else {
+      SystemNavigator.pop();
     }
   }
 }

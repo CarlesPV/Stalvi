@@ -1395,6 +1395,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Transfer'**
   String get filterSheetTransferType;
+
+  /// Label for the origin account of a transfer
+  ///
+  /// In en, this message translates to:
+  /// **'Origin Account'**
+  String get labelOriginAccount;
+
+  /// Label for the destination account of a transfer
+  ///
+  /// In en, this message translates to:
+  /// **'Destination Account'**
+  String get labelDestinationAccount;
 }
 
 class _AppLocalizationsDelegate

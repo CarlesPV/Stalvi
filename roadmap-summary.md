@@ -250,4 +250,18 @@ This document lists the completed phases of the Stalvi development roadmap, prov
   - Resolved `dashboard_screen_test.dart` failures caused by multiple listeners on the single-subscription `transactionsStream` by converting it to a broadcast stream.
   - Achieved 100% test pass rate with all 314 tests passing successfully.
 
+### Phase 18: Dynamic Initial Database Entity Localization & UI Polish
+* **Completion Date:** June 18, 2026
+* **Objective:** Dynamically localize the default database entities (e.g. default account/wallet name) on initialization to match the device's locale settings, ensuring Clean Architecture principles are followed by passing localized values from the presentation layer, and resolve layout widget constraints in widget test environments.
+* **Accomplishments:**
+  - **Dynamic Wallet Localization:** Refactored `InitializeDefaultDataUseCase` to accept a dynamic `walletName` argument rather than hardcoding.
+  - **Clean Architecture Providers:** Updated `AppStartupProvider` and `AuthNotifier` to read the active locale, resolve the localized wallet name (e.g., using direct lookup of localization bundles `lookupAppLocalizations(locale).defaultWalletName` with appropriate Catalan, Spanish, and English fallbacks), and inject it into the initialization flow.
+  - **Material Dialog Wrappers:** Wrapped bottom sheets in `Material` inside `CreateAccountDialog` and `EditAccountDialog` to prevent background ink splash errors/warnings when executing widget tests that render list tiles.
+  - **Test Suite Updates:** Updated unit and widget tests (including `initialize_default_data_usecase_test.dart` and `auth_notifier_test.dart`) to mock and verify dynamic wallet name resolutions under Catalan, Spanish, and English environments.
+* **Verification:**
+  - Standard static analysis pass (`flutter analyze` with 0 issues).
+  - Clean build generation and l10n compilation (`flutter gen-l10n`).
+  - Achieved 100% test pass rate with all 322 tests passing successfully.
+
+
 

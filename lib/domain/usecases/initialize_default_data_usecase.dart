@@ -38,20 +38,20 @@ class InitializeDefaultDataUseCase {
       final existingAccounts =
           await _accountRepository.getAccountsByUserId(userId);
       if (existingAccounts.isEmpty) {
-        String resolvedWalletName = walletName ?? 'Default Wallet';
+        String resolvedWalletName = walletName ?? 'My wallet';
         if (walletName == null && locale != null) {
           final langCode =
               locale.split('_').first.split('-').first.toLowerCase();
           try {
             final appLoc = lookupAppLocalizations(Locale(langCode));
-            resolvedWalletName = appLoc.defaultWallet;
+            resolvedWalletName = appLoc.defaultWalletName;
           } catch (_) {
             if (langCode == 'es') {
-              resolvedWalletName = 'Monedero Principal';
+              resolvedWalletName = 'Mi cartera';
             } else if (langCode == 'ca') {
-              resolvedWalletName = 'Moneder Principal';
+              resolvedWalletName = 'La meva cartera';
             } else {
-              resolvedWalletName = 'Default Wallet';
+              resolvedWalletName = 'My wallet';
             }
           }
         }

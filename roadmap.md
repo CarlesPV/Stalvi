@@ -106,11 +106,17 @@
   - [x] Enforce localized pluralized `.arb` strings for the dashboard multi-account text.
   - [x] Fix widget tests and achieve 100% automated test suite pass rate.
 
+- [x] **Phase 18: Dynamic Initial Database Entity Localization & UI Polish**
+  - [x] Dynamically localize the default wallet name based on active locale ("La meva cartera" / "Mi cartera" / "My Wallet").
+  - [x] Refactor usecase and initialization data flow to inject dynamic localized strings from presentation providers (Clean Architecture).
+  - [x] Resolve `ListTile` theme ancestor dependency issues in test runs by adding `Material` wrappers to dialog layouts.
+  - [x] Complete sweeping UI checks and fix all unit tests to achieve 100% pass rate.
+
 ## Current Phase
-- [ ] **Phase 18: Synchronization, Backups, and Import/Export Validations**
+- [ ] **Phase 19: Synchronization, Backups, and Import/Export Validations**
   - [ ] Implement cloud synchronization options.
   - [ ] Add encrypted automatic local backup features.
   - [ ] Validate cross-platform imports/exports.
 
 ## Upcoming Phases
-- [ ] **Phase 19: Integration Testing (E2E), final security audit, and store preparation.**
+- [ ] **Phase 20: Integration Testing (E2E), final security audit, and store preparation.**

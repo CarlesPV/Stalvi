@@ -93,6 +93,31 @@ void main() {
       expect(result.isDeleted, false);
       expect(result.createdAt, isA<DateTime>());
       expect(result.modifiedAt, isA<DateTime>());
+      expect(result.isDefault, false);
+    });
+
+    test('should pass isDefault as true when requested', () async {
+      // Arrange
+      when(() => mockAccountRepository.createAccount(any())).thenAnswer(
+        (invocation) async => invocation.positionalArguments[0] as Account,
+      );
+      const params = CreateAccountParams(
+        id: 'test_id',
+        userId: 'user_1',
+        name: 'Main Savings',
+        type: AccountType.savings,
+        initialBalance: 1000.0,
+        currency: 'USD',
+        color: '#00FF00',
+        icon: 'savings_icon',
+        isDefault: true,
+      );
+
+      // Act
+      final result = await usecase.execute(params);
+
+      // Assert
+      expect(result.isDefault, true);
     });
   });
 }

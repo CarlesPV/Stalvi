@@ -492,6 +492,22 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
           : ListView(
               padding: const EdgeInsets.all(24),
               children: [
+                // ── Categories & Tags (top-level, above Profile & Security) ─
+                ListTile(
+                  leading: const Icon(Icons.category_rounded),
+                  title: const Text('Categories & Tags Management'),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            const CategoriesTagsManagementScreen(),
+                      ),
+                    );
+                  },
+                ),
+                const Divider(),
+                // ── Profile & Security ────────────────────────────────────
                 if (state.profile != null) ...[
                   ListTile(
                     leading: const Icon(Icons.person),
@@ -564,20 +580,6 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                       );
                     }).toList(),
                   ),
-                ),
-                const Divider(),
-                ListTile(
-                  leading: const Icon(Icons.category_rounded),
-                  title: const Text('Categories & Tags Management'),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            const CategoriesTagsManagementScreen(),
-                      ),
-                    );
-                  },
                 ),
                 const Divider(),
                 ListTile(

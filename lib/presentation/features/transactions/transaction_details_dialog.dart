@@ -57,27 +57,46 @@ class TransactionDetailsDialog extends ConsumerWidget {
       showSign: true,
     );
 
-    final color =
-        isIncome ? financialColors.positive : financialColors.negative;
+    final isTransfer = transaction.type == TransactionType.transfer;
 
-    final typeIcon = isIncome
-        ? Icons.trending_up_rounded
-        : (transaction.type == TransactionType.transfer
-            ? Icons.swap_horiz_rounded
-            : Icons.trending_down_rounded);
+    final color = isTransfer
+        ? Colors.blue
+        : (isIncome ? financialColors.positive : financialColors.negative);
+
+    final typeIcon = isTransfer
+        ? Icons.swap_horiz_rounded
+        : (isIncome ? Icons.trending_up_rounded : Icons.trending_down_rounded);
 
     final dateStr =
         DateFormat.yMMMMd(Localizations.localeOf(context).toString())
             .add_jm()
             .format(transaction.date);
 
-    // Resolving account & category safely to nullable variables to avoid closure type errors
     final accounts = ref.watch(accountsListProvider).valueOrNull ?? [];
     Account? account;
+    Account? destinationAccount;
     for (final a in accounts) {
       if (a.id == transaction.accountId) {
         account = a;
-        break;
+      }
+    }
+
+    if (isTransfer) {
+      final allTransactions =
+          ref.watch(transactionsStreamProvider).valueOrNull ?? [];
+      for (final tx in allTransactions) {
+        if (tx.id != transaction.id &&
+            tx.type == TransactionType.income &&
+            tx.amount == transaction.amount &&
+            tx.date == transaction.date) {
+          for (final a in accounts) {
+            if (a.id == tx.accountId) {
+              destinationAccount = a;
+              break;
+            }
+          }
+          break;
+        }
       }
     }
 
@@ -169,38 +188,73 @@ class TransactionDetailsDialog extends ConsumerWidget {
             ),
             child: Column(
               children: [
-                _DetailRow(
-                  label: l10n.labelAccount,
-                  valueWidget: Text(
-                    account?.name ?? 'Unknown Account',
-                    style: theme.textTheme.bodyMedium
-                        ?.copyWith(fontWeight: FontWeight.bold),
+                if (isTransfer) ...[
+                  _DetailRow(
+                    label: l10n.labelOriginAccount,
+                    valueWidget: Text(
+                      account?.name ?? 'Unknown Account',
+                      style: theme.textTheme.bodyMedium
+                          ?.copyWith(fontWeight: FontWeight.bold),
+                    ),
+                    icon: account != null
+                        ? _getIconData(account.icon)
+                        : Icons.account_balance_wallet_rounded,
+                    iconColor: account != null
+                        ? _parseHexColor(account.color)
+                        : colorScheme.onSurfaceVariant,
                   ),
-                  icon: account != null
-                      ? _getIconData(account.icon)
-                      : Icons.account_balance_wallet_rounded,
-                  iconColor: account != null
-                      ? _parseHexColor(account.color)
-                      : colorScheme.onSurfaceVariant,
-                ),
-                Divider(
-                  height: 1,
-                  color: colorScheme.outline.withValues(alpha: 0.08),
-                ),
-                _DetailRow(
-                  label: l10n.labelCategory,
-                  valueWidget: Text(
-                    category?.name ?? l10n.uncategorized,
-                    style: theme.textTheme.bodyMedium
-                        ?.copyWith(fontWeight: FontWeight.bold),
+                  Divider(
+                    height: 1,
+                    color: colorScheme.outline.withValues(alpha: 0.08),
                   ),
-                  icon: category != null
-                      ? _getIconData(category.icon)
-                      : Icons.category_rounded,
-                  iconColor: category != null
-                      ? _parseHexColor(category.color)
-                      : colorScheme.onSurfaceVariant,
-                ),
+                  _DetailRow(
+                    label: l10n.labelDestinationAccount,
+                    valueWidget: Text(
+                      destinationAccount?.name ?? 'Unknown Account',
+                      style: theme.textTheme.bodyMedium
+                          ?.copyWith(fontWeight: FontWeight.bold),
+                    ),
+                    icon: destinationAccount != null
+                        ? _getIconData(destinationAccount.icon)
+                        : Icons.account_balance_wallet_rounded,
+                    iconColor: destinationAccount != null
+                        ? _parseHexColor(destinationAccount.color)
+                        : colorScheme.onSurfaceVariant,
+                  ),
+                ] else ...[
+                  _DetailRow(
+                    label: l10n.labelAccount,
+                    valueWidget: Text(
+                      account?.name ?? 'Unknown Account',
+                      style: theme.textTheme.bodyMedium
+                          ?.copyWith(fontWeight: FontWeight.bold),
+                    ),
+                    icon: account != null
+                        ? _getIconData(account.icon)
+                        : Icons.account_balance_wallet_rounded,
+                    iconColor: account != null
+                        ? _parseHexColor(account.color)
+                        : colorScheme.onSurfaceVariant,
+                  ),
+                  Divider(
+                    height: 1,
+                    color: colorScheme.outline.withValues(alpha: 0.08),
+                  ),
+                  _DetailRow(
+                    label: l10n.labelCategory,
+                    valueWidget: Text(
+                      category?.name ?? l10n.uncategorized,
+                      style: theme.textTheme.bodyMedium
+                          ?.copyWith(fontWeight: FontWeight.bold),
+                    ),
+                    icon: category != null
+                        ? _getIconData(category.icon)
+                        : Icons.category_rounded,
+                    iconColor: category != null
+                        ? _parseHexColor(category.color)
+                        : colorScheme.onSurfaceVariant,
+                  ),
+                ],
                 Divider(
                   height: 1,
                   color: colorScheme.outline.withValues(alpha: 0.08),

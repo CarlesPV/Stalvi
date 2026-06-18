@@ -138,7 +138,9 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
                         const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                     child: Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 4),
+                        horizontal: 16,
+                        vertical: 4,
+                      ),
                       decoration: BoxDecoration(
                         color: colorScheme.surfaceContainerHighest
                             .withValues(alpha: 0.5),
@@ -153,8 +155,10 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
                           value: filter.accountId,
                           hint: Text(AppLocalizations.of(context)!.filterAll),
                           isExpanded: true,
-                          icon: Icon(Icons.keyboard_arrow_down_rounded,
-                              color: colorScheme.primary),
+                          icon: Icon(
+                            Icons.keyboard_arrow_down_rounded,
+                            color: colorScheme.primary,
+                          ),
                           items: [
                             DropdownMenuItem<String?>(
                               value: null,

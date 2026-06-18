@@ -335,7 +335,8 @@ class _SavingsGoalCard extends ConsumerWidget {
     final targetDateStr = goal.targetDate != null
         ? AppLocalizations.of(context)!.savingsTargetDate(
             DateFormat.yMMMd(Localizations.localeOf(context).toString())
-                .format(goal.targetDate!))
+                .format(goal.targetDate!),
+          )
         : AppLocalizations.of(context)!.savingsNoTargetDate;
 
     return Container(

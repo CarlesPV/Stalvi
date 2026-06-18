@@ -115,7 +115,12 @@ void main() {
     test('deleteAccount soft-deletes the account record', () async {
       final id = uuid.v4();
       final account = buildTestAccount(id: id, name: 'Active Acc');
+      final anotherId = uuid.v4();
+      final anotherAccount =
+          buildTestAccount(id: anotherId, name: 'Another Acc');
+
       await repository.createAccount(account);
+      await repository.createAccount(anotherAccount);
 
       await repository.deleteAccount(id);
 

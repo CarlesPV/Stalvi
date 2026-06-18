@@ -215,5 +215,7 @@
   "filterSheetAllCurrencies": "Totes les monedes",
   "filterSheetSelectDateRange": "Seleccionar rang de dates",
   "filterSheetActiveFilters": "{count} filtres actius",
-  "filterSheetTransferType": "Transferència"
+  "filterSheetTransferType": "Transferència",
+  "labelOriginAccount": "Compte d'origen",
+  "labelDestinationAccount": "Compte de destinació"
 }

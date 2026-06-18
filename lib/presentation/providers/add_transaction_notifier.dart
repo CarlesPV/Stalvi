@@ -64,7 +64,7 @@ class AddTransactionState {
       amountText: amountText ?? this.amountText,
       type: type ?? this.type,
       accountId: accountId ?? this.accountId,
-      toAccountId: toAccountIdFn != null ? toAccountIdFn() : this.toAccountId,
+      toAccountId: toAccountIdFn != null ? toAccountIdFn() : toAccountId,
       categoryId: categoryId != null ? categoryId() : this.categoryId,
       notes: notes ?? this.notes,
       date: date ?? this.date,

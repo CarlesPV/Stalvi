@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:stalvi/core/l10n/app_localizations.dart';
 import 'package:stalvi/domain/entities/category.dart';
 import 'package:stalvi/domain/entities/tag.dart';
 import 'package:stalvi/presentation/providers/repository_providers.dart';
+import 'package:stalvi/presentation/widgets/category_icon_picker.dart';
 import 'package:uuid/uuid.dart';
 
 class CategoriesTagsManagementScreen extends ConsumerStatefulWidget {
@@ -41,13 +41,11 @@ class _CategoriesTagsManagementScreenState
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final l10n = AppLocalizations.of(context)!;
-
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-            'Categories & Tags'), // Assuming hardcoded or we can use l10n
+          'Categories & Tags',
+        ), // Assuming hardcoded or we can use l10n
         bottom: TabBar(
           controller: _tabController,
           tabs: const [
@@ -80,15 +78,23 @@ class _CategoriesTagsManagementScreenState
 class _CategoriesTab extends ConsumerWidget {
   const _CategoriesTab();
 
-  void _confirmDelete(BuildContext context, WidgetRef ref, Category category,
-      List<Category> allCategories) async {
+  void _confirmDelete(
+    BuildContext context,
+    WidgetRef ref,
+    Category category,
+    List<Category> allCategories,
+  ) async {
     final inUse = await ref
         .read(deleteAndReassignCategoryUseCaseProvider)
         .isCategoryInUse(category.id);
     if (!context.mounted) return;
 
     if (inUse) {
-      _showReassignDialog(context, ref, category, allCategories);
+      final replacements = await ref
+          .read(deleteAndReassignCategoryUseCaseProvider)
+          .getReplacementCategories(category);
+      if (!context.mounted) return;
+      _showReassignDialog(context, ref, category, replacements);
     } else {
       final confirm = await showDialog<bool>(
         context: context,
@@ -97,8 +103,9 @@ class _CategoriesTab extends ConsumerWidget {
           content: Text('Are you sure you want to delete ${category.name}?'),
           actions: [
             TextButton(
-                onPressed: () => Navigator.pop(ctx, false),
-                child: const Text('Cancel')),
+              onPressed: () => Navigator.pop(ctx, false),
+              child: const Text('Cancel'),
+            ),
             TextButton(
               onPressed: () => Navigator.pop(ctx, true),
               child: const Text('Delete', style: TextStyle(color: Colors.red)),
@@ -112,16 +119,20 @@ class _CategoriesTab extends ConsumerWidget {
     }
   }
 
-  void _showReassignDialog(BuildContext context, WidgetRef ref,
-      Category categoryToDel, List<Category> allCategories) {
+  void _showReassignDialog(
+    BuildContext context,
+    WidgetRef ref,
+    Category categoryToDel,
+    List<Category> replacementCategories,
+  ) {
     String? selectedNewCategoryId;
-    final otherCategories =
-        allCategories.where((c) => c.id != categoryToDel.id).toList();
+    final otherCategories = replacementCategories;
 
     if (otherCategories.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-            content: Text('No other categories to reassign transactions to.')),
+          content: Text('No other categories to reassign transactions to.'),
+        ),
       );
       return;
     }
@@ -139,13 +150,16 @@ class _CategoriesTab extends ConsumerWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                      '${categoryToDel.name} is used by existing transactions. Please select a category to reassign them to:'),
+                    '${categoryToDel.name} is used by existing transactions. Please select a category to reassign them to:',
+                  ),
                   const SizedBox(height: 16),
                   DropdownButtonFormField<String>(
-                    value: selectedNewCategoryId,
+                    initialValue: selectedNewCategoryId,
                     items: otherCategories
-                        .map((c) =>
-                            DropdownMenuItem(value: c.id, child: Text(c.name)))
+                        .map(
+                          (c) => DropdownMenuItem(
+                              value: c.id, child: Text(c.name)),
+                        )
                         .toList(),
                     onChanged: (val) {
                       setState(() => selectedNewCategoryId = val);
@@ -155,8 +169,9 @@ class _CategoriesTab extends ConsumerWidget {
               ),
               actions: [
                 TextButton(
-                    onPressed: () => Navigator.pop(ctx),
-                    child: const Text('Cancel')),
+                  onPressed: () => Navigator.pop(ctx),
+                  child: const Text('Cancel'),
+                ),
                 ElevatedButton(
                   onPressed: () async {
                     if (selectedNewCategoryId != null) {
@@ -184,19 +199,25 @@ class _CategoriesTab extends ConsumerWidget {
     final categoriesAsync = ref.watch(categoriesListProvider);
     return categoriesAsync.when(
       data: (categories) {
-        if (categories.isEmpty)
+        if (categories.isEmpty) {
           return const Center(child: Text('No categories'));
+        }
         return ListView.builder(
           itemCount: categories.length,
           itemBuilder: (context, index) {
             final category = categories[index];
             return ListTile(
               leading: CircleAvatar(
-                backgroundColor: Color(int.parse(
+                backgroundColor: Color(
+                  int.parse(
                     category.color.replaceFirst('#', 'ff'),
-                    radix: 16)),
-                child: const Icon(Icons.category,
-                    color: Colors.white), // Simplified icon handling
+                    radix: 16,
+                  ),
+                ),
+                child: Icon(
+                  CategoryIconPicker.iconDataForKey(category.icon),
+                  color: Colors.white,
+                ),
               ),
               title: Text(category.name),
               trailing: Row(
@@ -228,7 +249,11 @@ class _TagsTab extends ConsumerWidget {
   const _TagsTab();
 
   void _confirmDelete(
-      BuildContext context, WidgetRef ref, Tag tag, List<Tag> allTags) async {
+    BuildContext context,
+    WidgetRef ref,
+    Tag tag,
+    List<Tag> allTags,
+  ) async {
     final inUse =
         await ref.read(deleteAndReassignTagUseCaseProvider).isTagInUse(tag.id);
     if (!context.mounted) return;
@@ -243,8 +268,9 @@ class _TagsTab extends ConsumerWidget {
           content: Text('Are you sure you want to delete ${tag.name}?'),
           actions: [
             TextButton(
-                onPressed: () => Navigator.pop(ctx, false),
-                child: const Text('Cancel')),
+              onPressed: () => Navigator.pop(ctx, false),
+              child: const Text('Cancel'),
+            ),
             TextButton(
               onPressed: () => Navigator.pop(ctx, true),
               child: const Text('Delete', style: TextStyle(color: Colors.red)),
@@ -260,14 +286,19 @@ class _TagsTab extends ConsumerWidget {
   }
 
   void _showReassignDialog(
-      BuildContext context, WidgetRef ref, Tag tagToDel, List<Tag> allTags) {
+    BuildContext context,
+    WidgetRef ref,
+    Tag tagToDel,
+    List<Tag> allTags,
+  ) {
     String? selectedNewTagId;
     final otherTags = allTags.where((t) => t.id != tagToDel.id).toList();
 
     if (otherTags.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-            content: Text('No other tags to reassign transactions to.')),
+          content: Text('No other tags to reassign transactions to.'),
+        ),
       );
       return;
     }
@@ -285,13 +316,16 @@ class _TagsTab extends ConsumerWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                      '${tagToDel.name} is used by existing transactions. Please select a tag to reassign them to:'),
+                    '${tagToDel.name} is used by existing transactions. Please select a tag to reassign them to:',
+                  ),
                   const SizedBox(height: 16),
                   DropdownButtonFormField<String>(
-                    value: selectedNewTagId,
+                    initialValue: selectedNewTagId,
                     items: otherTags
-                        .map((t) =>
-                            DropdownMenuItem(value: t.id, child: Text(t.name)))
+                        .map(
+                          (t) => DropdownMenuItem(
+                              value: t.id, child: Text(t.name)),
+                        )
                         .toList(),
                     onChanged: (val) {
                       setState(() => selectedNewTagId = val);
@@ -301,8 +335,9 @@ class _TagsTab extends ConsumerWidget {
               ),
               actions: [
                 TextButton(
-                    onPressed: () => Navigator.pop(ctx),
-                    child: const Text('Cancel')),
+                  onPressed: () => Navigator.pop(ctx),
+                  child: const Text('Cancel'),
+                ),
                 ElevatedButton(
                   onPressed: () async {
                     if (selectedNewTagId != null) {
@@ -382,13 +417,14 @@ class _CategoryDialog extends StatefulWidget {
 class _CategoryDialogState extends State<_CategoryDialog> {
   final _nameController = TextEditingController();
   String _selectedColor = '#2196F3';
+  String _selectedIcon = 'category';
   final List<String> _colors = [
     '#2196F3',
     '#4CAF50',
     '#FFC107',
     '#E91E63',
     '#9C27B0',
-    '#FF5722'
+    '#FF5722',
   ];
 
   @override
@@ -397,6 +433,8 @@ class _CategoryDialogState extends State<_CategoryDialog> {
     if (widget.category != null) {
       _nameController.text = widget.category!.name;
       _selectedColor = widget.category!.color;
+      _selectedIcon =
+          widget.category!.icon.isNotEmpty ? widget.category!.icon : 'category';
     }
   }
 
@@ -404,17 +442,25 @@ class _CategoryDialogState extends State<_CategoryDialog> {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.fromLTRB(
-          24, 24, 24, MediaQuery.of(context).viewInsets.bottom + 24),
+        24,
+        24,
+        24,
+        MediaQuery.of(context).viewInsets.bottom + 24,
+      ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(widget.category == null ? 'Add Category' : 'Edit Category',
-              style: Theme.of(context).textTheme.titleLarge),
+          Text(
+            widget.category == null ? 'Add Category' : 'Edit Category',
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
           const SizedBox(height: 16),
           TextField(
             controller: _nameController,
             decoration: const InputDecoration(
-                labelText: 'Category Name', border: OutlineInputBorder()),
+              labelText: 'Category Name',
+              border: OutlineInputBorder(),
+            ),
           ),
           const SizedBox(height: 16),
           Wrap(
@@ -434,31 +480,49 @@ class _CategoryDialogState extends State<_CategoryDialog> {
               );
             }).toList(),
           ),
+          const SizedBox(height: 16),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              'Icon',
+              style: Theme.of(context).textTheme.labelLarge,
+            ),
+          ),
+          const SizedBox(height: 8),
+          CategoryIconPicker(
+            selectedIcon: _selectedIcon,
+            onIconSelected: (key) => setState(() => _selectedIcon = key),
+          ),
           const SizedBox(height: 24),
           ElevatedButton(
             onPressed: () async {
               if (_nameController.text.trim().isEmpty) return;
               final repo = widget.ref.read(categoryRepositoryProvider);
               if (widget.category == null) {
-                await repo.createCategory(Category(
-                  id: const Uuid().v4(),
-                  name: _nameController.text.trim(),
-                  icon: 'category', // Simplified
-                  color: _selectedColor,
-                  createdAt: DateTime.now(),
-                  modifiedAt: DateTime.now(),
-                ));
+                await repo.createCategory(
+                  Category(
+                    id: const Uuid().v4(),
+                    name: _nameController.text.trim(),
+                    icon: _selectedIcon,
+                    color: _selectedColor,
+                    createdAt: DateTime.now(),
+                    modifiedAt: DateTime.now(),
+                  ),
+                );
               } else {
-                await repo.updateCategory(widget.category!.copyWith(
-                  name: _nameController.text.trim(),
-                  color: _selectedColor,
-                  modifiedAt: DateTime.now(),
-                ));
+                await repo.updateCategory(
+                  widget.category!.copyWith(
+                    name: _nameController.text.trim(),
+                    icon: _selectedIcon,
+                    color: _selectedColor,
+                    modifiedAt: DateTime.now(),
+                  ),
+                );
               }
               if (context.mounted) Navigator.pop(context);
             },
             child: const Text('Save'),
-          )
+          ),
         ],
       ),
     );
@@ -497,17 +561,25 @@ class _TagDialogState extends State<_TagDialog> {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.fromLTRB(
-          24, 24, 24, MediaQuery.of(context).viewInsets.bottom + 24),
+        24,
+        24,
+        24,
+        MediaQuery.of(context).viewInsets.bottom + 24,
+      ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(widget.tag == null ? 'Add Tag' : 'Edit Tag',
-              style: Theme.of(context).textTheme.titleLarge),
+          Text(
+            widget.tag == null ? 'Add Tag' : 'Edit Tag',
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
           const SizedBox(height: 16),
           TextField(
             controller: _nameController,
             decoration: const InputDecoration(
-                labelText: 'Tag Name', border: OutlineInputBorder()),
+              labelText: 'Tag Name',
+              border: OutlineInputBorder(),
+            ),
           ),
           const SizedBox(height: 24),
           ElevatedButton(
@@ -515,23 +587,27 @@ class _TagDialogState extends State<_TagDialog> {
               if (_nameController.text.trim().isEmpty) return;
               final repo = widget.ref.read(tagRepositoryProvider);
               if (widget.tag == null) {
-                await repo.createTag(Tag(
-                  id: const Uuid().v4(),
-                  name: _nameController.text.trim(),
-                  createdAt: DateTime.now(),
-                  modifiedAt: DateTime.now(),
-                ));
+                await repo.createTag(
+                  Tag(
+                    id: const Uuid().v4(),
+                    name: _nameController.text.trim(),
+                    createdAt: DateTime.now(),
+                    modifiedAt: DateTime.now(),
+                  ),
+                );
               } else {
-                await repo.updateTag(widget.tag!.copyWith(
-                  name: _nameController.text.trim(),
-                  modifiedAt: DateTime.now(),
-                ));
+                await repo.updateTag(
+                  widget.tag!.copyWith(
+                    name: _nameController.text.trim(),
+                    modifiedAt: DateTime.now(),
+                  ),
+                );
               }
               widget.ref.invalidate(tagsListProvider);
               if (context.mounted) Navigator.pop(context);
             },
             child: const Text('Save'),
-          )
+          ),
         ],
       ),
     );

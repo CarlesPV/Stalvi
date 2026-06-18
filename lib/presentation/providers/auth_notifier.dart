@@ -259,9 +259,11 @@ class AuthNotifier extends AsyncNotifier<AuthStatus> {
 
       final initializeDefaultDataUseCase =
           ref.read(initializeDefaultDataUseCaseProvider);
+      final l10n = lookupAppLocalizations(locale);
       await initializeDefaultDataUseCase.execute(
         userId: profile.id,
         currency: defaultCurrency,
+        walletName: l10n.defaultWalletName,
         locale: locale.languageCode,
       );
 

@@ -215,5 +215,7 @@
   "filterSheetAllCurrencies": "Todas las monedas",
   "filterSheetSelectDateRange": "Seleccionar rango de fechas",
   "filterSheetActiveFilters": "{count} filtros activos",
-  "filterSheetTransferType": "Transferencia"
+  "filterSheetTransferType": "Transferencia",
+  "labelOriginAccount": "Cuenta de origen",
+  "labelDestinationAccount": "Cuenta de destino"
 }

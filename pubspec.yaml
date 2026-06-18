@@ -49,6 +49,7 @@ dependencies:
   sqlite3: any
   local_auth_android: any
   local_auth_darwin: any
+  shared_preferences: ^2.5.5
 dev_dependencies:
   integration_test:
     sdk: flutter
@@ -66,6 +67,8 @@ dev_dependencies:
   mockito: ^5.4.6
 
   local_auth_platform_interface: any
+  path_provider_platform_interface: any
+  plugin_platform_interface: any
 flutter:
   uses-material-design: true
   generate: true

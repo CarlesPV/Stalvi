@@ -2,6 +2,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:stalvi/domain/entities/transaction.dart';
 import 'package:stalvi/domain/entities/transaction_type.dart';
+import 'package:stalvi/domain/entities/category.dart';
+import 'package:stalvi/domain/entities/category_type.dart';
 import 'package:stalvi/domain/repositories/i_category_repository.dart';
 import 'package:stalvi/domain/repositories/i_transaction_repository.dart';
 import 'package:stalvi/domain/usecases/delete_and_reassign_category_usecase.dart';
@@ -64,9 +66,11 @@ void main() {
   group('DeleteAndReassignCategoryUseCase', () {
     test('isCategoryInUse returns true when transactions exist', () async {
       when(() => mockTransactionRepo.watchFilteredTransactions(any()))
-          .thenAnswer((_) => Stream.value([
-                FakeTransaction(id: '1', categoryId: 'cat1'),
-              ]));
+          .thenAnswer(
+        (_) => Stream.value([
+          FakeTransaction(id: '1', categoryId: 'cat1'),
+        ]),
+      );
 
       final result = await useCase.isCategoryInUse('cat1');
       expect(result, isTrue);
@@ -103,10 +107,67 @@ void main() {
 
       await useCase.execute(oldCategoryId: 'oldCat', newCategoryId: 'newCat');
 
-      verify(() => mockTransactionRepo.updateTransaction(any(
-              that: predicate<Transaction>((tx) => tx.categoryId == 'newCat'))))
-          .called(2);
+      verify(
+        () => mockTransactionRepo.updateTransaction(
+          any(
+            that: predicate<Transaction>((tx) => tx.categoryId == 'newCat'),
+          ),
+        ),
+      ).called(2);
       verify(() => mockCategoryRepo.deleteCategory('oldCat')).called(1);
+    });
+
+    test('getReplacementCategories returns correct filtered list', () async {
+      final now = DateTime.now();
+      final catIncome = Category(
+        id: 'inc1',
+        name: 'Income',
+        associatedType: CategoryType.income,
+        icon: 'icon',
+        color: 'color',
+        createdAt: now,
+        modifiedAt: now,
+      );
+      final catExpense = Category(
+        id: 'exp1',
+        name: 'Expense',
+        associatedType: CategoryType.expense,
+        icon: 'icon',
+        color: 'color',
+        createdAt: now,
+        modifiedAt: now,
+      );
+      final catCustom = Category(
+        id: 'cus1',
+        name: 'Custom',
+        associatedType: null,
+        icon: 'icon',
+        color: 'color',
+        createdAt: now,
+        modifiedAt: now,
+      );
+      final catCustom2 = Category(
+        id: 'cus2',
+        name: 'Custom2',
+        associatedType: null,
+        icon: 'icon',
+        color: 'color',
+        createdAt: now,
+        modifiedAt: now,
+      );
+
+      when(() => mockCategoryRepo.watchAllCategories()).thenAnswer(
+          (_) => Stream.value([catIncome, catExpense, catCustom, catCustom2]));
+
+      // Deleting income category should return other income cats + custom cats
+      final replacementsIncome =
+          await useCase.getReplacementCategories(catIncome);
+      expect(replacementsIncome.map((c) => c.id).toList(), ['cus1', 'cus2']);
+
+      // Deleting custom category should return other custom cats
+      final replacementsCustom =
+          await useCase.getReplacementCategories(catCustom);
+      expect(replacementsCustom.map((c) => c.id).toList(), ['cus2']);
     });
   });
 }

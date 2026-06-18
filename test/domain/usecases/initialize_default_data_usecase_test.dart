@@ -162,7 +162,7 @@ void main() {
     });
 
     test(
-        'should resolve localized wallet name to "Default Wallet" when locale is "en"',
+        'should resolve localized wallet name to "My Wallet" when locale is "en"',
         () async {
       // Arrange
       const userId = 'user_123';
@@ -186,11 +186,11 @@ void main() {
           verify(() => mockAccountRepository.createAccount(captureAny()))
               .captured
               .first as Account;
-      expect(capturedAccount.name, 'Default Wallet');
+      expect(capturedAccount.name, 'My Wallet');
     });
 
     test(
-        'should resolve localized wallet name to "Moneder Principal" when locale is "ca"',
+        'should resolve localized wallet name to "La meva cartera" when locale is "ca"',
         () async {
       // Arrange
       const userId = 'user_123';
@@ -214,11 +214,11 @@ void main() {
           verify(() => mockAccountRepository.createAccount(captureAny()))
               .captured
               .first as Account;
-      expect(capturedAccount.name, 'Moneder Principal');
+      expect(capturedAccount.name, 'La meva cartera');
     });
 
     test(
-        'should resolve localized wallet name to "Monedero Principal" when locale is "es"',
+        'should resolve localized wallet name to "Mi cartera" when locale is "es"',
         () async {
       // Arrange
       const userId = 'user_123';
@@ -242,11 +242,10 @@ void main() {
           verify(() => mockAccountRepository.createAccount(captureAny()))
               .captured
               .first as Account;
-      expect(capturedAccount.name, 'Monedero Principal');
+      expect(capturedAccount.name, 'Mi cartera');
     });
 
-    test(
-        'should fallback to default "Default Wallet" when locale is unsupported',
+    test('should fallback to default "My wallet" when locale is unsupported',
         () async {
       // Arrange
       const userId = 'user_123';
@@ -271,11 +270,11 @@ void main() {
           verify(() => mockAccountRepository.createAccount(captureAny()))
               .captured
               .first as Account;
-      expect(capturedAccount.name, 'Default Wallet');
+      expect(capturedAccount.name, 'My wallet');
     });
 
     test(
-        'should fallback to default "Default Wallet" when locale is null and walletName is null',
+        'should fallback to default "My wallet" when locale is null and walletName is null',
         () async {
       // Arrange
       const userId = 'user_123';
@@ -298,7 +297,7 @@ void main() {
           verify(() => mockAccountRepository.createAccount(captureAny()))
               .captured
               .first as Account;
-      expect(capturedAccount.name, 'Default Wallet');
+      expect(capturedAccount.name, 'My wallet');
     });
 
     test(
@@ -450,15 +449,17 @@ void main() {
       verifyNever(() => mockTagRepository.deleteTag(any()));
 
       // Verify permanent deletes were called instead
-      verify(() => mockCategoryRepository
-          .deleteCategoryPermanently('old-random-uuid-cat')).called(1);
-      verify(() =>
-              mockTagRepository.deleteTagPermanently('old-random-uuid-tag'))
-          .called(1);
+      verify(
+        () => mockCategoryRepository
+            .deleteCategoryPermanently('old-random-uuid-cat'),
+      ).called(1);
+      verify(
+        () => mockTagRepository.deleteTagPermanently('old-random-uuid-tag'),
+      ).called(1);
     });
 
     test(
-        'should resolve localized wallet name to "Moneder Principal" when locale is "ca_ES" (with country code)',
+        'should resolve localized wallet name to "La meva cartera" when locale is "ca_ES" (with country code)',
         () async {
       // Arrange
       const userId = 'user_123';
@@ -482,11 +483,11 @@ void main() {
           verify(() => mockAccountRepository.createAccount(captureAny()))
               .captured
               .first as Account;
-      expect(capturedAccount.name, 'Moneder Principal');
+      expect(capturedAccount.name, 'La meva cartera');
     });
 
     test(
-        'should resolve localized wallet name to "Monedero Principal" when locale is "es_US" (with country code)',
+        'should resolve localized wallet name to "Mi cartera" when locale is "es_US" (with country code)',
         () async {
       // Arrange
       const userId = 'user_123';
@@ -510,11 +511,11 @@ void main() {
           verify(() => mockAccountRepository.createAccount(captureAny()))
               .captured
               .first as Account;
-      expect(capturedAccount.name, 'Monedero Principal');
+      expect(capturedAccount.name, 'Mi cartera');
     });
 
     test(
-        'should resolve localized wallet name to "Default Wallet" when locale is "en_GB" (with country code)',
+        'should resolve localized wallet name to "My Wallet" when locale is "en_GB" (with country code)',
         () async {
       // Arrange
       const userId = 'user_123';
@@ -538,7 +539,7 @@ void main() {
           verify(() => mockAccountRepository.createAccount(captureAny()))
               .captured
               .first as Account;
-      expect(capturedAccount.name, 'Default Wallet');
+      expect(capturedAccount.name, 'My Wallet');
     });
 
     test(

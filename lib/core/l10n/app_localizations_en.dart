@@ -699,4 +699,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get filterSheetTransferType => 'Transfer';
+
+  @override
+  String get labelOriginAccount => 'Origin Account';
+
+  @override
+  String get labelDestinationAccount => 'Destination Account';
 }

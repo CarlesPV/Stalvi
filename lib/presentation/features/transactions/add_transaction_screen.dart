@@ -553,8 +553,11 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
 
   // ── Bottom Sheet Picker Helpers ──────────────────────────────────────────────
 
-  void _showAccountSelector(BuildContext context, List<Account> accounts,
-      {required bool isSource}) {
+  void _showAccountSelector(
+    BuildContext context,
+    List<Account> accounts, {
+    required bool isSource,
+  }) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final state = ref.read(addTransactionNotifierProvider);

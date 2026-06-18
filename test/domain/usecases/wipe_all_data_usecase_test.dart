@@ -11,6 +11,8 @@ import 'package:sqlite3/open.dart';
 import 'package:stalvi/core/security/secure_storage_manager.dart';
 import 'package:stalvi/data/database/app_database.dart';
 import 'package:stalvi/domain/usecases/wipe_all_data_usecase.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/services.dart';
 import 'package:drift/drift.dart' hide Column;
 import 'package:stalvi/data/database/tables/account_table.dart';
 import 'package:stalvi/data/database/tables/category_table.dart';
@@ -31,6 +33,8 @@ class FakePathProviderPlatform extends Fake
 }
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
   setUpAll(() {
     open.overrideFor(OperatingSystem.linux, () {
       return DynamicLibrary.open('libsqlite3.so.0');
@@ -45,6 +49,13 @@ void main() {
   setUp(() async {
     tempDir = await Directory.systemTemp.createTemp('wipe_test');
     PathProviderPlatform.instance = FakePathProviderPlatform(tempDir.path);
+    SharedPreferences.setMockInitialValues({'dummy': 'value'});
+
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(SystemChannels.platform,
+            (MethodCall methodCall) async {
+      return null;
+    });
 
     mockSecureStorageManager = MockSecureStorageManager();
     when(() => mockSecureStorageManager.deleteAll()).thenAnswer((_) async {});
@@ -204,28 +215,33 @@ void main() {
 
     // Verify all tables have data (including soft-deleted)
     expect(
-        (await db.select(db.profiles).get())
-            .any((p) => p.id == 'user_test_wipe'),
-        isTrue);
+      (await db.select(db.profiles).get()).any((p) => p.id == 'user_test_wipe'),
+      isTrue,
+    );
     expect(
-        (await db.select(db.accounts).get()).any((a) => a.id == 'acc_active'),
-        isTrue);
+      (await db.select(db.accounts).get()).any((a) => a.id == 'acc_active'),
+      isTrue,
+    );
     expect(
-        (await db.select(db.accounts).get()).any((a) => a.id == 'acc_deleted'),
-        isTrue);
+      (await db.select(db.accounts).get()).any((a) => a.id == 'acc_deleted'),
+      isTrue,
+    );
     expect(
-        (await db.select(db.categories).get()).any((c) => c.id == 'cat_active'),
-        isTrue);
+      (await db.select(db.categories).get()).any((c) => c.id == 'cat_active'),
+      isTrue,
+    );
     expect(
-        (await db.select(db.categories).get())
-            .any((c) => c.id == 'cat_deleted'),
-        isTrue);
-    expect((await db.select(db.tags).get()).any((t) => t.id == 'tag_test'),
-        isTrue);
+      (await db.select(db.categories).get()).any((c) => c.id == 'cat_deleted'),
+      isTrue,
+    );
     expect(
-        (await db.select(db.transactions).get())
-            .any((t) => t.id == 'tx_active'),
-        isTrue);
+      (await db.select(db.tags).get()).any((t) => t.id == 'tag_test'),
+      isTrue,
+    );
+    expect(
+      (await db.select(db.transactions).get()).any((t) => t.id == 'tx_active'),
+      isTrue,
+    );
 
     // Act
     await useCase.execute();

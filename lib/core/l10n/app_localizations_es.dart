@@ -710,4 +710,10 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get filterSheetTransferType => 'Transferencia';
+
+  @override
+  String get labelOriginAccount => 'Cuenta de origen';
+
+  @override
+  String get labelDestinationAccount => 'Cuenta de destino';
 }

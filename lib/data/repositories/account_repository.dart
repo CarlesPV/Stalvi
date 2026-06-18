@@ -15,9 +15,23 @@ class AccountRepository implements IAccountRepository {
 
   @override
   Future<Account> createAccount(Account account) async {
-    final dbAccount = account.toDb();
-    await _db.into(_db.accounts).insert(dbAccount);
-    return account;
+    return _db.transaction(() async {
+      if (account.isDefault) {
+        final now = DateTime.now();
+        await (_db.update(_db.accounts)
+              ..where((a) =>
+                  a.userId.equals(account.userId) & a.isDefault.equals(true)))
+            .write(
+          db.AccountsCompanion(
+            isDefault: const Value(false),
+            modifiedAt: Value(now),
+          ),
+        );
+      }
+      final dbAccount = account.toDb();
+      await _db.into(_db.accounts).insert(dbAccount);
+      return account;
+    });
   }
 
   @override
@@ -42,19 +56,56 @@ class AccountRepository implements IAccountRepository {
 
   @override
   Future<Account> updateAccount(Account account) async {
-    final dbAccount = account.toDb();
-    await (_db.update(_db.accounts)..where((a) => a.id.equals(account.id)))
-        .write(dbAccount.toCompanion(true));
-    return account;
+    return _db.transaction(() async {
+      if (account.isDefault) {
+        final now = DateTime.now();
+        await (_db.update(_db.accounts)
+              ..where((a) =>
+                  a.userId.equals(account.userId) & a.isDefault.equals(true)))
+            .write(
+          db.AccountsCompanion(
+            isDefault: const Value(false),
+            modifiedAt: Value(now),
+          ),
+        );
+      }
+      final dbAccount = account.toDb();
+      await (_db.update(_db.accounts)..where((a) => a.id.equals(account.id)))
+          .write(dbAccount.toCompanion(true));
+      return account;
+    });
   }
 
   @override
   Future<void> deleteAccount(String id) async {
-    await (_db.update(_db.accounts)..where((a) => a.id.equals(id))).write(
-      const db.AccountsCompanion(
-        isDeleted: Value(true),
-      ),
-    );
+    await _db.transaction(() async {
+      final accountToDelete = await getAccountById(id);
+      if (accountToDelete == null) return;
+
+      final remainingAccounts = await (_db.select(_db.accounts)
+            ..where((a) =>
+                a.userId.equals(accountToDelete.userId) &
+                a.id.isNotValue(id) &
+                a.isDeleted.equals(false)))
+          .get();
+
+      if (remainingAccounts.isEmpty) {
+        throw Exception('Cannot delete the last existing account');
+      }
+
+      if (accountToDelete.isDefault) {
+        final newDefault = remainingAccounts.first;
+        await (_db.update(_db.accounts)
+              ..where((a) => a.id.equals(newDefault.id)))
+            .write(const db.AccountsCompanion(isDefault: Value(true)));
+      }
+
+      await (_db.update(_db.accounts)..where((a) => a.id.equals(id))).write(
+        const db.AccountsCompanion(
+          isDeleted: Value(true),
+        ),
+      );
+    });
   }
 
   @override

@@ -223,7 +223,7 @@ class _TransactionFilterSheetState
                 ),
                 TextButton.icon(
                   onPressed: activeCount > 0 ? _clearAll : null,
-                  icon: const Icon(Icons.clear_all_rounded, size: 18),
+                  icon: const Icon(Icons.cleaning_services, size: 18),
                   label: Text(l10n.filterSheetClearAll),
                   style: TextButton.styleFrom(
                     foregroundColor: colorScheme.error,
@@ -261,9 +261,10 @@ class _TransactionFilterSheetState
                   items: [
                     DropdownMenuItem<String?>(
                       value: null,
-                      child: Text(l10n.filterSheetAllTypes,
-                          style:
-                              TextStyle(color: colorScheme.onSurfaceVariant)),
+                      child: Text(
+                        l10n.filterSheetAllTypes,
+                        style: TextStyle(color: colorScheme.onSurfaceVariant),
+                      ),
                     ),
                     ...accounts.map(
                       (acc) => DropdownMenuItem<String?>(
@@ -371,9 +372,10 @@ class _TransactionFilterSheetState
                   items: [
                     DropdownMenuItem<String?>(
                       value: null,
-                      child: Text(l10n.filterSheetAllCategories,
-                          style:
-                              TextStyle(color: colorScheme.onSurfaceVariant)),
+                      child: Text(
+                        l10n.filterSheetAllCategories,
+                        style: TextStyle(color: colorScheme.onSurfaceVariant),
+                      ),
                     ),
                     ...categories.where((c) => !c.isDeleted).map(
                           (cat) => DropdownMenuItem<String?>(
@@ -478,7 +480,8 @@ class _TransactionFilterSheetState
                         const TextInputType.numberWithOptions(decimal: true),
                     inputFormatters: [
                       FilteringTextInputFormatter.allow(
-                          RegExp(r'^\d*\.?\d{0,2}')),
+                        RegExp(r'^\d*\.?\d{0,2}'),
+                      ),
                     ],
                     decoration: InputDecoration(
                       labelText: l10n.filterSheetMinAmount,
@@ -504,7 +507,8 @@ class _TransactionFilterSheetState
                         const TextInputType.numberWithOptions(decimal: true),
                     inputFormatters: [
                       FilteringTextInputFormatter.allow(
-                          RegExp(r'^\d*\.?\d{0,2}')),
+                        RegExp(r'^\d*\.?\d{0,2}'),
+                      ),
                     ],
                     decoration: InputDecoration(
                       labelText: l10n.filterSheetMaxAmount,
@@ -554,19 +558,21 @@ class _TransactionFilterSheetState
                   items: [
                     DropdownMenuItem<String?>(
                       value: null,
-                      child: Text(l10n.filterSheetAllTags,
-                          style:
-                              TextStyle(color: colorScheme.onSurfaceVariant)),
+                      child: Text(
+                        l10n.filterSheetAllTags,
+                        style: TextStyle(color: colorScheme.onSurfaceVariant),
+                      ),
                     ),
                     ...activeTags.map(
                       (tag) => DropdownMenuItem<String?>(
                         value: tag.id,
                         child: Row(
                           children: [
-                            Icon(Icons.label_rounded,
-                                size: 14,
-                                color:
-                                    colorScheme.primary.withValues(alpha: 0.7)),
+                            Icon(
+                              Icons.label_rounded,
+                              size: 14,
+                              color: colorScheme.primary.withValues(alpha: 0.7),
+                            ),
                             const SizedBox(width: 6),
                             Text(tag.name),
                           ],
@@ -608,8 +614,10 @@ class _TransactionFilterSheetState
               items: [
                 DropdownMenuItem<String?>(
                   value: null,
-                  child: Text(l10n.filterSheetAllCurrencies,
-                      style: TextStyle(color: colorScheme.onSurfaceVariant)),
+                  child: Text(
+                    l10n.filterSheetAllCurrencies,
+                    style: TextStyle(color: colorScheme.onSurfaceVariant),
+                  ),
                 ),
                 ..._currencies.map(
                   (code) => DropdownMenuItem<String?>(

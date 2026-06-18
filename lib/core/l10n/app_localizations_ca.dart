@@ -711,4 +711,10 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get filterSheetTransferType => 'Transferència';
+
+  @override
+  String get labelOriginAccount => 'Compte d\'origen';
+
+  @override
+  String get labelDestinationAccount => 'Compte de destinació';
 }

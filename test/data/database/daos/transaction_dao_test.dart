@@ -370,8 +370,12 @@ void main() {
     test('minAmountCents boundary is inclusive', () async {
       await _seedProfile(database, 'u1');
       await _seedAccount(database, id: 'acc1', userId: 'u1');
-      await _seedTransaction(database,
-          id: 't1', accountId: 'acc1', amount: 500);
+      await _seedTransaction(
+        database,
+        id: 't1',
+        accountId: 'acc1',
+        amount: 500,
+      );
 
       final stream = dao.watchFiltered(minAmountCents: 500);
       final result = await stream.first;
@@ -382,8 +386,12 @@ void main() {
     test('maxAmountCents boundary is inclusive', () async {
       await _seedProfile(database, 'u1');
       await _seedAccount(database, id: 'acc1', userId: 'u1');
-      await _seedTransaction(database,
-          id: 't1', accountId: 'acc1', amount: 500);
+      await _seedTransaction(
+        database,
+        id: 't1',
+        accountId: 'acc1',
+        amount: 500,
+      );
 
       final stream = dao.watchFiltered(maxAmountCents: 500);
       final result = await stream.first;

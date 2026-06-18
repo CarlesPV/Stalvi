@@ -96,8 +96,12 @@ void main() {
         () async {
       await _seedProfile(database, 'user1');
       // acc1 starts as the default.
-      await _insertAccount(database,
-          id: 'acc1', userId: 'user1', isDefault: true);
+      await _insertAccount(
+        database,
+        id: 'acc1',
+        userId: 'user1',
+        isDefault: true,
+      );
       await _insertAccount(database, id: 'acc2', userId: 'user1');
 
       // Switch default to acc2.
@@ -133,8 +137,12 @@ void main() {
     test('does not affect accounts of a different user', () async {
       await _seedProfile(database, 'user1');
       await _seedProfile(database, 'user2');
-      await _insertAccount(database,
-          id: 'acc_u1', userId: 'user1', isDefault: true);
+      await _insertAccount(
+        database,
+        id: 'acc_u1',
+        userId: 'user1',
+        isDefault: true,
+      );
       await _insertAccount(database, id: 'acc_u2', userId: 'user2');
 
       // Changing default for user1 must not touch user2's accounts.
@@ -158,8 +166,12 @@ void main() {
     test('re-setting the already-default account leaves it as default',
         () async {
       await _seedProfile(database, 'user1');
-      await _insertAccount(database,
-          id: 'acc1', userId: 'user1', isDefault: true);
+      await _insertAccount(
+        database,
+        id: 'acc1',
+        userId: 'user1',
+        isDefault: true,
+      );
 
       // Setting acc1 as default again should be a no-op for the flag value.
       await dao.setDefaultAccount('acc1');
@@ -184,8 +196,12 @@ void main() {
 
     test('returns the default account when one is set', () async {
       await _seedProfile(database, 'user1');
-      await _insertAccount(database,
-          id: 'acc1', userId: 'user1', isDefault: true);
+      await _insertAccount(
+        database,
+        id: 'acc1',
+        userId: 'user1',
+        isDefault: true,
+      );
       await _insertAccount(database, id: 'acc2', userId: 'user1');
 
       final result = await dao.getDefaultAccount('user1');
@@ -197,8 +213,12 @@ void main() {
         () async {
       await _seedProfile(database, 'user1');
       await _seedProfile(database, 'user2');
-      await _insertAccount(database,
-          id: 'acc1', userId: 'user1', isDefault: true);
+      await _insertAccount(
+        database,
+        id: 'acc1',
+        userId: 'user1',
+        isDefault: true,
+      );
 
       // user2 has no accounts – should get null.
       final result = await dao.getDefaultAccount('user2');

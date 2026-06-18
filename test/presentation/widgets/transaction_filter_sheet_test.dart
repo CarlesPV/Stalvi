@@ -216,19 +216,19 @@ void main() {
           find.byKey(const ValueKey('filterTypeIncome'));
       final allChipContainer = find.byKey(const ValueKey('filterTypeAll'));
 
-      FilterChip _getChip(Finder container) => tester.widget<FilterChip>(
+      FilterChip getChip(Finder container) => tester.widget<FilterChip>(
             find.descendant(of: container, matching: find.byType(FilterChip)),
           );
 
       // Income chip should be selected initially.
-      expect(_getChip(incomeChipContainer).selected, isTrue);
+      expect(getChip(incomeChipContainer).selected, isTrue);
 
       // Tap "All" to clear type.
       await tester.tap(allChipContainer);
       await tester.pump();
 
-      expect(_getChip(incomeChipContainer).selected, isFalse);
-      expect(_getChip(allChipContainer).selected, isTrue);
+      expect(getChip(incomeChipContainer).selected, isFalse);
+      expect(getChip(allChipContainer).selected, isTrue);
     });
 
     testWidgets('Transfer chip is present and selectable', (tester) async {
@@ -246,7 +246,9 @@ void main() {
         tester
             .widget<FilterChip>(
               find.descendant(
-                  of: transferContainer, matching: find.byType(FilterChip)),
+                of: transferContainer,
+                matching: find.byType(FilterChip),
+              ),
             )
             .selected,
         isTrue,
@@ -267,7 +269,9 @@ void main() {
         tester
             .widget<FilterChip>(
               find.descendant(
-                  of: expenseContainer, matching: find.byType(FilterChip)),
+                of: expenseContainer,
+                matching: find.byType(FilterChip),
+              ),
             )
             .selected,
         isTrue,
@@ -278,7 +282,7 @@ void main() {
       await tester.pumpWidget(_wrap(const TransactionFilterSheet()));
       await tester.pump();
 
-      FilterChip _getChip(Finder container) => tester.widget<FilterChip>(
+      FilterChip getChip(Finder container) => tester.widget<FilterChip>(
             find.descendant(of: container, matching: find.byType(FilterChip)),
           );
 
@@ -289,10 +293,14 @@ void main() {
       await tester.tap(find.byKey(const ValueKey('filterTypeIncome')));
       await tester.pump();
 
-      expect(_getChip(find.byKey(const ValueKey('filterTypeExpense'))).selected,
-          isFalse);
-      expect(_getChip(find.byKey(const ValueKey('filterTypeIncome'))).selected,
-          isTrue);
+      expect(
+        getChip(find.byKey(const ValueKey('filterTypeExpense'))).selected,
+        isFalse,
+      );
+      expect(
+        getChip(find.byKey(const ValueKey('filterTypeIncome'))).selected,
+        isTrue,
+      );
     });
 
     // ── Account selector ───────────────────────────────────────────────────────
@@ -303,7 +311,9 @@ void main() {
       await tester.pump(const Duration(milliseconds: 50));
 
       expect(
-          find.byKey(const ValueKey('filterAccountDropdown')), findsOneWidget);
+        find.byKey(const ValueKey('filterAccountDropdown')),
+        findsOneWidget,
+      );
     });
 
     // ── Category dropdown ──────────────────────────────────────────────────────
@@ -314,7 +324,9 @@ void main() {
       await tester.pump(const Duration(milliseconds: 50));
 
       expect(
-          find.byKey(const ValueKey('filterCategoryDropdown')), findsOneWidget);
+        find.byKey(const ValueKey('filterCategoryDropdown')),
+        findsOneWidget,
+      );
     });
 
     // ── Tag dropdown ────────────────────────────────────────────────────────────
@@ -334,7 +346,9 @@ void main() {
       await tester.pump();
 
       expect(
-          find.byKey(const ValueKey('filterCurrencyDropdown')), findsOneWidget);
+        find.byKey(const ValueKey('filterCurrencyDropdown')),
+        findsOneWidget,
+      );
     });
 
     // ── Amount inputs ──────────────────────────────────────────────────────────
@@ -411,7 +425,9 @@ void main() {
       await tester.pump();
 
       expect(
-          find.byKey(const ValueKey('filterDateRangePicker')), findsOneWidget);
+        find.byKey(const ValueKey('filterDateRangePicker')),
+        findsOneWidget,
+      );
       expect(find.text('Select Date Range'), findsOneWidget);
     });
 
@@ -484,14 +500,14 @@ void main() {
       );
       await tester.pump();
 
-      FilterChip _getChip(Finder container) => tester.widget<FilterChip>(
+      FilterChip getChip(Finder container) => tester.widget<FilterChip>(
             find.descendant(of: container, matching: find.byType(FilterChip)),
           );
 
       final incomeChipContainer =
           find.byKey(const ValueKey('filterTypeIncome'));
       // Income chip should be selected initially.
-      expect(_getChip(incomeChipContainer).selected, isTrue);
+      expect(getChip(incomeChipContainer).selected, isTrue);
 
       // Tap Clear All.
       final clearBtn = find.widgetWithText(TextButton, 'Clear All');
@@ -500,8 +516,8 @@ void main() {
 
       // After clear, "All" should be selected.
       final allChipContainer = find.byKey(const ValueKey('filterTypeAll'));
-      expect(_getChip(allChipContainer).selected, isTrue);
-      expect(_getChip(incomeChipContainer).selected, isFalse);
+      expect(getChip(allChipContainer).selected, isTrue);
+      expect(getChip(incomeChipContainer).selected, isFalse);
     });
 
     testWidgets('tapping Clear All empties the amount text fields',
