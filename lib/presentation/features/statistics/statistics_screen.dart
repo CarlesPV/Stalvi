@@ -9,6 +9,7 @@ import 'package:stalvi/core/theme/app_theme.dart';
 import 'package:stalvi/core/utils/currency_formatter.dart';
 import 'package:stalvi/domain/entities/category_statistic.dart';
 import 'package:stalvi/domain/entities/period_summary.dart';
+import 'package:stalvi/presentation/providers/repository_providers.dart';
 import 'package:stalvi/presentation/providers/statistics_providers.dart';
 import 'package:stalvi/presentation/widgets/empty_state_widget.dart';
 
@@ -72,12 +73,20 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
     super.dispose();
   }
 
+  Color _parseHexColor(String hex) {
+    final buffer = StringBuffer();
+    if (hex.length == 6 || hex.length == 7) buffer.write('ff');
+    buffer.write(hex.replaceFirst('#', ''));
+    return Color(int.parse(buffer.toString(), radix: 16));
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final filter = ref.watch(statisticsFilterProvider);
     final summaryAsync = ref.watch(periodSummaryProvider);
+    final accountsAsync = ref.watch(accountsListProvider);
 
     final isEmpty = summaryAsync.when(
       data: (s) => s.totalIncome == 0 && s.totalExpense == 0,
@@ -119,6 +128,84 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
         color: colorScheme.primary,
         child: CustomScrollView(
           slivers: [
+            // ── Account Selector ─────────────────────────────────────────
+            SliverToBoxAdapter(
+              child: accountsAsync.when(
+                data: (accounts) {
+                  if (accounts.isEmpty) return const SizedBox.shrink();
+                  return Padding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: colorScheme.surfaceContainerHighest
+                            .withValues(alpha: 0.5),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: colorScheme.outline.withValues(alpha: 0.1),
+                        ),
+                      ),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<String?>(
+                          key: const ValueKey('statisticsAccountDropdown'),
+                          value: filter.accountId,
+                          hint: Text(AppLocalizations.of(context)!.filterAll),
+                          isExpanded: true,
+                          icon: Icon(Icons.keyboard_arrow_down_rounded,
+                              color: colorScheme.primary),
+                          items: [
+                            DropdownMenuItem<String?>(
+                              value: null,
+                              child: Text(
+                                AppLocalizations.of(context)!.filterAll,
+                                style: theme.textTheme.bodyMedium?.copyWith(
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                            ...accounts.map((acc) {
+                              return DropdownMenuItem<String?>(
+                                value: acc.id,
+                                child: Row(
+                                  children: [
+                                    Container(
+                                      width: 12,
+                                      height: 12,
+                                      decoration: BoxDecoration(
+                                        color: _parseHexColor(acc.color),
+                                        shape: BoxShape.circle,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      acc.name,
+                                      style:
+                                          theme.textTheme.bodyMedium?.copyWith(
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }),
+                          ],
+                          onChanged: (val) {
+                            ref
+                                .read(statisticsFilterProvider.notifier)
+                                .setAccountId(val);
+                          },
+                        ),
+                      ),
+                    ),
+                  );
+                },
+                loading: () => const SizedBox.shrink(),
+                error: (_, __) => const SizedBox.shrink(),
+              ),
+            ),
+
             // ── Filter chips ─────────────────────────────────────────────
             SliverToBoxAdapter(
               child: _FilterChipsRow(currentFilter: filter),

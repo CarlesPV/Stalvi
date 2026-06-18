@@ -6,4 +6,5 @@ abstract class ITagRepository {
   Future<List<Tag>> getAllTags();
   Future<Tag> updateTag(Tag tag);
   Future<void> deleteTag(String id);
+  Future<void> deleteTagPermanently(String id);
 }

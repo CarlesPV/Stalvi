@@ -444,6 +444,19 @@
   "@defaultWalletName": {
     "description": "Default wallet name when user profile is initialized"
   },
+  "defaultWallet": "Default Wallet",
+  "@defaultWallet": {
+    "description": "Default wallet name when user profile is initialized"
+  },
+  "acrossAccountsCount": "{count, plural, =1{1 account} other{{count} accounts}}",
+  "@acrossAccountsCount": {
+    "description": "Label indicating number of accounts",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "failedLoadAccounts": "Failed to load accounts.",
   "@failedLoadAccounts": {
     "description": "Error message when accounts list fails to load"
@@ -737,7 +750,7 @@
   "@createAccountNameHint": {
     "description": "Hint text for account name input"
   },
-  "createAccountInitialBalanceLabel": "Initial Balance",
+  "createAccountInitialBalanceLabel": "Balance",
   "@createAccountInitialBalanceLabel": {
     "description": "Label for initial balance input"
   },
@@ -804,5 +817,94 @@
   "btnClose": "Close",
   "@btnClose": {
     "description": "Close button label"
+  },
+  "setAsDefaultAccount": "Set as Default Account",
+  "@setAsDefaultAccount": {
+    "description": "Context menu option to set account as default"
+  },
+  "setAsDefaultAccountSuccess": "Account set as default",
+  "@setAsDefaultAccountSuccess": {
+    "description": "Snackbar message when account is set as default"
+  },
+  "setAsDefaultAccountError": "Failed to set default account",
+  "@setAsDefaultAccountError": {
+    "description": "Snackbar error when setting default account fails"
+  },
+  "filterSheetTitle": "Filter Transactions",
+  "@filterSheetTitle": {
+    "description": "Title for the transaction filter bottom sheet"
+  },
+  "filterSheetApply": "Apply Filters",
+  "@filterSheetApply": {
+    "description": "Button label to apply filters in the filter sheet"
+  },
+  "filterSheetClearAll": "Clear All",
+  "@filterSheetClearAll": {
+    "description": "Button label to clear all active filters"
+  },
+  "filterSheetType": "Transaction Type",
+  "@filterSheetType": {
+    "description": "Label for transaction type filter section"
+  },
+  "filterSheetCategory": "Category",
+  "@filterSheetCategory": {
+    "description": "Label for category filter section"
+  },
+  "filterSheetDateRange": "Date Range",
+  "@filterSheetDateRange": {
+    "description": "Label for date range filter section"
+  },
+  "filterSheetAmountRange": "Amount Range",
+  "@filterSheetAmountRange": {
+    "description": "Label for amount range filter section"
+  },
+  "filterSheetMinAmount": "Min Amount",
+  "@filterSheetMinAmount": {
+    "description": "Label for minimum amount input in filter sheet"
+  },
+  "filterSheetMaxAmount": "Max Amount",
+  "@filterSheetMaxAmount": {
+    "description": "Label for maximum amount input in filter sheet"
+  },
+  "filterSheetTag": "Tag",
+  "@filterSheetTag": {
+    "description": "Label for tag filter section"
+  },
+  "filterSheetCurrency": "Currency",
+  "@filterSheetCurrency": {
+    "description": "Label for currency filter section"
+  },
+  "filterSheetAllTypes": "All Types",
+  "@filterSheetAllTypes": {
+    "description": "Label for showing all transaction types in filter"
+  },
+  "filterSheetAllCategories": "All Categories",
+  "@filterSheetAllCategories": {
+    "description": "Label for showing all categories in filter"
+  },
+  "filterSheetAllTags": "All Tags",
+  "@filterSheetAllTags": {
+    "description": "Label for showing all tags in filter"
+  },
+  "filterSheetAllCurrencies": "All Currencies",
+  "@filterSheetAllCurrencies": {
+    "description": "Label for showing all currencies in filter"
+  },
+  "filterSheetSelectDateRange": "Select Date Range",
+  "@filterSheetSelectDateRange": {
+    "description": "Placeholder text for date range picker in filter sheet"
+  },
+  "filterSheetActiveFilters": "{count} active filters",
+  "@filterSheetActiveFilters": {
+    "description": "Badge label showing number of active filters",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "filterSheetTransferType": "Transfer",
+  "@filterSheetTransferType": {
+    "description": "Label for transfer type in filter sheet"
   }
 }

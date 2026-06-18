@@ -11,11 +11,13 @@ class GetTopCategoriesUseCase {
     required DateTime startDate,
     required DateTime endDate,
     TransactionType type = TransactionType.expense,
+    String? accountId,
   }) {
     return _repository.getTopCategories(
       startDate: startDate,
       endDate: endDate,
       type: type,
+      accountId: accountId,
     );
   }
 }

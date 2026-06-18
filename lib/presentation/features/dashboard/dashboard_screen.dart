@@ -9,6 +9,7 @@ import 'package:stalvi/domain/entities/account_type.dart';
 import 'package:stalvi/domain/entities/transaction.dart';
 import 'package:stalvi/domain/entities/transaction_type.dart';
 import 'package:stalvi/presentation/features/transactions/add_transaction_screen.dart';
+import 'package:stalvi/presentation/features/transactions/transaction_filter_sheet.dart';
 import 'package:stalvi/presentation/features/budgets_and_goals/budgets_and_goals_screen.dart';
 import 'package:stalvi/presentation/features/statistics/statistics_screen.dart';
 import 'package:stalvi/presentation/providers/repository_providers.dart';
@@ -24,6 +25,7 @@ import 'package:stalvi/presentation/widgets/create_account_dialog.dart';
 import 'package:stalvi/presentation/widgets/edit_account_dialog.dart';
 import 'package:stalvi/presentation/features/transactions/transaction_details_dialog.dart';
 import 'package:stalvi/core/utils/icon_helper.dart';
+import 'package:stalvi/presentation/providers/transaction_filter_provider.dart';
 
 /// The main application scaffold — shown after successful authentication.
 ///
@@ -409,14 +411,151 @@ class _TransactionsTab extends ConsumerStatefulWidget {
 }
 
 class _TransactionsTabState extends ConsumerState<_TransactionsTab> {
-  TransactionType? _filter;
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final filteredAsync = ref.watch(filteredTransactionsProvider);
+    final activeFilter = ref.watch(transactionFilterProvider);
+    final l10n = AppLocalizations.of(context)!;
 
-  Widget _buildFilterChip(
+    return filteredAsync.when(
+      loading: () => _GenericSkeletonTab(shimmer: widget.shimmer, itemCount: 8),
+      error: (err, _) => Center(
+        child: Text(
+          l10n.failedLoadTransactions,
+          style: TextStyle(color: colorScheme.error),
+        ),
+      ),
+      data: (transactions) {
+        return Column(
+          children: [
+            // ── Filter bar ──────────────────────────────────────────────
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+              child: Row(
+                children: [
+                  // Quick type filter chips
+                  Expanded(
+                    child: SizedBox(
+                      height: 44,
+                      child: ListView(
+                        scrollDirection: Axis.horizontal,
+                        children: [
+                          _buildTypeChip(
+                              l10n.filterAll, null, colorScheme, activeFilter),
+                          const SizedBox(width: 8),
+                          _buildTypeChip(
+                              l10n.filterIncome,
+                              TransactionType.income,
+                              colorScheme,
+                              activeFilter),
+                          const SizedBox(width: 8),
+                          _buildTypeChip(
+                              l10n.filterExpense,
+                              TransactionType.expense,
+                              colorScheme,
+                              activeFilter),
+                          const SizedBox(width: 8),
+                          _buildTypeChip(
+                              l10n.filterTransfer,
+                              TransactionType.transfer,
+                              colorScheme,
+                              activeFilter),
+                        ],
+                      ),
+                    ),
+                  ),
+                  // Advanced filter button
+                  const SizedBox(width: 8),
+                  Badge(
+                    isLabelVisible: activeFilter.isNotEmpty,
+                    backgroundColor: colorScheme.primary,
+                    child: IconButton.filledTonal(
+                      key: const ValueKey('advancedFilterButton'),
+                      icon: const Icon(Icons.tune_rounded),
+                      tooltip: l10n.filterSheetTitle,
+                      onPressed: () {
+                        TransactionFilterSheet.show(context);
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            // ── Transaction list ────────────────────────────────────────
+            Expanded(
+              child: transactions.isEmpty
+                  ? (activeFilter.isEmpty
+                      ? EmptyStateWidget(
+                          icon: Icons.receipt_long_outlined,
+                          title: l10n.noTransactionsTitle,
+                          subtitle: l10n.noTransactionsSubtitle,
+                          actionLabel: l10n.addTransaction,
+                          onActionPressed: () {
+                            final state = context.findAncestorStateOfType<
+                                _DashboardScreenState>();
+                            if (state != null) {
+                              state._navigateToAddTransaction(context);
+                            }
+                          },
+                        )
+                      : Center(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.search_off_rounded,
+                                size: 48,
+                                color: colorScheme.onSurfaceVariant
+                                    .withValues(alpha: 0.4),
+                              ),
+                              const SizedBox(height: 12),
+                              Text(
+                                l10n.noDataAvailable,
+                                style: TextStyle(
+                                    color: colorScheme.onSurfaceVariant),
+                              ),
+                              const SizedBox(height: 12),
+                              TextButton.icon(
+                                onPressed: () => ref
+                                    .read(transactionFilterProvider.notifier)
+                                    .clearAll(),
+                                icon: const Icon(Icons.clear_all_rounded,
+                                    size: 16),
+                                label: Text(l10n.filterSheetClearAll),
+                              ),
+                            ],
+                          ),
+                        ))
+                  : ListView.builder(
+                      padding: const EdgeInsets.fromLTRB(20, 10, 20, 24),
+                      itemCount: transactions.length,
+                      itemBuilder: (context, i) {
+                        final txn = transactions[i];
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 12),
+                          child: _TransactionItem(
+                            key: ValueKey('all_transaction_${txn.id}'),
+                            transaction: txn,
+                          ),
+                        );
+                      },
+                    ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildTypeChip(
     String label,
     TransactionType? type,
     ColorScheme colorScheme,
+    TransactionFilter activeFilter,
   ) {
-    final isSelected = _filter == type;
+    final isSelected = activeFilter.type == type;
     return FilterChip(
       label: Text(label),
       selected: isSelected,
@@ -435,103 +574,7 @@ class _TransactionsTabState extends ConsumerState<_TransactionsTab> {
             : colorScheme.outline.withValues(alpha: 0.2),
       ),
       onSelected: (_) {
-        setState(() => _filter = type);
-      },
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-    final transactionsAsync = ref.watch(transactionsStreamProvider);
-    final l10n = AppLocalizations.of(context)!;
-
-    return transactionsAsync.when(
-      loading: () => _GenericSkeletonTab(shimmer: widget.shimmer, itemCount: 8),
-      error: (err, _) => Center(
-        child: Text(
-          l10n.failedLoadTransactions,
-          style: TextStyle(color: colorScheme.error),
-        ),
-      ),
-      data: (transactions) {
-        if (transactions.isEmpty) {
-          return EmptyStateWidget(
-            icon: Icons.receipt_long_outlined,
-            title: l10n.noTransactionsTitle,
-            subtitle: l10n.noTransactionsSubtitle,
-            actionLabel: l10n.addTransaction,
-            onActionPressed: () {
-              final state =
-                  context.findAncestorStateOfType<_DashboardScreenState>();
-              if (state != null) {
-                state._navigateToAddTransaction(context);
-              }
-            },
-          );
-        }
-
-        final filtered = _filter == null
-            ? transactions
-            : transactions.where((t) => t.type == _filter).toList();
-
-        return Column(
-          children: [
-            SizedBox(
-              height: 56,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                children: [
-                  _buildFilterChip(l10n.filterAll, null, colorScheme),
-                  const SizedBox(width: 8),
-                  _buildFilterChip(
-                    l10n.filterIncome,
-                    TransactionType.income,
-                    colorScheme,
-                  ),
-                  const SizedBox(width: 8),
-                  _buildFilterChip(
-                    l10n.filterExpense,
-                    TransactionType.expense,
-                    colorScheme,
-                  ),
-                  const SizedBox(width: 8),
-                  _buildFilterChip(
-                    l10n.filterTransfer,
-                    TransactionType.transfer,
-                    colorScheme,
-                  ),
-                ],
-              ),
-            ),
-            Expanded(
-              child: filtered.isEmpty
-                  ? Center(
-                      child: Text(
-                        l10n.noDataAvailable,
-                        style: TextStyle(color: colorScheme.onSurfaceVariant),
-                      ),
-                    )
-                  : ListView.builder(
-                      padding: const EdgeInsets.fromLTRB(20, 10, 20, 24),
-                      itemCount: filtered.length,
-                      itemBuilder: (context, i) {
-                        final txn = filtered[i];
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 12),
-                          child: _TransactionItem(
-                            key: ValueKey('all_transaction_${txn.id}'),
-                            transaction: txn,
-                          ),
-                        );
-                      },
-                    ),
-            ),
-          ],
-        );
+        ref.read(transactionFilterProvider.notifier).setType(type);
       },
     );
   }
@@ -619,10 +662,44 @@ class _AccountItem extends ConsumerWidget {
     }
   }
 
+  Future<void> _setAsDefault(BuildContext context, WidgetRef ref) async {
+    final l10n = AppLocalizations.of(context)!;
+    final colorScheme = Theme.of(context).colorScheme;
+    try {
+      await ref.read(accountRepositoryProvider).setDefaultAccount(account.id);
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(l10n.setAsDefaultAccountSuccess),
+            backgroundColor: colorScheme.primary,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(l10n.setAsDefaultAccountError),
+            backgroundColor: colorScheme.error,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final l10n = AppLocalizations.of(context)!;
 
     final accColor = _parseHexColor(account.color);
     final accIcon = _getIconData(account.icon);
@@ -635,11 +712,19 @@ class _AccountItem extends ConsumerWidget {
 
     return GestureDetector(
       onTap: () => EditAccountDialog.show(context, account),
+      onLongPress: () =>
+          _showContextMenu(context, ref, l10n, colorScheme, theme),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         decoration: BoxDecoration(
           color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
           borderRadius: BorderRadius.circular(14),
+          border: account.isDefault
+              ? Border.all(
+                  color: colorScheme.primary.withValues(alpha: 0.4),
+                  width: 1.5,
+                )
+              : null,
         ),
         child: Row(
           children: [
@@ -717,6 +802,129 @@ class _AccountItem extends ConsumerWidget {
           ],
         ),
       ),
+    );
+  }
+
+  void _showContextMenu(
+    BuildContext context,
+    WidgetRef ref,
+    AppLocalizations l10n,
+    ColorScheme colorScheme,
+    ThemeData theme,
+  ) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) {
+        return Container(
+          decoration: BoxDecoration(
+            color: colorScheme.surface,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          ),
+          padding: const EdgeInsets.fromLTRB(24, 12, 24, 32),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Center(
+                child: Container(
+                  width: 48,
+                  height: 5,
+                  decoration: BoxDecoration(
+                    color: colorScheme.onSurfaceVariant.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              Text(
+                account.name,
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w700,
+                  color: colorScheme.onSurface,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                account.currency,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: colorScheme.onSurfaceVariant,
+                ),
+              ),
+              const SizedBox(height: 20),
+              const Divider(),
+              const SizedBox(height: 8),
+              // Edit action
+              ListTile(
+                leading: Icon(Icons.edit_outlined, color: colorScheme.primary),
+                title: Text(
+                  l10n.btnSave,
+                  style: TextStyle(color: colorScheme.onSurface),
+                ),
+                subtitle: Text(
+                  'Edit account details',
+                  style: TextStyle(
+                      color: colorScheme.onSurfaceVariant, fontSize: 12),
+                ),
+                onTap: () {
+                  Navigator.of(ctx).pop();
+                  EditAccountDialog.show(context, account);
+                },
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              // Set as Default action
+              if (!account.isDefault)
+                ListTile(
+                  key: const ValueKey('setAsDefaultButton'),
+                  leading: Icon(
+                    Icons.star_rounded,
+                    color: colorScheme.secondary,
+                  ),
+                  title: Text(
+                    l10n.setAsDefaultAccount,
+                    style: TextStyle(color: colorScheme.onSurface),
+                  ),
+                  subtitle: Text(
+                    'Mark this account as the default for new transactions',
+                    style: TextStyle(
+                        color: colorScheme.onSurfaceVariant, fontSize: 12),
+                  ),
+                  onTap: () {
+                    Navigator.of(ctx).pop();
+                    _setAsDefault(context, ref);
+                  },
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                )
+              else
+                ListTile(
+                  leading: Icon(
+                    Icons.star_rounded,
+                    color: colorScheme.primary,
+                  ),
+                  title: Text(
+                    l10n.defaultAccountLabel,
+                    style: TextStyle(
+                        color: colorScheme.primary,
+                        fontWeight: FontWeight.w600),
+                  ),
+                  subtitle: Text(
+                    'This is already the default account',
+                    style: TextStyle(
+                        color: colorScheme.onSurfaceVariant, fontSize: 12),
+                  ),
+                  enabled: false,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+            ],
+          ),
+        );
+      },
     );
   }
 }
@@ -1222,9 +1430,8 @@ class _BalanceCard extends ConsumerWidget {
             error: (_, __) => const SizedBox(height: 15),
             data: (accounts) {
               return Text(
-                accounts.length == 1
-                    ? 'Across 1 account'
-                    : 'Across ${accounts.length} accounts',
+                AppLocalizations.of(context)!
+                    .acrossAccountsCount(accounts.length),
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: colorScheme.onPrimary.withValues(alpha: 0.75),
                   fontWeight: FontWeight.w500,

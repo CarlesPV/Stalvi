@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart';
 import 'package:stalvi/data/database/app_database.dart' as db;
+import 'package:stalvi/data/database/daos/account_dao.dart';
 import 'package:stalvi/data/mappers/account_mapper.dart';
 import 'package:stalvi/domain/entities/account.dart';
 import 'package:stalvi/domain/repositories/i_account_repository.dart';
@@ -9,6 +10,8 @@ class AccountRepository implements IAccountRepository {
   final db.AppDatabase _db;
 
   AccountRepository(this._db);
+
+  AccountDao get _accountDao => _db.accountDao;
 
   @override
   Future<Account> createAccount(Account account) async {
@@ -26,19 +29,15 @@ class AccountRepository implements IAccountRepository {
 
   @override
   Future<List<Account>> getAccountsByUserId(String userId) async {
-    final query = _db.select(_db.accounts)
-      ..where((a) => a.userId.equals(userId) & a.isDeleted.equals(false))
-      ..orderBy([(a) => OrderingTerm(expression: a.name)]);
-    final rows = await query.get();
+    final rows = await _accountDao.getAccountsByUserId(userId);
     return rows.map((r) => r.toDomain()).toList();
   }
 
   @override
   Stream<List<Account>> watchAccountsByUserId(String userId) {
-    final query = _db.select(_db.accounts)
-      ..where((a) => a.userId.equals(userId) & a.isDeleted.equals(false))
-      ..orderBy([(a) => OrderingTerm(expression: a.name)]);
-    return query.watch().map((rows) => rows.map((r) => r.toDomain()).toList());
+    return _accountDao
+        .watchAccountsByUserId(userId)
+        .map((rows) => rows.map((r) => r.toDomain()).toList());
   }
 
   @override
@@ -56,5 +55,16 @@ class AccountRepository implements IAccountRepository {
         isDeleted: Value(true),
       ),
     );
+  }
+
+  @override
+  Future<Account?> getDefaultAccount(String userId) async {
+    final row = await _accountDao.getDefaultAccount(userId);
+    return row?.toDomain();
+  }
+
+  @override
+  Future<void> setDefaultAccount(String accountId) {
+    return _accountDao.setDefaultAccount(accountId);
   }
 }

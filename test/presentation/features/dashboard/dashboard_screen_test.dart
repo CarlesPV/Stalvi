@@ -25,6 +25,7 @@ import 'package:stalvi/presentation/features/transactions/add_transaction_screen
 import 'package:stalvi/core/security/secure_storage_manager.dart';
 import 'package:stalvi/infrastructure/services/biometric_auth_service.dart';
 import 'package:stalvi/presentation/providers/add_transaction_notifier.dart';
+import 'package:stalvi/presentation/providers/transaction_filter_provider.dart';
 
 class MockTransactionRepository extends Mock
     implements ITransactionRepository {}
@@ -176,9 +177,12 @@ void main() {
           totalExpense: 5000, // €50.00
         );
 
+    final broadcastTxns = transactionsStream.asBroadcastStream();
+
     return ProviderScope(
       overrides: [
-        transactionsStreamProvider.overrideWith((ref) => transactionsStream),
+        transactionsStreamProvider.overrideWith((ref) => broadcastTxns),
+        filteredTransactionsProvider.overrideWith((ref) => broadcastTxns),
         accountsListProvider.overrideWith((ref) => accountsStream),
         defaultProfileProvider.overrideWith((ref) => mockProfile),
         periodSummaryProvider.overrideWith((ref) => mockPeriodSummary),

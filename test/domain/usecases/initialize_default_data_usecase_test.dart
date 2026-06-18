@@ -7,6 +7,7 @@ import 'package:stalvi/domain/repositories/i_account_repository.dart';
 import 'package:stalvi/domain/usecases/initialize_default_data_usecase.dart';
 
 import 'package:stalvi/domain/entities/category.dart';
+import 'package:stalvi/domain/entities/category_type.dart';
 import 'package:stalvi/domain/repositories/i_category_repository.dart';
 import 'package:stalvi/domain/entities/tag.dart';
 import 'package:stalvi/domain/repositories/i_tag_repository.dart';
@@ -70,6 +71,10 @@ void main() {
     when(() => mockTagRepository.updateTag(any())).thenAnswer(
       (invocation) async => invocation.positionalArguments[0] as Tag,
     );
+    when(() => mockCategoryRepository.deleteCategoryPermanently(any()))
+        .thenAnswer((_) async {});
+    when(() => mockTagRepository.deleteTagPermanently(any()))
+        .thenAnswer((_) async {});
   });
 
   group('InitializeDefaultDataUseCase Unit Tests', () {
@@ -157,7 +162,7 @@ void main() {
     });
 
     test(
-        'should resolve localized wallet name to "Main Account" when locale is "en"',
+        'should resolve localized wallet name to "Default Wallet" when locale is "en"',
         () async {
       // Arrange
       const userId = 'user_123';
@@ -181,11 +186,11 @@ void main() {
           verify(() => mockAccountRepository.createAccount(captureAny()))
               .captured
               .first as Account;
-      expect(capturedAccount.name, 'Main Account');
+      expect(capturedAccount.name, 'Default Wallet');
     });
 
     test(
-        'should resolve localized wallet name to "Compte principal" when locale is "ca"',
+        'should resolve localized wallet name to "Moneder Principal" when locale is "ca"',
         () async {
       // Arrange
       const userId = 'user_123';
@@ -209,11 +214,11 @@ void main() {
           verify(() => mockAccountRepository.createAccount(captureAny()))
               .captured
               .first as Account;
-      expect(capturedAccount.name, 'Compte principal');
+      expect(capturedAccount.name, 'Moneder Principal');
     });
 
     test(
-        'should resolve localized wallet name to "Cuenta principal" when locale is "es"',
+        'should resolve localized wallet name to "Monedero Principal" when locale is "es"',
         () async {
       // Arrange
       const userId = 'user_123';
@@ -237,10 +242,11 @@ void main() {
           verify(() => mockAccountRepository.createAccount(captureAny()))
               .captured
               .first as Account;
-      expect(capturedAccount.name, 'Cuenta principal');
+      expect(capturedAccount.name, 'Monedero Principal');
     });
 
-    test('should fallback to default "Main Account" when locale is unsupported',
+    test(
+        'should fallback to default "Default Wallet" when locale is unsupported',
         () async {
       // Arrange
       const userId = 'user_123';
@@ -265,11 +271,11 @@ void main() {
           verify(() => mockAccountRepository.createAccount(captureAny()))
               .captured
               .first as Account;
-      expect(capturedAccount.name, 'Main Account');
+      expect(capturedAccount.name, 'Default Wallet');
     });
 
     test(
-        'should fallback to default "Main Account" when locale is null and walletName is null',
+        'should fallback to default "Default Wallet" when locale is null and walletName is null',
         () async {
       // Arrange
       const userId = 'user_123';
@@ -292,7 +298,7 @@ void main() {
           verify(() => mockAccountRepository.createAccount(captureAny()))
               .captured
               .first as Account;
-      expect(capturedAccount.name, 'Main Account');
+      expect(capturedAccount.name, 'Default Wallet');
     });
 
     test(
@@ -391,6 +397,189 @@ void main() {
       // English is default: 13 categories and 6 tags
       verify(() => mockCategoryRepository.createCategory(any())).called(13);
       verify(() => mockTagRepository.createTag(any())).called(6);
+    });
+
+    test(
+        'should permanently delete duplicate/old default categories and tags instead of soft-deleting them (ensuring clean recycle bin)',
+        () async {
+      // Arrange
+      const userId = 'user_123';
+      const currency = 'EUR';
+
+      // Setup duplicate categories and tags
+      final oldCategory = Category(
+        id: 'old-random-uuid-cat',
+        name: 'Food',
+        associatedType: CategoryType.expense,
+        icon: 'restaurant',
+        color: '#FF9800',
+        isDeleted: false,
+        createdAt: DateTime.now(),
+        modifiedAt: DateTime.now(),
+      );
+
+      final oldTag = Tag(
+        id: 'old-random-uuid-tag',
+        name: 'Summer Trip',
+        isDeleted: false,
+        createdAt: DateTime.now(),
+        modifiedAt: DateTime.now(),
+      );
+
+      when(() => mockAccountRepository.getAccountsByUserId(userId))
+          .thenAnswer((_) async => <Account>[]);
+      when(() => mockAccountRepository.createAccount(any())).thenAnswer(
+        (invocation) async => invocation.positionalArguments[0] as Account,
+      );
+
+      when(() => mockCategoryRepository.getAllCategories())
+          .thenAnswer((_) async => [oldCategory]);
+      when(() => mockTagRepository.getAllTags())
+          .thenAnswer((_) async => [oldTag]);
+
+      // Act
+      await useCase.execute(
+        userId: userId,
+        currency: currency,
+        locale: 'en',
+      );
+
+      // Assert
+      // Verify no soft deletes were called
+      verifyNever(() => mockCategoryRepository.deleteCategory(any()));
+      verifyNever(() => mockTagRepository.deleteTag(any()));
+
+      // Verify permanent deletes were called instead
+      verify(() => mockCategoryRepository
+          .deleteCategoryPermanently('old-random-uuid-cat')).called(1);
+      verify(() =>
+              mockTagRepository.deleteTagPermanently('old-random-uuid-tag'))
+          .called(1);
+    });
+
+    test(
+        'should resolve localized wallet name to "Moneder Principal" when locale is "ca_ES" (with country code)',
+        () async {
+      // Arrange
+      const userId = 'user_123';
+      const currency = 'EUR';
+
+      when(() => mockAccountRepository.getAccountsByUserId(userId))
+          .thenAnswer((_) async => <Account>[]);
+      when(() => mockAccountRepository.createAccount(any())).thenAnswer(
+        (invocation) async => invocation.positionalArguments[0] as Account,
+      );
+
+      // Act
+      await useCase.execute(
+        userId: userId,
+        currency: currency,
+        locale: 'ca_ES',
+      );
+
+      // Assert
+      final capturedAccount =
+          verify(() => mockAccountRepository.createAccount(captureAny()))
+              .captured
+              .first as Account;
+      expect(capturedAccount.name, 'Moneder Principal');
+    });
+
+    test(
+        'should resolve localized wallet name to "Monedero Principal" when locale is "es_US" (with country code)',
+        () async {
+      // Arrange
+      const userId = 'user_123';
+      const currency = 'EUR';
+
+      when(() => mockAccountRepository.getAccountsByUserId(userId))
+          .thenAnswer((_) async => <Account>[]);
+      when(() => mockAccountRepository.createAccount(any())).thenAnswer(
+        (invocation) async => invocation.positionalArguments[0] as Account,
+      );
+
+      // Act
+      await useCase.execute(
+        userId: userId,
+        currency: currency,
+        locale: 'es_US',
+      );
+
+      // Assert
+      final capturedAccount =
+          verify(() => mockAccountRepository.createAccount(captureAny()))
+              .captured
+              .first as Account;
+      expect(capturedAccount.name, 'Monedero Principal');
+    });
+
+    test(
+        'should resolve localized wallet name to "Default Wallet" when locale is "en_GB" (with country code)',
+        () async {
+      // Arrange
+      const userId = 'user_123';
+      const currency = 'EUR';
+
+      when(() => mockAccountRepository.getAccountsByUserId(userId))
+          .thenAnswer((_) async => <Account>[]);
+      when(() => mockAccountRepository.createAccount(any())).thenAnswer(
+        (invocation) async => invocation.positionalArguments[0] as Account,
+      );
+
+      // Act
+      await useCase.execute(
+        userId: userId,
+        currency: currency,
+        locale: 'en_GB',
+      );
+
+      // Assert
+      final capturedAccount =
+          verify(() => mockAccountRepository.createAccount(captureAny()))
+              .captured
+              .first as Account;
+      expect(capturedAccount.name, 'Default Wallet');
+    });
+
+    test(
+        'should ensure absolutely no categories, tags, or accounts have isDeleted: true during setup',
+        () async {
+      // Arrange
+      const userId = 'user_123';
+      const currency = 'EUR';
+
+      when(() => mockAccountRepository.getAccountsByUserId(userId))
+          .thenAnswer((_) async => <Account>[]);
+      when(() => mockAccountRepository.createAccount(any())).thenAnswer(
+        (invocation) async => invocation.positionalArguments[0] as Account,
+      );
+
+      // Act
+      await useCase.execute(
+        userId: userId,
+        currency: currency,
+        locale: 'en',
+      );
+
+      // Assert
+      final capturedAccount =
+          verify(() => mockAccountRepository.createAccount(captureAny()))
+              .captured
+              .first as Account;
+      expect(capturedAccount.isDeleted, isFalse);
+
+      final capturedCategories =
+          verify(() => mockCategoryRepository.createCategory(captureAny()))
+              .captured;
+      for (final cat in capturedCategories) {
+        expect((cat as Category).isDeleted, isFalse);
+      }
+
+      final capturedTags =
+          verify(() => mockTagRepository.createTag(captureAny())).captured;
+      for (final tag in capturedTags) {
+        expect((tag as Tag).isDeleted, isFalse);
+      }
     });
   });
 }

@@ -7,10 +7,12 @@ import 'package:stalvi/domain/usecases/add_transaction_usecase.dart';
 import 'package:stalvi/presentation/providers/repository_providers.dart';
 
 /// State representation for the Add Transaction form.
+/// State representation for the Add Transaction form.
 class AddTransactionState {
   final String amountText;
   final TransactionType type;
   final String? accountId;
+  final String? toAccountId;
   final String? categoryId;
   final String notes;
   final DateTime date;
@@ -22,6 +24,7 @@ class AddTransactionState {
     required this.amountText,
     required this.type,
     required this.accountId,
+    this.toAccountId,
     required this.categoryId,
     required this.notes,
     required this.date,
@@ -35,6 +38,7 @@ class AddTransactionState {
       amountText: '',
       type: TransactionType.expense,
       accountId: null,
+      toAccountId: null,
       categoryId: null,
       notes: '',
       date: DateTime.now(),
@@ -48,6 +52,7 @@ class AddTransactionState {
     String? amountText,
     TransactionType? type,
     String? accountId,
+    String? Function()? toAccountIdFn,
     String? Function()? categoryId,
     String? notes,
     DateTime? date,
@@ -59,6 +64,7 @@ class AddTransactionState {
       amountText: amountText ?? this.amountText,
       type: type ?? this.type,
       accountId: accountId ?? this.accountId,
+      toAccountId: toAccountIdFn != null ? toAccountIdFn() : this.toAccountId,
       categoryId: categoryId != null ? categoryId() : this.categoryId,
       notes: notes ?? this.notes,
       date: date ?? this.date,
@@ -128,7 +134,7 @@ class AddTransactionNotifier extends AutoDisposeNotifier<AddTransactionState> {
     state = state.copyWith(amountText: text);
   }
 
-  /// Update the transaction type (income / expense) in the form state.
+  /// Update the transaction type (income / expense / transfer) in the form state.
   /// Also resets category ID if the selected type changes, since category items
   /// are filtered by category type.
   void updateType(TransactionType type) {
@@ -136,6 +142,7 @@ class AddTransactionNotifier extends AutoDisposeNotifier<AddTransactionState> {
       state = state.copyWith(
         type: type,
         categoryId: () => null, // Reset selected category as its type changes
+        toAccountIdFn: () => null, // Clear destination account if type changes
       );
     }
   }
@@ -143,6 +150,11 @@ class AddTransactionNotifier extends AutoDisposeNotifier<AddTransactionState> {
   /// Select account.
   void updateAccount(String accountId) {
     state = state.copyWith(accountId: accountId);
+  }
+
+  /// Select destination account for transfers.
+  void updateToAccount(String? toAccountId) {
+    state = state.copyWith(toAccountIdFn: () => toAccountId);
   }
 
   /// Select category.
@@ -200,17 +212,44 @@ class AddTransactionNotifier extends AutoDisposeNotifier<AddTransactionState> {
       return false;
     }
 
-    if (state.categoryId == null) {
-      state = state.copyWith(
-        submissionStatus: AsyncValue.error(
-          const ValidationException(
-            message: 'Please select a category',
-            code: 'CATEGORY_REQUIRED',
+    if (state.type == TransactionType.transfer) {
+      if (state.toAccountId == null) {
+        state = state.copyWith(
+          submissionStatus: AsyncValue.error(
+            const ValidationException(
+              message: 'Please select a destination account',
+              code: 'TO_ACCOUNT_REQUIRED',
+            ),
+            StackTrace.current,
           ),
-          StackTrace.current,
-        ),
-      );
-      return false;
+        );
+        return false;
+      }
+      if (state.accountId == state.toAccountId) {
+        state = state.copyWith(
+          submissionStatus: AsyncValue.error(
+            const ValidationException(
+              message: 'Source and destination accounts cannot be the same',
+              code: 'SAME_ACCOUNTS',
+            ),
+            StackTrace.current,
+          ),
+        );
+        return false;
+      }
+    } else {
+      if (state.categoryId == null) {
+        state = state.copyWith(
+          submissionStatus: AsyncValue.error(
+            const ValidationException(
+              message: 'Please select a category',
+              code: 'CATEGORY_REQUIRED',
+            ),
+            StackTrace.current,
+          ),
+        );
+        return false;
+      }
     }
 
     final now = DateTime.now();
@@ -245,20 +284,53 @@ class AddTransactionNotifier extends AutoDisposeNotifier<AddTransactionState> {
     try {
       final useCase = ref.read(addTransactionUseCaseProvider);
       final cents = (amountDouble * 100).round();
-      final id = const Uuid().v4();
 
-      await useCase.execute(
-        AddTransactionParams(
-          id: id,
-          amount: cents,
-          date: state.date,
-          type: state.type,
-          accountId: state.accountId!,
-          categoryId: state.categoryId,
-          notes: state.notes.trim(),
-          currency: state.currency,
-        ),
-      );
+      if (state.type == TransactionType.transfer) {
+        final outflowId = const Uuid().v4();
+        final inflowId = const Uuid().v4();
+
+        // 1. Create Outflow transaction (Transfer type on From Account)
+        await useCase.execute(
+          AddTransactionParams(
+            id: outflowId,
+            amount: cents,
+            date: state.date,
+            type: TransactionType.transfer,
+            accountId: state.accountId!,
+            categoryId: state.categoryId,
+            notes: state.notes.trim().isEmpty ? 'Transfer' : state.notes.trim(),
+            currency: state.currency,
+          ),
+        );
+
+        // 2. Create Inflow transaction (Income type on To Account)
+        await useCase.execute(
+          AddTransactionParams(
+            id: inflowId,
+            amount: cents,
+            date: state.date,
+            type: TransactionType.income,
+            accountId: state.toAccountId!,
+            categoryId: state.categoryId,
+            notes: state.notes.trim().isEmpty ? 'Transfer' : state.notes.trim(),
+            currency: state.currency,
+          ),
+        );
+      } else {
+        final id = const Uuid().v4();
+        await useCase.execute(
+          AddTransactionParams(
+            id: id,
+            amount: cents,
+            date: state.date,
+            type: state.type,
+            accountId: state.accountId!,
+            categoryId: state.categoryId,
+            notes: state.notes.trim(),
+            currency: state.currency,
+          ),
+        );
+      }
 
       // Successfully saved transaction, invalidate account list to refresh balances
       ref.invalidate(accountsListProvider);

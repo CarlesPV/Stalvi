@@ -24,7 +24,9 @@ import 'tables/tag_table.dart';
 import 'tables/transaction_table.dart';
 import 'tables/budget_table.dart';
 import 'tables/savings_goal_table.dart';
+import 'daos/account_dao.dart';
 import 'daos/statistics_dao.dart';
+import 'daos/transaction_dao.dart';
 import 'daos/trash_dao.dart';
 
 part 'app_database.g.dart';
@@ -52,7 +54,7 @@ part 'app_database.g.dart';
     Budgets,
     SavingsGoals,
   ],
-  daos: [StatisticsDao, TrashDao],
+  daos: [AccountDao, TransactionDao, StatisticsDao, TrashDao],
 )
 class AppDatabase extends _$AppDatabase {
   /// Private constructor — use the [create] factory instead.
@@ -113,7 +115,7 @@ class AppDatabase extends _$AppDatabase {
             currency: 'EUR',
             color: '#4CAF50',
             icon: 'wallet',
-            isDefault: true,
+            isDefault: const Value(true),
             createdAt: now,
             modifiedAt: now,
           ),

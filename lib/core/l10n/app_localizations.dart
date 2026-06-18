@@ -724,6 +724,18 @@ abstract class AppLocalizations {
   /// **'My Wallet'**
   String get defaultWalletName;
 
+  /// Default wallet name when user profile is initialized
+  ///
+  /// In en, this message translates to:
+  /// **'Default Wallet'**
+  String get defaultWallet;
+
+  /// Label indicating number of accounts
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 account} other{{count} accounts}}'**
+  String acrossAccountsCount(int count);
+
   /// Error message when accounts list fails to load
   ///
   /// In en, this message translates to:
@@ -1159,7 +1171,7 @@ abstract class AppLocalizations {
   /// Label for initial balance input
   ///
   /// In en, this message translates to:
-  /// **'Initial Balance'**
+  /// **'Balance'**
   String get createAccountInitialBalanceLabel;
 
   /// Label for account type selection
@@ -1257,6 +1269,132 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Close'**
   String get btnClose;
+
+  /// Context menu option to set account as default
+  ///
+  /// In en, this message translates to:
+  /// **'Set as Default Account'**
+  String get setAsDefaultAccount;
+
+  /// Snackbar message when account is set as default
+  ///
+  /// In en, this message translates to:
+  /// **'Account set as default'**
+  String get setAsDefaultAccountSuccess;
+
+  /// Snackbar error when setting default account fails
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to set default account'**
+  String get setAsDefaultAccountError;
+
+  /// Title for the transaction filter bottom sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Filter Transactions'**
+  String get filterSheetTitle;
+
+  /// Button label to apply filters in the filter sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Apply Filters'**
+  String get filterSheetApply;
+
+  /// Button label to clear all active filters
+  ///
+  /// In en, this message translates to:
+  /// **'Clear All'**
+  String get filterSheetClearAll;
+
+  /// Label for transaction type filter section
+  ///
+  /// In en, this message translates to:
+  /// **'Transaction Type'**
+  String get filterSheetType;
+
+  /// Label for category filter section
+  ///
+  /// In en, this message translates to:
+  /// **'Category'**
+  String get filterSheetCategory;
+
+  /// Label for date range filter section
+  ///
+  /// In en, this message translates to:
+  /// **'Date Range'**
+  String get filterSheetDateRange;
+
+  /// Label for amount range filter section
+  ///
+  /// In en, this message translates to:
+  /// **'Amount Range'**
+  String get filterSheetAmountRange;
+
+  /// Label for minimum amount input in filter sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Min Amount'**
+  String get filterSheetMinAmount;
+
+  /// Label for maximum amount input in filter sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Max Amount'**
+  String get filterSheetMaxAmount;
+
+  /// Label for tag filter section
+  ///
+  /// In en, this message translates to:
+  /// **'Tag'**
+  String get filterSheetTag;
+
+  /// Label for currency filter section
+  ///
+  /// In en, this message translates to:
+  /// **'Currency'**
+  String get filterSheetCurrency;
+
+  /// Label for showing all transaction types in filter
+  ///
+  /// In en, this message translates to:
+  /// **'All Types'**
+  String get filterSheetAllTypes;
+
+  /// Label for showing all categories in filter
+  ///
+  /// In en, this message translates to:
+  /// **'All Categories'**
+  String get filterSheetAllCategories;
+
+  /// Label for showing all tags in filter
+  ///
+  /// In en, this message translates to:
+  /// **'All Tags'**
+  String get filterSheetAllTags;
+
+  /// Label for showing all currencies in filter
+  ///
+  /// In en, this message translates to:
+  /// **'All Currencies'**
+  String get filterSheetAllCurrencies;
+
+  /// Placeholder text for date range picker in filter sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Select Date Range'**
+  String get filterSheetSelectDateRange;
+
+  /// Badge label showing number of active filters
+  ///
+  /// In en, this message translates to:
+  /// **'{count} active filters'**
+  String filterSheetActiveFilters(int count);
+
+  /// Label for transfer type in filter sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Transfer'**
+  String get filterSheetTransferType;
 }
 
 class _AppLocalizationsDelegate

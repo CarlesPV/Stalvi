@@ -15,7 +15,45 @@ class WipeAllDataUseCase {
     // 1. Clear secure storage (encryption key, PIN, settings, etc.)
     await _secureStorageManager.deleteAll();
 
-    // 2. Close the database
+    // 2. Clear all tables explicitly
+    try {
+      await _appDatabase.transaction(() async {
+        await _appDatabase.customStatement('PRAGMA foreign_keys = OFF;');
+        await _appDatabase.delete(_appDatabase.transactions).go();
+        await _appDatabase.delete(_appDatabase.budgets).go();
+        await _appDatabase.delete(_appDatabase.savingsGoals).go();
+        await _appDatabase.delete(_appDatabase.accounts).go();
+        await _appDatabase.delete(_appDatabase.categories).go();
+        await _appDatabase.delete(_appDatabase.tags).go();
+        await _appDatabase.delete(_appDatabase.profiles).go();
+        await _appDatabase.customStatement('PRAGMA foreign_keys = ON;');
+      });
+    } catch (_) {
+      // Fallback: clear tables individually if transaction fails
+      try {
+        await _appDatabase.delete(_appDatabase.transactions).go();
+      } catch (_) {}
+      try {
+        await _appDatabase.delete(_appDatabase.budgets).go();
+      } catch (_) {}
+      try {
+        await _appDatabase.delete(_appDatabase.savingsGoals).go();
+      } catch (_) {}
+      try {
+        await _appDatabase.delete(_appDatabase.accounts).go();
+      } catch (_) {}
+      try {
+        await _appDatabase.delete(_appDatabase.categories).go();
+      } catch (_) {}
+      try {
+        await _appDatabase.delete(_appDatabase.tags).go();
+      } catch (_) {}
+      try {
+        await _appDatabase.delete(_appDatabase.profiles).go();
+      } catch (_) {}
+    }
+
+    // 3. Close the database
     await _appDatabase.close();
 
     // 3. Delete the Drift database file

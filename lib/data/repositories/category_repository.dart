@@ -57,4 +57,9 @@ class CategoryRepository implements ICategoryRepository {
       ),
     );
   }
+
+  @override
+  Future<void> deleteCategoryPermanently(String id) async {
+    await (_db.delete(_db.categories)..where((c) => c.id.equals(id))).go();
+  }
 }

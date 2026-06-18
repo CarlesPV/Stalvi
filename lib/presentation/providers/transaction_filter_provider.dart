@@ -15,6 +15,9 @@ import 'package:stalvi/presentation/providers/repository_providers.dart';
 /// domain-layer [TransactionQueryFilter] (used by the repository) via
 /// [toQueryFilter].
 class TransactionFilter {
+  /// Limit to a specific account by ID.
+  final String? accountId;
+
   /// Limit to a specific transaction type (income / expense / transfer).
   final TransactionType? type;
 
@@ -30,31 +33,33 @@ class TransactionFilter {
   /// Maximum amount in **cents** (minor units). Transactions above this are excluded.
   final int? maxAmountCents;
 
-  /// Limit to a specific tag name (case-insensitive substring match against
-  /// the transaction's notes field, prefixed with "#").
-  final String? tag;
+  /// Limit to a specific tag by its ID. The repository resolves this to the
+  /// tag's name and applies a substring match against the transaction's notes.
+  final String? tagId;
 
   /// Limit to a specific ISO-4217 currency code (e.g. "EUR", "USD").
   final String? currency;
 
   const TransactionFilter({
+    this.accountId,
     this.type,
     this.categoryId,
     this.dateRange,
     this.minAmountCents,
     this.maxAmountCents,
-    this.tag,
+    this.tagId,
     this.currency,
   });
 
   /// Returns `true` when every dimension is `null` (no active filters).
   bool get isEmpty =>
+      accountId == null &&
       type == null &&
       categoryId == null &&
       dateRange == null &&
       minAmountCents == null &&
       maxAmountCents == null &&
-      tag == null &&
+      tagId == null &&
       currency == null;
 
   /// Returns `true` when at least one filter dimension is active.
@@ -62,25 +67,28 @@ class TransactionFilter {
 
   /// Maps to the domain-layer [TransactionQueryFilter] consumed by the repository.
   TransactionQueryFilter toQueryFilter() => TransactionQueryFilter(
+        accountId: accountId,
         type: type,
         categoryId: categoryId,
         dateRange: dateRange,
         minAmountCents: minAmountCents,
         maxAmountCents: maxAmountCents,
-        tag: tag,
+        tagId: tagId,
         currency: currency,
       );
 
   TransactionFilter copyWith({
+    String? Function()? accountIdFn,
     TransactionType? Function()? typeFn,
     String? Function()? categoryIdFn,
     DateTimeRange? Function()? dateRangeFn,
     int? Function()? minAmountCentsFn,
     int? Function()? maxAmountCentsFn,
-    String? Function()? tagFn,
+    String? Function()? tagIdFn,
     String? Function()? currencyFn,
   }) {
     return TransactionFilter(
+      accountId: accountIdFn != null ? accountIdFn() : accountId,
       type: typeFn != null ? typeFn() : type,
       categoryId: categoryIdFn != null ? categoryIdFn() : categoryId,
       dateRange: dateRangeFn != null ? dateRangeFn() : dateRange,
@@ -88,7 +96,7 @@ class TransactionFilter {
           minAmountCentsFn != null ? minAmountCentsFn() : minAmountCents,
       maxAmountCents:
           maxAmountCentsFn != null ? maxAmountCentsFn() : maxAmountCents,
-      tag: tagFn != null ? tagFn() : tag,
+      tagId: tagIdFn != null ? tagIdFn() : tagId,
       currency: currencyFn != null ? currencyFn() : currency,
     );
   }
@@ -97,25 +105,27 @@ class TransactionFilter {
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
     return other is TransactionFilter &&
+        other.accountId == accountId &&
         other.type == type &&
         other.categoryId == categoryId &&
         other.dateRange?.start == dateRange?.start &&
         other.dateRange?.end == dateRange?.end &&
         other.minAmountCents == minAmountCents &&
         other.maxAmountCents == maxAmountCents &&
-        other.tag == tag &&
+        other.tagId == tagId &&
         other.currency == currency;
   }
 
   @override
   int get hashCode => Object.hash(
+        accountId,
         type,
         categoryId,
         dateRange?.start,
         dateRange?.end,
         minAmountCents,
         maxAmountCents,
-        tag,
+        tagId,
         currency,
       );
 }
@@ -127,6 +137,13 @@ class TransactionFilter {
 class TransactionFilterNotifier extends Notifier<TransactionFilter> {
   @override
   TransactionFilter build() => const TransactionFilter();
+
+  // ── Account ──────────────────────────────────────────────────────────────────
+
+  /// Sets (or clears when `null`) the account-ID filter.
+  void setAccount(String? accountId) {
+    state = state.copyWith(accountIdFn: () => accountId);
+  }
 
   // ── Type ────────────────────────────────────────────────────────────────────
 
@@ -171,9 +188,9 @@ class TransactionFilterNotifier extends Notifier<TransactionFilter> {
 
   // ── Tag ──────────────────────────────────────────────────────────────────────
 
-  /// Sets (or clears when `null`) the tag filter.
-  void setTag(String? tag) {
-    state = state.copyWith(tagFn: () => tag);
+  /// Sets (or clears when `null`) the tag filter by tag ID.
+  void setTag(String? tagId) {
+    state = state.copyWith(tagIdFn: () => tagId);
   }
 
   // ── Currency ─────────────────────────────────────────────────────────────────
@@ -188,6 +205,13 @@ class TransactionFilterNotifier extends Notifier<TransactionFilter> {
   /// Removes all active filters, resetting to the default state.
   void clearAll() {
     state = const TransactionFilter();
+  }
+
+  /// Replaces the entire filter with the provided [filter] value. Useful
+  /// when the filter sheet collects all changes in a draft and applies them
+  /// all at once.
+  void setFilter(TransactionFilter filter) {
+    state = filter;
   }
 }
 

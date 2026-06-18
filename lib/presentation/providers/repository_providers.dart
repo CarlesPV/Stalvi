@@ -34,6 +34,8 @@ import 'package:stalvi/domain/usecases/update_credentials_usecase.dart';
 import 'package:stalvi/domain/usecases/wipe_all_data_usecase.dart';
 import 'package:stalvi/domain/usecases/trash_usecases.dart';
 import 'package:stalvi/domain/usecases/create_account_usecase.dart';
+import 'package:stalvi/domain/usecases/delete_and_reassign_category_usecase.dart';
+import 'package:stalvi/domain/usecases/delete_and_reassign_tag_usecase.dart';
 import 'package:stalvi/presentation/providers/app_startup_provider.dart';
 import 'package:stalvi/presentation/providers/locale_provider.dart';
 
@@ -196,4 +198,20 @@ final transactionsStreamProvider = StreamProvider<List<Transaction>>((ref) {
 final tagsListProvider = FutureProvider<List<Tag>>((ref) {
   final repo = ref.watch(tagRepositoryProvider);
   return repo.getAllTags();
+});
+
+/// Provides the [DeleteAndReassignCategoryUseCase] instance.
+final deleteAndReassignCategoryUseCaseProvider =
+    Provider<DeleteAndReassignCategoryUseCase>((ref) {
+  final categoryRepo = ref.watch(categoryRepositoryProvider);
+  final transactionRepo = ref.watch(transactionRepositoryProvider);
+  return DeleteAndReassignCategoryUseCase(categoryRepo, transactionRepo);
+});
+
+/// Provides the [DeleteAndReassignTagUseCase] instance.
+final deleteAndReassignTagUseCaseProvider =
+    Provider<DeleteAndReassignTagUseCase>((ref) {
+  final tagRepo = ref.watch(tagRepositoryProvider);
+  final transactionRepo = ref.watch(transactionRepositoryProvider);
+  return DeleteAndReassignTagUseCase(tagRepo, transactionRepo);
 });

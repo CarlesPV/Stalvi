@@ -98,11 +98,19 @@
   - [x] Enforce automated account balance updates when deleting and restoring transactions (reverting/re-applying financial impacts).
   - [x] Fix compilation issues and achieve 100% automated test suite pass rate.
 
+- [x] **Phase 17: Multi-Account Statistics, Transaction Transfers, and Localization Polish**
+  - [x] Default the statistics view to the `isDefault` account, with an option to select other accounts.
+  - [x] Add an account selector dropdown at the top of the Statistics screen.
+  - [x] Support `Transfer` transaction type in the creation UI with "From Account" and "To Account" dropdowns.
+  - [x] Validate that the source and destination accounts in a transfer cannot be the same.
+  - [x] Enforce localized pluralized `.arb` strings for the dashboard multi-account text.
+  - [x] Fix widget tests and achieve 100% automated test suite pass rate.
+
 ## Current Phase
-- [ ] **Phase 17: Synchronization, Backups, and Import/Export Validations**
+- [ ] **Phase 18: Synchronization, Backups, and Import/Export Validations**
   - [ ] Implement cloud synchronization options.
   - [ ] Add encrypted automatic local backup features.
   - [ ] Validate cross-platform imports/exports.
 
 ## Upcoming Phases
-- [ ] **Phase 18: Integration Testing (E2E), final security audit, and store preparation.**
+- [ ] **Phase 19: Integration Testing (E2E), final security audit, and store preparation.**

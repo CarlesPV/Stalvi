@@ -9,6 +9,7 @@ import 'package:stalvi/presentation/providers/auth_notifier.dart';
 import 'package:stalvi/presentation/providers/locale_provider.dart';
 import 'package:stalvi/presentation/providers/theme_provider.dart';
 import 'package:stalvi/presentation/widgets/terms_and_conditions_viewer.dart';
+import 'package:stalvi/presentation/features/settings/categories_tags_management_screen.dart';
 
 class ProfileSettingsScreen extends ConsumerStatefulWidget {
   const ProfileSettingsScreen({super.key});
@@ -563,6 +564,20 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                       );
                     }).toList(),
                   ),
+                ),
+                const Divider(),
+                ListTile(
+                  leading: const Icon(Icons.category_rounded),
+                  title: const Text('Categories & Tags Management'),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            const CategoriesTagsManagementScreen(),
+                      ),
+                    );
+                  },
                 ),
                 const Divider(),
                 ListTile(

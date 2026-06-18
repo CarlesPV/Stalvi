@@ -38,14 +38,21 @@ class InitializeDefaultDataUseCase {
       final existingAccounts =
           await _accountRepository.getAccountsByUserId(userId);
       if (existingAccounts.isEmpty) {
-        String resolvedWalletName = walletName ?? 'Main Account';
+        String resolvedWalletName = walletName ?? 'Default Wallet';
         if (walletName == null && locale != null) {
+          final langCode =
+              locale.split('_').first.split('-').first.toLowerCase();
           try {
-            final appLoc = lookupAppLocalizations(Locale(locale));
-            resolvedWalletName = appLoc.defaultAccountName;
+            final appLoc = lookupAppLocalizations(Locale(langCode));
+            resolvedWalletName = appLoc.defaultWallet;
           } catch (_) {
-            if (locale == 'es') resolvedWalletName = 'Cuenta principal';
-            if (locale == 'ca') resolvedWalletName = 'Compte principal';
+            if (langCode == 'es') {
+              resolvedWalletName = 'Monedero Principal';
+            } else if (langCode == 'ca') {
+              resolvedWalletName = 'Moneder Principal';
+            } else {
+              resolvedWalletName = 'Default Wallet';
+            }
           }
         }
 
@@ -241,7 +248,8 @@ class InitializeDefaultDataUseCase {
             if (matchByIcon.id != id) {
               // Delete the old category with the non-stable ID
               try {
-                await _categoryRepository.deleteCategory(matchByIcon.id);
+                await _categoryRepository
+                    .deleteCategoryPermanently(matchByIcon.id);
               } catch (_) {}
             } else {
               dbCategory = matchByIcon;
@@ -344,7 +352,7 @@ class InitializeDefaultDataUseCase {
             defaultTagConfigs.any((config) => config['id'] == tag.id);
         if (allDefaultNames.contains(tag.name) && !isNewStableId) {
           try {
-            await _tagRepository.deleteTag(tag.id);
+            await _tagRepository.deleteTagPermanently(tag.id);
           } catch (_) {}
         }
       }

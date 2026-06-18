@@ -14,8 +14,13 @@ class StatisticsRepositoryImpl implements IStatisticsRepository {
   Future<PeriodSummary> getPeriodSummary({
     required DateTime startDate,
     required DateTime endDate,
+    String? accountId,
   }) async {
-    final (income, expense) = await _dao.getPeriodSummary(startDate, endDate);
+    final (income, expense) = await _dao.getPeriodSummary(
+      startDate,
+      endDate,
+      accountId: accountId,
+    );
     return PeriodSummary(
       totalIncome: income,
       totalExpense: expense,
@@ -27,11 +32,13 @@ class StatisticsRepositoryImpl implements IStatisticsRepository {
     required DateTime startDate,
     required DateTime endDate,
     TransactionType type = TransactionType.expense,
+    String? accountId,
   }) async {
     final results = await _dao.getTopCategories(
       startDate,
       endDate,
       type: type,
+      accountId: accountId,
     );
     return results.map((r) => r.toDomain()).toList();
   }

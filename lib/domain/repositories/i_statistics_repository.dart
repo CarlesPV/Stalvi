@@ -6,11 +6,13 @@ abstract class IStatisticsRepository {
   Future<PeriodSummary> getPeriodSummary({
     required DateTime startDate,
     required DateTime endDate,
+    String? accountId,
   });
 
   Future<List<CategoryStatistic>> getTopCategories({
     required DateTime startDate,
     required DateTime endDate,
     TransactionType type = TransactionType.expense,
+    String? accountId,
   });
 }

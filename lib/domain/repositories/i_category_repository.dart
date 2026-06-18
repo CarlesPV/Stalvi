@@ -7,4 +7,5 @@ abstract class ICategoryRepository {
   Stream<List<Category>> watchAllCategories();
   Future<Category> updateCategory(Category category);
   Future<void> deleteCategory(String id);
+  Future<void> deleteCategoryPermanently(String id);
 }

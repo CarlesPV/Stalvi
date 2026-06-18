@@ -73,8 +73,10 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
 
     final state = ref.watch(addTransactionNotifierProvider);
     final isExpense = state.type == TransactionType.expense;
-    final activeColor =
-        isExpense ? financialColors.negative : financialColors.positive;
+    final isIncome = state.type == TransactionType.income;
+    final activeColor = isExpense
+        ? financialColors.negative
+        : (isIncome ? financialColors.positive : colorScheme.primary);
 
     // Listen to form submission status to show SnackBars and pop screen
     ref.listen<AsyncValue<void>>(
@@ -122,6 +124,13 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
             orElse: () => accounts.first,
           );
 
+    final selectedToAccount = accounts.isEmpty || state.toAccountId == null
+        ? null
+        : accounts.firstWhere(
+            (a) => a.id == state.toAccountId,
+            orElse: () => accounts.first,
+          );
+
     final categories = categoriesAsync.valueOrNull ?? [];
     final selectedCategory = state.categoryId == null
         ? null
@@ -161,7 +170,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // ── Income/Expense Custom Segmented Control ───────────────────
+              // ── Income/Expense/Transfer Custom Segmented Control ──────────
               Container(
                 height: 54,
                 padding: const EdgeInsets.all(4),
@@ -183,7 +192,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                           duration: const Duration(milliseconds: 200),
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
-                            color: isExpense
+                            color: state.type == TransactionType.expense
                                 ? financialColors.negative
                                 : Colors.transparent,
                             borderRadius: BorderRadius.circular(12),
@@ -192,7 +201,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                             AppLocalizations.of(context)!.expense,
                             style: theme.textTheme.bodyMedium?.copyWith(
                               fontWeight: FontWeight.w700,
-                              color: isExpense
+                              color: state.type == TransactionType.expense
                                   ? colorScheme.onPrimary
                                   : colorScheme.onSurfaceVariant,
                             ),
@@ -211,7 +220,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                           duration: const Duration(milliseconds: 200),
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
-                            color: !isExpense
+                            color: state.type == TransactionType.income
                                 ? financialColors.positive
                                 : Colors.transparent,
                             borderRadius: BorderRadius.circular(12),
@@ -220,7 +229,35 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                             AppLocalizations.of(context)!.income,
                             style: theme.textTheme.bodyMedium?.copyWith(
                               fontWeight: FontWeight.w700,
-                              color: !isExpense
+                              color: state.type == TransactionType.income
+                                  ? colorScheme.onPrimary
+                                  : colorScheme.onSurfaceVariant,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () {
+                          ref
+                              .read(addTransactionNotifierProvider.notifier)
+                              .updateType(TransactionType.transfer);
+                        },
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 200),
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            color: state.type == TransactionType.transfer
+                                ? colorScheme.primary
+                                : Colors.transparent,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Text(
+                            AppLocalizations.of(context)!.filterTransfer,
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.w700,
+                              color: state.type == TransactionType.transfer
                                   ? colorScheme.onPrimary
                                   : colorScheme.onSurfaceVariant,
                             ),
@@ -297,43 +334,97 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                 ),
                 child: Column(
                   children: [
-                    // Account Selector
-                    _FormSelectorTile(
-                      label: AppLocalizations.of(context)!.labelAccount,
-                      value: selectedAccount?.name ??
-                          AppLocalizations.of(context)!.labelSelectAccount,
-                      icon: selectedAccount != null
-                          ? _getIconData(selectedAccount.icon)
-                          : Icons.account_balance_wallet_rounded,
-                      iconColor: selectedAccount != null
-                          ? _parseHexColor(selectedAccount.color)
-                          : colorScheme.onSurfaceVariant,
-                      onTap: () => _showAccountSelector(
-                        context,
-                        accountsAsync.valueOrNull ?? [],
+                    if (state.type == TransactionType.transfer) ...[
+                      // From Account Selector
+                      _FormSelectorTile(
+                        label: Localizations.localeOf(context).languageCode ==
+                                'es'
+                            ? 'Desde cuenta'
+                            : (Localizations.localeOf(context).languageCode ==
+                                    'ca'
+                                ? 'Des de compte'
+                                : 'From Account'),
+                        value: selectedAccount?.name ??
+                            AppLocalizations.of(context)!.labelSelectAccount,
+                        icon: selectedAccount != null
+                            ? _getIconData(selectedAccount.icon)
+                            : Icons.account_balance_wallet_rounded,
+                        iconColor: selectedAccount != null
+                            ? _parseHexColor(selectedAccount.color)
+                            : colorScheme.onSurfaceVariant,
+                        onTap: () => _showAccountSelector(
+                          context,
+                          accountsAsync.valueOrNull ?? [],
+                          isSource: true,
+                        ),
                       ),
-                    ),
-                    Divider(
-                      height: 1,
-                      color: colorScheme.outline.withValues(alpha: 0.08),
-                    ),
-                    // Category Selector
-                    _FormSelectorTile(
-                      label: AppLocalizations.of(context)!.labelCategory,
-                      value: selectedCategory?.name ??
-                          AppLocalizations.of(context)!.uncategorized,
-                      icon: selectedCategory != null
-                          ? _getIconData(selectedCategory.icon)
-                          : Icons.category_rounded,
-                      iconColor: selectedCategory != null
-                          ? _parseHexColor(selectedCategory.color)
-                          : colorScheme.onSurfaceVariant,
-                      onTap: () => _showCategorySelector(
-                        context,
-                        categoriesAsync.valueOrNull ?? [],
-                        state.type,
+                      Divider(
+                        height: 1,
+                        color: colorScheme.outline.withValues(alpha: 0.08),
                       ),
-                    ),
+                      // To Account Selector
+                      _FormSelectorTile(
+                        label: Localizations.localeOf(context).languageCode ==
+                                'es'
+                            ? 'Hacia cuenta'
+                            : (Localizations.localeOf(context).languageCode ==
+                                    'ca'
+                                ? 'A compte'
+                                : 'To Account'),
+                        value: selectedToAccount?.name ??
+                            AppLocalizations.of(context)!.labelSelectAccount,
+                        icon: selectedToAccount != null
+                            ? _getIconData(selectedToAccount.icon)
+                            : Icons.account_balance_wallet_rounded,
+                        iconColor: selectedToAccount != null
+                            ? _parseHexColor(selectedToAccount.color)
+                            : colorScheme.onSurfaceVariant,
+                        onTap: () => _showAccountSelector(
+                          context,
+                          accountsAsync.valueOrNull ?? [],
+                          isSource: false,
+                        ),
+                      ),
+                    ] else ...[
+                      // Account Selector
+                      _FormSelectorTile(
+                        label: AppLocalizations.of(context)!.labelAccount,
+                        value: selectedAccount?.name ??
+                            AppLocalizations.of(context)!.labelSelectAccount,
+                        icon: selectedAccount != null
+                            ? _getIconData(selectedAccount.icon)
+                            : Icons.account_balance_wallet_rounded,
+                        iconColor: selectedAccount != null
+                            ? _parseHexColor(selectedAccount.color)
+                            : colorScheme.onSurfaceVariant,
+                        onTap: () => _showAccountSelector(
+                          context,
+                          accountsAsync.valueOrNull ?? [],
+                          isSource: true,
+                        ),
+                      ),
+                      Divider(
+                        height: 1,
+                        color: colorScheme.outline.withValues(alpha: 0.08),
+                      ),
+                      // Category Selector
+                      _FormSelectorTile(
+                        label: AppLocalizations.of(context)!.labelCategory,
+                        value: selectedCategory?.name ??
+                            AppLocalizations.of(context)!.uncategorized,
+                        icon: selectedCategory != null
+                            ? _getIconData(selectedCategory.icon)
+                            : Icons.category_rounded,
+                        iconColor: selectedCategory != null
+                            ? _parseHexColor(selectedCategory.color)
+                            : colorScheme.onSurfaceVariant,
+                        onTap: () => _showCategorySelector(
+                          context,
+                          categoriesAsync.valueOrNull ?? [],
+                          state.type,
+                        ),
+                      ),
+                    ],
                     Divider(
                       height: 1,
                       color: colorScheme.outline.withValues(alpha: 0.08),
@@ -462,10 +553,23 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
 
   // ── Bottom Sheet Picker Helpers ──────────────────────────────────────────────
 
-  void _showAccountSelector(BuildContext context, List<Account> accounts) {
+  void _showAccountSelector(BuildContext context, List<Account> accounts,
+      {required bool isSource}) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final state = ref.read(addTransactionNotifierProvider);
+
+    final titleText = isSource
+        ? (Localizations.localeOf(context).languageCode == 'es'
+            ? 'Seleccionar cuenta de origen'
+            : (Localizations.localeOf(context).languageCode == 'ca'
+                ? 'Seleccionar compte d\'origen'
+                : 'Select Source Account'))
+        : (Localizations.localeOf(context).languageCode == 'es'
+            ? 'Seleccionar cuenta de destino'
+            : (Localizations.localeOf(context).languageCode == 'ca'
+                ? 'Seleccionar compte de destí'
+                : 'Select Destination Account'));
 
     showModalBottomSheet(
       context: context,
@@ -480,7 +584,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(
-                AppLocalizations.of(context)!.labelSelectAccount,
+                titleText,
                 style: theme.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.w800,
                 ),
@@ -493,7 +597,9 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                   itemCount: accounts.length,
                   itemBuilder: (context, index) {
                     final account = accounts[index];
-                    final isSelected = state.accountId == account.id;
+                    final isSelected = isSource
+                        ? state.accountId == account.id
+                        : state.toAccountId == account.id;
                     final accColor = _parseHexColor(account.color);
 
                     return Container(
@@ -535,9 +641,15 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                             ? Icon(Icons.check_circle_rounded, color: accColor)
                             : null,
                         onTap: () {
-                          ref
-                              .read(addTransactionNotifierProvider.notifier)
-                              .updateAccount(account.id);
+                          if (isSource) {
+                            ref
+                                .read(addTransactionNotifierProvider.notifier)
+                                .updateAccount(account.id);
+                          } else {
+                            ref
+                                .read(addTransactionNotifierProvider.notifier)
+                                .updateToAccount(account.id);
+                          }
                           Navigator.of(context).pop();
                         },
                       ),

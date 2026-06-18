@@ -237,4 +237,17 @@ This document lists the completed phases of the Stalvi development roadmap, prov
   - Regenerated code wrappers (`build_runner` and `gen-l10n`) cleanly.
   - Achieved 100% test pass rate with all 246 tests passing successfully.
 
+### Phase 17: Multi-Account Statistics, Transaction Transfers, and Localization Polish
+* **Completion Date:** June 18, 2026
+* **Objective:** Support multi-account filtering on the Statistics screen, implement transaction transfer flows in the creation form, perform validation checks, and localize the dashboard multi-account summary text using pluralized `.arb` strings.
+* **Accomplishments:**
+  - **Multi-Account Statistics:** Configured `StatisticsFilterNotifier` to automatically load data for the `isDefault` account on startup, and added an account selector dropdown at the top of the Statistics screen to filter totals and top categories by account.
+  - **Transaction Transfers UI:** Added support for the `Transfer` type in `AddTransactionScreen`. When selected, it dynamically displays "From Account" and "To Account" dropdown selectors.
+  - **Transfer Validation:** Implemented validation preventing users from selecting the same account for both source and destination in a transfer.
+  - **Dashboard Pluralization:** Wired the `acrossAccountsCount` localization key from the `.arb` bundles into the Dashboard balance card, replacing the hardcoded English text.
+* **Verification:**
+  - Standard static analysis pass (`flutter analyze` with 0 issues).
+  - Resolved `dashboard_screen_test.dart` failures caused by multiple listeners on the single-subscription `transactionsStream` by converting it to a broadcast stream.
+  - Achieved 100% test pass rate with all 314 tests passing successfully.
+
 

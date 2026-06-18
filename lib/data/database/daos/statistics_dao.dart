@@ -30,9 +30,19 @@ class StatisticsDao extends DatabaseAccessor<AppDatabase>
   /// Calculates total income and total expenses within a date range
   Future<(int totalIncome, int totalExpense)> getPeriodSummary(
     DateTime startDate,
-    DateTime endDate,
-  ) async {
+    DateTime endDate, {
+    String? accountId,
+  }) async {
     final incomeSum = transactions.amount.sum();
+    var incomeConditions =
+        transactions.date.isBetweenValues(startDate, endDate) &
+            transactions.type.equalsValue(TransactionType.income) &
+            transactions.isDeleted.equals(false) &
+            accounts.isDeleted.equals(false);
+    if (accountId != null) {
+      incomeConditions =
+          incomeConditions & transactions.accountId.equals(accountId);
+    }
     final incomeQuery = selectOnly(transactions)
       ..addColumns([incomeSum])
       ..join([
@@ -41,16 +51,20 @@ class StatisticsDao extends DatabaseAccessor<AppDatabase>
           accounts.id.equalsExp(transactions.accountId),
         ),
       ])
-      ..where(
-        transactions.date.isBetweenValues(startDate, endDate) &
-            transactions.type.equalsValue(TransactionType.income) &
-            transactions.isDeleted.equals(false) &
-            accounts.isDeleted.equals(false),
-      );
+      ..where(incomeConditions);
     final incomeResult = await incomeQuery.getSingle();
     final totalIncome = incomeResult.read(incomeSum) ?? 0;
 
     final expenseSum = transactions.amount.sum();
+    var expenseConditions =
+        transactions.date.isBetweenValues(startDate, endDate) &
+            transactions.type.equalsValue(TransactionType.expense) &
+            transactions.isDeleted.equals(false) &
+            accounts.isDeleted.equals(false);
+    if (accountId != null) {
+      expenseConditions =
+          expenseConditions & transactions.accountId.equals(accountId);
+    }
     final expenseQuery = selectOnly(transactions)
       ..addColumns([expenseSum])
       ..join([
@@ -59,12 +73,7 @@ class StatisticsDao extends DatabaseAccessor<AppDatabase>
           accounts.id.equalsExp(transactions.accountId),
         ),
       ])
-      ..where(
-        transactions.date.isBetweenValues(startDate, endDate) &
-            transactions.type.equalsValue(TransactionType.expense) &
-            transactions.isDeleted.equals(false) &
-            accounts.isDeleted.equals(false),
-      );
+      ..where(expenseConditions);
     final expenseResult = await expenseQuery.getSingle();
     final totalExpense = expenseResult.read(expenseSum) ?? 0;
 
@@ -76,8 +85,20 @@ class StatisticsDao extends DatabaseAccessor<AppDatabase>
     DateTime startDate,
     DateTime endDate, {
     TransactionType type = TransactionType.expense,
+    String? accountId,
   }) async {
     final amountSum = transactions.amount.sum();
+
+    var queryConditions =
+        transactions.date.isBetweenValues(startDate, endDate) &
+            transactions.type.equalsValue(type) &
+            transactions.isDeleted.equals(false) &
+            categories.isDeleted.equals(false) &
+            accounts.isDeleted.equals(false);
+    if (accountId != null) {
+      queryConditions =
+          queryConditions & transactions.accountId.equals(accountId);
+    }
 
     final query = selectOnly(transactions)
       ..addColumns([
@@ -97,13 +118,7 @@ class StatisticsDao extends DatabaseAccessor<AppDatabase>
           accounts.id.equalsExp(transactions.accountId),
         ),
       ])
-      ..where(
-        transactions.date.isBetweenValues(startDate, endDate) &
-            transactions.type.equalsValue(type) &
-            transactions.isDeleted.equals(false) &
-            categories.isDeleted.equals(false) &
-            accounts.isDeleted.equals(false),
-      )
+      ..where(queryConditions)
       ..groupBy([categories.id])
       ..orderBy([OrderingTerm(expression: amountSum, mode: OrderingMode.desc)]);
 

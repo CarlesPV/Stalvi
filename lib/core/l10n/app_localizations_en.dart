@@ -345,6 +345,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get defaultWalletName => 'My Wallet';
 
   @override
+  String get defaultWallet => 'Default Wallet';
+
+  @override
+  String acrossAccountsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count accounts',
+      one: '1 account',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get failedLoadAccounts => 'Failed to load accounts.';
 
   @override
@@ -570,7 +584,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get createAccountNameHint => 'e.g. Personal Card, Cash, etc.';
 
   @override
-  String get createAccountInitialBalanceLabel => 'Initial Balance';
+  String get createAccountInitialBalanceLabel => 'Balance';
 
   @override
   String get createAccountTypeLabel => 'Account Type';
@@ -620,4 +634,69 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get btnClose => 'Close';
+
+  @override
+  String get setAsDefaultAccount => 'Set as Default Account';
+
+  @override
+  String get setAsDefaultAccountSuccess => 'Account set as default';
+
+  @override
+  String get setAsDefaultAccountError => 'Failed to set default account';
+
+  @override
+  String get filterSheetTitle => 'Filter Transactions';
+
+  @override
+  String get filterSheetApply => 'Apply Filters';
+
+  @override
+  String get filterSheetClearAll => 'Clear All';
+
+  @override
+  String get filterSheetType => 'Transaction Type';
+
+  @override
+  String get filterSheetCategory => 'Category';
+
+  @override
+  String get filterSheetDateRange => 'Date Range';
+
+  @override
+  String get filterSheetAmountRange => 'Amount Range';
+
+  @override
+  String get filterSheetMinAmount => 'Min Amount';
+
+  @override
+  String get filterSheetMaxAmount => 'Max Amount';
+
+  @override
+  String get filterSheetTag => 'Tag';
+
+  @override
+  String get filterSheetCurrency => 'Currency';
+
+  @override
+  String get filterSheetAllTypes => 'All Types';
+
+  @override
+  String get filterSheetAllCategories => 'All Categories';
+
+  @override
+  String get filterSheetAllTags => 'All Tags';
+
+  @override
+  String get filterSheetAllCurrencies => 'All Currencies';
+
+  @override
+  String get filterSheetSelectDateRange => 'Select Date Range';
+
+  @override
+  String filterSheetActiveFilters(int count) {
+    return '$count active filters';
+  }
+
+  @override
+  String get filterSheetTransferType => 'Transfer';
 }

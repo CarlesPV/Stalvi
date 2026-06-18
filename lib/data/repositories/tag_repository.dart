@@ -49,4 +49,9 @@ class TagRepository implements ITagRepository {
       ),
     );
   }
+
+  @override
+  Future<void> deleteTagPermanently(String id) async {
+    await (_db.delete(_db.tags)..where((t) => t.id.equals(id))).go();
+  }
 }

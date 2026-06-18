@@ -8,21 +8,26 @@ import '../entities/transaction_type.dart';
 /// concurrent transaction filters. All fields are optional; `null` means
 /// "no constraint on this dimension".
 class TransactionQueryFilter {
+  final String? accountId;
   final TransactionType? type;
   final String? categoryId;
   final DateTimeRange? dateRange;
   final int? minAmountCents;
   final int? maxAmountCents;
-  final String? tag;
+
+  /// ID of a [Tag] entity. The DAO resolves this to the tag's name and
+  /// matches it as a substring of the transaction's `notes` field.
+  final String? tagId;
   final String? currency;
 
   const TransactionQueryFilter({
+    this.accountId,
     this.type,
     this.categoryId,
     this.dateRange,
     this.minAmountCents,
     this.maxAmountCents,
-    this.tag,
+    this.tagId,
     this.currency,
   });
 }

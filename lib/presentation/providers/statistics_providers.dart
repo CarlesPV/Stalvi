@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:stalvi/data/database/tables/transaction_table.dart';
+import 'package:stalvi/domain/entities/account.dart';
 import 'package:stalvi/domain/entities/category_statistic.dart';
 import 'package:stalvi/domain/entities/period_summary.dart';
 import 'package:stalvi/domain/use_cases/statistics/get_period_summary_use_case.dart';
@@ -108,18 +109,55 @@ enum StatisticsDatePreset {
 
 /// Holds and mutates the active statistics filter state.
 class StatisticsFilterNotifier extends Notifier<StatisticsFilter> {
+  bool _hasInitializedDefaultAccount = false;
+
   @override
   StatisticsFilter build() {
     const initialPreset = StatisticsDatePreset.thisMonth;
+
+    ref.listen<AsyncValue<List<Account>>>(accountsListProvider,
+        (previous, next) {
+      if (!_hasInitializedDefaultAccount) {
+        next.whenData((accounts) {
+          try {
+            final defaultAccount = accounts.firstWhere((a) => a.isDefault);
+            state = state.copyWith(accountIdFn: () => defaultAccount.id);
+            _hasInitializedDefaultAccount = true;
+          } catch (_) {
+            if (accounts.isNotEmpty) {
+              state = state.copyWith(accountIdFn: () => accounts.first.id);
+              _hasInitializedDefaultAccount = true;
+            }
+          }
+        });
+      }
+    });
+
+    final accountsAsync = ref.read(accountsListProvider);
+    String? initialAccountId;
+    accountsAsync.whenData((accounts) {
+      try {
+        final defaultAccount = accounts.firstWhere((a) => a.isDefault);
+        initialAccountId = defaultAccount.id;
+        _hasInitializedDefaultAccount = true;
+      } catch (_) {
+        if (accounts.isNotEmpty) {
+          initialAccountId = accounts.first.id;
+          _hasInitializedDefaultAccount = true;
+        }
+      }
+    });
+
     return StatisticsFilter(
       dateRange: initialPreset.toDateTimeRange(),
       preset: initialPreset,
+      accountId: initialAccountId,
     );
   }
 
   /// Switches to one of the named presets and recomputes the date range.
   void setPreset(StatisticsDatePreset preset) {
-    state = StatisticsFilter(
+    state = state.copyWith(
       dateRange: preset.toDateTimeRange(),
       preset: preset,
     );
@@ -127,7 +165,7 @@ class StatisticsFilterNotifier extends Notifier<StatisticsFilter> {
 
   /// Applies a free-form date range (triggered by the calendar picker).
   void setCustomDateTimeRange(DateTimeRange dateRange) {
-    state = StatisticsFilter(
+    state = state.copyWith(
       dateRange: dateRange,
       preset: StatisticsDatePreset.custom,
     );
@@ -163,6 +201,7 @@ final periodSummaryProvider =
   return useCase.execute(
     startDate: filter.dateRange.start,
     endDate: filter.dateRange.end,
+    accountId: filter.accountId,
   );
 });
 
@@ -176,6 +215,7 @@ final topExpenseCategoriesProvider =
     startDate: filter.dateRange.start,
     endDate: filter.dateRange.end,
     type: TransactionType.expense,
+    accountId: filter.accountId,
   );
 });
 
@@ -189,5 +229,6 @@ final topIncomeCategoriesProvider =
     startDate: filter.dateRange.start,
     endDate: filter.dateRange.end,
     type: TransactionType.income,
+    accountId: filter.accountId,
   );
 });

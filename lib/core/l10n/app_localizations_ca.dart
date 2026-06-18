@@ -353,6 +353,20 @@ class AppLocalizationsCa extends AppLocalizations {
   String get defaultWalletName => 'La meva cartera';
 
   @override
+  String get defaultWallet => 'Moneder Principal';
+
+  @override
+  String acrossAccountsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count comptes',
+      one: '1 compte',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get failedLoadAccounts => 'No s\'han pogut carregar els comptes.';
 
   @override
@@ -579,7 +593,7 @@ class AppLocalizationsCa extends AppLocalizations {
   String get createAccountNameHint => 'ex. Targeta Personal, Efectiu, etc.';
 
   @override
-  String get createAccountInitialBalanceLabel => 'Saldo inicial';
+  String get createAccountInitialBalanceLabel => 'Saldo';
 
   @override
   String get createAccountTypeLabel => 'Tipus de compte';
@@ -630,4 +644,71 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get btnClose => 'Tancar';
+
+  @override
+  String get setAsDefaultAccount => 'Establir com a compte predeterminat';
+
+  @override
+  String get setAsDefaultAccountSuccess =>
+      'Compte establert com a predeterminat';
+
+  @override
+  String get setAsDefaultAccountError =>
+      'Error en establir el compte predeterminat';
+
+  @override
+  String get filterSheetTitle => 'Filtrar transaccions';
+
+  @override
+  String get filterSheetApply => 'Aplicar filtres';
+
+  @override
+  String get filterSheetClearAll => 'Netejar tot';
+
+  @override
+  String get filterSheetType => 'Tipus de transacció';
+
+  @override
+  String get filterSheetCategory => 'Categoria';
+
+  @override
+  String get filterSheetDateRange => 'Rang de dates';
+
+  @override
+  String get filterSheetAmountRange => 'Rang d\'imports';
+
+  @override
+  String get filterSheetMinAmount => 'Import mínim';
+
+  @override
+  String get filterSheetMaxAmount => 'Import màxim';
+
+  @override
+  String get filterSheetTag => 'Etiqueta';
+
+  @override
+  String get filterSheetCurrency => 'Moneda';
+
+  @override
+  String get filterSheetAllTypes => 'Tots els tipus';
+
+  @override
+  String get filterSheetAllCategories => 'Totes les categories';
+
+  @override
+  String get filterSheetAllTags => 'Totes les etiquetes';
+
+  @override
+  String get filterSheetAllCurrencies => 'Totes les monedes';
+
+  @override
+  String get filterSheetSelectDateRange => 'Seleccionar rang de dates';
+
+  @override
+  String filterSheetActiveFilters(int count) {
+    return '$count filtres actius';
+  }
+
+  @override
+  String get filterSheetTransferType => 'Transferència';
 }

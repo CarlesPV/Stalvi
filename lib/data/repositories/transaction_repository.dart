@@ -2,6 +2,7 @@ import 'package:drift/drift.dart';
 
 import 'package:stalvi/core/errors/app_exceptions.dart';
 import 'package:stalvi/data/database/app_database.dart' as db;
+import 'package:stalvi/data/database/daos/transaction_dao.dart';
 import 'package:stalvi/data/database/tables/transaction_table.dart' as db_table;
 import 'package:stalvi/data/mappers/transaction_mapper.dart';
 import 'package:stalvi/domain/entities/transaction.dart' as domain;
@@ -17,6 +18,8 @@ class TransactionRepository implements ITransactionRepository {
   final db.AppDatabase _db;
 
   TransactionRepository(this._db);
+
+  TransactionDao get _transactionDao => _db.transactionDao;
 
   @override
   Future<domain.Transaction> createTransaction(
@@ -244,72 +247,25 @@ class TransactionRepository implements ITransactionRepository {
   /// Streams [domain.Transaction] rows matching all non-null dimensions in
   /// [filter] concurrently.
   ///
-  /// Filter application strategy:
-  /// - All conditions are ANDed together (every active dimension must match).
-  /// - `isDeleted = false` is always enforced.
-  /// - [TransactionQueryFilter.tag] is matched as a case-insensitive LIKE
-  ///   substring against the `notes` column.
+  /// Delegates to [TransactionDao.watchFiltered] which handles all nine filter
+  /// dimensions including the `tagId → tag name → LIKE notes` resolution.
   @override
   Stream<List<domain.Transaction>> watchFilteredTransactions(
     TransactionQueryFilter filter,
   ) {
     try {
-      final t = _db.transactions;
-      final query = _db.select(t);
-
-      // Always exclude soft-deleted rows.
-      Expression<bool> conditions = t.isDeleted.equals(false);
-
-      // ── Type ──────────────────────────────────────────────────────────────────
-      if (filter.type != null) {
-        final dbType = _mapDomainTypeToDB(filter.type!);
-        conditions = conditions & t.type.equalsValue(dbType);
-      }
-
-      // ── Category ──────────────────────────────────────────────────────────────
-      if (filter.categoryId != null) {
-        conditions = conditions & t.categoryId.equals(filter.categoryId!);
-      }
-
-      // ── Date range ────────────────────────────────────────────────────────────
-      if (filter.dateRange != null) {
-        conditions = conditions &
-            t.date.isBetweenValues(
-              filter.dateRange!.start,
-              filter.dateRange!.end,
-            );
-      }
-
-      // ── Amount range ──────────────────────────────────────────────────────────
-      if (filter.minAmountCents != null) {
-        conditions =
-            conditions & t.amount.isBiggerOrEqualValue(filter.minAmountCents!);
-      }
-      if (filter.maxAmountCents != null) {
-        conditions =
-            conditions & t.amount.isSmallerOrEqualValue(filter.maxAmountCents!);
-      }
-
-      // ── Tag (case-insensitive substring match on notes) ───────────────────────
-      // SQLite LIKE is case-insensitive for ASCII by default – no extra flag needed.
-      if (filter.tag != null && filter.tag!.isNotEmpty) {
-        conditions = conditions & t.notes.like('%${filter.tag!}%');
-      }
-
-      // ── Currency ──────────────────────────────────────────────────────────────
-      if (filter.currency != null) {
-        conditions = conditions & t.originalCurrency.equals(filter.currency!);
-      }
-
-      query
-        ..where((_) => conditions)
-        ..orderBy([
-          (t) => OrderingTerm(expression: t.date, mode: OrderingMode.desc),
-          (t) => OrderingTerm(expression: t.createdAt, mode: OrderingMode.desc),
-        ]);
-
-      return query
-          .watch()
+      return _transactionDao
+          .watchFiltered(
+            accountId: filter.accountId,
+            type: filter.type != null ? _mapDomainTypeToDB(filter.type!) : null,
+            categoryId: filter.categoryId,
+            startDate: filter.dateRange?.start,
+            endDate: filter.dateRange?.end,
+            minAmountCents: filter.minAmountCents,
+            maxAmountCents: filter.maxAmountCents,
+            tagId: filter.tagId,
+            currency: filter.currency,
+          )
           .map((rows) => rows.map((r) => r.toDomain()).toList());
     } catch (e) {
       throw DatabaseException(

@@ -13,6 +13,24 @@ import 'package:stalvi/domain/repositories/i_transaction_repository.dart';
 // ignore: depend_on_referenced_packages
 import 'package:sqlite3/open.dart';
 
+/// Inserts a Tag row and returns its id.
+Future<String> _seedTag(
+  AppDatabase db, {
+  required String id,
+  required String name,
+}) async {
+  final now = DateTime.now();
+  await db.into(db.tags).insert(
+        TagsCompanion.insert(
+          id: id,
+          name: name,
+          createdAt: now,
+          modifiedAt: now,
+        ),
+      );
+  return id;
+}
+
 // ──────────────────────────────────────────────────────────────────────────────
 // Helpers
 // ──────────────────────────────────────────────────────────────────────────────
@@ -45,7 +63,7 @@ Future<String> _seedAccount(AppDatabase db) async {
           currency: 'EUR',
           color: '#FFFFFF',
           icon: 'wallet',
-          isDefault: true,
+          isDefault: const drift.Value(true),
           createdAt: now,
           modifiedAt: now,
         ),
@@ -512,8 +530,11 @@ void main() {
   // ──────────────────────────────────────────────────────────────────────────
 
   group('watchFilteredTransactions – tag filter', () {
-    test('returns transactions whose notes contain the tag substring',
+    test(
+        'returns transactions whose notes contain the tag name (resolved from tagId)',
         () async {
+      await _seedTag(database, id: 'tag-food', name: '#food');
+
       await _insertTransaction(
         database,
         id: 't1',
@@ -543,7 +564,7 @@ void main() {
       );
 
       final stream = repo.watchFilteredTransactions(
-        const TransactionQueryFilter(tag: '#food'),
+        const TransactionQueryFilter(tagId: 'tag-food'),
       );
       final result = await stream.first;
 
@@ -551,7 +572,9 @@ void main() {
       expect(result.first.id, 't1');
     });
 
-    test('tag match is case-insensitive', () async {
+    test('tag match is case-insensitive (SQLite LIKE default)', () async {
+      await _seedTag(database, id: 'tag-health', name: '#health');
+
       await _insertTransaction(
         database,
         id: 't1',
@@ -563,7 +586,7 @@ void main() {
       );
 
       final stream = repo.watchFilteredTransactions(
-        const TransactionQueryFilter(tag: '#health'),
+        const TransactionQueryFilter(tagId: 'tag-health'),
       );
       final result = await stream.first;
 
@@ -571,7 +594,9 @@ void main() {
       expect(result.first.id, 't1');
     });
 
-    test('returns empty when no notes contain the tag', () async {
+    test('returns empty when no notes contain the tag name', () async {
+      await _seedTag(database, id: 'tag-gym', name: '#gym');
+
       await _insertTransaction(
         database,
         id: 't1',
@@ -583,7 +608,7 @@ void main() {
       );
 
       final stream = repo.watchFilteredTransactions(
-        const TransactionQueryFilter(tag: '#gym'),
+        const TransactionQueryFilter(tagId: 'tag-gym'),
       );
       final result = await stream.first;
 
@@ -902,6 +927,8 @@ void main() {
         notes: 'Supermarket – no tag',
       );
 
+      await _seedTag(database, id: 'tag-food', name: '#food');
+
       final stream = repo.watchFilteredTransactions(
         TransactionQueryFilter(
           type: domain.TransactionType.expense,
@@ -912,7 +939,7 @@ void main() {
           ),
           minAmountCents: 500,
           maxAmountCents: 1000,
-          tag: '#food',
+          tagId: 'tag-food',
           currency: 'EUR',
         ),
       );

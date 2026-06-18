@@ -352,6 +352,20 @@ class AppLocalizationsEs extends AppLocalizations {
   String get defaultWalletName => 'Mi cartera';
 
   @override
+  String get defaultWallet => 'Monedero Principal';
+
+  @override
+  String acrossAccountsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count cuentas',
+      one: '1 cuenta',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get failedLoadAccounts => 'No se pudieron cargar las cuentas.';
 
   @override
@@ -578,7 +592,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get createAccountNameHint => 'ej. Tarjeta Personal, Efectivo, etc.';
 
   @override
-  String get createAccountInitialBalanceLabel => 'Saldo inicial';
+  String get createAccountInitialBalanceLabel => 'Saldo';
 
   @override
   String get createAccountTypeLabel => 'Tipo de cuenta';
@@ -629,4 +643,71 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get btnClose => 'Cerrar';
+
+  @override
+  String get setAsDefaultAccount => 'Establecer como cuenta predeterminada';
+
+  @override
+  String get setAsDefaultAccountSuccess =>
+      'Cuenta establecida como predeterminada';
+
+  @override
+  String get setAsDefaultAccountError =>
+      'Error al establecer la cuenta predeterminada';
+
+  @override
+  String get filterSheetTitle => 'Filtrar transacciones';
+
+  @override
+  String get filterSheetApply => 'Aplicar filtros';
+
+  @override
+  String get filterSheetClearAll => 'Limpiar todo';
+
+  @override
+  String get filterSheetType => 'Tipo de transacción';
+
+  @override
+  String get filterSheetCategory => 'Categoría';
+
+  @override
+  String get filterSheetDateRange => 'Rango de fechas';
+
+  @override
+  String get filterSheetAmountRange => 'Rango de importes';
+
+  @override
+  String get filterSheetMinAmount => 'Importe mínimo';
+
+  @override
+  String get filterSheetMaxAmount => 'Importe máximo';
+
+  @override
+  String get filterSheetTag => 'Etiqueta';
+
+  @override
+  String get filterSheetCurrency => 'Moneda';
+
+  @override
+  String get filterSheetAllTypes => 'Todos los tipos';
+
+  @override
+  String get filterSheetAllCategories => 'Todas las categorías';
+
+  @override
+  String get filterSheetAllTags => 'Todas las etiquetas';
+
+  @override
+  String get filterSheetAllCurrencies => 'Todas las monedas';
+
+  @override
+  String get filterSheetSelectDateRange => 'Seleccionar rango de fechas';
+
+  @override
+  String filterSheetActiveFilters(int count) {
+    return '$count filtros activos';
+  }
+
+  @override
+  String get filterSheetTransferType => 'Transferencia';
 }
