@@ -92,13 +92,17 @@
   "@authVerifyIdentity": {
     "description": "Prompt title to verify identity"
   },
-  "authVerifyMessage": "Use biometrics or your device PIN to continue.",
+  "authVerifyMessage": "Use biometrics or your device PIN to continue",
   "@authVerifyMessage": {
     "description": "Prompt description to verify identity"
   },
   "authVerifying": "Verifying…",
   "@authVerifying": {
     "description": "Button label during verification state"
+  },
+  "authProcessing": "Processing security authentication…",
+  "@authProcessing": {
+    "description": "Loading message when processing security authentication"
   },
   "authAuthenticate": "Authenticate",
   "@authAuthenticate": {

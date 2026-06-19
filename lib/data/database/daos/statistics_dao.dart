@@ -33,7 +33,11 @@ class StatisticsDao extends DatabaseAccessor<AppDatabase>
     DateTime endDate, {
     String? accountId,
   }) async {
-    final incomeSum = transactions.amount.sum();
+    final amountExp = accountId == null
+        ? coalesce<int>([transactions.convertedAmount, transactions.amount])
+        : transactions.amount;
+
+    final incomeSum = amountExp.sum();
     var incomeConditions =
         transactions.date.isBetweenValues(startDate, endDate) &
             transactions.type.equalsValue(TransactionType.income) &
@@ -55,7 +59,7 @@ class StatisticsDao extends DatabaseAccessor<AppDatabase>
     final incomeResult = await incomeQuery.getSingle();
     final totalIncome = incomeResult.read(incomeSum) ?? 0;
 
-    final expenseSum = transactions.amount.sum();
+    final expenseSum = amountExp.sum();
     var expenseConditions =
         transactions.date.isBetweenValues(startDate, endDate) &
             transactions.type.equalsValue(TransactionType.expense) &
@@ -87,7 +91,11 @@ class StatisticsDao extends DatabaseAccessor<AppDatabase>
     TransactionType type = TransactionType.expense,
     String? accountId,
   }) async {
-    final amountSum = transactions.amount.sum();
+    final amountExp = accountId == null
+        ? coalesce<int>([transactions.convertedAmount, transactions.amount])
+        : transactions.amount;
+
+    final amountSum = amountExp.sum();
 
     var queryConditions =
         transactions.date.isBetweenValues(startDate, endDate) &

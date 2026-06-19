@@ -194,5 +194,50 @@ void main() {
         AuthStatus.authenticated,
       );
     });
+
+    testWidgets(
+        'shows biometric opt-in dialog if biometrics available but not enabled',
+        (WidgetTester tester) async {
+      // Arrange
+      when(() => mockSecureStorage.hasPin()).thenAnswer((_) async => true);
+      when(() => mockSecureStorage.getPinLength()).thenAnswer((_) async => 4);
+      when(() => mockSecureStorage.getPinHash())
+          .thenAnswer((_) async => hashPin('1234'));
+      when(() => mockBiometricAuth.isBiometricAvailable())
+          .thenAnswer((_) async => true);
+      when(() => mockBiometricAuth.isBiometricsEnabled())
+          .thenAnswer((_) async => false);
+
+      final container = ProviderContainer(
+        overrides: [
+          secureStorageProvider.overrideWithValue(mockSecureStorage),
+          biometricAuthServiceProvider.overrideWithValue(mockBiometricAuth),
+          transactionsStreamProvider
+              .overrideWith((ref) => Stream.value(<Transaction>[])),
+          accountsListProvider.overrideWith((ref) => Stream.value(<Account>[])),
+        ],
+      );
+
+      // Act
+      await tester.pumpWidget(buildTestApp(container: container));
+      await tester.pump();
+
+      // Find biometric icon and tap
+      final biometricIcon = find.byIcon(Icons.fingerprint_rounded);
+      expect(biometricIcon, findsOneWidget);
+      await tester.ensureVisible(biometricIcon);
+      await tester.pump(const Duration(milliseconds: 100)); // Wait for scroll
+      await tester.tap(biometricIcon);
+      await tester.pump();
+
+      // Assert: Verify dialog is shown
+      expect(find.text('Enable Biometric Login'), findsWidgets);
+
+      // Cancel dialog
+      await tester.tap(find.text('Skip for Now'));
+      await tester.pump();
+
+      expect(find.text('Enable Biometric Login'), findsNothing);
+    });
   });
 }

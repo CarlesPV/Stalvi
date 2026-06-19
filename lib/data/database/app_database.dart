@@ -28,6 +28,8 @@ import 'daos/account_dao.dart';
 import 'daos/statistics_dao.dart';
 import 'daos/transaction_dao.dart';
 import 'daos/trash_dao.dart';
+import 'tables/exchange_rate_table.dart';
+import 'daos/exchange_rate_dao.dart';
 
 part 'app_database.g.dart';
 
@@ -53,8 +55,9 @@ part 'app_database.g.dart';
     Transactions,
     Budgets,
     SavingsGoals,
+    ExchangeRates,
   ],
-  daos: [AccountDao, TransactionDao, StatisticsDao, TrashDao],
+  daos: [AccountDao, TransactionDao, StatisticsDao, TrashDao, ExchangeRateDao],
 )
 class AppDatabase extends _$AppDatabase {
   /// Private constructor — use the [create] factory instead.
@@ -79,7 +82,7 @@ class AppDatabase extends _$AppDatabase {
 
   /// Bump this version whenever you add, modify, or remove tables.
   @override
-  int get schemaVersion => 5;
+  int get schemaVersion => 6;
 
   @override
   MigrationStrategy get migration {
@@ -171,6 +174,10 @@ class AppDatabase extends _$AppDatabase {
         }
         if (from < 5) {
           await m.addColumn(transactions, transactions.transferId);
+        }
+        if (from < 6) {
+          await m.createTable(exchangeRates);
+          await m.addColumn(transactions, transactions.exchangeRateSnapshot);
         }
       },
     );

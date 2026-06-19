@@ -15,4 +15,10 @@ abstract class IExchangeRateRepository {
   ///   an unexpected response.
   /// - [ValidationException] if [baseCurrency] is empty or invalid.
   Future<ExchangeRate> getLatestRates({required String baseCurrency});
+
+  /// Fetches the exchange rates from the local database if available.
+  Future<ExchangeRate?> getLocalRates({required String baseCurrency});
+
+  /// Fetches the latest rates from remote and saves them to the local database.
+  Future<void> syncRates({required String baseCurrency});
 }

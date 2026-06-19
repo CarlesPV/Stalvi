@@ -52,14 +52,15 @@ class TransactionDetailsDialog extends ConsumerWidget {
     final isOrigin = isTransfer && !transaction.id.endsWith('_dst');
     final isIncome =
         transaction.type == TransactionType.income || (isTransfer && !isOrigin);
-    final amountDouble =
-        (isIncome ? transaction.amount : -transaction.amount) / 100.0;
+    final amountDouble = isTransfer
+        ? transaction.amount.abs() / 100.0
+        : (isIncome ? transaction.amount : -transaction.amount) / 100.0;
 
     final formatter = ref.watch(currencyFormatterProvider);
     final amountStr = formatter.format(
       amountDouble,
       currencyCode: transaction.originalCurrency,
-      showSign: true,
+      showSign: !isTransfer,
     );
 
     final color = isTransfer

@@ -311,4 +311,63 @@ void main() {
         await dao.getPeriodSummary(DateTime(2023, 1, 1), DateTime(2023, 1, 31));
     expect(result.$1, 1000); // Only t_active is counted
   });
+
+  test(
+      'getPeriodSummary uses convertedAmount when accountId is null, and amount when not null',
+      () async {
+    final now = DateTime.now();
+    await database.into(database.profiles).insert(
+          ProfilesCompanion.insert(
+            id: 'profile3',
+            name: 'Test3',
+            username: 'test3',
+            password: '',
+            createdAt: now,
+            modifiedAt: now,
+          ),
+        );
+
+    await database.into(database.accounts).insert(
+          AccountsCompanion.insert(
+            id: 'acc3',
+            userId: 'profile3',
+            name: 'Account 3',
+            type: AccountType.cash,
+            initialBalance: 0,
+            currency: 'USD',
+            color: 'blue',
+            icon: 'icon',
+            isDefault: const drift.Value(true),
+            createdAt: now,
+            modifiedAt: now,
+          ),
+        );
+
+    await database.into(database.transactions).insert(
+          TransactionsCompanion.insert(
+            id: 't_converted',
+            amount: 1000, // 10 USD
+            convertedAmount: const drift.Value(900), // 9 EUR
+            date: DateTime(2023, 1, 10),
+            type: TransactionType.income,
+            accountId: 'acc3',
+            originalCurrency: 'USD',
+            createdAt: now,
+            modifiedAt: now,
+          ),
+        );
+
+    // Act - all accounts (accountId is null)
+    final resultAll =
+        await dao.getPeriodSummary(DateTime(2023, 1, 1), DateTime(2023, 1, 31));
+
+    // Act - specific account
+    final resultSpecific = await dao.getPeriodSummary(
+        DateTime(2023, 1, 1), DateTime(2023, 1, 31),
+        accountId: 'acc3');
+
+    // Assert
+    expect(resultAll.$1, 900); // Should use convertedAmount
+    expect(resultSpecific.$1, 1000); // Should use original amount
+  });
 }

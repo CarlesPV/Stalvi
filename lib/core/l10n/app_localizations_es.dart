@@ -84,10 +84,13 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get authVerifyMessage =>
-      'Use la biometría o el PIN de su dispositivo para continuar.';
+      'Use la biometría o el PIN de su dispositivo para continuar';
 
   @override
   String get authVerifying => 'Verificando…';
+
+  @override
+  String get authProcessing => 'Procesando autenticación de seguridad…';
 
   @override
   String get authAuthenticate => 'Autenticar';

@@ -241,7 +241,7 @@ abstract class AppLocalizations {
   /// Prompt description to verify identity
   ///
   /// In en, this message translates to:
-  /// **'Use biometrics or your device PIN to continue.'**
+  /// **'Use biometrics or your device PIN to continue'**
   String get authVerifyMessage;
 
   /// Button label during verification state
@@ -249,6 +249,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Verifying…'**
   String get authVerifying;
+
+  /// Loading message when processing security authentication
+  ///
+  /// In en, this message translates to:
+  /// **'Processing security authentication…'**
+  String get authProcessing;
 
   /// Button label to trigger biometric authentication
   ///

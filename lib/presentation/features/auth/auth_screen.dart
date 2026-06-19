@@ -3,9 +3,11 @@ import 'dart:ui';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:stalvi/core/errors/app_exceptions.dart';
 import 'package:stalvi/core/l10n/app_localizations.dart';
 import 'package:stalvi/presentation/features/dashboard/dashboard_screen.dart';
 import 'package:stalvi/presentation/features/auth/biometric_opt_in_screen.dart';
+import 'package:stalvi/infrastructure/services/biometric_auth_service.dart';
 import 'package:stalvi/presentation/providers/auth_notifier.dart';
 import 'package:stalvi/presentation/providers/locale_provider.dart';
 import 'package:stalvi/presentation/widgets/terms_and_conditions_viewer.dart';
@@ -180,8 +182,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
                     child: authState.when(
                       loading: () => const _SpinnerContent(),
                       error: (err, _) {
-                        final errorText =
-                            err is String ? err : l10n.unexpectedError;
+                        final errorText = _getLocalizedAuthError(context, err);
                         // Determine where the error came from
                         final status = authState.valueOrNull;
                         if (status == AuthStatus.setupRequired ||
@@ -254,6 +255,55 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
         ),
       ),
     );
+  }
+
+  String _getLocalizedAuthError(BuildContext context, Object error) {
+    final l10n = AppLocalizations.of(context)!;
+    final String errorStr;
+    if (error is AppException) {
+      errorStr = error.message;
+    } else {
+      errorStr = error.toString();
+    }
+
+    if (errorStr.contains('between 4 and 8')) {
+      return l10n.authSetupValidationErrorPinLength;
+    }
+    if (errorStr.contains('only numeric digits') ||
+        errorStr.contains('digits only') ||
+        errorStr.contains('digits-only') ||
+        errorStr.contains('pin_not_numeric')) {
+      return l10n.errorPinNotNumeric;
+    }
+    if (errorStr.contains('do not match') || errorStr.contains('match')) {
+      return l10n.authSetupValidationErrorPinMatch;
+    }
+    if (errorStr.contains('accept the Terms') ||
+        errorStr.contains('accept Terms') ||
+        errorStr.contains('accept_terms')) {
+      return l10n.authSetupValidationErrorTerms;
+    }
+    if (errorStr.contains('enter a name') ||
+        errorStr.contains('Name cannot be empty') ||
+        errorStr.contains('name_empty')) {
+      return l10n.authSetupValidationErrorName;
+    }
+    if (errorStr.contains('enter a username') ||
+        errorStr.contains('Username cannot be empty') ||
+        errorStr.contains('username_empty')) {
+      return l10n.authSetupValidationErrorUsername;
+    }
+    if (errorStr.contains('Incorrect PIN.')) {
+      final remaining =
+          ref.read(authNotifierProvider.notifier).remainingPinAttempts;
+      return '${l10n.authPinIncorrect}\n${l10n.authPinAttemptsRemaining(remaining)}';
+    }
+    if (errorStr.contains('Maximum PIN attempts') ||
+        errorStr.contains('attempts reached') ||
+        errorStr.contains('maximum_pin_attempts')) {
+      return l10n.errorMaxPinAttempts;
+    }
+    return errorStr;
   }
 
   // ─── Profile Setup Form View ───────────────────────────────────────────────
@@ -460,7 +510,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
                 return l10n.authSetupValidationErrorPinLength;
               }
               if (int.tryParse(val) == null) {
-                return 'PIN must contain digits only';
+                return l10n.errorPinNotNumeric;
               }
               return null;
             },
@@ -689,9 +739,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
               borderRadius: BorderRadius.circular(8),
             ),
             child: Text(
-              error == 'Incorrect PIN.'
-                  ? '${l10n.authPinIncorrect}\n${l10n.authPinAttemptsRemaining(ref.read(authNotifierProvider.notifier).remainingPinAttempts)}'
-                  : error,
+              error,
               style:
                   theme.textTheme.bodySmall?.copyWith(color: colorScheme.error),
               textAlign: TextAlign.center,
@@ -772,9 +820,38 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
                 size: 36,
                 color: colorScheme.primary,
               ),
-              onPressed: () {
+              onPressed: () async {
                 ref.read(authNotifierProvider.notifier).resetStatus();
-                ref.read(authNotifierProvider.notifier).authenticate();
+                final biometricService = ref.read(biometricAuthServiceProvider);
+                final isEnabled = await biometricService.isBiometricsEnabled();
+                if (!isEnabled) {
+                  if (!mounted) return;
+                  final l10n = AppLocalizations.of(context)!;
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: Text(l10n.authBiometricOptInTitle),
+                      content: Text(l10n.authBiometricOptInSubtitle),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          child: Text(l10n.authBiometricOptInSkip),
+                        ),
+                        FilledButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                            ref
+                                .read(authNotifierProvider.notifier)
+                                .enableBiometricsOptIn();
+                          },
+                          child: Text(l10n.authBiometricOptInEnable),
+                        ),
+                      ],
+                    ),
+                  );
+                } else {
+                  ref.read(authNotifierProvider.notifier).authenticate();
+                }
               },
             ),
           ),
@@ -947,6 +1024,7 @@ class _SpinnerContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final colorScheme = Theme.of(context).colorScheme;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 24),
@@ -963,7 +1041,7 @@ class _SpinnerContent extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Text(
-            'Processing security authentication…',
+            l10n.authProcessing,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: colorScheme.onSurfaceVariant,
                 ),

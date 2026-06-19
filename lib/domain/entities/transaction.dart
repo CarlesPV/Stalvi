@@ -12,6 +12,7 @@ class Transaction {
   final String originalCurrency;
   final int? convertedAmount;
   final double? exchangeRate;
+  final String? exchangeRateSnapshot;
   final DateTime createdAt;
   final DateTime modifiedAt;
 
@@ -35,6 +36,7 @@ class Transaction {
     required this.originalCurrency,
     this.convertedAmount,
     this.exchangeRate,
+    this.exchangeRateSnapshot,
     required this.createdAt,
     required this.modifiedAt,
     this.transferId,
@@ -55,6 +57,7 @@ class Transaction {
         other.originalCurrency == originalCurrency &&
         other.convertedAmount == convertedAmount &&
         other.exchangeRate == exchangeRate &&
+        other.exchangeRateSnapshot == exchangeRateSnapshot &&
         other.createdAt == createdAt &&
         other.modifiedAt == modifiedAt &&
         other.transferId == transferId;
@@ -72,6 +75,7 @@ class Transaction {
         originalCurrency.hashCode ^
         convertedAmount.hashCode ^
         exchangeRate.hashCode ^
+        exchangeRateSnapshot.hashCode ^
         createdAt.hashCode ^
         modifiedAt.hashCode ^
         transferId.hashCode;
@@ -88,6 +92,7 @@ class Transaction {
     String? originalCurrency,
     int? convertedAmount,
     double? exchangeRate,
+    String? exchangeRateSnapshot,
     DateTime? createdAt,
     DateTime? modifiedAt,
     String? transferId,
@@ -104,6 +109,7 @@ class Transaction {
       originalCurrency: originalCurrency ?? this.originalCurrency,
       convertedAmount: convertedAmount ?? this.convertedAmount,
       exchangeRate: exchangeRate ?? this.exchangeRate,
+      exchangeRateSnapshot: exchangeRateSnapshot ?? this.exchangeRateSnapshot,
       createdAt: createdAt ?? this.createdAt,
       modifiedAt: modifiedAt ?? this.modifiedAt,
       transferId: clearTransferId ? null : (transferId ?? this.transferId),

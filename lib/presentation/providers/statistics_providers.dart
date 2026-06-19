@@ -232,3 +232,17 @@ final topIncomeCategoriesProvider =
     accountId: filter.accountId,
   );
 });
+
+/// Computes the currency code to use for displaying statistics.
+/// Returns the selected account's currency, or the user's default currency if "All Accounts" is selected.
+final statisticsCurrencyProvider = Provider.autoDispose<String>((ref) {
+  final filter = ref.watch(statisticsFilterProvider);
+  if (filter.accountId != null) {
+    final accounts = ref.watch(accountsListProvider).valueOrNull ?? [];
+    try {
+      return accounts.firstWhere((a) => a.id == filter.accountId).currency;
+    } catch (_) {}
+  }
+  final profile = ref.watch(defaultProfileProvider).valueOrNull;
+  return profile?.defaultCurrency ?? 'EUR';
+});

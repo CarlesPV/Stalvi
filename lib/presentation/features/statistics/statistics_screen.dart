@@ -531,9 +531,11 @@ class _NetBalanceCard extends ConsumerWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  ref
-                      .watch(currencyFormatterProvider)
-                      .format(net.abs(), showSign: false),
+                  ref.watch(currencyFormatterProvider).format(
+                        net.abs(),
+                        currencyCode: ref.watch(statisticsCurrencyProvider),
+                        showSign: false,
+                      ),
                   style: theme.textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.w800,
                     color: accentColor,
@@ -617,7 +619,10 @@ class _SummaryCard extends ConsumerWidget {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  ref.watch(currencyFormatterProvider).format(amount),
+                  ref.watch(currencyFormatterProvider).format(
+                        amount,
+                        currencyCode: ref.watch(statisticsCurrencyProvider),
+                      ),
                   style: theme.textTheme.titleSmall?.copyWith(
                     fontWeight: FontWeight.w800,
                     color: accentColor,
@@ -967,9 +972,11 @@ class _PieChartWithLegend extends ConsumerWidget {
                       ),
                       const SizedBox(width: 12),
                       Text(
-                        ref
-                            .watch(currencyFormatterProvider)
-                            .format(cat.totalAmount / 100.0),
+                        ref.watch(currencyFormatterProvider).format(
+                              cat.totalAmount / 100.0,
+                              currencyCode:
+                                  ref.watch(statisticsCurrencyProvider),
+                            ),
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: catColor,
                           fontWeight: FontWeight.w700,
@@ -1004,9 +1011,10 @@ class _PieChartWithLegend extends ConsumerWidget {
                   ),
                 ),
                 Text(
-                  ref
-                      .watch(currencyFormatterProvider)
-                      .format(otherTotal / 100.0),
+                  ref.watch(currencyFormatterProvider).format(
+                        otherTotal / 100.0,
+                        currencyCode: ref.watch(statisticsCurrencyProvider),
+                      ),
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: colorScheme.onSurfaceVariant,
                     fontWeight: FontWeight.w600,
@@ -1085,9 +1093,10 @@ class _TouchedCategoryInfo extends ConsumerWidget {
             ),
             const SizedBox(width: 8),
             Text(
-              ref
-                  .watch(currencyFormatterProvider)
-                  .format(category.totalAmount / 100.0),
+              ref.watch(currencyFormatterProvider).format(
+                    category.totalAmount / 100.0,
+                    currencyCode: ref.watch(statisticsCurrencyProvider),
+                  ),
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: catColor,
                 fontWeight: FontWeight.w700,

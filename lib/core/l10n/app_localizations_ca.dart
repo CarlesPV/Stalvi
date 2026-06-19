@@ -85,10 +85,13 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get authVerifyMessage =>
-      'Utilitzeu la biometria o el PIN del dispositiu per continuar.';
+      'Utilitzeu la biometria o el PIN del dispositiu per continuar';
 
   @override
   String get authVerifying => 'Verificant…';
+
+  @override
+  String get authProcessing => 'Processant l\'autenticació de seguretat…';
 
   @override
   String get authAuthenticate => 'Autenticar';

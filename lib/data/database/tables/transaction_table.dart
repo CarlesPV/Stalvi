@@ -24,6 +24,8 @@ class Transactions extends Table {
   IntColumn get convertedAmount =>
       integer().named('converted_amount').nullable()();
   RealColumn get exchangeRate => real().named('exchange_rate').nullable()();
+  TextColumn get exchangeRateSnapshot =>
+      text().named('exchange_rate_snapshot').nullable()();
   DateTimeColumn get createdAt => dateTime().named('created_at')();
   DateTimeColumn get modifiedAt => dateTime().named('modified_at')();
   BoolColumn get isDeleted =>

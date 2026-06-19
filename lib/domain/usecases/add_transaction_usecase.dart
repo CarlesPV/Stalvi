@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:stalvi/core/errors/app_exceptions.dart';
 import 'package:stalvi/domain/entities/transaction.dart';
 import 'package:stalvi/domain/entities/transaction_type.dart';
@@ -137,6 +138,7 @@ class AddTransactionUseCase {
 
     int? convertedAmount;
     double? exchangeRate;
+    String? exchangeRateSnapshot;
     final String originalCurrency = params.currency ?? account.currency;
 
     if (originalCurrency != profile.defaultCurrency) {
@@ -152,6 +154,7 @@ class AddTransactionUseCase {
           );
         }
         convertedAmount = (params.amount / exchangeRate).round();
+        exchangeRateSnapshot = jsonEncode(rateSnapshot.toJson());
       } on AppException {
         rethrow;
       } catch (e) {
@@ -188,6 +191,7 @@ class AddTransactionUseCase {
         originalCurrency: originalCurrency,
         convertedAmount: convertedAmount,
         exchangeRate: exchangeRate,
+        exchangeRateSnapshot: exchangeRateSnapshot,
         createdAt: now,
         modifiedAt: now,
         transferId: transferId,
@@ -204,6 +208,7 @@ class AddTransactionUseCase {
         originalCurrency: originalCurrency,
         convertedAmount: convertedAmount,
         exchangeRate: exchangeRate,
+        exchangeRateSnapshot: exchangeRateSnapshot,
         createdAt: now,
         modifiedAt: now,
         transferId: transferId,
@@ -228,6 +233,7 @@ class AddTransactionUseCase {
       originalCurrency: originalCurrency,
       convertedAmount: convertedAmount,
       exchangeRate: exchangeRate,
+      exchangeRateSnapshot: exchangeRateSnapshot,
       createdAt: now,
       modifiedAt: now,
     );

@@ -66,4 +66,22 @@ class ExchangeRate {
     }
     return true;
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'baseCurrency': baseCurrency,
+      'date': date.toIso8601String(),
+      'rates': rates,
+    };
+  }
+
+  factory ExchangeRate.fromJson(Map<String, dynamic> json) {
+    return ExchangeRate(
+      baseCurrency: json['baseCurrency'] as String,
+      date: DateTime.parse(json['date'] as String),
+      rates: (json['rates'] as Map<String, dynamic>).map(
+        (key, value) => MapEntry(key, (value as num).toDouble()),
+      ),
+    );
+  }
 }

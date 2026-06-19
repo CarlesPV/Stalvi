@@ -7,10 +7,14 @@ import 'package:stalvi/core/security/secure_storage_manager.dart';
 import 'package:stalvi/domain/entities/profile.dart';
 import 'package:stalvi/domain/repositories/i_profile_repository.dart';
 import 'package:stalvi/domain/usecases/create_profile_usecase.dart';
+import 'package:stalvi/domain/usecases/initialize_default_data_usecase.dart';
 
 class MockProfileRepository extends Mock implements IProfileRepository {}
 
 class MockSecureStorageManager extends Mock implements SecureStorageManager {}
+
+class MockInitializeDefaultDataUseCase extends Mock
+    implements InitializeDefaultDataUseCase {}
 
 class FakeProfile extends Fake implements Profile {}
 
@@ -18,6 +22,7 @@ void main() {
   late CreateProfileUseCase usecase;
   late MockProfileRepository mockProfileRepository;
   late MockSecureStorageManager mockSecureStorageManager;
+  late MockInitializeDefaultDataUseCase mockInitializeDefaultDataUseCase;
 
   setUpAll(() {
     registerFallbackValue(FakeProfile());
@@ -26,8 +31,12 @@ void main() {
   setUp(() {
     mockProfileRepository = MockProfileRepository();
     mockSecureStorageManager = MockSecureStorageManager();
-    usecase =
-        CreateProfileUseCase(mockProfileRepository, mockSecureStorageManager);
+    mockInitializeDefaultDataUseCase = MockInitializeDefaultDataUseCase();
+    usecase = CreateProfileUseCase(
+      mockProfileRepository,
+      mockSecureStorageManager,
+      mockInitializeDefaultDataUseCase,
+    );
   });
 
   const defaultParams = CreateProfileParams(
@@ -62,6 +71,13 @@ void main() {
       when(() => mockProfileRepository.createProfile(any())).thenAnswer(
         (invocation) async => invocation.positionalArguments[0] as Profile,
       );
+      when(
+        () => mockInitializeDefaultDataUseCase.execute(
+          userId: any(named: 'userId'),
+          currency: any(named: 'currency'),
+          locale: any(named: 'locale'),
+        ),
+      ).thenAnswer((_) async {});
 
       // Act
       final result = await usecase.execute(defaultParams);
@@ -107,6 +123,13 @@ void main() {
       when(() => mockProfileRepository.updateProfile(any())).thenAnswer(
         (invocation) async => invocation.positionalArguments[0] as Profile,
       );
+      when(
+        () => mockInitializeDefaultDataUseCase.execute(
+          userId: any(named: 'userId'),
+          currency: any(named: 'currency'),
+          locale: any(named: 'locale'),
+        ),
+      ).thenAnswer((_) async {});
 
       // Act
       final result = await usecase.execute(defaultParams);

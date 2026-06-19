@@ -8,6 +8,10 @@ import 'package:stalvi/domain/repositories/i_profile_repository.dart';
 import 'package:stalvi/domain/usecases/update_credentials_usecase.dart';
 import 'package:stalvi/presentation/features/settings/profile_settings_screen.dart';
 import 'package:stalvi/presentation/providers/repository_providers.dart';
+import 'package:mocktail/mocktail.dart';
+import 'package:stalvi/infrastructure/services/biometric_auth_service.dart';
+
+class MockBiometricAuthService extends Mock implements BiometricAuthService {}
 
 class FakeProfileRepository implements IProfileRepository {
   @override
@@ -146,5 +150,78 @@ void main() {
 
     // Verify success snackbar
     expect(find.text('PIN updated successfully.'), findsWidgets);
+  });
+
+  testWidgets(
+      'fallback to PIN if biometrics fails or is cancelled when deleting all data',
+      (WidgetTester tester) async {
+    fakeUpdateCredentialsUseCase.shouldFailVerify = false;
+
+    final mockBiometricAuth = MockBiometricAuthService();
+    when(() => mockBiometricAuth.isBiometricsEnabled())
+        .thenAnswer((_) async => true);
+    when(() => mockBiometricAuth.isBiometricAvailable())
+        .thenAnswer((_) async => true);
+    when(
+      () => mockBiometricAuth.authenticate(
+        localizedReason: any(named: 'localizedReason'),
+        lockedOutMessage: any(named: 'lockedOutMessage'),
+        authFailedMessage: any(named: 'authFailedMessage'),
+        unknownErrorMessage: any(named: 'unknownErrorMessage'),
+        signInTitle: any(named: 'signInTitle'),
+        cancelButton: any(named: 'cancelButton'),
+      ),
+    ).thenAnswer((_) async => false);
+
+    tester.view.physicalSize = const Size(1080, 2400);
+    tester.view.devicePixelRatio = 3.0;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          profileRepositoryProvider.overrideWithValue(fakeProfileRepository),
+          updateCredentialsUseCaseProvider
+              .overrideWithValue(fakeUpdateCredentialsUseCase),
+          biometricAuthServiceProvider.overrideWithValue(mockBiometricAuth),
+        ],
+        child: const MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: ProfileSettingsScreen(),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    // Open change PIN bottom sheet (actually we tap Delete All Data)
+    final deleteButton = find.text('Delete All Data');
+    try {
+      await tester.scrollUntilVisible(deleteButton, 200,
+          scrollable: find.byType(Scrollable));
+    } catch (_) {
+      // In case scrollUntilVisible fails, drag manually
+      await tester.drag(find.byType(ListView), const Offset(0, -1000));
+      await tester.pumpAndSettle();
+    }
+    await tester.tap(deleteButton);
+    await tester.pumpAndSettle();
+
+    // Biometrics should be called
+    verify(
+      () => mockBiometricAuth.authenticate(
+        localizedReason: any(named: 'localizedReason'),
+        lockedOutMessage: any(named: 'lockedOutMessage'),
+        authFailedMessage: any(named: 'authFailedMessage'),
+        unknownErrorMessage: any(named: 'unknownErrorMessage'),
+        signInTitle: any(named: 'signInTitle'),
+        cancelButton: any(named: 'cancelButton'),
+      ),
+    ).called(1);
+
+    // PIN bottom sheet should be shown
+    expect(find.text('Use biometrics or your device PIN to continue.'),
+        findsWidgets);
   });
 }

@@ -92,7 +92,11 @@ final statisticsRepositoryProvider = Provider<IStatisticsRepository>((ref) {
 final exchangeRateRepositoryProvider = Provider<IExchangeRateRepository>((ref) {
   final client = http.Client();
   final remoteDataSource = ExchangeRateRemoteDataSourceImpl(httpClient: client);
-  return ExchangeRateRepository(remoteDataSource: remoteDataSource);
+  final db = ref.watch(appDatabaseProvider).requireValue;
+  return ExchangeRateRepository(
+    remoteDataSource: remoteDataSource,
+    exchangeRateDao: db.exchangeRateDao,
+  );
 });
 
 /// Provides the [AddTransactionUseCase] instance.
@@ -113,7 +117,8 @@ final addTransactionUseCaseProvider = Provider<AddTransactionUseCase>((ref) {
 final createProfileUseCaseProvider = Provider<CreateProfileUseCase>((ref) {
   final profileRepo = ref.watch(profileRepositoryProvider);
   final secureStorage = ref.watch(secureStorageProvider);
-  return CreateProfileUseCase(profileRepo, secureStorage);
+  final initDefaultData = ref.watch(initializeDefaultDataUseCaseProvider);
+  return CreateProfileUseCase(profileRepo, secureStorage, initDefaultData);
 });
 
 /// Provides the [InitializeDefaultDataUseCase] instance.

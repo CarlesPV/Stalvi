@@ -968,18 +968,19 @@ class _TransactionItem extends ConsumerWidget {
     final colorScheme = theme.colorScheme;
     final financialColors = context.financialColors;
 
-    final isOrigin = transaction.type == TransactionType.transfer &&
-        !transaction.id.endsWith('_dst');
-    final isIncome = transaction.type == TransactionType.income ||
-        (transaction.type == TransactionType.transfer && !isOrigin);
-    final amountDouble =
-        (isIncome ? transaction.amount : -transaction.amount) / 100.0;
+    final isTransfer = transaction.type == TransactionType.transfer;
+    final isOrigin = isTransfer && !transaction.id.endsWith('_dst');
+    final isIncome =
+        transaction.type == TransactionType.income || (isTransfer && !isOrigin);
+    final amountDouble = isTransfer
+        ? transaction.amount.abs() / 100.0
+        : (isIncome ? transaction.amount : -transaction.amount) / 100.0;
 
     final formatter = ref.watch(currencyFormatterProvider);
     final amountStr = formatter.format(
       amountDouble,
       currencyCode: transaction.originalCurrency,
-      showSign: true,
+      showSign: !isTransfer,
     );
     final color =
         isIncome ? financialColors.positive : financialColors.negative;

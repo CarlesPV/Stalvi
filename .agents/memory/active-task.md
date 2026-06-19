@@ -1,26 +1,37 @@
-# Active Task: Phase 21 - Transfer Flow Polish, Recycle Bin Refinements & Validation
+# Active Task: Phase 22 - Multi-Currency Snapshot, Auth Fallbacks & i18n Completeness
 
 ## Current Status
-- All E2E bugs, transfer details lookup failures, and recycle bin localization issues have been resolved.
-- Full automated test suite (352 tests) and static analysis pass cleanly.
-- Documentation, roadmap, and resolved issues logs have been updated.
+- **Phase:** 22
+- **State:** Completed
+- **Primary Focus:** Implement historical exchange rate snapshots per transaction, background sync for exchange rates, resolve biometric/PIN fallback logic, and complete full i18n coverage.
 
-## Completed Objectives
-1. **Empty Note Default**: Cleared note field default value on transfer creation forms to start empty.
-2. **Transfer Deduplication**: Paired transfers are deduplicated in global lists but display correctly for both accounts under filters.
-3. **Transaction Details Lookup**: Created `watchRawTransactions()` and `rawTransactionsStreamProvider` to search both legs of a transfer, allowing the details modal to show the origin and destination accounts correctly.
-4. **Recycle Bin Operations & i18n**:
-   - Disabled bulk "delete all/empty sweep" to avoid accidental deletions.
-   - Added metadata tracking to `TrashItem` (`amount`, `txType`, `currency`) in `TrashDao`.
-   - Updated Recycle Bin list tiles to dynamically render items formatted as `<Note/Type> - <Amount>` using localized translations.
-   - Ensured deleting a transfer places exactly 1 item in the Recycle Bin.
-   - Wired Recycle Bin provider to `autoDispose` for automatic refresh on entry.
-5. **Icon & Balance Synchronization**:
-   - Standardized transfer icons on the dashboard.
-   - Ensured trashing, restoring, or hard-deleting transactions (including mirrored transfers) properly reverts or re-applies account balances for both accounts.
-6. **UI Overflow Sweep**: Audited all screen layouts to ensure no overflows or truncated ellipsis ("...") occur under dynamic screens.
+## Objectives
+1. **Multi-Currency Immutability:**
+   - `[x]` Update `Transaction` entity and `transaction_table` in Drift to store a snapshot of current exchange rates at creation time.
+   - `[x]` Implement 24h background sync for exchange rates upon app opening (silent update).
+2. **Account Initialization:**
+   - `[x]` Modify initial profile setup to generate default account as "Mi Cartera" (localized) with 0 balance in the user's default currency.
+   - `[x]` Ensure default currency changes in settings reflect instantly across the app state.
+3. **UI & Data Presentation:**
+   - `[x]` Remove positive/negative symbols (+/-) from Transfer transactions.
+   - `[x]` Format Statistics based on Account currency or Default currency (if "All" is selected).
+4. **Security & Auth UX:**
+   - `[x]` Fix "Delete All Data" fallback: allow PIN authentication if biometrics are enabled but fail/cancelled.
+   - `[x]` Add biometric opt-in prompt on the unlock screen if not previously activated.
+5. **Localization (i18n):**
+   - `[x]` Translate all missing loading, error, and feedback states into English, Spanish, and Catalan (`.arb` files).
 
-## Architectural Guidelines
-- **Clean Architecture:** Pass parameters to the Domain layer and use repository/use-case bounds for transactions logic.
-- **Unfiltered Streams:** Use raw unfiltered streams for detail dialog queries to verify related entity pairs (e.g. transfers), and filtered streams for general listings to prevent duplicate visibility.
-- **Reactivity:** Use Riverpod invalidations to force refresh state upon mutations.
+## Files in Scope
+- `lib/domain/entities/transaction.dart`
+- `lib/data/database/tables/transaction_table.dart`
+- `lib/presentation/providers/app_startup_provider.dart`
+- `lib/domain/usecases/create_profile_usecase.dart`
+- `lib/presentation/features/auth/auth_screen.dart`
+- `lib/presentation/features/settings/profile_settings_controller.dart`
+- `lib/core/l10n/app_*.arb`
+
+## Strict Guidelines
+- Maintain Clean Architecture and DRY principles.
+- Ensure all new database migrations handle SQLCipher encryption properly.
+- All operations must be covered by Unit Tests.
+- Do not output code to the chat; write directly to the file system.

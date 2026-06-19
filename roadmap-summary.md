@@ -319,6 +319,24 @@ This document lists the completed phases of the Stalvi development roadmap, prov
   - Run full suite of 352 unit and widget tests ensuring a 100% pass rate.
   - Static analysis (`flutter analyze`) returns 0 issues and 0 warnings.
 
+### Phase 22: Multi-Currency Snapshot, Auth Fallbacks & i18n Completeness
+* **Completion Date:** June 19, 2026
+* **Objective:** Implement historical exchange rate snapshots per transaction, add background synchronization of exchange rates, resolve fallback PIN authentication when biometric authentication fails or is cancelled in sensitive flows, and complete full internationalization (i18n) coverage.
+* **Accomplishments:**
+  - **Multi-Currency Snapshot & Sync:**
+    - Modified the `Transactions` table and entity to include `exchangeRateSnapshot` for storing exchange rates at transaction creation time.
+    - Implemented background synchronization (`SyncExchangeRatesUseCase`) running on app startup to keep currency exchange rates up-to-date in the database.
+  - **Auth & Onboarding UX:**
+    - Updated profile registration and startup flows to resolve localized wallet names ("My Wallet", "Mi cartera", "La meva cartera") dynamically.
+    - Refactored `AuthScreen` PIN fallback logic to allow entering the PIN if biometric authentication fails, is locked out, or is cancelled, ensuring users can delete all data or access sensitive areas securely.
+  - **100% Localization Coverage:**
+    - Conducted a comprehensive audit of missing UI states. Extracted and localized all loading, error, and progress feedback states across English, Spanish, and Catalan.
+    - Updated `AppLocalizations` definitions and regenerated l10n bindings cleanly.
+* **Verification:**
+  - Clean run of static analysis (`flutter analyze` with 0 issues).
+  - Executed the entire suite of 357 unit, integration, and widget tests, achieving a 100% success rate (all tests passed!).
+
+
 
 
 

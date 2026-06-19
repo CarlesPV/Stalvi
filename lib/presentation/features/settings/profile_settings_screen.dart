@@ -391,7 +391,9 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
           signInTitle: l10n.authSignInTitle,
           cancelButton: l10n.btnCancel,
         );
-        return didAuthenticate;
+        if (didAuthenticate) {
+          return true;
+        }
       } catch (_) {
         // Biometrics failed / cancelled — fall through to PIN.
       }

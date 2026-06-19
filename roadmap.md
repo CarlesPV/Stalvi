@@ -141,10 +141,19 @@
   - [x] Run full automated testing (352 tests) and static analysis to ensure 100% build health and lint correctness.
 
 ## Current Phase
-- [ ] **Phase 22: Synchronization, Backups, and Import/Export Validations**
+- [x] **Phase 22: Multi-Currency Snapshot, Auth Fallbacks & i18n Completeness**
+  - [x] Implement historical exchange rate snapshots per transaction, stored in the database.
+  - [x] Integrate background synchronization of exchange rates on application startup.
+  - [x] Refactor registration profile setup to utilize dynamic localized wallet names.
+  - [x] Resolve fallback PIN authentication when biometric authentication fails or is cancelled in sensitive flows.
+  - [x] Complete 100% internationalization (i18n) coverage for loading, error, and feedback states in English, Spanish, and Catalan.
+  - [x] Ensure all 357 unit/widget tests and static analysis pass cleanly.
+
+## Current Phase
+- [ ] **Phase 23: Synchronization, Backups, and Import/Export Validations**
   - [ ] Implement cloud synchronization options.
   - [ ] Add encrypted automatic local backup features.
   - [ ] Validate cross-platform imports/exports.
 
 ## Upcoming Phases
-- [ ] **Phase 23: Integration Testing (E2E), final security audit, and store preparation.**
+- [ ] **Phase 24: Integration Testing (E2E), final security audit, and store preparation.**

@@ -93,6 +93,7 @@ class ProfileSettingsController extends StateNotifier<ProfileSettingsState> {
         modifiedAt: DateTime.now(),
       );
       await repo.updateProfile(updatedProfile);
+      _ref.invalidate(defaultProfileProvider);
       state = state.copyWith(profile: updatedProfile, isLoading: false);
     } catch (e) {
       state = state.copyWith(isLoading: false, error: e.toString());

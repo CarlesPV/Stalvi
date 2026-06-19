@@ -6,6 +6,7 @@ import 'package:stalvi/core/errors/app_exceptions.dart';
 import 'package:stalvi/core/security/secure_storage_manager.dart';
 import 'package:stalvi/domain/entities/profile.dart';
 import 'package:stalvi/domain/repositories/i_profile_repository.dart';
+import 'package:stalvi/domain/usecases/initialize_default_data_usecase.dart';
 
 class CreateProfileParams {
   final String name;
@@ -28,8 +29,13 @@ class CreateProfileParams {
 class CreateProfileUseCase {
   final IProfileRepository _profileRepository;
   final SecureStorageManager _secureStorageManager;
+  final InitializeDefaultDataUseCase _initializeDefaultDataUseCase;
 
-  CreateProfileUseCase(this._profileRepository, this._secureStorageManager);
+  CreateProfileUseCase(
+    this._profileRepository,
+    this._secureStorageManager,
+    this._initializeDefaultDataUseCase,
+  );
 
   Future<Profile> execute(CreateProfileParams params) async {
     // 1. Terms acceptance check
@@ -99,6 +105,13 @@ class CreateProfileUseCase {
       );
       await _profileRepository.createProfile(profile);
     }
+
+    // 6. Initialize default data (account, categories, tags)
+    await _initializeDefaultDataUseCase.execute(
+      userId: profile.id,
+      currency: profile.defaultCurrency,
+      locale: params.locale,
+    );
 
     return profile;
   }

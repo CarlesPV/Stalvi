@@ -33,6 +33,7 @@ class FakeTransaction extends Fake implements Transaction {
     String? originalCurrency,
     int? convertedAmount,
     double? exchangeRate,
+    String? exchangeRateSnapshot,
     DateTime? createdAt,
     DateTime? modifiedAt,
     String? transferId,
