@@ -1,4 +1,4 @@
-import 'package:konta/domain/entities/exchange_rate.dart';
+import 'package:stalvi/domain/entities/exchange_rate.dart';
 
 /// Data Transfer Object (DTO) that mirrors the JSON response shape of the
 /// Frankfurter exchange rate API:

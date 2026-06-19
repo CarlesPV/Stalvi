@@ -1,19 +1,30 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:konta/core/utils/currency_formatter.dart';
+import 'package:stalvi/core/utils/currency_formatter.dart';
 
 void main() {
   group('CurrencyFormatter Tests', () {
-    test('format formats correctly', () {
-      final formatted = CurrencyFormatter.format(
+    test('format formats correctly with symbols', () {
+      final formatted = CurrencyFormatter().format(
         1234.56,
         locale: 'en_US',
         currencyCode: 'EUR',
       );
       expect(formatted, contains('1,234.56'));
+      expect(formatted, contains('€'));
+    });
+
+    test('formatWithCode formats correctly with ISO codes', () {
+      final formatted = CurrencyFormatter().formatWithCode(
+        1234.56,
+        locale: 'en_US',
+        currencyCode: 'EUR',
+      );
+      expect(formatted, contains('1,234.56'));
+      expect(formatted, contains('EUR'));
     });
 
     test('format with sign prepends plus sign for positive values', () {
-      final formatted = CurrencyFormatter.format(
+      final formatted = CurrencyFormatter().format(
         1234.56,
         locale: 'en_US',
         currencyCode: 'USD',
@@ -22,13 +33,14 @@ void main() {
       expect(formatted, startsWith('+'));
     });
 
-    test('format compact formats correctly', () {
-      final formatted = CurrencyFormatter.formatCompact(
+    test('format compact formats correctly with symbols', () {
+      final formatted = CurrencyFormatter().formatCompact(
         1200000,
         locale: 'en_US',
         currencyCode: 'USD',
       );
       expect(formatted, contains('1.2M'));
+      expect(formatted, contains('\$'));
     });
 
     test('tryParse parses currency strings correctly', () {

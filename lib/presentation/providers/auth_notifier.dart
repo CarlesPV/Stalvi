@@ -1,142 +1,459 @@
-import 'package:flutter/services.dart';
+import 'dart:async';
+import 'dart:convert';
+import 'package:crypto/crypto.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:local_auth/local_auth.dart';
-import 'package:local_auth/error_codes.dart' as auth_error;
+import 'package:stalvi/infrastructure/services/biometric_auth_service.dart';
 
-/// Describes the current biometric authentication status for this session.
-///
-/// The state machine is intentionally linear:
-/// ```
-/// AsyncLoading → unauthenticated → authenticating → authenticated
-///             ↘ unavailable (auto-proceed)
-///             ↘ lockedOut   (hard block — no bypass)
-/// ```
+import 'package:stalvi/domain/usecases/create_profile_usecase.dart';
+import 'package:stalvi/presentation/providers/locale_provider.dart';
+import 'package:stalvi/presentation/providers/repository_providers.dart';
+import 'package:stalvi/core/l10n/app_localizations.dart';
+
+/// Describes the current authentication status for this session.
 enum AuthStatus {
-  /// Biometrics are available and enrolled but not yet verified this session.
+  /// The user has not created a profile yet (first launch).
+  setupRequired,
+
+  /// Profile setup is currently being processed.
+  setupSubmitting,
+
+  /// User is in the post-registration biometric opt-in flow.
+  biometricOptIn,
+
+  /// User needs to authenticate (either via PIN or biometrics).
   unauthenticated,
 
-  /// A biometric prompt is actively being presented to the user.
+  /// PIN/biometric authentication is in progress.
   authenticating,
 
-  /// The user has been successfully authenticated this session.
+  /// User is successfully authenticated for the current session.
   authenticated,
 
-  /// The device has no biometric hardware or no biometrics are enrolled.
-  /// The application proceeds without biometric protection.
-  unavailable,
-
-  /// The biometric sensor is temporarily or permanently locked due to
-  /// repeated failures. The user must unlock their device to continue.
-  ///
-  /// **Security invariant**: This state is NEVER silently bypassed via [skip].
+  /// Biometric hardware is temporarily or permanently locked.
   lockedOut,
+
+  /// PIN was exhausted – a 30-second brute-force cooldown is running.
+  pinLockedOut,
 }
 
-/// [AsyncNotifier] that manages biometric authentication via [local_auth].
-///
-/// ---
-/// ### Platform setup required
-/// - **Android**: Add `USE_BIOMETRIC` and `USE_FINGERPRINT` permissions to
-///   `android/app/src/main/AndroidManifest.xml`.
-/// - **iOS**: Add `NSFaceIDUsageDescription` to `ios/Runner/Info.plist`.
-/// ---
-///
-/// ### Security invariants
-/// - [AuthStatus.lockedOut] cannot be bypassed — [skip] is a strict no-op.
-/// - All [PlatformException] error codes are handled explicitly.
-/// - Authentication state is NOT persisted; it resets on every cold start.
-class AuthNotifier extends AsyncNotifier<AuthStatus> {
-  late final LocalAuthentication _localAuth;
+/// Duration of the PIN brute-force lockout in seconds.
+const int kPinLockoutSeconds = 30;
 
-  /// Checks hardware & enrollment availability on first access.
+/// [AsyncNotifier] that manages PIN validation, profile setup, and biometric
+/// authentication, including brute-force protection with a 30-second cooldown.
+class AuthNotifier extends AsyncNotifier<AuthStatus> {
+  // ─── Public observable state ────────────────────────────────────────────────
+
+  /// Number of PIN attempts still allowed.  Starts at 5 and counts down.
+  int remainingPinAttempts = 5;
+
+  /// Seconds remaining in the current PIN lockout. 0 means no lockout.
+  int pinLockoutSecondsRemaining = 0;
+
+  // ─── Private state ──────────────────────────────────────────────────────────
+
+  Timer? _lockoutTimer;
+  int _lockoutStartEpochMs = 0;
+
+  // ─── Lifecycle ──────────────────────────────────────────────────────────────
+
   @override
   Future<AuthStatus> build() async {
-    _localAuth = LocalAuthentication();
+    // Cancel any running timer when the notifier is rebuilt/disposed.
+    ref.onDispose(() => _lockoutTimer?.cancel());
 
-    try {
-      final isSupported = await _localAuth.isDeviceSupported();
-      if (!isSupported) return AuthStatus.unavailable;
+    final secureStorage = ref.watch(secureStorageProvider);
 
-      final canCheck = await _localAuth.canCheckBiometrics;
-      if (!canCheck) return AuthStatus.unavailable;
-
-      final available = await _localAuth.getAvailableBiometrics();
-      if (available.isEmpty) return AuthStatus.unavailable;
-
-      return AuthStatus.unauthenticated;
-    } on PlatformException catch (e) {
-      if (e.code == auth_error.notAvailable ||
-          e.code == auth_error.notEnrolled ||
-          e.code == auth_error.passcodeNotSet) {
-        return AuthStatus.unavailable;
-      }
-      if (e.code == auth_error.lockedOut ||
-          e.code == auth_error.permanentlyLockedOut) {
-        return AuthStatus.lockedOut;
-      }
-      rethrow;
+    // Check if the user has already configured a PIN.
+    final hasPin = await secureStorage.hasPin();
+    if (!hasPin) {
+      return AuthStatus.setupRequired;
     }
+
+    // ── Restore persisted lockout (survives app restart) ─────────────────────
+    final storedTs = await secureStorage.getLockoutTimestamp();
+    if (storedTs != null) {
+      final elapsed = DateTime.now().millisecondsSinceEpoch - storedTs;
+      final elapsedSeconds = elapsed ~/ 1000;
+      if (elapsedSeconds < kPinLockoutSeconds) {
+        // Lockout is still active – resume the countdown.
+        _lockoutStartEpochMs = storedTs;
+        remainingPinAttempts = 0;
+        pinLockoutSecondsRemaining = kPinLockoutSeconds - elapsedSeconds;
+        Future.microtask(_startLockoutCountdown);
+        return AuthStatus.pinLockedOut;
+      } else {
+        // Lockout already expired while the app was closed – grant 1 attempt
+        // for this cycle. A wrong entry will trigger a fresh 30 s lockout.
+        await secureStorage.deleteLockoutTimestamp();
+        remainingPinAttempts = 1;
+        return AuthStatus.unauthenticated;
+      }
+    }
+
+    // ── Biometric auto-login ─────────────────────────────────────────────────
+    final biometricService = ref.read(biometricAuthServiceProvider);
+    final isEnabled = await biometricService.isBiometricsEnabled();
+    final isAvailable = await biometricService.isBiometricAvailable();
+
+    if (isEnabled && isAvailable) {
+      Future.microtask(() => _authenticateOnStartup());
+      return AuthStatus.authenticating;
+    }
+
+    return AuthStatus.unauthenticated;
   }
 
-  /// Presents the native biometric/device-credential prompt.
-  ///
-  /// State transitions:
-  /// - → [AsyncValue.loading] while the prompt is active
-  /// - → [AsyncData(authenticated)] on success
-  /// - → [AsyncData(unauthenticated)] if the user dismisses without verifying
-  /// - → [AsyncData(lockedOut)] on hardware lockout
-  /// - → [AsyncValue.error] on unexpected platform errors
+  // ─── Public API ─────────────────────────────────────────────────────────────
+
+  /// Checks if biometric authentication is supported and enrolled on the device.
+  Future<bool> isBiometricAvailable() async {
+    final biometricService = ref.read(biometricAuthServiceProvider);
+    return biometricService.isBiometricAvailable();
+  }
+
+  /// Prompts the user to enable biometrics right after PIN setup.
+  Future<bool> promptBiometricSetup() async {
+    final biometricService = ref.read(biometricAuthServiceProvider);
+
+    final isAvailable = await biometricService.isBiometricAvailable();
+    if (!isAvailable) {
+      return false;
+    }
+
+    try {
+      final locale = ref.read(localeProvider);
+      final l10n = lookupAppLocalizations(locale);
+      final authenticated = await biometricService.authenticate(
+        localizedReason: l10n.authVerifyMessage,
+        lockedOutMessage: l10n.authLockedTitle,
+        authFailedMessage: l10n.authError,
+        unknownErrorMessage: l10n.unexpectedError,
+        signInTitle: l10n.authSignInTitle,
+        cancelButton: l10n.btnCancel,
+      );
+
+      if (authenticated) {
+        await biometricService.enableBiometrics();
+        return true;
+      }
+    } on BiometricLockedOutException {
+      state = const AsyncValue.data(AuthStatus.lockedOut);
+    } catch (_) {
+      // Ignore other errors and fallback to PIN
+    }
+    return false;
+  }
+
+  /// Presents the native biometric prompt to authenticate the user.
   Future<void> authenticate() async {
     final currentStatus = state.valueOrNull;
 
-    // Guard: skip if already in a terminal or in-progress state.
     if (currentStatus == AuthStatus.authenticated ||
-        currentStatus == AuthStatus.unavailable ||
         currentStatus == AuthStatus.lockedOut ||
-        currentStatus == AuthStatus.authenticating) {
+        currentStatus == AuthStatus.setupRequired ||
+        currentStatus == AuthStatus.pinLockedOut ||
+        state.isLoading) {
       return;
     }
 
     state = const AsyncValue.loading();
 
     try {
-      final didAuthenticate = await _localAuth.authenticate(
-        localizedReason: 'Access your Konta financial data securely',
-        options: const AuthenticationOptions(
-          // Allow PIN/password as fallback so the user is never fully blocked.
-          biometricOnly: false,
-          stickyAuth: true,
-        ),
+      final biometricService = ref.read(biometricAuthServiceProvider);
+
+      final isEnabled = await biometricService.isBiometricsEnabled();
+      if (!isEnabled) {
+        state = const AsyncValue.data(AuthStatus.unauthenticated);
+        return;
+      }
+
+      final locale = ref.read(localeProvider);
+      final l10n = lookupAppLocalizations(locale);
+      final didAuthenticate = await biometricService.authenticate(
+        localizedReason: l10n.authVerifyMessage,
+        lockedOutMessage: l10n.authLockedTitle,
+        authFailedMessage: l10n.authError,
+        unknownErrorMessage: l10n.unexpectedError,
+        signInTitle: l10n.authSignInTitle,
+        cancelButton: l10n.btnCancel,
       );
 
       state = AsyncValue.data(
         didAuthenticate ? AuthStatus.authenticated : AuthStatus.unauthenticated,
       );
-    } on PlatformException catch (e, st) {
-      if (e.code == auth_error.lockedOut ||
-          e.code == auth_error.permanentlyLockedOut) {
-        // Honour hardware lockout — never convert to authenticated.
-        state = const AsyncValue.data(AuthStatus.lockedOut);
-      } else {
-        state = AsyncValue.error(
-          e.message ?? 'Authentication failed. Please try again.',
-          st,
-        );
-      }
+    } on BiometricLockedOutException {
+      state = const AsyncValue.data(AuthStatus.lockedOut);
     } catch (e, st) {
       state = AsyncValue.error(e, st);
     }
   }
 
-  /// Bypasses biometric auth for the current session.
+  /// Validates inputs, hashes the PIN, and invokes [CreateProfileUseCase] to
+  /// create/update the profile.
+  Future<void> setupProfile({
+    required String name,
+    required String username,
+    required String pin,
+    required String confirmPin,
+    required bool acceptTerms,
+    required String defaultCurrency,
+  }) async {
+    if (pin.length < 4 || pin.length > 8) {
+      state = AsyncValue.error(
+        'PIN must be between 4 and 8 digits.',
+        StackTrace.current,
+      );
+      return;
+    }
+    if (int.tryParse(pin) == null) {
+      state = AsyncValue.error(
+        'PIN must contain only numeric digits.',
+        StackTrace.current,
+      );
+      return;
+    }
+    if (pin != confirmPin) {
+      state = AsyncValue.error(
+        'PINs do not match.',
+        StackTrace.current,
+      );
+      return;
+    }
+    if (!acceptTerms) {
+      state = AsyncValue.error(
+        'You must accept the Terms & Conditions to proceed.',
+        StackTrace.current,
+      );
+      return;
+    }
+    if (name.trim().isEmpty) {
+      state = AsyncValue.error(
+        'Please enter a name.',
+        StackTrace.current,
+      );
+      return;
+    }
+    if (username.trim().isEmpty) {
+      state = AsyncValue.error(
+        'Please enter a username.',
+        StackTrace.current,
+      );
+      return;
+    }
+
+    state = const AsyncValue.loading();
+    try {
+      final locale = ref.read(localeProvider);
+      final createProfileUseCase = ref.read(createProfileUseCaseProvider);
+      final profile = await createProfileUseCase.execute(
+        CreateProfileParams(
+          name: name,
+          username: username,
+          pin: pin,
+          defaultCurrency: defaultCurrency,
+          locale: locale.languageCode,
+          acceptedTerms: acceptTerms,
+        ),
+      );
+
+      final initializeDefaultDataUseCase =
+          ref.read(initializeDefaultDataUseCaseProvider);
+      final l10n = lookupAppLocalizations(locale);
+      await initializeDefaultDataUseCase.execute(
+        userId: profile.id,
+        currency: defaultCurrency,
+        walletName: l10n.defaultWalletName,
+        locale: locale.languageCode,
+      );
+
+      ref.invalidate(defaultProfileProvider);
+
+      state = const AsyncValue.data(AuthStatus.authenticated);
+    } catch (e, st) {
+      state = AsyncValue.error(e, st);
+    }
+  }
+
+  /// Enables biometrics, prompts for registration, and completes the opt-in
+  /// flow.
+  Future<void> enableBiometricsOptIn() async {
+    state = const AsyncValue.loading();
+    try {
+      final success = await promptBiometricSetup();
+      if (success) {
+        state = const AsyncValue.data(AuthStatus.authenticated);
+      } else {
+        final biometricService = ref.read(biometricAuthServiceProvider);
+        await biometricService.disableBiometrics();
+        state = const AsyncValue.data(AuthStatus.authenticated);
+      }
+    } catch (_) {
+      final biometricService = ref.read(biometricAuthServiceProvider);
+      await biometricService.disableBiometrics();
+      state = const AsyncValue.data(AuthStatus.authenticated);
+    }
+  }
+
+  /// Disables biometrics and completes the opt-in flow.
+  Future<void> skipBiometricOptIn() async {
+    state = const AsyncValue.loading();
+    try {
+      final biometricService = ref.read(biometricAuthServiceProvider);
+      await biometricService.disableBiometrics();
+      state = const AsyncValue.data(AuthStatus.authenticated);
+    } catch (e, st) {
+      state = AsyncValue.error(e, st);
+    }
+  }
+
+  /// Verifies the entered PIN against the hash stored in secure storage.
   ///
-  /// Intended for the "Skip for now" action on devices where biometrics are
-  /// inconvenient in the moment. This is a **strict no-op** when the status
-  /// is [AuthStatus.lockedOut] — that state can only be cleared by unlocking
-  /// the device at the OS level.
-  void skip() {
-    if (state.valueOrNull == AuthStatus.lockedOut) return;
-    state = const AsyncValue.data(AuthStatus.authenticated);
+  /// Brute-force protection rules (unlimited cycles):
+  ///  1. First 5 wrong attempts   → decrement [remainingPinAttempts], show error.
+  ///  2. On the 5th wrong attempt → persist lockout timestamp, start 30 s timer.
+  ///  3. After 30 s               → grant exactly **1** attempt for this cycle.
+  ///  4. If that attempt is wrong → trigger another 30 s lockout (step 2 again).
+  ///  The cycle repeats indefinitely and survives app restarts.
+  Future<bool> verifyPin(String pin) async {
+    final currentStatus = state.valueOrNull;
+    if (currentStatus == AuthStatus.authenticated ||
+        currentStatus == AuthStatus.lockedOut ||
+        currentStatus == AuthStatus.pinLockedOut ||
+        state.isLoading) {
+      return false;
+    }
+
+    if (remainingPinAttempts <= 0) {
+      // Should not normally be reached – guard anyway.
+      _triggerPinLockout();
+      return false;
+    }
+
+    state = const AsyncValue.loading();
+    try {
+      final secureStorage = ref.read(secureStorageProvider);
+      final storedHash = await secureStorage.getPinHash();
+      final inputHash = _hashPin(pin);
+
+      if (storedHash == inputHash) {
+        // ── Success ───────────────────────────────────────────────────────────
+        remainingPinAttempts = 5;
+        pinLockoutSecondsRemaining = 0;
+        _lockoutTimer?.cancel();
+        await secureStorage.deleteLockoutTimestamp();
+        state = const AsyncValue.data(AuthStatus.authenticated);
+        return true;
+      } else {
+        // ── Wrong PIN ─────────────────────────────────────────────────────────
+        remainingPinAttempts--;
+
+        if (remainingPinAttempts <= 0) {
+          // Attempts exhausted – start a fresh 30 s lockout cycle.
+          await _triggerPinLockout();
+        } else {
+          state = AsyncValue.error('Incorrect PIN.', StackTrace.current);
+        }
+        return false;
+      }
+    } catch (e, st) {
+      state = AsyncValue.error(e, st);
+      return false;
+    }
+  }
+
+  /// Resets the authentication status to unauthenticated (e.g. on manual retry).
+  void resetStatus() {
+    state = const AsyncValue.data(AuthStatus.unauthenticated);
+  }
+
+  /// Retrieves the required PIN length from secure storage, defaulting to 4 if
+  /// not set.
+  Future<int> getRequiredPinLength() async {
+    try {
+      final secureStorage = ref.read(secureStorageProvider);
+      final length = await secureStorage.getPinLength();
+      return length ?? 4;
+    } catch (_) {
+      return 4;
+    }
+  }
+
+  // ─── Lockout helpers ────────────────────────────────────────────────────────
+
+  /// Starts the 30-second PIN lockout: persists the timestamp, updates state,
+  /// and kicks off the countdown ticker.
+  Future<void> _triggerPinLockout() async {
+    _lockoutStartEpochMs = DateTime.now().millisecondsSinceEpoch;
+    pinLockoutSecondsRemaining = kPinLockoutSeconds;
+
+    try {
+      final secureStorage = ref.read(secureStorageProvider);
+      await secureStorage.saveLockoutTimestamp(_lockoutStartEpochMs);
+    } catch (_) {
+      // Non-fatal – in-memory timer still protects the session.
+    }
+
+    state = const AsyncValue.data(AuthStatus.pinLockedOut);
+    _startLockoutCountdown();
+  }
+
+  /// Ticks every second, updating [pinLockoutSecondsRemaining].
+  /// When the countdown reaches zero, 1 attempt is granted for the next cycle.
+  /// A wrong entry will trigger a fresh lockout, cycling indefinitely.
+  void _startLockoutCountdown() {
+    _lockoutTimer?.cancel();
+    _lockoutTimer = Timer.periodic(const Duration(seconds: 1), (timer) async {
+      if (pinLockoutSecondsRemaining > 1) {
+        pinLockoutSecondsRemaining--;
+        // Notify listeners so the UI can refresh the countdown.
+        state = const AsyncValue.data(AuthStatus.pinLockedOut);
+      } else {
+        // ── Lockout expired ───────────────────────────────────────────────────
+        timer.cancel();
+        pinLockoutSecondsRemaining = 0;
+        remainingPinAttempts = 1; // one attempt for this cycle
+        try {
+          final secureStorage = ref.read(secureStorageProvider);
+          await secureStorage.deleteLockoutTimestamp();
+        } catch (_) {
+          // Non-fatal.
+        }
+        state = const AsyncValue.data(AuthStatus.unauthenticated);
+      }
+    });
+  }
+
+  // ─── Private helpers ────────────────────────────────────────────────────────
+
+  Future<void> _authenticateOnStartup() async {
+    state = const AsyncValue.loading();
+    try {
+      final biometricService = ref.read(biometricAuthServiceProvider);
+      final locale = ref.read(localeProvider);
+      final l10n = lookupAppLocalizations(locale);
+      final didAuthenticate = await biometricService.authenticate(
+        localizedReason: l10n.authVerifyMessage,
+        lockedOutMessage: l10n.authLockedTitle,
+        authFailedMessage: l10n.authError,
+        unknownErrorMessage: l10n.unexpectedError,
+        signInTitle: l10n.authSignInTitle,
+        cancelButton: l10n.btnCancel,
+      );
+      state = AsyncValue.data(
+        didAuthenticate ? AuthStatus.authenticated : AuthStatus.unauthenticated,
+      );
+    } on BiometricLockedOutException {
+      state = const AsyncValue.data(AuthStatus.lockedOut);
+    } catch (_) {
+      state = const AsyncValue.data(AuthStatus.unauthenticated);
+    }
+  }
+
+  String _hashPin(String pin) {
+    final bytes = utf8.encode(pin);
+    final digest = sha256.convert(bytes);
+    return digest.toString();
   }
 }
 

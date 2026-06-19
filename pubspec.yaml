@@ -1,4 +1,4 @@
-name: konta
+name: stalvi
 description: A local-first financial application.
 publish_to: 'none'
 version: 1.0.0+1
@@ -46,6 +46,10 @@ dependencies:
   uuid: ^4.3.3
 
   path: any
+  sqlite3: any
+  local_auth_android: any
+  local_auth_darwin: any
+  shared_preferences: ^2.5.5
 dev_dependencies:
   integration_test:
     sdk: flutter
@@ -60,9 +64,14 @@ dev_dependencies:
   riverpod_lint: ^2.3.7
   mocktail: ^1.0.5
 
-  sqlite3: any
+  mockito: ^5.4.6
+
+  local_auth_platform_interface: any
+  path_provider_platform_interface: any
+  plugin_platform_interface: any
 flutter:
   uses-material-design: true
   generate: true
   assets:
     - .env
+    - assets/legal/

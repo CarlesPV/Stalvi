@@ -1,9 +1,9 @@
-import 'package:konta/data/database/daos/statistics_dao.dart';
-import 'package:konta/data/database/tables/transaction_table.dart';
-import 'package:konta/data/mappers/statistics_mapper.dart';
-import 'package:konta/domain/entities/category_statistic.dart';
-import 'package:konta/domain/entities/period_summary.dart';
-import 'package:konta/domain/repositories/i_statistics_repository.dart';
+import 'package:stalvi/data/database/daos/statistics_dao.dart';
+import 'package:stalvi/data/database/tables/transaction_table.dart';
+import 'package:stalvi/data/mappers/statistics_mapper.dart';
+import 'package:stalvi/domain/entities/category_statistic.dart';
+import 'package:stalvi/domain/entities/period_summary.dart';
+import 'package:stalvi/domain/repositories/i_statistics_repository.dart';
 
 class StatisticsRepositoryImpl implements IStatisticsRepository {
   final StatisticsDao _dao;
@@ -14,8 +14,13 @@ class StatisticsRepositoryImpl implements IStatisticsRepository {
   Future<PeriodSummary> getPeriodSummary({
     required DateTime startDate,
     required DateTime endDate,
+    String? accountId,
   }) async {
-    final (income, expense) = await _dao.getPeriodSummary(startDate, endDate);
+    final (income, expense) = await _dao.getPeriodSummary(
+      startDate,
+      endDate,
+      accountId: accountId,
+    );
     return PeriodSummary(
       totalIncome: income,
       totalExpense: expense,
@@ -27,11 +32,13 @@ class StatisticsRepositoryImpl implements IStatisticsRepository {
     required DateTime startDate,
     required DateTime endDate,
     TransactionType type = TransactionType.expense,
+    String? accountId,
   }) async {
     final results = await _dao.getTopCategories(
       startDate,
       endDate,
       type: type,
+      accountId: accountId,
     );
     return results.map((r) => r.toDomain()).toList();
   }

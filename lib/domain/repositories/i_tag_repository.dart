@@ -1,4 +1,4 @@
-import 'package:konta/domain/entities/tag.dart';
+import 'package:stalvi/domain/entities/tag.dart';
 
 abstract class ITagRepository {
   Future<Tag> createTag(Tag tag);
@@ -6,4 +6,5 @@ abstract class ITagRepository {
   Future<List<Tag>> getAllTags();
   Future<Tag> updateTag(Tag tag);
   Future<void> deleteTag(String id);
+  Future<void> deleteTagPermanently(String id);
 }

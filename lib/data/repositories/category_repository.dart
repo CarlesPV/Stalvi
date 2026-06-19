@@ -1,8 +1,8 @@
 import 'package:drift/drift.dart';
-import 'package:konta/data/database/app_database.dart' as db;
-import 'package:konta/data/mappers/category_mapper.dart';
-import 'package:konta/domain/entities/category.dart';
-import 'package:konta/domain/repositories/i_category_repository.dart';
+import 'package:stalvi/data/database/app_database.dart' as db;
+import 'package:stalvi/data/mappers/category_mapper.dart';
+import 'package:stalvi/domain/entities/category.dart';
+import 'package:stalvi/domain/repositories/i_category_repository.dart';
 
 /// Concrete implementation of [ICategoryRepository] backed by Drift.
 class CategoryRepository implements ICategoryRepository {
@@ -34,6 +34,14 @@ class CategoryRepository implements ICategoryRepository {
   }
 
   @override
+  Stream<List<Category>> watchAllCategories() {
+    final query = _db.select(_db.categories)
+      ..where((c) => c.isDeleted.equals(false))
+      ..orderBy([(c) => OrderingTerm(expression: c.name)]);
+    return query.watch().map((rows) => rows.map((r) => r.toDomain()).toList());
+  }
+
+  @override
   Future<Category> updateCategory(Category category) async {
     final dbCategory = category.toDb();
     await (_db.update(_db.categories)..where((c) => c.id.equals(category.id)))
@@ -48,5 +56,10 @@ class CategoryRepository implements ICategoryRepository {
         isDeleted: Value(true),
       ),
     );
+  }
+
+  @override
+  Future<void> deleteCategoryPermanently(String id) async {
+    await (_db.delete(_db.categories)..where((c) => c.id.equals(id))).go();
   }
 }

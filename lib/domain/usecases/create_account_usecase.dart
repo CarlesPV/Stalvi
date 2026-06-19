@@ -1,7 +1,7 @@
-import 'package:konta/core/errors/app_exceptions.dart';
-import 'package:konta/domain/entities/account.dart';
-import 'package:konta/domain/entities/account_type.dart';
-import 'package:konta/domain/repositories/i_account_repository.dart';
+import 'package:stalvi/core/errors/app_exceptions.dart';
+import 'package:stalvi/domain/entities/account.dart';
+import 'package:stalvi/domain/entities/account_type.dart';
+import 'package:stalvi/domain/repositories/i_account_repository.dart';
 
 class CreateAccountParams {
   final String id;

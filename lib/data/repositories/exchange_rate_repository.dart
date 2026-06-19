@@ -1,6 +1,6 @@
-import 'package:konta/data/network/exchange_rate_remote_data_source.dart';
-import 'package:konta/domain/entities/exchange_rate.dart';
-import 'package:konta/domain/repositories/i_exchange_rate_repository.dart';
+import 'package:stalvi/data/network/exchange_rate_remote_data_source.dart';
+import 'package:stalvi/domain/entities/exchange_rate.dart';
+import 'package:stalvi/domain/repositories/i_exchange_rate_repository.dart';
 
 /// Concrete implementation of [IExchangeRateRepository].
 ///

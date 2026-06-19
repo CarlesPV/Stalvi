@@ -1,9 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:konta/core/errors/app_exceptions.dart';
-import 'package:konta/domain/entities/savings_goal.dart';
-import 'package:konta/domain/repositories/i_savings_goal_repository.dart';
-import 'package:konta/domain/usecases/create_savings_goal_usecase.dart';
+import 'package:stalvi/core/errors/app_exceptions.dart';
+import 'package:stalvi/domain/entities/savings_goal.dart';
+import 'package:stalvi/domain/repositories/i_savings_goal_repository.dart';
+import 'package:stalvi/domain/usecases/create_savings_goal_usecase.dart';
 
 class MockSavingsGoalRepository extends Mock
     implements ISavingsGoalRepository {}

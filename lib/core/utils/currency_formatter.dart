@@ -1,26 +1,60 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:stalvi/presentation/providers/repository_providers.dart';
+
+/// Provider for CurrencyFormatter that uses the user's preferred currency.
+final currencyFormatterProvider = Provider<CurrencyFormatter>((ref) {
+  final profileAsync = ref.watch(defaultProfileProvider);
+  final currencyCode = profileAsync.valueOrNull?.defaultCurrency ?? 'EUR';
+  return CurrencyFormatter(currencyCode: currencyCode);
+});
 
 /// Utility class to handle standard monetary and percentage formatting.
 class CurrencyFormatter {
-  CurrencyFormatter._();
+  final String currencyCode;
+
+  CurrencyFormatter({this.currencyCode = 'EUR'});
 
   /// Formats a double value to a currency string.
   ///
   /// [amount] is the monetary value to format.
   /// [locale] determines formatting rules (e.g., 'en_US' uses $1,000.00, 'es_ES' uses 1.000,00 €).
-  /// [currencyCode] is the ISO 4217 code (e.g., 'USD', 'EUR').
   /// [decimalDigits] sets the number of fraction digits. Defaults to 2.
   /// [showSign] if true, prepends '+' for positive values. (Negative values always have '-').
-  static String format(
+  String format(
     double amount, {
     String? locale,
-    String currencyCode = 'EUR',
+    String? currencyCode,
+    int decimalDigits = 2,
+    bool showSign = false,
+  }) {
+    final format = NumberFormat.simpleCurrency(
+      locale: locale,
+      name: currencyCode ?? this.currencyCode,
+      decimalDigits: decimalDigits,
+    );
+
+    final result = format.format(amount);
+
+    if (showSign && amount > 0) {
+      return '+$result';
+    }
+
+    return result;
+  }
+
+  /// Formats a double value to a currency string with the currency code.
+  /// Used primarily in the Settings screen.
+  String formatWithCode(
+    double amount, {
+    String? locale,
+    String? currencyCode,
     int decimalDigits = 2,
     bool showSign = false,
   }) {
     final format = NumberFormat.currency(
       locale: locale,
-      name: currencyCode,
+      name: currencyCode ?? this.currencyCode,
       decimalDigits: decimalDigits,
     );
 
@@ -34,14 +68,14 @@ class CurrencyFormatter {
   }
 
   /// Formats a double value to a compact currency string (e.g., €1.2M, €450K).
-  static String formatCompact(
+  String formatCompact(
     double amount, {
     String? locale,
-    String currencyCode = 'EUR',
+    String? currencyCode,
   }) {
-    final format = NumberFormat.compactCurrency(
+    final format = NumberFormat.compactSimpleCurrency(
       locale: locale,
-      name: currencyCode,
+      name: currencyCode ?? this.currencyCode,
     );
     return format.format(amount);
   }

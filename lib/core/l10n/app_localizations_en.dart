@@ -48,7 +48,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Network error. Please check your internet connection.';
 
   @override
-  String get appTitle => 'Konta';
+  String get appTitle => 'Stalvi';
 
   @override
   String get splashTagline => 'Your finances, your way.';
@@ -58,7 +58,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get splashSecureStorageError =>
-      'Konta couldn\'t initialise its secure storage. Please check available device storage and try again.';
+      'Stalvi couldn\'t initialise its secure storage. Please check available device storage and try again.';
 
   @override
   String get tryAgain => 'Try Again';
@@ -84,7 +84,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get authVerifyMessage =>
-      'Use biometrics or your device PIN to access your financial data securely.';
+      'Use biometrics or your device PIN to continue.';
 
   @override
   String get authVerifying => 'Verifying…';
@@ -284,4 +284,566 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get getStarted => 'Get Started';
+
+  @override
+  String get authSetupTitle => 'Create Your Profile';
+
+  @override
+  String get authSetupSubtitle => 'Set up your secure offline wallet to begin.';
+
+  @override
+  String get authSetupNameLabel => 'Name';
+
+  @override
+  String get authSetupUsernameLabel => 'Username';
+
+  @override
+  String get authSetupPinLabel => 'Set a 4-8 digit PIN';
+
+  @override
+  String get authSetupConfirmPinLabel => 'Confirm PIN';
+
+  @override
+  String get authSetupLanguageLabel => 'Default Language';
+
+  @override
+  String get authSetupTermsCheckbox =>
+      'I accept the Terms & Conditions and Privacy Policy';
+
+  @override
+  String get authSetupCreateButton => 'Create Profile';
+
+  @override
+  String get authSetupValidationErrorPinLength =>
+      'PIN must be between 4 and 8 digits.';
+
+  @override
+  String get authSetupValidationErrorPinMatch => 'PINs do not match.';
+
+  @override
+  String get authSetupValidationErrorTerms =>
+      'You must accept the Terms & Conditions and Privacy Policy to proceed.';
+
+  @override
+  String get authSetupValidationErrorName => 'Please enter a name.';
+
+  @override
+  String get authSetupValidationErrorUsername => 'Please enter a username.';
+
+  @override
+  String get authPinEnter => 'Enter PIN';
+
+  @override
+  String authPinAttemptsRemaining(int attempts) {
+    return '$attempts attempts remaining';
+  }
+
+  @override
+  String get authPinIncorrect => 'Incorrect PIN. Please try again.';
+
+  @override
+  String get defaultWalletName => 'My Wallet';
+
+  @override
+  String get defaultWallet => 'Default Wallet';
+
+  @override
+  String acrossAccountsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count accounts',
+      one: '1 account',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get failedLoadAccounts => 'Failed to load accounts.';
+
+  @override
+  String get noAccountsTitle => 'No accounts yet';
+
+  @override
+  String get noAccountsSubtitle =>
+      'Create an account or wallet to start managing your assets and tracking transactions.';
+
+  @override
+  String get defaultAccountLabel => 'Default';
+
+  @override
+  String get statisticsNoDataSubtitle =>
+      'Try adding transactions or changing the filter range to see your category breakdown.';
+
+  @override
+  String get authBiometricOptInTitle => 'Enable Biometric Login';
+
+  @override
+  String get authBiometricOptInSubtitle =>
+      'Use Fingerprint or FaceID to quickly and securely access your Stalvi account in the future.';
+
+  @override
+  String get authBiometricOptInEnable => 'Enable Biometrics';
+
+  @override
+  String get authBiometricOptInSkip => 'Skip for Now';
+
+  @override
+  String get noDataAvailable => 'No data available yet';
+
+  @override
+  String get termsAndConditions => 'Terms and Conditions';
+
+  @override
+  String get privacyPolicy => 'Privacy Policy';
+
+  @override
+  String get myWallet => 'My Wallet';
+
+  @override
+  String get authSetupCurrencyLabel => 'Default Currency';
+
+  @override
+  String get authSetupAcceptPrefix => 'I accept the ';
+
+  @override
+  String get authSetupAcceptAnd => ' and the ';
+
+  @override
+  String get settingsThemeMode => 'Theme Mode';
+
+  @override
+  String get themeModeSystem => 'System';
+
+  @override
+  String get themeModeLight => 'Light';
+
+  @override
+  String get themeModeDark => 'Dark';
+
+  @override
+  String get profileSettingsTitle => 'Profile & Security';
+
+  @override
+  String get changePinButton => 'Change PIN';
+
+  @override
+  String get deleteAllDataButton => 'Delete All Data';
+
+  @override
+  String get oldPinLabel => 'Old PIN';
+
+  @override
+  String get newPinLabel => 'New PIN';
+
+  @override
+  String get confirmPinLabel => 'Confirm New PIN';
+
+  @override
+  String get incorrectOldPin => 'Incorrect Old PIN.';
+
+  @override
+  String get pinsDoNotMatch => 'PINs do not match.';
+
+  @override
+  String get pinUpdatedSuccessfully => 'PIN updated successfully.';
+
+  @override
+  String get deleteAllDataWarning =>
+      'Are you sure you want to delete all data? This cannot be undone.';
+
+  @override
+  String get settingsLanguage => 'Language';
+
+  @override
+  String get usernameLabel => 'Username';
+
+  @override
+  String get btnCancel => 'Cancel';
+
+  @override
+  String get btnSave => 'Save';
+
+  @override
+  String get btnDelete => 'Delete';
+
+  @override
+  String get btnNext => 'Next';
+
+  @override
+  String get recycleBinTitle => 'Recycle Bin';
+
+  @override
+  String get recycleBinEmpty => 'Recycle bin is empty.';
+
+  @override
+  String get recycleBinRestoreTooltip => 'Restore';
+
+  @override
+  String get recycleBinDeleteTooltip => 'Permanently Delete';
+
+  @override
+  String get recycleBinDeleteConfirmTitle => 'Permanent Delete';
+
+  @override
+  String get recycleBinDeleteConfirmMessage =>
+      'Are you sure you want to permanently delete this item? This action cannot be undone.';
+
+  @override
+  String get recycleBinRestoredMessage => 'Item restored';
+
+  @override
+  String get recycleBinDeletedMessage => 'Item permanently deleted';
+
+  @override
+  String recycleBinDaysRemaining(int days) {
+    return 'Expires in $days days';
+  }
+
+  @override
+  String get optional => 'Optional';
+
+  @override
+  String get errorCategoryRequired => 'Please select a category';
+
+  @override
+  String get errorCurrencyRequired => 'Please select a currency';
+
+  @override
+  String get labelCurrency => 'Currency';
+
+  @override
+  String get labelSelectCurrency => 'Select Currency';
+
+  @override
+  String get labelTag => 'Tag';
+
+  @override
+  String get labelSelectTag => 'Select Tag';
+
+  @override
+  String get noTag => 'None';
+
+  @override
+  String get optionalPlaceholder => '(Optional)';
+
+  @override
+  String get fallbackIncome => 'Income';
+
+  @override
+  String get fallbackExpense => 'Expense';
+
+  @override
+  String get errorMaxPinAttempts =>
+      'Maximum PIN attempts reached. Please try again later.';
+
+  @override
+  String get errorPinNotNumeric => 'PIN must contain only numeric digits.';
+
+  @override
+  String get errorNoPinSet => 'No PIN is currently set.';
+
+  @override
+  String get authPinLockedTitle => 'Too Many Failed Attempts';
+
+  @override
+  String get authPinLockedMessage =>
+      'Access has been temporarily blocked after too many incorrect PIN entries.';
+
+  @override
+  String get authPinLockedCountdown => 'seconds remaining';
+
+  @override
+  String get authPinLockedRetry => 'You may now try again';
+
+  @override
+  String get authSignInTitle => 'Verify identity';
+
+  @override
+  String get defaultAccountName => 'Main Account';
+
+  @override
+  String get filterAll => 'All';
+
+  @override
+  String get filterIncome => 'Income';
+
+  @override
+  String get filterExpense => 'Expense';
+
+  @override
+  String get filterTransfer => 'Transfer';
+
+  @override
+  String get createAccountTitle => 'Create New Account';
+
+  @override
+  String get createAccountNameLabel => 'Account Name';
+
+  @override
+  String get createAccountNameHint => 'e.g. Personal Card, Cash, etc.';
+
+  @override
+  String get createAccountInitialBalanceLabel => 'Balance';
+
+  @override
+  String get createAccountTypeLabel => 'Account Type';
+
+  @override
+  String get createAccountColorThemeLabel => 'Color Theme';
+
+  @override
+  String get createAccountIconLabel => 'Icon';
+
+  @override
+  String get createAccountSuccess => 'Account created successfully';
+
+  @override
+  String get createAccountErrorName => 'Please enter an account name';
+
+  @override
+  String get createAccountErrorFailed => 'Failed to create account';
+
+  @override
+  String get accountTypeOther => 'Other';
+
+  @override
+  String get accountTypeCash => 'Cash';
+
+  @override
+  String get accountTypeBank => 'Bank';
+
+  @override
+  String get accountTypeSavings => 'Savings';
+
+  @override
+  String get accountTypeCard => 'Card';
+
+  @override
+  String get deleteTransactionTitle => 'Delete Transaction?';
+
+  @override
+  String get transactionMovedToRecycleBin => 'Transaction moved to recycle bin';
+
+  @override
+  String get errorDeleteTransaction => 'Failed to delete transaction';
+
+  @override
+  String get deleteTransactionConfirmation =>
+      'Are you sure you want to delete this transaction? This will move it to the recycle bin.';
+
+  @override
+  String get btnClose => 'Close';
+
+  @override
+  String get setAsDefaultAccount => 'Set as Default Account';
+
+  @override
+  String get setAsDefaultAccountSuccess => 'Account set as default';
+
+  @override
+  String get setAsDefaultAccountError => 'Failed to set default account';
+
+  @override
+  String get filterSheetTitle => 'Filter Transactions';
+
+  @override
+  String get filterSheetApply => 'Apply Filters';
+
+  @override
+  String get filterSheetClearAll => 'Clear All';
+
+  @override
+  String get filterSheetType => 'Transaction Type';
+
+  @override
+  String get filterSheetCategory => 'Category';
+
+  @override
+  String get filterSheetDateRange => 'Date Range';
+
+  @override
+  String get filterSheetAmountRange => 'Amount Range';
+
+  @override
+  String get filterSheetMinAmount => 'Min Amount';
+
+  @override
+  String get filterSheetMaxAmount => 'Max Amount';
+
+  @override
+  String get filterSheetTag => 'Tag';
+
+  @override
+  String get filterSheetCurrency => 'Currency';
+
+  @override
+  String get filterSheetAllTypes => 'All Types';
+
+  @override
+  String get filterSheetAllCategories => 'All Categories';
+
+  @override
+  String get filterSheetAllTags => 'All Tags';
+
+  @override
+  String get filterSheetAllCurrencies => 'All Currencies';
+
+  @override
+  String get filterSheetSelectDateRange => 'Select Date Range';
+
+  @override
+  String filterSheetActiveFilters(int count) {
+    return '$count active filters';
+  }
+
+  @override
+  String get filterSheetTransferType => 'Transfer';
+
+  @override
+  String get labelOriginAccount => 'Origin Account';
+
+  @override
+  String get labelDestinationAccount => 'Destination Account';
+
+  @override
+  String get errorCannotDeleteLastAccount =>
+      'Cannot delete the last existing account.';
+
+  @override
+  String get categoriesAndTags => 'Categories & Tags';
+
+  @override
+  String get setAsDefault => 'Set as Default';
+
+  @override
+  String get warning => 'Warning';
+
+  @override
+  String get replaceDefaultAccountConfirm =>
+      'The previous default account will be replaced. Continue?';
+
+  @override
+  String get btnContinue => 'Continue';
+
+  @override
+  String get unknownAccount => 'Unknown Account';
+
+  @override
+  String get editAccountDetails => 'Edit account details';
+
+  @override
+  String get markAccountAsDefault =>
+      'Mark this account as the default for new transactions';
+
+  @override
+  String get alreadyDefaultAccount => 'This is already the default account';
+
+  @override
+  String get categories => 'Categories';
+
+  @override
+  String get tags => 'Tags';
+
+  @override
+  String get deleteCategoryTitle => 'Delete Category?';
+
+  @override
+  String deleteCategoryConfirm(String name) {
+    return 'Are you sure you want to delete $name?';
+  }
+
+  @override
+  String get deleteTagTitle => 'Delete Tag?';
+
+  @override
+  String deleteTagConfirm(String name) {
+    return 'Are you sure you want to delete $name?';
+  }
+
+  @override
+  String get errorNoOtherCategories =>
+      'No other categories to reassign transactions to.';
+
+  @override
+  String get errorNoOtherTags => 'No other tags to reassign transactions to.';
+
+  @override
+  String get categoryInUseTitle => 'Category in Use';
+
+  @override
+  String get tagInUseTitle => 'Tag in Use';
+
+  @override
+  String categoryInUseMessage(String name) {
+    return '$name is used by existing transactions. Please select a category to reassign them to:';
+  }
+
+  @override
+  String tagInUseMessage(String name) {
+    return '$name is used by existing transactions. Please select a tag to reassign them to:';
+  }
+
+  @override
+  String get btnReassignAndDelete => 'Reassign & Delete';
+
+  @override
+  String get noCategories => 'No categories yet';
+
+  @override
+  String get noTags => 'No tags yet';
+
+  @override
+  String get addCategoryTitle => 'Add Category';
+
+  @override
+  String get editCategoryTitle => 'Edit Category';
+
+  @override
+  String get addTagTitle => 'Add Tag';
+
+  @override
+  String get editTagTitle => 'Edit Tag';
+
+  @override
+  String get labelCategoryName => 'Category Name';
+
+  @override
+  String get labelTagName => 'Tag Name';
+
+  @override
+  String get labelIcon => 'Icon';
+
+  @override
+  String get labelFromAccount => 'From Account';
+
+  @override
+  String get labelToAccount => 'To Account';
+
+  @override
+  String get selectSourceAccount => 'Select Source Account';
+
+  @override
+  String get selectDestinationAccount => 'Select Destination Account';
+
+  @override
+  String get currencyEUR => 'Euro (EUR)';
+
+  @override
+  String get currencyUSD => 'US Dollar (USD)';
+
+  @override
+  String get currencyGBP => 'British Pound (GBP)';
+
+  @override
+  String get currencyJPY => 'Japanese Yen (JPY)';
+
+  @override
+  String get currencyCHF => 'Swiss Franc (CHF)';
+
+  @override
+  String get currencyCAD => 'Canadian Dollar (CAD)';
+
+  @override
+  String get currencyAUD => 'Australian Dollar (AUD)';
 }

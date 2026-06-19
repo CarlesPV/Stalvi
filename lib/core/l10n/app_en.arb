@@ -48,7 +48,7 @@
   "@errorNetwork": {
     "description": "Error message when network request fails"
   },
-  "appTitle": "Konta",
+  "appTitle": "Stalvi",
   "@appTitle": {
     "description": "App name branding"
   },
@@ -60,7 +60,7 @@
   "@splashStartupFailed": {
     "description": "Error title shown when app startup fails"
   },
-  "splashSecureStorageError": "Konta couldn't initialise its secure storage. Please check available device storage and try again.",
+  "splashSecureStorageError": "Stalvi couldn't initialise its secure storage. Please check available device storage and try again.",
   "@splashSecureStorageError": {
     "description": "Error message shown when secure storage fails to initialize"
   },
@@ -92,7 +92,7 @@
   "@authVerifyIdentity": {
     "description": "Prompt title to verify identity"
   },
-  "authVerifyMessage": "Use biometrics or your device PIN to access your financial data securely.",
+  "authVerifyMessage": "Use biometrics or your device PIN to continue.",
   "@authVerifyMessage": {
     "description": "Prompt description to verify identity"
   },
@@ -366,5 +366,732 @@
   "getStarted": "Get Started",
   "@getStarted": {
     "description": "Default label for empty state call-to-action button"
+  },
+  "authSetupTitle": "Create Your Profile",
+  "@authSetupTitle": {
+    "description": "Title for the profile setup screen"
+  },
+  "authSetupSubtitle": "Set up your secure offline wallet to begin.",
+  "@authSetupSubtitle": {
+    "description": "Subtitle for the profile setup screen"
+  },
+  "authSetupNameLabel": "Name",
+  "@authSetupNameLabel": {
+    "description": "Label for name input"
+  },
+  "authSetupUsernameLabel": "Username",
+  "@authSetupUsernameLabel": {
+    "description": "Label for username input"
+  },
+  "authSetupPinLabel": "Set a 4-8 digit PIN",
+  "@authSetupPinLabel": {
+    "description": "Label for PIN input"
+  },
+  "authSetupConfirmPinLabel": "Confirm PIN",
+  "@authSetupConfirmPinLabel": {
+    "description": "Label for confirming PIN"
+  },
+  "authSetupLanguageLabel": "Default Language",
+  "@authSetupLanguageLabel": {
+    "description": "Label for language selection"
+  },
+  "authSetupTermsCheckbox": "I accept the Terms & Conditions and Privacy Policy",
+  "@authSetupTermsCheckbox": {
+    "description": "Label for terms and conditions checkbox"
+  },
+  "authSetupCreateButton": "Create Profile",
+  "@authSetupCreateButton": {
+    "description": "Button label to submit setup form"
+  },
+  "authSetupValidationErrorPinLength": "PIN must be between 4 and 8 digits.",
+  "@authSetupValidationErrorPinLength": {
+    "description": "Validation error when PIN length is invalid"
+  },
+  "authSetupValidationErrorPinMatch": "PINs do not match.",
+  "@authSetupValidationErrorPinMatch": {
+    "description": "Validation error when PINs do not match"
+  },
+  "authSetupValidationErrorTerms": "You must accept the Terms & Conditions and Privacy Policy to proceed.",
+  "@authSetupValidationErrorTerms": {
+    "description": "Validation error when terms are not accepted"
+  },
+  "authSetupValidationErrorName": "Please enter a name.",
+  "@authSetupValidationErrorName": {
+    "description": "Validation error when name is empty"
+  },
+  "authSetupValidationErrorUsername": "Please enter a username.",
+  "@authSetupValidationErrorUsername": {
+    "description": "Validation error when username is empty"
+  },
+  "authPinEnter": "Enter PIN",
+  "@authPinEnter": {
+    "description": "Prompt to enter PIN"
+  },
+  "authPinAttemptsRemaining": "{attempts} attempts remaining",
+  "@authPinAttemptsRemaining": {
+    "description": "Message indicating how many PIN attempts are remaining before lockout",
+    "placeholders": {
+      "attempts": {
+        "type": "int"
+      }
+    }
+  },
+  "authPinIncorrect": "Incorrect PIN. Please try again.",
+  "@authPinIncorrect": {
+    "description": "Error message when PIN is incorrect"
+  },
+  "defaultWalletName": "My Wallet",
+  "@defaultWalletName": {
+    "description": "Default wallet name when user profile is initialized"
+  },
+  "defaultWallet": "Default Wallet",
+  "@defaultWallet": {
+    "description": "Default wallet name when user profile is initialized"
+  },
+  "acrossAccountsCount": "{count, plural, =1{1 account} other{{count} accounts}}",
+  "@acrossAccountsCount": {
+    "description": "Label indicating number of accounts",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "failedLoadAccounts": "Failed to load accounts.",
+  "@failedLoadAccounts": {
+    "description": "Error message when accounts list fails to load"
+  },
+  "noAccountsTitle": "No accounts yet",
+  "@noAccountsTitle": {
+    "description": "Title when accounts list is empty"
+  },
+  "noAccountsSubtitle": "Create an account or wallet to start managing your assets and tracking transactions.",
+  "@noAccountsSubtitle": {
+    "description": "Subtitle when accounts list is empty"
+  },
+  "defaultAccountLabel": "Default",
+  "@defaultAccountLabel": {
+    "description": "Label indicating an account is the default account"
+  },
+  "statisticsNoDataSubtitle": "Try adding transactions or changing the filter range to see your category breakdown.",
+  "@statisticsNoDataSubtitle": {
+    "description": "Subtitle when there is no data to show in statistics charts"
+  },
+  "authBiometricOptInTitle": "Enable Biometric Login",
+  "@authBiometricOptInTitle": {
+    "description": "Title for the biometric opt-in screen"
+  },
+  "authBiometricOptInSubtitle": "Use Fingerprint or FaceID to quickly and securely access your Stalvi account in the future.",
+  "@authBiometricOptInSubtitle": {
+    "description": "Subtitle for the biometric opt-in screen"
+  },
+  "authBiometricOptInEnable": "Enable Biometrics",
+  "@authBiometricOptInEnable": {
+    "description": "Button label to enable biometric login"
+  },
+  "authBiometricOptInSkip": "Skip for Now",
+  "@authBiometricOptInSkip": {
+    "description": "Button label to skip biometric login"
+  },
+  "noDataAvailable": "No data available yet",
+  "@noDataAvailable": {
+    "description": "Default label for empty state when no data is found"
+  },
+  "termsAndConditions": "Terms and Conditions",
+  "@termsAndConditions": {
+    "description": "Title for the Terms and Conditions screen"
+  },
+  "privacyPolicy": "Privacy Policy",
+  "@privacyPolicy": {
+    "description": "Title for the Privacy Policy screen"
+  },
+  "myWallet": "My Wallet",
+  "@myWallet": {
+    "description": "General localized label for My Wallet"
+  },
+  "authSetupCurrencyLabel": "Default Currency",
+  "@authSetupCurrencyLabel": {
+    "description": "Label for default currency selector during setup"
+  },
+  "authSetupAcceptPrefix": "I accept the ",
+  "@authSetupAcceptPrefix": {
+    "description": "Prefix text for terms acceptance checkbox"
+  },
+  "authSetupAcceptAnd": " and the ",
+  "@authSetupAcceptAnd": {
+    "description": "Conjunction text for terms and privacy acceptance checkbox"
+  },
+  "settingsThemeMode": "Theme Mode",
+  "@settingsThemeMode": {
+    "description": "Label for theme mode selection in settings"
+  },
+  "themeModeSystem": "System",
+  "@themeModeSystem": {
+    "description": "System theme option"
+  },
+  "themeModeLight": "Light",
+  "@themeModeLight": {
+    "description": "Light theme option"
+  },
+  "themeModeDark": "Dark",
+  "@themeModeDark": {
+    "description": "Dark theme option"
+  },
+  "profileSettingsTitle": "Profile & Security",
+  "@profileSettingsTitle": {
+    "description": "Title for the profile and security settings screen"
+  },
+  "changePinButton": "Change PIN",
+  "@changePinButton": {
+    "description": "Button to change PIN"
+  },
+  "deleteAllDataButton": "Delete All Data",
+  "@deleteAllDataButton": {
+    "description": "Button to delete all application data"
+  },
+  "oldPinLabel": "Old PIN",
+  "@oldPinLabel": {
+    "description": "Label for old PIN input"
+  },
+  "newPinLabel": "New PIN",
+  "@newPinLabel": {
+    "description": "Label for new PIN input"
+  },
+  "confirmPinLabel": "Confirm New PIN",
+  "@confirmPinLabel": {
+    "description": "Label for confirm new PIN input"
+  },
+  "incorrectOldPin": "Incorrect Old PIN.",
+  "@incorrectOldPin": {
+    "description": "Error message for incorrect old PIN"
+  },
+  "pinsDoNotMatch": "PINs do not match.",
+  "@pinsDoNotMatch": {
+    "description": "Error message when new PINs do not match"
+  },
+  "pinUpdatedSuccessfully": "PIN updated successfully.",
+  "@pinUpdatedSuccessfully": {
+    "description": "Success message after updating PIN"
+  },
+  "deleteAllDataWarning": "Are you sure you want to delete all data? This cannot be undone.",
+  "@deleteAllDataWarning": {
+    "description": "Warning message before deleting all data"
+  },
+  "settingsLanguage": "Language",
+  "@settingsLanguage": {
+    "description": "Label for language selection in settings"
+  },
+  "usernameLabel": "Username",
+  "@usernameLabel": {
+    "description": "Label for username input"
+  },
+  "btnCancel": "Cancel",
+  "@btnCancel": {
+    "description": "General cancel button label"
+  },
+  "btnSave": "Save",
+  "@btnSave": {
+    "description": "General save button label"
+  },
+  "btnDelete": "Delete",
+  "@btnDelete": {
+    "description": "General delete button label"
+  },
+  "btnNext": "Next",
+  "@btnNext": {
+    "description": "General next button label"
+  },
+  "recycleBinTitle": "Recycle Bin",
+  "@recycleBinTitle": {
+    "description": "Title for the Recycle Bin screen"
+  },
+  "recycleBinEmpty": "Recycle bin is empty.",
+  "@recycleBinEmpty": {
+    "description": "Text shown when the recycle bin is empty"
+  },
+  "recycleBinRestoreTooltip": "Restore",
+  "@recycleBinRestoreTooltip": {
+    "description": "Tooltip text for restoring an item"
+  },
+  "recycleBinDeleteTooltip": "Permanently Delete",
+  "@recycleBinDeleteTooltip": {
+    "description": "Tooltip text for permanently deleting an item"
+  },
+  "recycleBinDeleteConfirmTitle": "Permanent Delete",
+  "@recycleBinDeleteConfirmTitle": {
+    "description": "Title for the permanent delete confirmation dialog"
+  },
+  "recycleBinDeleteConfirmMessage": "Are you sure you want to permanently delete this item? This action cannot be undone.",
+  "@recycleBinDeleteConfirmMessage": {
+    "description": "Message for the permanent delete confirmation dialog"
+  },
+  "recycleBinRestoredMessage": "Item restored",
+  "@recycleBinRestoredMessage": {
+    "description": "Snackbar message shown when an item is successfully restored"
+  },
+  "recycleBinDeletedMessage": "Item permanently deleted",
+  "@recycleBinDeletedMessage": {
+    "description": "Snackbar message shown when an item is permanently deleted"
+  },
+  "recycleBinDaysRemaining": "Expires in {days} days",
+  "@recycleBinDaysRemaining": {
+    "description": "Days remaining until item in recycle bin is deleted",
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "optional": "Optional",
+  "@optional": {
+    "description": "Label indicating an input field is optional"
+  },
+  "errorCategoryRequired": "Please select a category",
+  "@errorCategoryRequired": {
+    "description": "Validation error when category is not selected"
+  },
+  "errorCurrencyRequired": "Please select a currency",
+  "@errorCurrencyRequired": {
+    "description": "Validation error when currency is not selected"
+  },
+  "labelCurrency": "Currency",
+  "@labelCurrency": {
+    "description": "Label for currency selector field"
+  },
+  "labelSelectCurrency": "Select Currency",
+  "@labelSelectCurrency": {
+    "description": "Header or prompt to select a currency"
+  },
+  "labelTag": "Tag",
+  "@labelTag": {
+    "description": "Label for tag selector field"
+  },
+  "labelSelectTag": "Select Tag",
+  "@labelSelectTag": {
+    "description": "Header or prompt to select a tag"
+  },
+  "noTag": "None",
+  "@noTag": {
+    "description": "Label when no tag is selected"
+  },
+  "optionalPlaceholder": "(Optional)",
+  "@optionalPlaceholder": {
+    "description": "Optional label formatted with parentheses"
+  },
+  "fallbackIncome": "Income",
+  "@fallbackIncome": {
+    "description": "Fallback name for empty income transaction notes"
+  },
+  "fallbackExpense": "Expense",
+  "@fallbackExpense": {
+    "description": "Fallback name for empty expense transaction notes"
+  },
+  "errorMaxPinAttempts": "Maximum PIN attempts reached. Please try again later.",
+  "@errorMaxPinAttempts": {
+    "description": "Error message when PIN attempts exceed limit"
+  },
+  "errorPinNotNumeric": "PIN must contain only numeric digits.",
+  "@errorPinNotNumeric": {
+    "description": "Error message when PIN contains non-numeric characters"
+  },
+  "errorNoPinSet": "No PIN is currently set.",
+  "@errorNoPinSet": {
+    "description": "Error message when trying to verify a PIN but none is configured"
+  },
+  "authPinLockedTitle": "Too Many Failed Attempts",
+  "@authPinLockedTitle": {
+    "description": "Title shown during the PIN brute-force lockout screen"
+  },
+  "authPinLockedMessage": "Access has been temporarily blocked after too many incorrect PIN entries.",
+  "@authPinLockedMessage": {
+    "description": "Description shown during the PIN brute-force lockout screen"
+  },
+  "authPinLockedCountdown": "seconds remaining",
+  "@authPinLockedCountdown": {
+    "description": "Label shown below the countdown ring during PIN lockout"
+  },
+  "authPinLockedRetry": "You may now try again",
+  "@authPinLockedRetry": {
+    "description": "Label shown after PIN lockout expires, granting one more attempt"
+  },
+  "authSignInTitle": "Verify identity",
+  "@authSignInTitle": {
+    "description": "Title for the biometric sign-in prompt"
+  },
+  "defaultAccountName": "Main Account",
+  "@defaultAccountName": {
+    "description": "Default name for the main cash account created during setup"
+  },
+  "filterAll": "All",
+  "@filterAll": {
+    "description": "Filter option to show all transactions"
+  },
+  "filterIncome": "Income",
+  "@filterIncome": {
+    "description": "Filter option to show only income transactions"
+  },
+  "filterExpense": "Expense",
+  "@filterExpense": {
+    "description": "Filter option to show only expense transactions"
+  },
+  "filterTransfer": "Transfer",
+  "@filterTransfer": {
+    "description": "Filter option to show only transfer transactions"
+  },
+  "createAccountTitle": "Create New Account",
+  "@createAccountTitle": {
+    "description": "Title for the create account dialog"
+  },
+  "createAccountNameLabel": "Account Name",
+  "@createAccountNameLabel": {
+    "description": "Label for account name input"
+  },
+  "createAccountNameHint": "e.g. Personal Card, Cash, etc.",
+  "@createAccountNameHint": {
+    "description": "Hint text for account name input"
+  },
+  "createAccountInitialBalanceLabel": "Balance",
+  "@createAccountInitialBalanceLabel": {
+    "description": "Label for initial balance input"
+  },
+  "createAccountTypeLabel": "Account Type",
+  "@createAccountTypeLabel": {
+    "description": "Label for account type selection"
+  },
+  "createAccountColorThemeLabel": "Color Theme",
+  "@createAccountColorThemeLabel": {
+    "description": "Label for color theme selection"
+  },
+  "createAccountIconLabel": "Icon",
+  "@createAccountIconLabel": {
+    "description": "Label for icon selection"
+  },
+  "createAccountSuccess": "Account created successfully",
+  "@createAccountSuccess": {
+    "description": "Success message after account creation"
+  },
+  "createAccountErrorName": "Please enter an account name",
+  "@createAccountErrorName": {
+    "description": "Error message when account name is empty"
+  },
+  "createAccountErrorFailed": "Failed to create account",
+  "@createAccountErrorFailed": {
+    "description": "Error message when account creation fails"
+  },
+  "accountTypeOther": "Other",
+  "@accountTypeOther": {
+    "description": "Account type: Other"
+  },
+  "accountTypeCash": "Cash",
+  "@accountTypeCash": {
+    "description": "Account type: Cash"
+  },
+  "accountTypeBank": "Bank",
+  "@accountTypeBank": {
+    "description": "Account type: Bank"
+  },
+  "accountTypeSavings": "Savings",
+  "@accountTypeSavings": {
+    "description": "Account type: Savings"
+  },
+  "accountTypeCard": "Card",
+  "@accountTypeCard": {
+    "description": "Account type: Card"
+  },
+  "deleteTransactionTitle": "Delete Transaction?",
+  "@deleteTransactionTitle": {
+    "description": "Title for the delete transaction dialog"
+  },
+  "transactionMovedToRecycleBin": "Transaction moved to recycle bin",
+  "@transactionMovedToRecycleBin": {
+    "description": "Success message when transaction is deleted"
+  },
+  "errorDeleteTransaction": "Failed to delete transaction",
+  "@errorDeleteTransaction": {
+    "description": "Error message when transaction deletion fails"
+  },
+  "deleteTransactionConfirmation": "Are you sure you want to delete this transaction? This will move it to the recycle bin.",
+  "@deleteTransactionConfirmation": {
+    "description": "Message confirming the deletion of a transaction"
+  },
+  "btnClose": "Close",
+  "@btnClose": {
+    "description": "Close button label"
+  },
+  "setAsDefaultAccount": "Set as Default Account",
+  "@setAsDefaultAccount": {
+    "description": "Context menu option to set account as default"
+  },
+  "setAsDefaultAccountSuccess": "Account set as default",
+  "@setAsDefaultAccountSuccess": {
+    "description": "Snackbar message when account is set as default"
+  },
+  "setAsDefaultAccountError": "Failed to set default account",
+  "@setAsDefaultAccountError": {
+    "description": "Snackbar error when setting default account fails"
+  },
+  "filterSheetTitle": "Filter Transactions",
+  "@filterSheetTitle": {
+    "description": "Title for the transaction filter bottom sheet"
+  },
+  "filterSheetApply": "Apply Filters",
+  "@filterSheetApply": {
+    "description": "Button label to apply filters in the filter sheet"
+  },
+  "filterSheetClearAll": "Clear All",
+  "@filterSheetClearAll": {
+    "description": "Button label to clear all active filters"
+  },
+  "filterSheetType": "Transaction Type",
+  "@filterSheetType": {
+    "description": "Label for transaction type filter section"
+  },
+  "filterSheetCategory": "Category",
+  "@filterSheetCategory": {
+    "description": "Label for category filter section"
+  },
+  "filterSheetDateRange": "Date Range",
+  "@filterSheetDateRange": {
+    "description": "Label for date range filter section"
+  },
+  "filterSheetAmountRange": "Amount Range",
+  "@filterSheetAmountRange": {
+    "description": "Label for amount range filter section"
+  },
+  "filterSheetMinAmount": "Min Amount",
+  "@filterSheetMinAmount": {
+    "description": "Label for minimum amount input in filter sheet"
+  },
+  "filterSheetMaxAmount": "Max Amount",
+  "@filterSheetMaxAmount": {
+    "description": "Label for maximum amount input in filter sheet"
+  },
+  "filterSheetTag": "Tag",
+  "@filterSheetTag": {
+    "description": "Label for tag filter section"
+  },
+  "filterSheetCurrency": "Currency",
+  "@filterSheetCurrency": {
+    "description": "Label for currency filter section"
+  },
+  "filterSheetAllTypes": "All Types",
+  "@filterSheetAllTypes": {
+    "description": "Label for showing all transaction types in filter"
+  },
+  "filterSheetAllCategories": "All Categories",
+  "@filterSheetAllCategories": {
+    "description": "Label for showing all categories in filter"
+  },
+  "filterSheetAllTags": "All Tags",
+  "@filterSheetAllTags": {
+    "description": "Label for showing all tags in filter"
+  },
+  "filterSheetAllCurrencies": "All Currencies",
+  "@filterSheetAllCurrencies": {
+    "description": "Label for showing all currencies in filter"
+  },
+  "filterSheetSelectDateRange": "Select Date Range",
+  "@filterSheetSelectDateRange": {
+    "description": "Placeholder text for date range picker in filter sheet"
+  },
+  "filterSheetActiveFilters": "{count} active filters",
+  "@filterSheetActiveFilters": {
+    "description": "Badge label showing number of active filters",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "filterSheetTransferType": "Transfer",
+  "@filterSheetTransferType": {
+    "description": "Label for transfer type in filter sheet"
+  },
+  "labelOriginAccount": "Origin Account",
+  "@labelOriginAccount": {
+    "description": "Label for the origin account of a transfer"
+  },
+  "labelDestinationAccount": "Destination Account",
+  "@labelDestinationAccount": {
+    "description": "Label for the destination account of a transfer"
+  },
+  "errorCannotDeleteLastAccount": "Cannot delete the last existing account.",
+  "@errorCannotDeleteLastAccount": {
+    "description": "Error message when attempting to delete the last remaining account"
+  },
+  "categoriesAndTags": "Categories & Tags",
+  "@categoriesAndTags": {
+    "description": "Title or label for Categories & Tags section"
+  },
+  "setAsDefault": "Set as Default",
+  "@setAsDefault": {
+    "description": "Switch label to set an account as default"
+  },
+  "warning": "Warning",
+  "@warning": {
+    "description": "Warning dialog title"
+  },
+  "replaceDefaultAccountConfirm": "The previous default account will be replaced. Continue?",
+  "@replaceDefaultAccountConfirm": {
+    "description": "Confirmation message when replacing the default account"
+  },
+  "btnContinue": "Continue",
+  "@btnContinue": {
+    "description": "Label for continue button"
+  },
+  "unknownAccount": "Unknown Account",
+  "@unknownAccount": {
+    "description": "Fallback label when account is not found"
+  },
+  "editAccountDetails": "Edit account details",
+  "@editAccountDetails": {
+    "description": "Subtitle for editing account details"
+  },
+  "markAccountAsDefault": "Mark this account as the default for new transactions",
+  "@markAccountAsDefault": {
+    "description": "Subtitle for setting account as default"
+  },
+  "alreadyDefaultAccount": "This is already the default account",
+  "@alreadyDefaultAccount": {
+    "description": "Subtitle indicating account is already default"
+  },
+  "categories": "Categories",
+  "@categories": {
+    "description": "Label for categories tab or section"
+  },
+  "tags": "Tags",
+  "@tags": {
+    "description": "Label for tags tab or section"
+  },
+  "deleteCategoryTitle": "Delete Category?",
+  "@deleteCategoryTitle": {
+    "description": "Title for delete category confirmation dialog"
+  },
+  "deleteCategoryConfirm": "Are you sure you want to delete {name}?",
+  "@deleteCategoryConfirm": {
+    "description": "Message to confirm deleting a category",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "deleteTagTitle": "Delete Tag?",
+  "@deleteTagTitle": {
+    "description": "Title for delete tag confirmation dialog"
+  },
+  "deleteTagConfirm": "Are you sure you want to delete {name}?",
+  "@deleteTagConfirm": {
+    "description": "Message to confirm deleting a tag",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "errorNoOtherCategories": "No other categories to reassign transactions to.",
+  "@errorNoOtherCategories": {
+    "description": "Error message when no other categories are available for reassignment"
+  },
+  "errorNoOtherTags": "No other tags to reassign transactions to.",
+  "@errorNoOtherTags": {
+    "description": "Error message when no other tags are available for reassignment"
+  },
+  "categoryInUseTitle": "Category in Use",
+  "@categoryInUseTitle": {
+    "description": "Title for category in use warning dialog"
+  },
+  "tagInUseTitle": "Tag in Use",
+  "@tagInUseTitle": {
+    "description": "Title for tag in use warning dialog"
+  },
+  "categoryInUseMessage": "{name} is used by existing transactions. Please select a category to reassign them to:",
+  "@categoryInUseMessage": {
+    "description": "Message explaining that a category is in use and prompting for reassignment",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "tagInUseMessage": "{name} is used by existing transactions. Please select a tag to reassign them to:",
+  "@tagInUseMessage": {
+    "description": "Message explaining that a tag is in use and prompting for reassignment",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "btnReassignAndDelete": "Reassign & Delete",
+  "@btnReassignAndDelete": {
+    "description": "Button label to reassign items and delete the original"
+  },
+  "noCategories": "No categories yet",
+  "@noCategories": {
+    "description": "Message shown when categories list is empty"
+  },
+  "noTags": "No tags yet",
+  "@noTags": {
+    "description": "Message shown when tags list is empty"
+  },
+  "addCategoryTitle": "Add Category",
+  "@addCategoryTitle": {
+    "description": "Title for adding a category"
+  },
+  "editCategoryTitle": "Edit Category",
+  "@editCategoryTitle": {
+    "description": "Title for editing a category"
+  },
+  "addTagTitle": "Add Tag",
+  "@addTagTitle": {
+    "description": "Title for adding a tag"
+  },
+  "editTagTitle": "Edit Tag",
+  "@editTagTitle": {
+    "description": "Title for editing a tag"
+  },
+  "labelCategoryName": "Category Name",
+  "@labelCategoryName": {
+    "description": "Label for category name input field"
+  },
+  "labelTagName": "Tag Name",
+  "@labelTagName": {
+    "description": "Label for tag name input field"
+  },
+  "labelIcon": "Icon",
+  "@labelIcon": {
+    "description": "Label for icon picker or display"
+  },
+  "labelFromAccount": "From Account",
+  "@labelFromAccount": {
+    "description": "Label for the origin account of a transfer in transaction creation"
+  },
+  "labelToAccount": "To Account",
+  "@labelToAccount": {
+    "description": "Label for the destination account of a transfer in transaction creation"
+  },
+  "selectSourceAccount": "Select Source Account",
+  "@selectSourceAccount": {
+    "description": "Title for the source account picker modal"
+  },
+  "selectDestinationAccount": "Select Destination Account",
+  "@selectDestinationAccount": {
+    "description": "Title for the destination account picker modal"
   }
+,
+  "currencyEUR": "Euro (EUR)",
+  "@currencyEUR": { "description": "Currency name for EUR" },
+  "currencyUSD": "US Dollar (USD)",
+  "@currencyUSD": { "description": "Currency name for USD" },
+  "currencyGBP": "British Pound (GBP)",
+  "@currencyGBP": { "description": "Currency name for GBP" },
+  "currencyJPY": "Japanese Yen (JPY)",
+  "@currencyJPY": { "description": "Currency name for JPY" },
+  "currencyCHF": "Swiss Franc (CHF)",
+  "@currencyCHF": { "description": "Currency name for CHF" },
+  "currencyCAD": "Canadian Dollar (CAD)",
+  "@currencyCAD": { "description": "Currency name for CAD" },
+  "currencyAUD": "Australian Dollar (AUD)",
+  "@currencyAUD": { "description": "Currency name for AUD" }
 }

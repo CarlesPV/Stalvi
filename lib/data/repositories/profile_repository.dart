@@ -1,7 +1,7 @@
-import 'package:konta/data/database/app_database.dart' as db;
-import 'package:konta/data/mappers/profile_mapper.dart';
-import 'package:konta/domain/entities/profile.dart';
-import 'package:konta/domain/repositories/i_profile_repository.dart';
+import 'package:stalvi/data/database/app_database.dart' as db;
+import 'package:stalvi/data/mappers/profile_mapper.dart';
+import 'package:stalvi/domain/entities/profile.dart';
+import 'package:stalvi/domain/repositories/i_profile_repository.dart';
 
 /// Concrete implementation of [IProfileRepository] backed by Drift.
 class ProfileRepository implements IProfileRepository {
@@ -19,6 +19,13 @@ class ProfileRepository implements IProfileRepository {
   @override
   Future<Profile?> getProfileById(String id) async {
     final query = _db.select(_db.profiles)..where((p) => p.id.equals(id));
+    final row = await query.getSingleOrNull();
+    return row?.toDomain();
+  }
+
+  @override
+  Future<Profile?> getFirstProfile() async {
+    final query = _db.select(_db.profiles)..limit(1);
     final row = await query.getSingleOrNull();
     return row?.toDomain();
   }

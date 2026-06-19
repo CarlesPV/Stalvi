@@ -5,9 +5,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:mocktail/mocktail.dart';
 
-import 'package:konta/core/errors/app_exceptions.dart';
-import 'package:konta/data/models/exchange_rate_model.dart';
-import 'package:konta/data/network/exchange_rate_remote_data_source.dart';
+import 'package:stalvi/core/errors/app_exceptions.dart';
+import 'package:stalvi/data/models/exchange_rate_model.dart';
+import 'package:stalvi/data/network/exchange_rate_remote_data_source.dart';
 
 // ---------------------------------------------------------------------------
 // Mocktail fakes & mocks

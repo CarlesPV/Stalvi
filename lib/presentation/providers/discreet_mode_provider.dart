@@ -6,12 +6,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class DiscreetModeNotifier extends Notifier<bool> {
   @override
   bool build() {
-    return false; // Default to visible
+    return true; // Default to true (obfuscated)
   }
 
   /// Toggles the discreet mode state between true and false.
   void toggle() {
     state = !state;
+  }
+
+  /// Explicitly sets the discreet mode state.
+  void setDiscreet(bool value) {
+    state = value;
   }
 }
 

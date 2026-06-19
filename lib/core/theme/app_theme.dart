@@ -32,7 +32,7 @@ class FinancialColors extends ThemeExtension<FinancialColors> {
   }
 }
 
-/// AppTheme defines the visual design system for Konta.
+/// AppTheme defines the visual design system for Stalvi.
 /// It uses a financial-trust aesthetic with Deep Navy Blue as primary,
 /// pastel Mint Green for positive/income values, and pastel Coral Red for negative/expenses.
 class AppTheme {

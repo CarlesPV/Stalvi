@@ -4,12 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:konta/core/l10n/app_localizations.dart';
-import 'package:konta/core/theme/app_theme.dart';
-import 'package:konta/domain/entities/category_statistic.dart';
-import 'package:konta/domain/entities/period_summary.dart';
-import 'package:konta/presentation/features/statistics/statistics_screen.dart';
-import 'package:konta/presentation/providers/statistics_providers.dart';
+import 'package:stalvi/core/l10n/app_localizations.dart';
+import 'package:stalvi/core/theme/app_theme.dart';
+import 'package:stalvi/domain/entities/category_statistic.dart';
+import 'package:stalvi/domain/entities/period_summary.dart';
+import 'package:stalvi/presentation/features/statistics/statistics_screen.dart';
+import 'package:stalvi/presentation/providers/statistics_providers.dart';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 

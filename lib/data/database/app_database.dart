@@ -10,12 +10,13 @@ import 'package:path_provider/path_provider.dart';
 // Import sqlcipher_flutter_libs to ensure the SQLCipher native library is
 // bundled and loaded at runtime. The package replaces the default sqlite3
 // library with one that includes SQLCipher support.
-// ignore: unused_import
 import 'package:sqlcipher_flutter_libs/sqlcipher_flutter_libs.dart';
+// ignore: depend_on_referenced_packages
+import 'package:sqlite3/open.dart';
 
 import 'package:uuid/uuid.dart';
 
-import 'package:konta/core/security/secure_storage_manager.dart';
+import 'package:stalvi/core/security/secure_storage_manager.dart';
 import 'tables/profile_table.dart';
 import 'tables/account_table.dart';
 import 'tables/category_table.dart';
@@ -23,11 +24,14 @@ import 'tables/tag_table.dart';
 import 'tables/transaction_table.dart';
 import 'tables/budget_table.dart';
 import 'tables/savings_goal_table.dart';
+import 'daos/account_dao.dart';
 import 'daos/statistics_dao.dart';
+import 'daos/transaction_dao.dart';
+import 'daos/trash_dao.dart';
 
 part 'app_database.g.dart';
 
-/// The base Drift database for Konta.
+/// The base Drift database for Stalvi.
 ///
 /// Uses SQLCipher (via [sqlcipher_flutter_libs]) to encrypt the database file
 /// at rest. The cipher key is sourced from [SecureStorageManager], which keeps
@@ -50,7 +54,7 @@ part 'app_database.g.dart';
     Budgets,
     SavingsGoals,
   ],
-  daos: [StatisticsDao],
+  daos: [AccountDao, TransactionDao, StatisticsDao, TrashDao],
 )
 class AppDatabase extends _$AppDatabase {
   /// Private constructor — use the [create] factory instead.
@@ -75,7 +79,7 @@ class AppDatabase extends _$AppDatabase {
 
   /// Bump this version whenever you add, modify, or remove tables.
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 5;
 
   @override
   MigrationStrategy get migration {
@@ -111,7 +115,7 @@ class AppDatabase extends _$AppDatabase {
             currency: 'EUR',
             color: '#4CAF50',
             icon: 'wallet',
-            isDefault: true,
+            isDefault: const Value(true),
             createdAt: now,
             modifiedAt: now,
           ),
@@ -162,6 +166,12 @@ class AppDatabase extends _$AppDatabase {
           await m.createTable(budgets);
           await m.createTable(savingsGoals);
         }
+        if (from < 4) {
+          await m.addColumn(transactions, transactions.isDeleted);
+        }
+        if (from < 5) {
+          await m.addColumn(transactions, transactions.transferId);
+        }
       },
     );
   }
@@ -174,20 +184,21 @@ class AppDatabase extends _$AppDatabase {
   static Future<QueryExecutor> _openEncryptedDatabase(
     String cipherKey,
   ) async {
-    final dbFolder = await getApplicationDocumentsDirectory();
-    final dbFile = File(p.join(dbFolder.path, 'konta.db'));
+    // 1. Override the native library to use SQLCipher
+    if (Platform.isAndroid) {
+      open.overrideFor(OperatingSystem.android, openCipherOnAndroid);
+    }
 
-    return NativeDatabase.createInBackground(
+    final dbFolder = await getApplicationDocumentsDirectory();
+    final dbFile = File(p.join(dbFolder.path, 'stalvi.db'));
+
+    // CRITICAL FIX: Use NativeDatabase instead of NativeDatabase.createInBackground.
+    // createInBackground spawns an isolate that does not inherit the open.overrideFor
+    // FFI configuration, causing the dynamic library loader to fail.
+    return NativeDatabase(
       dbFile,
       setup: (rawDb) {
-        // Apply the SQLCipher encryption key. Must be the FIRST statement
-        // executed on the connection. The key is hex-encoded, so we use the
-        // x'' literal syntax that SQLCipher expects for raw key bytes.
         rawDb.execute("PRAGMA key = \"x'$cipherKey'\";");
-
-        // Verify the key is correct by attempting to read the database.
-        // If the key is wrong, this will throw an exception immediately
-        // rather than failing silently on the first real query.
         rawDb.execute('SELECT count(*) FROM sqlite_master;');
       },
     );

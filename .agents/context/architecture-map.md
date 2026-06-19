@@ -1,4 +1,4 @@
-# Architecture Map: Konta (Flutter Clean Architecture)
+# Architecture Map: Stalvi (Flutter Clean Architecture)
 
 The application strictly enforces Clean Architecture. The flow of dependencies is unidirectional: Presentation -> Domain <- Data.
 
@@ -11,7 +11,7 @@ The application strictly enforces Clean Architecture. The flow of dependencies i
 - **Entities:** Pure Dart classes, framework-agnostic.
 - **Use Cases:** Business logic (e.g., `AddMovementUseCase`, `CalculateBudgetUseCase`).
 - **Repositories (Interfaces):** Abstract definitions of data operations.
-- **Responsibility:** The core of Konta. Contains all financial validation rules (no negative amounts, transfer rules).
+- **Responsibility:** The core of Stalvi. Contains all financial validation rules (no negative amounts, transfer rules).
 
 ## 3. Data Layer
 - **Models / DTOs:** Classes that map to database rows or API responses.

@@ -4,12 +4,14 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:konta/core/l10n/app_localizations.dart';
-import 'package:konta/core/theme/app_theme.dart';
-import 'package:konta/core/utils/currency_formatter.dart';
-import 'package:konta/domain/entities/category_statistic.dart';
-import 'package:konta/domain/entities/period_summary.dart';
-import 'package:konta/presentation/providers/statistics_providers.dart';
+import 'package:stalvi/core/l10n/app_localizations.dart';
+import 'package:stalvi/core/theme/app_theme.dart';
+import 'package:stalvi/core/utils/currency_formatter.dart';
+import 'package:stalvi/domain/entities/category_statistic.dart';
+import 'package:stalvi/domain/entities/period_summary.dart';
+import 'package:stalvi/presentation/providers/repository_providers.dart';
+import 'package:stalvi/presentation/providers/statistics_providers.dart';
+import 'package:stalvi/presentation/widgets/empty_state_widget.dart';
 
 // ─── Main Screen ──────────────────────────────────────────────────────────────
 
@@ -42,6 +44,27 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
       parent: _shimmerController,
       curve: Curves.easeInOut,
     );
+
+    // Pre-warm all data providers immediately on mount so that data begins
+    // fetching within milliseconds of screen insertion – before the first
+    // build() frame calls ref.watch(). Without this, autoDispose providers
+    // are not subscribed until the first widget build, which can add a full
+    // frame of latency. Using a post-frame callback ensures the ProviderScope
+    // is fully ready before we read.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+
+      ref.invalidate(periodSummaryProvider);
+      ref.invalidate(topExpenseCategoriesProvider);
+      ref.invalidate(topIncomeCategoriesProvider);
+
+      // Reading (not watching) subscribes to the provider and triggers the
+      // Future without rebuilding – the watch() calls in build() will pick up
+      // the already-running future and show data as soon as it resolves.
+      ref.read(periodSummaryProvider.future).ignore();
+      ref.read(topExpenseCategoriesProvider.future).ignore();
+      ref.read(topIncomeCategoriesProvider.future).ignore();
+    });
   }
 
   @override
@@ -50,11 +73,26 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
     super.dispose();
   }
 
+  Color _parseHexColor(String hex) {
+    final buffer = StringBuffer();
+    if (hex.length == 6 || hex.length == 7) buffer.write('ff');
+    buffer.write(hex.replaceFirst('#', ''));
+    return Color(int.parse(buffer.toString(), radix: 16));
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final filter = ref.watch(statisticsFilterProvider);
+    final summaryAsync = ref.watch(periodSummaryProvider);
+    final accountsAsync = ref.watch(accountsListProvider);
+
+    final isEmpty = summaryAsync.when(
+      data: (s) => s.totalIncome == 0 && s.totalExpense == 0,
+      loading: () => false,
+      error: (_, __) => false,
+    );
 
     return Scaffold(
       appBar: AppBar(
@@ -90,6 +128,88 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
         color: colorScheme.primary,
         child: CustomScrollView(
           slivers: [
+            // ── Account Selector ─────────────────────────────────────────
+            SliverToBoxAdapter(
+              child: accountsAsync.when(
+                data: (accounts) {
+                  if (accounts.isEmpty) return const SizedBox.shrink();
+                  return Padding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: colorScheme.surfaceContainerHighest
+                            .withValues(alpha: 0.5),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: colorScheme.outline.withValues(alpha: 0.1),
+                        ),
+                      ),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<String?>(
+                          key: const ValueKey('statisticsAccountDropdown'),
+                          value: filter.accountId,
+                          hint: Text(AppLocalizations.of(context)!.filterAll),
+                          isExpanded: true,
+                          icon: Icon(
+                            Icons.keyboard_arrow_down_rounded,
+                            color: colorScheme.primary,
+                          ),
+                          items: [
+                            DropdownMenuItem<String?>(
+                              value: null,
+                              child: Text(
+                                AppLocalizations.of(context)!.filterAll,
+                                style: theme.textTheme.bodyMedium?.copyWith(
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                            ...accounts.map((acc) {
+                              return DropdownMenuItem<String?>(
+                                value: acc.id,
+                                child: Row(
+                                  children: [
+                                    Container(
+                                      width: 12,
+                                      height: 12,
+                                      decoration: BoxDecoration(
+                                        color: _parseHexColor(acc.color),
+                                        shape: BoxShape.circle,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      acc.name,
+                                      style:
+                                          theme.textTheme.bodyMedium?.copyWith(
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }),
+                          ],
+                          onChanged: (val) {
+                            ref
+                                .read(statisticsFilterProvider.notifier)
+                                .setAccountId(val);
+                          },
+                        ),
+                      ),
+                    ),
+                  );
+                },
+                loading: () => const SizedBox.shrink(),
+                error: (_, __) => const SizedBox.shrink(),
+              ),
+            ),
+
             // ── Filter chips ─────────────────────────────────────────────
             SliverToBoxAdapter(
               child: _FilterChipsRow(currentFilter: filter),
@@ -100,40 +220,59 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
               child: _PeriodHeader(dateRange: filter.dateRange),
             ),
 
-            // ── Income vs. Expense summary ────────────────────────────────
-            SliverToBoxAdapter(
-              child: _SummarySection(shimmer: _shimmer),
-            ),
-
-            // ── Top Expense Categories ─────────────────────────────────────
-            SliverToBoxAdapter(
-              child: _CategoryChartSection(
-                key: const ValueKey('expense_chart'),
-                shimmer: _shimmer,
-                categoriesAsync: ref.watch(topExpenseCategoriesProvider),
-                title: AppLocalizations.of(context)!.statisticsTopSpending,
-                subtitle:
-                    AppLocalizations.of(context)!.statisticsWhereMoneyGoes,
-                emptyLabel: AppLocalizations.of(context)!.statisticsNoExpenses,
-                accentColor: context.financialColors.negative,
+            if (isEmpty)
+              SliverFillRemaining(
+                hasScrollBody: false,
+                child: Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Center(
+                    child: EmptyStateWidget(
+                      icon: Icons.bar_chart_rounded,
+                      title: AppLocalizations.of(context)!.noDataAvailable,
+                      subtitle: AppLocalizations.of(context)!
+                          .statisticsNoDataSubtitle,
+                    ),
+                  ),
+                ),
+              )
+            else ...[
+              // ── Income vs. Expense summary ────────────────────────────────
+              SliverToBoxAdapter(
+                child: _SummarySection(shimmer: _shimmer),
               ),
-            ),
 
-            // ── Top Income Categories ──────────────────────────────────────
-            SliverToBoxAdapter(
-              child: _CategoryChartSection(
-                key: const ValueKey('income_chart'),
-                shimmer: _shimmer,
-                categoriesAsync: ref.watch(topIncomeCategoriesProvider),
-                title: AppLocalizations.of(context)!.statisticsTopIncome,
-                subtitle: AppLocalizations.of(context)!.statisticsWhatYouEarned,
-                emptyLabel: AppLocalizations.of(context)!.statisticsNoIncome,
-                accentColor: context.financialColors.positive,
+              // ── Top Expense Categories ─────────────────────────────────────
+              SliverToBoxAdapter(
+                child: _CategoryChartSection(
+                  key: const ValueKey('expense_chart'),
+                  shimmer: _shimmer,
+                  categoriesAsync: ref.watch(topExpenseCategoriesProvider),
+                  title: AppLocalizations.of(context)!.statisticsTopSpending,
+                  subtitle:
+                      AppLocalizations.of(context)!.statisticsWhereMoneyGoes,
+                  emptyLabel:
+                      AppLocalizations.of(context)!.statisticsNoExpenses,
+                  accentColor: context.financialColors.negative,
+                ),
               ),
-            ),
 
-            // Bottom padding
-            const SliverToBoxAdapter(child: SizedBox(height: 40)),
+              // ── Top Income Categories ──────────────────────────────────────
+              SliverToBoxAdapter(
+                child: _CategoryChartSection(
+                  key: const ValueKey('income_chart'),
+                  shimmer: _shimmer,
+                  categoriesAsync: ref.watch(topIncomeCategoriesProvider),
+                  title: AppLocalizations.of(context)!.statisticsTopIncome,
+                  subtitle:
+                      AppLocalizations.of(context)!.statisticsWhatYouEarned,
+                  emptyLabel: AppLocalizations.of(context)!.statisticsNoIncome,
+                  accentColor: context.financialColors.positive,
+                ),
+              ),
+
+              // Bottom padding
+              const SliverToBoxAdapter(child: SizedBox(height: 40)),
+            ],
           ],
         ),
       ),
@@ -233,8 +372,9 @@ class _PeriodHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final locale = Localizations.localeOf(context).toString();
     final formatted =
-        '${DateFormat('MMM d').format(dateRange.start)} – ${DateFormat('MMM d, y').format(dateRange.end)}';
+        '${DateFormat.MMMd(locale).format(dateRange.start)} – ${DateFormat.yMMMd(locale).format(dateRange.end)}';
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 4, 20, 0),
@@ -327,13 +467,13 @@ class _SummarySection extends ConsumerWidget {
   }
 }
 
-class _NetBalanceCard extends StatelessWidget {
+class _NetBalanceCard extends ConsumerWidget {
   final PeriodSummary summary;
 
   const _NetBalanceCard({required this.summary});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final financialColors = context.financialColors;
@@ -391,7 +531,9 @@ class _NetBalanceCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  CurrencyFormatter.format(net.abs(), showSign: false),
+                  ref
+                      .watch(currencyFormatterProvider)
+                      .format(net.abs(), showSign: false),
                   style: theme.textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.w800,
                     color: accentColor,
@@ -423,7 +565,7 @@ class _NetBalanceCard extends StatelessWidget {
   }
 }
 
-class _SummaryCard extends StatelessWidget {
+class _SummaryCard extends ConsumerWidget {
   final String label;
   final double amount;
   final IconData icon;
@@ -437,7 +579,7 @@ class _SummaryCard extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
@@ -475,12 +617,11 @@ class _SummaryCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  CurrencyFormatter.format(amount),
+                  ref.watch(currencyFormatterProvider).format(amount),
                   style: theme.textTheme.titleSmall?.copyWith(
                     fontWeight: FontWeight.w800,
                     color: accentColor,
                   ),
-                  overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),
@@ -638,9 +779,11 @@ class _CategoryChartSectionState extends State<_CategoryChartSection> {
             error: (err, _) => _InlineError(message: err.toString()),
             data: (categories) {
               if (categories.isEmpty) {
-                return _EmptyChartState(
-                  label: widget.emptyLabel,
-                  accentColor: widget.accentColor,
+                return EmptyStateWidget(
+                  icon: Icons.pie_chart_outline_rounded,
+                  title: widget.emptyLabel,
+                  subtitle:
+                      AppLocalizations.of(context)!.statisticsNoDataSubtitle,
                 );
               }
               return _PieChartWithLegend(
@@ -659,7 +802,7 @@ class _CategoryChartSectionState extends State<_CategoryChartSection> {
 
 // ─── Pie chart ────────────────────────────────────────────────────────────────
 
-class _PieChartWithLegend extends StatelessWidget {
+class _PieChartWithLegend extends ConsumerWidget {
   final List<CategoryStatistic> categories;
   final int touchedIndex;
   final ValueChanged<int> onTouch;
@@ -680,7 +823,7 @@ class _PieChartWithLegend extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final total = categories.fold<int>(0, (s, c) => s + c.totalAmount);
@@ -824,7 +967,9 @@ class _PieChartWithLegend extends StatelessWidget {
                       ),
                       const SizedBox(width: 12),
                       Text(
-                        CurrencyFormatter.format(cat.totalAmount / 100.0),
+                        ref
+                            .watch(currencyFormatterProvider)
+                            .format(cat.totalAmount / 100.0),
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: catColor,
                           fontWeight: FontWeight.w700,
@@ -859,7 +1004,9 @@ class _PieChartWithLegend extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  CurrencyFormatter.format(otherTotal / 100.0),
+                  ref
+                      .watch(currencyFormatterProvider)
+                      .format(otherTotal / 100.0),
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: colorScheme.onSurfaceVariant,
                     fontWeight: FontWeight.w600,
@@ -874,7 +1021,7 @@ class _PieChartWithLegend extends StatelessWidget {
   }
 }
 
-class _TouchedCategoryInfo extends StatelessWidget {
+class _TouchedCategoryInfo extends ConsumerWidget {
   final CategoryStatistic category;
   final int total;
   final Color Function(String) parseColor;
@@ -886,7 +1033,7 @@ class _TouchedCategoryInfo extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final catColor = parseColor(category.categoryColor);
     final percentage = total > 0
@@ -905,11 +1052,13 @@ class _TouchedCategoryInfo extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
-              category.categoryName,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                fontWeight: FontWeight.w700,
-                color: catColor,
+            Flexible(
+              child: Text(
+                category.categoryName,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  fontWeight: FontWeight.w700,
+                  color: catColor,
+                ),
               ),
             ),
             const SizedBox(width: 8),
@@ -936,7 +1085,9 @@ class _TouchedCategoryInfo extends StatelessWidget {
             ),
             const SizedBox(width: 8),
             Text(
-              CurrencyFormatter.format(category.totalAmount / 100.0),
+              ref
+                  .watch(currencyFormatterProvider)
+                  .format(category.totalAmount / 100.0),
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: catColor,
                 fontWeight: FontWeight.w700,
@@ -1006,54 +1157,6 @@ class _ChartSkeleton extends StatelessWidget {
               ),
             );
           }),
-        ],
-      ),
-    );
-  }
-}
-
-class _EmptyChartState extends StatelessWidget {
-  final String label;
-  final Color accentColor;
-
-  const _EmptyChartState({required this.label, required this.accentColor});
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 36, horizontal: 20),
-      decoration: BoxDecoration(
-        color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.35),
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: colorScheme.outline.withValues(alpha: 0.08)),
-      ),
-      child: Column(
-        children: [
-          Container(
-            width: 64,
-            height: 64,
-            decoration: BoxDecoration(
-              color: accentColor.withValues(alpha: 0.1),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              Icons.pie_chart_outline_rounded,
-              size: 30,
-              color: accentColor.withValues(alpha: 0.6),
-            ),
-          ),
-          const SizedBox(height: 16),
-          Text(
-            label,
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: colorScheme.onSurfaceVariant,
-              fontWeight: FontWeight.w500,
-            ),
-            textAlign: TextAlign.center,
-          ),
         ],
       ),
     );

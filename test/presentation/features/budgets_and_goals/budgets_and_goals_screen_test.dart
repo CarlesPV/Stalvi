@@ -3,15 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:konta/core/l10n/app_localizations.dart';
-import 'package:konta/core/theme/app_theme.dart';
-import 'package:konta/domain/entities/budget.dart';
-import 'package:konta/domain/entities/category.dart';
-import 'package:konta/domain/entities/savings_goal.dart';
-import 'package:konta/presentation/features/budgets_and_goals/budgets_and_goals_screen.dart';
-import 'package:konta/presentation/providers/repository_providers.dart';
-import 'package:konta/core/utils/currency_formatter.dart';
-import 'package:konta/presentation/widgets/progress_bar_widget.dart';
+import 'package:stalvi/core/l10n/app_localizations.dart';
+import 'package:stalvi/core/theme/app_theme.dart';
+import 'package:stalvi/domain/entities/budget.dart';
+import 'package:stalvi/domain/entities/category.dart';
+import 'package:stalvi/domain/entities/savings_goal.dart';
+import 'package:stalvi/presentation/features/budgets_and_goals/budgets_and_goals_screen.dart';
+import 'package:stalvi/presentation/providers/repository_providers.dart';
+import 'package:stalvi/core/utils/currency_formatter.dart';
+import 'package:stalvi/presentation/widgets/progress_bar_widget.dart';
 
 /// A completely passive, synchronous Stream that never emits any values and never completes.
 /// Useful for testing loading states without scheduling any event loop tasks.
@@ -102,13 +102,15 @@ void main() {
   Widget createTestWidget({
     required Stream<List<Budget>> budgetsStream,
     required Stream<List<SavingsGoal>> savingsGoalsStream,
-    required Future<List<Category>> categoriesFuture,
+    required Stream<List<Category>> categoriesStream,
   }) {
     return ProviderScope(
       overrides: [
         budgetsStreamProvider.overrideWith((ref) => budgetsStream),
         savingsGoalsStreamProvider.overrideWith((ref) => savingsGoalsStream),
-        categoriesListProvider.overrideWith((ref) => categoriesFuture),
+        categoriesListProvider.overrideWith((ref) => categoriesStream),
+        currencyFormatterProvider
+            .overrideWith((ref) => CurrencyFormatter(currencyCode: 'EUR')),
       ],
       child: MaterialApp(
         theme: AppTheme.lightTheme,
@@ -133,8 +135,7 @@ void main() {
         createTestWidget(
           budgetsStream: const NeverStream<List<Budget>>(),
           savingsGoalsStream: const NeverStream<List<SavingsGoal>>(),
-          categoriesFuture: Completer<List<Category>>()
-              .future, // A future that never resolves to stay in loading
+          categoriesStream: const NeverStream<List<Category>>(),
         ),
       );
 
@@ -148,7 +149,7 @@ void main() {
         createTestWidget(
           budgetsStream: Stream<List<Budget>>.error(Exception('Db error')),
           savingsGoalsStream: Stream.value([testSavingsGoal]),
-          categoriesFuture: Future.value([testCategory]),
+          categoriesStream: Stream.value([testCategory]),
         ),
       );
 
@@ -164,7 +165,7 @@ void main() {
         createTestWidget(
           budgetsStream: Stream.value(<Budget>[]),
           savingsGoalsStream: Stream.value(<SavingsGoal>[]),
-          categoriesFuture: Future.value([testCategory]),
+          categoriesStream: Stream.value([testCategory]),
         ),
       );
 
@@ -200,7 +201,7 @@ void main() {
         createTestWidget(
           budgetsStream: Stream.value([testBudgetNormal, testBudgetExceeded]),
           savingsGoalsStream: Stream.value([testSavingsGoal]),
-          categoriesFuture: Future.value([testCategory]),
+          categoriesStream: Stream.value([testCategory]),
         ),
       );
 
@@ -213,17 +214,17 @@ void main() {
       ); // Should find two occurrences because we have two budgets with the same category
 
       // Budget 1 (Normal): Spent €80.00 of €200.00 (progress: 40%) -> remaining: €120.00
-      final b1Spent = CurrencyFormatter.format(80.0);
-      final b1Target = CurrencyFormatter.format(200.0);
-      final b1Remaining = CurrencyFormatter.format(120.0);
+      final b1Spent = CurrencyFormatter().format(80.0);
+      final b1Target = CurrencyFormatter().format(200.0);
+      final b1Remaining = CurrencyFormatter().format(120.0);
       expect(find.text('$b1Spent of $b1Target'), findsOneWidget);
       expect(find.text('$b1Remaining remaining'), findsOneWidget);
       expect(find.text('40%'), findsOneWidget);
 
       // Budget 2 (Exceeded): Spent €120.00 of €100.00 (progress: 120%) -> overspent: €20.00
-      final b2Spent = CurrencyFormatter.format(120.0);
-      final b2Target = CurrencyFormatter.format(100.0);
-      final b2Overspent = CurrencyFormatter.format(20.0);
+      final b2Spent = CurrencyFormatter().format(120.0);
+      final b2Target = CurrencyFormatter().format(100.0);
+      final b2Overspent = CurrencyFormatter().format(20.0);
       expect(find.text('$b2Spent of $b2Target'), findsOneWidget);
       expect(find.text('$b2Overspent overspent'), findsOneWidget);
       expect(find.text('120%'), findsOneWidget);
@@ -239,7 +240,7 @@ void main() {
         createTestWidget(
           budgetsStream: Stream.value([testBudgetNormal]),
           savingsGoalsStream: Stream.value([testSavingsGoal]),
-          categoriesFuture: Future.value([testCategory]),
+          categoriesStream: Stream.value([testCategory]),
         ),
       );
 
@@ -251,8 +252,8 @@ void main() {
 
       // Check Savings Goal Details
       expect(find.text('New Electric Car'), findsOneWidget);
-      final sgSaved = CurrencyFormatter.format(15000.0);
-      final sgTarget = CurrencyFormatter.format(30000.0);
+      final sgSaved = CurrencyFormatter().format(15000.0);
+      final sgTarget = CurrencyFormatter().format(30000.0);
       expect(find.text('$sgSaved saved of $sgTarget'), findsOneWidget);
       expect(find.text('50%'), findsOneWidget);
       expect(find.text('Target date: Dec 31, 2027'), findsOneWidget);

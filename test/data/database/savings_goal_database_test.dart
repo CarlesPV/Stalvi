@@ -1,9 +1,9 @@
 import 'dart:ffi';
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:konta/data/database/app_database.dart';
-import 'package:konta/data/repositories/savings_goal_repository.dart';
-import 'package:konta/domain/entities/savings_goal.dart';
+import 'package:stalvi/data/database/app_database.dart';
+import 'package:stalvi/data/repositories/savings_goal_repository.dart';
+import 'package:stalvi/domain/entities/savings_goal.dart';
 // ignore: depend_on_referenced_packages
 import 'package:sqlite3/open.dart';
 

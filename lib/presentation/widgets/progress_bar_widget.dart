@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:konta/core/theme/app_theme.dart';
+import 'package:stalvi/core/theme/app_theme.dart';
 
-/// A reusable visual progress bar widget designed with Konta brand aesthetics.
+/// A reusable visual progress bar widget designed with Stalvi brand aesthetics.
 ///
 /// Takes [currentAmount] and [targetAmount] (in cents or any consistent unit),
 /// calculates the progress percentage, and renders an animated bar.

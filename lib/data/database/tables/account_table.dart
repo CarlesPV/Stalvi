@@ -6,6 +6,7 @@ enum AccountType {
   bank,
   savings,
   card,
+  other,
 }
 
 @DataClassName('Account')
@@ -18,7 +19,8 @@ class Accounts extends Table {
   TextColumn get currency => text()();
   TextColumn get color => text()();
   TextColumn get icon => text()();
-  BoolColumn get isDefault => boolean().named('is_default')();
+  BoolColumn get isDefault =>
+      boolean().named('is_default').withDefault(const Constant(false))();
   BoolColumn get isDeleted =>
       boolean().named('is_deleted').withDefault(const Constant(false))();
   DateTimeColumn get createdAt => dateTime().named('created_at')();

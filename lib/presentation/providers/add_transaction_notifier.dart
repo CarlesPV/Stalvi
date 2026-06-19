@@ -1,28 +1,36 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
-import 'package:konta/core/errors/app_exceptions.dart';
-import 'package:konta/core/utils/currency_formatter.dart';
-import 'package:konta/domain/entities/transaction_type.dart';
-import 'package:konta/domain/usecases/add_transaction_usecase.dart';
-import 'package:konta/presentation/providers/repository_providers.dart';
+import 'package:stalvi/core/errors/app_exceptions.dart';
+import 'package:stalvi/core/utils/currency_formatter.dart';
+import 'package:stalvi/domain/entities/transaction_type.dart';
+import 'package:stalvi/domain/usecases/add_transaction_usecase.dart';
+import 'package:stalvi/presentation/providers/repository_providers.dart';
+import 'package:stalvi/presentation/providers/statistics_providers.dart';
 
+/// State representation for the Add Transaction form.
 /// State representation for the Add Transaction form.
 class AddTransactionState {
   final String amountText;
   final TransactionType type;
   final String? accountId;
+  final String? toAccountId;
   final String? categoryId;
   final String notes;
   final DateTime date;
+  final String? currency;
+  final String? tagId;
   final AsyncValue<void> submissionStatus;
 
   const AddTransactionState({
     required this.amountText,
     required this.type,
     required this.accountId,
+    this.toAccountId,
     required this.categoryId,
     required this.notes,
     required this.date,
+    this.currency,
+    this.tagId,
     required this.submissionStatus,
   });
 
@@ -31,9 +39,12 @@ class AddTransactionState {
       amountText: '',
       type: TransactionType.expense,
       accountId: null,
+      toAccountId: null,
       categoryId: null,
       notes: '',
       date: DateTime.now(),
+      currency: null,
+      tagId: null,
       submissionStatus: const AsyncData<void>(null),
     );
   }
@@ -42,18 +53,24 @@ class AddTransactionState {
     String? amountText,
     TransactionType? type,
     String? accountId,
+    String? Function()? toAccountIdFn,
     String? Function()? categoryId,
     String? notes,
     DateTime? date,
+    String? Function()? currency,
+    String? Function()? tagId,
     AsyncValue<void>? submissionStatus,
   }) {
     return AddTransactionState(
       amountText: amountText ?? this.amountText,
       type: type ?? this.type,
       accountId: accountId ?? this.accountId,
+      toAccountId: toAccountIdFn != null ? toAccountIdFn() : toAccountId,
       categoryId: categoryId != null ? categoryId() : this.categoryId,
       notes: notes ?? this.notes,
       date: date ?? this.date,
+      currency: currency != null ? currency() : this.currency,
+      tagId: tagId != null ? tagId() : this.tagId,
       submissionStatus: submissionStatus ?? this.submissionStatus,
     );
   }
@@ -92,8 +109,24 @@ class AddTransactionNotifier extends AutoDisposeNotifier<AddTransactionState> {
       }
     }
 
+    // Default to the user's default setting for currency.
+    ref.listen(defaultProfileProvider, (previous, next) {
+      next.whenData((profile) {
+        if (state.currency == null) {
+          state = state.copyWith(currency: () => profile.defaultCurrency);
+        }
+      });
+    });
+
+    final profileAsyncValue = ref.read(defaultProfileProvider);
+    String? initialCurrency;
+    if (profileAsyncValue.hasValue) {
+      initialCurrency = profileAsyncValue.value!.defaultCurrency;
+    }
+
     return AddTransactionState.initial().copyWith(
       accountId: initialAccountId,
+      currency: initialCurrency != null ? () => initialCurrency : null,
     );
   }
 
@@ -102,7 +135,7 @@ class AddTransactionNotifier extends AutoDisposeNotifier<AddTransactionState> {
     state = state.copyWith(amountText: text);
   }
 
-  /// Update the transaction type (income / expense) in the form state.
+  /// Update the transaction type (income / expense / transfer) in the form state.
   /// Also resets category ID if the selected type changes, since category items
   /// are filtered by category type.
   void updateType(TransactionType type) {
@@ -110,6 +143,7 @@ class AddTransactionNotifier extends AutoDisposeNotifier<AddTransactionState> {
       state = state.copyWith(
         type: type,
         categoryId: () => null, // Reset selected category as its type changes
+        toAccountIdFn: () => null, // Clear destination account if type changes
       );
     }
   }
@@ -117,6 +151,11 @@ class AddTransactionNotifier extends AutoDisposeNotifier<AddTransactionState> {
   /// Select account.
   void updateAccount(String accountId) {
     state = state.copyWith(accountId: accountId);
+  }
+
+  /// Select destination account for transfers.
+  void updateToAccount(String? toAccountId) {
+    state = state.copyWith(toAccountIdFn: () => toAccountId);
   }
 
   /// Select category.
@@ -132,6 +171,16 @@ class AddTransactionNotifier extends AutoDisposeNotifier<AddTransactionState> {
   /// Update date.
   void updateDate(DateTime date) {
     state = state.copyWith(date: date);
+  }
+
+  /// Update currency.
+  void updateCurrency(String currency) {
+    state = state.copyWith(currency: () => currency);
+  }
+
+  /// Update tag.
+  void updateTag(String? tagId) {
+    state = state.copyWith(tagId: () => tagId);
   }
 
   /// Validates the form state and attempts to execute the use case.
@@ -164,12 +213,81 @@ class AddTransactionNotifier extends AutoDisposeNotifier<AddTransactionState> {
       return false;
     }
 
+    if (state.type == TransactionType.transfer) {
+      if (state.toAccountId == null) {
+        state = state.copyWith(
+          submissionStatus: AsyncValue.error(
+            const ValidationException(
+              message: 'Please select a destination account',
+              code: 'TO_ACCOUNT_REQUIRED',
+            ),
+            StackTrace.current,
+          ),
+        );
+        return false;
+      }
+      if (state.accountId == state.toAccountId) {
+        state = state.copyWith(
+          submissionStatus: AsyncValue.error(
+            const ValidationException(
+              message: 'Source and destination accounts cannot be the same',
+              code: 'SAME_ACCOUNTS',
+            ),
+            StackTrace.current,
+          ),
+        );
+        return false;
+      }
+    } else {
+      if (state.categoryId == null) {
+        state = state.copyWith(
+          submissionStatus: AsyncValue.error(
+            const ValidationException(
+              message: 'Please select a category',
+              code: 'CATEGORY_REQUIRED',
+            ),
+            StackTrace.current,
+          ),
+        );
+        return false;
+      }
+    }
+
+    final now = DateTime.now();
+    if (state.date.isAfter(now)) {
+      state = state.copyWith(
+        submissionStatus: AsyncValue.error(
+          const ValidationException(
+            message: 'Transaction date cannot be in the future',
+            code: 'FUTURE_DATE',
+          ),
+          StackTrace.current,
+        ),
+      );
+      return false;
+    }
+
+    if (state.currency == null || state.currency!.trim().isEmpty) {
+      state = state.copyWith(
+        submissionStatus: AsyncValue.error(
+          const ValidationException(
+            message: 'Please select a currency',
+            code: 'CURRENCY_REQUIRED',
+          ),
+          StackTrace.current,
+        ),
+      );
+      return false;
+    }
+
     state = state.copyWith(submissionStatus: const AsyncValue.loading());
 
     try {
       final useCase = ref.read(addTransactionUseCaseProvider);
       final cents = (amountDouble * 100).round();
+
       final id = const Uuid().v4();
+      final trimmedNotes = state.notes.trim();
 
       await useCase.execute(
         AddTransactionParams(
@@ -178,13 +296,20 @@ class AddTransactionNotifier extends AutoDisposeNotifier<AddTransactionState> {
           date: state.date,
           type: state.type,
           accountId: state.accountId!,
+          destinationAccountId:
+              state.type == TransactionType.transfer ? state.toAccountId : null,
           categoryId: state.categoryId,
-          notes: state.notes.trim().isEmpty ? null : state.notes.trim(),
+          notes: trimmedNotes.isEmpty ? null : trimmedNotes,
+          currency: state.currency,
         ),
       );
 
       // Successfully saved transaction, invalidate account list to refresh balances
       ref.invalidate(accountsListProvider);
+      ref.invalidate(transactionsStreamProvider);
+      ref.invalidate(periodSummaryProvider);
+      ref.invalidate(topExpenseCategoriesProvider);
+      ref.invalidate(topIncomeCategoriesProvider);
 
       state = state.copyWith(submissionStatus: const AsyncValue.data(null));
       return true;

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:konta/core/l10n/app_localizations.dart';
+import 'package:stalvi/core/l10n/app_localizations.dart';
 
 /// A premium, reusable presentation widget designed to prevent "blank page syndrome".
 ///
@@ -15,10 +15,10 @@ class EmptyStateWidget extends StatelessWidget {
   final String? svgAssetPath;
 
   /// The primary title text (bold, distinct).
-  final String title;
+  final String? title;
 
   /// The secondary subtitle text providing helpful context or instruction.
-  final String subtitle;
+  final String? subtitle;
 
   /// The label for the optional call-to-action button.
   final String? actionLabel;
@@ -30,19 +30,20 @@ class EmptyStateWidget extends StatelessWidget {
     super.key,
     this.icon,
     this.svgAssetPath,
-    required this.title,
-    required this.subtitle,
+    this.title,
+    this.subtitle,
     this.actionLabel,
     this.onActionPressed,
-  }) : assert(
-          icon != null || svgAssetPath != null,
-          'Either an icon or a svgAssetPath must be provided to render an EmptyStateWidget.',
-        );
+  });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final l10n = AppLocalizations.of(context);
+
+    final displayTitle =
+        title ?? l10n?.noDataAvailable ?? 'No data available yet';
 
     return Center(
       child: SingleChildScrollView(
@@ -72,7 +73,7 @@ class EmptyStateWidget extends StatelessWidget {
 
             // Title Text
             Text(
-              title,
+              displayTitle,
               style: theme.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.w800,
                 color: colorScheme.onSurface,
@@ -80,20 +81,22 @@ class EmptyStateWidget extends StatelessWidget {
               ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 12),
 
-            // Subtitle / Description Text
-            ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 290),
-              child: Text(
-                subtitle,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: colorScheme.onSurfaceVariant.withValues(alpha: 0.8),
-                  height: 1.45,
+            if (subtitle != null && subtitle!.isNotEmpty) ...[
+              const SizedBox(height: 12),
+              // Subtitle / Description Text
+              ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 290),
+                child: Text(
+                  subtitle!,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: colorScheme.onSurfaceVariant.withValues(alpha: 0.8),
+                    height: 1.45,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
-                textAlign: TextAlign.center,
               ),
-            ),
+            ],
 
             // Action button (if callback is provided)
             if (onActionPressed != null) ...[
@@ -102,9 +105,7 @@ class EmptyStateWidget extends StatelessWidget {
                 onPressed: onActionPressed,
                 icon: const Icon(Icons.add_rounded, size: 20),
                 label: Text(
-                  actionLabel ??
-                      (AppLocalizations.of(context)?.getStarted ??
-                          'Get Started'),
+                  actionLabel ?? (l10n?.getStarted ?? 'Get Started'),
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     letterSpacing: -0.1,
@@ -131,9 +132,11 @@ class EmptyStateWidget extends StatelessWidget {
   }
 
   Widget _buildGraphic(ColorScheme colorScheme) {
-    if (icon != null) {
+    final displayIcon =
+        icon ?? (svgAssetPath == null ? Icons.info_outline_rounded : null);
+    if (displayIcon != null) {
       return Icon(
-        icon,
+        displayIcon,
         size: 38,
         color: colorScheme.primary,
       );

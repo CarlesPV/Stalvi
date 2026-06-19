@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:konta/core/l10n/app_localizations.dart';
-import 'package:konta/presentation/features/auth/auth_screen.dart';
-import 'package:konta/presentation/providers/app_startup_provider.dart';
+import 'package:stalvi/core/l10n/app_localizations.dart';
+import 'package:stalvi/presentation/features/auth/auth_screen.dart';
+import 'package:stalvi/presentation/providers/app_startup_provider.dart';
 
 /// The app entry-point screen.
 ///
@@ -258,7 +258,7 @@ class _SplashContent extends StatelessWidget {
             child: FadeTransition(
               opacity: wordmarkFade,
               child: Text(
-                'Konta',
+                'Stalvi',
                 style: theme.textTheme.displayMedium?.copyWith(
                   color: colorScheme.onSurface,
                   fontWeight: FontWeight.w800,

@@ -26,6 +26,11 @@ class Transactions extends Table {
   RealColumn get exchangeRate => real().named('exchange_rate').nullable()();
   DateTimeColumn get createdAt => dateTime().named('created_at')();
   DateTimeColumn get modifiedAt => dateTime().named('modified_at')();
+  BoolColumn get isDeleted =>
+      boolean().named('is_deleted').withDefault(const Constant(false))();
+
+  /// Links both legs of a transfer pair. Null for income/expense rows.
+  TextColumn get transferId => text().named('transfer_id').nullable()();
 
   @override
   Set<Column> get primaryKey => {id};

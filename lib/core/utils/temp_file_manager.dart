@@ -3,8 +3,8 @@ import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
-import 'package:konta/core/errors/app_exceptions.dart';
-import 'package:konta/domain/repositories/i_export_service.dart';
+import 'package:stalvi/core/errors/app_exceptions.dart';
+import 'package:stalvi/domain/repositories/i_export_service.dart';
 
 /// Manages the lifecycle of temporary export files:
 /// write → share → delete.

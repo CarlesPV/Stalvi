@@ -1,5 +1,5 @@
-import 'package:konta/data/database/daos/statistics_dao.dart';
-import 'package:konta/domain/entities/category_statistic.dart';
+import 'package:stalvi/data/database/daos/statistics_dao.dart';
+import 'package:stalvi/domain/entities/category_statistic.dart';
 
 extension CategoryStatisticResultMapper on CategoryStatisticResult {
   CategoryStatistic toDomain() {

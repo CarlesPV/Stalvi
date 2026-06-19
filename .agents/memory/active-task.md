@@ -1,23 +1,26 @@
-# Active Task Memory
+# Active Task: Phase 21 - Transfer Flow Polish, Recycle Bin Refinements & Validation
 
-## Current Task
-Verification and Roadmap Update Complete. All development phases of the current roadmap (Phases 1-6) are fully completed, verified, and ready for deployment.
+## Current Status
+- All E2E bugs, transfer details lookup failures, and recycle bin localization issues have been resolved.
+- Full automated test suite (352 tests) and static analysis pass cleanly.
+- Documentation, roadmap, and resolved issues logs have been updated.
 
-## Execution Plan
-- [x] Step 1: Implement fully functional i18n (English, Spanish, Catalan) using `flutter_localizations` and verify Dark Mode contrast compliance.
-- [x] Step 2: Develop "Discreet Mode" (toggle to mask balances) and implement App Lifecycle security (blurring the screen or using `FLAG_SECURE` / `ScreenShield` when the app is in the background).
-- [x] Step 3: Implement informative and engaging "Empty States" across all views (Dashboard, Transactions, Budgets) to prevent blank page syndrome.
-- [x] Step 4: Write and execute E2E Integration Tests simulating the critical user journey (Biometric Auth -> Add Transaction -> View Dashboard).
-- [x] Step 5: Draft App Store & Google Play compliance documentation (`privacy_policy_data_map.md` and `store_compliance.md`), detailing SQLCipher local encryption and lack of off-device telemetry.
+## Completed Objectives
+1. **Empty Note Default**: Cleared note field default value on transfer creation forms to start empty.
+2. **Transfer Deduplication**: Paired transfers are deduplicated in global lists but display correctly for both accounts under filters.
+3. **Transaction Details Lookup**: Created `watchRawTransactions()` and `rawTransactionsStreamProvider` to search both legs of a transfer, allowing the details modal to show the origin and destination accounts correctly.
+4. **Recycle Bin Operations & i18n**:
+   - Disabled bulk "delete all/empty sweep" to avoid accidental deletions.
+   - Added metadata tracking to `TrashItem` (`amount`, `txType`, `currency`) in `TrashDao`.
+   - Updated Recycle Bin list tiles to dynamically render items formatted as `<Note/Type> - <Amount>` using localized translations.
+   - Ensured deleting a transfer places exactly 1 item in the Recycle Bin.
+   - Wired Recycle Bin provider to `autoDispose` for automatic refresh on entry.
+5. **Icon & Balance Synchronization**:
+   - Standardized transfer icons on the dashboard.
+   - Ensured trashing, restoring, or hard-deleting transactions (including mirrored transfers) properly reverts or re-applies account balances for both accounts.
+6. **UI Overflow Sweep**: Audited all screen layouts to ensure no overflows or truncated ellipsis ("...") occur under dynamic screens.
 
-## Progress & Notes
-- All phases (1 through 6) are fully completed and verified.
-- The automated test suite has been expanded and passes with 100% success rate (113 unit/widget tests passing).
-- Cleaned up lint warnings and unnecessary imports across providers and widgets.
-- Resolved build configuration issues (compileSdk 36, targetSdk 36, removed conflicting `sqlite3_flutter_libs` dependency to resolve Android namespace conflict).
-- Successfully compiled the Android package locally (`✓ Built build/app/outputs/flutter-apk/app-debug.apk`).
-
-## Vulnerability & Security Logs
-- App Lifecycle Security: Screen blurring verified and operational on background events via `LifecycleBlurWrapper`.
-- Store Compliance: Documentation complete and mapped in `docs/compliance/`. Users' data never leaves the device.
-- Local Storage: PBKDF2 derived keys generated and secured via Secure Enclave / Keystore wrapping SQLCipher.
+## Architectural Guidelines
+- **Clean Architecture:** Pass parameters to the Domain layer and use repository/use-case bounds for transactions logic.
+- **Unfiltered Streams:** Use raw unfiltered streams for detail dialog queries to verify related entity pairs (e.g. transfers), and filtered streams for general listings to prevent duplicate visibility.
+- **Reactivity:** Use Riverpod invalidations to force refresh state upon mutations.

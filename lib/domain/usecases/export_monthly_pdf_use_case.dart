@@ -1,6 +1,6 @@
-import 'package:konta/domain/repositories/i_export_service.dart';
-import 'package:konta/domain/repositories/i_transaction_repository.dart';
-import 'package:konta/domain/repositories/i_statistics_repository.dart';
+import 'package:stalvi/domain/repositories/i_export_service.dart';
+import 'package:stalvi/domain/repositories/i_transaction_repository.dart';
+import 'package:stalvi/domain/repositories/i_statistics_repository.dart';
 
 /// Use case that generates a PDF summary report for the **current calendar month**.
 ///
