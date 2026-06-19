@@ -451,12 +451,15 @@ class _EditAccountDialogState extends ConsumerState<EditAccountDialog> {
                     borderRadius: BorderRadius.circular(16),
                   ),
                 ),
-                items: ['EUR', 'USD', 'GBP', 'JPY', 'CHF']
-                    .map(
-                      (code) =>
-                          DropdownMenuItem(value: code, child: Text(code)),
-                    )
-                    .toList(),
+                items: [
+                  DropdownMenuItem(value: 'EUR', child: Text(l10n.currencyEUR)),
+                  DropdownMenuItem(value: 'USD', child: Text(l10n.currencyUSD)),
+                  DropdownMenuItem(value: 'GBP', child: Text(l10n.currencyGBP)),
+                  DropdownMenuItem(value: 'JPY', child: Text(l10n.currencyJPY)),
+                  DropdownMenuItem(value: 'CHF', child: Text(l10n.currencyCHF)),
+                  DropdownMenuItem(value: 'CAD', child: Text(l10n.currencyCAD)),
+                  DropdownMenuItem(value: 'AUD', child: Text(l10n.currencyAUD)),
+                ],
                 onChanged: (val) {
                   if (val != null) setState(() => _selectedCurrency = val);
                 },

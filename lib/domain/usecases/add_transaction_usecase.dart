@@ -175,8 +175,7 @@ class AddTransactionUseCase {
       // A shared transferId links the two rows; derived deterministically from
       // the origin id so callers can recreate it if needed.
       final transferId = _uuid.v5(Namespace.url.value, params.id);
-      final destinationTxnId =
-          _uuid.v5(Namespace.url.value, '${params.id}_dst');
+      final destinationTxnId = '${params.id}_dst';
 
       final originTxn = Transaction(
         id: params.id,
@@ -185,8 +184,7 @@ class AddTransactionUseCase {
         type: TransactionType.transfer,
         accountId: params.accountId,
         categoryId: params.categoryId,
-        // "Transfer" title stored in notes if none supplied, kept ≤ 20 chars.
-        notes: sanitizedNotes ?? 'Transfer',
+        notes: sanitizedNotes,
         originalCurrency: originalCurrency,
         convertedAmount: convertedAmount,
         exchangeRate: exchangeRate,
@@ -202,7 +200,7 @@ class AddTransactionUseCase {
         type: TransactionType.transfer,
         accountId: params.destinationAccountId!,
         categoryId: params.categoryId,
-        notes: sanitizedNotes ?? 'Transfer',
+        notes: sanitizedNotes,
         originalCurrency: originalCurrency,
         convertedAmount: convertedAmount,
         exchangeRate: exchangeRate,

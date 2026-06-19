@@ -48,8 +48,12 @@ class TransactionDetailsDialog extends ConsumerWidget {
     final financialColors = context.financialColors;
     final l10n = AppLocalizations.of(context)!;
 
-    final isIncome = transaction.type == TransactionType.income;
-    final amountDouble = transaction.amount / 100.0;
+    final isTransfer = transaction.type == TransactionType.transfer;
+    final isOrigin = isTransfer && !transaction.id.endsWith('_dst');
+    final isIncome =
+        transaction.type == TransactionType.income || (isTransfer && !isOrigin);
+    final amountDouble =
+        (isIncome ? transaction.amount : -transaction.amount) / 100.0;
 
     final formatter = ref.watch(currencyFormatterProvider);
     final amountStr = formatter.format(
@@ -57,8 +61,6 @@ class TransactionDetailsDialog extends ConsumerWidget {
       currencyCode: transaction.originalCurrency,
       showSign: true,
     );
-
-    final isTransfer = transaction.type == TransactionType.transfer;
 
     final color = isTransfer
         ? Colors.blue
@@ -75,7 +77,9 @@ class TransactionDetailsDialog extends ConsumerWidget {
 
     final accounts = ref.watch(accountsListProvider).valueOrNull ?? [];
     Account? account;
+    Account? originAccount;
     Account? destinationAccount;
+
     for (final a in accounts) {
       if (a.id == transaction.accountId) {
         account = a;
@@ -83,16 +87,24 @@ class TransactionDetailsDialog extends ConsumerWidget {
     }
 
     if (isTransfer) {
+      if (isOrigin) {
+        originAccount = account;
+      } else {
+        destinationAccount = account;
+      }
+
       final allTransactions =
-          ref.watch(transactionsStreamProvider).valueOrNull ?? [];
+          ref.watch(rawTransactionsStreamProvider).valueOrNull ?? [];
       for (final tx in allTransactions) {
         if (tx.id != transaction.id &&
-            tx.type == TransactionType.income &&
-            tx.amount == transaction.amount &&
-            tx.date == transaction.date) {
+            tx.transferId == transaction.transferId) {
           for (final a in accounts) {
             if (a.id == tx.accountId) {
-              destinationAccount = a;
+              if (isOrigin) {
+                destinationAccount = a;
+              } else {
+                originAccount = a;
+              }
               break;
             }
           }
@@ -118,228 +130,234 @@ class TransactionDetailsDialog extends ConsumerWidget {
         borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
       ),
       padding: const EdgeInsets.fromLTRB(24, 12, 24, 24),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          // Drag handle bar
-          Center(
-            child: Container(
-              width: 48,
-              height: 5,
-              decoration: BoxDecoration(
-                color: colorScheme.onSurfaceVariant.withValues(alpha: 0.2),
-                borderRadius: BorderRadius.circular(10),
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Drag handle bar
+            Center(
+              child: Container(
+                width: 48,
+                height: 5,
+                decoration: BoxDecoration(
+                  color: colorScheme.onSurfaceVariant.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(10),
+                ),
               ),
             ),
-          ),
-          const SizedBox(height: 24),
+            const SizedBox(height: 24),
 
-          // Header title
-          Text(
-            isTransfer
-                ? l10n.filterTransfer
-                : (isIncome ? l10n.filterIncome : l10n.filterExpense),
-            style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.w800,
-              color: colorScheme.onSurfaceVariant,
-              letterSpacing: 0.5,
+            // Header title
+            Text(
+              transaction.notes?.isNotEmpty == true
+                  ? transaction.notes!
+                  : (isTransfer
+                      ? l10n.filterSheetTransferType
+                      : (isIncome ? l10n.filterIncome : l10n.filterExpense)),
+              style: theme.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.w800,
+                color: colorScheme.onSurfaceVariant,
+                letterSpacing: 0.5,
+              ),
+              textAlign: TextAlign.center,
             ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 16),
+            const SizedBox(height: 16),
 
-          // Large stylized amount
-          Center(
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            // Large stylized amount
+            Center(
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                decoration: BoxDecoration(
+                  color: color.withValues(alpha: 0.08),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: color.withValues(alpha: 0.15),
+                    width: 1,
+                  ),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(typeIcon, color: color, size: 24),
+                    const SizedBox(width: 10),
+                    Text(
+                      amountStr,
+                      style: theme.textTheme.headlineMedium?.copyWith(
+                        fontWeight: FontWeight.w900,
+                        color: color,
+                        letterSpacing: -0.5,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 28),
+
+            // Details grid/list
+            Container(
               decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.08),
+                color:
+                    colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
-                  color: color.withValues(alpha: 0.15),
-                  width: 1,
-                ),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(typeIcon, color: color, size: 24),
-                  const SizedBox(width: 10),
-                  Text(
-                    amountStr,
-                    style: theme.textTheme.headlineMedium?.copyWith(
-                      fontWeight: FontWeight.w900,
-                      color: color,
-                      letterSpacing: -0.5,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: 28),
-
-          // Details grid/list
-          Container(
-            decoration: BoxDecoration(
-              color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: colorScheme.outline.withValues(alpha: 0.08),
-              ),
-            ),
-            child: Column(
-              children: [
-                if (isTransfer) ...[
-                  _DetailRow(
-                    label: l10n.labelOriginAccount,
-                    valueWidget: Text(
-                      account?.name ?? l10n.unknownAccount,
-                      style: theme.textTheme.bodyMedium
-                          ?.copyWith(fontWeight: FontWeight.bold),
-                    ),
-                    icon: account != null
-                        ? _getIconData(account.icon)
-                        : Icons.account_balance_wallet_rounded,
-                    iconColor: account != null
-                        ? _parseHexColor(account.color)
-                        : colorScheme.onSurfaceVariant,
-                  ),
-                  Divider(
-                    height: 1,
-                    color: colorScheme.outline.withValues(alpha: 0.08),
-                  ),
-                  _DetailRow(
-                    label: l10n.labelDestinationAccount,
-                    valueWidget: Text(
-                      destinationAccount?.name ?? l10n.unknownAccount,
-                      style: theme.textTheme.bodyMedium
-                          ?.copyWith(fontWeight: FontWeight.bold),
-                    ),
-                    icon: destinationAccount != null
-                        ? _getIconData(destinationAccount.icon)
-                        : Icons.account_balance_wallet_rounded,
-                    iconColor: destinationAccount != null
-                        ? _parseHexColor(destinationAccount.color)
-                        : colorScheme.onSurfaceVariant,
-                  ),
-                ] else ...[
-                  _DetailRow(
-                    label: l10n.labelAccount,
-                    valueWidget: Text(
-                      account?.name ?? l10n.unknownAccount,
-                      style: theme.textTheme.bodyMedium
-                          ?.copyWith(fontWeight: FontWeight.bold),
-                    ),
-                    icon: account != null
-                        ? _getIconData(account.icon)
-                        : Icons.account_balance_wallet_rounded,
-                    iconColor: account != null
-                        ? _parseHexColor(account.color)
-                        : colorScheme.onSurfaceVariant,
-                  ),
-                  Divider(
-                    height: 1,
-                    color: colorScheme.outline.withValues(alpha: 0.08),
-                  ),
-                  _DetailRow(
-                    label: l10n.labelCategory,
-                    valueWidget: Text(
-                      category?.name ?? l10n.uncategorized,
-                      style: theme.textTheme.bodyMedium
-                          ?.copyWith(fontWeight: FontWeight.bold),
-                    ),
-                    icon: category != null
-                        ? _getIconData(category.icon)
-                        : Icons.category_rounded,
-                    iconColor: category != null
-                        ? _parseHexColor(category.color)
-                        : colorScheme.onSurfaceVariant,
-                  ),
-                ],
-                Divider(
-                  height: 1,
                   color: colorScheme.outline.withValues(alpha: 0.08),
                 ),
-                _DetailRow(
-                  label: l10n.labelDate,
-                  valueWidget: Text(
-                    dateStr,
-                    style: theme.textTheme.bodyMedium
-                        ?.copyWith(fontWeight: FontWeight.bold),
-                  ),
-                  icon: Icons.calendar_today_rounded,
-                  iconColor: colorScheme.primary,
-                ),
-                if (transaction.notes?.isNotEmpty == true) ...[
+              ),
+              child: Column(
+                children: [
+                  if (isTransfer) ...[
+                    _DetailRow(
+                      label: l10n.labelOriginAccount,
+                      valueWidget: Text(
+                        originAccount?.name ?? l10n.unknownAccount,
+                        style: theme.textTheme.bodyMedium
+                            ?.copyWith(fontWeight: FontWeight.bold),
+                      ),
+                      icon: originAccount != null
+                          ? _getIconData(originAccount.icon)
+                          : Icons.account_balance_wallet_rounded,
+                      iconColor: originAccount != null
+                          ? _parseHexColor(originAccount.color)
+                          : colorScheme.onSurfaceVariant,
+                    ),
+                    Divider(
+                      height: 1,
+                      color: colorScheme.outline.withValues(alpha: 0.08),
+                    ),
+                    _DetailRow(
+                      label: l10n.labelDestinationAccount,
+                      valueWidget: Text(
+                        destinationAccount?.name ?? l10n.unknownAccount,
+                        style: theme.textTheme.bodyMedium
+                            ?.copyWith(fontWeight: FontWeight.bold),
+                      ),
+                      icon: destinationAccount != null
+                          ? _getIconData(destinationAccount.icon)
+                          : Icons.account_balance_wallet_rounded,
+                      iconColor: destinationAccount != null
+                          ? _parseHexColor(destinationAccount.color)
+                          : colorScheme.onSurfaceVariant,
+                    ),
+                  ] else ...[
+                    _DetailRow(
+                      label: l10n.labelAccount,
+                      valueWidget: Text(
+                        account?.name ?? l10n.unknownAccount,
+                        style: theme.textTheme.bodyMedium
+                            ?.copyWith(fontWeight: FontWeight.bold),
+                      ),
+                      icon: account != null
+                          ? _getIconData(account.icon)
+                          : Icons.account_balance_wallet_rounded,
+                      iconColor: account != null
+                          ? _parseHexColor(account.color)
+                          : colorScheme.onSurfaceVariant,
+                    ),
+                    Divider(
+                      height: 1,
+                      color: colorScheme.outline.withValues(alpha: 0.08),
+                    ),
+                    _DetailRow(
+                      label: l10n.labelCategory,
+                      valueWidget: Text(
+                        category?.name ?? l10n.uncategorized,
+                        style: theme.textTheme.bodyMedium
+                            ?.copyWith(fontWeight: FontWeight.bold),
+                      ),
+                      icon: category != null
+                          ? _getIconData(category.icon)
+                          : Icons.category_rounded,
+                      iconColor: category != null
+                          ? _parseHexColor(category.color)
+                          : colorScheme.onSurfaceVariant,
+                    ),
+                  ],
                   Divider(
                     height: 1,
                     color: colorScheme.outline.withValues(alpha: 0.08),
                   ),
                   _DetailRow(
-                    label: l10n.labelNotes,
+                    label: l10n.labelDate,
                     valueWidget: Text(
-                      transaction.notes!,
+                      dateStr,
                       style: theme.textTheme.bodyMedium
                           ?.copyWith(fontWeight: FontWeight.bold),
                     ),
-                    icon: Icons.notes_rounded,
-                    iconColor: colorScheme.secondary,
+                    icon: Icons.calendar_today_rounded,
+                    iconColor: colorScheme.primary,
                   ),
+                  if (transaction.notes?.isNotEmpty == true) ...[
+                    Divider(
+                      height: 1,
+                      color: colorScheme.outline.withValues(alpha: 0.08),
+                    ),
+                    _DetailRow(
+                      label: l10n.labelNotes,
+                      valueWidget: Text(
+                        transaction.notes!,
+                        style: theme.textTheme.bodyMedium
+                            ?.copyWith(fontWeight: FontWeight.bold),
+                      ),
+                      icon: Icons.notes_rounded,
+                      iconColor: colorScheme.secondary,
+                    ),
+                  ],
                 ],
+              ),
+            ),
+            const SizedBox(height: 32),
+
+            // Action buttons: Delete in full destructiveness
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    style: OutlinedButton.styleFrom(
+                      minimumSize: const Size(0, 52),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      side: BorderSide(
+                        color: colorScheme.outline.withValues(alpha: 0.2),
+                      ),
+                    ),
+                    child: Text(
+                      l10n.btnClose,
+                      style: TextStyle(
+                        color: colorScheme.onSurfaceVariant,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: FilledButton.icon(
+                    key: const ValueKey('deleteTransactionButton'),
+                    onPressed: () => _confirmDelete(context, ref),
+                    icon: const Icon(Icons.delete_outline_rounded, size: 20),
+                    label: Text(
+                      l10n.btnDelete,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    style: FilledButton.styleFrom(
+                      backgroundColor: colorScheme.error,
+                      foregroundColor: colorScheme.onError,
+                      minimumSize: const Size(0, 52),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                    ),
+                  ),
+                ),
               ],
             ),
-          ),
-          const SizedBox(height: 32),
-
-          // Action buttons: Delete in full destructiveness
-          Row(
-            children: [
-              Expanded(
-                child: OutlinedButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  style: OutlinedButton.styleFrom(
-                    minimumSize: const Size(0, 52),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    side: BorderSide(
-                      color: colorScheme.outline.withValues(alpha: 0.2),
-                    ),
-                  ),
-                  child: Text(
-                    l10n.btnClose,
-                    style: TextStyle(
-                      color: colorScheme.onSurfaceVariant,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: FilledButton.icon(
-                  key: const ValueKey('deleteTransactionButton'),
-                  onPressed: () => _confirmDelete(context, ref),
-                  icon: const Icon(Icons.delete_outline_rounded, size: 20),
-                  label: Text(
-                    l10n.btnDelete,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  style: FilledButton.styleFrom(
-                    backgroundColor: colorScheme.error,
-                    foregroundColor: colorScheme.onError,
-                    minimumSize: const Size(0, 52),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:stalvi/core/l10n/app_localizations.dart';
+import 'package:stalvi/core/utils/currency_formatter.dart';
 import '../../../domain/entities/trash_item.dart';
 import 'recycle_bin_provider.dart';
 
@@ -49,6 +50,7 @@ class _TrashItemTile extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final notifier = ref.read(recycleBinProvider.notifier);
     final l10n = AppLocalizations.of(context)!;
+    final formatter = ref.watch(currencyFormatterProvider);
 
     IconData getIconForType() {
       switch (item.type) {
@@ -65,14 +67,55 @@ class _TrashItemTile extends ConsumerWidget {
       }
     }
 
+    String getTypeLabel() {
+      switch (item.type) {
+        case TrashItemType.transaction:
+          return l10n.transactions;
+        case TrashItemType.category:
+          return l10n.filterSheetCategory;
+        case TrashItemType.account:
+          return l10n.labelAccount;
+        case TrashItemType.budget:
+          return l10n.budgets;
+        case TrashItemType.savingsGoal:
+          return 'Savings Goal';
+      }
+    }
+
+    String getFormattedTitle() {
+      if (item.type != TrashItemType.transaction || item.metadata == null) {
+        return item.name;
+      }
+
+      final txTypeIdx = item.metadata!['txType'] as int;
+      final txTypeStr = txTypeIdx == 0
+          ? l10n.filterIncome
+          : (txTypeIdx == 1
+              ? l10n.filterExpense
+              : l10n.filterSheetTransferType);
+
+      final nameStr = item.name.isNotEmpty ? item.name : txTypeStr;
+
+      final amount = item.metadata!['amount'] as int;
+      final currency = item.metadata!['currency'] as String;
+
+      final formattedAmt = formatter.format(
+        amount / 100.0,
+        currencyCode: currency,
+        showSign: false,
+      );
+
+      return '$nameStr - $formattedAmt';
+    }
+
     return ListTile(
       leading: CircleAvatar(
         backgroundColor: Colors.grey.shade300,
         child: Icon(getIconForType(), color: Colors.grey.shade700),
       ),
-      title: Text(item.name),
+      title: Text(getFormattedTitle()),
       subtitle: Text(
-        l10n.recycleBinDaysRemaining(item.daysRemaining),
+        '${getTypeLabel()} • ${l10n.recycleBinDaysRemaining(item.daysRemaining)}',
         style: TextStyle(
           color: item.daysRemaining <= 3 ? Colors.red : Colors.grey,
         ),

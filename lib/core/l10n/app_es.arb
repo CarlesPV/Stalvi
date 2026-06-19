@@ -249,5 +249,17 @@
   "editTagTitle": "Editar etiqueta",
   "labelCategoryName": "Nombre de la categoría",
   "labelTagName": "Nombre de la etiqueta",
-  "labelIcon": "Icono"
+  "labelIcon": "Icono",
+  "labelFromAccount": "Desde cuenta",
+  "labelToAccount": "Hacia cuenta",
+  "selectSourceAccount": "Seleccionar cuenta de origen",
+  "selectDestinationAccount": "Seleccionar cuenta de destino"
+,
+  "currencyEUR": "Euro (EUR)",
+  "currencyUSD": "Dólar Estadounidense (USD)",
+  "currencyGBP": "Libra Esterlina (GBP)",
+  "currencyJPY": "Yen Japonés (JPY)",
+  "currencyCHF": "Franco Suizo (CHF)",
+  "currencyCAD": "Dólar Canadiense (CAD)",
+  "currencyAUD": "Dólar Australiano (AUD)"
 }

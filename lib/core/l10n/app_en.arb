@@ -1062,5 +1062,36 @@
   "labelIcon": "Icon",
   "@labelIcon": {
     "description": "Label for icon picker or display"
+  },
+  "labelFromAccount": "From Account",
+  "@labelFromAccount": {
+    "description": "Label for the origin account of a transfer in transaction creation"
+  },
+  "labelToAccount": "To Account",
+  "@labelToAccount": {
+    "description": "Label for the destination account of a transfer in transaction creation"
+  },
+  "selectSourceAccount": "Select Source Account",
+  "@selectSourceAccount": {
+    "description": "Title for the source account picker modal"
+  },
+  "selectDestinationAccount": "Select Destination Account",
+  "@selectDestinationAccount": {
+    "description": "Title for the destination account picker modal"
   }
+,
+  "currencyEUR": "Euro (EUR)",
+  "@currencyEUR": { "description": "Currency name for EUR" },
+  "currencyUSD": "US Dollar (USD)",
+  "@currencyUSD": { "description": "Currency name for USD" },
+  "currencyGBP": "British Pound (GBP)",
+  "@currencyGBP": { "description": "Currency name for GBP" },
+  "currencyJPY": "Japanese Yen (JPY)",
+  "@currencyJPY": { "description": "Currency name for JPY" },
+  "currencyCHF": "Swiss Franc (CHF)",
+  "@currencyCHF": { "description": "Currency name for CHF" },
+  "currencyCAD": "Canadian Dollar (CAD)",
+  "@currencyCAD": { "description": "Currency name for CAD" },
+  "currencyAUD": "Australian Dollar (AUD)",
+  "@currencyAUD": { "description": "Currency name for AUD" }
 }

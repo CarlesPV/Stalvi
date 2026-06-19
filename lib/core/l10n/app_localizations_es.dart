@@ -84,7 +84,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get authVerifyMessage =>
-      'Use la biometría o el PIN de su dispositivo para acceder a sus datos financieros de forma segura.';
+      'Use la biometría o el PIN de su dispositivo para continuar.';
 
   @override
   String get authVerifying => 'Verificando…';
@@ -825,4 +825,37 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get labelIcon => 'Icono';
+
+  @override
+  String get labelFromAccount => 'Desde cuenta';
+
+  @override
+  String get labelToAccount => 'Hacia cuenta';
+
+  @override
+  String get selectSourceAccount => 'Seleccionar cuenta de origen';
+
+  @override
+  String get selectDestinationAccount => 'Seleccionar cuenta de destino';
+
+  @override
+  String get currencyEUR => 'Euro (EUR)';
+
+  @override
+  String get currencyUSD => 'Dólar Estadounidense (USD)';
+
+  @override
+  String get currencyGBP => 'Libra Esterlina (GBP)';
+
+  @override
+  String get currencyJPY => 'Yen Japonés (JPY)';
+
+  @override
+  String get currencyCHF => 'Franco Suizo (CHF)';
+
+  @override
+  String get currencyCAD => 'Dólar Canadiense (CAD)';
+
+  @override
+  String get currencyAUD => 'Dólar Australiano (AUD)';
 }

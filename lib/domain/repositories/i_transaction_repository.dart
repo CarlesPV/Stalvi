@@ -85,6 +85,10 @@ abstract class ITransactionRepository {
   /// Permanently hard-deletes all transactions belonging to [accountId].
   Future<void> hardDeleteTransactionsByAccountId(String accountId);
 
+  /// Emits a list of all transactions, including both legs of a transfer.
+  Stream<List<Transaction>> watchRawTransactions();
+
+  /// Emits a list of all transactions.
   Stream<List<Transaction>> watchAllTransactions();
 
   /// Streams transactions matching all non-null filter dimensions concurrently.

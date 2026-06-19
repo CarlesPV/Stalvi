@@ -763,8 +763,6 @@ class _AccountItem extends ConsumerWidget {
                       fontWeight: FontWeight.w700,
                       color: colorScheme.onSurface,
                     ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 4),
                   Text(
@@ -779,36 +777,41 @@ class _AccountItem extends ConsumerWidget {
               ),
             ),
             const SizedBox(width: 12),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text(
-                  balanceStr,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.w800,
-                    color: colorScheme.onSurface,
-                  ),
-                ),
-                if (account.isDefault) ...[
-                  const SizedBox(height: 4),
-                  Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                    decoration: BoxDecoration(
-                      color: colorScheme.primary.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(4),
+            Flexible(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    balanceStr,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.w800,
+                      color: colorScheme.onSurface,
                     ),
-                    child: Text(
-                      AppLocalizations.of(context)!.defaultAccountLabel,
-                      style: theme.textTheme.labelSmall?.copyWith(
-                        color: colorScheme.primary,
-                        fontSize: 9,
-                        fontWeight: FontWeight.bold,
+                  ),
+                  if (account.isDefault) ...[
+                    const SizedBox(height: 4),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 2,
+                      ),
+                      decoration: BoxDecoration(
+                        color: colorScheme.primary.withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Text(
+                        AppLocalizations.of(context)!.defaultAccountLabel,
+                        style: theme.textTheme.labelSmall?.copyWith(
+                          color: colorScheme.primary,
+                          fontSize: 9,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
-                  ),
+                  ],
                 ],
-              ],
+              ),
             ),
           ],
         ),
@@ -965,8 +968,12 @@ class _TransactionItem extends ConsumerWidget {
     final colorScheme = theme.colorScheme;
     final financialColors = context.financialColors;
 
-    final isIncome = transaction.type == TransactionType.income;
-    final amountDouble = transaction.amount / 100.0;
+    final isOrigin = transaction.type == TransactionType.transfer &&
+        !transaction.id.endsWith('_dst');
+    final isIncome = transaction.type == TransactionType.income ||
+        (transaction.type == TransactionType.transfer && !isOrigin);
+    final amountDouble =
+        (isIncome ? transaction.amount : -transaction.amount) / 100.0;
 
     final formatter = ref.watch(currencyFormatterProvider);
     final amountStr = formatter.format(
@@ -977,11 +984,9 @@ class _TransactionItem extends ConsumerWidget {
     final color =
         isIncome ? financialColors.positive : financialColors.negative;
 
-    final icon = isIncome
-        ? Icons.trending_up_rounded
-        : (transaction.type == TransactionType.transfer
-            ? Icons.swap_horiz_rounded
-            : Icons.trending_down_rounded);
+    final icon = transaction.type == TransactionType.transfer
+        ? Icons.swap_horiz_rounded
+        : (isIncome ? Icons.trending_up_rounded : Icons.trending_down_rounded);
 
     final dateStr = DateFormat.yMMMd(Localizations.localeOf(context).toString())
         .format(transaction.date);
@@ -1020,15 +1025,17 @@ class _TransactionItem extends ConsumerWidget {
                   Text(
                     transaction.notes?.isNotEmpty == true
                         ? transaction.notes!
-                        : (isIncome
-                            ? AppLocalizations.of(context)!.fallbackIncome
-                            : AppLocalizations.of(context)!.fallbackExpense),
+                        : (transaction.type == TransactionType.transfer
+                            ? AppLocalizations.of(context)!
+                                .filterSheetTransferType
+                            : (isIncome
+                                ? AppLocalizations.of(context)!.fallbackIncome
+                                : AppLocalizations.of(context)!
+                                    .fallbackExpense)),
                     style: theme.textTheme.bodyMedium?.copyWith(
                       fontWeight: FontWeight.w700,
                       color: colorScheme.onSurface,
                     ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 4),
                   Text(
@@ -1042,11 +1049,13 @@ class _TransactionItem extends ConsumerWidget {
               ),
             ),
             const SizedBox(width: 12),
-            Text(
-              amountStr,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                fontWeight: FontWeight.w800,
-                color: color,
+            Flexible(
+              child: Text(
+                amountStr,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  fontWeight: FontWeight.w800,
+                  color: color,
+                ),
               ),
             ),
           ],

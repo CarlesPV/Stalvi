@@ -263,7 +263,7 @@ This document lists the completed phases of the Stalvi development roadmap, prov
   - Clean build generation and l10n compilation (`flutter gen-l10n`).
   - Achieved 100% test pass rate with all 322 tests passing successfully.
 
-### Phase 19: Complex Cascades, Riverpod Reactivity & Deep UX Polish
+#### Phase 19: Complex Cascades, Riverpod Reactivity & Deep UX Polish
 * **Completion Date:** June 18, 2026
 * **Objective:** Implement referential integrity (cascading deletes), double-entry transaction mirroring for transfers, real-time provider invalidations, system wipe and cold restart, UI/UX details refinements, dynamic menu structures, global localization coverage audit, and CI workflow compilation safety.
 * **Accomplishments:**
@@ -272,7 +272,7 @@ This document lists the completed phases of the Stalvi development roadmap, prov
   - **UI/UX Refinements:**
     - Hidden empty "Notes" section inside the transaction details sheet.
     - Standardized modal sheets title to show the localized transaction type (Income, Expense, Transfer) instead of a generic header.
-    -consistently formatted all inputs/errors inline.
+    - consistently formatted all inputs/errors inline.
   - **Reorganization of Settings:** Moved "Categories & Tags" out of "Profile & Security" screen and placed it directly as a main Settings page option, located between "Statistics" and "Profile & Security".
   - **Cascading Deletes:** Deleting or trashing an account cascades trashing to all associated transactions, automatically adjusting account balances and keeping totals synchronized.
   - **Recycle Bin Hard Delete Refresh:** Configured permanent deletes in the Recycle Bin to force a global provider refresh, updating accounts and statistics immediately.
@@ -284,6 +284,41 @@ This document lists the completed phases of the Stalvi development roadmap, prov
   - Clean build generation and l10n compilation (`flutter gen-l10n`).
   - Fixed 54 auto-fixable lint issues (trailing commas) and cleaned up unused declarations/imports in tests.
   - Achieved 100% test pass rate with all 351 tests passing successfully.
+
+### Phase 20: Advanced Localization Audit & Mobile Layout Robustness
+* **Completion Date:** June 18, 2026
+* **Objective:** Conduct a comprehensive audit of the core layout structures, ensure all text fields and labels adapt gracefully to tight mobile screen viewports, eliminate inline localization checks in the Transfer UI, and verify 100% automated test compliance.
+* **Accomplishments:**
+  - **Localization Refactoring:** Replaced hardcoded inline language code checks in `AddTransactionScreen` for "From Account", "To Account", "Select Source Account", and "Select Destination Account" with fully localized keys (`labelFromAccount`, `labelToAccount`, `selectSourceAccount`, `selectDestinationAccount`) in `app_en.arb`, `app_es.arb`, and `app_ca.arb`.
+  - **Layout Constraints & Overflow Prevention:**
+    - Modified `_FormSelectorTile` inside `AddTransactionScreen` to restrict text fields using `maxLines: 1` and `overflow: TextOverflow.ellipsis`.
+    - Enhanced `_AccountItem` and `_TransactionItem` inside `DashboardScreen` by wrapping trailing balance and amount columns/texts in `Flexible` controls and setting truncation parameters on the account types and dates.
+    - Updated `_PieChartWithLegend` and `_TouchedCategoryInfo` in `StatisticsScreen` to wrap category name labels in `Flexible` widgets and enforce single-line truncation to handle long category names elegantly.
+  - **Code Generation:** Re-ran `flutter gen-l10n` to successfully compile the newly added localization keys across all targets.
+* **Verification:**
+  - Standard static analysis pass (`flutter analyze` with 0 issues).
+  - Executed the full automated test suite containing 352 unit and widget tests with a 100% success rate.
+
+### Phase 21: Transfer Flow Polish, Recycle Bin Refinements & Validation
+* **Completion Date:** June 19, 2026
+* **Objective:** Polish transfer movements, ensure exact record counts, update recycle bin behaviors, and verify that balance calculations are correct when deleting/restoring transactions.
+* **Accomplishments:**
+  - **Transfer Flow Polish:**
+    - Cleared note field default value on transfer creation forms to start empty.
+    - Implemented database-level mirroring for transfers. Exactly 1 leg of a transfer is shown in the global lists, while filtered account lists show the correct leg without duplicates.
+    - Standardized list tile transfer icons to consistently show `Icons.swap_horiz_rounded` regardless of whether they represent an incoming or outgoing leg.
+    - Integrated a raw transaction query stream (`watchRawTransactions`) in `TransactionRepository` and created `rawTransactionsStreamProvider`. This is used in `TransactionDetailsDialog` to retrieve the mirror transaction leg, dynamically identifying and displaying both origin and destination accounts correctly.
+  - **Recycle Bin Polish:**
+    - Disabled "Delete All / Empty Sweep" option inside the recycle bin to avoid accidental deletion.
+    - Enforced automatic provider auto-disposal to refresh the Recycle Bin screen whenever users enter the view.
+    - Modified delete mirroring so deleting a transfer places exactly 1 consolidated item inside the recycle bin list.
+    - Structured additional metadata fields (`amount`, `txType`, `currency`) in `TrashDao` for `TrashItem` instances. Refactored the Recycle Bin list tiles to dynamically render items formatted as `<Note/Type> - <Amount>` using localized translations.
+  - **Robust Calculations:**
+    - Ensured that trashing, restoring, or hard-deleting a transaction (including mirrored transfers) properly reverts or re-applies the financial balances for both accounts.
+* **Verification:**
+  - Run full suite of 352 unit and widget tests ensuring a 100% pass rate.
+  - Static analysis (`flutter analyze`) returns 0 issues and 0 warnings.
+
 
 
 

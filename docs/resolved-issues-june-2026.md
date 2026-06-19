@@ -192,6 +192,45 @@ on Android devices, preventing the database from loading and blocking app launch
 - Use explicit provider invalidations when mutating entities that affect global statistics or filtered watch streams.
 - Ensure any new UI copy uses `AppLocalizations` and that CI configurations include the localization generator.
 
+---
+
+## 9. Transfer Flow Polish, Recycle Bin Refinements & Layout Bug Fixes (Phase 21)
+
+### Problem Description
+1. **Default Transfer Note**: Creating a transfer auto-populated the note field with "Transfer" instead of leaving it empty.
+2. **Duplicate/Mirrored Transfer display**: Transfers were either duplicated in global listings, or did not display correctly for both accounts under filters, or spawned duplicate entries inside the Recycle Bin when deleted.
+3. **Transaction Details for Transfers**: Tapping on a transfer failed to retrieve and display the destination account details in the transaction details modal.
+4. **Recycle Bin Operations & UI**:
+   - The Recycle Bin UI had a bulk "delete all/empty sweep" button which could cause accidental permanent data loss.
+   - The Recycle Bin screen list did not automatically refresh or dispose when entering/exiting.
+   - Trashed items in the Recycle Bin did not display transaction details/amounts localized in all 3 languages, and instead printed in English.
+5. **Transfer Icon Asymmetry**: Dashboard transaction rows displayed standard transaction icons instead of a dedicated transfer icon.
+6. **Mobile Viewport Overflow**: Certain buttons and text fields overflowed when constraints or input keyboards changed.
+
+### Root Causes
+1. **Default Note Initial Value**: `AddTransactionUseCase` automatically set the note field string to "Transfer" when it was null or empty.
+2. **Transfer Deduplication Filter**: `watchAllTransactions` in `TransactionRepository` filtered out mirrored transactions. However, this also blocked detail lookups in the UI dialog which queried `watchAllTransactions`, meaning only the origin account could be found.
+3. **Recycle Bin State Retention**: The Riverpod provider for the Recycle Bin did not auto-dispose, keeping stale lists when navigated to.
+4. **Recycle Bin Localized Metadata**: The Recycle Bin list items only retrieved basic properties, omitting the transaction amount, currency, and type.
+5. **Layout constraints**: Certain containers used hardcoded sizes or lacked `Flexible` wrappers to handle dynamic text wrapping.
+
+### Solutions Applied
+1. **Transfer Form & Notes Polish**: Removed the default "Transfer" fallback text inside the transaction use case. Standardized transfer list tiles to use `Icons.swap_horiz_rounded`.
+2. **Raw Transaction Watch Stream**: Created `watchRawTransactions()` in `TransactionRepository` and exposed it via `rawTransactionsStreamProvider`. This unfiltered stream is used specifically by the details dialog to search for both legs of a transfer, allowing the dialog to display both the origin and destination accounts correctly.
+3. **Recycle Bin Enhancements**:
+   - Removed the "Empty All / Delete Sweep" button from the AppBar.
+   - Appended `amount`, `txType`, and `currency` fields into the `TrashItem` metadata dictionary in `TrashDao`.
+   - Updated the Recycle Bin UI list tiles to read metadata and format the title as `<Note/Type> - <Amount>` using localized strings.
+   - Refactored `recycleBinProvider` to `autoDispose` so it re-fetches deleted items on every entry.
+   - Ensured deleting a transfer mirrors properly, adding only 1 item to the Recycle Bin.
+4. **Calculations & Balance Reversals**: Verified that soft-deleting, restoring, or permanently deleting transactions correctly recalculates and updates the balance of both origin and destination accounts.
+5. **Mobile Viewport Polish**: Wrap long text lines in `Flexible` widgets and remove restrictive ellipsis rules to allow text to flow naturally without layout overflows.
+
+### Future Prevention Guideline
+- Use unfiltered raw transaction queries when checking for mirrors or paired relations, and use filtered queries for lists where duplicate visibility must be avoided.
+- Add metadata to generic audit/trash tables if localized representation is required without direct joins.
+- Use `autoDispose` for providers that monitor transient screen lists (like trash bins) to prevent caching stale items.
+
 
 
 

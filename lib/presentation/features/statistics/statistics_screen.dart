@@ -622,7 +622,6 @@ class _SummaryCard extends ConsumerWidget {
                     fontWeight: FontWeight.w800,
                     color: accentColor,
                   ),
-                  overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),
@@ -1053,11 +1052,13 @@ class _TouchedCategoryInfo extends ConsumerWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
-              category.categoryName,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                fontWeight: FontWeight.w700,
-                color: catColor,
+            Flexible(
+              child: Text(
+                category.categoryName,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  fontWeight: FontWeight.w700,
+                  color: catColor,
+                ),
               ),
             ),
             const SizedBox(width: 8),

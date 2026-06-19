@@ -484,8 +484,10 @@ void main() {
       await tester.pumpWidget(_wrap(const TransactionFilterSheet()));
       await tester.pump();
 
+      await tester
+          .ensureVisible(find.byKey(const ValueKey('filterApplyButton')));
       await tester.tap(find.byKey(const ValueKey('filterApplyButton')));
-      await tester.pump();
+      await tester.pumpAndSettle();
       // No exception means success.
     });
 

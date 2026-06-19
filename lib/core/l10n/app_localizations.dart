@@ -241,7 +241,7 @@ abstract class AppLocalizations {
   /// Prompt description to verify identity
   ///
   /// In en, this message translates to:
-  /// **'Use biometrics or your device PIN to access your financial data securely.'**
+  /// **'Use biometrics or your device PIN to continue.'**
   String get authVerifyMessage;
 
   /// Button label during verification state
@@ -1599,6 +1599,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Icon'**
   String get labelIcon;
+
+  /// Label for the origin account of a transfer in transaction creation
+  ///
+  /// In en, this message translates to:
+  /// **'From Account'**
+  String get labelFromAccount;
+
+  /// Label for the destination account of a transfer in transaction creation
+  ///
+  /// In en, this message translates to:
+  /// **'To Account'**
+  String get labelToAccount;
+
+  /// Title for the source account picker modal
+  ///
+  /// In en, this message translates to:
+  /// **'Select Source Account'**
+  String get selectSourceAccount;
+
+  /// Title for the destination account picker modal
+  ///
+  /// In en, this message translates to:
+  /// **'Select Destination Account'**
+  String get selectDestinationAccount;
+
+  /// Currency name for EUR
+  ///
+  /// In en, this message translates to:
+  /// **'Euro (EUR)'**
+  String get currencyEUR;
+
+  /// Currency name for USD
+  ///
+  /// In en, this message translates to:
+  /// **'US Dollar (USD)'**
+  String get currencyUSD;
+
+  /// Currency name for GBP
+  ///
+  /// In en, this message translates to:
+  /// **'British Pound (GBP)'**
+  String get currencyGBP;
+
+  /// Currency name for JPY
+  ///
+  /// In en, this message translates to:
+  /// **'Japanese Yen (JPY)'**
+  String get currencyJPY;
+
+  /// Currency name for CHF
+  ///
+  /// In en, this message translates to:
+  /// **'Swiss Franc (CHF)'**
+  String get currencyCHF;
+
+  /// Currency name for CAD
+  ///
+  /// In en, this message translates to:
+  /// **'Canadian Dollar (CAD)'**
+  String get currencyCAD;
+
+  /// Currency name for AUD
+  ///
+  /// In en, this message translates to:
+  /// **'Australian Dollar (AUD)'**
+  String get currencyAUD;
 }
 
 class _AppLocalizationsDelegate

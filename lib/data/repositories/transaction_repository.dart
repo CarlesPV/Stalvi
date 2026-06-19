@@ -334,6 +334,27 @@ class TransactionRepository implements ITransactionRepository {
   // ── Streams ───────────────────────────────────────────────────────────────
 
   @override
+  Stream<List<domain.Transaction>> watchRawTransactions() {
+    try {
+      final query = _db.select(_db.transactions)
+        ..where((t) => t.isDeleted.equals(false))
+        ..orderBy([
+          (t) => OrderingTerm(expression: t.date, mode: OrderingMode.desc),
+          (t) => OrderingTerm(expression: t.createdAt, mode: OrderingMode.desc),
+        ]);
+      return query.watch().map((rows) {
+        return rows.map((r) => r.toDomain()).toList();
+      });
+    } catch (e) {
+      throw DatabaseException(
+        message: 'Failed to watch raw transactions',
+        code: 'TRANSACTION_WATCH_FAILED',
+        details: e,
+      );
+    }
+  }
+
+  @override
   Stream<List<domain.Transaction>> watchAllTransactions() {
     try {
       final query = _db.select(_db.transactions)
@@ -342,9 +363,19 @@ class TransactionRepository implements ITransactionRepository {
           (t) => OrderingTerm(expression: t.date, mode: OrderingMode.desc),
           (t) => OrderingTerm(expression: t.createdAt, mode: OrderingMode.desc),
         ]);
-      return query
-          .watch()
-          .map((rows) => rows.map((r) => r.toDomain()).toList());
+      return query.watch().map((rows) {
+        final seenTransfers = <String>{};
+        return rows
+            .where((r) {
+              if (r.transferId != null) {
+                if (seenTransfers.contains(r.transferId)) return false;
+                seenTransfers.add(r.transferId!);
+              }
+              return true;
+            })
+            .map((r) => r.toDomain())
+            .toList();
+      });
     } catch (e) {
       throw DatabaseException(
         message: 'Failed to watch transactions',
@@ -366,17 +397,33 @@ class TransactionRepository implements ITransactionRepository {
     try {
       return _transactionDao
           .watchFiltered(
-            accountId: filter.accountId,
-            type: filter.type != null ? _mapDomainTypeToDB(filter.type!) : null,
-            categoryId: filter.categoryId,
-            startDate: filter.dateRange?.start,
-            endDate: filter.dateRange?.end,
-            minAmountCents: filter.minAmountCents,
-            maxAmountCents: filter.maxAmountCents,
-            tagId: filter.tagId,
-            currency: filter.currency,
-          )
-          .map((rows) => rows.map((r) => r.toDomain()).toList());
+        accountId: filter.accountId,
+        type: filter.type != null ? _mapDomainTypeToDB(filter.type!) : null,
+        categoryId: filter.categoryId,
+        startDate: filter.dateRange?.start,
+        endDate: filter.dateRange?.end,
+        minAmountCents: filter.minAmountCents,
+        maxAmountCents: filter.maxAmountCents,
+        tagId: filter.tagId,
+        currency: filter.currency,
+      )
+          .map((rows) {
+        if (filter.accountId != null) {
+          return rows.map((r) => r.toDomain()).toList();
+        } else {
+          final seenTransfers = <String>{};
+          return rows
+              .where((r) {
+                if (r.transferId != null) {
+                  if (seenTransfers.contains(r.transferId)) return false;
+                  seenTransfers.add(r.transferId!);
+                }
+                return true;
+              })
+              .map((r) => r.toDomain())
+              .toList();
+        }
+      });
     } catch (e) {
       throw DatabaseException(
         message: 'Failed to watch filtered transactions',
@@ -503,50 +550,32 @@ class TransactionRepository implements ITransactionRepository {
       // Determine leg direction by checking if this account was debited or
       // credited. We do this by finding the mirror row.
       final mirror = await _findMirror(txn.id, txn.transferId!);
-      if (mirror != null) {
-        // If mirror's accountId != txn.accountId we know they're on different
-        // accounts. Origin was debited (expense dir), destination was credited.
-        // To revert: check if txn is origin or destination.
-        // Convention: the origin id matches params.id (no _dst suffix).
-        // Simpler: try to see if balance logic used +delta or -delta.
-        // The safest approach here is: revert origin by adding back (income),
-        // revert destination by subtracting (expense).
-        // We infer which leg this is by looking at the account balance history.
-        // Since we can't know at this layer, we track by the `id` suffix
-        // convention set in AddTransactionUseCase (originId vs originId_dst).
-        // However that is a fragile coupling. Instead we record direction via
-        // a balance peek:
-        // If removing delta (treating as income revert) or adding (expense revert).
-        // DECISION: Keep it simple — treat origin as expense (debit), destination
-        // as income (credit). A transfer mirror found means this IS the other leg.
-        // Check which account was debited: we'll compute from the stored amounts.
-        // Both legs have the same `amount`. The origin was debited, destination
-        // credited. We distinguish by ID ordering – whichever was inserted first
-        // (chronologically earlier createdAt) is the origin.
-        final isOrigin = txn.createdAt.isBefore(mirror.createdAt) ||
-            txn.createdAt.isAtSameMomentAs(mirror.createdAt) &&
-                txn.id.compareTo(mirror.id) < 0;
+      final isOrigin = txn.id.endsWith('_dst')
+          ? false
+          : (mirror != null
+              ? (txn.createdAt.isBefore(mirror.createdAt) ||
+                  (txn.createdAt.isAtSameMomentAs(mirror.createdAt) &&
+                      txn.id.compareTo(mirror.id) < 0))
+              : true);
 
-        if (isOrigin) {
-          // Was debited; revert by adding back (income direction).
-          await _adjustBalance(
-            txn.accountId,
-            txn.amount,
-            domain.TransactionType.income,
-            _BalanceOp.add,
-          );
-        } else {
-          // Was credited; revert by subtracting (expense direction).
-          await _adjustBalance(
-            txn.accountId,
-            txn.amount,
-            domain.TransactionType.expense,
-            _BalanceOp.add,
-          );
-        }
-        return;
+      if (isOrigin) {
+        // Was debited; revert by adding back (income direction).
+        await _adjustBalance(
+          txn.accountId,
+          txn.amount,
+          domain.TransactionType.income,
+          _BalanceOp.add,
+        );
+      } else {
+        // Was credited; revert by subtracting (expense direction).
+        await _adjustBalance(
+          txn.accountId,
+          txn.amount,
+          domain.TransactionType.expense,
+          _BalanceOp.add,
+        );
       }
-      // Mirror not found – fall through to normal revert logic.
+      return;
     }
 
     await _adjustBalance(
@@ -563,28 +592,30 @@ class TransactionRepository implements ITransactionRepository {
     if (txn.type == db_table.TransactionType.transfer &&
         txn.transferId != null) {
       final mirror = await _findMirror(txn.id, txn.transferId!);
-      if (mirror != null) {
-        final isOrigin = txn.createdAt.isBefore(mirror.createdAt) ||
-            txn.createdAt.isAtSameMomentAs(mirror.createdAt) &&
-                txn.id.compareTo(mirror.id) < 0;
+      final isOrigin = txn.id.endsWith('_dst')
+          ? false
+          : (mirror != null
+              ? (txn.createdAt.isBefore(mirror.createdAt) ||
+                  (txn.createdAt.isAtSameMomentAs(mirror.createdAt) &&
+                      txn.id.compareTo(mirror.id) < 0))
+              : true);
 
-        if (isOrigin) {
-          await _adjustBalance(
-            txn.accountId,
-            txn.amount,
-            domain.TransactionType.expense,
-            _BalanceOp.add,
-          );
-        } else {
-          await _adjustBalance(
-            txn.accountId,
-            txn.amount,
-            domain.TransactionType.income,
-            _BalanceOp.add,
-          );
-        }
-        return;
+      if (isOrigin) {
+        await _adjustBalance(
+          txn.accountId,
+          txn.amount,
+          domain.TransactionType.expense,
+          _BalanceOp.add,
+        );
+      } else {
+        await _adjustBalance(
+          txn.accountId,
+          txn.amount,
+          domain.TransactionType.income,
+          _BalanceOp.add,
+        );
       }
+      return;
     }
 
     await _adjustBalance(txn.accountId, txn.amount, domainType, _BalanceOp.add);

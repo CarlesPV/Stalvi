@@ -111,8 +111,10 @@ class _CategoriesTab extends ConsumerWidget {
             ),
             TextButton(
               onPressed: () => Navigator.pop(ctx, true),
-              child: Text(l10n.btnDelete,
-                  style: const TextStyle(color: Colors.red),),
+              child: Text(
+                l10n.btnDelete,
+                style: const TextStyle(color: Colors.red),
+              ),
             ),
           ],
         ),
@@ -151,28 +153,30 @@ class _CategoriesTab extends ConsumerWidget {
           builder: (context, setState) {
             return AlertDialog(
               title: Text(l10n.categoryInUseTitle),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    l10n.categoryInUseMessage(categoryToDel.name),
-                  ),
-                  const SizedBox(height: 16),
-                  DropdownButtonFormField<String>(
-                    initialValue: selectedNewCategoryId,
-                    items: otherCategories
-                        .map(
-                          (c) => DropdownMenuItem(
-                            value: c.id,
-                            child: Text(c.name),
-                          ),
-                        )
-                        .toList(),
-                    onChanged: (val) {
-                      setState(() => selectedNewCategoryId = val);
-                    },
-                  ),
-                ],
+              content: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      l10n.categoryInUseMessage(categoryToDel.name),
+                    ),
+                    const SizedBox(height: 16),
+                    DropdownButtonFormField<String>(
+                      initialValue: selectedNewCategoryId,
+                      items: otherCategories
+                          .map(
+                            (c) => DropdownMenuItem(
+                              value: c.id,
+                              child: Text(c.name),
+                            ),
+                          )
+                          .toList(),
+                      onChanged: (val) {
+                        setState(() => selectedNewCategoryId = val);
+                      },
+                    ),
+                  ],
+                ),
               ),
               actions: [
                 TextButton(
@@ -282,8 +286,10 @@ class _TagsTab extends ConsumerWidget {
             ),
             TextButton(
               onPressed: () => Navigator.pop(ctx, true),
-              child: Text(l10n.btnDelete,
-                  style: const TextStyle(color: Colors.red),),
+              child: Text(
+                l10n.btnDelete,
+                style: const TextStyle(color: Colors.red),
+              ),
             ),
           ],
         ),
@@ -323,28 +329,30 @@ class _TagsTab extends ConsumerWidget {
           builder: (context, setState) {
             return AlertDialog(
               title: Text(l10n.tagInUseTitle),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    l10n.tagInUseMessage(tagToDel.name),
-                  ),
-                  const SizedBox(height: 16),
-                  DropdownButtonFormField<String>(
-                    initialValue: selectedNewTagId,
-                    items: otherTags
-                        .map(
-                          (t) => DropdownMenuItem(
-                            value: t.id,
-                            child: Text(t.name),
-                          ),
-                        )
-                        .toList(),
-                    onChanged: (val) {
-                      setState(() => selectedNewTagId = val);
-                    },
-                  ),
-                ],
+              content: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      l10n.tagInUseMessage(tagToDel.name),
+                    ),
+                    const SizedBox(height: 16),
+                    DropdownButtonFormField<String>(
+                      initialValue: selectedNewTagId,
+                      items: otherTags
+                          .map(
+                            (t) => DropdownMenuItem(
+                              value: t.id,
+                              child: Text(t.name),
+                            ),
+                          )
+                          .toList(),
+                      onChanged: (val) {
+                        setState(() => selectedNewTagId = val);
+                      },
+                    ),
+                  ],
+                ),
               ),
               actions: [
                 TextButton(
@@ -462,85 +470,88 @@ class _CategoryDialogState extends State<_CategoryDialog> {
         24,
         MediaQuery.of(context).viewInsets.bottom + 24,
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            widget.category == null
-                ? l10n.addCategoryTitle
-                : l10n.editCategoryTitle,
-            style: Theme.of(context).textTheme.titleLarge,
-          ),
-          const SizedBox(height: 16),
-          TextField(
-            controller: _nameController,
-            decoration: InputDecoration(
-              labelText: l10n.labelCategoryName,
-              border: const OutlineInputBorder(),
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              widget.category == null
+                  ? l10n.addCategoryTitle
+                  : l10n.editCategoryTitle,
+              style: Theme.of(context).textTheme.titleLarge,
             ),
-          ),
-          const SizedBox(height: 16),
-          Wrap(
-            spacing: 8,
-            children: _colors.map((colorHex) {
-              final color =
-                  Color(int.parse(colorHex.replaceFirst('#', 'ff'), radix: 16));
-              final isSelected = _selectedColor == colorHex;
-              return GestureDetector(
-                onTap: () => setState(() => _selectedColor = colorHex),
-                child: CircleAvatar(
-                  backgroundColor: color,
-                  child: isSelected
-                      ? const Icon(Icons.check, color: Colors.white)
-                      : null,
-                ),
-              );
-            }).toList(),
-          ),
-          const SizedBox(height: 16),
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Text(
-              l10n.labelIcon,
-              style: Theme.of(context).textTheme.labelLarge,
+            const SizedBox(height: 16),
+            TextField(
+              controller: _nameController,
+              decoration: InputDecoration(
+                labelText: l10n.labelCategoryName,
+                border: const OutlineInputBorder(),
+              ),
             ),
-          ),
-          const SizedBox(height: 8),
-          CategoryIconPicker(
-            selectedIcon: _selectedIcon,
-            onIconSelected: (key) => setState(() => _selectedIcon = key),
-          ),
-          const SizedBox(height: 24),
-          ElevatedButton(
-            onPressed: () async {
-              if (_nameController.text.trim().isEmpty) return;
-              final repo = widget.ref.read(categoryRepositoryProvider);
-              if (widget.category == null) {
-                await repo.createCategory(
-                  Category(
-                    id: const Uuid().v4(),
-                    name: _nameController.text.trim(),
-                    icon: _selectedIcon,
-                    color: _selectedColor,
-                    createdAt: DateTime.now(),
-                    modifiedAt: DateTime.now(),
+            const SizedBox(height: 16),
+            Wrap(
+              spacing: 8,
+              children: _colors.map((colorHex) {
+                final color = Color(
+                  int.parse(colorHex.replaceFirst('#', 'ff'), radix: 16),
+                );
+                final isSelected = _selectedColor == colorHex;
+                return GestureDetector(
+                  onTap: () => setState(() => _selectedColor = colorHex),
+                  child: CircleAvatar(
+                    backgroundColor: color,
+                    child: isSelected
+                        ? const Icon(Icons.check, color: Colors.white)
+                        : null,
                   ),
                 );
-              } else {
-                await repo.updateCategory(
-                  widget.category!.copyWith(
-                    name: _nameController.text.trim(),
-                    icon: _selectedIcon,
-                    color: _selectedColor,
-                    modifiedAt: DateTime.now(),
-                  ),
-                );
-              }
-              if (context.mounted) Navigator.pop(context);
-            },
-            child: Text(l10n.btnSave),
-          ),
-        ],
+              }).toList(),
+            ),
+            const SizedBox(height: 16),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                l10n.labelIcon,
+                style: Theme.of(context).textTheme.labelLarge,
+              ),
+            ),
+            const SizedBox(height: 8),
+            CategoryIconPicker(
+              selectedIcon: _selectedIcon,
+              onIconSelected: (key) => setState(() => _selectedIcon = key),
+            ),
+            const SizedBox(height: 24),
+            ElevatedButton(
+              onPressed: () async {
+                if (_nameController.text.trim().isEmpty) return;
+                final repo = widget.ref.read(categoryRepositoryProvider);
+                if (widget.category == null) {
+                  await repo.createCategory(
+                    Category(
+                      id: const Uuid().v4(),
+                      name: _nameController.text.trim(),
+                      icon: _selectedIcon,
+                      color: _selectedColor,
+                      createdAt: DateTime.now(),
+                      modifiedAt: DateTime.now(),
+                    ),
+                  );
+                } else {
+                  await repo.updateCategory(
+                    widget.category!.copyWith(
+                      name: _nameController.text.trim(),
+                      icon: _selectedIcon,
+                      color: _selectedColor,
+                      modifiedAt: DateTime.now(),
+                    ),
+                  );
+                }
+                if (context.mounted) Navigator.pop(context);
+              },
+              child: Text(l10n.btnSave),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -584,49 +595,51 @@ class _TagDialogState extends State<_TagDialog> {
         24,
         MediaQuery.of(context).viewInsets.bottom + 24,
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            widget.tag == null ? l10n.addTagTitle : l10n.editTagTitle,
-            style: Theme.of(context).textTheme.titleLarge,
-          ),
-          const SizedBox(height: 16),
-          TextField(
-            controller: _nameController,
-            decoration: InputDecoration(
-              labelText: l10n.labelTagName,
-              border: const OutlineInputBorder(),
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              widget.tag == null ? l10n.addTagTitle : l10n.editTagTitle,
+              style: Theme.of(context).textTheme.titleLarge,
             ),
-          ),
-          const SizedBox(height: 24),
-          ElevatedButton(
-            onPressed: () async {
-              if (_nameController.text.trim().isEmpty) return;
-              final repo = widget.ref.read(tagRepositoryProvider);
-              if (widget.tag == null) {
-                await repo.createTag(
-                  Tag(
-                    id: const Uuid().v4(),
-                    name: _nameController.text.trim(),
-                    createdAt: DateTime.now(),
-                    modifiedAt: DateTime.now(),
-                  ),
-                );
-              } else {
-                await repo.updateTag(
-                  widget.tag!.copyWith(
-                    name: _nameController.text.trim(),
-                    modifiedAt: DateTime.now(),
-                  ),
-                );
-              }
-              widget.ref.invalidate(tagsListProvider);
-              if (context.mounted) Navigator.pop(context);
-            },
-            child: Text(l10n.btnSave),
-          ),
-        ],
+            const SizedBox(height: 16),
+            TextField(
+              controller: _nameController,
+              decoration: InputDecoration(
+                labelText: l10n.labelTagName,
+                border: const OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 24),
+            ElevatedButton(
+              onPressed: () async {
+                if (_nameController.text.trim().isEmpty) return;
+                final repo = widget.ref.read(tagRepositoryProvider);
+                if (widget.tag == null) {
+                  await repo.createTag(
+                    Tag(
+                      id: const Uuid().v4(),
+                      name: _nameController.text.trim(),
+                      createdAt: DateTime.now(),
+                      modifiedAt: DateTime.now(),
+                    ),
+                  );
+                } else {
+                  await repo.updateTag(
+                    widget.tag!.copyWith(
+                      name: _nameController.text.trim(),
+                      modifiedAt: DateTime.now(),
+                    ),
+                  );
+                }
+                widget.ref.invalidate(tagsListProvider);
+                if (context.mounted) Navigator.pop(context);
+              },
+              child: Text(l10n.btnSave),
+            ),
+          ],
+        ),
       ),
     );
   }

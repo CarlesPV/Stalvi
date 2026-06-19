@@ -286,52 +286,23 @@ class AddTransactionNotifier extends AutoDisposeNotifier<AddTransactionState> {
       final useCase = ref.read(addTransactionUseCaseProvider);
       final cents = (amountDouble * 100).round();
 
-      if (state.type == TransactionType.transfer) {
-        final outflowId = const Uuid().v4();
-        final inflowId = const Uuid().v4();
+      final id = const Uuid().v4();
+      final trimmedNotes = state.notes.trim();
 
-        // 1. Create Outflow transaction (Transfer type on From Account)
-        await useCase.execute(
-          AddTransactionParams(
-            id: outflowId,
-            amount: cents,
-            date: state.date,
-            type: TransactionType.transfer,
-            accountId: state.accountId!,
-            categoryId: state.categoryId,
-            notes: state.notes.trim().isEmpty ? 'Transfer' : state.notes.trim(),
-            currency: state.currency,
-          ),
-        );
-
-        // 2. Create Inflow transaction (Income type on To Account)
-        await useCase.execute(
-          AddTransactionParams(
-            id: inflowId,
-            amount: cents,
-            date: state.date,
-            type: TransactionType.income,
-            accountId: state.toAccountId!,
-            categoryId: state.categoryId,
-            notes: state.notes.trim().isEmpty ? 'Transfer' : state.notes.trim(),
-            currency: state.currency,
-          ),
-        );
-      } else {
-        final id = const Uuid().v4();
-        await useCase.execute(
-          AddTransactionParams(
-            id: id,
-            amount: cents,
-            date: state.date,
-            type: state.type,
-            accountId: state.accountId!,
-            categoryId: state.categoryId,
-            notes: state.notes.trim(),
-            currency: state.currency,
-          ),
-        );
-      }
+      await useCase.execute(
+        AddTransactionParams(
+          id: id,
+          amount: cents,
+          date: state.date,
+          type: state.type,
+          accountId: state.accountId!,
+          destinationAccountId:
+              state.type == TransactionType.transfer ? state.toAccountId : null,
+          categoryId: state.categoryId,
+          notes: trimmedNotes.isEmpty ? null : trimmedNotes,
+          currency: state.currency,
+        ),
+      );
 
       // Successfully saved transaction, invalidate account list to refresh balances
       ref.invalidate(accountsListProvider);

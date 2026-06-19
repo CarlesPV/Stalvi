@@ -4,9 +4,8 @@ import '../../../domain/usecases/trash_usecases.dart';
 import '../../providers/repository_providers.dart';
 import '../../providers/statistics_providers.dart';
 
-final recycleBinProvider =
-    StateNotifierProvider<RecycleBinNotifier, AsyncValue<List<TrashItem>>>(
-        (ref) {
+final recycleBinProvider = StateNotifierProvider.autoDispose<RecycleBinNotifier,
+    AsyncValue<List<TrashItem>>>((ref) {
   return RecycleBinNotifier(ref.watch(trashUsecasesProvider), ref);
 });
 
@@ -49,6 +48,20 @@ class RecycleBinNotifier extends StateNotifier<AsyncValue<List<TrashItem>>> {
     try {
       await _trashUsecases.deleteItemPermanently(id, type);
       await loadItems(); // Refresh the list
+      ref.invalidate(accountsListProvider);
+      ref.invalidate(transactionsStreamProvider);
+      ref.invalidate(periodSummaryProvider);
+      ref.invalidate(topExpenseCategoriesProvider);
+      ref.invalidate(topIncomeCategoriesProvider);
+    } catch (e, st) {
+      state = AsyncValue.error(e, st);
+    }
+  }
+
+  Future<void> emptyTrash() async {
+    try {
+      await _trashUsecases.emptyTrash();
+      await loadItems();
       ref.invalidate(accountsListProvider);
       ref.invalidate(transactionsStreamProvider);
       ref.invalidate(periodSummaryProvider);

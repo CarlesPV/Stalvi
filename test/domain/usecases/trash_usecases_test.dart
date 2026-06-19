@@ -178,7 +178,9 @@ void main() {
 
         verifyNever(
           () => mockTrashDao.deleteItemPermanently(
-              'account_1', TrashItemType.account,),
+            'account_1',
+            TrashItemType.account,
+          ),
         );
       });
     });

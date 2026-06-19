@@ -30,13 +30,26 @@ class TrashDao extends DatabaseAccessor<AppDatabase> with _$TrashDaoMixin {
     final transactionRows = await (select(transactions)
           ..where((t) => t.isDeleted.equals(true)))
         .get();
+    final seenTransfers = <String>{};
     for (final t in transactionRows) {
+      if (t.transferId != null) {
+        if (seenTransfers.contains(t.transferId)) continue;
+        seenTransfers.add(t.transferId!);
+      }
+
+      final displayName = t.notes ?? '';
+
       items.add(
         TrashItem(
           id: t.id,
-          name: 'Transaction (${(t.amount / 100).toStringAsFixed(2)})',
+          name: displayName,
           type: TrashItemType.transaction,
           daysRemaining: 30 - now.difference(t.modifiedAt).inDays,
+          metadata: {
+            'amount': t.amount,
+            'txType': t.type.index,
+            'currency': t.originalCurrency,
+          },
         ),
       );
     }

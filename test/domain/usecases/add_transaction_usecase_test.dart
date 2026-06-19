@@ -391,7 +391,7 @@ void main() {
         expect(capturedOrigin!.date, capturedDest!.date);
       });
 
-      test('uses "Transfer" as default notes when none supplied', () async {
+      test('uses null as default notes when none supplied', () async {
         final params = AddTransactionParams(
           id: 'txn_t',
           amount: 100,
@@ -428,7 +428,7 @@ void main() {
 
         await usecase.execute(params);
 
-        expect(capturedOrigin!.notes, 'Transfer');
+        expect(capturedOrigin!.notes, isNull);
       });
     });
 

@@ -196,6 +196,12 @@ final transactionsStreamProvider = StreamProvider<List<Transaction>>((ref) {
   return repo.watchAllTransactions();
 });
 
+/// Stream of all raw transactions, including all legs of transfers.
+final rawTransactionsStreamProvider = StreamProvider<List<Transaction>>((ref) {
+  final repo = ref.watch(transactionRepositoryProvider);
+  return repo.watchRawTransactions();
+});
+
 /// Fetches the list of all tags.
 final tagsListProvider = FutureProvider<List<Tag>>((ref) {
   final repo = ref.watch(tagRepositoryProvider);

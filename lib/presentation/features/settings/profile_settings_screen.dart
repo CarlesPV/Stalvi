@@ -58,10 +58,18 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
 
   void _editCurrency(BuildContext context, String currentCurrency) {
     final l10n = AppLocalizations.of(context)!;
-    final currencies = ['EUR', 'USD', 'GBP', 'JPY'];
-    String selected = currencies.contains(currentCurrency)
+    final currencies = {
+      'EUR': l10n.currencyEUR,
+      'USD': l10n.currencyUSD,
+      'GBP': l10n.currencyGBP,
+      'JPY': l10n.currencyJPY,
+      'CHF': l10n.currencyCHF,
+      'CAD': l10n.currencyCAD,
+      'AUD': l10n.currencyAUD,
+    };
+    String selected = currencies.keys.contains(currentCurrency)
         ? currentCurrency
-        : currencies.first;
+        : currencies.keys.first;
 
     showDialog(
       context: context,
@@ -72,10 +80,10 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
             builder: (context, setState) {
               return DropdownButtonFormField<String>(
                 initialValue: selected,
-                items: currencies.map((c) {
+                items: currencies.entries.map((e) {
                   return DropdownMenuItem(
-                    value: c,
-                    child: Text(c),
+                    value: e.key,
+                    child: Text(e.value),
                   );
                 }).toList(),
                 onChanged: (val) {

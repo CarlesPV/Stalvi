@@ -65,4 +65,12 @@ class TrashUsecases {
       await _trashDao.deleteItemPermanently(id, type);
     }
   }
+
+  /// Permanently deletes all items in the trash.
+  Future<void> emptyTrash() async {
+    final items = await getTrashItems();
+    for (final item in items) {
+      await deleteItemPermanently(item.id, item.type);
+    }
+  }
 }

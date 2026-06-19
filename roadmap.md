@@ -123,11 +123,28 @@
   - [x] Complete global localization audit and replace all remaining hardcoded texts in Spanish, English, and Catalan.
   - [x] Update CI/CD pipelines to run `flutter gen-l10n` on build.
 
+- [x] **Phase 20: Advanced Localization Audit & Mobile Layout Robustness**
+  - [x] Standardize 7 global currencies across the app and localization files.
+  - [x] Improve transfer details and calculations to handle both origin and destination accounts securely.
+  - [x] Enforce fallback localized transfer titles on the dashboard.
+  - [x] Perform sweeping UI checks removing maxLines and TextOverflow.ellipsis to use responsive layouts.
+  - [x] Ensure perfect translation coverage for English, Spanish, and Catalan.
+  - [x] Verify that all tests pass successfully.
+
+- [x] **Phase 21: Transfer Flow Polish, Recycle Bin Refinements & Validation**
+  - [x] Default the transfer notes field to empty instead of auto-populating "Transfer".
+  - [x] Deduplicate transfers to display only 1 record in global listings, while correctly displaying the corresponding leg for both origin and destination accounts when filtered.
+  - [x] Ensure deleting a transfer mirrors properly, adding only 1 item to the recycle bin.
+  - [x] Refactor recycle bin to remove bulk empty options, auto-dispose state when exiting, and dynamically format items as `<Note/Type> - <Amount>` localized in all 3 languages using stored metadata.
+  - [x] Implement raw transaction query streams to successfully fetch and display both origin and destination accounts inside transaction detail sheets.
+  - [x] Standardize transfer list icons to use transfer-specific iconography.
+  - [x] Run full automated testing (352 tests) and static analysis to ensure 100% build health and lint correctness.
+
 ## Current Phase
-- [ ] **Phase 20: Synchronization, Backups, and Import/Export Validations**
+- [ ] **Phase 22: Synchronization, Backups, and Import/Export Validations**
   - [ ] Implement cloud synchronization options.
   - [ ] Add encrypted automatic local backup features.
   - [ ] Validate cross-platform imports/exports.
 
 ## Upcoming Phases
-- [ ] **Phase 21: Integration Testing (E2E), final security audit, and store preparation.**
+- [ ] **Phase 23: Integration Testing (E2E), final security audit, and store preparation.**

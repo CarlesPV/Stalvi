@@ -12,10 +12,13 @@ class TrashItem {
   final TrashItemType type;
   final int daysRemaining;
 
+  final Map<String, dynamic>? metadata;
+
   const TrashItem({
     required this.id,
     required this.name,
     required this.type,
     required this.daysRemaining,
+    this.metadata,
   });
 }

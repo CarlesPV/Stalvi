@@ -337,13 +337,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                     if (state.type == TransactionType.transfer) ...[
                       // From Account Selector
                       _FormSelectorTile(
-                        label: Localizations.localeOf(context).languageCode ==
-                                'es'
-                            ? 'Desde cuenta'
-                            : (Localizations.localeOf(context).languageCode ==
-                                    'ca'
-                                ? 'Des de compte'
-                                : 'From Account'),
+                        label: AppLocalizations.of(context)!.labelFromAccount,
                         value: selectedAccount?.name ??
                             AppLocalizations.of(context)!.labelSelectAccount,
                         icon: selectedAccount != null
@@ -364,13 +358,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                       ),
                       // To Account Selector
                       _FormSelectorTile(
-                        label: Localizations.localeOf(context).languageCode ==
-                                'es'
-                            ? 'Hacia cuenta'
-                            : (Localizations.localeOf(context).languageCode ==
-                                    'ca'
-                                ? 'A compte'
-                                : 'To Account'),
+                        label: AppLocalizations.of(context)!.labelToAccount,
                         value: selectedToAccount?.name ??
                             AppLocalizations.of(context)!.labelSelectAccount,
                         icon: selectedToAccount != null
@@ -563,16 +551,8 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
     final state = ref.read(addTransactionNotifierProvider);
 
     final titleText = isSource
-        ? (Localizations.localeOf(context).languageCode == 'es'
-            ? 'Seleccionar cuenta de origen'
-            : (Localizations.localeOf(context).languageCode == 'ca'
-                ? 'Seleccionar compte d\'origen'
-                : 'Select Source Account'))
-        : (Localizations.localeOf(context).languageCode == 'es'
-            ? 'Seleccionar cuenta de destino'
-            : (Localizations.localeOf(context).languageCode == 'ca'
-                ? 'Seleccionar compte de destí'
-                : 'Select Destination Account'));
+        ? AppLocalizations.of(context)!.selectSourceAccount
+        : AppLocalizations.of(context)!.selectDestinationAccount;
 
     showModalBottomSheet(
       context: context,
@@ -808,14 +788,15 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
     final colorScheme = theme.colorScheme;
     final state = ref.read(addTransactionNotifierProvider);
 
+    final l10n = AppLocalizations.of(context)!;
     final currencies = {
-      'EUR': 'Euro (EUR)',
-      'USD': 'US Dollar (USD)',
-      'GBP': 'British Pound (GBP)',
-      'JPY': 'Japanese Yen (JPY)',
-      'CHF': 'Swiss Franc (CHF)',
-      'CAD': 'Canadian Dollar (CAD)',
-      'AUD': 'Australian Dollar (AUD)',
+      'EUR': l10n.currencyEUR,
+      'USD': l10n.currencyUSD,
+      'GBP': l10n.currencyGBP,
+      'JPY': l10n.currencyJPY,
+      'CHF': l10n.currencyCHF,
+      'CAD': l10n.currencyCAD,
+      'AUD': l10n.currencyAUD,
     };
 
     showModalBottomSheet(

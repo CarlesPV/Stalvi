@@ -359,5 +359,44 @@ void main() {
       expect(finalState.submissionStatus.hasError, isTrue);
       expect(finalState.submissionStatus.error, testException);
     });
+
+    test(
+        'submit calls usecase with destinationAccountId for transfer transactions',
+        () async {
+      buildContainer();
+
+      final notifier = container.read(addTransactionNotifierProvider.notifier);
+      notifier.updateType(TransactionType.transfer);
+      notifier.updateAmount('50.00');
+      notifier.updateAccount(testAccount.id);
+      notifier.updateToAccount('acc_dest');
+      notifier.updateCurrency('EUR');
+      // Category is not required for transfers based on validation logic
+
+      when(() => mockUseCase.execute(any())).thenAnswer(
+        (_) async => Transaction(
+          id: 'txn_generated',
+          amount: 5000,
+          date: DateTime.now(),
+          type: TransactionType.transfer,
+          accountId: testAccount.id,
+          originalCurrency: 'EUR',
+          createdAt: DateTime.now(),
+          modifiedAt: DateTime.now(),
+        ),
+      );
+
+      final success = await notifier.submit();
+
+      expect(success, isTrue);
+      final captured = verify(() => mockUseCase.execute(captureAny()))
+          .captured
+          .first as AddTransactionParams;
+      expect(captured.amount, 5000);
+      expect(captured.type, TransactionType.transfer);
+      expect(captured.accountId, testAccount.id);
+      expect(captured.destinationAccountId, 'acc_dest');
+      expect(captured.notes, isNull);
+    });
   });
 }

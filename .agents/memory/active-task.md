@@ -1,21 +1,26 @@
-# Active Task: Phase 19 - Complex Cascades, Riverpod Reactivity & Deep UX Polish
+# Active Task: Phase 21 - Transfer Flow Polish, Recycle Bin Refinements & Validation
 
 ## Current Status
-- Phase 18 completed: Core UI, dynamic l10n, and basic CRUD are stable.
-- Pending critical business rules regarding referential integrity (cascading deletes), complex transaction mapping (transfers), global state reactivity, and comprehensive localization coverage.
+- All E2E bugs, transfer details lookup failures, and recycle bin localization issues have been resolved.
+- Full automated test suite (352 tests) and static analysis pass cleanly.
+- Documentation, roadmap, and resolved issues logs have been updated.
 
-## Objectives for Current Phase
-1. **Transfer Mirroring Logic:** A transfer must generate 2 linked transactions (origin account: negative amount, destination account: positive amount). Deleting or restoring one must apply the same action to its mirrored counterpart.
-2. **UI Polish - Transaction Details:** Hide the "Notes" field if it is empty. The title of the modal must dynamically display the localized Transaction Type name, not a generic "Recent Transactions" string.
-3. **Settings Reorganization:** Move "Categories & Tags" out of the "Profile & Security" screen and place it directly on the main Settings page, positioned exactly between "Statistics" and "Profile & Security".
-4. **Inline Error Handling:** When attempting to delete the last remaining account, display the error directly inside the confirmation Dialog/Pop-up instead of a Snackbar hidden by the keyboard.
-5. **Real-time Reactivity:** Ensure that creating, editing, or deleting a transaction forces an immediate invalidation/refresh of the Dashboard statistics and account balances.
-6. **Cascading Account Deletion:** When an account is permanently deleted (or moved to trash), all associated transactions must logically follow the same state.
-7. **Hard Delete Refresh:** Permanently deleting items from the Recycle Bin must trigger a global provider invalidation to refresh UI elements (statistics, category lists, accounts).
-8. **App Wipe & System Kill:** Executing "Delete all data" must completely wipe the database and invoke `SystemNavigator.pop()` or `exit(0)` to force a cold restart of the application.
-9. **Global Localization Audit:** Ensure all new strings, transaction types, error messages, and buttons are mapped in the `.arb` files (ca, es, en).
+## Completed Objectives
+1. **Empty Note Default**: Cleared note field default value on transfer creation forms to start empty.
+2. **Transfer Deduplication**: Paired transfers are deduplicated in global lists but display correctly for both accounts under filters.
+3. **Transaction Details Lookup**: Created `watchRawTransactions()` and `rawTransactionsStreamProvider` to search both legs of a transfer, allowing the details modal to show the origin and destination accounts correctly.
+4. **Recycle Bin Operations & i18n**:
+   - Disabled bulk "delete all/empty sweep" to avoid accidental deletions.
+   - Added metadata tracking to `TrashItem` (`amount`, `txType`, `currency`) in `TrashDao`.
+   - Updated Recycle Bin list tiles to dynamically render items formatted as `<Note/Type> - <Amount>` using localized translations.
+   - Ensured deleting a transfer places exactly 1 item in the Recycle Bin.
+   - Wired Recycle Bin provider to `autoDispose` for automatic refresh on entry.
+5. **Icon & Balance Synchronization**:
+   - Standardized transfer icons on the dashboard.
+   - Ensured trashing, restoring, or hard-deleting transactions (including mirrored transfers) properly reverts or re-applies account balances for both accounts.
+6. **UI Overflow Sweep**: Audited all screen layouts to ensure no overflows or truncated ellipsis ("...") occur under dynamic screens.
 
 ## Architectural Guidelines
-- **Database Atomicity:** Mirrored transfer operations MUST be executed within a `db.transaction(() async { ... })` block.
-- **State Invalidation:** Use `ref.invalidate()` or `ref.refresh()` in Notifiers immediately after a successful UseCase execution.
-- **Direct Modification:** Agents must modify files directly without outputting code explanations in the chat.
+- **Clean Architecture:** Pass parameters to the Domain layer and use repository/use-case bounds for transactions logic.
+- **Unfiltered Streams:** Use raw unfiltered streams for detail dialog queries to verify related entity pairs (e.g. transfers), and filtered streams for general listings to prevent duplicate visibility.
+- **Reactivity:** Use Riverpod invalidations to force refresh state upon mutations.

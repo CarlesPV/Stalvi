@@ -386,23 +386,14 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
                 ),
               ),
             ),
-            items: const [
-              DropdownMenuItem(value: 'EUR', child: Text('Euro (EUR)')),
-              DropdownMenuItem(value: 'USD', child: Text('US Dollar (USD)')),
-              DropdownMenuItem(
-                value: 'GBP',
-                child: Text('British Pound (GBP)'),
-              ),
-              DropdownMenuItem(value: 'JPY', child: Text('Japanese Yen (JPY)')),
-              DropdownMenuItem(value: 'CHF', child: Text('Swiss Franc (CHF)')),
-              DropdownMenuItem(
-                value: 'CAD',
-                child: Text('Canadian Dollar (CAD)'),
-              ),
-              DropdownMenuItem(
-                value: 'AUD',
-                child: Text('Australian Dollar (AUD)'),
-              ),
+            items: [
+              DropdownMenuItem(value: 'EUR', child: Text(l10n.currencyEUR)),
+              DropdownMenuItem(value: 'USD', child: Text(l10n.currencyUSD)),
+              DropdownMenuItem(value: 'GBP', child: Text(l10n.currencyGBP)),
+              DropdownMenuItem(value: 'JPY', child: Text(l10n.currencyJPY)),
+              DropdownMenuItem(value: 'CHF', child: Text(l10n.currencyCHF)),
+              DropdownMenuItem(value: 'CAD', child: Text(l10n.currencyCAD)),
+              DropdownMenuItem(value: 'AUD', child: Text(l10n.currencyAUD)),
             ],
             onChanged: (currency) {
               if (currency != null) {
