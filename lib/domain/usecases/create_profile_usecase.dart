@@ -111,6 +111,7 @@ class CreateProfileUseCase {
       userId: profile.id,
       currency: profile.defaultCurrency,
       locale: params.locale,
+      createAccount: true,
     );
 
     return profile;

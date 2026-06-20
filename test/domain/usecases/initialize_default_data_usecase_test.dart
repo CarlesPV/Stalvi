@@ -96,6 +96,7 @@ void main() {
       // Act
       await useCase.execute(
         userId: userId,
+        createAccount: true,
         walletName: walletName,
         currency: currency,
       );
@@ -151,6 +152,7 @@ void main() {
       // Act
       await useCase.execute(
         userId: userId,
+        createAccount: true,
         walletName: walletName,
         currency: currency,
       );
@@ -177,6 +179,7 @@ void main() {
       // Act
       await useCase.execute(
         userId: userId,
+        createAccount: true,
         currency: currency,
         locale: 'en',
       );
@@ -205,6 +208,7 @@ void main() {
       // Act
       await useCase.execute(
         userId: userId,
+        createAccount: true,
         currency: currency,
         locale: 'ca',
       );
@@ -233,6 +237,7 @@ void main() {
       // Act
       await useCase.execute(
         userId: userId,
+        createAccount: true,
         currency: currency,
         locale: 'es',
       );
@@ -260,6 +265,7 @@ void main() {
       // Act
       await useCase.execute(
         userId: userId,
+        createAccount: true,
         currency: currency,
         locale:
             'fr', // French is not supported, should trigger exception fallback
@@ -289,6 +295,7 @@ void main() {
       // Act
       await useCase.execute(
         userId: userId,
+        createAccount: true,
         currency: currency,
       );
 
@@ -317,6 +324,7 @@ void main() {
       // Act
       await useCase.execute(
         userId: userId,
+        createAccount: true,
         currency: currency,
         locale: locale,
       );
@@ -388,6 +396,7 @@ void main() {
       // If it throws, the test will fail. If it succeeds, it means exceptions were silenced.
       await useCase.execute(
         userId: userId,
+        createAccount: true,
         currency: currency,
       );
 
@@ -439,6 +448,7 @@ void main() {
       // Act
       await useCase.execute(
         userId: userId,
+        createAccount: true,
         currency: currency,
         locale: 'en',
       );
@@ -474,6 +484,7 @@ void main() {
       // Act
       await useCase.execute(
         userId: userId,
+        createAccount: true,
         currency: currency,
         locale: 'ca_ES',
       );
@@ -502,6 +513,7 @@ void main() {
       // Act
       await useCase.execute(
         userId: userId,
+        createAccount: true,
         currency: currency,
         locale: 'es_US',
       );
@@ -530,6 +542,7 @@ void main() {
       // Act
       await useCase.execute(
         userId: userId,
+        createAccount: true,
         currency: currency,
         locale: 'en_GB',
       );
@@ -558,6 +571,7 @@ void main() {
       // Act
       await useCase.execute(
         userId: userId,
+        createAccount: true,
         currency: currency,
         locale: 'en',
       );

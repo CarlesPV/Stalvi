@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:stalvi/core/errors/app_exceptions.dart';
@@ -153,6 +154,13 @@ void main() {
     mockAccountRepo = MockAccountRepository();
     mockProfileRepo = MockProfileRepository();
     mockExchangeRateRepo = MockExchangeRateRepository();
+
+    when(
+      () => mockExchangeRateRepo.getLocalRates(
+        baseCurrency: any(named: 'baseCurrency'),
+      ),
+    ).thenAnswer((_) async => null);
+
     usecase = AddTransactionUseCase(
       mockTransactionRepo,
       mockAccountRepo,
@@ -184,8 +192,43 @@ void main() {
         expect(result.convertedAmount, isNull);
         expect(result.exchangeRate, isNull);
 
-        verifyZeroInteractions(mockExchangeRateRepo);
+        verify(() => mockExchangeRateRepo.getLocalRates(baseCurrency: 'EUR'))
+            .called(1);
+        verifyNever(() => mockExchangeRateRepo.getLatestRates(
+            baseCurrency: any(named: 'baseCurrency')));
         verify(() => mockTransactionRepo.createTransaction(any())).called(1);
+      });
+
+      test(
+          'attaches JSON exchange rate snapshot when local rates are available',
+          () async {
+        final params = _incomeParams();
+        final account = _buildAccount();
+        final profile = _buildProfile();
+        final localRates =
+            _buildExchangeRate(base: 'EUR'); // EUR: {'USD': 1.08, 'GBP': 0.85}
+
+        when(() => mockAccountRepo.getAccountById(params.accountId))
+            .thenAnswer((_) async => account);
+        when(() => mockProfileRepo.getProfileById(account.userId))
+            .thenAnswer((_) async => profile);
+        when(() => mockExchangeRateRepo.getLocalRates(baseCurrency: 'EUR'))
+            .thenAnswer((_) async => localRates);
+        when(() => mockTransactionRepo.createTransaction(any())).thenAnswer(
+          (inv) async => inv.positionalArguments[0] as Transaction,
+        );
+
+        final result = await usecase.execute(params);
+
+        expect(result.exchangeRateSnapshot, isNotNull);
+        final decoded =
+            jsonDecode(result.exchangeRateSnapshot!) as Map<String, dynamic>;
+        expect(decoded['EUR'], 1.0);
+        expect(decoded['USD'], 1.08);
+        expect(decoded['GBP'], 0.85);
+
+        verify(() => mockExchangeRateRepo.getLocalRates(baseCurrency: 'EUR'))
+            .called(1);
       });
 
       test('calculates convertedAmount when currencies differ', () async {

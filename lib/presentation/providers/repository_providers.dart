@@ -85,7 +85,9 @@ final savingsGoalRepositoryProvider = Provider<ISavingsGoalRepository>((ref) {
 /// Provides the [IStatisticsRepository] implementation.
 final statisticsRepositoryProvider = Provider<IStatisticsRepository>((ref) {
   final db = ref.watch(appDatabaseProvider).requireValue;
-  return StatisticsRepositoryImpl(db.statisticsDao);
+  final profileRepo = ref.watch(profileRepositoryProvider);
+  final accountRepo = ref.watch(accountRepositoryProvider);
+  return StatisticsRepositoryImpl(db.statisticsDao, profileRepo, accountRepo);
 });
 
 /// Provides the [IExchangeRateRepository] implementation.

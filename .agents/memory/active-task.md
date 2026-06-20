@@ -1,37 +1,25 @@
-# Active Task: Phase 22 - Multi-Currency Snapshot, Auth Fallbacks & i18n Completeness
+# Active Task: Phase 22.1 - Multi-Currency Immutability & Profile Hydration Fixes
 
 ## Current Status
-- **Phase:** 22
-- **State:** Completed
-- **Primary Focus:** Implement historical exchange rate snapshots per transaction, background sync for exchange rates, resolve biometric/PIN fallback logic, and complete full i18n coverage.
+- **Phase:** 22.1 (Hotfixes & Refactoring)
+- **State:** In Progress
+- **Primary Focus:** Fix premature default account creation, implement exchange rate snapshot JSON injection on transactions, and refactor statistics to calculate historical values using snapshots.
 
 ## Objectives
-1. **Multi-Currency Immutability:**
-   - `[x]` Update `Transaction` entity and `transaction_table` in Drift to store a snapshot of current exchange rates at creation time.
-   - `[x]` Implement 24h background sync for exchange rates upon app opening (silent update).
-2. **Account Initialization:**
-   - `[x]` Modify initial profile setup to generate default account as "Mi Cartera" (localized) with 0 balance in the user's default currency.
-   - `[x]` Ensure default currency changes in settings reflect instantly across the app state.
-3. **UI & Data Presentation:**
-   - `[x]` Remove positive/negative symbols (+/-) from Transfer transactions.
-   - `[x]` Format Statistics based on Account currency or Default currency (if "All" is selected).
-4. **Security & Auth UX:**
-   - `[x]` Fix "Delete All Data" fallback: allow PIN authentication if biometrics are enabled but fail/cancelled.
-   - `[x]` Add biometric opt-in prompt on the unlock screen if not previously activated.
-5. **Localization (i18n):**
-   - `[x]` Translate all missing loading, error, and feedback states into English, Spanish, and Catalan (`.arb` files).
+1. **Profile Hydration Fix:** Prevent `InitializeDefaultDataUseCase` from creating the default account during app startup. Restrict account creation strictly to `CreateProfileUseCase`.
+2. **Snapshot Injection:** Update `AddTransactionUseCase` to fetch the 24h local exchange rates and store them as a JSON string in `exchangeRateSnapshot`.
+3. **Historical Math:** Refactor `StatisticsRepositoryImpl` and Dashboard summaries to perform aggregations in Dart (not SQL SUM) by decoding `exchangeRateSnapshot` and calculating the exact value at the time of the transaction.
 
 ## Files in Scope
-- `lib/domain/entities/transaction.dart`
-- `lib/data/database/tables/transaction_table.dart`
-- `lib/presentation/providers/app_startup_provider.dart`
+- `lib/domain/usecases/initialize_default_data_usecase.dart`
 - `lib/domain/usecases/create_profile_usecase.dart`
-- `lib/presentation/features/auth/auth_screen.dart`
-- `lib/presentation/features/settings/profile_settings_controller.dart`
-- `lib/core/l10n/app_*.arb`
+- `lib/presentation/providers/app_startup_provider.dart`
+- `lib/domain/usecases/add_transaction_usecase.dart`
+- `lib/data/repositories/statistics_repository_impl.dart`
+- `lib/data/database/daos/statistics_dao.dart`
 
 ## Strict Guidelines
 - Maintain Clean Architecture and DRY principles.
-- Ensure all new database migrations handle SQLCipher encryption properly.
+- Use Dart's `jsonDecode` for math calculations in Repositories.
 - All operations must be covered by Unit Tests.
 - Do not output code to the chat; write directly to the file system.

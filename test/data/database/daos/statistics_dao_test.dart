@@ -29,7 +29,8 @@ void main() {
     await database.close();
   });
 
-  test('getPeriodSummary should return total income and expense', () async {
+  test('getTransactionsForPeriod should return transactions in the period',
+      () async {
     // Arrange
     final now = DateTime.now();
     await database.into(database.profiles).insert(
@@ -85,17 +86,32 @@ void main() {
           ),
         );
 
+    await database.into(database.transactions).insert(
+          TransactionsCompanion.insert(
+            id: 't3',
+            amount: 700,
+            date: DateTime(2023, 2, 1),
+            type: TransactionType.expense,
+            accountId: 'acc1',
+            originalCurrency: 'EUR',
+            createdAt: now,
+            modifiedAt: now,
+          ),
+        );
+
     // Act
-    final result =
-        await dao.getPeriodSummary(DateTime(2023, 1, 1), DateTime(2023, 1, 31));
+    final result = await dao.getTransactionsForPeriod(
+        DateTime(2023, 1, 1), DateTime(2023, 1, 31));
 
     // Assert
-    expect(result.$1, 1000); // Income
-    expect(result.$2, 500); // Expense
+    expect(result.length, 2);
+    expect(result.any((t) => t.id == 't1'), isTrue);
+    expect(result.any((t) => t.id == 't2'), isTrue);
+    expect(result.any((t) => t.id == 't3'), isFalse);
   });
 
   test(
-      'getTopCategories should return categories grouped by id and sorted by sum',
+      'getTransactionsWithCategoryForPeriod should return transactions with categories in the period',
       () async {
     // Arrange
     final now = DateTime.now();
@@ -169,20 +185,6 @@ void main() {
     await database.into(database.transactions).insert(
           TransactionsCompanion.insert(
             id: 't2',
-            amount: 300,
-            date: DateTime(2023, 1, 11),
-            type: TransactionType.expense,
-            accountId: 'acc1',
-            categoryId: const drift.Value('cat1'),
-            originalCurrency: 'EUR',
-            createdAt: now,
-            modifiedAt: now,
-          ),
-        );
-
-    await database.into(database.transactions).insert(
-          TransactionsCompanion.insert(
-            id: 't3',
             amount: 1000,
             date: DateTime(2023, 1, 12),
             type: TransactionType.expense,
@@ -195,7 +197,7 @@ void main() {
         );
 
     // Act
-    final result = await dao.getTopCategories(
+    final result = await dao.getTransactionsWithCategoryForPeriod(
       DateTime(2023, 1, 1),
       DateTime(2023, 1, 31),
       type: TransactionType.expense,
@@ -203,21 +205,24 @@ void main() {
 
     // Assert
     expect(result.length, 2);
-    expect(result[0].categoryId, 'cat2');
-    expect(result[0].totalAmount, 1000);
-    expect(result[1].categoryId, 'cat1');
-    expect(result[1].totalAmount, 800);
+    expect(
+        result.any((t) => t.categoryId == 'cat1' && t.categoryName == 'Food'),
+        isTrue);
+    expect(
+        result.any(
+            (t) => t.categoryId == 'cat2' && t.categoryName == 'Transport'),
+        isTrue);
   });
 
-  test('getPeriodSummary should return 0 when DB is empty', () async {
-    final result =
-        await dao.getPeriodSummary(DateTime(2023, 1, 1), DateTime(2023, 1, 31));
-    expect(result.$1, 0);
-    expect(result.$2, 0);
+  test('getTransactionsForPeriod should return empty list when DB is empty',
+      () async {
+    final result = await dao.getTransactionsForPeriod(
+        DateTime(2023, 1, 1), DateTime(2023, 1, 31));
+    expect(result, isEmpty);
   });
 
   test(
-      'getPeriodSummary should ignore soft-deleted transactions and transactions of soft-deleted accounts',
+      'getTransactionsForPeriod should ignore soft-deleted transactions and transactions of soft-deleted accounts',
       () async {
     final now = DateTime.now();
     await database.into(database.profiles).insert(
@@ -307,13 +312,13 @@ void main() {
           ),
         );
 
-    final result =
-        await dao.getPeriodSummary(DateTime(2023, 1, 1), DateTime(2023, 1, 31));
-    expect(result.$1, 1000); // Only t_active is counted
+    final result = await dao.getTransactionsForPeriod(
+        DateTime(2023, 1, 1), DateTime(2023, 1, 31));
+    expect(result.length, 1);
+    expect(result.first.id, 't_active');
   });
 
-  test(
-      'getPeriodSummary uses convertedAmount when accountId is null, and amount when not null',
+  test('getTransactionsForPeriod should filter by accountId when provided',
       () async {
     final now = DateTime.now();
     await database.into(database.profiles).insert(
@@ -343,11 +348,26 @@ void main() {
           ),
         );
 
+    await database.into(database.accounts).insert(
+          AccountsCompanion.insert(
+            id: 'acc4',
+            userId: 'profile3',
+            name: 'Account 4',
+            type: AccountType.cash,
+            initialBalance: 0,
+            currency: 'EUR',
+            color: 'green',
+            icon: 'icon',
+            isDefault: const drift.Value(false),
+            createdAt: now,
+            modifiedAt: now,
+          ),
+        );
+
     await database.into(database.transactions).insert(
           TransactionsCompanion.insert(
-            id: 't_converted',
-            amount: 1000, // 10 USD
-            convertedAmount: const drift.Value(900), // 9 EUR
+            id: 't_acc3',
+            amount: 1000,
             date: DateTime(2023, 1, 10),
             type: TransactionType.income,
             accountId: 'acc3',
@@ -357,17 +377,33 @@ void main() {
           ),
         );
 
-    // Act - all accounts (accountId is null)
-    final resultAll =
-        await dao.getPeriodSummary(DateTime(2023, 1, 1), DateTime(2023, 1, 31));
+    await database.into(database.transactions).insert(
+          TransactionsCompanion.insert(
+            id: 't_acc4',
+            amount: 2000,
+            date: DateTime(2023, 1, 12),
+            type: TransactionType.income,
+            accountId: 'acc4',
+            originalCurrency: 'EUR',
+            createdAt: now,
+            modifiedAt: now,
+          ),
+        );
 
-    // Act - specific account
-    final resultSpecific = await dao.getPeriodSummary(
-        DateTime(2023, 1, 1), DateTime(2023, 1, 31),
-        accountId: 'acc3');
+    // Act - all accounts (accountId is null)
+    final resultAll = await dao.getTransactionsForPeriod(
+        DateTime(2023, 1, 1), DateTime(2023, 1, 31));
+
+    // Act - specific account acc3
+    final resultAcc3 = await dao.getTransactionsForPeriod(
+      DateTime(2023, 1, 1),
+      DateTime(2023, 1, 31),
+      accountId: 'acc3',
+    );
 
     // Assert
-    expect(resultAll.$1, 900); // Should use convertedAmount
-    expect(resultSpecific.$1, 1000); // Should use original amount
+    expect(resultAll.length, 2);
+    expect(resultAcc3.length, 1);
+    expect(resultAcc3.first.id, 't_acc3');
   });
 }

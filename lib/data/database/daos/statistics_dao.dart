@@ -6,19 +6,19 @@ import '../tables/account_table.dart';
 
 part 'statistics_dao.g.dart';
 
-class CategoryStatisticResult {
+class TransactionWithCategory {
+  final Transaction transaction;
   final String categoryId;
   final String categoryName;
   final String categoryIcon;
   final String categoryColor;
-  final int totalAmount;
 
-  CategoryStatisticResult({
+  TransactionWithCategory({
+    required this.transaction,
     required this.categoryId,
     required this.categoryName,
     required this.categoryIcon,
     required this.categoryColor,
-    required this.totalAmount,
   });
 }
 
@@ -27,118 +27,74 @@ class StatisticsDao extends DatabaseAccessor<AppDatabase>
     with _$StatisticsDaoMixin {
   StatisticsDao(super.db);
 
-  /// Calculates total income and total expenses within a date range
-  Future<(int totalIncome, int totalExpense)> getPeriodSummary(
+  Future<List<Transaction>> getTransactionsForPeriod(
     DateTime startDate,
     DateTime endDate, {
     String? accountId,
   }) async {
-    final amountExp = accountId == null
-        ? coalesce<int>([transactions.convertedAmount, transactions.amount])
-        : transactions.amount;
-
-    final incomeSum = amountExp.sum();
-    var incomeConditions =
+    var queryConditions =
         transactions.date.isBetweenValues(startDate, endDate) &
-            transactions.type.equalsValue(TransactionType.income) &
             transactions.isDeleted.equals(false) &
             accounts.isDeleted.equals(false);
-    if (accountId != null) {
-      incomeConditions =
-          incomeConditions & transactions.accountId.equals(accountId);
-    }
-    final incomeQuery = selectOnly(transactions)
-      ..addColumns([incomeSum])
-      ..join([
-        innerJoin(
-          accounts,
-          accounts.id.equalsExp(transactions.accountId),
-        ),
-      ])
-      ..where(incomeConditions);
-    final incomeResult = await incomeQuery.getSingle();
-    final totalIncome = incomeResult.read(incomeSum) ?? 0;
 
-    final expenseSum = amountExp.sum();
-    var expenseConditions =
-        transactions.date.isBetweenValues(startDate, endDate) &
-            transactions.type.equalsValue(TransactionType.expense) &
-            transactions.isDeleted.equals(false) &
-            accounts.isDeleted.equals(false);
     if (accountId != null) {
-      expenseConditions =
-          expenseConditions & transactions.accountId.equals(accountId);
+      queryConditions =
+          queryConditions & transactions.accountId.equals(accountId);
     }
-    final expenseQuery = selectOnly(transactions)
-      ..addColumns([expenseSum])
-      ..join([
-        innerJoin(
-          accounts,
-          accounts.id.equalsExp(transactions.accountId),
-        ),
-      ])
-      ..where(expenseConditions);
-    final expenseResult = await expenseQuery.getSingle();
-    final totalExpense = expenseResult.read(expenseSum) ?? 0;
 
-    return (totalIncome, totalExpense);
+    final query = select(transactions).join([
+      innerJoin(
+        accounts,
+        accounts.id.equalsExp(transactions.accountId),
+      ),
+    ])
+      ..where(queryConditions);
+
+    final results = await query.get();
+    return results.map((row) => row.readTable(transactions)).toList();
   }
 
-  /// Calculates Top Categories within a Date Range
-  Future<List<CategoryStatisticResult>> getTopCategories(
+  Future<List<TransactionWithCategory>> getTransactionsWithCategoryForPeriod(
     DateTime startDate,
     DateTime endDate, {
     TransactionType type = TransactionType.expense,
     String? accountId,
   }) async {
-    final amountExp = accountId == null
-        ? coalesce<int>([transactions.convertedAmount, transactions.amount])
-        : transactions.amount;
-
-    final amountSum = amountExp.sum();
-
     var queryConditions =
         transactions.date.isBetweenValues(startDate, endDate) &
             transactions.type.equalsValue(type) &
             transactions.isDeleted.equals(false) &
             categories.isDeleted.equals(false) &
             accounts.isDeleted.equals(false);
+
     if (accountId != null) {
       queryConditions =
           queryConditions & transactions.accountId.equals(accountId);
     }
 
-    final query = selectOnly(transactions)
-      ..addColumns([
-        categories.id,
-        categories.name,
-        categories.icon,
-        categories.color,
-        amountSum,
-      ])
-      ..join([
-        innerJoin(
-          categories,
-          categories.id.equalsExp(transactions.categoryId),
-        ),
-        innerJoin(
-          accounts,
-          accounts.id.equalsExp(transactions.accountId),
-        ),
-      ])
-      ..where(queryConditions)
-      ..groupBy([categories.id])
-      ..orderBy([OrderingTerm(expression: amountSum, mode: OrderingMode.desc)]);
+    final query = select(transactions).join([
+      innerJoin(
+        categories,
+        categories.id.equalsExp(transactions.categoryId),
+      ),
+      innerJoin(
+        accounts,
+        accounts.id.equalsExp(transactions.accountId),
+      ),
+    ])
+      ..where(queryConditions);
 
     final results = await query.get();
 
     return results.map((row) {
-      return CategoryStatisticResult(
-        categoryId: row.read(categories.id) ?? '',
-        categoryName: row.read(categories.name) ?? '',
-        categoryIcon: row.read(categories.icon) ?? '',
-        categoryColor: row.read(categories.color) ?? '',
-        totalAmount: row.read(amountSum) ?? 0,
+      final transaction = row.readTable(transactions);
+      final category = row.readTable(categories);
+      return TransactionWithCategory(
+        transaction: transaction,
+        categoryId: category.id,
+        categoryName: category.name,
+        categoryIcon: category.icon,
+        categoryColor: category.color,
       );
     }).toList();
   }

@@ -198,8 +198,11 @@ void main() {
     // Open change PIN bottom sheet (actually we tap Delete All Data)
     final deleteButton = find.text('Delete All Data');
     try {
-      await tester.scrollUntilVisible(deleteButton, 200,
-          scrollable: find.byType(Scrollable));
+      await tester.scrollUntilVisible(
+        deleteButton,
+        200,
+        scrollable: find.byType(Scrollable),
+      );
     } catch (_) {
       // In case scrollUntilVisible fails, drag manually
       await tester.drag(find.byType(ListView), const Offset(0, -1000));
@@ -221,7 +224,9 @@ void main() {
     ).called(1);
 
     // PIN bottom sheet should be shown
-    expect(find.text('Use biometrics or your device PIN to continue.'),
-        findsWidgets);
+    expect(
+      find.text('Use biometrics or your device PIN to continue'),
+      findsWidgets,
+    );
   });
 }

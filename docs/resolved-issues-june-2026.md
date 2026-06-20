@@ -231,6 +231,32 @@ on Android devices, preventing the database from loading and blocking app launch
 - Add metadata to generic audit/trash tables if localized representation is required without direct joins.
 - Use `autoDispose` for providers that monitor transient screen lists (like trash bins) to prevent caching stale items.
 
+---
+
+## 10. Refactoring Statistics & Dashboard Aggregations to Use Historical Exchange Rate Snapshots
+
+### Problem Description
+Previously, `StatisticsDao` performed database-level aggregation using raw SQLite `SUM()` commands. This bypassed transaction-specific historical exchange rates (stored as JSON string in `exchangeRateSnapshot` table column). When a user changed their default currency or loaded statistics, the calculations failed to reflect historical exchange rates dynamically, resulting in financial inaccuracies or falling back to static current rates.
+
+### Root Cause
+SQL-based database aggregation is incapable of parsing dynamic JSON objects (specifically the JSON-encoded `exchangeRateSnapshot` rates) inline on standard sqlite configurations. As a result, calculating accurate localized figures for multi-currency transactions requires moving the aggregation and conversion calculations from the SQLite database engine to the application's Dart repository layer.
+
+### Solution Applied
+1. **DAO Layer Refactoring**:
+   - Replaced custom aggregate database queries (`getPeriodSummary` and `getTopCategories`) in [statistics_dao.dart](file:///home/carlesp/Proyectos/Konta/lib/data/database/daos/statistics_dao.dart) with data-fetching methods: `getTransactionsForPeriod` and `getTransactionsWithCategoryForPeriod`.
+   - These methods retrieve the full list of matched `Transaction` and joined `TransactionWithCategory` records rather than raw SQL aggregate sums.
+2. **Repository Layer Aggregation**:
+   - Modified `StatisticsRepositoryImpl` in [statistics_repository_impl.dart](file:///home/carlesp/Proyectos/Konta/lib/data/repositories/statistics_repository_impl.dart) to parse the `exchangeRateSnapshot` JSON dictionary dynamically for each transaction.
+   - Performed the conversion from the transaction's `originalCurrency` to the active target currency (either the selected account's currency, or the user's default currency fallback) utilizing the transaction's historical rate snapshot.
+   - Handled cases where the snapshot is missing, corrupt, or does not contain the target rate, falling back safely.
+3. **Tests Refactoring**:
+   - Rewrote `statistics_dao_test.dart` to assert correct transaction retrieval, filtering, and exclusion behaviors for the new DAO methods.
+   - Wrote rigorous unit tests in `statistics_repository_impl_test.dart` to mock repository dependencies, feed custom exchange rate JSON snapshots, and assert that income/expense sums and category aggregates map correctly with exact currency conversions.
+
+### Future Prevention Guideline
+- Whenever a database column contains structured JSON properties (such as dynamic snapshots or metadata logs) that dictate financial calculations, perform the mathematical aggregation in the Dart domain/repository layer instead of using database-level SQL functions.
+
+
 
 
 

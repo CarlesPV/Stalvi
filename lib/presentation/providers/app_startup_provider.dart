@@ -59,6 +59,7 @@ final appStartupProvider = FutureProvider<void>((ref) async {
       currency: profile.defaultCurrency,
       walletName: l10n.defaultWalletName,
       locale: locale.languageCode,
+      createAccount: false,
     );
 
     // Run silent background sync for exchange rates

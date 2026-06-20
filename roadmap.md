@@ -149,6 +149,13 @@
   - [x] Complete 100% internationalization (i18n) coverage for loading, error, and feedback states in English, Spanish, and Catalan.
   - [x] Ensure all 357 unit/widget tests and static analysis pass cleanly.
 
+- [x] **Phase 22.1: Multi-Currency Immutability & Background Sync**
+  - [x] Create ExchangeRate entities and Local/Remote data sources.
+  - [x] Add `exchangeRateSnapshot` field to `Transaction` entity.
+  - [x] **Fix:** Isolate default Wallet creation to Profile Registration flow only.
+  - [x] **Fix:** Inject 24h exchange rate snapshot as JSON into new Transactions.
+  - [x] **Fix:** Calculate Statistics & Dashboard summaries using historical snapshot math instead of pure SQL sums.
+
 ## Current Phase
 - [ ] **Phase 23: Synchronization, Backups, and Import/Export Validations**
   - [ ] Implement cloud synchronization options.

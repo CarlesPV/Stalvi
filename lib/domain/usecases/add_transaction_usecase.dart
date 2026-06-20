@@ -141,6 +141,19 @@ class AddTransactionUseCase {
     String? exchangeRateSnapshot;
     final String originalCurrency = params.currency ?? account.currency;
 
+    try {
+      final localRates = await _exchangeRateRepository.getLocalRates(
+        baseCurrency: profile.defaultCurrency,
+      );
+      if (localRates != null) {
+        final ratesMap = Map<String, double>.from(localRates.rates);
+        ratesMap[localRates.baseCurrency] = 1.0;
+        exchangeRateSnapshot = jsonEncode(ratesMap);
+      }
+    } catch (_) {
+      // Ignore if local rates cannot be fetched
+    }
+
     if (originalCurrency != profile.defaultCurrency) {
       try {
         final rateSnapshot = await _exchangeRateRepository.getLatestRates(
@@ -154,7 +167,11 @@ class AddTransactionUseCase {
           );
         }
         convertedAmount = (params.amount / exchangeRate).round();
-        exchangeRateSnapshot = jsonEncode(rateSnapshot.toJson());
+        if (exchangeRateSnapshot == null) {
+          final ratesMap = Map<String, double>.from(rateSnapshot.rates);
+          ratesMap[rateSnapshot.baseCurrency] = 1.0;
+          exchangeRateSnapshot = jsonEncode(ratesMap);
+        }
       } on AppException {
         rethrow;
       } catch (e) {

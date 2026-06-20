@@ -1,14 +1,2 @@
-import 'package:stalvi/data/database/daos/statistics_dao.dart';
-import 'package:stalvi/domain/entities/category_statistic.dart';
-
-extension CategoryStatisticResultMapper on CategoryStatisticResult {
-  CategoryStatistic toDomain() {
-    return CategoryStatistic(
-      categoryId: categoryId,
-      categoryName: categoryName,
-      categoryIcon: categoryIcon,
-      categoryColor: categoryColor,
-      totalAmount: totalAmount,
-    );
-  }
-}
+// This file has been deprecated and its content removed as the mapping logic
+// is now handled directly inside StatisticsRepositoryImpl to support dynamic JSON snapshot parsing.

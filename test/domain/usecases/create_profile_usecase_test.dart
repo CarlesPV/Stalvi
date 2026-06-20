@@ -76,6 +76,7 @@ void main() {
           userId: any(named: 'userId'),
           currency: any(named: 'currency'),
           locale: any(named: 'locale'),
+          createAccount: any(named: 'createAccount'),
         ),
       ).thenAnswer((_) async {});
 
@@ -128,6 +129,7 @@ void main() {
           userId: any(named: 'userId'),
           currency: any(named: 'currency'),
           locale: any(named: 'locale'),
+          createAccount: any(named: 'createAccount'),
         ),
       ).thenAnswer((_) async {});
 

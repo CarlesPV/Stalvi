@@ -33,48 +33,51 @@ class InitializeDefaultDataUseCase {
     required String currency,
     String? walletName,
     String? locale,
+    bool createAccount = false,
   }) async {
     try {
-      final existingAccounts =
-          await _accountRepository.getAccountsByUserId(userId);
-      if (existingAccounts.isEmpty) {
-        String resolvedWalletName = walletName ?? 'My wallet';
-        if (walletName == null && locale != null) {
-          final langCode =
-              locale.split('_').first.split('-').first.toLowerCase();
-          try {
-            final appLoc = lookupAppLocalizations(Locale(langCode));
-            resolvedWalletName = appLoc.defaultWalletName;
-          } catch (_) {
-            if (langCode == 'es') {
-              resolvedWalletName = 'Mi cartera';
-            } else if (langCode == 'ca') {
-              resolvedWalletName = 'La meva cartera';
-            } else {
-              resolvedWalletName = 'My wallet';
+      if (createAccount) {
+        final existingAccounts =
+            await _accountRepository.getAccountsByUserId(userId);
+        if (existingAccounts.isEmpty) {
+          String resolvedWalletName = walletName ?? 'My wallet';
+          if (walletName == null && locale != null) {
+            final langCode =
+                locale.split('_').first.split('-').first.toLowerCase();
+            try {
+              final appLoc = lookupAppLocalizations(Locale(langCode));
+              resolvedWalletName = appLoc.defaultWalletName;
+            } catch (_) {
+              if (langCode == 'es') {
+                resolvedWalletName = 'Mi cartera';
+              } else if (langCode == 'ca') {
+                resolvedWalletName = 'La meva cartera';
+              } else {
+                resolvedWalletName = 'My wallet';
+              }
             }
           }
+
+          final now = DateTime.now();
+
+          final defaultAccount = Account(
+            id: const Uuid().v4(),
+            userId: userId,
+            name: resolvedWalletName,
+            type: AccountType.cash,
+            initialBalance: 0.0,
+            currency: currency,
+            color: '#4CAF50',
+            icon: 'wallet',
+            isDefault: true,
+            isDeleted: false,
+            createdAt: now,
+            modifiedAt: now,
+          );
+          try {
+            await _accountRepository.createAccount(defaultAccount);
+          } catch (_) {}
         }
-
-        final now = DateTime.now();
-
-        final defaultAccount = Account(
-          id: const Uuid().v4(),
-          userId: userId,
-          name: resolvedWalletName,
-          type: AccountType.cash,
-          initialBalance: 0.0,
-          currency: currency,
-          color: '#4CAF50',
-          icon: 'wallet',
-          isDefault: true,
-          isDeleted: false,
-          createdAt: now,
-          modifiedAt: now,
-        );
-        try {
-          await _accountRepository.createAccount(defaultAccount);
-        } catch (_) {}
       }
 
       final now = DateTime.now();

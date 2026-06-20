@@ -336,6 +336,21 @@ This document lists the completed phases of the Stalvi development roadmap, prov
   - Clean run of static analysis (`flutter analyze` with 0 issues).
   - Executed the entire suite of 357 unit, integration, and widget tests, achieving a 100% success rate (all tests passed!).
 
+### Phase 22.1: Multi-Currency Immutability & Background Sync
+* **Completion Date:** June 19, 2026
+* **Objective:** Ensure financial accuracy by saving local JSON exchange rate snapshots inside transactions, isolating default wallet initialization to the onboarding registration flow, and calculating statistics and dashboard summaries using historical snapshot math instead of pure SQL database sums.
+* **Accomplishments:**
+  - **Local Exchange Rate Caching**: Created ExchangeRate entity, local/remote data sources, and database table.
+  - **Historical Rate Snapshots**: Added `exchangeRateSnapshot` text column to the `Transactions` table to persist historical exchange rates as a JSON string when transactions are created.
+  - **Registration-scoped Initialization**: Isolated the default wallet creation to onboarding registration only, avoiding premature wallet initialization on app start.
+  - **Dynamic Snapshot Calculations**: Refactored `StatisticsDao` and `StatisticsRepositoryImpl` to query the list of transactions in a period and aggregate the sums in the Dart layer by parsing the `exchangeRateSnapshot` JSON, ensuring correct currency calculations even if default profile currencies change.
+* **Verification:**
+  - Fixed test assertion issues in `profile_settings_screen_test.dart` and aligned biometrics fallback verification string.
+  - Updated `statistics_dao_test.dart` to assert transaction queries on the updated DAO methods.
+  - Clean pass of static analysis (`dart analyze`) with 0 errors/warnings on edited code.
+  - Executed the full automated test suite (361 tests passed successfully!).
+
+
 
 
 
