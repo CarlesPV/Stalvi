@@ -1,6 +1,5 @@
 import 'dart:ui';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:stalvi/core/l10n/app_localizations.dart';
 import 'package:stalvi/core/security/secure_storage_manager.dart';
 import 'package:stalvi/presentation/providers/repository_providers.dart';
 import 'package:stalvi/presentation/providers/app_startup_provider.dart';
@@ -65,11 +64,8 @@ class LocaleNotifier extends Notifier<Locale> {
           final profile = await ref.read(defaultProfileProvider.future);
           final initializeUseCase =
               ref.read(initializeDefaultDataUseCaseProvider);
-          final l10n = lookupAppLocalizations(newLocale);
           await initializeUseCase.execute(
             userId: profile.id,
-            currency: profile.defaultCurrency,
-            walletName: l10n.defaultWalletName,
             locale: newLocale.languageCode,
           );
           // Invalidate tagsListProvider so the UI re-fetches tag names in the new language

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:stalvi/domain/entities/account.dart';
 import 'package:stalvi/domain/entities/account_type.dart';
 import 'package:stalvi/presentation/providers/repository_providers.dart';
+import 'package:stalvi/domain/usecases/update_account_usecase.dart';
 import 'package:stalvi/core/l10n/app_localizations.dart';
 import 'package:stalvi/core/errors/app_exceptions.dart';
 
@@ -26,10 +27,8 @@ class EditAccountDialog extends ConsumerStatefulWidget {
 
 class _EditAccountDialogState extends ConsumerState<EditAccountDialog> {
   late final TextEditingController _nameController;
-  late final TextEditingController _balanceController;
 
   late AccountType _selectedType;
-  late String _selectedCurrency;
   late String _selectedColor;
   late String _selectedIcon;
   bool _isLoading = false;
@@ -57,11 +56,7 @@ class _EditAccountDialogState extends ConsumerState<EditAccountDialog> {
   void initState() {
     super.initState();
     _nameController = TextEditingController(text: widget.account.name);
-    _balanceController = TextEditingController(
-      text: widget.account.initialBalance.toStringAsFixed(2),
-    );
     _selectedType = widget.account.type;
-    _selectedCurrency = widget.account.currency;
     _selectedColor = widget.account.color;
     _selectedIcon = widget.account.icon;
     _isDefault = widget.account.isDefault;
@@ -70,7 +65,6 @@ class _EditAccountDialogState extends ConsumerState<EditAccountDialog> {
   @override
   void dispose() {
     _nameController.dispose();
-    _balanceController.dispose();
     super.dispose();
   }
 
@@ -83,7 +77,6 @@ class _EditAccountDialogState extends ConsumerState<EditAccountDialog> {
 
   Future<void> _submit() async {
     final name = _nameController.text.trim();
-    final balanceStr = _balanceController.text.trim();
 
     setState(() {
       _errorMessage = null;
@@ -98,26 +91,32 @@ class _EditAccountDialogState extends ConsumerState<EditAccountDialog> {
       return;
     }
 
-    final balance = double.tryParse(balanceStr) ?? 0.0;
-
     setState(() => _isLoading = true);
 
     try {
-      final updated = widget.account.copyWith(
+      final params = UpdateAccountParams(
+        id: widget.account.id,
         name: name,
         type: _selectedType,
-        initialBalance: balance,
-        currency: _selectedCurrency,
         color: _selectedColor,
         icon: _selectedIcon,
         isDefault: _isDefault,
-        modifiedAt: DateTime.now(),
       );
 
-      await ref.read(accountRepositoryProvider).updateAccount(updated);
+      await ref.read(updateAccountUseCaseProvider).execute(params);
 
       if (mounted) {
         Navigator.of(context).pop();
+      }
+    } on ValidationException catch (e) {
+      if (mounted) {
+        setState(() {
+          if (e.code == 'INVALID_NAME') {
+            _errorMessage = l10n.createAccountErrorName;
+          } else {
+            _errorMessage = e.message;
+          }
+        });
       }
     } catch (e) {
       if (mounted) {
@@ -355,9 +354,13 @@ class _EditAccountDialogState extends ConsumerState<EditAccountDialog> {
               ),
               const SizedBox(height: 16),
 
-              // Initial Balance field
+              // Initial Balance field (read-only)
               TextField(
-                controller: _balanceController,
+                controller: TextEditingController(
+                  text: widget.account.initialBalance.toStringAsFixed(2),
+                ),
+                readOnly: true,
+                enabled: false,
                 keyboardType:
                     const TextInputType.numberWithOptions(decimal: true),
                 decoration: InputDecoration(
@@ -365,6 +368,17 @@ class _EditAccountDialogState extends ConsumerState<EditAccountDialog> {
                   hintText: '0.00',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(16),
+                  ),
+                  disabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    borderSide: BorderSide(
+                      color: colorScheme.outline.withValues(alpha: 0.3),
+                    ),
+                  ),
+                  suffixIcon: Icon(
+                    Icons.lock_outline_rounded,
+                    size: 18,
+                    color: colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
                   ),
                 ),
               ),
@@ -442,13 +456,24 @@ class _EditAccountDialogState extends ConsumerState<EditAccountDialog> {
               ),
               const SizedBox(height: 20),
 
-              // Currency Selector
+              // Currency Selector (read-only — immutable after creation)
               DropdownButtonFormField<String>(
-                initialValue: _selectedCurrency,
+                value: widget.account.currency,
                 decoration: InputDecoration(
                   labelText: l10n.labelCurrency,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(16),
+                  ),
+                  disabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    borderSide: BorderSide(
+                      color: colorScheme.outline.withValues(alpha: 0.3),
+                    ),
+                  ),
+                  suffixIcon: Icon(
+                    Icons.lock_outline_rounded,
+                    size: 18,
+                    color: colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
                   ),
                 ),
                 items: [
@@ -460,9 +485,8 @@ class _EditAccountDialogState extends ConsumerState<EditAccountDialog> {
                   DropdownMenuItem(value: 'CAD', child: Text(l10n.currencyCAD)),
                   DropdownMenuItem(value: 'AUD', child: Text(l10n.currencyAUD)),
                 ],
-                onChanged: (val) {
-                  if (val != null) setState(() => _selectedCurrency = val);
-                },
+                // null disables the dropdown — currency is immutable after creation
+                onChanged: null,
               ),
               const SizedBox(height: 20),
 

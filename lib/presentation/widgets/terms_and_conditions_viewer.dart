@@ -48,15 +48,43 @@ class TermsAndConditionsViewer extends StatelessWidget {
         assetPath: showPrivacyPolicy
             ? 'assets/legal/privacy_$lang.md'
             : 'assets/legal/terms_$lang.md',
-        fallbackContent:
-            showPrivacyPolicy ? _getPrivacyFallback() : _getTermsFallback(),
+        fallbackContent: showPrivacyPolicy
+            ? _getPrivacyFallback(lang)
+            : _getTermsFallback(lang),
       ),
     );
   }
 
   // --- Fallback raw strings in case assets are not accessible ---
 
-  String _getTermsFallback() {
+  String _getTermsFallback(String lang) {
+    if (lang == 'es') {
+      return '# Términos y Condiciones\n\n'
+          'Bienvenido a Stalvi. Estos Términos y Condiciones rigen el uso de la aplicación móvil sin conexión Stalvi. Al crear un perfil y usar esta aplicación, aceptas estos términos.\n\n'
+          '## 1. Almacenamiento Local First\n'
+          '* **Datos Locales**: Stalvi almacena todos tus datos financieros, cuentas, transacciones y categorías localmente en tu dispositivo.\n'
+          '* **Seguridad y Cifrado**: Tus datos están protegidos en el dispositivo mediante el cifrado de base de datos SQLCipher y Flutter Secure Storage.\n\n'
+          '## 2. Responsabilidad del Usuario\n'
+          '* **Copia de Seguridad**: Dado que Stalvi es una aplicación local-first y no sube tus datos a ningún servidor remoto, eres el único responsable de realizar copias de seguridad de tu dispositivo y archivos de base de datos.\n'
+          '* **Pérdida de Datos**: Si pierdes tu dispositivo o lo reinicias sin una copia de seguridad, tus registros financieros no se podrán recuperar.\n\n'
+          '## 3. Privacidad\n'
+          'No recopilamos, transmitimos ni vendemos tus datos personales o financieros. Tus datos te pertenecen por completo.\n\n'
+          '## 4. Actualizaciones de los Términos\n'
+          'Nos reservamos el derecho de actualizar estos términos en cualquier momento. El uso continuado de la aplicación constituye la aceptación de los términos actualizados.';
+    } else if (lang == 'ca') {
+      return '# Termes i Condicions\n\n'
+          'Benvingut a Stalvi. Aquests Termes i Condicions regeixen l\'ús de l\'aplicació mòbil sense connexió Stalvi. Al crear un perfil i utilitzar aquesta aplicació, acceptes aquests termes.\n\n'
+          '## 1. Emmagatzematge Local First\n'
+          '* **Dades Locals**: Stalvi emmagatzema totes les teves dades financeres, comptes, transaccions i categories localment al teu dispositiu.\n'
+          '* **Seguretat i Xifratge**: Les teves dades estan protegides al dispositiu mitjançant el xifratge de base de dades SQLCipher i Flutter Secure Storage.\n\n'
+          '## 2. Responsabilitat de l\'Usuari\n'
+          '* **Còpia de Seguretat**: Com que Stalvi és una aplicació local-first i no puja les teves dades a cap servidor remot, ets l\'únic responsable de fer còpies de seguretat del teu dispositiu i fitxers de base de dades.\n'
+          '* **Pèrdua de Dades**: Si perds el dispositiu o el reinicies sense una còpia de seguretat, els teus registres financers no es podran recuperar.\n\n'
+          '## 3. Privacitat\n'
+          'No recopilem, transmetem ni venem les teves dades personals o financeres. Les teves dades et pertanyen per complet.\n\n'
+          '## 4. Actualitzacions dels Termes\n'
+          'Ens reservem el dret d\'actualitzar aquests termes en qualsevol moment. L\'ús continuat de l\'aplicació constitueix l\'acceptació dels termes actualitzats.';
+    }
     return '# Terms and Conditions\n\n'
         'Welcome to Stalvi. These Terms and Conditions govern your use of the Stalvi offline mobile application. By creating a profile and using this application, you agree to these terms.\n\n'
         '## 1. Local-First Storage\n'
@@ -71,7 +99,34 @@ class TermsAndConditionsViewer extends StatelessWidget {
         'We reserve the right to update these terms at any time. Your continued use of the application constitutes acceptance of any updated terms.';
   }
 
-  String _getPrivacyFallback() {
+  String _getPrivacyFallback(String lang) {
+    if (lang == 'es') {
+      return '# Política de Privacidad\n\n'
+          'Tu privacidad es extremadamente importante para nosotros. Esta Política de Privacidad explica cómo Stalvi maneja tu información.\n\n'
+          '## 1. Cero Recopilación de Datos\n'
+          '* **Datos Personales**: No recopilamos ningún dato personal como nombre, nombre de usuario o información de contacto.\n'
+          '* **Datos Financieros**: Todos los registros de transacciones, saldos de cuentas y presupuestos se guardan estrictamente en tu dispositivo. No tenemos un servidor central y no tenemos acceso a tus datos financieros.\n\n'
+          '## 2. Seguridad\n'
+          '* **Autenticación del Dispositivo**: Stalvi utiliza el PIN del dispositivo y la autenticación biométrica (huella dactilar o FaceID) para asegurar el acceso a la aplicación.\n'
+          '* **Cifrado**: La base de datos local está cifrada con SQLCipher utilizando una clave criptográfica generada y almacenada de forma segura en el llavero/Keystore del dispositivo.\n\n'
+          '## 3. Servicios de Terceros\n'
+          'No utilizamos herramientas de seguimiento, análisis ni SDK de publicidad de terceros que recopilen o compartan tus datos.\n\n'
+          '## 4. Contacto\n'
+          'Si tienes alguna pregunta o comentario sobre nuestras prácticas de privacidad, puedes contactarnos en privacy@stalvi.app.';
+    } else if (lang == 'ca') {
+      return '# Política de Privacitat\n\n'
+          'La teva privacitat és extremadament important per a nosaltres. Aquesta Política de Privacitat explica com Stalvi gestiona la teva informació.\n\n'
+          '## 1. Zero Recopilació de Dades\n'
+          '* **Dades Personales**: No recopilem cap dada personal com el nom, nom d\'usuari o informació de contacte.\n'
+          '* **Dades Financeres**: Tots els registres de transaccions, saldos de comptes i pressupostos es guarden estrictament al teu dispositiu. No tenim cap servidor central i no tenim accés a les teves dades financeres.\n\n'
+          '## 2. Seguretat\n'
+          '* **Autenticació del Dispositiu**: Stalvi utilitza el PIN del dispositiu i l\'autenticació biomètrica (petjada digital o FaceID) per assegurar l\'accés a l\'aplicació.\n'
+          '* **Xifratge**: La base de datos local està xifrada amb SQLCipher utilitzant una clau criptogràfica generada i emmagatzemada de forma segura al clauer/Keystore del dispositiu.\n\n'
+          '## 3. Serveis de Tercers\n'
+          'No utilitzem eines de seguiment, anàlisi ni SDK de publicitat de tercers que recopilin o comparteixin les teves dades.\n\n'
+          '## 4. Contacte\n'
+          'Si tens algun dubte o comentari sobre les nostres pràctiques de privacitat, pots contactar amb nosaltres a privacy@stalvi.app.';
+    }
     return '# Privacy Policy\n\n'
         'Your privacy is extremely important to us. This Privacy Policy explains how Stalvi handles your information.\n\n'
         '## 1. Zero Data Collection\n'

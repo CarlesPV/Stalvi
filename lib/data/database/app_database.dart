@@ -107,23 +107,6 @@ class AppDatabase extends _$AppDatabase {
           ),
         );
 
-        // Seed Default Account 'Mi Cartera'
-        await into(accounts).insert(
-          AccountsCompanion.insert(
-            id: uuid.v4(),
-            userId: defaultUserId,
-            name: 'Mi Cartera',
-            type: AccountType.cash,
-            initialBalance: 0.0,
-            currency: 'EUR',
-            color: '#4CAF50',
-            icon: 'wallet',
-            isDefault: const Value(true),
-            createdAt: now,
-            modifiedAt: now,
-          ),
-        );
-
         // Seed Default Functional Categories
         await into(categories).insert(
           CategoriesCompanion.insert(

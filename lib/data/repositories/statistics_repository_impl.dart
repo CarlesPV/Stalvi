@@ -6,30 +6,13 @@ import 'package:stalvi/data/database/tables/transaction_table.dart'
 import 'package:stalvi/domain/entities/category_statistic.dart';
 import 'package:stalvi/domain/entities/period_summary.dart';
 import 'package:stalvi/domain/repositories/i_statistics_repository.dart';
-import 'package:stalvi/domain/repositories/i_profile_repository.dart';
-import 'package:stalvi/domain/repositories/i_account_repository.dart';
 
 class StatisticsRepositoryImpl implements IStatisticsRepository {
   final StatisticsDao _dao;
-  final IProfileRepository _profileRepository;
-  final IAccountRepository _accountRepository;
 
   StatisticsRepositoryImpl(
     this._dao,
-    this._profileRepository,
-    this._accountRepository,
   );
-
-  Future<String> _getTargetCurrency(String? accountId) async {
-    if (accountId != null) {
-      final account = await _accountRepository.getAccountById(accountId);
-      if (account != null) {
-        return account.currency;
-      }
-    }
-    final profile = await _profileRepository.getFirstProfile();
-    return profile?.defaultCurrency ?? 'EUR';
-  }
 
   int _calculateConvertedAmount(
       Transaction transaction, String targetCurrency) {
@@ -74,6 +57,7 @@ class StatisticsRepositoryImpl implements IStatisticsRepository {
   Future<PeriodSummary> getPeriodSummary({
     required DateTime startDate,
     required DateTime endDate,
+    required String targetCurrency,
     String? accountId,
   }) async {
     final transactions = await _dao.getTransactionsForPeriod(
@@ -81,8 +65,6 @@ class StatisticsRepositoryImpl implements IStatisticsRepository {
       endDate,
       accountId: accountId,
     );
-
-    final targetCurrency = await _getTargetCurrency(accountId);
 
     int totalIncome = 0;
     int totalExpense = 0;
@@ -106,6 +88,7 @@ class StatisticsRepositoryImpl implements IStatisticsRepository {
   Future<List<CategoryStatistic>> getTopCategories({
     required DateTime startDate,
     required DateTime endDate,
+    required String targetCurrency,
     TransactionType type = TransactionType.expense,
     String? accountId,
   }) async {
@@ -115,8 +98,6 @@ class StatisticsRepositoryImpl implements IStatisticsRepository {
       type: type,
       accountId: accountId,
     );
-
-    final targetCurrency = await _getTargetCurrency(accountId);
 
     final Map<String, CategoryStatistic> categoryMap = {};
 

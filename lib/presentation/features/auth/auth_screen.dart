@@ -997,10 +997,12 @@ class _BrandHeader extends StatelessWidget {
               ),
             ],
           ),
-          child: Icon(
-            Icons.account_balance_wallet_rounded,
-            size: 30,
-            color: colorScheme.onPrimary,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(16),
+            child: Image.asset(
+              'assets/icon/app_icon.png',
+              fit: BoxFit.cover,
+            ),
           ),
         ),
         const SizedBox(height: 12),

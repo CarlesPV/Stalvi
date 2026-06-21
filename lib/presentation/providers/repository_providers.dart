@@ -34,6 +34,7 @@ import 'package:stalvi/domain/usecases/update_credentials_usecase.dart';
 import 'package:stalvi/domain/usecases/wipe_all_data_usecase.dart';
 import 'package:stalvi/domain/usecases/trash_usecases.dart';
 import 'package:stalvi/domain/usecases/create_account_usecase.dart';
+import 'package:stalvi/domain/usecases/update_account_usecase.dart';
 import 'package:stalvi/domain/usecases/delete_and_reassign_category_usecase.dart';
 import 'package:stalvi/domain/usecases/delete_and_reassign_tag_usecase.dart';
 import 'package:stalvi/presentation/providers/app_startup_provider.dart';
@@ -85,9 +86,7 @@ final savingsGoalRepositoryProvider = Provider<ISavingsGoalRepository>((ref) {
 /// Provides the [IStatisticsRepository] implementation.
 final statisticsRepositoryProvider = Provider<IStatisticsRepository>((ref) {
   final db = ref.watch(appDatabaseProvider).requireValue;
-  final profileRepo = ref.watch(profileRepositoryProvider);
-  final accountRepo = ref.watch(accountRepositoryProvider);
-  return StatisticsRepositoryImpl(db.statisticsDao, profileRepo, accountRepo);
+  return StatisticsRepositoryImpl(db.statisticsDao);
 });
 
 /// Provides the [IExchangeRateRepository] implementation.
@@ -119,23 +118,42 @@ final addTransactionUseCaseProvider = Provider<AddTransactionUseCase>((ref) {
 final createProfileUseCaseProvider = Provider<CreateProfileUseCase>((ref) {
   final profileRepo = ref.watch(profileRepositoryProvider);
   final secureStorage = ref.watch(secureStorageProvider);
+  final createAccount = ref.watch(createAccountUseCaseProvider);
   final initDefaultData = ref.watch(initializeDefaultDataUseCaseProvider);
-  return CreateProfileUseCase(profileRepo, secureStorage, initDefaultData);
+  return CreateProfileUseCase(
+    profileRepo,
+    secureStorage,
+    createAccount,
+    initDefaultData,
+  );
 });
 
 /// Provides the [InitializeDefaultDataUseCase] instance.
+///
+/// Note: account creation has been removed from this use case. The default
+/// account is now created by [CreateProfileUseCase] after the profile is
+/// persisted, ensuring the account currency always matches the profile.
 final initializeDefaultDataUseCaseProvider =
     Provider<InitializeDefaultDataUseCase>((ref) {
-  final accountRepo = ref.watch(accountRepositoryProvider);
   final categoryRepo = ref.watch(categoryRepositoryProvider);
   final tagRepo = ref.watch(tagRepositoryProvider);
-  return InitializeDefaultDataUseCase(accountRepo, categoryRepo, tagRepo);
+  return InitializeDefaultDataUseCase(categoryRepo, tagRepo);
 });
 
 /// Provides the [CreateAccountUseCase] instance.
 final createAccountUseCaseProvider = Provider<CreateAccountUseCase>((ref) {
   final accountRepo = ref.watch(accountRepositoryProvider);
   return CreateAccountUseCase(accountRepo);
+});
+
+/// Provides the [UpdateAccountUseCase] instance.
+///
+/// The use case enforces that [Account.initialBalance] and [Account.currency]
+/// are immutable after creation — any attempt to mutate them will throw a
+/// [ValidationException] with code `IMMUTABLE_FIELD`.
+final updateAccountUseCaseProvider = Provider<UpdateAccountUseCase>((ref) {
+  final accountRepo = ref.watch(accountRepositoryProvider);
+  return UpdateAccountUseCase(accountRepo);
 });
 
 /// Provides the [UpdateCredentialsUseCase] instance.

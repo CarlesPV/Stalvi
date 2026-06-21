@@ -180,17 +180,13 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen>
         title: Row(
           children: [
             // Mini logo for context
-            Container(
-              width: 34,
-              height: 34,
-              decoration: BoxDecoration(
-                color: colorScheme.primary,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Icon(
-                Icons.account_balance_wallet_rounded,
-                size: 18,
-                color: colorScheme.onPrimary,
+            ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: Image.asset(
+                'assets/icon/app_icon.png',
+                width: 34,
+                height: 34,
+                fit: BoxFit.contain,
               ),
             ),
             const SizedBox(width: 10),
@@ -1470,24 +1466,44 @@ class _BalanceCard extends ConsumerWidget {
               ),
             ),
             data: (accounts) {
-              final profile = ref.watch(defaultProfileProvider).valueOrNull;
-              final currency = profile?.defaultCurrency ?? 'EUR';
-              final totalBalance = accounts.fold<double>(
-                0.0,
-                (sum, acc) => sum + acc.initialBalance,
-              );
-              final formatter = ref.watch(currencyFormatterProvider);
-              final balanceStr = formatter.format(
-                totalBalance,
-                currencyCode: currency,
-              );
-              return ObfuscatedText(
-                balanceStr,
-                style: theme.textTheme.headlineMedium?.copyWith(
-                  color: colorScheme.onPrimary,
-                  fontWeight: FontWeight.w800,
-                  letterSpacing: -0.5,
+              final globalBalanceAsync = ref.watch(globalBalanceProvider);
+              return globalBalanceAsync.when(
+                loading: () => AnimatedBuilder(
+                  animation: shimmer,
+                  builder: (_, __) => Container(
+                    width: 170,
+                    height: 34,
+                    decoration: BoxDecoration(
+                      color: colorScheme.onPrimary
+                          .withValues(alpha: 0.18 + 0.12 * shimmer.value),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
                 ),
+                error: (_, __) => Text(
+                  '--',
+                  style: theme.textTheme.headlineMedium?.copyWith(
+                    color: colorScheme.onPrimary,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+                data: (totalBalance) {
+                  final profile = ref.watch(defaultProfileProvider).valueOrNull;
+                  final currency = profile?.defaultCurrency ?? 'EUR';
+                  final formatter = ref.watch(currencyFormatterProvider);
+                  final balanceStr = formatter.format(
+                    totalBalance,
+                    currencyCode: currency,
+                  );
+                  return ObfuscatedText(
+                    balanceStr,
+                    style: theme.textTheme.headlineMedium?.copyWith(
+                      color: colorScheme.onPrimary,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: -0.5,
+                    ),
+                  );
+                },
               );
             },
           ),

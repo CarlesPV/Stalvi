@@ -6,6 +6,8 @@ import 'package:stalvi/domain/entities/transaction_type.dart';
 import 'package:stalvi/domain/usecases/add_transaction_usecase.dart';
 import 'package:stalvi/presentation/providers/repository_providers.dart';
 import 'package:stalvi/presentation/providers/statistics_providers.dart';
+import 'package:stalvi/presentation/providers/locale_provider.dart';
+import 'package:stalvi/core/l10n/app_localizations.dart';
 
 /// State representation for the Add Transaction form.
 /// State representation for the Add Transaction form.
@@ -187,11 +189,14 @@ class AddTransactionNotifier extends AutoDisposeNotifier<AddTransactionState> {
   /// Returns `true` on success and `false` on failure.
   Future<bool> submit() async {
     final amountDouble = CurrencyFormatter.tryParse(state.amountText);
+    final locale = ref.read(localeProvider);
+    final l10n = lookupAppLocalizations(locale);
+
     if (amountDouble == null || amountDouble <= 0) {
       state = state.copyWith(
         submissionStatus: AsyncValue.error(
-          const ValidationException(
-            message: 'Please enter a valid amount greater than 0',
+          ValidationException(
+            message: l10n.errorInvalidAmount,
             code: 'INVALID_AMOUNT',
           ),
           StackTrace.current,
@@ -203,8 +208,8 @@ class AddTransactionNotifier extends AutoDisposeNotifier<AddTransactionState> {
     if (state.accountId == null) {
       state = state.copyWith(
         submissionStatus: AsyncValue.error(
-          const ValidationException(
-            message: 'Please select an account',
+          ValidationException(
+            message: l10n.errorAccountRequired,
             code: 'ACCOUNT_REQUIRED',
           ),
           StackTrace.current,
@@ -217,8 +222,8 @@ class AddTransactionNotifier extends AutoDisposeNotifier<AddTransactionState> {
       if (state.toAccountId == null) {
         state = state.copyWith(
           submissionStatus: AsyncValue.error(
-            const ValidationException(
-              message: 'Please select a destination account',
+            ValidationException(
+              message: l10n.errorDestinationAccountRequired,
               code: 'TO_ACCOUNT_REQUIRED',
             ),
             StackTrace.current,
@@ -229,8 +234,8 @@ class AddTransactionNotifier extends AutoDisposeNotifier<AddTransactionState> {
       if (state.accountId == state.toAccountId) {
         state = state.copyWith(
           submissionStatus: AsyncValue.error(
-            const ValidationException(
-              message: 'Source and destination accounts cannot be the same',
+            ValidationException(
+              message: l10n.errorSameAccountTransfer,
               code: 'SAME_ACCOUNTS',
             ),
             StackTrace.current,
@@ -242,8 +247,8 @@ class AddTransactionNotifier extends AutoDisposeNotifier<AddTransactionState> {
       if (state.categoryId == null) {
         state = state.copyWith(
           submissionStatus: AsyncValue.error(
-            const ValidationException(
-              message: 'Please select a category',
+            ValidationException(
+              message: l10n.errorCategoryRequired,
               code: 'CATEGORY_REQUIRED',
             ),
             StackTrace.current,
@@ -257,8 +262,8 @@ class AddTransactionNotifier extends AutoDisposeNotifier<AddTransactionState> {
     if (state.date.isAfter(now)) {
       state = state.copyWith(
         submissionStatus: AsyncValue.error(
-          const ValidationException(
-            message: 'Transaction date cannot be in the future',
+          ValidationException(
+            message: l10n.errorFutureDate,
             code: 'FUTURE_DATE',
           ),
           StackTrace.current,
@@ -270,8 +275,8 @@ class AddTransactionNotifier extends AutoDisposeNotifier<AddTransactionState> {
     if (state.currency == null || state.currency!.trim().isEmpty) {
       state = state.copyWith(
         submissionStatus: AsyncValue.error(
-          const ValidationException(
-            message: 'Please select a currency',
+          ValidationException(
+            message: l10n.errorCurrencyRequired,
             code: 'CURRENCY_REQUIRED',
           ),
           StackTrace.current,

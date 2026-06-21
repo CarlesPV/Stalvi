@@ -24,6 +24,7 @@ class ExportMonthlyPdfUseCase {
   /// Optionally pass a custom [month] — defaults to the current month.
   Future<ExportResult> call(
     String accountId, {
+    required String targetCurrency,
     DateTime? month,
   }) async {
     final now = DateTime.now();
@@ -52,6 +53,7 @@ class ExportMonthlyPdfUseCase {
     final summary = await _statisticsRepository.getPeriodSummary(
       startDate: startDate,
       endDate: endDate,
+      targetCurrency: targetCurrency,
     );
 
     return _exportService.generateMonthlyPdf(

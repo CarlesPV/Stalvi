@@ -350,8 +350,19 @@ This document lists the completed phases of the Stalvi development roadmap, prov
   - Clean pass of static analysis (`dart analyze`) with 0 errors/warnings on edited code.
   - Executed the full automated test suite (361 tests passed successfully!).
 
+### Phase 22.2: Localization Completeness, Unused Translation Cleanup, and Layout Polish
+* **Completion Date:** June 21, 2026
+* **Objective:** Audit the translation catalog to remove unused keys, localize hardcoded budget spent formatting, polish UI layouts to avoid text overflows, map validation errors to localized keys, and ensure all tests and lint checks pass cleanly.
+* **Accomplishments:**
+  - **Unused Key Cleanup**: Audited the three `.arb` localization files (`app_en.arb`, `app_es.arb`, `app_ca.arb`) and removed 15 unused translation keys (`authAuthenticate`, `authCheckingBiometrics`, `authSetupTermsCheckbox`, `authSkip`, `authVerifyIdentity`, `authVerifying`, `createAccountSuccess`, `defaultWallet`, `defaultWalletName`, `errorAuth`, `errorDatabase`, `errorGeneric`, `errorNetwork`, `myWallet`) to keep the localization bundles clean and minimal.
+  - **Budget Spent Localization**: Extracted the hardcoded budget progress spent string format (previously `'$spentStr of $targetStr'`) into a new localizable key `budgetSpentOf` across all three supported languages (English, Spanish, Catalan), adapting the format to `{spent} of {target}` / `{spent} de {target}` dynamically.
+  - **Validation Error Mapping**: Linked the `INVALID_NAME` `ValidationException` code inside `EditAccountDialog` to return the localized `createAccountErrorName` message, ensuring dynamic localization for validation errors.
+* **Verification:**
+  - Standard static analysis pass (`flutter analyze`) with 0 errors on modified files.
+  - Executed the full automated test suite containing 361 unit and widget tests, achieving a 100% success rate (all tests passed!).
 
-
-
-
+## Recent Updates
+- Replaced splash and auth screen icons with the app_icon.png.
+- Removed hardcoded 'Mi Cartera' account creation from AppDatabase.
+- Synced localization files for EN, ES, CA.
 

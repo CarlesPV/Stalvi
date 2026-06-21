@@ -231,7 +231,8 @@ class _BudgetCard extends ConsumerWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                '$spentStr of $targetStr',
+                AppLocalizations.of(context)!
+                    .budgetSpentOf(spentStr, targetStr),
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: colorScheme.onSurfaceVariant,
                   fontWeight: FontWeight.w500,

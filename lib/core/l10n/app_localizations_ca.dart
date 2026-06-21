@@ -33,22 +33,6 @@ class AppLocalizationsCa extends AppLocalizations {
   String get expenses => 'Despeses';
 
   @override
-  String get errorGeneric =>
-      'Alguna cosa ha anat malament. Si us plau, torneu-ho a provar.';
-
-  @override
-  String get errorDatabase =>
-      'S\'ha produït un error a la base de dades. Si us plau, contacteu amb el suport.';
-
-  @override
-  String get errorAuth =>
-      'L\'autenticació ha fallat. Si us plau, verifiqueu les vostres credencials.';
-
-  @override
-  String get errorNetwork =>
-      'Error de xarxa. Si us plau, comproveu la vostra connexió a internet.';
-
-  @override
   String get appTitle => 'Stalvi';
 
   @override
@@ -65,9 +49,6 @@ class AppLocalizationsCa extends AppLocalizations {
   String get tryAgain => 'Torna-ho a provar';
 
   @override
-  String get authCheckingBiometrics => 'Comprovant biometria…';
-
-  @override
   String get authError => 'Error d\'autenticació';
 
   @override
@@ -81,23 +62,11 @@ class AppLocalizationsCa extends AppLocalizations {
   String get authLockoutActive => 'Bloqueig de seguretat actiu';
 
   @override
-  String get authVerifyIdentity => 'Verifiqueu la vostra identitat';
-
-  @override
   String get authVerifyMessage =>
       'Utilitzeu la biometria o el PIN del dispositiu per continuar';
 
   @override
-  String get authVerifying => 'Verificant…';
-
-  @override
   String get authProcessing => 'Processant l\'autenticació de seguretat…';
-
-  @override
-  String get authAuthenticate => 'Autenticar';
-
-  @override
-  String get authSkip => 'Omet de moment';
 
   @override
   String get authProtectedBy => 'Protegit per la biometria del dispositiu';
@@ -317,10 +286,6 @@ class AppLocalizationsCa extends AppLocalizations {
   String get authSetupLanguageLabel => 'Idioma predeterminat';
 
   @override
-  String get authSetupTermsCheckbox =>
-      'Accepto els Termes i Condicions i la Política de Privacitat';
-
-  @override
   String get authSetupCreateButton => 'Crear perfil';
 
   @override
@@ -351,12 +316,6 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get authPinIncorrect => 'PIN incorrecte. Torneu-ho a provar.';
-
-  @override
-  String get defaultWalletName => 'La meva cartera';
-
-  @override
-  String get defaultWallet => 'Moneder Principal';
 
   @override
   String acrossAccountsCount(int count) {
@@ -407,9 +366,6 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get privacyPolicy => 'Política de privadesa';
-
-  @override
-  String get myWallet => 'La meva cartera';
 
   @override
   String get authSetupCurrencyLabel => 'Divisa predeterminada';
@@ -606,9 +562,6 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get createAccountIconLabel => 'Icona';
-
-  @override
-  String get createAccountSuccess => 'Compte creat amb èxit';
 
   @override
   String get createAccountErrorName =>
@@ -862,4 +815,20 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get currencyAUD => 'Dòlar Australià (AUD)';
+
+  @override
+  String get errorDestinationAccountRequired =>
+      'Si us plau, seleccioneu un compte de destí';
+
+  @override
+  String get errorSameAccountTransfer =>
+      'Els comptes d\'origen i destí no poden ser el mateix';
+
+  @override
+  String get savingsGoal => 'Objectiu d\'estalvi';
+
+  @override
+  String budgetSpentOf(String spent, String target) {
+    return '$spent de $target';
+  }
 }

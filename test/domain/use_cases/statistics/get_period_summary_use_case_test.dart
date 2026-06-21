@@ -26,12 +26,16 @@ void main() {
       () => mockRepository.getPeriodSummary(
         startDate: startDate,
         endDate: endDate,
+        targetCurrency: 'EUR',
       ),
     ).thenAnswer((_) async => expectedSummary);
 
     // Act
-    final result =
-        await useCase.execute(startDate: startDate, endDate: endDate);
+    final result = await useCase.execute(
+      startDate: startDate,
+      endDate: endDate,
+      targetCurrency: 'EUR',
+    );
 
     // Assert
     expect(result, expectedSummary);
@@ -39,6 +43,7 @@ void main() {
       () => mockRepository.getPeriodSummary(
         startDate: startDate,
         endDate: endDate,
+        targetCurrency: 'EUR',
       ),
     ).called(1);
     verifyNoMoreInteractions(mockRepository);

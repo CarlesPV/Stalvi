@@ -192,6 +192,13 @@ void main() {
         biometricAuthServiceProvider.overrideWithValue(mockBiometricAuth),
         addTransactionNotifierProvider
             .overrideWith(FakeAddTransactionNotifier.new),
+        globalBalanceProvider.overrideWith((ref) async {
+          final accounts = await ref.watch(accountsListProvider.future);
+          return accounts.fold<double>(
+            0.0,
+            (sum, acc) => sum + acc.initialBalance,
+          );
+        }),
         if (transactionRepo != null)
           transactionRepositoryProvider.overrideWithValue(transactionRepo),
         if (createAccountUseCase != null)

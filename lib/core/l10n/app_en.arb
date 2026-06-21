@@ -32,22 +32,6 @@
   "@expenses": {
     "description": "Label for plural negative financial expenses"
   },
-  "errorGeneric": "Something went wrong. Please try again.",
-  "@errorGeneric": {
-    "description": "Generic fallback error message"
-  },
-  "errorDatabase": "Database error occurred. Please contact support.",
-  "@errorDatabase": {
-    "description": "Error message when database operation fails"
-  },
-  "errorAuth": "Authentication failed. Please check your credentials.",
-  "@errorAuth": {
-    "description": "Error message when authentication fails"
-  },
-  "errorNetwork": "Network error. Please check your internet connection.",
-  "@errorNetwork": {
-    "description": "Error message when network request fails"
-  },
   "appTitle": "Stalvi",
   "@appTitle": {
     "description": "App name branding"
@@ -68,10 +52,6 @@
   "@tryAgain": {
     "description": "General button label to retry an operation"
   },
-  "authCheckingBiometrics": "Checking biometrics…",
-  "@authCheckingBiometrics": {
-    "description": "Loading message during biometric initialization"
-  },
   "authError": "Authentication Error",
   "@authError": {
     "description": "Error title for biometric authentication failure"
@@ -88,29 +68,13 @@
   "@authLockoutActive": {
     "description": "Warning chip label for active biometric lockout"
   },
-  "authVerifyIdentity": "Verify Your Identity",
-  "@authVerifyIdentity": {
-    "description": "Prompt title to verify identity"
-  },
   "authVerifyMessage": "Use biometrics or your device PIN to continue",
   "@authVerifyMessage": {
     "description": "Prompt description to verify identity"
   },
-  "authVerifying": "Verifying…",
-  "@authVerifying": {
-    "description": "Button label during verification state"
-  },
   "authProcessing": "Processing security authentication…",
   "@authProcessing": {
     "description": "Loading message when processing security authentication"
-  },
-  "authAuthenticate": "Authenticate",
-  "@authAuthenticate": {
-    "description": "Button label to trigger biometric authentication"
-  },
-  "authSkip": "Skip for now",
-  "@authSkip": {
-    "description": "Button label to skip biometric authentication"
   },
   "authProtectedBy": "Protected by device biometrics",
   "@authProtectedBy": {
@@ -399,10 +363,6 @@
   "@authSetupLanguageLabel": {
     "description": "Label for language selection"
   },
-  "authSetupTermsCheckbox": "I accept the Terms & Conditions and Privacy Policy",
-  "@authSetupTermsCheckbox": {
-    "description": "Label for terms and conditions checkbox"
-  },
   "authSetupCreateButton": "Create Profile",
   "@authSetupCreateButton": {
     "description": "Button label to submit setup form"
@@ -443,14 +403,6 @@
   "authPinIncorrect": "Incorrect PIN. Please try again.",
   "@authPinIncorrect": {
     "description": "Error message when PIN is incorrect"
-  },
-  "defaultWalletName": "My Wallet",
-  "@defaultWalletName": {
-    "description": "Default wallet name when user profile is initialized"
-  },
-  "defaultWallet": "Default Wallet",
-  "@defaultWallet": {
-    "description": "Default wallet name when user profile is initialized"
   },
   "acrossAccountsCount": "{count, plural, =1{1 account} other{{count} accounts}}",
   "@acrossAccountsCount": {
@@ -508,10 +460,6 @@
   "privacyPolicy": "Privacy Policy",
   "@privacyPolicy": {
     "description": "Title for the Privacy Policy screen"
-  },
-  "myWallet": "My Wallet",
-  "@myWallet": {
-    "description": "General localized label for My Wallet"
   },
   "authSetupCurrencyLabel": "Default Currency",
   "@authSetupCurrencyLabel": {
@@ -769,10 +717,6 @@
   "createAccountIconLabel": "Icon",
   "@createAccountIconLabel": {
     "description": "Label for icon selection"
-  },
-  "createAccountSuccess": "Account created successfully",
-  "@createAccountSuccess": {
-    "description": "Success message after account creation"
   },
   "createAccountErrorName": "Please enter an account name",
   "@createAccountErrorName": {
@@ -1082,20 +1026,57 @@
   "selectDestinationAccount": "Select Destination Account",
   "@selectDestinationAccount": {
     "description": "Title for the destination account picker modal"
-  }
-,
+  },
   "currencyEUR": "Euro (EUR)",
-  "@currencyEUR": { "description": "Currency name for EUR" },
+  "@currencyEUR": {
+    "description": "Currency name for EUR"
+  },
   "currencyUSD": "US Dollar (USD)",
-  "@currencyUSD": { "description": "Currency name for USD" },
+  "@currencyUSD": {
+    "description": "Currency name for USD"
+  },
   "currencyGBP": "British Pound (GBP)",
-  "@currencyGBP": { "description": "Currency name for GBP" },
+  "@currencyGBP": {
+    "description": "Currency name for GBP"
+  },
   "currencyJPY": "Japanese Yen (JPY)",
-  "@currencyJPY": { "description": "Currency name for JPY" },
+  "@currencyJPY": {
+    "description": "Currency name for JPY"
+  },
   "currencyCHF": "Swiss Franc (CHF)",
-  "@currencyCHF": { "description": "Currency name for CHF" },
+  "@currencyCHF": {
+    "description": "Currency name for CHF"
+  },
   "currencyCAD": "Canadian Dollar (CAD)",
-  "@currencyCAD": { "description": "Currency name for CAD" },
+  "@currencyCAD": {
+    "description": "Currency name for CAD"
+  },
   "currencyAUD": "Australian Dollar (AUD)",
-  "@currencyAUD": { "description": "Currency name for AUD" }
+  "@currencyAUD": {
+    "description": "Currency name for AUD"
+  },
+  "errorDestinationAccountRequired": "Please select a destination account",
+  "@errorDestinationAccountRequired": {
+    "description": "Validation error when destination account is required for transfer"
+  },
+  "errorSameAccountTransfer": "Source and destination accounts cannot be the same",
+  "@errorSameAccountTransfer": {
+    "description": "Validation error when source and destination accounts are the same"
+  },
+  "savingsGoal": "Savings Goal",
+  "@savingsGoal": {
+    "description": "Singular name for savings goal trash item"
+  },
+  "budgetSpentOf": "{spent} of {target}",
+  "@budgetSpentOf": {
+    "description": "Progress message showing spent amount out of budget target",
+    "placeholders": {
+      "spent": {
+        "type": "String"
+      },
+      "target": {
+        "type": "String"
+      }
+    }
+  }
 }

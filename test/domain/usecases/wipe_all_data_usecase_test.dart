@@ -84,7 +84,6 @@ void main() {
     final categoriesList = await db.select(db.categories).get();
 
     expect(profilesList.isNotEmpty, isTrue);
-    expect(accountsList.isNotEmpty, isTrue);
     expect(categoriesList.isNotEmpty, isTrue);
 
     // Create journal, wal, and shm simulation files

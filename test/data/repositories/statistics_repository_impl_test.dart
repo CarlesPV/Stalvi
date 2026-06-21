@@ -18,18 +18,12 @@ import 'statistics_repository_impl_test.mocks.dart';
 
 void main() {
   late MockStatisticsDao mockDao;
-  late MockIProfileRepository mockProfileRepository;
-  late MockIAccountRepository mockAccountRepository;
   late StatisticsRepositoryImpl repository;
 
   setUp(() {
     mockDao = MockStatisticsDao();
-    mockProfileRepository = MockIProfileRepository();
-    mockAccountRepository = MockIAccountRepository();
     repository = StatisticsRepositoryImpl(
       mockDao,
-      mockProfileRepository,
-      mockAccountRepository,
     );
   });
 
@@ -40,17 +34,7 @@ void main() {
     test(
         'should return correct summary using profile defaultCurrency when accountId is null',
         () async {
-      when(mockProfileRepository.getFirstProfile()).thenAnswer(
-        (_) async => Profile(
-          id: 'p1',
-          defaultCurrency: 'EUR',
-          name: 'test',
-          username: 'test',
-          password: 'test',
-          createdAt: DateTime.now(),
-          modifiedAt: DateTime.now(),
-        ),
-      );
+      final targetCurrency = 'EUR';
 
       final snapshot = jsonEncode({
         'rates': {
@@ -84,7 +68,9 @@ void main() {
           .thenAnswer((_) async => transactions);
 
       final summary = await repository.getPeriodSummary(
-          startDate: startDate, endDate: endDate);
+          startDate: startDate,
+          endDate: endDate,
+          targetCurrency: targetCurrency);
 
       // (10000 / 1.0) * 0.9 = 9000 EUR cents
       expect(summary.totalIncome, 9000);
@@ -94,22 +80,7 @@ void main() {
     test(
         'should return correct summary using account currency when accountId is provided',
         () async {
-      when(mockAccountRepository.getAccountById('a1')).thenAnswer(
-        (_) async => Account(
-          id: 'a1',
-          type: AccountType.bank,
-          name: 'Account',
-          currency: 'GBP',
-          color: 'red',
-          icon: 'bank',
-          isDefault: true,
-          createdAt: DateTime.now(),
-          modifiedAt: DateTime.now(),
-          initialBalance: 0,
-          userId: 'u1',
-          isDeleted: false,
-        ),
-      );
+      final targetCurrency = 'GBP';
 
       final snapshot = jsonEncode({
         'rates': {
@@ -143,7 +114,10 @@ void main() {
           .thenAnswer((_) async => transactions);
 
       final summary = await repository.getPeriodSummary(
-          startDate: startDate, endDate: endDate, accountId: 'a1');
+          startDate: startDate,
+          endDate: endDate,
+          targetCurrency: targetCurrency,
+          accountId: 'a1');
 
       // (5000 / 1.0) * 0.8 = 4000 GBP cents
       expect(summary.totalIncome, 0);
@@ -157,17 +131,7 @@ void main() {
 
     test('should aggregate categories correctly with currency conversion',
         () async {
-      when(mockProfileRepository.getFirstProfile()).thenAnswer(
-        (_) async => Profile(
-          id: 'p1',
-          defaultCurrency: 'EUR',
-          name: 'test',
-          username: 'test',
-          password: 'test',
-          createdAt: DateTime.now(),
-          modifiedAt: DateTime.now(),
-        ),
-      );
+      final targetCurrency = 'EUR';
 
       final snapshot = jsonEncode({
         'rates': {
@@ -254,7 +218,9 @@ void main() {
           .thenAnswer((_) async => results);
 
       final topCategories = await repository.getTopCategories(
-          startDate: startDate, endDate: endDate);
+          startDate: startDate,
+          endDate: endDate,
+          targetCurrency: targetCurrency);
 
       // t1: (10000 / 1.0) * 0.9 = 9000 EUR
       // t2: (150000 / 150.0) * 0.9 = 1000 * 0.9 = 900 EUR. Total c1 = 9900 EUR

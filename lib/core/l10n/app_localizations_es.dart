@@ -33,21 +33,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String get expenses => 'Gastos';
 
   @override
-  String get errorGeneric => 'Algo salió mal. Por favor, inténtelo de nuevo.';
-
-  @override
-  String get errorDatabase =>
-      'Ocurrió un error en la base de datos. Por favor, contacte con soporte.';
-
-  @override
-  String get errorAuth =>
-      'Autenticación fallida. Por favor, verifique sus credenciales.';
-
-  @override
-  String get errorNetwork =>
-      'Error de red. Por favor, compruebe su conexión a internet.';
-
-  @override
   String get appTitle => 'Stalvi';
 
   @override
@@ -64,9 +49,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String get tryAgain => 'Intentar de nuevo';
 
   @override
-  String get authCheckingBiometrics => 'Comprobando biometría…';
-
-  @override
   String get authError => 'Error de autenticación';
 
   @override
@@ -80,23 +62,11 @@ class AppLocalizationsEs extends AppLocalizations {
   String get authLockoutActive => 'Bloqueo de seguridad activo';
 
   @override
-  String get authVerifyIdentity => 'Verifique su identidad';
-
-  @override
   String get authVerifyMessage =>
       'Use la biometría o el PIN de su dispositivo para continuar';
 
   @override
-  String get authVerifying => 'Verificando…';
-
-  @override
   String get authProcessing => 'Procesando autenticación de seguridad…';
-
-  @override
-  String get authAuthenticate => 'Autenticar';
-
-  @override
-  String get authSkip => 'Omitir por ahora';
 
   @override
   String get authProtectedBy => 'Protegido por la biometría del dispositivo';
@@ -316,10 +286,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String get authSetupLanguageLabel => 'Idioma predeterminado';
 
   @override
-  String get authSetupTermsCheckbox =>
-      'Acepto los Términos y Condiciones y la Política de Privacidad';
-
-  @override
   String get authSetupCreateButton => 'Crear perfil';
 
   @override
@@ -350,12 +316,6 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get authPinIncorrect => 'PIN incorrecto. Inténtelo de nuevo.';
-
-  @override
-  String get defaultWalletName => 'Mi cartera';
-
-  @override
-  String get defaultWallet => 'Monedero Principal';
 
   @override
   String acrossAccountsCount(int count) {
@@ -406,9 +366,6 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get privacyPolicy => 'Política de privacidad';
-
-  @override
-  String get myWallet => 'Mi cartera';
 
   @override
   String get authSetupCurrencyLabel => 'Moneda predeterminada';
@@ -605,9 +562,6 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get createAccountIconLabel => 'Icono';
-
-  @override
-  String get createAccountSuccess => 'Cuenta creada con éxito';
 
   @override
   String get createAccountErrorName =>
@@ -861,4 +815,20 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get currencyAUD => 'Dólar Australiano (AUD)';
+
+  @override
+  String get errorDestinationAccountRequired =>
+      'Por favor, seleccione una cuenta de destino';
+
+  @override
+  String get errorSameAccountTransfer =>
+      'Las cuentas de origen y destino no pueden ser la misma';
+
+  @override
+  String get savingsGoal => 'Objetivo de ahorro';
+
+  @override
+  String budgetSpentOf(String spent, String target) {
+    return '$spent de $target';
+  }
 }

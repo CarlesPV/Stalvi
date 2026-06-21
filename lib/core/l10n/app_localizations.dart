@@ -148,30 +148,6 @@ abstract class AppLocalizations {
   /// **'Expenses'**
   String get expenses;
 
-  /// Generic fallback error message
-  ///
-  /// In en, this message translates to:
-  /// **'Something went wrong. Please try again.'**
-  String get errorGeneric;
-
-  /// Error message when database operation fails
-  ///
-  /// In en, this message translates to:
-  /// **'Database error occurred. Please contact support.'**
-  String get errorDatabase;
-
-  /// Error message when authentication fails
-  ///
-  /// In en, this message translates to:
-  /// **'Authentication failed. Please check your credentials.'**
-  String get errorAuth;
-
-  /// Error message when network request fails
-  ///
-  /// In en, this message translates to:
-  /// **'Network error. Please check your internet connection.'**
-  String get errorNetwork;
-
   /// App name branding
   ///
   /// In en, this message translates to:
@@ -202,12 +178,6 @@ abstract class AppLocalizations {
   /// **'Try Again'**
   String get tryAgain;
 
-  /// Loading message during biometric initialization
-  ///
-  /// In en, this message translates to:
-  /// **'Checking biometrics…'**
-  String get authCheckingBiometrics;
-
   /// Error title for biometric authentication failure
   ///
   /// In en, this message translates to:
@@ -232,41 +202,17 @@ abstract class AppLocalizations {
   /// **'Security lockout active'**
   String get authLockoutActive;
 
-  /// Prompt title to verify identity
-  ///
-  /// In en, this message translates to:
-  /// **'Verify Your Identity'**
-  String get authVerifyIdentity;
-
   /// Prompt description to verify identity
   ///
   /// In en, this message translates to:
   /// **'Use biometrics or your device PIN to continue'**
   String get authVerifyMessage;
 
-  /// Button label during verification state
-  ///
-  /// In en, this message translates to:
-  /// **'Verifying…'**
-  String get authVerifying;
-
   /// Loading message when processing security authentication
   ///
   /// In en, this message translates to:
   /// **'Processing security authentication…'**
   String get authProcessing;
-
-  /// Button label to trigger biometric authentication
-  ///
-  /// In en, this message translates to:
-  /// **'Authenticate'**
-  String get authAuthenticate;
-
-  /// Button label to skip biometric authentication
-  ///
-  /// In en, this message translates to:
-  /// **'Skip for now'**
-  String get authSkip;
 
   /// Footer text describing security
   ///
@@ -664,12 +610,6 @@ abstract class AppLocalizations {
   /// **'Default Language'**
   String get authSetupLanguageLabel;
 
-  /// Label for terms and conditions checkbox
-  ///
-  /// In en, this message translates to:
-  /// **'I accept the Terms & Conditions and Privacy Policy'**
-  String get authSetupTermsCheckbox;
-
   /// Button label to submit setup form
   ///
   /// In en, this message translates to:
@@ -723,18 +663,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Incorrect PIN. Please try again.'**
   String get authPinIncorrect;
-
-  /// Default wallet name when user profile is initialized
-  ///
-  /// In en, this message translates to:
-  /// **'My Wallet'**
-  String get defaultWalletName;
-
-  /// Default wallet name when user profile is initialized
-  ///
-  /// In en, this message translates to:
-  /// **'Default Wallet'**
-  String get defaultWallet;
 
   /// Label indicating number of accounts
   ///
@@ -813,12 +741,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Privacy Policy'**
   String get privacyPolicy;
-
-  /// General localized label for My Wallet
-  ///
-  /// In en, this message translates to:
-  /// **'My Wallet'**
-  String get myWallet;
 
   /// Label for default currency selector during setup
   ///
@@ -1197,12 +1119,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Icon'**
   String get createAccountIconLabel;
-
-  /// Success message after account creation
-  ///
-  /// In en, this message translates to:
-  /// **'Account created successfully'**
-  String get createAccountSuccess;
 
   /// Error message when account name is empty
   ///
@@ -1671,6 +1587,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Australian Dollar (AUD)'**
   String get currencyAUD;
+
+  /// Validation error when destination account is required for transfer
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a destination account'**
+  String get errorDestinationAccountRequired;
+
+  /// Validation error when source and destination accounts are the same
+  ///
+  /// In en, this message translates to:
+  /// **'Source and destination accounts cannot be the same'**
+  String get errorSameAccountTransfer;
+
+  /// Singular name for savings goal trash item
+  ///
+  /// In en, this message translates to:
+  /// **'Savings Goal'**
+  String get savingsGoal;
+
+  /// Progress message showing spent amount out of budget target
+  ///
+  /// In en, this message translates to:
+  /// **'{spent} of {target}'**
+  String budgetSpentOf(String spent, String target);
 }
 
 class _AppLocalizationsDelegate

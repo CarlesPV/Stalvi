@@ -5,36 +5,47 @@ import 'package:mocktail/mocktail.dart';
 import 'package:stalvi/core/errors/app_exceptions.dart';
 import 'package:stalvi/core/security/secure_storage_manager.dart';
 import 'package:stalvi/domain/entities/profile.dart';
+import 'package:stalvi/domain/entities/account.dart';
+import 'package:stalvi/domain/entities/account_type.dart';
 import 'package:stalvi/domain/repositories/i_profile_repository.dart';
 import 'package:stalvi/domain/usecases/create_profile_usecase.dart';
+import 'package:stalvi/domain/usecases/create_account_usecase.dart';
 import 'package:stalvi/domain/usecases/initialize_default_data_usecase.dart';
 
 class MockProfileRepository extends Mock implements IProfileRepository {}
 
 class MockSecureStorageManager extends Mock implements SecureStorageManager {}
 
+class MockCreateAccountUseCase extends Mock implements CreateAccountUseCase {}
+
 class MockInitializeDefaultDataUseCase extends Mock
     implements InitializeDefaultDataUseCase {}
 
 class FakeProfile extends Fake implements Profile {}
 
+class FakeCreateAccountParams extends Fake implements CreateAccountParams {}
+
 void main() {
   late CreateProfileUseCase usecase;
   late MockProfileRepository mockProfileRepository;
   late MockSecureStorageManager mockSecureStorageManager;
+  late MockCreateAccountUseCase mockCreateAccountUseCase;
   late MockInitializeDefaultDataUseCase mockInitializeDefaultDataUseCase;
 
   setUpAll(() {
     registerFallbackValue(FakeProfile());
+    registerFallbackValue(FakeCreateAccountParams());
   });
 
   setUp(() {
     mockProfileRepository = MockProfileRepository();
     mockSecureStorageManager = MockSecureStorageManager();
+    mockCreateAccountUseCase = MockCreateAccountUseCase();
     mockInitializeDefaultDataUseCase = MockInitializeDefaultDataUseCase();
     usecase = CreateProfileUseCase(
       mockProfileRepository,
       mockSecureStorageManager,
+      mockCreateAccountUseCase,
       mockInitializeDefaultDataUseCase,
     );
   });
@@ -56,7 +67,7 @@ void main() {
 
   group('CreateProfileUseCase Unit Tests', () {
     test(
-        'should successfully hash PIN, save PIN and locale, and create a new profile when database is empty',
+        'should successfully hash PIN, save PIN and locale, create a new profile, and create default account when database is empty',
         () async {
       // Arrange
       final expectedPinHash = calculateHash('1234');
@@ -71,12 +82,26 @@ void main() {
       when(() => mockProfileRepository.createProfile(any())).thenAnswer(
         (invocation) async => invocation.positionalArguments[0] as Profile,
       );
+      when(() => mockCreateAccountUseCase.execute(any())).thenAnswer(
+        (_) async => Account(
+          id: 'acc1',
+          userId: 'user1',
+          name: 'Main Account',
+          type: AccountType.cash,
+          initialBalance: 0.0,
+          currency: 'EUR',
+          color: '#4CAF50',
+          icon: 'wallet',
+          isDefault: true,
+          isDeleted: false,
+          createdAt: DateTime.now(),
+          modifiedAt: DateTime.now(),
+        ),
+      );
       when(
         () => mockInitializeDefaultDataUseCase.execute(
           userId: any(named: 'userId'),
-          currency: any(named: 'currency'),
           locale: any(named: 'locale'),
-          createAccount: any(named: 'createAccount'),
         ),
       ).thenAnswer((_) async {});
 
@@ -96,6 +121,22 @@ void main() {
       verify(() => mockProfileRepository.getFirstProfile()).called(1);
       verify(() => mockProfileRepository.createProfile(any())).called(1);
       verifyNever(() => mockProfileRepository.updateProfile(any()));
+
+      // Verify default account was created with user's chosen currency
+      final capturedAccountParams =
+          verify(() => mockCreateAccountUseCase.execute(captureAny()))
+              .captured
+              .first as CreateAccountParams;
+      expect(capturedAccountParams.userId, result.id);
+      expect(capturedAccountParams.currency, 'EUR');
+      expect(capturedAccountParams.isDefault, isTrue);
+
+      verify(
+        () => mockInitializeDefaultDataUseCase.execute(
+          userId: result.id,
+          locale: 'es',
+        ),
+      ).called(1);
     });
 
     test(
@@ -124,12 +165,26 @@ void main() {
       when(() => mockProfileRepository.updateProfile(any())).thenAnswer(
         (invocation) async => invocation.positionalArguments[0] as Profile,
       );
+      when(() => mockCreateAccountUseCase.execute(any())).thenAnswer(
+        (_) async => Account(
+          id: 'acc1',
+          userId: existingProfile.id,
+          name: 'Main Account',
+          type: AccountType.cash,
+          initialBalance: 0.0,
+          currency: 'EUR',
+          color: '#4CAF50',
+          icon: 'wallet',
+          isDefault: true,
+          isDeleted: false,
+          createdAt: DateTime.now(),
+          modifiedAt: DateTime.now(),
+        ),
+      );
       when(
         () => mockInitializeDefaultDataUseCase.execute(
           userId: any(named: 'userId'),
-          currency: any(named: 'currency'),
           locale: any(named: 'locale'),
-          createAccount: any(named: 'createAccount'),
         ),
       ).thenAnswer((_) async {});
 
@@ -152,6 +207,8 @@ void main() {
       verify(() => mockProfileRepository.getFirstProfile()).called(1);
       verify(() => mockProfileRepository.updateProfile(any())).called(1);
       verifyNever(() => mockProfileRepository.createProfile(any()));
+
+      verify(() => mockCreateAccountUseCase.execute(any())).called(1);
     });
 
     test('should throw ValidationException when acceptedTerms is false',

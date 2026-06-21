@@ -197,10 +197,12 @@ final periodSummaryProvider =
   // just switched filter tabs, avoiding unnecessary flickering.
   ref.keepAlive();
   final filter = ref.watch(statisticsFilterProvider);
+  final targetCurrency = ref.watch(statisticsCurrencyProvider);
   final useCase = ref.watch(getPeriodSummaryUseCaseProvider);
   return useCase.execute(
     startDate: filter.dateRange.start,
     endDate: filter.dateRange.end,
+    targetCurrency: targetCurrency,
     accountId: filter.accountId,
   );
 });
@@ -210,10 +212,12 @@ final topExpenseCategoriesProvider =
     FutureProvider.autoDispose<List<CategoryStatistic>>((ref) async {
   ref.keepAlive();
   final filter = ref.watch(statisticsFilterProvider);
+  final targetCurrency = ref.watch(statisticsCurrencyProvider);
   final useCase = ref.watch(getTopCategoriesUseCaseProvider);
   return useCase.execute(
     startDate: filter.dateRange.start,
     endDate: filter.dateRange.end,
+    targetCurrency: targetCurrency,
     type: TransactionType.expense,
     accountId: filter.accountId,
   );
@@ -224,10 +228,12 @@ final topIncomeCategoriesProvider =
     FutureProvider.autoDispose<List<CategoryStatistic>>((ref) async {
   ref.keepAlive();
   final filter = ref.watch(statisticsFilterProvider);
+  final targetCurrency = ref.watch(statisticsCurrencyProvider);
   final useCase = ref.watch(getTopCategoriesUseCaseProvider);
   return useCase.execute(
     startDate: filter.dateRange.start,
     endDate: filter.dateRange.end,
+    targetCurrency: targetCurrency,
     type: TransactionType.income,
     accountId: filter.accountId,
   );
@@ -245,4 +251,27 @@ final statisticsCurrencyProvider = Provider.autoDispose<String>((ref) {
   }
   final profile = ref.watch(defaultProfileProvider).valueOrNull;
   return profile?.defaultCurrency ?? 'EUR';
+});
+
+/// Calculates the global balance by converting all account balances
+/// to the user's default currency using the latest local exchange rates.
+final globalBalanceProvider = FutureProvider.autoDispose<double>((ref) async {
+  final accounts = await ref.watch(accountsListProvider.future);
+  final profile = await ref.watch(defaultProfileProvider.future);
+
+  final exchangeRateRepo = ref.watch(exchangeRateRepositoryProvider);
+  final localRates = await exchangeRateRepo.getLocalRates(
+    baseCurrency: profile.defaultCurrency,
+  );
+
+  double total = 0.0;
+  for (final acc in accounts) {
+    if (acc.currency == profile.defaultCurrency) {
+      total += acc.initialBalance;
+    } else {
+      final rate = localRates?.rateFor(acc.currency) ?? 1.0;
+      total += acc.initialBalance / rate;
+    }
+  }
+  return total;
 });

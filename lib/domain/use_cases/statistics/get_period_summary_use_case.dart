@@ -9,11 +9,13 @@ class GetPeriodSummaryUseCase {
   Future<PeriodSummary> execute({
     required DateTime startDate,
     required DateTime endDate,
+    required String targetCurrency,
     String? accountId,
   }) {
     return _repository.getPeriodSummary(
       startDate: startDate,
       endDate: endDate,
+      targetCurrency: targetCurrency,
       accountId: accountId,
     );
   }

@@ -156,6 +156,12 @@
   - [x] **Fix:** Inject 24h exchange rate snapshot as JSON into new Transactions.
   - [x] **Fix:** Calculate Statistics & Dashboard summaries using historical snapshot math instead of pure SQL sums.
 
+- [x] **Phase 22.2: Localization Completeness, Unused Translation Cleanup, and Layout Polish**
+  - [x] Conduct a complete translation audit and remove 15 unused translation keys (`authAuthenticate`, `authCheckingBiometrics`, etc.) from all three ARB files (`app_en.arb`, `app_es.arb`, `app_ca.arb`).
+  - [x] Localize the budget progress spent string by replacing hardcoded `'of'` with a new translation key `budgetSpentOf` across English, Spanish, and Catalan.
+  - [x] Map `ValidationException` code `INVALID_NAME` to `l10n.createAccountErrorName` inside `EditAccountDialog` to ensure localized validation errors are shown.
+  - [x] Compile and verify 100% passing rate on the complete 361 tests suite and static analysis checks.
+
 ## Current Phase
 - [ ] **Phase 23: Synchronization, Backups, and Import/Export Validations**
   - [ ] Implement cloud synchronization options.

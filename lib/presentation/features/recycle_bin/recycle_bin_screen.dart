@@ -78,7 +78,7 @@ class _TrashItemTile extends ConsumerWidget {
         case TrashItemType.budget:
           return l10n.budgets;
         case TrashItemType.savingsGoal:
-          return 'Savings Goal';
+          return l10n.savingsGoal;
       }
     }
 

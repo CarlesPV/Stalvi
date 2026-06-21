@@ -1057,6 +1057,10 @@ String _getLocalizedError(BuildContext context, Object error) {
         return l10n.errorInvalidAmount;
       case 'ACCOUNT_REQUIRED':
         return l10n.errorAccountRequired;
+      case 'TO_ACCOUNT_REQUIRED':
+        return l10n.errorDestinationAccountRequired;
+      case 'SAME_ACCOUNTS':
+        return l10n.errorSameAccountTransfer;
       case 'CATEGORY_REQUIRED':
         return l10n.errorCategoryRequired;
       case 'CURRENCY_REQUIRED':

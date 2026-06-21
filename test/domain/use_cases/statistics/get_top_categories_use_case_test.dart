@@ -35,6 +35,7 @@ void main() {
       () => mockRepository.getTopCategories(
         startDate: startDate,
         endDate: endDate,
+        targetCurrency: 'EUR',
         type: TransactionType.expense,
       ),
     ).thenAnswer((_) async => expectedCategories);
@@ -43,6 +44,7 @@ void main() {
     final result = await useCase.execute(
       startDate: startDate,
       endDate: endDate,
+      targetCurrency: 'EUR',
       type: TransactionType.expense,
     );
 
@@ -52,6 +54,7 @@ void main() {
       () => mockRepository.getTopCategories(
         startDate: startDate,
         endDate: endDate,
+        targetCurrency: 'EUR',
         type: TransactionType.expense,
       ),
     ).called(1);

@@ -10,12 +10,14 @@ class GetTopCategoriesUseCase {
   Future<List<CategoryStatistic>> execute({
     required DateTime startDate,
     required DateTime endDate,
+    required String targetCurrency,
     TransactionType type = TransactionType.expense,
     String? accountId,
   }) {
     return _repository.getTopCategories(
       startDate: startDate,
       endDate: endDate,
+      targetCurrency: targetCurrency,
       type: type,
       accountId: accountId,
     );
