@@ -8,6 +8,8 @@ import 'package:stalvi/data/repositories/transaction_repository.dart';
 import 'package:stalvi/data/repositories/exchange_rate_repository.dart';
 import 'package:stalvi/data/repositories/budget_repository.dart';
 import 'package:stalvi/data/repositories/savings_goal_repository.dart';
+import 'package:stalvi/data/repositories/export_service_impl.dart';
+import 'package:stalvi/data/repositories/import_service_impl.dart';
 import 'package:stalvi/data/network/exchange_rate_remote_data_source.dart';
 import 'package:http/http.dart' as http;
 import 'package:stalvi/data/mappers/profile_mapper.dart';
@@ -27,6 +29,8 @@ import 'package:stalvi/domain/repositories/i_exchange_rate_repository.dart';
 import 'package:stalvi/domain/repositories/i_budget_repository.dart';
 import 'package:stalvi/domain/repositories/i_savings_goal_repository.dart';
 import 'package:stalvi/domain/repositories/i_statistics_repository.dart';
+import 'package:stalvi/domain/repositories/i_export_service.dart';
+import 'package:stalvi/domain/repositories/i_import_service.dart';
 import 'package:stalvi/domain/usecases/add_transaction_usecase.dart';
 import 'package:stalvi/domain/usecases/create_profile_usecase.dart';
 import 'package:stalvi/domain/usecases/initialize_default_data_usecase.dart';
@@ -37,6 +41,10 @@ import 'package:stalvi/domain/usecases/create_account_usecase.dart';
 import 'package:stalvi/domain/usecases/update_account_usecase.dart';
 import 'package:stalvi/domain/usecases/delete_and_reassign_category_usecase.dart';
 import 'package:stalvi/domain/usecases/delete_and_reassign_tag_usecase.dart';
+import 'package:stalvi/domain/usecases/export_encrypted_json_use_case.dart';
+import 'package:stalvi/domain/usecases/import_encrypted_json_use_case.dart';
+import 'package:stalvi/domain/usecases/export_transactions_csv_use_case.dart';
+import 'package:stalvi/domain/usecases/export_monthly_pdf_use_case.dart';
 import 'package:stalvi/presentation/providers/app_startup_provider.dart';
 import 'package:stalvi/presentation/providers/locale_provider.dart';
 
@@ -247,4 +255,62 @@ final deleteAndReassignTagUseCaseProvider =
   final tagRepo = ref.watch(tagRepositoryProvider);
   final transactionRepo = ref.watch(transactionRepositoryProvider);
   return DeleteAndReassignTagUseCase(tagRepo, transactionRepo);
+});
+
+/// Provides the [IExportService] implementation.
+final exportServiceProvider = Provider<IExportService>((ref) {
+  return ExportServiceImpl();
+});
+
+/// Provides the [IImportService] implementation.
+final importServiceProvider = Provider<IImportService>((ref) {
+  final db = ref.watch(appDatabaseProvider).requireValue;
+  final exportService = ref.watch(exportServiceProvider);
+  return ImportServiceImpl(database: db, exportService: exportService);
+});
+
+/// Provides the [ExportEncryptedJsonUseCase] instance.
+final exportEncryptedJsonUseCaseProvider =
+    Provider<ExportEncryptedJsonUseCase>((ref) {
+  return ExportEncryptedJsonUseCase(
+    profileRepository: ref.watch(profileRepositoryProvider),
+    accountRepository: ref.watch(accountRepositoryProvider),
+    categoryRepository: ref.watch(categoryRepositoryProvider),
+    tagRepository: ref.watch(tagRepositoryProvider),
+    transactionRepository: ref.watch(transactionRepositoryProvider),
+    exportService: ref.watch(exportServiceProvider),
+  );
+});
+
+/// Provides the [ImportEncryptedJsonUseCase] instance.
+final importEncryptedJsonUseCaseProvider =
+    Provider<ImportEncryptedJsonUseCase>((ref) {
+  return ImportEncryptedJsonUseCase(
+    importService: ref.watch(importServiceProvider),
+  );
+});
+
+/// Provides the [ExportTransactionsCsvUseCase] instance.
+final exportTransactionsCsvUseCaseProvider =
+    Provider<ExportTransactionsCsvUseCase>((ref) {
+  return ExportTransactionsCsvUseCase(
+    profileRepository: ref.watch(profileRepositoryProvider),
+    accountRepository: ref.watch(accountRepositoryProvider),
+    categoryRepository: ref.watch(categoryRepositoryProvider),
+    transactionRepository: ref.watch(transactionRepositoryProvider),
+    exportService: ref.watch(exportServiceProvider),
+  );
+});
+
+/// Provides the [ExportMonthlyPdfUseCase] instance.
+final exportMonthlyPdfUseCaseProvider =
+    Provider<ExportMonthlyPdfUseCase>((ref) {
+  return ExportMonthlyPdfUseCase(
+    profileRepository: ref.watch(profileRepositoryProvider),
+    accountRepository: ref.watch(accountRepositoryProvider),
+    categoryRepository: ref.watch(categoryRepositoryProvider),
+    transactionRepository: ref.watch(transactionRepositoryProvider),
+    statisticsRepository: ref.watch(statisticsRepositoryProvider),
+    exportService: ref.watch(exportServiceProvider),
+  );
 });

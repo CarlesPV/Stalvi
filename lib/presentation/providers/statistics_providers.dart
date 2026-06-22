@@ -6,6 +6,7 @@ import 'package:stalvi/domain/entities/category_statistic.dart';
 import 'package:stalvi/domain/entities/period_summary.dart';
 import 'package:stalvi/domain/use_cases/statistics/get_period_summary_use_case.dart';
 import 'package:stalvi/domain/use_cases/statistics/get_top_categories_use_case.dart';
+import 'package:stalvi/presentation/providers/app_startup_provider.dart';
 import 'package:stalvi/presentation/providers/repository_providers.dart';
 
 // ─── Use-case providers ───────────────────────────────────────────────────────
@@ -253,25 +254,11 @@ final statisticsCurrencyProvider = Provider.autoDispose<String>((ref) {
   return profile?.defaultCurrency ?? 'EUR';
 });
 
-/// Calculates the global balance by converting all account balances
-/// to the user's default currency using the latest local exchange rates.
-final globalBalanceProvider = FutureProvider.autoDispose<double>((ref) async {
-  final accounts = await ref.watch(accountsListProvider.future);
+/// Calculates the global balance using the dynamic currency conversion
+/// aggregation from StatisticsDao.
+final globalBalanceProvider = StreamProvider.autoDispose<double>((ref) async* {
   final profile = await ref.watch(defaultProfileProvider.future);
+  final db = ref.watch(appDatabaseProvider).requireValue;
 
-  final exchangeRateRepo = ref.watch(exchangeRateRepositoryProvider);
-  final localRates = await exchangeRateRepo.getLocalRates(
-    baseCurrency: profile.defaultCurrency,
-  );
-
-  double total = 0.0;
-  for (final acc in accounts) {
-    if (acc.currency == profile.defaultCurrency) {
-      total += acc.initialBalance;
-    } else {
-      final rate = localRates?.rateFor(acc.currency) ?? 1.0;
-      total += acc.initialBalance / rate;
-    }
-  }
-  return total;
+  yield* db.statisticsDao.watchGlobalBalance(profile.defaultCurrency);
 });

@@ -1,6 +1,10 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:stalvi/core/l10n/app_localizations.dart';
 import 'package:stalvi/infrastructure/services/biometric_auth_service.dart';
 import 'package:stalvi/presentation/features/settings/profile_settings_controller.dart';
@@ -522,6 +526,360 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
     });
   }
 
+  // ─── Data Portability helpers ──────────────────────────────────────────────
+
+  /// Saves [bytes] to a temp file and shares it via the OS share sheet.
+  Future<void> _shareFile(
+    BuildContext context,
+    List<int> bytes,
+    String filename,
+    String mimeType,
+  ) async {
+    final tempDir = await getTemporaryDirectory();
+    final file = File('${tempDir.path}/$filename');
+    await file.writeAsBytes(bytes, flush: true);
+    await Share.shareXFiles(
+      [XFile(file.path, mimeType: mimeType)],
+      subject: filename,
+    );
+  }
+
+  /// Shows a dialog asking the user to set a password for an encrypted backup.
+  /// Returns the password or null if cancelled.
+  Future<String?> _askExportPassword(BuildContext context) async {
+    final l10n = AppLocalizations.of(context)!;
+    final passController = TextEditingController();
+    final confirmController = TextEditingController();
+    String? dialogError;
+    bool obscure = true;
+
+    return showDialog<String>(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) {
+        return StatefulBuilder(
+          builder: (ctx, setDialogState) {
+            return AlertDialog(
+              title: Text(l10n.exportPasswordDialogTitle),
+              content: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      l10n.exportPasswordDialogSubtitle,
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                    const SizedBox(height: 16),
+                    TextField(
+                      controller: passController,
+                      obscureText: obscure,
+                      decoration: InputDecoration(
+                        labelText: l10n.exportPasswordLabel,
+                        border: const OutlineInputBorder(),
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            obscure ? Icons.visibility_off : Icons.visibility,
+                          ),
+                          onPressed: () =>
+                              setDialogState(() => obscure = !obscure),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    TextField(
+                      controller: confirmController,
+                      obscureText: obscure,
+                      decoration: InputDecoration(
+                        labelText: l10n.exportPasswordConfirmLabel,
+                        border: const OutlineInputBorder(),
+                      ),
+                    ),
+                    if (dialogError != null) ...[
+                      const SizedBox(height: 8),
+                      Text(
+                        dialogError!,
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.error,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(ctx).pop(null),
+                  child: Text(l10n.btnCancel),
+                ),
+                FilledButton(
+                  onPressed: () {
+                    final pass = passController.text;
+                    final confirm = confirmController.text;
+                    if (pass.length < 6) {
+                      setDialogState(
+                        () => dialogError = l10n.exportPasswordTooShort,
+                      );
+                      return;
+                    }
+                    if (pass != confirm) {
+                      setDialogState(
+                        () => dialogError = l10n.exportPasswordMismatch,
+                      );
+                      return;
+                    }
+                    Navigator.of(ctx).pop(pass);
+                  },
+                  child: Text(l10n.btnExport),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  /// Shows a dialog asking the user to enter the restore password.
+  Future<String?> _askImportPassword(BuildContext context) async {
+    final l10n = AppLocalizations.of(context)!;
+    final passController = TextEditingController();
+    bool obscure = true;
+
+    return showDialog<String>(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) {
+        return StatefulBuilder(
+          builder: (ctx, setDialogState) {
+            return AlertDialog(
+              title: Text(l10n.importPasswordDialogTitle),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    l10n.importPasswordDialogSubtitle,
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    controller: passController,
+                    obscureText: obscure,
+                    autofocus: true,
+                    decoration: InputDecoration(
+                      labelText: l10n.exportPasswordLabel,
+                      border: const OutlineInputBorder(),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          obscure ? Icons.visibility_off : Icons.visibility,
+                        ),
+                        onPressed: () =>
+                            setDialogState(() => obscure = !obscure),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(ctx).pop(null),
+                  child: Text(l10n.btnCancel),
+                ),
+                FilledButton(
+                  onPressed: () => Navigator.of(ctx).pop(passController.text),
+                  child: Text(l10n.btnRestore),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Future<void> _handleExportEncryptedBackup(BuildContext context) async {
+    final l10n = AppLocalizations.of(context)!;
+
+    // Auth gate
+    final authenticated = await _requireLocalAuth(context);
+    if (!authenticated) return;
+    if (!context.mounted) return;
+
+    // Ask password
+    final password = await _askExportPassword(context);
+    if (password == null || !context.mounted) return;
+
+    try {
+      final result = await ref
+          .read(profileSettingsControllerProvider.notifier)
+          .exportEncryptedBackup(password: password);
+      if (!context.mounted) return;
+      await _shareFile(
+        context,
+        result.bytes,
+        result.filename,
+        result.mimeType,
+      );
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(l10n.exportSuccess)),
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(l10n.exportFailed),
+            backgroundColor: Theme.of(context).colorScheme.error,
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _handleImportEncryptedBackup(BuildContext context) async {
+    final l10n = AppLocalizations.of(context)!;
+
+    // Auth gate
+    final authenticated = await _requireLocalAuth(context);
+    if (!authenticated) return;
+    if (!context.mounted) return;
+
+    // Warn the user: destructive operation
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Row(
+          children: [
+            Icon(
+              Icons.warning_amber_rounded,
+              color: Theme.of(context).colorScheme.error,
+            ),
+            const SizedBox(width: 8),
+            Text(l10n.importConfirmTitle),
+          ],
+        ),
+        content: Text(l10n.importConfirmMessage),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: Text(l10n.btnCancel),
+          ),
+          FilledButton(
+            style: FilledButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.error,
+            ),
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: Text(l10n.btnRestore),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true || !context.mounted) return;
+
+    // Pick file
+    final pickerResult = await FilePicker.platform.pickFiles(
+      type: FileType.any,
+      allowMultiple: false,
+      withData: true,
+    );
+
+    if (pickerResult == null || pickerResult.files.isEmpty) return;
+    final fileBytes = pickerResult.files.first.bytes;
+    if (fileBytes == null || !context.mounted) return;
+
+    // Ask restore password
+    final password = await _askImportPassword(context);
+    if (password == null || password.isEmpty || !context.mounted) return;
+
+    try {
+      await ref
+          .read(profileSettingsControllerProvider.notifier)
+          .importEncryptedBackup(fileBytes, password: password);
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.importSuccess)),
+      );
+      // Navigate to splash to restart cleanly
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (_) => const SplashScreen()),
+        (_) => false,
+      );
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(l10n.importFailed),
+            backgroundColor: Theme.of(context).colorScheme.error,
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _handleExportCsv(BuildContext context) async {
+    final l10n = AppLocalizations.of(context)!;
+    try {
+      final result = await ref
+          .read(profileSettingsControllerProvider.notifier)
+          .exportTransactionsCsv();
+      if (!context.mounted) return;
+      await _shareFile(
+        context,
+        result.bytes,
+        result.filename,
+        result.mimeType,
+      );
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(l10n.exportSuccess)),
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(l10n.exportFailed),
+            backgroundColor: Theme.of(context).colorScheme.error,
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _handleExportMonthlyPdf(BuildContext context) async {
+    final l10n = AppLocalizations.of(context)!;
+    try {
+      final result = await ref
+          .read(profileSettingsControllerProvider.notifier)
+          .exportMonthlyPdf();
+      if (!context.mounted) return;
+      await _shareFile(
+        context,
+        result.bytes,
+        result.filename,
+        result.mimeType,
+      );
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(l10n.exportSuccess)),
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(l10n.exportFailed),
+            backgroundColor: Theme.of(context).colorScheme.error,
+          ),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -677,6 +1035,77 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                     );
                   },
                 ),
+                const Divider(),
+
+                // ── Data Portability ──────────────────────────────────────
+                const SizedBox(height: 8),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 4,
+                  ),
+                  child: Text(
+                    l10n.dataPortabilityTitle,
+                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                          color: Theme.of(context)
+                              .colorScheme
+                              .onSurfaceVariant
+                              .withValues(alpha: 0.8),
+                          letterSpacing: 1.1,
+                        ),
+                  ),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.backup_rounded),
+                  title: Text(l10n.exportEncryptedBackup),
+                  subtitle: Text(
+                    l10n.exportEncryptedBackupSubtitle,
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                  trailing: const Icon(Icons.ios_share_rounded),
+                  onTap: state.isLoading
+                      ? null
+                      : () => _handleExportEncryptedBackup(context),
+                ),
+                const Divider(),
+                ListTile(
+                  leading: const Icon(Icons.restore_rounded),
+                  title: Text(l10n.importRestoreBackup),
+                  subtitle: Text(
+                    l10n.importRestoreBackupSubtitle,
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                  trailing: const Icon(Icons.folder_open_rounded),
+                  onTap: state.isLoading
+                      ? null
+                      : () => _handleImportEncryptedBackup(context),
+                ),
+                const Divider(),
+                ListTile(
+                  leading: const Icon(Icons.table_chart_rounded),
+                  title: Text(l10n.exportTransactionsCsv),
+                  subtitle: Text(
+                    l10n.exportTransactionsCsvSubtitle,
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                  trailing: const Icon(Icons.ios_share_rounded),
+                  onTap:
+                      state.isLoading ? null : () => _handleExportCsv(context),
+                ),
+                const Divider(),
+                ListTile(
+                  leading: const Icon(Icons.picture_as_pdf_rounded),
+                  title: Text(l10n.exportMonthlyPdf),
+                  subtitle: Text(
+                    l10n.exportMonthlyPdfSubtitle,
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                  trailing: const Icon(Icons.ios_share_rounded),
+                  onTap: state.isLoading
+                      ? null
+                      : () => _handleExportMonthlyPdf(context),
+                ),
+
                 const SizedBox(height: 48),
                 ElevatedButton.icon(
                   style: ElevatedButton.styleFrom(

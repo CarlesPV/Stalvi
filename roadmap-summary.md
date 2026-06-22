@@ -361,8 +361,24 @@ This document lists the completed phases of the Stalvi development roadmap, prov
   - Standard static analysis pass (`flutter analyze`) with 0 errors on modified files.
   - Executed the full automated test suite containing 361 unit and widget tests, achieving a 100% success rate (all tests passed!).
 
+### Phase 23: Backups, and Import/Export Validations
+* **Completion Date:** June 22, 2026
+* **Objective:** Design and implement a secure, encrypted local backup system using AES-256-CBC, validate imports/exports cross-platform, clean up formatting, resolve static analysis, and verify all tests pass successfully.
+* **Accomplishments:**
+  - **Encrypted Local Backups**: Added cryptographic JSON exports/imports using user-defined passwords. Derived keys via PBKDF2-HMAC-SHA256 from user-specified passwords, incorporating random salt and IV headers.
+  - **Database Restoration**: Implemented `IImportService` and `ImportServiceImpl` to decrypt, validate, parse, and restore full database snapshots (Accounts, Categories, Tags, and Transactions).
+  - **Atomic Transaction Import**: Ensured that the database is atomically wiped (transactions, accounts, categories, tags) inside a single Drift transaction block and re-populated in foreign-key safe order. Kept user profiles intact during import.
+  - **Launcher Icons & Splash Screen**: Configured `flutter_launcher_icons` and `flutter_native_splash` utilizing rounded rectangle (squircle) logos, conforming to light/dark themes (`#F8FAFC` / `#0B0F19`) and Android 12+ guidelines.
+  - **Test Suite expansion**: Created unit test suite for `ImportServiceImpl` utilizing `mocktail` (4 new unit tests), verifying decryption errors, parsing exceptions, unsupported versions, and successful database restoration.
+* **Verification:**
+  - Standard static analysis pass (`flutter analyze` with 0 issues).
+  - Executed the entire suite of 359 unit, integration, and widget tests, achieving a 100% success rate (all tests passed!).
+
 ## Recent Updates
-- Replaced splash and auth screen icons with the app_icon.png.
-- Removed hardcoded 'Mi Cartera' account creation from AppDatabase.
+- Configured launcher icons and splash screens.
+- Implemented encrypted backup import/restore services (`ImportServiceImpl`).
+- Wrote new unit tests for `ImportServiceImpl` using mocktail.
+- Fixed all code format lints and missing trailing commas in test suites.
 - Synced localization files for EN, ES, CA.
+
 

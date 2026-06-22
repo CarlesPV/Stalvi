@@ -101,7 +101,9 @@ void main() {
 
     // Act
     final result = await dao.getTransactionsForPeriod(
-        DateTime(2023, 1, 1), DateTime(2023, 1, 31));
+      DateTime(2023, 1, 1),
+      DateTime(2023, 1, 31),
+    );
 
     // Assert
     expect(result.length, 2);
@@ -206,18 +208,23 @@ void main() {
     // Assert
     expect(result.length, 2);
     expect(
-        result.any((t) => t.categoryId == 'cat1' && t.categoryName == 'Food'),
-        isTrue);
+      result.any((t) => t.categoryId == 'cat1' && t.categoryName == 'Food'),
+      isTrue,
+    );
     expect(
-        result.any(
-            (t) => t.categoryId == 'cat2' && t.categoryName == 'Transport'),
-        isTrue);
+      result.any(
+        (t) => t.categoryId == 'cat2' && t.categoryName == 'Transport',
+      ),
+      isTrue,
+    );
   });
 
   test('getTransactionsForPeriod should return empty list when DB is empty',
       () async {
     final result = await dao.getTransactionsForPeriod(
-        DateTime(2023, 1, 1), DateTime(2023, 1, 31));
+      DateTime(2023, 1, 1),
+      DateTime(2023, 1, 31),
+    );
     expect(result, isEmpty);
   });
 
@@ -313,7 +320,9 @@ void main() {
         );
 
     final result = await dao.getTransactionsForPeriod(
-        DateTime(2023, 1, 1), DateTime(2023, 1, 31));
+      DateTime(2023, 1, 1),
+      DateTime(2023, 1, 31),
+    );
     expect(result.length, 1);
     expect(result.first.id, 't_active');
   });
@@ -392,7 +401,9 @@ void main() {
 
     // Act - all accounts (accountId is null)
     final resultAll = await dao.getTransactionsForPeriod(
-        DateTime(2023, 1, 1), DateTime(2023, 1, 31));
+      DateTime(2023, 1, 1),
+      DateTime(2023, 1, 31),
+    );
 
     // Act - specific account acc3
     final resultAcc3 = await dao.getTransactionsForPeriod(
@@ -405,5 +416,108 @@ void main() {
     expect(resultAll.length, 2);
     expect(resultAcc3.length, 1);
     expect(resultAcc3.first.id, 't_acc3');
+  });
+
+  test(
+      'getPeriodSummaryAggregates should correctly convert amounts based on exchangeRateSnapshot',
+      () async {
+    // Arrange
+    final now = DateTime.now();
+    await database.into(database.profiles).insert(
+          ProfilesCompanion.insert(
+            id: 'profile_curr',
+            name: 'Test',
+            username: 'test',
+            password: '',
+            createdAt: now,
+            modifiedAt: now,
+          ),
+        );
+
+    await database.into(database.accounts).insert(
+          AccountsCompanion.insert(
+            id: 'acc_curr',
+            userId: 'profile_curr',
+            name: 'Cash',
+            type: AccountType.cash,
+            initialBalance: 0,
+            currency: 'EUR',
+            color: 'red',
+            icon: 'icon',
+            isDefault: const drift.Value(true),
+            createdAt: now,
+            modifiedAt: now,
+          ),
+        );
+
+    // Income in EUR (target currency) -> 1000 EUR
+    await database.into(database.transactions).insert(
+          TransactionsCompanion.insert(
+            id: 't_eur',
+            amount: 1000,
+            date: DateTime(2023, 1, 10),
+            type: TransactionType.income,
+            accountId: 'acc_curr',
+            originalCurrency: 'EUR',
+            exchangeRateSnapshot:
+                const drift.Value('{"rates": {"EUR": 1.0, "USD": 1.10}}'),
+            createdAt: now,
+            modifiedAt: now,
+          ),
+        );
+
+    // Income in USD -> 1100 USD / 1.10 = 1000 EUR
+    await database.into(database.transactions).insert(
+          TransactionsCompanion.insert(
+            id: 't_usd',
+            amount: 1100,
+            date: DateTime(2023, 1, 15),
+            type: TransactionType.income,
+            accountId: 'acc_curr',
+            originalCurrency: 'USD',
+            exchangeRateSnapshot:
+                const drift.Value('{"rates": {"EUR": 1.0, "USD": 1.10}}'),
+            createdAt: now,
+            modifiedAt: now,
+          ),
+        );
+
+    // Expense in JPY -> 14000 JPY / 140 = 100 EUR.
+    await database.into(database.transactions).insert(
+          TransactionsCompanion.insert(
+            id: 't_jpy',
+            amount: 14000,
+            date: DateTime(2023, 1, 20),
+            type: TransactionType.expense,
+            accountId: 'acc_curr',
+            originalCurrency: 'JPY',
+            exchangeRateSnapshot: const drift.Value(
+                '{"rates": {"EUR": 1.0, "JPY": 140.0, "USD": 1.10}}'),
+            createdAt: now,
+            modifiedAt: now,
+          ),
+        );
+
+    // Act - fetch period summary in EUR
+    final summaryEur = await dao.getPeriodSummaryAggregates(
+      DateTime(2023, 1, 1),
+      DateTime(2023, 1, 31),
+      'EUR',
+    );
+
+    // Assert EUR
+    expect(summaryEur.totalIncome, 2000); // 1000 EUR + 1000 EUR equivalent
+    expect(summaryEur.totalExpense, 100); // 100 EUR equivalent
+
+    // Act - fetch period summary in USD
+    final summaryUsd = await dao.getPeriodSummaryAggregates(
+      DateTime(2023, 1, 1),
+      DateTime(2023, 1, 31),
+      'USD',
+    );
+
+    // Assert USD
+    expect(summaryUsd.totalIncome, 2200); // 1100 USD equivalent + 1100 USD
+    expect(summaryUsd.totalExpense, 110); // 100 EUR * 1.10 = 110 USD
   });
 }

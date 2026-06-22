@@ -80,7 +80,6 @@ void main() {
       () async {
     // Arrange: Ensure database is initialized and seeds exist
     final profilesList = await db.select(db.profiles).get();
-    final accountsList = await db.select(db.accounts).get();
     final categoriesList = await db.select(db.categories).get();
 
     expect(profilesList.isNotEmpty, isTrue);

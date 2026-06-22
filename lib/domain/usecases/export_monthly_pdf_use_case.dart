@@ -1,29 +1,42 @@
+import 'package:stalvi/domain/repositories/i_account_repository.dart';
+import 'package:stalvi/domain/repositories/i_category_repository.dart';
 import 'package:stalvi/domain/repositories/i_export_service.dart';
-import 'package:stalvi/domain/repositories/i_transaction_repository.dart';
+import 'package:stalvi/domain/repositories/i_profile_repository.dart';
 import 'package:stalvi/domain/repositories/i_statistics_repository.dart';
+import 'package:stalvi/domain/repositories/i_transaction_repository.dart';
 
 /// Use case that generates a PDF summary report for the **current calendar month**.
 ///
-/// It fetches all transactions for the given account that fall within the
-/// current month, and delegates PDF generation to [IExportService].
+/// It fetches all transactions that fall within the current month across all
+/// accounts, resolves Account and Category names, and delegates PDF generation
+/// to [IExportService]. The generated PDF includes columns:
+/// Date, Type, Account, Category, Amount, Currency, and Notes.
 class ExportMonthlyPdfUseCase {
+  final IProfileRepository _profileRepository;
+  final IAccountRepository _accountRepository;
+  final ICategoryRepository _categoryRepository;
   final ITransactionRepository _transactionRepository;
   final IStatisticsRepository _statisticsRepository;
   final IExportService _exportService;
 
   const ExportMonthlyPdfUseCase({
+    required IProfileRepository profileRepository,
+    required IAccountRepository accountRepository,
+    required ICategoryRepository categoryRepository,
     required ITransactionRepository transactionRepository,
     required IStatisticsRepository statisticsRepository,
     required IExportService exportService,
-  })  : _transactionRepository = transactionRepository,
+  })  : _profileRepository = profileRepository,
+        _accountRepository = accountRepository,
+        _categoryRepository = categoryRepository,
+        _transactionRepository = transactionRepository,
         _statisticsRepository = statisticsRepository,
         _exportService = exportService;
 
-  /// Generates a monthly PDF report for [accountId].
+  /// Generates a monthly PDF report.
   ///
   /// Optionally pass a custom [month] — defaults to the current month.
-  Future<ExportResult> call(
-    String accountId, {
+  Future<ExportResult> call({
     required String targetCurrency,
     DateTime? month,
   }) async {
@@ -40,26 +53,40 @@ class ExportMonthlyPdfUseCase {
       59,
     );
 
-    // Fetch all transactions and filter to the target month client-side.
-    // For large datasets consider adding a date-range query to the repository.
+    // Resolve profile for account lookup
+    final profile = await _profileRepository.getFirstProfile();
+    final userId = profile?.id ?? '';
+
+    // Fetch in parallel
+    final results = await Future.wait([
+      _accountRepository.getAccountsByUserId(userId),
+      _categoryRepository.getAllCategories(),
+      _statisticsRepository.getPeriodSummary(
+        startDate: startDate,
+        endDate: endDate,
+        targetCurrency: targetCurrency,
+      ),
+    ]);
+
+    final accounts = results[0] as dynamic;
+    final categories = results[1] as dynamic;
+    final summary = results[2] as dynamic;
+
+    // Fetch and filter transactions to target month
     final allTransactions =
-        await _transactionRepository.getTransactionsByAccountId(accountId);
+        await _transactionRepository.watchAllTransactions().first;
 
     final monthTransactions = allTransactions.where((tx) {
       return !tx.date.isBefore(startDate) && !tx.date.isAfter(endDate);
     }).toList()
       ..sort((a, b) => a.date.compareTo(b.date));
 
-    final summary = await _statisticsRepository.getPeriodSummary(
-      startDate: startDate,
-      endDate: endDate,
-      targetCurrency: targetCurrency,
-    );
-
     return _exportService.generateMonthlyPdf(
       monthTransactions,
       summary: summary,
       month: targetMonth,
+      accounts: accounts,
+      categories: categories,
     );
   }
 }

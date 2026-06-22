@@ -1003,7 +1003,8 @@ class _PieChartWithLegend extends ConsumerWidget {
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(
-                    'Other (${categories.length - 6} categories)',
+                    AppLocalizations.of(context)!
+                        .statisticsOtherCategories(categories.length - 6),
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: colorScheme.onSurfaceVariant,
                       fontWeight: FontWeight.w500,

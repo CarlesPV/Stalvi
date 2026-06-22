@@ -819,4 +819,93 @@ class AppLocalizationsEn extends AppLocalizations {
   String budgetSpentOf(String spent, String target) {
     return '$spent of $target';
   }
+
+  @override
+  String get dataPortabilityTitle => 'Data Portability';
+
+  @override
+  String get exportEncryptedBackup => 'Export Encrypted Backup';
+
+  @override
+  String get exportEncryptedBackupSubtitle =>
+      'Export all data as a password-protected backup file';
+
+  @override
+  String get importRestoreBackup => 'Import / Restore Backup';
+
+  @override
+  String get importRestoreBackupSubtitle =>
+      'Restore your data from a Konta backup file';
+
+  @override
+  String get exportTransactionsCsv => 'Export Transactions (CSV)';
+
+  @override
+  String get exportTransactionsCsvSubtitle =>
+      'Export all transactions to a spreadsheet-compatible CSV file';
+
+  @override
+  String get exportMonthlyPdf => 'Export Monthly Report (PDF)';
+
+  @override
+  String get exportMonthlyPdfSubtitle =>
+      'Generate a PDF summary for the current month';
+
+  @override
+  String get exportPasswordDialogTitle => 'Set Backup Password';
+
+  @override
+  String get exportPasswordDialogSubtitle =>
+      'This password will be required to restore your backup. Store it safely.';
+
+  @override
+  String get exportPasswordLabel => 'Backup Password';
+
+  @override
+  String get exportPasswordConfirmLabel => 'Confirm Password';
+
+  @override
+  String get exportPasswordMismatch => 'Passwords do not match.';
+
+  @override
+  String get exportPasswordTooShort =>
+      'Password must be at least 6 characters.';
+
+  @override
+  String get importPasswordDialogTitle => 'Enter Backup Password';
+
+  @override
+  String get importPasswordDialogSubtitle =>
+      'Enter the password used when the backup was created.';
+
+  @override
+  String get importConfirmTitle => 'Restore Backup?';
+
+  @override
+  String get importConfirmMessage =>
+      'Restoring a backup will overwrite all current data. This cannot be undone. Are you sure?';
+
+  @override
+  String get exportSuccess => 'Export successful. File saved.';
+
+  @override
+  String get importSuccess =>
+      'Backup restored successfully. Please restart the app.';
+
+  @override
+  String get exportFailed => 'Export failed. Please try again.';
+
+  @override
+  String get importFailed => 'Restore failed. Check your password and file.';
+
+  @override
+  String get btnExport => 'Export';
+
+  @override
+  String get btnRestore => 'Restore';
+
+  @override
+  String statisticsOtherCategories(int count) {
+    return 'Other ($count categories)';
+  }
 }

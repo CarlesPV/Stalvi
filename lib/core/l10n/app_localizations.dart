@@ -1611,6 +1611,162 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{spent} of {target}'**
   String budgetSpentOf(String spent, String target);
+
+  /// Section title for data export and import options
+  ///
+  /// In en, this message translates to:
+  /// **'Data Portability'**
+  String get dataPortabilityTitle;
+
+  /// Button label to export an encrypted full backup
+  ///
+  /// In en, this message translates to:
+  /// **'Export Encrypted Backup'**
+  String get exportEncryptedBackup;
+
+  /// Subtitle for the encrypted backup export option
+  ///
+  /// In en, this message translates to:
+  /// **'Export all data as a password-protected backup file'**
+  String get exportEncryptedBackupSubtitle;
+
+  /// Button label to import and restore from an encrypted backup
+  ///
+  /// In en, this message translates to:
+  /// **'Import / Restore Backup'**
+  String get importRestoreBackup;
+
+  /// Subtitle for the import/restore option
+  ///
+  /// In en, this message translates to:
+  /// **'Restore your data from a Konta backup file'**
+  String get importRestoreBackupSubtitle;
+
+  /// Button label to export all transactions as a CSV file
+  ///
+  /// In en, this message translates to:
+  /// **'Export Transactions (CSV)'**
+  String get exportTransactionsCsv;
+
+  /// Subtitle for the CSV export option
+  ///
+  /// In en, this message translates to:
+  /// **'Export all transactions to a spreadsheet-compatible CSV file'**
+  String get exportTransactionsCsvSubtitle;
+
+  /// Button label to export the current month's report as a PDF
+  ///
+  /// In en, this message translates to:
+  /// **'Export Monthly Report (PDF)'**
+  String get exportMonthlyPdf;
+
+  /// Subtitle for the PDF monthly report export option
+  ///
+  /// In en, this message translates to:
+  /// **'Generate a PDF summary for the current month'**
+  String get exportMonthlyPdfSubtitle;
+
+  /// Title for the dialog where user sets a backup password
+  ///
+  /// In en, this message translates to:
+  /// **'Set Backup Password'**
+  String get exportPasswordDialogTitle;
+
+  /// Subtitle in the export password dialog
+  ///
+  /// In en, this message translates to:
+  /// **'This password will be required to restore your backup. Store it safely.'**
+  String get exportPasswordDialogSubtitle;
+
+  /// Label for the backup password input field
+  ///
+  /// In en, this message translates to:
+  /// **'Backup Password'**
+  String get exportPasswordLabel;
+
+  /// Label for the confirm password input field
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Password'**
+  String get exportPasswordConfirmLabel;
+
+  /// Error when export passwords do not match
+  ///
+  /// In en, this message translates to:
+  /// **'Passwords do not match.'**
+  String get exportPasswordMismatch;
+
+  /// Error when export password is too short
+  ///
+  /// In en, this message translates to:
+  /// **'Password must be at least 6 characters.'**
+  String get exportPasswordTooShort;
+
+  /// Title for the dialog where user enters restore password
+  ///
+  /// In en, this message translates to:
+  /// **'Enter Backup Password'**
+  String get importPasswordDialogTitle;
+
+  /// Subtitle in the import password dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the password used when the backup was created.'**
+  String get importPasswordDialogSubtitle;
+
+  /// Title for the import confirmation dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Restore Backup?'**
+  String get importConfirmTitle;
+
+  /// Warning message in the import confirmation dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Restoring a backup will overwrite all current data. This cannot be undone. Are you sure?'**
+  String get importConfirmMessage;
+
+  /// Snackbar message when export succeeds
+  ///
+  /// In en, this message translates to:
+  /// **'Export successful. File saved.'**
+  String get exportSuccess;
+
+  /// Snackbar message when import/restore succeeds
+  ///
+  /// In en, this message translates to:
+  /// **'Backup restored successfully. Please restart the app.'**
+  String get importSuccess;
+
+  /// Snackbar message when export fails
+  ///
+  /// In en, this message translates to:
+  /// **'Export failed. Please try again.'**
+  String get exportFailed;
+
+  /// Snackbar message when import/restore fails
+  ///
+  /// In en, this message translates to:
+  /// **'Restore failed. Check your password and file.'**
+  String get importFailed;
+
+  /// Generic export button label
+  ///
+  /// In en, this message translates to:
+  /// **'Export'**
+  String get btnExport;
+
+  /// Generic restore button label
+  ///
+  /// In en, this message translates to:
+  /// **'Restore'**
+  String get btnRestore;
+
+  /// Label for other categories slice in statistics charts when count exceeds display limit
+  ///
+  /// In en, this message translates to:
+  /// **'Other ({count} categories)'**
+  String statisticsOtherCategories(int count);
 }
 
 class _AppLocalizationsDelegate

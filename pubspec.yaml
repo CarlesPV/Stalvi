@@ -22,7 +22,6 @@ dependencies:
   # Security & Storage
   flutter_secure_storage: ^9.0.0
   local_auth: ^2.1.8
-  flutter_dotenv: ^5.1.0
 
   # Charts & UI
   fl_chart: ^0.65.0
@@ -30,9 +29,6 @@ dependencies:
 
   # Export, Import & Files
   pdf: ^3.11.1
-  printing: ^5.13.0
-  csv: ^6.0.0
-  excel: ^4.0.3
   path_provider: ^2.1.1
   share_plus: ^10.0.0
   file_picker: ^8.1.2
@@ -75,7 +71,6 @@ flutter:
   uses-material-design: true
   generate: true
   assets:
-    - .env
     - assets/legal/
     - assets/icon/
 
@@ -87,13 +82,15 @@ flutter_launcher_icons:
 flutter_native_splash:
   color: "#F8FAFC"
   color_dark: "#0B0F19"
-  image: assets/icon/app_icon.png
-  image_dark: assets/icon/app_icon.png
+  image: assets/icon/splash_light.png
+  image_dark: assets/icon/splash_dark.png
   android: true
   ios: true
   web: false
   android_12:
     color: "#F8FAFC"
     color_dark: "#0B0F19"
-    image: assets/icon/app_icon.png
-    image_dark: assets/icon/app_icon.png
+    image: assets/icon/splash_light.png
+    image_dark: assets/icon/splash_dark.png
+    icon_background_color: "#F8FAFC"
+    icon_background_color_dark: "#0B0F19"

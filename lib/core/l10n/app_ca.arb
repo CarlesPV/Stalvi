@@ -1078,5 +1078,114 @@
         "type": "String"
       }
     }
+  },
+  "dataPortabilityTitle": "Portabilitat de dades",
+  "@dataPortabilityTitle": {
+    "description": "Section title for data export and import options"
+  },
+  "exportEncryptedBackup": "Exportar còpia de seguretat xifrada",
+  "@exportEncryptedBackup": {
+    "description": "Button label to export an encrypted full backup"
+  },
+  "exportEncryptedBackupSubtitle": "Exporta totes les dades com a arxiu de còpia de seguretat protegit amb contrasenya",
+  "@exportEncryptedBackupSubtitle": {
+    "description": "Subtitle for the encrypted backup export option"
+  },
+  "importRestoreBackup": "Importar / Restaurar còpia de seguretat",
+  "@importRestoreBackup": {
+    "description": "Button label to import and restore from an encrypted backup"
+  },
+  "importRestoreBackupSubtitle": "Restaura les teves dades des d'un arxiu de còpia de seguretat de Konta",
+  "@importRestoreBackupSubtitle": {
+    "description": "Subtitle for the import/restore option"
+  },
+  "exportTransactionsCsv": "Exportar transaccions (CSV)",
+  "@exportTransactionsCsv": {
+    "description": "Button label to export all transactions as a CSV file"
+  },
+  "exportTransactionsCsvSubtitle": "Exporta totes les transaccions a un arxiu CSV compatible amb fulls de càlcul",
+  "@exportTransactionsCsvSubtitle": {
+    "description": "Subtitle for the CSV export option"
+  },
+  "exportMonthlyPdf": "Exportar informe mensual (PDF)",
+  "@exportMonthlyPdf": {
+    "description": "Button label to export the current month's report as a PDF"
+  },
+  "exportMonthlyPdfSubtitle": "Genera un resum en PDF per al mes actual",
+  "@exportMonthlyPdfSubtitle": {
+    "description": "Subtitle for the PDF monthly report export option"
+  },
+  "exportPasswordDialogTitle": "Establir contrasenya de còpia de seguretat",
+  "@exportPasswordDialogTitle": {
+    "description": "Title for the dialog where user sets a backup password"
+  },
+  "exportPasswordDialogSubtitle": "Aquesta contrasenya serà necessària per restaurar la còpia de seguretat. Guarda-la en un lloc segur.",
+  "@exportPasswordDialogSubtitle": {
+    "description": "Subtitle in the export password dialog"
+  },
+  "exportPasswordLabel": "Contrasenya de còpia de seguretat",
+  "@exportPasswordLabel": {
+    "description": "Label for the backup password input field"
+  },
+  "exportPasswordConfirmLabel": "Confirmar contrasenya",
+  "@exportPasswordConfirmLabel": {
+    "description": "Label for the confirm password input field"
+  },
+  "exportPasswordMismatch": "Les contrasenyes no coincideixen.",
+  "@exportPasswordMismatch": {
+    "description": "Error when export passwords do not match"
+  },
+  "exportPasswordTooShort": "La contrasenya ha de tenir almenys 6 caràcters.",
+  "@exportPasswordTooShort": {
+    "description": "Error when export password is too short"
+  },
+  "importPasswordDialogTitle": "Introduir contrasenya de còpia de seguretat",
+  "@importPasswordDialogTitle": {
+    "description": "Title for the dialog where user enters restore password"
+  },
+  "importPasswordDialogSubtitle": "Introdueix la contrasenya que vas fer servir quan vas crear la còpia de seguretat.",
+  "@importPasswordDialogSubtitle": {
+    "description": "Subtitle in the import password dialog"
+  },
+  "importConfirmTitle": "Restaurar còpia de seguretat?",
+  "@importConfirmTitle": {
+    "description": "Title for the import confirmation dialog"
+  },
+  "importConfirmMessage": "Restaurar una còpia de seguretat sobreescriurà totes les dades actuals. Aquesta acció no es pot desfer. Estàs segur?",
+  "@importConfirmMessage": {
+    "description": "Warning message in the import confirmation dialog"
+  },
+  "exportSuccess": "Exportació correcta. Arxiu desat.",
+  "@exportSuccess": {
+    "description": "Snackbar message when export succeeds"
+  },
+  "importSuccess": "Còpia de seguretat restaurada correctament. Si us plau, reinicia l'aplicació.",
+  "@importSuccess": {
+    "description": "Snackbar message when import/restore succeeds"
+  },
+  "exportFailed": "Error en exportar. Si us plau, torna-ho a provar.",
+  "@exportFailed": {
+    "description": "Snackbar message when export fails"
+  },
+  "importFailed": "Error en restaurar. Comprova la contrasenya i l'arxiu.",
+  "@importFailed": {
+    "description": "Snackbar message when import/restore fails"
+  },
+  "btnExport": "Exportar",
+  "@btnExport": {
+    "description": "Generic export button label"
+  },
+  "btnRestore": "Restaurar",
+  "@btnRestore": {
+    "description": "Generic restore button label"
+  },
+  "statisticsOtherCategories": "Altres ({count} categories)",
+  "@statisticsOtherCategories": {
+    "description": "Label for other categories slice in statistics charts when count exceeds display limit",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   }
 }

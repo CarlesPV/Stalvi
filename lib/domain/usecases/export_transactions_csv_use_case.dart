@@ -1,28 +1,62 @@
 import 'package:stalvi/core/errors/app_exceptions.dart';
+import 'package:stalvi/domain/repositories/i_account_repository.dart';
+import 'package:stalvi/domain/repositories/i_category_repository.dart';
 import 'package:stalvi/domain/repositories/i_export_service.dart';
+import 'package:stalvi/domain/repositories/i_profile_repository.dart';
 import 'package:stalvi/domain/repositories/i_transaction_repository.dart';
 
-/// Use case that retrieves **all non-deleted transactions** and packages them
-/// into a CSV [ExportResult].
+/// Use case that retrieves **all non-deleted transactions** across every
+/// account and packages them into a CSV [ExportResult].
 ///
-/// Callers should pass the [accountId] to export per-account, or implement a
-/// repository method that fetches across all accounts as needed.
+/// The CSV includes the required columns:
+/// Date, Type, Account, Category, Amount, Currency, and Notes.
 class ExportTransactionsCsvUseCase {
-  final ITransactionRepository _repository;
+  final IProfileRepository _profileRepository;
+  final IAccountRepository _accountRepository;
+  final ICategoryRepository _categoryRepository;
+  final ITransactionRepository _transactionRepository;
   final IExportService _exportService;
 
   const ExportTransactionsCsvUseCase({
-    required ITransactionRepository repository,
+    required IProfileRepository profileRepository,
+    required IAccountRepository accountRepository,
+    required ICategoryRepository categoryRepository,
+    required ITransactionRepository transactionRepository,
     required IExportService exportService,
-  })  : _repository = repository,
+  })  : _profileRepository = profileRepository,
+        _accountRepository = accountRepository,
+        _categoryRepository = categoryRepository,
+        _transactionRepository = transactionRepository,
         _exportService = exportService;
 
-  /// Fetches all transactions for [accountId] and generates a CSV export.
+  /// Fetches all transactions and generates a CSV export.
   ///
   /// Throws an [AppException] subclass on failure.
-  Future<ExportResult> call(String accountId) async {
+  Future<ExportResult> call() async {
+    final profile = await _profileRepository.getFirstProfile();
+    if (profile == null) {
+      throw const ValidationException(
+        message: 'No profile found',
+        code: 'NO_PROFILE',
+      );
+    }
+
+    // Fetch in parallel for performance
+    final results = await Future.wait([
+      _accountRepository.getAccountsByUserId(profile.id),
+      _categoryRepository.getAllCategories(),
+    ]);
+
+    final accounts = results[0] as dynamic;
+    final categories = results[1] as dynamic;
+
     final transactions =
-        await _repository.getTransactionsByAccountId(accountId);
-    return _exportService.generateCsv(transactions);
+        await _transactionRepository.watchAllTransactions().first;
+
+    return _exportService.generateCsv(
+      transactions,
+      accounts: accounts,
+      categories: categories,
+    );
   }
 }

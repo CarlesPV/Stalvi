@@ -194,8 +194,11 @@ void main() {
 
         verify(() => mockExchangeRateRepo.getLocalRates(baseCurrency: 'EUR'))
             .called(1);
-        verifyNever(() => mockExchangeRateRepo.getLatestRates(
-            baseCurrency: any(named: 'baseCurrency')));
+        verifyNever(
+          () => mockExchangeRateRepo.getLatestRates(
+            baseCurrency: any(named: 'baseCurrency'),
+          ),
+        );
         verify(() => mockTransactionRepo.createTransaction(any())).called(1);
       });
 

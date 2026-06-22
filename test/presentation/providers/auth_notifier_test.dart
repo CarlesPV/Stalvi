@@ -26,7 +26,6 @@ class FakeCreateProfileParams extends Fake implements CreateProfileParams {}
 void main() {
   late MockSecureStorageManager mockSecureStorage;
   late MockCreateProfileUseCase mockCreateProfileUseCase;
-  late MockInitializeDefaultDataUseCase mockInitializeDefaultDataUseCase;
   late MockBiometricAuthService mockBiometricAuth;
 
   setUpAll(() {
@@ -36,7 +35,6 @@ void main() {
   setUp(() {
     mockSecureStorage = MockSecureStorageManager();
     mockCreateProfileUseCase = MockCreateProfileUseCase();
-    mockInitializeDefaultDataUseCase = MockInitializeDefaultDataUseCase();
     mockBiometricAuth = MockBiometricAuthService();
 
     // Default stubbing

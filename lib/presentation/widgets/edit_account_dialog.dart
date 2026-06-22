@@ -458,7 +458,7 @@ class _EditAccountDialogState extends ConsumerState<EditAccountDialog> {
 
               // Currency Selector (read-only — immutable after creation)
               DropdownButtonFormField<String>(
-                value: widget.account.currency,
+                initialValue: widget.account.currency,
                 decoration: InputDecoration(
                   labelText: l10n.labelCurrency,
                   border: OutlineInputBorder(

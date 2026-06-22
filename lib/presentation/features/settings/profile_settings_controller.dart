@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:stalvi/domain/entities/profile.dart';
+import 'package:stalvi/domain/repositories/i_export_service.dart';
 import 'package:stalvi/domain/usecases/update_credentials_usecase.dart';
 import 'package:stalvi/presentation/providers/repository_providers.dart';
 
@@ -189,6 +190,69 @@ class ProfileSettingsController extends StateNotifier<ProfileSettingsState> {
       final useCase = _ref.read(wipeAllDataUseCaseProvider);
       await useCase.execute();
       state = state.copyWith(isLoading: false);
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: e.toString());
+      rethrow;
+    }
+  }
+
+  /// Exports all user data as an AES-256-CBC-encrypted JSON backup.
+  ///
+  /// Returns the [ExportResult] on success; throws on failure.
+  Future<ExportResult> exportEncryptedBackup({required String password}) async {
+    state = state.copyWith(isLoading: true, error: null);
+    try {
+      final useCase = _ref.read(exportEncryptedJsonUseCaseProvider);
+      final result = await useCase.call(password: password);
+      state = state.copyWith(isLoading: false);
+      return result;
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: e.toString());
+      rethrow;
+    }
+  }
+
+  /// Restores the database from an encrypted JSON backup file.
+  ///
+  /// ⚠️ Destructive: overwrites all existing data.
+  Future<void> importEncryptedBackup(
+    List<int> fileBytes, {
+    required String password,
+  }) async {
+    state = state.copyWith(isLoading: true, error: null);
+    try {
+      final useCase = _ref.read(importEncryptedJsonUseCaseProvider);
+      await useCase.call(fileBytes, password: password);
+      state = state.copyWith(isLoading: false);
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: e.toString());
+      rethrow;
+    }
+  }
+
+  /// Exports all transactions to a CSV file.
+  Future<ExportResult> exportTransactionsCsv() async {
+    state = state.copyWith(isLoading: true, error: null);
+    try {
+      final useCase = _ref.read(exportTransactionsCsvUseCaseProvider);
+      final result = await useCase.call();
+      state = state.copyWith(isLoading: false);
+      return result;
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: e.toString());
+      rethrow;
+    }
+  }
+
+  /// Exports the current month's transactions as a PDF report.
+  Future<ExportResult> exportMonthlyPdf() async {
+    state = state.copyWith(isLoading: true, error: null);
+    try {
+      final useCase = _ref.read(exportMonthlyPdfUseCaseProvider);
+      final currency = state.profile?.defaultCurrency ?? 'EUR';
+      final result = await useCase.call(targetCurrency: currency);
+      state = state.copyWith(isLoading: false);
+      return result;
     } catch (e) {
       state = state.copyWith(isLoading: false, error: e.toString());
       rethrow;

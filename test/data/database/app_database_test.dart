@@ -2,7 +2,6 @@ import 'dart:ffi';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:drift/native.dart';
 import 'package:stalvi/data/database/app_database.dart';
-import 'package:stalvi/data/database/tables/account_table.dart';
 import 'package:stalvi/data/database/tables/category_table.dart';
 // ignore: depend_on_referenced_packages
 import 'package:sqlite3/open.dart';

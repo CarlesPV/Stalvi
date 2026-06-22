@@ -1078,5 +1078,114 @@
         "type": "String"
       }
     }
+  },
+  "dataPortabilityTitle": "Portabilidad de datos",
+  "@dataPortabilityTitle": {
+    "description": "Section title for data export and import options"
+  },
+  "exportEncryptedBackup": "Exportar copia de seguridad cifrada",
+  "@exportEncryptedBackup": {
+    "description": "Button label to export an encrypted full backup"
+  },
+  "exportEncryptedBackupSubtitle": "Exporta todos los datos como archivo de copia de seguridad protegido con contraseña",
+  "@exportEncryptedBackupSubtitle": {
+    "description": "Subtitle for the encrypted backup export option"
+  },
+  "importRestoreBackup": "Importar / Restaurar copia de seguridad",
+  "@importRestoreBackup": {
+    "description": "Button label to import and restore from an encrypted backup"
+  },
+  "importRestoreBackupSubtitle": "Restaura tus datos desde un archivo de copia de seguridad de Konta",
+  "@importRestoreBackupSubtitle": {
+    "description": "Subtitle for the import/restore option"
+  },
+  "exportTransactionsCsv": "Exportar transacciones (CSV)",
+  "@exportTransactionsCsv": {
+    "description": "Button label to export all transactions as a CSV file"
+  },
+  "exportTransactionsCsvSubtitle": "Exporta todas las transacciones a un archivo CSV compatible con hojas de cálculo",
+  "@exportTransactionsCsvSubtitle": {
+    "description": "Subtitle for the CSV export option"
+  },
+  "exportMonthlyPdf": "Exportar informe mensual (PDF)",
+  "@exportMonthlyPdf": {
+    "description": "Button label to export the current month's report as a PDF"
+  },
+  "exportMonthlyPdfSubtitle": "Genera un resumen en PDF para el mes actual",
+  "@exportMonthlyPdfSubtitle": {
+    "description": "Subtitle for the PDF monthly report export option"
+  },
+  "exportPasswordDialogTitle": "Establecer contraseña de copia de seguridad",
+  "@exportPasswordDialogTitle": {
+    "description": "Title for the dialog where user sets a backup password"
+  },
+  "exportPasswordDialogSubtitle": "Esta contraseña será necesaria para restaurar la copia de seguridad. Guárdala en un lugar seguro.",
+  "@exportPasswordDialogSubtitle": {
+    "description": "Subtitle in the export password dialog"
+  },
+  "exportPasswordLabel": "Contraseña de copia de seguridad",
+  "@exportPasswordLabel": {
+    "description": "Label for the backup password input field"
+  },
+  "exportPasswordConfirmLabel": "Confirmar contraseña",
+  "@exportPasswordConfirmLabel": {
+    "description": "Label for the confirm password input field"
+  },
+  "exportPasswordMismatch": "Las contraseñas no coinciden.",
+  "@exportPasswordMismatch": {
+    "description": "Error when export passwords do not match"
+  },
+  "exportPasswordTooShort": "La contraseña debe tener al menos 6 caracteres.",
+  "@exportPasswordTooShort": {
+    "description": "Error when export password is too short"
+  },
+  "importPasswordDialogTitle": "Introducir contraseña de copia de seguridad",
+  "@importPasswordDialogTitle": {
+    "description": "Title for the dialog where user enters restore password"
+  },
+  "importPasswordDialogSubtitle": "Introduce la contraseña utilizada al crear la copia de seguridad.",
+  "@importPasswordDialogSubtitle": {
+    "description": "Subtitle in the import password dialog"
+  },
+  "importConfirmTitle": "¿Restaurar copia de seguridad?",
+  "@importConfirmTitle": {
+    "description": "Title for the import confirmation dialog"
+  },
+  "importConfirmMessage": "Restaurar una copia de seguridad sobreescribirá todos los datos actuales. Esta acción no se puede deshacer. ¿Estás seguro?",
+  "@importConfirmMessage": {
+    "description": "Warning message in the import confirmation dialog"
+  },
+  "exportSuccess": "Exportación exitosa. Archivo guardado.",
+  "@exportSuccess": {
+    "description": "Snackbar message when export succeeds"
+  },
+  "importSuccess": "Copia de seguridad restaurada correctamente. Por favor, reinicia la aplicación.",
+  "@importSuccess": {
+    "description": "Snackbar message when import/restore succeeds"
+  },
+  "exportFailed": "Error al exportar. Por favor, inténtalo de nuevo.",
+  "@exportFailed": {
+    "description": "Snackbar message when export fails"
+  },
+  "importFailed": "Error al restaurar. Comprueba la contraseña y el archivo.",
+  "@importFailed": {
+    "description": "Snackbar message when import/restore fails"
+  },
+  "btnExport": "Exportar",
+  "@btnExport": {
+    "description": "Generic export button label"
+  },
+  "btnRestore": "Restaurar",
+  "@btnRestore": {
+    "description": "Generic restore button label"
+  },
+  "statisticsOtherCategories": "Otras ({count} categorías)",
+  "@statisticsOtherCategories": {
+    "description": "Label for other categories slice in statistics charts when count exceeds display limit",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   }
 }

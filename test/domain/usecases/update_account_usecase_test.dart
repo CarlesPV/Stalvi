@@ -54,7 +54,8 @@ void main() {
       when(() => mockAccountRepository.getAccountById(existingAccount.id))
           .thenAnswer((_) async => existingAccount);
       when(() => mockAccountRepository.updateAccount(any())).thenAnswer(
-          (invocation) async => invocation.positionalArguments[0] as Account);
+        (invocation) async => invocation.positionalArguments[0] as Account,
+      );
 
       // Act
       final result = await useCase.execute(params);
@@ -86,11 +87,13 @@ void main() {
       // Act & Assert
       expect(
         () => useCase.execute(params),
-        throwsA(isA<ValidationException>().having(
-          (e) => e.code,
-          'code',
-          'INVALID_NAME',
-        )),
+        throwsA(
+          isA<ValidationException>().having(
+            (e) => e.code,
+            'code',
+            'INVALID_NAME',
+          ),
+        ),
       );
       verifyNever(() => mockAccountRepository.getAccountById(any()));
       verifyNever(() => mockAccountRepository.updateAccount(any()));
@@ -113,11 +116,13 @@ void main() {
       // Act & Assert
       expect(
         () => useCase.execute(params),
-        throwsA(isA<NotFoundException>().having(
-          (e) => e.code,
-          'code',
-          'ACCOUNT_NOT_FOUND',
-        )),
+        throwsA(
+          isA<NotFoundException>().having(
+            (e) => e.code,
+            'code',
+            'ACCOUNT_NOT_FOUND',
+          ),
+        ),
       );
       verify(() => mockAccountRepository.getAccountById(existingAccount.id))
           .called(1);

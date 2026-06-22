@@ -162,11 +162,12 @@
   - [x] Map `ValidationException` code `INVALID_NAME` to `l10n.createAccountErrorName` inside `EditAccountDialog` to ensure localized validation errors are shown.
   - [x] Compile and verify 100% passing rate on the complete 361 tests suite and static analysis checks.
 
-## Current Phase
-- [ ] **Phase 23: Synchronization, Backups, and Import/Export Validations**
-  - [ ] Implement cloud synchronization options.
-  - [ ] Add encrypted automatic local backup features.
-  - [ ] Validate cross-platform imports/exports.
+- [x] **Phase 23: Backups, and Import/Export Validations**
+  - [x] Add encrypted automatic local backup features using AES-256-CBC with keys derived via PBKDF2-HMAC-SHA256 from user-defined passwords.
+  - [x] Implement complete database restoration from encrypted JSON backups (`IImportService` and `ImportServiceImpl`), mapping to categories, tags, accounts, and transactions.
+  - [x] Ensure atomic table wipes (transactions, accounts, categories, tags) inside single Drift database transactions before importing, keeping profiles intact.
+  - [x] Validate cross-platform imports/exports with comprehensive test suites covering CSV parsing, encryption/decryption envelopes, PDF statements, and full DB restorations.
+  - [x] Ensure 100% build health, clean lint checks (0 issues on `flutter analyze`), and successfully compile and execute all 360+ tests suite.
 
 ## Upcoming Phases
 - [ ] **Phase 24: Integration Testing (E2E), final security audit, and store preparation.**

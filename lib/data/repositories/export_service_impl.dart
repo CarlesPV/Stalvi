@@ -9,7 +9,10 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
 import 'package:stalvi/core/errors/app_exceptions.dart';
+import 'package:stalvi/domain/entities/account.dart';
+import 'package:stalvi/domain/entities/category.dart';
 import 'package:stalvi/domain/entities/period_summary.dart';
+import 'package:stalvi/domain/entities/tag.dart';
 import 'package:stalvi/domain/entities/transaction.dart';
 import 'package:stalvi/domain/repositories/i_export_service.dart';
 
@@ -22,13 +25,22 @@ class ExportServiceImpl implements IExportService {
   // ───────────────────────────── CSV ──────────────────────────────────────
 
   @override
-  Future<ExportResult> generateCsv(List<Transaction> transactions) async {
+  Future<ExportResult> generateCsv(
+    List<Transaction> transactions, {
+    List<Account> accounts = const [],
+    List<Category> categories = const [],
+  }) async {
     try {
       final buffer = StringBuffer();
 
-      // Header row
+      // Build lookup maps for name resolution
+      final accountMap = {for (final a in accounts) a.id: a.name};
+      final categoryMap = {for (final c in categories) c.id: c.name};
+
+      // Header row – required fields: Date, Type, Account, Category,
+      // Amount, Currency, Notes
       buffer.writeln(
-        'id,date,type,amount,currency,converted_amount,exchange_rate,account_id,category_id,notes,created_at,modified_at',
+        'Date,Type,Account,Category,Amount,Currency,Notes,converted_amount,exchange_rate,id,created_at,modified_at',
       );
 
       final dateFormat = DateFormat('yyyy-MM-dd');
@@ -36,20 +48,24 @@ class ExportServiceImpl implements IExportService {
       for (final tx in transactions) {
         buffer.writeln(
           [
-            _csvField(tx.id),
             _csvField(dateFormat.format(tx.date)),
             _csvField(tx.type.name),
+            _csvField(accountMap[tx.accountId] ?? tx.accountId),
+            _csvField(
+              tx.categoryId != null
+                  ? (categoryMap[tx.categoryId!] ?? tx.categoryId!)
+                  : '',
+            ),
             _csvField(_centsToDecimal(tx.amount)),
             _csvField(tx.originalCurrency),
+            _csvField(tx.notes ?? ''),
             _csvField(
               tx.convertedAmount != null
                   ? _centsToDecimal(tx.convertedAmount!)
                   : '',
             ),
             _csvField(tx.exchangeRate?.toString() ?? ''),
-            _csvField(tx.accountId),
-            _csvField(tx.categoryId ?? ''),
-            _csvField(tx.notes ?? ''),
+            _csvField(tx.id),
             _csvField(tx.createdAt.toIso8601String()),
             _csvField(tx.modifiedAt.toIso8601String()),
           ].join(','),
@@ -59,7 +75,7 @@ class ExportServiceImpl implements IExportService {
       final bytes = utf8.encode(buffer.toString());
 
       final filename =
-          'stalvi_export_${DateFormat('yyyyMMdd_HHmmss').format(DateTime.now())}.csv';
+          'konta_export_${DateFormat('yyyyMMdd_HHmmss').format(DateTime.now())}.csv';
 
       return ExportResult(
         bytes: bytes,
@@ -78,8 +94,11 @@ class ExportServiceImpl implements IExportService {
   // ──────────────────────── Encrypted JSON ─────────────────────────────────
 
   @override
-  Future<ExportResult> generateEncryptedJson(
-    List<Transaction> transactions, {
+  Future<ExportResult> generateEncryptedJson({
+    required List<Account> accounts,
+    required List<Category> categories,
+    required List<Tag> tags,
+    required List<Transaction> transactions,
     required String password,
   }) async {
     if (password.isEmpty) {
@@ -90,10 +109,13 @@ class ExportServiceImpl implements IExportService {
     }
 
     try {
-      // 1. Build the JSON payload
+      // 1. Build the full JSON payload with all entities
       final payload = jsonEncode({
         'exportedAt': DateTime.now().toIso8601String(),
-        'version': 1,
+        'version': 2,
+        'accounts': accounts.map(_accountToMap).toList(),
+        'categories': categories.map(_categoryToMap).toList(),
+        'tags': tags.map(_tagToMap).toList(),
         'transactions': transactions.map(_transactionToMap).toList(),
       });
 
@@ -117,7 +139,7 @@ class ExportServiceImpl implements IExportService {
       envelope.setRange(32, envelope.length, encrypted.bytes);
 
       final filename =
-          'stalvi_encrypted_${DateFormat('yyyyMMdd_HHmmss').format(DateTime.now())}.enc';
+          'konta_backup_${DateFormat('yyyyMMdd_HHmmss').format(DateTime.now())}.kbak';
 
       return ExportResult(
         bytes: envelope,
@@ -135,6 +157,56 @@ class ExportServiceImpl implements IExportService {
     }
   }
 
+  @override
+  Future<String> decryptJsonPayload(
+    List<int> encryptedBytes, {
+    required String password,
+  }) async {
+    if (password.isEmpty) {
+      throw const ExportException(
+        message: 'Password must not be empty for decryption',
+        code: 'EMPTY_PASSWORD',
+      );
+    }
+
+    try {
+      if (encryptedBytes.length < 33) {
+        throw const ExportException(
+          message: 'File is too short to be a valid Konta backup',
+          code: 'INVALID_ENVELOPE',
+        );
+      }
+
+      final bytes = Uint8List.fromList(encryptedBytes);
+
+      // Extract envelope parts: salt (16) || iv (16) || ciphertext
+      final salt = bytes.sublist(0, 16);
+      final ivBytes = bytes.sublist(16, 32);
+      final ciphertext = bytes.sublist(32);
+
+      final derivedKey = _deriveKey(password, salt);
+      final iv = enc.IV(ivBytes);
+      final encrypter = enc.Encrypter(
+        enc.AES(enc.Key(derivedKey), mode: enc.AESMode.cbc),
+      );
+
+      final decrypted = encrypter.decrypt(
+        enc.Encrypted(Uint8List.fromList(ciphertext)),
+        iv: iv,
+      );
+
+      return decrypted;
+    } on ExportException {
+      rethrow;
+    } catch (e) {
+      throw ExportException(
+        message: 'Failed to decrypt backup. Check your password and try again.',
+        code: 'DECRYPTION_FAILED',
+        details: e,
+      );
+    }
+  }
+
   // ─────────────────────────────── PDF ────────────────────────────────────
 
   @override
@@ -142,8 +214,14 @@ class ExportServiceImpl implements IExportService {
     List<Transaction> transactions, {
     required PeriodSummary summary,
     required DateTime month,
+    List<Account> accounts = const [],
+    List<Category> categories = const [],
   }) async {
     try {
+      // Build lookup maps for name resolution
+      final accountMap = {for (final a in accounts) a.id: a.name};
+      final categoryMap = {for (final c in categories) c.id: c.name};
+
       final monthLabel = DateFormat('MMMM yyyy').format(month);
       final pdf = pw.Document();
 
@@ -159,7 +237,7 @@ class ExportServiceImpl implements IExportService {
                 mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                 children: [
                   pw.Text(
-                    'Stalvi – Monthly Report',
+                    'Konta – Monthly Report',
                     style: pw.TextStyle(
                       fontSize: 20,
                       fontWeight: pw.FontWeight.bold,
@@ -220,29 +298,43 @@ class ExportServiceImpl implements IExportService {
             ),
             pw.SizedBox(height: 8),
 
-            // ── Transactions table ──
+            // ── Transactions table with all required fields ──
             pw.TableHelper.fromTextArray(
               border: pw.TableBorder.all(color: PdfColors.grey400, width: 0.5),
-              headers: ['Date', 'Type', 'Amount', 'Currency', 'Notes'],
+              headers: [
+                'Date',
+                'Type',
+                'Account',
+                'Category',
+                'Amount',
+                'Currency',
+                'Notes',
+              ],
               headerStyle: pw.TextStyle(
                 fontWeight: pw.FontWeight.bold,
-                fontSize: 10,
+                fontSize: 9,
               ),
-              cellStyle: const pw.TextStyle(fontSize: 9),
+              cellStyle: const pw.TextStyle(fontSize: 8),
               headerDecoration: const pw.BoxDecoration(
                 color: PdfColors.grey300,
               ),
               cellAlignments: {
                 0: pw.Alignment.centerLeft,
                 1: pw.Alignment.center,
-                2: pw.Alignment.centerRight,
-                3: pw.Alignment.center,
-                4: pw.Alignment.centerLeft,
+                2: pw.Alignment.centerLeft,
+                3: pw.Alignment.centerLeft,
+                4: pw.Alignment.centerRight,
+                5: pw.Alignment.center,
+                6: pw.Alignment.centerLeft,
               },
               data: transactions.map((tx) {
                 return [
                   DateFormat('dd/MM/yyyy').format(tx.date),
                   tx.type.name,
+                  accountMap[tx.accountId] ?? tx.accountId,
+                  tx.categoryId != null
+                      ? (categoryMap[tx.categoryId!] ?? '')
+                      : '-',
                   _centsToDecimal(tx.amount),
                   tx.originalCurrency,
                   tx.notes ?? '-',
@@ -252,7 +344,7 @@ class ExportServiceImpl implements IExportService {
 
             pw.SizedBox(height: 12),
             pw.Text(
-              'Generated by Stalvi on ${DateFormat('dd/MM/yyyy HH:mm').format(DateTime.now())}',
+              'Generated by Konta on ${DateFormat('dd/MM/yyyy HH:mm').format(DateTime.now())}',
               style: const pw.TextStyle(fontSize: 8, color: PdfColors.grey600),
             ),
           ],
@@ -260,8 +352,7 @@ class ExportServiceImpl implements IExportService {
       );
 
       final bytes = await pdf.save();
-      final filename =
-          'stalvi_report_${DateFormat('yyyyMM').format(month)}.pdf';
+      final filename = 'konta_report_${DateFormat('yyyyMM').format(month)}.pdf';
 
       return ExportResult(
         bytes: bytes,
@@ -298,6 +389,44 @@ class ExportServiceImpl implements IExportService {
     return '$major.$minor';
   }
 
+  /// Serialises an [Account] to a plain [Map] for JSON encoding.
+  static Map<String, dynamic> _accountToMap(Account a) => {
+        'id': a.id,
+        'user_id': a.userId,
+        'name': a.name,
+        'type': a.type.name,
+        'initial_balance': a.initialBalance,
+        'currency': a.currency,
+        'color': a.color,
+        'icon': a.icon,
+        'is_default': a.isDefault,
+        'is_deleted': a.isDeleted,
+        'created_at': a.createdAt.toIso8601String(),
+        'modified_at': a.modifiedAt.toIso8601String(),
+      };
+
+  /// Serialises a [Category] to a plain [Map] for JSON encoding.
+  static Map<String, dynamic> _categoryToMap(Category c) => {
+        'id': c.id,
+        'name': c.name,
+        'associated_type': c.associatedType?.name,
+        'icon': c.icon,
+        'color': c.color,
+        'parent_category_id': c.parentCategoryId,
+        'is_deleted': c.isDeleted,
+        'created_at': c.createdAt.toIso8601String(),
+        'modified_at': c.modifiedAt.toIso8601String(),
+      };
+
+  /// Serialises a [Tag] to a plain [Map] for JSON encoding.
+  static Map<String, dynamic> _tagToMap(Tag t) => {
+        'id': t.id,
+        'name': t.name,
+        'is_deleted': t.isDeleted,
+        'created_at': t.createdAt.toIso8601String(),
+        'modified_at': t.modifiedAt.toIso8601String(),
+      };
+
   /// Serialises a [Transaction] to a plain [Map] for JSON encoding.
   static Map<String, dynamic> _transactionToMap(Transaction tx) => {
         'id': tx.id,
@@ -310,6 +439,8 @@ class ExportServiceImpl implements IExportService {
         'original_currency': tx.originalCurrency,
         'converted_amount': tx.convertedAmount,
         'exchange_rate': tx.exchangeRate,
+        'exchange_rate_snapshot': tx.exchangeRateSnapshot,
+        'transfer_id': tx.transferId,
         'created_at': tx.createdAt.toIso8601String(),
         'modified_at': tx.modifiedAt.toIso8601String(),
       };
@@ -385,13 +516,4 @@ class ExportServiceImpl implements IExportService {
       ],
     );
   }
-}
-
-/// Exception thrown when an export operation fails.
-class ExportException extends AppException {
-  const ExportException({
-    required super.message,
-    super.code,
-    super.details,
-  });
 }

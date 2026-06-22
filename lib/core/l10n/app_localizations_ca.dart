@@ -831,4 +831,97 @@ class AppLocalizationsCa extends AppLocalizations {
   String budgetSpentOf(String spent, String target) {
     return '$spent de $target';
   }
+
+  @override
+  String get dataPortabilityTitle => 'Portabilitat de dades';
+
+  @override
+  String get exportEncryptedBackup => 'Exportar còpia de seguretat xifrada';
+
+  @override
+  String get exportEncryptedBackupSubtitle =>
+      'Exporta totes les dades com a arxiu de còpia de seguretat protegit amb contrasenya';
+
+  @override
+  String get importRestoreBackup => 'Importar / Restaurar còpia de seguretat';
+
+  @override
+  String get importRestoreBackupSubtitle =>
+      'Restaura les teves dades des d\'un arxiu de còpia de seguretat de Konta';
+
+  @override
+  String get exportTransactionsCsv => 'Exportar transaccions (CSV)';
+
+  @override
+  String get exportTransactionsCsvSubtitle =>
+      'Exporta totes les transaccions a un arxiu CSV compatible amb fulls de càlcul';
+
+  @override
+  String get exportMonthlyPdf => 'Exportar informe mensual (PDF)';
+
+  @override
+  String get exportMonthlyPdfSubtitle =>
+      'Genera un resum en PDF per al mes actual';
+
+  @override
+  String get exportPasswordDialogTitle =>
+      'Establir contrasenya de còpia de seguretat';
+
+  @override
+  String get exportPasswordDialogSubtitle =>
+      'Aquesta contrasenya serà necessària per restaurar la còpia de seguretat. Guarda-la en un lloc segur.';
+
+  @override
+  String get exportPasswordLabel => 'Contrasenya de còpia de seguretat';
+
+  @override
+  String get exportPasswordConfirmLabel => 'Confirmar contrasenya';
+
+  @override
+  String get exportPasswordMismatch => 'Les contrasenyes no coincideixen.';
+
+  @override
+  String get exportPasswordTooShort =>
+      'La contrasenya ha de tenir almenys 6 caràcters.';
+
+  @override
+  String get importPasswordDialogTitle =>
+      'Introduir contrasenya de còpia de seguretat';
+
+  @override
+  String get importPasswordDialogSubtitle =>
+      'Introdueix la contrasenya que vas fer servir quan vas crear la còpia de seguretat.';
+
+  @override
+  String get importConfirmTitle => 'Restaurar còpia de seguretat?';
+
+  @override
+  String get importConfirmMessage =>
+      'Restaurar una còpia de seguretat sobreescriurà totes les dades actuals. Aquesta acció no es pot desfer. Estàs segur?';
+
+  @override
+  String get exportSuccess => 'Exportació correcta. Arxiu desat.';
+
+  @override
+  String get importSuccess =>
+      'Còpia de seguretat restaurada correctament. Si us plau, reinicia l\'aplicació.';
+
+  @override
+  String get exportFailed =>
+      'Error en exportar. Si us plau, torna-ho a provar.';
+
+  @override
+  String get importFailed =>
+      'Error en restaurar. Comprova la contrasenya i l\'arxiu.';
+
+  @override
+  String get btnExport => 'Exportar';
+
+  @override
+  String get btnRestore => 'Restaurar';
+
+  @override
+  String statisticsOtherCategories(int count) {
+    return 'Altres ($count categories)';
+  }
 }
