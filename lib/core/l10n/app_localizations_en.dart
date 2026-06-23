@@ -824,6 +824,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dataPortabilityTitle => 'Data Portability';
 
   @override
+  String get settingsDataManagement => 'Data Management';
+
+  @override
   String get exportEncryptedBackup => 'Export Encrypted Backup';
 
   @override
@@ -835,7 +838,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get importRestoreBackupSubtitle =>
-      'Restore your data from a Konta backup file';
+      'Restore your data from a Stalvi backup file';
 
   @override
   String get exportTransactionsCsv => 'Export Transactions (CSV)';

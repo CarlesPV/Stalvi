@@ -17,6 +17,7 @@ import 'package:stalvi/presentation/providers/auth_notifier.dart';
 import 'package:stalvi/presentation/providers/locale_provider.dart';
 import 'package:stalvi/presentation/features/settings/profile_settings_screen.dart';
 import 'package:stalvi/presentation/features/settings/categories_tags_management_screen.dart';
+import 'package:stalvi/presentation/features/settings/data_management_screen.dart';
 import 'package:stalvi/presentation/features/recycle_bin/recycle_bin_screen.dart';
 import 'package:stalvi/presentation/widgets/empty_state_widget.dart';
 import 'package:stalvi/presentation/providers/discreet_mode_provider.dart';
@@ -1097,7 +1098,7 @@ class _SettingsSkeletonTab extends ConsumerWidget {
 
     return ListView.separated(
       padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
-      itemCount: 5,
+      itemCount: 6,
       separatorBuilder: (_, __) => const SizedBox(height: 12),
       itemBuilder: (context, i) {
         if (i == 0) {
@@ -1290,6 +1291,53 @@ class _SettingsSkeletonTab extends ConsumerWidget {
         }
 
         if (i == 4) {
+          return Container(
+            height: 60,
+            decoration: BoxDecoration(
+              color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: InkWell(
+              borderRadius: BorderRadius.circular(14),
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const DataManagementScreen(),
+                  ),
+                );
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.storage_rounded,
+                      color: colorScheme.secondary,
+                      size: 22,
+                    ),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Text(
+                        AppLocalizations.of(context)!.settingsDataManagement,
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.w700,
+                              color: colorScheme.onSurface,
+                            ),
+                      ),
+                    ),
+                    Icon(
+                      Icons.chevron_right_rounded,
+                      color:
+                          colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        }
+
+        if (i == 5) {
           return Container(
             height: 60,
             decoration: BoxDecoration(

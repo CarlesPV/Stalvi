@@ -1,4 +1,4 @@
-/// Contract for the service that restores a full Konta backup from an
+/// Contract for the service that restores a full Stalvi backup from an
 /// encrypted JSON envelope previously produced by [IExportService.generateEncryptedJson].
 ///
 /// The implementation lives in the *data* layer and is responsible for:

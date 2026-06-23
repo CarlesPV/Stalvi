@@ -25,7 +25,9 @@ import 'package:stalvi/presentation/features/transactions/add_transaction_screen
 import 'package:stalvi/core/security/secure_storage_manager.dart';
 import 'package:stalvi/infrastructure/services/biometric_auth_service.dart';
 import 'package:stalvi/presentation/providers/add_transaction_notifier.dart';
+import 'package:stalvi/core/utils/icon_helper.dart';
 import 'package:stalvi/presentation/providers/transaction_filter_provider.dart';
+import 'package:stalvi/presentation/features/settings/data_management_screen.dart';
 
 class MockTransactionRepository extends Mock
     implements ITransactionRepository {}
@@ -336,7 +338,8 @@ void main() {
       expect(find.byType(EmptyStateWidget), findsNothing);
     });
 
-    testWidgets('renders Recycle Bin tile and navigates to RecycleBinScreen',
+    testWidgets(
+        'renders Settings tiles with Data Management in correct order and navigates',
         (WidgetTester tester) async {
       await tester.pumpWidget(
         createTestWidget(
@@ -353,8 +356,40 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 200));
 
-      // Expect to see the Recycle Bin row
-      expect(find.text('Recycle Bin'), findsOneWidget);
+      // Expect to see all settings items
+      final budgetsFinder = find.text('Budgets & Goals');
+      final statsFinder = find.text('Statistics');
+      final catTagsFinder = find.text('Categories & Tags');
+      final profileSettingsFinder = find.text('Profile & Security');
+      final dataManagementFinder = find.text('Data Management');
+      final recycleBinFinder = find.text('Recycle Bin');
+
+      expect(budgetsFinder, findsOneWidget);
+      expect(statsFinder, findsOneWidget);
+      expect(catTagsFinder, findsOneWidget);
+      expect(profileSettingsFinder, findsOneWidget);
+      expect(dataManagementFinder, findsOneWidget);
+      expect(recycleBinFinder, findsOneWidget);
+
+      // Verify the order of items in the list view by checking their Y coordinate
+      final budgetsY = tester.getCenter(budgetsFinder).dy;
+      final statsY = tester.getCenter(statsFinder).dy;
+      final catTagsY = tester.getCenter(catTagsFinder).dy;
+      final profileY = tester.getCenter(profileSettingsFinder).dy;
+      final dataManagementY = tester.getCenter(dataManagementFinder).dy;
+      final recycleBinY = tester.getCenter(recycleBinFinder).dy;
+
+      expect(budgetsY < statsY, true);
+      expect(statsY < catTagsY, true);
+      expect(catTagsY < profileY, true);
+      expect(profileY < dataManagementY, true);
+      expect(dataManagementY < recycleBinY, true);
+
+      // Tap on Data Management and verify it navigates to DataManagementScreen
+      await tester.tap(dataManagementFinder);
+      await tester.pumpAndSettle();
+
+      expect(find.byType(DataManagementScreen), findsOneWidget);
     });
 
     testWidgets(

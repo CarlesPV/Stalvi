@@ -1618,6 +1618,12 @@ abstract class AppLocalizations {
   /// **'Data Portability'**
   String get dataPortabilityTitle;
 
+  /// Settings option for data management
+  ///
+  /// In en, this message translates to:
+  /// **'Data Management'**
+  String get settingsDataManagement;
+
   /// Button label to export an encrypted full backup
   ///
   /// In en, this message translates to:
@@ -1639,7 +1645,7 @@ abstract class AppLocalizations {
   /// Subtitle for the import/restore option
   ///
   /// In en, this message translates to:
-  /// **'Restore your data from a Konta backup file'**
+  /// **'Restore your data from a Stalvi backup file'**
   String get importRestoreBackupSubtitle;
 
   /// Button label to export all transactions as a CSV file

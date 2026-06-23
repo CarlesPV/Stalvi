@@ -836,6 +836,9 @@ class AppLocalizationsCa extends AppLocalizations {
   String get dataPortabilityTitle => 'Portabilitat de dades';
 
   @override
+  String get settingsDataManagement => 'Gestió de Dades';
+
+  @override
   String get exportEncryptedBackup => 'Exportar còpia de seguretat xifrada';
 
   @override
@@ -847,7 +850,7 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get importRestoreBackupSubtitle =>
-      'Restaura les teves dades des d\'un arxiu de còpia de seguretat de Konta';
+      'Restaura les teves dades des d\'un arxiu de còpia de seguretat de Stalvi';
 
   @override
   String get exportTransactionsCsv => 'Exportar transaccions (CSV)';

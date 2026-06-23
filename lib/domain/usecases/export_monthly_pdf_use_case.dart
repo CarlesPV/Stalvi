@@ -2,8 +2,8 @@ import 'package:stalvi/domain/repositories/i_account_repository.dart';
 import 'package:stalvi/domain/repositories/i_category_repository.dart';
 import 'package:stalvi/domain/repositories/i_export_service.dart';
 import 'package:stalvi/domain/repositories/i_profile_repository.dart';
-import 'package:stalvi/domain/repositories/i_statistics_repository.dart';
 import 'package:stalvi/domain/repositories/i_transaction_repository.dart';
+import 'package:stalvi/domain/use_cases/statistics/get_period_summary_use_case.dart';
 
 /// Use case that generates a PDF summary report for the **current calendar month**.
 ///
@@ -16,7 +16,7 @@ class ExportMonthlyPdfUseCase {
   final IAccountRepository _accountRepository;
   final ICategoryRepository _categoryRepository;
   final ITransactionRepository _transactionRepository;
-  final IStatisticsRepository _statisticsRepository;
+  final GetPeriodSummaryUseCase _getPeriodSummaryUseCase;
   final IExportService _exportService;
 
   const ExportMonthlyPdfUseCase({
@@ -24,13 +24,13 @@ class ExportMonthlyPdfUseCase {
     required IAccountRepository accountRepository,
     required ICategoryRepository categoryRepository,
     required ITransactionRepository transactionRepository,
-    required IStatisticsRepository statisticsRepository,
+    required GetPeriodSummaryUseCase getPeriodSummaryUseCase,
     required IExportService exportService,
   })  : _profileRepository = profileRepository,
         _accountRepository = accountRepository,
         _categoryRepository = categoryRepository,
         _transactionRepository = transactionRepository,
-        _statisticsRepository = statisticsRepository,
+        _getPeriodSummaryUseCase = getPeriodSummaryUseCase,
         _exportService = exportService;
 
   /// Generates a monthly PDF report.
@@ -61,7 +61,7 @@ class ExportMonthlyPdfUseCase {
     final results = await Future.wait([
       _accountRepository.getAccountsByUserId(userId),
       _categoryRepository.getAllCategories(),
-      _statisticsRepository.getPeriodSummary(
+      _getPeriodSummaryUseCase.execute(
         startDate: startDate,
         endDate: endDate,
         targetCurrency: targetCurrency,

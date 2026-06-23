@@ -1,10 +1,14 @@
+import "package:flutter/foundation.dart" hide Category;
 import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:crypto/crypto.dart';
 import 'package:encrypt/encrypt.dart' as enc;
 import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
@@ -16,13 +20,38 @@ import 'package:stalvi/domain/entities/tag.dart';
 import 'package:stalvi/domain/entities/transaction.dart';
 import 'package:stalvi/domain/repositories/i_export_service.dart';
 
-/// Concrete implementation of [IExportService].
-///
-/// Separation of concerns:
-/// * This class **only generates bytes** — it never touches the file system.
-/// * File writing, sharing, and cleanup are handled by [TempFileManager].
 class ExportServiceImpl implements IExportService {
-  // ───────────────────────────── CSV ──────────────────────────────────────
+  Future<String> _saveFile(List<int> bytes, String filename) async {
+    if (Platform.isAndroid) {
+      // In Android 13+, WRITE_EXTERNAL_STORAGE is deprecated and not needed for Downloads if using MediaStore,
+      // but to use File IO in /storage/emulated/0/Download we might need it or just try without.
+      var status = await Permission.storage.status;
+      if (!status.isGranted) {
+        await Permission.storage.request();
+      }
+    }
+
+    Directory? dir;
+    if (Platform.isAndroid) {
+      dir = Directory('/storage/emulated/0/Download');
+      if (!await dir.exists()) {
+        dir = await getExternalStorageDirectory();
+      }
+    } else {
+      dir = await getDownloadsDirectory();
+      dir ??= await getApplicationDocumentsDirectory();
+    }
+
+    if (dir == null) {
+      throw const ExportException(
+          message: 'Could not find a directory to save the file',
+          code: 'NO_DIRECTORY');
+    }
+
+    final file = File('${dir.path}/$filename');
+    await file.writeAsBytes(bytes, flush: true);
+    return file.path;
+  }
 
   @override
   Future<ExportResult> generateCsv(
@@ -32,55 +61,45 @@ class ExportServiceImpl implements IExportService {
   }) async {
     try {
       final buffer = StringBuffer();
-
-      // Build lookup maps for name resolution
       final accountMap = {for (final a in accounts) a.id: a.name};
       final categoryMap = {for (final c in categories) c.id: c.name};
 
-      // Header row – required fields: Date, Type, Account, Category,
-      // Amount, Currency, Notes
       buffer.writeln(
-        'Date,Type,Account,Category,Amount,Currency,Notes,converted_amount,exchange_rate,id,created_at,modified_at',
-      );
+          'Date,Type,Account,Category,Amount,Currency,Notes,converted_amount,exchange_rate,id,created_at,modified_at');
 
       final dateFormat = DateFormat('yyyy-MM-dd');
 
       for (final tx in transactions) {
-        buffer.writeln(
-          [
-            _csvField(dateFormat.format(tx.date)),
-            _csvField(tx.type.name),
-            _csvField(accountMap[tx.accountId] ?? tx.accountId),
-            _csvField(
-              tx.categoryId != null
-                  ? (categoryMap[tx.categoryId!] ?? tx.categoryId!)
-                  : '',
-            ),
-            _csvField(_centsToDecimal(tx.amount)),
-            _csvField(tx.originalCurrency),
-            _csvField(tx.notes ?? ''),
-            _csvField(
-              tx.convertedAmount != null
-                  ? _centsToDecimal(tx.convertedAmount!)
-                  : '',
-            ),
-            _csvField(tx.exchangeRate?.toString() ?? ''),
-            _csvField(tx.id),
-            _csvField(tx.createdAt.toIso8601String()),
-            _csvField(tx.modifiedAt.toIso8601String()),
-          ].join(','),
-        );
+        buffer.writeln([
+          _csvField(dateFormat.format(tx.date)),
+          _csvField(tx.type.name),
+          _csvField(accountMap[tx.accountId] ?? tx.accountId),
+          _csvField(tx.categoryId != null
+              ? (categoryMap[tx.categoryId!] ?? tx.categoryId!)
+              : ''),
+          _csvField(_centsToDecimal(tx.amount)),
+          _csvField(tx.originalCurrency),
+          _csvField(tx.notes ?? ''),
+          _csvField(tx.convertedAmount != null
+              ? _centsToDecimal(tx.convertedAmount!)
+              : ''),
+          _csvField(tx.exchangeRate?.toString() ?? ''),
+          _csvField(tx.id),
+          _csvField(tx.createdAt.toIso8601String()),
+          _csvField(tx.modifiedAt.toIso8601String()),
+        ].join(','));
       }
 
       final bytes = utf8.encode(buffer.toString());
-
       final filename =
-          'konta_export_${DateFormat('yyyyMMdd_HHmmss').format(DateTime.now())}.csv';
+          'stalvi_export_${DateFormat('yyyyMMdd_HHmmss').format(DateTime.now())}.csv';
+      final savedPath = await _saveFile(bytes, filename);
 
       return ExportResult(
         bytes: bytes,
         filename: filename,
         mimeType: 'text/csv',
+        filePath: savedPath,
       );
     } catch (e) {
       throw ExportException(
@@ -90,8 +109,6 @@ class ExportServiceImpl implements IExportService {
       );
     }
   }
-
-  // ──────────────────────── Encrypted JSON ─────────────────────────────────
 
   @override
   Future<ExportResult> generateEncryptedJson({
@@ -109,7 +126,6 @@ class ExportServiceImpl implements IExportService {
     }
 
     try {
-      // 1. Build the full JSON payload with all entities
       final payload = jsonEncode({
         'exportedAt': DateTime.now().toIso8601String(),
         'version': 2,
@@ -119,32 +135,30 @@ class ExportServiceImpl implements IExportService {
         'transactions': transactions.map(_transactionToMap).toList(),
       });
 
-      // 2. Derive a 32-byte AES key from the password using PBKDF2-HMAC-SHA256
       final salt = _generateRandomBytes(16);
       final derivedKey = _deriveKey(password, salt);
 
-      // 3. Encrypt with AES-256-CBC
       final iv = enc.IV.fromSecureRandom(16);
       final encrypter = enc.Encrypter(
         enc.AES(enc.Key(derivedKey), mode: enc.AESMode.cbc),
       );
       final encrypted = encrypter.encrypt(payload, iv: iv);
 
-      // 4. Build envelope: salt (16) || iv (16) || ciphertext
-      final envelope = Uint8List(
-        16 + 16 + encrypted.bytes.length,
-      );
+      final envelope = Uint8List(16 + 16 + encrypted.bytes.length);
       envelope.setRange(0, 16, salt);
       envelope.setRange(16, 32, iv.bytes);
       envelope.setRange(32, envelope.length, encrypted.bytes);
 
+      // Ensures "Stalvi" in filename per requirements
       final filename =
-          'konta_backup_${DateFormat('yyyyMMdd_HHmmss').format(DateTime.now())}.kbak';
+          'Stalvi_backup_${DateFormat('yyyyMMdd_HHmmss').format(DateTime.now())}.kbak';
+      final savedPath = await _saveFile(envelope, filename);
 
       return ExportResult(
         bytes: envelope,
         filename: filename,
         mimeType: 'application/octet-stream',
+        filePath: savedPath,
       );
     } on ExportException {
       rethrow;
@@ -172,14 +186,12 @@ class ExportServiceImpl implements IExportService {
     try {
       if (encryptedBytes.length < 33) {
         throw const ExportException(
-          message: 'File is too short to be a valid Konta backup',
+          message: 'File is too short to be a valid Stalvi backup',
           code: 'INVALID_ENVELOPE',
         );
       }
 
       final bytes = Uint8List.fromList(encryptedBytes);
-
-      // Extract envelope parts: salt (16) || iv (16) || ciphertext
       final salt = bytes.sublist(0, 16);
       final ivBytes = bytes.sublist(16, 32);
       final ciphertext = bytes.sublist(32);
@@ -207,8 +219,6 @@ class ExportServiceImpl implements IExportService {
     }
   }
 
-  // ─────────────────────────────── PDF ────────────────────────────────────
-
   @override
   Future<ExportResult> generateMonthlyPdf(
     List<Transaction> transactions, {
@@ -218,7 +228,6 @@ class ExportServiceImpl implements IExportService {
     List<Category> categories = const [],
   }) async {
     try {
-      // Build lookup maps for name resolution
       final accountMap = {for (final a in accounts) a.id: a.name};
       final categoryMap = {for (final c in categories) c.id: c.name};
 
@@ -230,75 +239,47 @@ class ExportServiceImpl implements IExportService {
           pageFormat: PdfPageFormat.a4,
           margin: const pw.EdgeInsets.all(32),
           build: (context) => [
-            // ── Header ──
             pw.Header(
               level: 0,
               child: pw.Row(
                 mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                 children: [
-                  pw.Text(
-                    'Konta – Monthly Report',
-                    style: pw.TextStyle(
-                      fontSize: 20,
-                      fontWeight: pw.FontWeight.bold,
-                    ),
-                  ),
-                  pw.Text(
-                    monthLabel,
-                    style: const pw.TextStyle(fontSize: 14),
-                  ),
+                  pw.Text('Stalvi – Monthly Report',
+                      style: pw.TextStyle(
+                          fontSize: 20, fontWeight: pw.FontWeight.bold)),
+                  pw.Text(monthLabel, style: const pw.TextStyle(fontSize: 14)),
                 ],
               ),
             ),
-
             pw.SizedBox(height: 16),
-
-            // ── Summary box ──
             pw.Container(
               padding: const pw.EdgeInsets.all(12),
               decoration: const pw.BoxDecoration(
                 color: PdfColors.grey200,
-                borderRadius: pw.BorderRadius.all(
-                  pw.Radius.circular(4),
-                ),
+                borderRadius: pw.BorderRadius.all(pw.Radius.circular(4)),
               ),
               child: pw.Row(
                 mainAxisAlignment: pw.MainAxisAlignment.spaceEvenly,
                 children: [
+                  _pdfSummaryItem('Total Income',
+                      _centsToDecimal(summary.totalIncome), PdfColors.green800),
+                  _pdfSummaryItem('Total Expenses',
+                      _centsToDecimal(summary.totalExpense), PdfColors.red800),
                   _pdfSummaryItem(
-                    'Total Income',
-                    _centsToDecimal(summary.totalIncome),
-                    PdfColors.green800,
-                  ),
-                  _pdfSummaryItem(
-                    'Total Expenses',
-                    _centsToDecimal(summary.totalExpense),
-                    PdfColors.red800,
-                  ),
-                  _pdfSummaryItem(
-                    'Net Balance',
-                    _centsToDecimal(
-                      summary.totalIncome - summary.totalExpense,
-                    ),
-                    summary.totalIncome >= summary.totalExpense
-                        ? PdfColors.green800
-                        : PdfColors.red800,
-                  ),
+                      'Net Balance',
+                      _centsToDecimal(
+                          summary.totalIncome - summary.totalExpense),
+                      summary.totalIncome >= summary.totalExpense
+                          ? PdfColors.green800
+                          : PdfColors.red800),
                 ],
               ),
             ),
-
             pw.SizedBox(height: 24),
-            pw.Text(
-              'Transactions',
-              style: pw.TextStyle(
-                fontSize: 14,
-                fontWeight: pw.FontWeight.bold,
-              ),
-            ),
+            pw.Text('Transactions',
+                style:
+                    pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold)),
             pw.SizedBox(height: 8),
-
-            // ── Transactions table with all required fields ──
             pw.TableHelper.fromTextArray(
               border: pw.TableBorder.all(color: PdfColors.grey400, width: 0.5),
               headers: [
@@ -308,16 +289,13 @@ class ExportServiceImpl implements IExportService {
                 'Category',
                 'Amount',
                 'Currency',
-                'Notes',
+                'Notes'
               ],
-              headerStyle: pw.TextStyle(
-                fontWeight: pw.FontWeight.bold,
-                fontSize: 9,
-              ),
+              headerStyle:
+                  pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 9),
               cellStyle: const pw.TextStyle(fontSize: 8),
-              headerDecoration: const pw.BoxDecoration(
-                color: PdfColors.grey300,
-              ),
+              headerDecoration:
+                  const pw.BoxDecoration(color: PdfColors.grey300),
               cellAlignments: {
                 0: pw.Alignment.centerLeft,
                 1: pw.Alignment.center,
@@ -341,23 +319,25 @@ class ExportServiceImpl implements IExportService {
                 ];
               }).toList(),
             ),
-
             pw.SizedBox(height: 12),
             pw.Text(
-              'Generated by Konta on ${DateFormat('dd/MM/yyyy HH:mm').format(DateTime.now())}',
-              style: const pw.TextStyle(fontSize: 8, color: PdfColors.grey600),
-            ),
+                'Generated by Stalvi on ${DateFormat('dd/MM/yyyy HH:mm').format(DateTime.now())}',
+                style:
+                    const pw.TextStyle(fontSize: 8, color: PdfColors.grey600)),
           ],
         ),
       );
 
       final bytes = await pdf.save();
-      final filename = 'konta_report_${DateFormat('yyyyMM').format(month)}.pdf';
+      final filename =
+          'Stalvi_report_${DateFormat('yyyyMM').format(month)}.pdf';
+      final savedPath = await _saveFile(bytes, filename);
 
       return ExportResult(
         bytes: bytes,
         filename: filename,
         mimeType: 'application/pdf',
+        filePath: savedPath,
       );
     } catch (e) {
       throw ExportException(
@@ -368,10 +348,6 @@ class ExportServiceImpl implements IExportService {
     }
   }
 
-  // ─────────────────────────── Private helpers ─────────────────────────────
-
-  /// Wraps a CSV field value: escapes double-quotes and wraps in quotes when
-  /// the value contains a comma, newline, or double-quote.
   static String _csvField(String value) {
     if (value.contains(',') ||
         value.contains('"') ||
@@ -382,14 +358,12 @@ class ExportServiceImpl implements IExportService {
     return value;
   }
 
-  /// Converts an integer amount stored in cents to a decimal string (e.g. 1050 → "10.50").
   static String _centsToDecimal(int cents) {
     final major = cents ~/ 100;
     final minor = (cents.abs() % 100).toString().padLeft(2, '0');
     return '$major.$minor';
   }
 
-  /// Serialises an [Account] to a plain [Map] for JSON encoding.
   static Map<String, dynamic> _accountToMap(Account a) => {
         'id': a.id,
         'user_id': a.userId,
@@ -405,7 +379,6 @@ class ExportServiceImpl implements IExportService {
         'modified_at': a.modifiedAt.toIso8601String(),
       };
 
-  /// Serialises a [Category] to a plain [Map] for JSON encoding.
   static Map<String, dynamic> _categoryToMap(Category c) => {
         'id': c.id,
         'name': c.name,
@@ -418,7 +391,6 @@ class ExportServiceImpl implements IExportService {
         'modified_at': c.modifiedAt.toIso8601String(),
       };
 
-  /// Serialises a [Tag] to a plain [Map] for JSON encoding.
   static Map<String, dynamic> _tagToMap(Tag t) => {
         'id': t.id,
         'name': t.name,
@@ -427,7 +399,6 @@ class ExportServiceImpl implements IExportService {
         'modified_at': t.modifiedAt.toIso8601String(),
       };
 
-  /// Serialises a [Transaction] to a plain [Map] for JSON encoding.
   static Map<String, dynamic> _transactionToMap(Transaction tx) => {
         'id': tx.id,
         'amount': tx.amount,
@@ -445,19 +416,15 @@ class ExportServiceImpl implements IExportService {
         'modified_at': tx.modifiedAt.toIso8601String(),
       };
 
-  /// Derives a 32-byte key from [password] + [salt] using PBKDF2-HMAC-SHA256
-  /// with 100 000 iterations (OWASP minimum recommendation).
   static Uint8List _deriveKey(String password, Uint8List salt) {
     const iterations = 100000;
-    const keyLength = 32; // 256 bits for AES-256
+    const keyLength = 32;
 
     final passwordBytes = utf8.encode(password);
     var block = Uint8List(keyLength);
 
-    // PBKDF2 with a single block (dkLen ≤ hLen, so block index = 1)
     final hmac = Hmac(sha256, passwordBytes);
 
-    // U1 = PRF(password, salt || INT(1))
     final saltWithInt = Uint8List(salt.length + 4);
     saltWithInt.setRange(0, salt.length, salt);
     saltWithInt[salt.length] = 0;
@@ -478,7 +445,6 @@ class ExportServiceImpl implements IExportService {
     return block;
   }
 
-  /// Generates [length] cryptographically secure random bytes.
   static Uint8List _generateRandomBytes(int length) {
     final rng = Random.secure();
     return Uint8List.fromList(
@@ -486,15 +452,10 @@ class ExportServiceImpl implements IExportService {
     );
   }
 
-  // ──────────────────────── Test accessor ───────────────────────────────────
-
-  /// Exposed for unit testing only. Allows tests to decrypt the envelope and
-  /// verify the round-trip without duplicating the KDF implementation.
-  // ignore: invalid_use_of_visible_for_testing_member
+  @visibleForTesting
   static Uint8List deriveKeyForTest(String password, Uint8List salt) =>
       _deriveKey(password, salt);
 
-  /// Creates a labelled value widget for the PDF summary section.
   static pw.Widget _pdfSummaryItem(
     String label,
     String value,

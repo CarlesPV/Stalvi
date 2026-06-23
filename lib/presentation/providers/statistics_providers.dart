@@ -1,26 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:stalvi/data/database/tables/transaction_table.dart';
+import 'package:stalvi/domain/entities/transaction_type.dart';
 import 'package:stalvi/domain/entities/account.dart';
 import 'package:stalvi/domain/entities/category_statistic.dart';
 import 'package:stalvi/domain/entities/period_summary.dart';
 import 'package:stalvi/domain/use_cases/statistics/get_period_summary_use_case.dart';
 import 'package:stalvi/domain/use_cases/statistics/get_top_categories_use_case.dart';
-import 'package:stalvi/presentation/providers/app_startup_provider.dart';
 import 'package:stalvi/presentation/providers/repository_providers.dart';
 
 // ─── Use-case providers ───────────────────────────────────────────────────────
 
-/// Provides the [GetPeriodSummaryUseCase], wired to [statisticsRepositoryProvider].
+/// Provides the [GetPeriodSummaryUseCase], wired to [transactionRepositoryProvider] and [exchangeRateRepositoryProvider].
 final getPeriodSummaryUseCaseProvider =
     Provider<GetPeriodSummaryUseCase>((ref) {
-  return GetPeriodSummaryUseCase(ref.watch(statisticsRepositoryProvider));
+  return GetPeriodSummaryUseCase(
+    ref.watch(transactionRepositoryProvider),
+    ref.watch(exchangeRateRepositoryProvider),
+  );
 });
 
-/// Provides the [GetTopCategoriesUseCase], wired to [statisticsRepositoryProvider].
+/// Provides the [GetTopCategoriesUseCase], wired to [transactionRepositoryProvider], [categoryRepositoryProvider], and [exchangeRateRepositoryProvider].
 final getTopCategoriesUseCaseProvider =
     Provider<GetTopCategoriesUseCase>((ref) {
-  return GetTopCategoriesUseCase(ref.watch(statisticsRepositoryProvider));
+  return GetTopCategoriesUseCase(
+    ref.watch(transactionRepositoryProvider),
+    ref.watch(categoryRepositoryProvider),
+    ref.watch(exchangeRateRepositoryProvider),
+  );
 });
 
 // ─── Filter State ─────────────────────────────────────────────────────────────
@@ -254,11 +260,36 @@ final statisticsCurrencyProvider = Provider.autoDispose<String>((ref) {
   return profile?.defaultCurrency ?? 'EUR';
 });
 
-/// Calculates the global balance using the dynamic currency conversion
-/// aggregation from StatisticsDao.
+/// Calculates the global balance using dynamic currency conversion in Dart.
 final globalBalanceProvider = StreamProvider.autoDispose<double>((ref) async* {
   final profile = await ref.watch(defaultProfileProvider.future);
-  final db = ref.watch(appDatabaseProvider).requireValue;
+  final targetCurrency = profile.defaultCurrency;
 
-  yield* db.statisticsDao.watchGlobalBalance(profile.defaultCurrency);
+  final transactionsStream =
+      ref.watch(transactionRepositoryProvider).watchAllTransactions();
+  final exchangeRateRepo = ref.watch(exchangeRateRepositoryProvider);
+
+  await for (final transactions in transactionsStream) {
+    final rates =
+        await exchangeRateRepo.getLocalRates(baseCurrency: targetCurrency);
+
+    double balance = 0;
+    for (final tx in transactions) {
+      double amount = tx.amount.toDouble();
+      if (tx.originalCurrency != targetCurrency) {
+        final rate = rates?.rateFor(tx.originalCurrency);
+        if (rate != null && rate != 0) {
+          amount = amount / rate;
+        }
+      }
+
+      if (tx.type == TransactionType.income) {
+        balance += amount;
+      } else if (tx.type == TransactionType.expense) {
+        balance -= amount;
+      }
+    }
+
+    yield balance / 100.0;
+  }
 });

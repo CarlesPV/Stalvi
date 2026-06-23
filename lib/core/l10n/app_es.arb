@@ -1083,6 +1083,10 @@
   "@dataPortabilityTitle": {
     "description": "Section title for data export and import options"
   },
+  "settingsDataManagement": "Gestión de Datos",
+  "@settingsDataManagement": {
+    "description": "Settings option for data management"
+  },
   "exportEncryptedBackup": "Exportar copia de seguridad cifrada",
   "@exportEncryptedBackup": {
     "description": "Button label to export an encrypted full backup"
@@ -1095,7 +1099,7 @@
   "@importRestoreBackup": {
     "description": "Button label to import and restore from an encrypted backup"
   },
-  "importRestoreBackupSubtitle": "Restaura tus datos desde un archivo de copia de seguridad de Konta",
+  "importRestoreBackupSubtitle": "Restaura tus datos desde un archivo de copia de seguridad de Stalvi",
   "@importRestoreBackupSubtitle": {
     "description": "Subtitle for the import/restore option"
   },

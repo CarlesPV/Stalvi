@@ -1,7 +1,7 @@
 import 'package:stalvi/core/errors/app_exceptions.dart';
 import 'package:stalvi/domain/repositories/i_import_service.dart';
 
-/// Use case that restores the entire Konta database from an encrypted
+/// Use case that restores the entire Stalvi database from an encrypted
 /// JSON backup file previously produced by [ExportEncryptedJsonUseCase].
 ///
 /// ⚠️  **Destructive operation**: all existing data is overwritten.

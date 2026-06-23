@@ -47,6 +47,7 @@ import 'package:stalvi/domain/usecases/export_transactions_csv_use_case.dart';
 import 'package:stalvi/domain/usecases/export_monthly_pdf_use_case.dart';
 import 'package:stalvi/presentation/providers/app_startup_provider.dart';
 import 'package:stalvi/presentation/providers/locale_provider.dart';
+import 'package:stalvi/presentation/providers/statistics_providers.dart';
 
 /// Provides the [IProfileRepository] implementation.
 /// Requires the database to be initialized, using [appDatabaseProvider.requireValue].
@@ -310,7 +311,7 @@ final exportMonthlyPdfUseCaseProvider =
     accountRepository: ref.watch(accountRepositoryProvider),
     categoryRepository: ref.watch(categoryRepositoryProvider),
     transactionRepository: ref.watch(transactionRepositoryProvider),
-    statisticsRepository: ref.watch(statisticsRepositoryProvider),
+    getPeriodSummaryUseCase: ref.watch(getPeriodSummaryUseCaseProvider),
     exportService: ref.watch(exportServiceProvider),
   );
 });

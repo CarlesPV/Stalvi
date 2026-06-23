@@ -46,6 +46,7 @@ dependencies:
   local_auth_android: any
   local_auth_darwin: any
   shared_preferences: ^2.5.5
+  permission_handler: ^12.0.3
 dev_dependencies:
   integration_test:
     sdk: flutter
