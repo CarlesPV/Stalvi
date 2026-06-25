@@ -48,7 +48,16 @@ class _TransactionFilterSheetState
   late final TextEditingController _maxAmountController;
 
   // Supported currencies shown in the dropdown.
-  static const _currencies = ['EUR', 'USD', 'GBP', 'JPY', 'CHF', 'CAD', 'AUD'];
+  static const _currencies = [
+    'EUR',
+    'USD',
+    'GBP',
+    'JPY',
+    'CHF',
+    'CAD',
+    'AUD',
+    'CNY',
+  ];
 
   @override
   void initState() {

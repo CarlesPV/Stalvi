@@ -4,7 +4,7 @@ import 'package:stalvi/domain/repositories/i_export_service.dart';
 import 'package:stalvi/domain/repositories/i_profile_repository.dart';
 import 'package:stalvi/domain/repositories/i_transaction_repository.dart';
 import 'package:stalvi/core/l10n/app_localizations.dart';
-import 'package:stalvi/core/utils/currency_converter.dart';
+
 import 'package:stalvi/domain/entities/transaction_type.dart';
 import 'package:stalvi/domain/repositories/i_exchange_rate_repository.dart';
 import 'package:stalvi/domain/use_cases/statistics/get_period_summary_use_case.dart';
@@ -101,7 +101,7 @@ class ExportMonthlyPdfUseCase {
     final allTransactions =
         await _transactionRepository.watchAllTransactions().first;
 
-    final currentRates = await _exchangeRateRepository.getLatestRates(
+    await _exchangeRateRepository.getLatestRates(
       baseCurrency: targetCurrency,
     );
 
@@ -110,24 +110,8 @@ class ExportMonthlyPdfUseCase {
     }).toList()
       ..sort((a, b) => a.date.compareTo(b.date));
 
-    // Convert transactions to the target currency
-    final convertedTransactions = monthTransactions.map((tx) {
-      if (tx.originalCurrency == targetCurrency) return tx;
-
-      final convertedAmount = CurrencyConverter.convertAmount(
-        tx,
-        targetCurrency,
-        currentRates,
-      );
-
-      return tx.copyWith(
-        amount: convertedAmount.round(),
-        originalCurrency: targetCurrency,
-      );
-    }).toList();
-
     return _exportService.generateMonthlyPdf(
-      convertedTransactions,
+      monthTransactions,
       summary: summary,
       month: targetMonth,
       l10n: l10n,

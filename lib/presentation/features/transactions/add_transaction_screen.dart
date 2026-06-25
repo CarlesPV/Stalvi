@@ -11,6 +11,7 @@ import 'package:stalvi/domain/entities/category_type.dart';
 import 'package:stalvi/domain/entities/transaction_type.dart';
 import 'package:stalvi/presentation/providers/add_transaction_notifier.dart';
 import 'package:stalvi/presentation/providers/repository_providers.dart';
+import 'package:stalvi/core/utils/currency_formatter.dart';
 
 import 'package:stalvi/core/utils/icon_helper.dart';
 
@@ -296,9 +297,9 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                           textBaseline: TextBaseline.alphabetic,
                           children: [
                             Text(
-                              NumberFormat.simpleCurrency(
-                                name: state.currency ?? 'EUR',
-                              ).currencySymbol,
+                              CurrencyFormatter.getCurrencySymbol(
+                                state.currency ?? 'EUR',
+                              ),
                               style: theme.textTheme.displaySmall?.copyWith(
                                 color: activeColor,
                                 fontWeight: FontWeight.w600,
@@ -812,6 +813,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
       'CHF': l10n.currencyCHF,
       'CAD': l10n.currencyCAD,
       'AUD': l10n.currencyAUD,
+      'CNY': l10n.currencyCNY,
     };
 
     showModalBottomSheet(
@@ -862,8 +864,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                           backgroundColor:
                               colorScheme.primary.withValues(alpha: 0.12),
                           child: Text(
-                            NumberFormat.simpleCurrency(name: code)
-                                .currencySymbol,
+                            CurrencyFormatter.getCurrencySymbol(code),
                             style: TextStyle(
                               color: colorScheme.primary,
                               fontWeight: FontWeight.bold,

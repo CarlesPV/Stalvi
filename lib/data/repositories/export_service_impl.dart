@@ -104,7 +104,7 @@ class ExportServiceImpl implements IExportService {
 
       final bytes = utf8.encode(buffer.toString());
       final filename =
-          'Konta_Export_${DateFormat('yyyyMMdd_HHmmss').format(DateTime.now())}.csv';
+          'Stalvi_Export_${DateFormat('yyyyMMdd_HHmmss').format(DateTime.now())}.csv';
       final savedPath = await _saveFile(bytes, filename);
 
       return ExportResult(
@@ -161,9 +161,9 @@ class ExportServiceImpl implements IExportService {
       envelope.setRange(16, 32, iv.bytes);
       envelope.setRange(32, envelope.length, encrypted.bytes);
 
-      // Ensures "Konta_Export" in filename per requirements
+      // Ensures "Stalvi_Export" in filename per requirements
       final filename =
-          'Konta_Export_${DateFormat('yyyyMMdd_HHmmss').format(DateTime.now())}.kbak';
+          'Stalvi_Export_${DateFormat('yyyyMMdd_HHmmss').format(DateTime.now())}.kbak';
       final savedPath = await _saveFile(envelope, filename);
 
       return ExportResult(
@@ -347,7 +347,7 @@ class ExportServiceImpl implements IExportService {
                   tx.categoryId != null
                       ? (categoryMap[tx.categoryId!] ?? '')
                       : '-',
-                  '$symbol ${_centsToDecimal(tx.amount)}',
+                  '${_getCurrencySymbol(tx.originalCurrency)} ${_centsToDecimal(tx.amount)}',
                   tx.originalCurrency,
                   tx.notes ?? '-',
                 ];
@@ -387,7 +387,7 @@ class ExportServiceImpl implements IExportService {
 
       final bytes = await pdf.save();
       final filename =
-          'Konta_Export_${DateFormat('yyyyMMdd_HHmmss').format(DateTime.now())}.pdf';
+          'Stalvi_Export_${DateFormat('yyyyMMdd_HHmmss').format(DateTime.now())}.pdf';
       final savedPath = await _saveFile(bytes, filename);
 
       return ExportResult(
@@ -544,6 +544,7 @@ class ExportServiceImpl implements IExportService {
       case 'GBP':
         return '£';
       case 'JPY':
+      case 'CNY':
         return '¥';
       case 'CAD':
         return 'CA\$';
@@ -685,31 +686,118 @@ class ExportServiceImpl implements IExportService {
               final color = colorHex.length == 6 || colorHex.length == 8
                   ? PdfColor.fromHex(colorHex)
                   : PdfColors.grey;
-              final percentage =
-                  totalAmount > 0 ? (cat.totalAmount / totalAmount * 100) : 0.0;
               return pw.PieDataSet(
                 value: cat.totalAmount,
                 color: color,
-                legend:
-                    '${cat.categoryName} (${percentage.toStringAsFixed(1)}%)',
+                drawBorder: true,
+                drawSurface: true,
               );
             }).toList(),
           ),
         ),
         pw.SizedBox(height: 10),
-        pw.TableHelper.fromTextArray(
+        pw.Table(
           border: pw.TableBorder.all(color: PdfColors.grey400, width: 0.5),
-          headerStyle:
-              pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 9),
-          cellStyle: const pw.TextStyle(fontSize: 8),
-          headerDecoration: const pw.BoxDecoration(color: PdfColors.grey300),
-          headers: [l10n.labelCategory, l10n.labelAmount],
-          data: categories.map((cat) {
-            return [
-              cat.categoryName,
-              '$symbol ${_centsToDecimal(cat.totalAmount.toInt())}',
-            ];
-          }).toList(),
+          columnWidths: {
+            0: const pw.FixedColumnWidth(30),
+            1: const pw.FlexColumnWidth(),
+            2: const pw.FixedColumnWidth(50),
+            3: const pw.FixedColumnWidth(80),
+          },
+          children: [
+            pw.TableRow(
+              decoration: const pw.BoxDecoration(color: PdfColors.grey300),
+              children: [
+                pw.Padding(
+                  padding: const pw.EdgeInsets.all(4),
+                  child: pw.Text(
+                    '',
+                    style: pw.TextStyle(
+                      fontWeight: pw.FontWeight.bold,
+                      fontSize: 9,
+                    ),
+                  ),
+                ),
+                pw.Padding(
+                  padding: const pw.EdgeInsets.all(4),
+                  child: pw.Text(
+                    l10n.labelCategory,
+                    style: pw.TextStyle(
+                      fontWeight: pw.FontWeight.bold,
+                      fontSize: 9,
+                    ),
+                  ),
+                ),
+                pw.Padding(
+                  padding: const pw.EdgeInsets.all(4),
+                  child: pw.Text(
+                    '%',
+                    textAlign: pw.TextAlign.right,
+                    style: pw.TextStyle(
+                      fontWeight: pw.FontWeight.bold,
+                      fontSize: 9,
+                    ),
+                  ),
+                ),
+                pw.Padding(
+                  padding: const pw.EdgeInsets.all(4),
+                  child: pw.Text(
+                    l10n.labelAmount,
+                    textAlign: pw.TextAlign.right,
+                    style: pw.TextStyle(
+                      fontWeight: pw.FontWeight.bold,
+                      fontSize: 9,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            ...categories.map((cat) {
+              final colorHex = cat.categoryColor.replaceFirst('#', '');
+              final color = colorHex.length == 6 || colorHex.length == 8
+                  ? PdfColor.fromHex(colorHex)
+                  : PdfColors.grey;
+              final percentage =
+                  totalAmount > 0 ? (cat.totalAmount / totalAmount * 100) : 0.0;
+              return pw.TableRow(
+                children: [
+                  pw.Padding(
+                    padding: const pw.EdgeInsets.all(4),
+                    child: pw.Center(
+                      child: pw.Container(
+                        width: 10,
+                        height: 10,
+                        color: color,
+                      ),
+                    ),
+                  ),
+                  pw.Padding(
+                    padding: const pw.EdgeInsets.all(4),
+                    child: pw.Text(
+                      cat.categoryName,
+                      style: const pw.TextStyle(fontSize: 8),
+                    ),
+                  ),
+                  pw.Padding(
+                    padding: const pw.EdgeInsets.all(4),
+                    child: pw.Text(
+                      '${percentage.toStringAsFixed(1)}%',
+                      textAlign: pw.TextAlign.right,
+                      style: const pw.TextStyle(fontSize: 8),
+                    ),
+                  ),
+                  pw.Padding(
+                    padding: const pw.EdgeInsets.all(4),
+                    child: pw.Text(
+                      '$symbol ${_centsToDecimal(cat.totalAmount.toInt())}',
+                      textAlign: pw.TextAlign.right,
+                      style: const pw.TextStyle(fontSize: 8),
+                    ),
+                  ),
+                ],
+              );
+            }),
+          ],
         ),
         pw.SizedBox(height: 20),
       ],

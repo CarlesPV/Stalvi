@@ -95,7 +95,7 @@ void main() {
 
   group('generateCsv', () {
     test(
-        'result has correct MIME type and matches Konta_Export_yyyyMMdd_HHmmss.csv filename pattern',
+        'result has correct MIME type and matches Stalvi_Export_yyyyMMdd_HHmmss.csv filename pattern',
         () async {
       // Arrange
       final tx = _makeTransaction();
@@ -111,7 +111,7 @@ void main() {
       expect(result.mimeType, equals('text/csv'));
       expect(
         result.filename,
-        matches(RegExp(r'^Konta_Export_\d{8}_\d{6}\.csv$')),
+        matches(RegExp(r'^Stalvi_Export_\d{8}_\d{6}\.csv$')),
       );
     });
 
@@ -268,7 +268,7 @@ void main() {
     const password = 'S3cur3P@ssw0rd!';
 
     test(
-        'result has correct MIME type and matches Konta_Export_yyyyMMdd_HHmmss.kbak filename pattern',
+        'result has correct MIME type and matches Stalvi_Export_yyyyMMdd_HHmmss.kbak filename pattern',
         () async {
       // Arrange
       final tx = _makeTransaction();
@@ -286,7 +286,7 @@ void main() {
       expect(result.mimeType, equals('application/octet-stream'));
       expect(
         result.filename,
-        matches(RegExp(r'^Konta_Export_\d{8}_\d{6}\.kbak$')),
+        matches(RegExp(r'^Stalvi_Export_\d{8}_\d{6}\.kbak$')),
       );
     });
 
@@ -468,7 +468,7 @@ void main() {
 
   group('generateMonthlyPdf', () {
     test(
-        'result has correct MIME type and matches Konta_Export_yyyyMMdd_HHmmss.pdf filename pattern',
+        'result has correct MIME type and matches Stalvi_Export_yyyyMMdd_HHmmss.pdf filename pattern',
         () async {
       // Arrange
       final tx = _makeTransaction();
@@ -488,7 +488,7 @@ void main() {
       expect(result.mimeType, equals('application/pdf'));
       expect(
         result.filename,
-        matches(RegExp(r'^Konta_Export_\d{8}_\d{6}\.pdf$')),
+        matches(RegExp(r'^Stalvi_Export_\d{8}_\d{6}\.pdf$')),
       );
     });
 

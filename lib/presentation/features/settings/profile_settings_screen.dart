@@ -67,6 +67,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
       'CHF': l10n.currencyCHF,
       'CAD': l10n.currencyCAD,
       'AUD': l10n.currencyAUD,
+      'CNY': l10n.currencyCNY,
     };
     String selected = currencies.keys.contains(currentCurrency)
         ? currentCurrency

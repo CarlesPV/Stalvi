@@ -35,10 +35,16 @@ class CurrencyFormatter {
             locale: locale,
             name: currencyCode ?? this.currencyCode,
           )
-        : NumberFormat.simpleCurrency(
-            locale: locale,
-            name: currencyCode ?? this.currencyCode,
-          );
+        : (currencyCode ?? this.currencyCode) == 'CNY'
+            ? NumberFormat.currency(
+                locale: locale,
+                name: 'CNY',
+                symbol: '¥',
+              )
+            : NumberFormat.simpleCurrency(
+                locale: locale,
+                name: currencyCode ?? this.currencyCode,
+              );
 
     final currencyString = currencyFmt.format(amount < 0 ? -1 : 1);
     var result =
@@ -72,11 +78,18 @@ class CurrencyFormatter {
     );
     if (millions != null) return millions;
 
-    final format = NumberFormat.simpleCurrency(
-      locale: locale,
-      name: currencyCode ?? this.currencyCode,
-      decimalDigits: decimalDigits,
-    );
+    final format = (currencyCode ?? this.currencyCode) == 'CNY'
+        ? NumberFormat.currency(
+            locale: locale,
+            name: 'CNY',
+            symbol: '¥',
+            decimalDigits: decimalDigits,
+          )
+        : NumberFormat.simpleCurrency(
+            locale: locale,
+            name: currencyCode ?? this.currencyCode,
+            decimalDigits: decimalDigits,
+          );
 
     final result = format.format(amount);
 
@@ -130,9 +143,19 @@ class CurrencyFormatter {
         _formatMillions(amount, locale: locale, currencyCode: currencyCode);
     if (millions != null) return millions;
 
+    final code = currencyCode ?? this.currencyCode;
+    if (code == 'CNY') {
+      final format = NumberFormat.compactCurrency(
+        locale: locale,
+        name: 'CNY',
+        symbol: '¥',
+      );
+      return format.format(amount);
+    }
+
     final format = NumberFormat.compactSimpleCurrency(
       locale: locale,
-      name: currencyCode ?? this.currencyCode,
+      name: code,
     );
     return format.format(amount);
   }
@@ -202,5 +225,13 @@ class CurrencyFormatter {
       return '+$result';
     }
     return result;
+  }
+
+  /// Returns the currency symbol for the given currency code.
+  static String getCurrencySymbol(String currencyCode) {
+    if (currencyCode.toUpperCase() == 'CNY') {
+      return '¥';
+    }
+    return NumberFormat.simpleCurrency(name: currencyCode).currencySymbol;
   }
 }

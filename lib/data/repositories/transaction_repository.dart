@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:drift/drift.dart';
 
 import 'package:stalvi/core/errors/app_exceptions.dart';
@@ -9,6 +8,7 @@ import 'package:stalvi/data/mappers/transaction_mapper.dart';
 import 'package:stalvi/domain/entities/transaction.dart' as domain;
 import 'package:stalvi/domain/entities/transaction_type.dart' as domain;
 import 'package:stalvi/domain/repositories/i_transaction_repository.dart';
+import 'package:stalvi/core/utils/currency_converter.dart';
 
 /// Concrete implementation of [ITransactionRepository] backed by Drift.
 ///
@@ -497,32 +497,14 @@ class TransactionRepository implements ITransactionRepository {
       );
     }
 
-    int amountCents = transaction.amount;
+    final domain.Transaction domainTxn = transaction.toDomain();
+    final double convertedAmount = CurrencyConverter.convertAmount(
+      domainTxn,
+      accountRow.currency,
+      null,
+    );
 
-    // Currency conversion if transaction currency != account currency
-    if (transaction.originalCurrency != accountRow.currency) {
-      if (transaction.exchangeRateSnapshot != null) {
-        try {
-          final Map<String, dynamic> snapshot =
-              jsonDecode(transaction.exchangeRateSnapshot!);
-          if (snapshot.containsKey('rates')) {
-            final rates = snapshot['rates'] as Map<String, dynamic>;
-            final transactionCurrencyRate =
-                (rates[transaction.originalCurrency] as num?)?.toDouble() ??
-                    1.0;
-            final targetCurrencyRate =
-                (rates[accountRow.currency] as num?)?.toDouble() ?? 1.0;
-            amountCents = ((transaction.amount / transactionCurrencyRate) *
-                    targetCurrencyRate)
-                .round();
-          }
-        } catch (_) {
-          // Fallback to original amount if conversion fails
-        }
-      }
-    }
-
-    final double delta = amountCents / 100.0;
+    final double delta = convertedAmount / 100.0;
     final bool applying = op == _BalanceOp.add;
     double newBalance;
 
@@ -533,10 +515,36 @@ class TransactionRepository implements ITransactionRepository {
             : accountRow.initialBalance - delta;
         break;
       case domain.TransactionType.expense:
-      case domain.TransactionType.transfer:
         newBalance = applying
             ? accountRow.initialBalance - delta
             : accountRow.initialBalance + delta;
+        break;
+      case domain.TransactionType.transfer:
+        bool isOrigin = true;
+        if (transaction.transferId != null) {
+          final mirror =
+              await _findMirror(transaction.id, transaction.transferId!);
+          isOrigin = transaction.id.endsWith('_dst')
+              ? false
+              : (mirror != null
+                  ? (transaction.createdAt.isBefore(mirror.createdAt) ||
+                      (transaction.createdAt
+                              .isAtSameMomentAs(mirror.createdAt) &&
+                          transaction.id.compareTo(mirror.id) < 0))
+                  : true);
+        }
+
+        if (isOrigin) {
+          // Origin deducts the amount
+          newBalance = applying
+              ? accountRow.initialBalance - delta
+              : accountRow.initialBalance + delta;
+        } else {
+          // Destination adds the amount
+          newBalance = applying
+              ? accountRow.initialBalance + delta
+              : accountRow.initialBalance - delta;
+        }
         break;
     }
 

@@ -186,7 +186,8 @@
   - [x] Optimize `exchange_rate_remote_data_source.dart` to cache (24h) and limit requests to only the 8 supported currencies.
   - [x] Refactor providers (`statistics_providers.dart`) to automatically recalculate upon detecting changes in the default currency.
   - [x] Modify `add_transaction_usecase.dart` to calculate and apply dynamic exchange rates in transfers between accounts with different currencies.
-  - [x] Expand `export_monthly_pdf_use_case.dart` to include income/expense charts, category percentages, and amounts in the user's default currency.
+  - [x] Expand and refactor `export_monthly_pdf_use_case.dart` and `export_service_impl.dart` to support original transaction currencies, clean pie charts without inline labels, and a comprehensive table legend with color swatches, category percentages, and values.
+  - [x] Rename export filename prefixes from "Konta_Export" to "Stalvi_Export" across CSV, PDF, and backup formats.
   - [x] Implement the "Open file" action using `open_filex` after exporting CSV/PDF.
   - [x] UI Audit: Prevent overflows (keyboard/small screens) and review ARB files (ES, EN, CA).
 
