@@ -3,13 +3,16 @@ import 'package:stalvi/domain/entities/transaction_type.dart';
 import 'package:stalvi/domain/entities/period_summary.dart';
 import 'package:stalvi/domain/repositories/i_transaction_repository.dart';
 import 'package:stalvi/domain/repositories/i_exchange_rate_repository.dart';
+import 'package:stalvi/core/utils/currency_converter.dart';
 
 class GetPeriodSummaryUseCase {
   final ITransactionRepository _transactionRepository;
   final IExchangeRateRepository _exchangeRateRepository;
 
   GetPeriodSummaryUseCase(
-      this._transactionRepository, this._exchangeRateRepository);
+    this._transactionRepository,
+    this._exchangeRateRepository,
+  );
 
   Future<PeriodSummary> execute({
     required DateTime startDate,
@@ -25,19 +28,15 @@ class GetPeriodSummaryUseCase {
         await _transactionRepository.watchFilteredTransactions(filter).first;
 
     final rates = await _exchangeRateRepository.getLocalRates(
-        baseCurrency: targetCurrency);
+      baseCurrency: targetCurrency,
+    );
 
     double totalIncome = 0;
     double totalExpense = 0;
 
     for (final tx in transactions) {
-      double amount = tx.amount.toDouble();
-      if (tx.originalCurrency != targetCurrency) {
-        final rate = rates?.rateFor(tx.originalCurrency);
-        if (rate != null && rate != 0) {
-          amount = amount / rate;
-        }
-      }
+      double amount =
+          CurrencyConverter.convertAmount(tx, targetCurrency, rates);
 
       if (tx.type == TransactionType.income) {
         totalIncome += amount;

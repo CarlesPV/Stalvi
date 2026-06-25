@@ -1,7 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:stalvi/core/l10n/app_localizations.dart';
 import 'package:stalvi/domain/entities/profile.dart';
 import 'package:stalvi/domain/repositories/i_export_service.dart';
 import 'package:stalvi/domain/usecases/update_credentials_usecase.dart';
+import 'package:stalvi/presentation/providers/locale_provider.dart';
 import 'package:stalvi/presentation/providers/repository_providers.dart';
 
 enum PinChangeStep { verifyOld, enterNew }
@@ -250,7 +252,12 @@ class ProfileSettingsController extends StateNotifier<ProfileSettingsState> {
     try {
       final useCase = _ref.read(exportMonthlyPdfUseCaseProvider);
       final currency = state.profile?.defaultCurrency ?? 'EUR';
-      final result = await useCase.call(targetCurrency: currency);
+      final locale = _ref.read(localeProvider);
+      final l10n = lookupAppLocalizations(locale);
+      final result = await useCase.call(
+        targetCurrency: currency,
+        l10n: l10n,
+      );
       state = state.copyWith(isLoading: false);
       return result;
     } catch (e) {

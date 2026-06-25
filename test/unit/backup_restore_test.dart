@@ -1,9 +1,11 @@
 import 'dart:io';
+import 'dart:ffi';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:sqlite3/open.dart';
-import 'package:sqlcipher_flutter_libs/sqlcipher_flutter_libs.dart';
+import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
+import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 import 'package:stalvi/data/database/app_database.dart';
 import 'package:stalvi/data/repositories/export_service_impl.dart';
@@ -15,7 +17,47 @@ import 'package:stalvi/domain/entities/tag.dart' as ent_tag;
 import 'package:stalvi/domain/entities/transaction.dart' as t;
 import 'package:stalvi/domain/entities/transaction_type.dart' as t_type;
 
+class FakePathProviderPlatform extends Fake
+    with MockPlatformInterfaceMixin
+    implements PathProviderPlatform {
+  final String tempDir;
+  FakePathProviderPlatform(this.tempDir);
+
+  @override
+  Future<String?> getApplicationDocumentsPath() async {
+    return tempDir;
+  }
+
+  @override
+  Future<String?> getDownloadsPath() async {
+    return tempDir;
+  }
+
+  @override
+  Future<String?> getExternalStoragePath() async {
+    return tempDir;
+  }
+}
+
 void main() {
+  setUpAll(() {
+    open.overrideFor(OperatingSystem.linux, () {
+      return DynamicLibrary.open('libsqlite3.so.0');
+    });
+  });
+
+  late Directory tempDir;
+
+  setUp(() async {
+    tempDir = await Directory.systemTemp.createTemp('backup_restore_test');
+    PathProviderPlatform.instance = FakePathProviderPlatform(tempDir.path);
+  });
+
+  tearDown(() async {
+    if (await tempDir.exists()) {
+      await tempDir.delete(recursive: true);
+    }
+  });
   test('export and import relational data', () async {
     final executor = NativeDatabase.memory();
     final db = AppDatabase.forTesting(executor);
@@ -28,31 +70,36 @@ void main() {
         ImportServiceImpl(database: db, exportService: exportService);
 
     // Seed a profile
-    await db.into(db.profiles).insert(ProfilesCompanion.insert(
-        id: 'u1',
-        name: 'User 1',
-        username: 'user1',
-        password: 'pwd',
-        defaultCurrency: const Value('USD'),
-        createdAt: DateTime.now(),
-        modifiedAt: DateTime.now()));
+    await db.delete(db.profiles).go();
+    await db.into(db.profiles).insert(
+          ProfilesCompanion.insert(
+            id: 'u1',
+            name: 'User 1',
+            username: 'user1',
+            password: 'pwd',
+            defaultCurrency: const Value('USD'),
+            createdAt: DateTime.now(),
+            modifiedAt: DateTime.now(),
+          ),
+        );
 
     // Create domain entities for export
     final now = DateTime.now();
 
     final acc = ent_acc.Account(
-        id: 'a1',
-        userId: 'u1',
-        name: 'My Bank',
-        type: ent_acc_type.AccountType.bank,
-        initialBalance: 10000,
-        currency: 'USD',
-        color: 'blue',
-        icon: 'bank',
-        isDefault: true,
-        isDeleted: false,
-        createdAt: now,
-        modifiedAt: now);
+      id: 'a1',
+      userId: 'u1',
+      name: 'My Bank',
+      type: ent_acc_type.AccountType.bank,
+      initialBalance: 10000,
+      currency: 'USD',
+      color: 'blue',
+      icon: 'bank',
+      isDefault: true,
+      isDeleted: false,
+      createdAt: now,
+      modifiedAt: now,
+    );
 
     final cat = ent_cat.Category(
       id: 'c1',
@@ -73,27 +120,31 @@ void main() {
     );
 
     final tx = t.Transaction(
-        id: 't1',
-        amount: 5000,
-        date: now,
-        type: t_type.TransactionType.expense,
-        accountId: 'a1',
-        categoryId: 'c1',
-        originalCurrency: 'USD',
-        createdAt: now,
-        modifiedAt: now);
+      id: 't1',
+      amount: 5000,
+      date: now,
+      type: t_type.TransactionType.expense,
+      accountId: 'a1',
+      categoryId: 'c1',
+      originalCurrency: 'USD',
+      createdAt: now,
+      modifiedAt: now,
+    );
 
     // Generate the backup file
     final exported = await exportService.generateEncryptedJson(
-        accounts: [acc],
-        categories: [cat],
-        tags: [tag],
-        transactions: [tx],
-        password: 'mypassword');
+      accounts: [acc],
+      categories: [cat],
+      tags: [tag],
+      transactions: [tx],
+      password: 'mypassword',
+    );
 
     // Wipe and Import
-    await importService.restoreFromEncryptedJson(exported.bytes,
-        password: 'mypassword');
+    await importService.restoreFromEncryptedJson(
+      exported.bytes,
+      password: 'mypassword',
+    );
 
     // Verify
     final accounts = await db.select(db.accounts).get();
@@ -103,8 +154,11 @@ void main() {
 
     expect(accounts.length, 1);
     expect(accounts.first.name, 'My Bank');
-    expect(accounts.first.userId, 'u1',
-        reason: 'Should map to the current profile id');
+    expect(
+      accounts.first.userId,
+      'u1',
+      reason: 'Should map to the current profile id',
+    );
 
     expect(categories.length, 1);
     expect(categories.first.name, 'Groceries');

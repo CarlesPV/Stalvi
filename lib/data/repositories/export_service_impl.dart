@@ -2,7 +2,6 @@ import "package:flutter/foundation.dart" hide Category;
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
-import 'dart:typed_data';
 
 import 'package:crypto/crypto.dart';
 import 'package:encrypt/encrypt.dart' as enc;
@@ -13,11 +12,14 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
 import 'package:stalvi/core/errors/app_exceptions.dart';
+import 'package:stalvi/core/l10n/app_localizations.dart';
 import 'package:stalvi/domain/entities/account.dart';
 import 'package:stalvi/domain/entities/category.dart';
+import 'package:stalvi/domain/entities/category_statistic.dart';
 import 'package:stalvi/domain/entities/period_summary.dart';
 import 'package:stalvi/domain/entities/tag.dart';
 import 'package:stalvi/domain/entities/transaction.dart';
+import 'package:stalvi/domain/entities/transaction_type.dart';
 import 'package:stalvi/domain/repositories/i_export_service.dart';
 
 class ExportServiceImpl implements IExportService {
@@ -44,8 +46,9 @@ class ExportServiceImpl implements IExportService {
 
     if (dir == null) {
       throw const ExportException(
-          message: 'Could not find a directory to save the file',
-          code: 'NO_DIRECTORY');
+        message: 'Could not find a directory to save the file',
+        code: 'NO_DIRECTORY',
+      );
     }
 
     final file = File('${dir.path}/$filename');
@@ -65,34 +68,43 @@ class ExportServiceImpl implements IExportService {
       final categoryMap = {for (final c in categories) c.id: c.name};
 
       buffer.writeln(
-          'Date,Type,Account,Category,Amount,Currency,Notes,converted_amount,exchange_rate,id,created_at,modified_at');
+        'Date,Type,Account,Category,Amount,Currency,Notes,converted_amount,exchange_rate,exchange_rate_snapshot,id,created_at,modified_at,transfer_id',
+      );
 
       final dateFormat = DateFormat('yyyy-MM-dd');
 
       for (final tx in transactions) {
-        buffer.writeln([
-          _csvField(dateFormat.format(tx.date)),
-          _csvField(tx.type.name),
-          _csvField(accountMap[tx.accountId] ?? tx.accountId),
-          _csvField(tx.categoryId != null
-              ? (categoryMap[tx.categoryId!] ?? tx.categoryId!)
-              : ''),
-          _csvField(_centsToDecimal(tx.amount)),
-          _csvField(tx.originalCurrency),
-          _csvField(tx.notes ?? ''),
-          _csvField(tx.convertedAmount != null
-              ? _centsToDecimal(tx.convertedAmount!)
-              : ''),
-          _csvField(tx.exchangeRate?.toString() ?? ''),
-          _csvField(tx.id),
-          _csvField(tx.createdAt.toIso8601String()),
-          _csvField(tx.modifiedAt.toIso8601String()),
-        ].join(','));
+        buffer.writeln(
+          [
+            _csvField(dateFormat.format(tx.date)),
+            _csvField(tx.type.name),
+            _csvField(accountMap[tx.accountId] ?? tx.accountId),
+            _csvField(
+              tx.categoryId != null
+                  ? (categoryMap[tx.categoryId!] ?? tx.categoryId!)
+                  : '',
+            ),
+            _csvField(_centsToDecimal(tx.amount)),
+            _csvField(tx.originalCurrency),
+            _csvField(tx.notes ?? ''),
+            _csvField(
+              tx.convertedAmount != null
+                  ? _centsToDecimal(tx.convertedAmount!)
+                  : '',
+            ),
+            _csvField(tx.exchangeRate?.toString() ?? ''),
+            _csvField(tx.exchangeRateSnapshot ?? ''),
+            _csvField(tx.id),
+            _csvField(tx.createdAt.toIso8601String()),
+            _csvField(tx.modifiedAt.toIso8601String()),
+            _csvField(tx.transferId ?? ''),
+          ].join(','),
+        );
       }
 
       final bytes = utf8.encode(buffer.toString());
       final filename =
-          'stalvi_export_${DateFormat('yyyyMMdd_HHmmss').format(DateTime.now())}.csv';
+          'Konta_Export_${DateFormat('yyyyMMdd_HHmmss').format(DateTime.now())}.csv';
       final savedPath = await _saveFile(bytes, filename);
 
       return ExportResult(
@@ -149,9 +161,9 @@ class ExportServiceImpl implements IExportService {
       envelope.setRange(16, 32, iv.bytes);
       envelope.setRange(32, envelope.length, encrypted.bytes);
 
-      // Ensures "Stalvi" in filename per requirements
+      // Ensures "Konta_Export" in filename per requirements
       final filename =
-          'Stalvi_backup_${DateFormat('yyyyMMdd_HHmmss').format(DateTime.now())}.kbak';
+          'Konta_Export_${DateFormat('yyyyMMdd_HHmmss').format(DateTime.now())}.kbak';
       final savedPath = await _saveFile(envelope, filename);
 
       return ExportResult(
@@ -224,8 +236,12 @@ class ExportServiceImpl implements IExportService {
     List<Transaction> transactions, {
     required PeriodSummary summary,
     required DateTime month,
+    required AppLocalizations l10n,
     List<Account> accounts = const [],
     List<Category> categories = const [],
+    List<CategoryStatistic> topExpenseCategories = const [],
+    List<CategoryStatistic> topIncomeCategories = const [],
+    String defaultCurrency = 'EUR',
   }) async {
     try {
       final accountMap = {for (final a in accounts) a.id: a.name};
@@ -233,6 +249,7 @@ class ExportServiceImpl implements IExportService {
 
       final monthLabel = DateFormat('MMMM yyyy').format(month);
       final pdf = pw.Document();
+      final symbol = _getCurrencySymbol(defaultCurrency);
 
       pdf.addPage(
         pw.MultiPage(
@@ -244,9 +261,13 @@ class ExportServiceImpl implements IExportService {
               child: pw.Row(
                 mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                 children: [
-                  pw.Text('Stalvi – Monthly Report',
-                      style: pw.TextStyle(
-                          fontSize: 20, fontWeight: pw.FontWeight.bold)),
+                  pw.Text(
+                    '${l10n.appTitle} – ${l10n.overview}',
+                    style: pw.TextStyle(
+                      fontSize: 20,
+                      fontWeight: pw.FontWeight.bold,
+                    ),
+                  ),
                   pw.Text(monthLabel, style: const pw.TextStyle(fontSize: 14)),
                 ],
               ),
@@ -261,35 +282,44 @@ class ExportServiceImpl implements IExportService {
               child: pw.Row(
                 mainAxisAlignment: pw.MainAxisAlignment.spaceEvenly,
                 children: [
-                  _pdfSummaryItem('Total Income',
-                      _centsToDecimal(summary.totalIncome), PdfColors.green800),
-                  _pdfSummaryItem('Total Expenses',
-                      _centsToDecimal(summary.totalExpense), PdfColors.red800),
                   _pdfSummaryItem(
-                      'Net Balance',
-                      _centsToDecimal(
-                          summary.totalIncome - summary.totalExpense),
-                      summary.totalIncome >= summary.totalExpense
-                          ? PdfColors.green800
-                          : PdfColors.red800),
+                    l10n.income,
+                    '$symbol ${_centsToDecimal(summary.totalIncome)}',
+                    PdfColors.green800,
+                  ),
+                  _pdfSummaryItem(
+                    l10n.expenses,
+                    '$symbol ${_centsToDecimal(summary.totalExpense)}',
+                    PdfColors.red800,
+                  ),
+                  _pdfSummaryItem(
+                    l10n.statisticsNetBalance,
+                    '$symbol ${_centsToDecimal(
+                      summary.totalIncome - summary.totalExpense,
+                    )}',
+                    summary.totalIncome >= summary.totalExpense
+                        ? PdfColors.green800
+                        : PdfColors.red800,
+                  ),
                 ],
               ),
             ),
             pw.SizedBox(height: 24),
-            pw.Text('Transactions',
-                style:
-                    pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold)),
+            pw.Text(
+              l10n.transactions,
+              style: pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold),
+            ),
             pw.SizedBox(height: 8),
             pw.TableHelper.fromTextArray(
               border: pw.TableBorder.all(color: PdfColors.grey400, width: 0.5),
               headers: [
-                'Date',
-                'Type',
-                'Account',
-                'Category',
-                'Amount',
-                'Currency',
-                'Notes'
+                l10n.labelDate,
+                l10n.filterSheetType,
+                l10n.labelAccount,
+                l10n.labelCategory,
+                l10n.labelAmount,
+                l10n.labelCurrency,
+                l10n.labelNotes,
               ],
               headerStyle:
                   pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 9),
@@ -308,29 +338,187 @@ class ExportServiceImpl implements IExportService {
               data: transactions.map((tx) {
                 return [
                   DateFormat('dd/MM/yyyy').format(tx.date),
-                  tx.type.name,
+                  tx.type == TransactionType.income
+                      ? l10n.income
+                      : tx.type == TransactionType.expense
+                          ? l10n.expense
+                          : l10n.filterTransfer,
                   accountMap[tx.accountId] ?? tx.accountId,
                   tx.categoryId != null
                       ? (categoryMap[tx.categoryId!] ?? '')
                       : '-',
-                  _centsToDecimal(tx.amount),
+                  '$symbol ${_centsToDecimal(tx.amount)}',
                   tx.originalCurrency,
                   tx.notes ?? '-',
                 ];
               }).toList(),
             ),
+            pw.SizedBox(height: 20),
+
+            // Income vs Expense Chart
+            pw.Text(
+              l10n.overview,
+              style: pw.TextStyle(fontSize: 12, fontWeight: pw.FontWeight.bold),
+            ),
+            pw.SizedBox(height: 10),
+            pw.Container(
+              alignment: pw.Alignment.center,
+              child: pw.Column(
+                children: [
+                  pw.CustomPaint(
+                    size: const PdfPoint(300, 120),
+                    painter: (PdfGraphics canvas, PdfPoint size) {
+                      final double maxVal = max(
+                        1.0,
+                        max(
+                          summary.totalIncome.toDouble(),
+                          summary.totalExpense.toDouble(),
+                        ),
+                      );
+                      final double incomeHeight =
+                          (summary.totalIncome / maxVal) * 80.0;
+                      final double expenseHeight =
+                          (summary.totalExpense / maxVal) * 80.0;
+
+                      // Draw grid lines
+                      canvas
+                        ..setStrokeColor(PdfColors.grey300)
+                        ..setLineWidth(0.5)
+                        // Grid line at 50%
+                        ..moveTo(20, 50)
+                        ..lineTo(280, 50)
+                        // Grid line at 100%
+                        ..moveTo(20, 90)
+                        ..lineTo(280, 90)
+                        ..strokePath();
+
+                      // Draw Income Bar (Green)
+                      canvas
+                        ..setFillColor(PdfColors.green700)
+                        ..drawRect(60, 10, 40, incomeHeight)
+                        ..fillPath();
+
+                      // Draw Expense Bar (Red)
+                      canvas
+                        ..setFillColor(PdfColors.red700)
+                        ..drawRect(180, 10, 40, expenseHeight)
+                        ..fillPath();
+
+                      // Draw baseline
+                      canvas
+                        ..setStrokeColor(PdfColors.grey400)
+                        ..setLineWidth(1)
+                        ..moveTo(20, 10)
+                        ..lineTo(280, 10)
+                        ..strokePath();
+                    },
+                  ),
+                  pw.SizedBox(height: 4),
+                  pw.Row(
+                    mainAxisAlignment: pw.MainAxisAlignment.center,
+                    children: [
+                      pw.SizedBox(width: 40),
+                      pw.Container(
+                        width: 80,
+                        alignment: pw.Alignment.center,
+                        child: pw.Text(
+                          l10n.income,
+                          style: pw.TextStyle(
+                            fontSize: 8,
+                            fontWeight: pw.FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      pw.SizedBox(width: 40),
+                      pw.Container(
+                        width: 80,
+                        alignment: pw.Alignment.center,
+                        child: pw.Text(
+                          l10n.expenses,
+                          style: pw.TextStyle(
+                            fontSize: 8,
+                            fontWeight: pw.FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      pw.SizedBox(width: 40),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            pw.SizedBox(height: 20),
+
+            // Top Spending Categories Chart
+            if (topExpenseCategories.isNotEmpty) ...[
+              pw.Text(
+                l10n.statisticsTopSpending,
+                style:
+                    pw.TextStyle(fontSize: 12, fontWeight: pw.FontWeight.bold),
+              ),
+              pw.SizedBox(height: 10),
+              pw.SizedBox(
+                height: 150,
+                child: pw.Chart(
+                  grid: pw.PieGrid(),
+                  datasets: topExpenseCategories.map((cat) {
+                    final colorHex = cat.categoryColor.replaceFirst('#', '');
+                    final color = colorHex.length == 6 || colorHex.length == 8
+                        ? PdfColor.fromHex(colorHex)
+                        : PdfColors.grey;
+                    return pw.PieDataSet(
+                      value: cat.totalAmount,
+                      color: color,
+                      legend:
+                          '${cat.categoryName} ($symbol ${_centsToDecimal(cat.totalAmount.toInt())})',
+                    );
+                  }).toList(),
+                ),
+              ),
+              pw.SizedBox(height: 20),
+            ],
+
+            // Top Income Categories Chart
+            if (topIncomeCategories.isNotEmpty) ...[
+              pw.Text(
+                l10n.statisticsTopIncome,
+                style:
+                    pw.TextStyle(fontSize: 12, fontWeight: pw.FontWeight.bold),
+              ),
+              pw.SizedBox(height: 10),
+              pw.SizedBox(
+                height: 150,
+                child: pw.Chart(
+                  grid: pw.PieGrid(),
+                  datasets: topIncomeCategories.map((cat) {
+                    final colorHex = cat.categoryColor.replaceFirst('#', '');
+                    final color = colorHex.length == 6 || colorHex.length == 8
+                        ? PdfColor.fromHex(colorHex)
+                        : PdfColors.grey;
+                    return pw.PieDataSet(
+                      value: cat.totalAmount,
+                      color: color,
+                      legend:
+                          '${cat.categoryName} ($symbol ${_centsToDecimal(cat.totalAmount.toInt())})',
+                    );
+                  }).toList(),
+                ),
+              ),
+              pw.SizedBox(height: 20),
+            ],
+
             pw.SizedBox(height: 12),
             pw.Text(
-                'Generated by Stalvi on ${DateFormat('dd/MM/yyyy HH:mm').format(DateTime.now())}',
-                style:
-                    const pw.TextStyle(fontSize: 8, color: PdfColors.grey600)),
+              'Generated by Stalvi on ${DateFormat('dd/MM/yyyy HH:mm').format(DateTime.now())}',
+              style: const pw.TextStyle(fontSize: 8, color: PdfColors.grey600),
+            ),
           ],
         ),
       );
 
       final bytes = await pdf.save();
       final filename =
-          'Stalvi_report_${DateFormat('yyyyMM').format(month)}.pdf';
+          'Konta_Export_${DateFormat('yyyyMMdd_HHmmss').format(DateTime.now())}.pdf';
       final savedPath = await _saveFile(bytes, filename);
 
       return ExportResult(
@@ -476,5 +664,24 @@ class ExportServiceImpl implements IExportService {
         ),
       ],
     );
+  }
+
+  static String _getCurrencySymbol(String currencyCode) {
+    switch (currencyCode.toUpperCase()) {
+      case 'EUR':
+        return '€';
+      case 'USD':
+        return '\$';
+      case 'GBP':
+        return '£';
+      case 'JPY':
+        return '¥';
+      case 'CAD':
+        return 'CA\$';
+      case 'AUD':
+        return 'A\$';
+      default:
+        return currencyCode;
+    }
   }
 }

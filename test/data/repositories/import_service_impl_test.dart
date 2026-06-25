@@ -42,8 +42,12 @@ void main() {
           any(),
           password: any(named: 'password'),
         ),
-      ).thenThrow(const ExportException(
-          message: 'Decryption failed', code: 'DECRYPT_FAILED'));
+      ).thenThrow(
+        const ExportException(
+          message: 'Decryption failed',
+          code: 'DECRYPT_FAILED',
+        ),
+      );
 
       expect(
         () => importService

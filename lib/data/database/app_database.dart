@@ -82,7 +82,7 @@ class AppDatabase extends _$AppDatabase {
 
   /// Bump this version whenever you add, modify, or remove tables.
   @override
-  int get schemaVersion => 6;
+  int get schemaVersion => 7;
 
   @override
   MigrationStrategy get migration {
@@ -161,6 +161,17 @@ class AppDatabase extends _$AppDatabase {
         if (from < 6) {
           await m.createTable(exchangeRates);
           await m.addColumn(transactions, transactions.exchangeRateSnapshot);
+        }
+        if (from < 7) {
+          final existingRates = await select(exchangeRates).get();
+          String fallbackJson = '{"EUR": 1.0}';
+          if (existingRates.isNotEmpty) {
+            fallbackJson = existingRates.first.rates;
+          }
+          await customStatement(
+            'UPDATE transactions SET exchange_rate_snapshot = ? WHERE exchange_rate_snapshot IS NULL',
+            [Variable.withString(fallbackJson)],
+          );
         }
       },
     );

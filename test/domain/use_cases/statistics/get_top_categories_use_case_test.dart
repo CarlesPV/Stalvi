@@ -4,7 +4,6 @@ import 'package:stalvi/domain/entities/transaction_type.dart';
 import 'package:stalvi/domain/entities/category.dart';
 import 'package:stalvi/domain/entities/exchange_rate.dart';
 import 'package:stalvi/domain/entities/transaction.dart';
-import 'package:stalvi/domain/entities/category_statistic.dart';
 import 'package:stalvi/domain/repositories/i_category_repository.dart';
 import 'package:stalvi/domain/repositories/i_transaction_repository.dart';
 import 'package:stalvi/domain/repositories/i_exchange_rate_repository.dart';
@@ -84,7 +83,7 @@ void main() {
         color: '#FF0000',
         createdAt: startDate,
         modifiedAt: startDate,
-      )
+      ),
     ];
 
     when(() => mockCategoryRepository.watchAllCategories())
@@ -96,11 +95,13 @@ void main() {
     };
 
     when(() => mockExchangeRateRepository.getLocalRates(baseCurrency: 'JPY'))
-        .thenAnswer((_) async => ExchangeRate(
-              baseCurrency: 'JPY',
-              date: DateTime.now(),
-              rates: ratesMap,
-            ));
+        .thenAnswer(
+      (_) async => ExchangeRate(
+        baseCurrency: 'JPY',
+        date: DateTime.now(),
+        rates: ratesMap,
+      ),
+    );
 
     // Act
     final result = await useCase.execute(

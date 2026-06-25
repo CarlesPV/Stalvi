@@ -29,7 +29,9 @@ void main() {
     mockTransactionRepository = MockTransactionRepository();
     mockExchangeRateRepository = MockExchangeRateRepository();
     useCase = GetPeriodSummaryUseCase(
-        mockTransactionRepository, mockExchangeRateRepository);
+      mockTransactionRepository,
+      mockExchangeRateRepository,
+    );
   });
 
   test(
@@ -91,11 +93,13 @@ void main() {
     };
 
     when(() => mockExchangeRateRepository.getLocalRates(baseCurrency: 'JPY'))
-        .thenAnswer((_) async => ExchangeRate(
-              baseCurrency: 'JPY',
-              date: DateTime.now(),
-              rates: ratesMap,
-            ));
+        .thenAnswer(
+      (_) async => ExchangeRate(
+        baseCurrency: 'JPY',
+        date: DateTime.now(),
+        rates: ratesMap,
+      ),
+    );
 
     // Act
     final result = await useCase.execute(

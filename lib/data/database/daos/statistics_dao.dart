@@ -60,8 +60,9 @@ class StatisticsDao extends DatabaseAccessor<AppDatabase>
         accounts.id.equalsExp(transactions.accountId),
       ),
     ])
-      ..where(transactions.isDeleted.equals(false) &
-          accounts.isDeleted.equals(false))
+      ..where(
+        transactions.isDeleted.equals(false) & accounts.isDeleted.equals(false),
+      )
       ..addColumns([balanceExpr]);
 
     return query.watchSingle().map((row) {

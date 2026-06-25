@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:file_picker/file_picker.dart';
@@ -58,7 +57,8 @@ class _DataManagementScreenState extends ConsumerState<DataManagementScreen> {
     final passController = TextEditingController();
     final confirmController = TextEditingController();
     String? dialogError;
-    bool obscure = true;
+    bool obscurePass = true;
+    bool obscureConfirm = true;
 
     return showDialog<String>(
       context: context,
@@ -80,26 +80,37 @@ class _DataManagementScreenState extends ConsumerState<DataManagementScreen> {
                     const SizedBox(height: 16),
                     TextField(
                       controller: passController,
-                      obscureText: obscure,
+                      obscureText: obscurePass,
                       decoration: InputDecoration(
                         labelText: l10n.exportPasswordLabel,
                         border: const OutlineInputBorder(),
                         suffixIcon: IconButton(
-                          icon: Icon(obscure
-                              ? Icons.visibility_off
-                              : Icons.visibility),
+                          icon: Icon(
+                            obscurePass
+                                ? Icons.visibility_off
+                                : Icons.visibility,
+                          ),
                           onPressed: () =>
-                              setDialogState(() => obscure = !obscure),
+                              setDialogState(() => obscurePass = !obscurePass),
                         ),
                       ),
                     ),
                     const SizedBox(height: 12),
                     TextField(
                       controller: confirmController,
-                      obscureText: obscure,
+                      obscureText: obscureConfirm,
                       decoration: InputDecoration(
                         labelText: l10n.exportPasswordConfirmLabel,
                         border: const OutlineInputBorder(),
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            obscureConfirm
+                                ? Icons.visibility_off
+                                : Icons.visibility,
+                          ),
+                          onPressed: () => setDialogState(
+                              () => obscureConfirm = !obscureConfirm),
+                        ),
                       ),
                     ),
                     if (dialogError != null) ...[
@@ -126,12 +137,14 @@ class _DataManagementScreenState extends ConsumerState<DataManagementScreen> {
                     final confirm = confirmController.text;
                     if (pass.length < 6) {
                       setDialogState(
-                          () => dialogError = l10n.exportPasswordTooShort);
+                        () => dialogError = l10n.exportPasswordTooShort,
+                      );
                       return;
                     }
                     if (pass != confirm) {
                       setDialogState(
-                          () => dialogError = l10n.exportPasswordMismatch);
+                        () => dialogError = l10n.exportPasswordMismatch,
+                      );
                       return;
                     }
                     Navigator.of(ctx).pop(pass);
@@ -177,7 +190,8 @@ class _DataManagementScreenState extends ConsumerState<DataManagementScreen> {
                       border: const OutlineInputBorder(),
                       suffixIcon: IconButton(
                         icon: Icon(
-                            obscure ? Icons.visibility_off : Icons.visibility),
+                          obscure ? Icons.visibility_off : Icons.visibility,
+                        ),
                         onPressed: () =>
                             setDialogState(() => obscure = !obscure),
                       ),
@@ -203,7 +217,10 @@ class _DataManagementScreenState extends ConsumerState<DataManagementScreen> {
   }
 
   void _showExportSuccess(
-      BuildContext context, String? filePath, String successMsg) {
+    BuildContext context,
+    String? filePath,
+    String successMsg,
+  ) {
     if (!context.mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -225,12 +242,16 @@ class _DataManagementScreenState extends ConsumerState<DataManagementScreen> {
       final result = await ref
           .read(profileSettingsControllerProvider.notifier)
           .exportEncryptedBackup(password: password);
+      if (!context.mounted) return;
       _showExportSuccess(context, result.filePath, l10n.exportSuccess);
     } catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
             content: Text(l10n.exportFailed),
-            backgroundColor: Theme.of(context).colorScheme.error));
+            backgroundColor: Theme.of(context).colorScheme.error,
+          ),
+        );
       }
     }
   }
@@ -245,8 +266,10 @@ class _DataManagementScreenState extends ConsumerState<DataManagementScreen> {
       builder: (ctx) => AlertDialog(
         title: Row(
           children: [
-            Icon(Icons.warning_amber_rounded,
-                color: Theme.of(context).colorScheme.error),
+            Icon(
+              Icons.warning_amber_rounded,
+              color: Theme.of(context).colorScheme.error,
+            ),
             const SizedBox(width: 8),
             Text(l10n.importConfirmTitle),
           ],
@@ -254,11 +277,13 @@ class _DataManagementScreenState extends ConsumerState<DataManagementScreen> {
         content: Text(l10n.importConfirmMessage),
         actions: [
           TextButton(
-              onPressed: () => Navigator.of(ctx).pop(false),
-              child: Text(l10n.btnCancel)),
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: Text(l10n.btnCancel),
+          ),
           FilledButton(
             style: FilledButton.styleFrom(
-                backgroundColor: Theme.of(context).colorScheme.error),
+              backgroundColor: Theme.of(context).colorScheme.error,
+            ),
             onPressed: () => Navigator.of(ctx).pop(true),
             child: Text(l10n.btnRestore),
           ),
@@ -285,13 +310,17 @@ class _DataManagementScreenState extends ConsumerState<DataManagementScreen> {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text(l10n.importSuccess)));
       Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (_) => const SplashScreen()),
-          (_) => false);
+        MaterialPageRoute(builder: (_) => const SplashScreen()),
+        (_) => false,
+      );
     } catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
             content: Text(l10n.importFailed),
-            backgroundColor: Theme.of(context).colorScheme.error));
+            backgroundColor: Theme.of(context).colorScheme.error,
+          ),
+        );
       }
     }
   }
@@ -302,12 +331,16 @@ class _DataManagementScreenState extends ConsumerState<DataManagementScreen> {
       final result = await ref
           .read(profileSettingsControllerProvider.notifier)
           .exportTransactionsCsv();
+      if (!context.mounted) return;
       _showExportSuccess(context, result.filePath, l10n.exportSuccess);
     } catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
             content: Text(l10n.exportFailed),
-            backgroundColor: Theme.of(context).colorScheme.error));
+            backgroundColor: Theme.of(context).colorScheme.error,
+          ),
+        );
       }
     }
   }
@@ -318,12 +351,16 @@ class _DataManagementScreenState extends ConsumerState<DataManagementScreen> {
       final result = await ref
           .read(profileSettingsControllerProvider.notifier)
           .exportMonthlyPdf();
+      if (!context.mounted) return;
       _showExportSuccess(context, result.filePath, l10n.exportSuccess);
     } catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
             content: Text(l10n.exportFailed),
-            backgroundColor: Theme.of(context).colorScheme.error));
+            backgroundColor: Theme.of(context).colorScheme.error,
+          ),
+        );
       }
     }
   }
@@ -343,8 +380,10 @@ class _DataManagementScreenState extends ConsumerState<DataManagementScreen> {
                 ListTile(
                   leading: const Icon(Icons.backup_rounded),
                   title: Text(l10n.exportEncryptedBackup),
-                  subtitle: Text(l10n.exportEncryptedBackupSubtitle,
-                      style: Theme.of(context).textTheme.bodySmall),
+                  subtitle: Text(
+                    l10n.exportEncryptedBackupSubtitle,
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
                   trailing: const Icon(Icons.save_alt_rounded),
                   onTap: state.isLoading
                       ? null
@@ -354,8 +393,10 @@ class _DataManagementScreenState extends ConsumerState<DataManagementScreen> {
                 ListTile(
                   leading: const Icon(Icons.restore_rounded),
                   title: Text(l10n.importRestoreBackup),
-                  subtitle: Text(l10n.importRestoreBackupSubtitle,
-                      style: Theme.of(context).textTheme.bodySmall),
+                  subtitle: Text(
+                    l10n.importRestoreBackupSubtitle,
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
                   trailing: const Icon(Icons.folder_open_rounded),
                   onTap: state.isLoading
                       ? null
@@ -365,8 +406,10 @@ class _DataManagementScreenState extends ConsumerState<DataManagementScreen> {
                 ListTile(
                   leading: const Icon(Icons.table_chart_rounded),
                   title: Text(l10n.exportTransactionsCsv),
-                  subtitle: Text(l10n.exportTransactionsCsvSubtitle,
-                      style: Theme.of(context).textTheme.bodySmall),
+                  subtitle: Text(
+                    l10n.exportTransactionsCsvSubtitle,
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
                   trailing: const Icon(Icons.save_alt_rounded),
                   onTap:
                       state.isLoading ? null : () => _handleExportCsv(context),
@@ -375,8 +418,10 @@ class _DataManagementScreenState extends ConsumerState<DataManagementScreen> {
                 ListTile(
                   leading: const Icon(Icons.picture_as_pdf_rounded),
                   title: Text(l10n.exportMonthlyPdf),
-                  subtitle: Text(l10n.exportMonthlyPdfSubtitle,
-                      style: Theme.of(context).textTheme.bodySmall),
+                  subtitle: Text(
+                    l10n.exportMonthlyPdfSubtitle,
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
                   trailing: const Icon(Icons.save_alt_rounded),
                   onTap: state.isLoading
                       ? null

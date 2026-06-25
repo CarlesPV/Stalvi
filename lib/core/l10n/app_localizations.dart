@@ -1773,6 +1773,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Other ({count} categories)'**
   String statisticsOtherCategories(int count);
+
+  /// Text button label to view details of statistics
+  ///
+  /// In en, this message translates to:
+  /// **'View Details'**
+  String get btnViewDetails;
 }
 
 class _AppLocalizationsDelegate

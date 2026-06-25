@@ -1191,5 +1191,9 @@
         "type": "int"
       }
     }
+  },
+  "btnViewDetails": "Ver detalles",
+  "@btnViewDetails": {
+    "description": "Text button label to view details of statistics"
   }
 }

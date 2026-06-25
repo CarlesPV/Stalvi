@@ -492,7 +492,8 @@ void main() {
             accountId: 'acc_curr',
             originalCurrency: 'JPY',
             exchangeRateSnapshot: const drift.Value(
-                '{"rates": {"EUR": 1.0, "JPY": 140.0, "USD": 1.10}}'),
+              '{"rates": {"EUR": 1.0, "JPY": 140.0, "USD": 1.10}}',
+            ),
             createdAt: now,
             modifiedAt: now,
           ),

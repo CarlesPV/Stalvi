@@ -911,4 +911,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String statisticsOtherCategories(int count) {
     return 'Other ($count categories)';
   }
+
+  @override
+  String get btnViewDetails => 'View Details';
 }

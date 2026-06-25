@@ -10,6 +10,7 @@ import 'package:stalvi/domain/entities/account_type.dart';
 import 'package:stalvi/domain/entities/transaction.dart';
 import 'package:stalvi/domain/entities/transaction_type.dart';
 import 'package:stalvi/presentation/features/dashboard/dashboard_screen.dart';
+import 'package:stalvi/presentation/features/statistics/statistics_screen.dart';
 import 'package:stalvi/presentation/providers/repository_providers.dart';
 import 'package:stalvi/presentation/widgets/empty_state_widget.dart';
 import 'package:stalvi/presentation/providers/locale_provider.dart';
@@ -25,7 +26,6 @@ import 'package:stalvi/presentation/features/transactions/add_transaction_screen
 import 'package:stalvi/core/security/secure_storage_manager.dart';
 import 'package:stalvi/infrastructure/services/biometric_auth_service.dart';
 import 'package:stalvi/presentation/providers/add_transaction_notifier.dart';
-import 'package:stalvi/core/utils/icon_helper.dart';
 import 'package:stalvi/presentation/providers/transaction_filter_provider.dart';
 import 'package:stalvi/presentation/features/settings/data_management_screen.dart';
 
@@ -358,14 +358,12 @@ void main() {
 
       // Expect to see all settings items
       final budgetsFinder = find.text('Budgets & Goals');
-      final statsFinder = find.text('Statistics');
       final catTagsFinder = find.text('Categories & Tags');
       final profileSettingsFinder = find.text('Profile & Security');
       final dataManagementFinder = find.text('Data Management');
       final recycleBinFinder = find.text('Recycle Bin');
 
       expect(budgetsFinder, findsOneWidget);
-      expect(statsFinder, findsOneWidget);
       expect(catTagsFinder, findsOneWidget);
       expect(profileSettingsFinder, findsOneWidget);
       expect(dataManagementFinder, findsOneWidget);
@@ -373,14 +371,12 @@ void main() {
 
       // Verify the order of items in the list view by checking their Y coordinate
       final budgetsY = tester.getCenter(budgetsFinder).dy;
-      final statsY = tester.getCenter(statsFinder).dy;
       final catTagsY = tester.getCenter(catTagsFinder).dy;
       final profileY = tester.getCenter(profileSettingsFinder).dy;
       final dataManagementY = tester.getCenter(dataManagementFinder).dy;
       final recycleBinY = tester.getCenter(recycleBinFinder).dy;
 
-      expect(budgetsY < statsY, true);
-      expect(statsY < catTagsY, true);
+      expect(budgetsY < catTagsY, true);
       expect(catTagsY < profileY, true);
       expect(profileY < dataManagementY, true);
       expect(dataManagementY < recycleBinY, true);
@@ -546,6 +542,44 @@ void main() {
 
       // Verify that deleteTransaction was called on mock repository
       verify(() => mockTxnRepo.deleteTransaction(testTransaction.id)).called(1);
+    });
+
+    testWidgets(
+        'renders Statistics summary on Accounts tab and clicking View Details navigates to StatisticsScreen',
+        (WidgetTester tester) async {
+      await tester.binding.setSurfaceSize(const Size(800, 1200));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+
+      await tester.pumpWidget(
+        createTestWidget(
+          transactionsStream: Stream.value([testTransaction]),
+          accountsStream: Stream.value([testAccount]),
+        ),
+      );
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 200));
+
+      // Tap Accounts tab
+      await tester.tap(find.text('Accounts'));
+      await tester.pump();
+      for (int i = 0; i < 5; i++) {
+        await tester.pump(const Duration(milliseconds: 100));
+      }
+
+      // Verify Statistics header is shown on Accounts tab
+      expect(find.text('Statistics'), findsOneWidget); // Statistics header
+
+      // Tap View Details button to navigate to StatisticsScreen
+      final viewDetailsBtn = find.text('View Details');
+      expect(viewDetailsBtn, findsOneWidget);
+      await tester.tap(viewDetailsBtn);
+      await tester.pump();
+      for (int i = 0; i < 5; i++) {
+        await tester.pump(const Duration(milliseconds: 100));
+      }
+
+      // Verify that StatisticsScreen is opened
+      expect(find.byType(StatisticsScreen), findsOneWidget);
     });
   });
 }

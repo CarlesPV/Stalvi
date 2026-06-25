@@ -1,31 +1,22 @@
-# Active Task: Phase 24 - Core Robustness, Branding, and Data Integrity
+# Active Task: Phase 24 - Financial Immutability, Export Engine & UI Polish
 
 ## Objective
-Refine the app's branding to "Stalvi", fix critical UI/UX flows in the settings and splash screen, correct the currency conversion engine across the app, and resolve data integrity issues in the Import/Export backup system.
+Ensure historical transaction data integrity, improve data export capabilities (PDF/CSV/JSON), and fix critical UI/UX overflows and layout issues.
 
-## Current State
-Phase 23 completed. The core architecture (Clean Architecture, Riverpod, Drift) is functional, but specific bugs have been identified regarding currency calculations, backup restorations (missing accounts), and file export destinations. 
+## Scope
+- **Domain/Data Layer:** - Update `Transaction` entity and Drift database schema to store a snapshot of currency exchange rates at the time of creation.
+  - Write database migration scripts to handle existing transactions.
+- **Presentation Layer:**
+  - Relocate the Statistics section from Settings to the top of the Accounts/Wallets view with proper visual separation.
+  - Fix the missing visibility toggle (eye icon) on the backup confirmation password field.
+  - Resolve global UI overflows, text truncation ("..."), and visual alignment issues across buttons and error messages.
+- **Infrastructure/Services Layer:**
+  - Modify export services (PDF, CSV, JSON) to append timestamps (`yyyyMMdd_HHmmss`) to filenames.
+  - Enhance PDF generation: Include user's default currency symbols on all totals and generate summary charts below the transaction table.
+  - Enhance CSV generation to include all newly added transaction data (e.g., historical exchange rates).
+  - Modify import service: Force a complete memory clear, background state flush, and app restart upon successful data import.
 
-## Sub-Tasks
-
-### 1. Branding & Splash Screen Polish
-- [ ] Update the Android and iOS splash screens to display the app icon with a rounded-corner square background (matching the top-left inner app icon), scaled and centered.
-- [ ] Globally replace the name "Konta" with "Stalvi" across all export strings, backup file names, and user-facing texts.
-
-### 2. Currency Conversion Engine
-- [ ] Refactor currency calculation logic.
-- [ ] Ensure transactions retain their original currency immutably.
-- [ ] Implement robust conversion logic in UseCases/Providers so that stats, account balances, and totals accurately calculate the exchange rate from the transaction's source currency to the current profile's target currency.
-
-### 3. Settings UI Restructuring
-- [ ] Extract the Import/Export functionality from Profile/Security.
-- [ ] Create a dedicated "Data Management" (Import/Export) section in the Settings screen, positioned between "Profile & Security" and the "Recycle Bin".
-
-### 4. File System Integration & Backup Integrity
-- [ ] Modify the Export functionality to save files directly to the device's standard "Downloads" folder, removing the immediate "Share" sheet trigger.
-- [ ] Fix the Backup JSON Serialization/Deserialization logic.
-- [ ] Ensure `Accounts` (and other relational entities like Categories/Tags) are correctly exported.
-- [ ] Ensure the `ImportService` restores `Accounts` before `Transactions` to prevent foreign key constraint failures, ensuring wallets are not empty upon restoration.
-
-## Next Steps
-Execute the atomic prompts assigned to this phase to systematically implement these fixes ensuring tests pass and Clean Architecture principles are maintained.
+## Constraints
+- Ensure all translations (English, Spanish, Catalan) are updated for any new UI text.
+- Maintain Clean Architecture boundaries.
+- Database migrations must not cause data loss for existing users.

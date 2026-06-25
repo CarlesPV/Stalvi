@@ -622,16 +622,87 @@ class _AccountsTab extends ConsumerWidget {
           );
         }
 
-        return ListView.builder(
+        return ListView(
           padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
-          itemCount: accounts.length,
-          itemBuilder: (context, i) {
-            final account = accounts[i];
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: _AccountItem(account: account),
-            );
-          },
+          children: [
+            // ─── Statistics Header ───
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Icon(
+                      Icons.bar_chart_rounded,
+                      color: colorScheme.secondary,
+                      size: 22,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      AppLocalizations.of(context)!.settingsStatistics,
+                      style: theme.textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.w800,
+                        color: colorScheme.onSurface,
+                        letterSpacing: -0.2,
+                      ),
+                    ),
+                  ],
+                ),
+                TextButton.icon(
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const StatisticsScreen(),
+                      ),
+                    );
+                  },
+                  label: Text(
+                    AppLocalizations.of(context)!.btnViewDetails,
+                    style: theme.textTheme.labelMedium?.copyWith(
+                      color: colorScheme.primary,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  icon: Icon(
+                    Icons.chevron_right_rounded,
+                    color: colorScheme.primary,
+                    size: 18,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+
+            const SizedBox(height: 20),
+
+            // ─── Accounts Header ───
+            Row(
+              children: [
+                Icon(
+                  Icons.account_balance_rounded,
+                  color: colorScheme.primary,
+                  size: 20,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  AppLocalizations.of(context)!.accounts,
+                  style: theme.textTheme.titleSmall?.copyWith(
+                    fontWeight: FontWeight.w800,
+                    color: colorScheme.onSurface,
+                    letterSpacing: -0.2,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+
+            // ─── Accounts List ───
+            ...accounts.map((account) {
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: _AccountItem(account: account),
+              );
+            }),
+          ],
         );
       },
     );
@@ -1098,7 +1169,7 @@ class _SettingsSkeletonTab extends ConsumerWidget {
 
     return ListView.separated(
       padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
-      itemCount: 6,
+      itemCount: 5,
       separatorBuilder: (_, __) => const SizedBox(height: 12),
       itemBuilder: (context, i) {
         if (i == 0) {
@@ -1160,53 +1231,6 @@ class _SettingsSkeletonTab extends ConsumerWidget {
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => const StatisticsScreen(),
-                  ),
-                );
-              },
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.bar_chart_rounded,
-                      color: colorScheme.secondary,
-                      size: 22,
-                    ),
-                    const SizedBox(width: 14),
-                    Expanded(
-                      child: Text(
-                        AppLocalizations.of(context)!.settingsStatistics,
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              fontWeight: FontWeight.w700,
-                              color: colorScheme.onSurface,
-                            ),
-                      ),
-                    ),
-                    Icon(
-                      Icons.chevron_right_rounded,
-                      color:
-                          colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          );
-        }
-
-        if (i == 2) {
-          return Container(
-            height: 60,
-            decoration: BoxDecoration(
-              color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
-              borderRadius: BorderRadius.circular(14),
-            ),
-            child: InkWell(
-              borderRadius: BorderRadius.circular(14),
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
                     builder: (context) =>
                         const CategoriesTagsManagementScreen(),
                   ),
@@ -1243,7 +1267,7 @@ class _SettingsSkeletonTab extends ConsumerWidget {
           );
         }
 
-        if (i == 3) {
+        if (i == 2) {
           return Container(
             height: 60,
             decoration: BoxDecoration(
@@ -1290,7 +1314,7 @@ class _SettingsSkeletonTab extends ConsumerWidget {
           );
         }
 
-        if (i == 4) {
+        if (i == 3) {
           return Container(
             height: 60,
             decoration: BoxDecoration(
@@ -1337,7 +1361,7 @@ class _SettingsSkeletonTab extends ConsumerWidget {
           );
         }
 
-        if (i == 5) {
+        if (i == 4) {
           return Container(
             height: 60,
             decoration: BoxDecoration(

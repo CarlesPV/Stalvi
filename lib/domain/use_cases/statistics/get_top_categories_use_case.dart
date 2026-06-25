@@ -4,6 +4,7 @@ import 'package:stalvi/domain/entities/category_statistic.dart';
 import 'package:stalvi/domain/repositories/i_transaction_repository.dart';
 import 'package:stalvi/domain/repositories/i_exchange_rate_repository.dart';
 import 'package:stalvi/domain/repositories/i_category_repository.dart';
+import 'package:stalvi/core/utils/currency_converter.dart';
 
 class GetTopCategoriesUseCase {
   final ITransactionRepository _transactionRepository;
@@ -32,19 +33,15 @@ class GetTopCategoriesUseCase {
         await _transactionRepository.watchFilteredTransactions(filter).first;
 
     final rates = await _exchangeRateRepository.getLocalRates(
-        baseCurrency: targetCurrency);
+      baseCurrency: targetCurrency,
+    );
 
     final categoryTotals = <String, double>{};
     for (final tx in transactions) {
       if (tx.categoryId == null) continue;
 
-      double amount = tx.amount.toDouble();
-      if (tx.originalCurrency != targetCurrency) {
-        final rate = rates?.rateFor(tx.originalCurrency);
-        if (rate != null && rate != 0) {
-          amount = amount / rate;
-        }
-      }
+      double amount =
+          CurrencyConverter.convertAmount(tx, targetCurrency, rates);
 
       categoryTotals[tx.categoryId!] =
           (categoryTotals[tx.categoryId!] ?? 0) + amount;
@@ -57,13 +54,15 @@ class GetTopCategoriesUseCase {
     for (final entry in categoryTotals.entries) {
       final category = categoryMap[entry.key];
       if (category != null) {
-        result.add(CategoryStatistic(
-          categoryId: category.id,
-          categoryName: category.name,
-          categoryIcon: category.icon,
-          categoryColor: category.color,
-          totalAmount: entry.value.round(),
-        ));
+        result.add(
+          CategoryStatistic(
+            categoryId: category.id,
+            categoryName: category.name,
+            categoryIcon: category.icon,
+            categoryColor: category.color,
+            totalAmount: entry.value.round(),
+          ),
+        );
       }
     }
 

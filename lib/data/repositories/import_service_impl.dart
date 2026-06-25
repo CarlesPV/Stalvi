@@ -15,12 +15,15 @@ import 'package:stalvi/domain/repositories/i_import_service.dart';
 class ImportServiceImpl implements IImportService {
   final db.AppDatabase _database;
   final IExportService _exportService;
+  final void Function()? _onImportSuccess;
 
   ImportServiceImpl({
     required db.AppDatabase database,
     required IExportService exportService,
+    void Function()? onImportSuccess,
   })  : _database = database,
-        _exportService = exportService;
+        _exportService = exportService,
+        _onImportSuccess = onImportSuccess;
 
   @override
   Future<void> restoreFromEncryptedJson(
@@ -86,8 +89,9 @@ class ImportServiceImpl implements IImportService {
         await _database.delete(_database.categories).go();
 
         // Ensure we assign accounts to the CURRENT device profile
-        final currentProfile =
-            await _database.select(_database.profiles).getSingleOrNull();
+        final currentProfile = await (_database.select(_database.profiles)
+              ..limit(1))
+            .getSingleOrNull();
         final currentUserId = currentProfile?.id;
 
         // Insert Accounts
@@ -119,7 +123,8 @@ class ImportServiceImpl implements IImportService {
                   id: cat['id'] as String,
                   name: cat['name'] as String,
                   associatedType: Value(
-                      _parseCategoryType(cat['associated_type'] as String?)),
+                    _parseCategoryType(cat['associated_type'] as String?),
+                  ),
                   icon: cat['icon'] as String,
                   color: cat['color'] as String,
                   parentCategoryId: Value(cat['parent_category_id'] as String?),
@@ -168,6 +173,7 @@ class ImportServiceImpl implements IImportService {
               );
         }
       });
+      _onImportSuccess?.call();
     } on ImportException {
       rethrow;
     } on ExportException catch (e) {
@@ -186,7 +192,8 @@ class ImportServiceImpl implements IImportService {
   }
 
   static category_table.CategoryAssociatedType? _parseCategoryType(
-      String? raw) {
+    String? raw,
+  ) {
     if (raw == null) return null;
     switch (raw) {
       case 'income':

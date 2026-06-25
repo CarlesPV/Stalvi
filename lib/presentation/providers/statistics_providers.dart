@@ -7,6 +7,7 @@ import 'package:stalvi/domain/entities/period_summary.dart';
 import 'package:stalvi/domain/use_cases/statistics/get_period_summary_use_case.dart';
 import 'package:stalvi/domain/use_cases/statistics/get_top_categories_use_case.dart';
 import 'package:stalvi/presentation/providers/repository_providers.dart';
+import 'package:stalvi/core/utils/currency_converter.dart';
 
 // ─── Use-case providers ───────────────────────────────────────────────────────
 
@@ -275,13 +276,8 @@ final globalBalanceProvider = StreamProvider.autoDispose<double>((ref) async* {
 
     double balance = 0;
     for (final tx in transactions) {
-      double amount = tx.amount.toDouble();
-      if (tx.originalCurrency != targetCurrency) {
-        final rate = rates?.rateFor(tx.originalCurrency);
-        if (rate != null && rate != 0) {
-          amount = amount / rate;
-        }
-      }
+      double amount =
+          CurrencyConverter.convertAmount(tx, targetCurrency, rates);
 
       if (tx.type == TransactionType.income) {
         balance += amount;

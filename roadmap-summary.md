@@ -374,11 +374,25 @@ This document lists the completed phases of the Stalvi development roadmap, prov
   - Standard static analysis pass (`flutter analyze` with 0 issues).
   - Executed the entire suite of 359 unit, integration, and widget tests, achieving a 100% success rate (all tests passed!).
 
+### Phase 24: Financial Immutability, Export Engine & UI Polish
+* **Completion Date:** June 24, 2026
+* **Objective:** Ensure historical transaction data integrity, improve data export capabilities (PDF/CSV/JSON), and fix critical UI/UX overflows and layout issues.
+* **Accomplishments:**
+  - **Financial Immutability**: Added an `exchangeRateSnapshot` field to transactions and updated database mapping logic to store snapshots at creation time, preserving historical balance integrity. Calculate all Statistics (dashboard summaries and top categories) dynamically in real-time, performing live currency conversions based on full unrounded integer cents across multi-currency accounts.
+  - **Export Engine Enhancements**: Enhanced CSV and PDF generation to export complete data fields (including historical rates), formatted totals using active local currency symbols, and appended timestamps to filenames. Fully localized PDF strings (`AppLocalizations`) and appended `pw.PieGrid` charts for top income and expense categories.
+  - **Data Import Flow**: Modified the backup import pipeline to invalidate Riverpod providers, purge memory caches, and trigger a clean application restart via the navigator key to prevent transient state issues after data restoration.
+  - **UI/UX Polish**: Removed the redundant "Net Balance" summary from the Accounts tab, leaving a clean "Statistics" section header and entry point. Centered the transaction amount initially in the "Add Transaction" screen, allowing it to dynamically expand leftwards on large inputs. Fix the missing visibility toggle (eye icon) on the backup confirmation password field and resolved global UI overflows.
+* **Verification:**
+  - Resolved BuildContext async gap warnings (`use_build_context_synchronously`) in `data_management_screen.dart`.
+  - Deleted unnecessary scratch file `test_downloads.dart`.
+  - 100% passing rate on code analysis (`flutter analyze` with 0 issues).
+  - 100% success rate on the complete 363 tests suite (`flutter test`).
+
 ## Recent Updates
 - Configured launcher icons and splash screens.
 - Implemented encrypted backup import/restore services (`ImportServiceImpl`).
-- Wrote new unit tests for `ImportServiceImpl` using mocktail.
-- Fixed all code format lints and missing trailing commas in test suites.
+- Removed redundant Net Balance from accounts, centered amount inputs, and localized export PDFs with pie charts.
 - Synced localization files for EN, ES, CA.
+- Achieved 100% pass rate with all 363 tests passing successfully and 0 lint issues.
 
 

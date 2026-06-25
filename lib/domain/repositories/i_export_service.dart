@@ -3,6 +3,8 @@ import '../entities/category.dart';
 import '../entities/tag.dart';
 import '../entities/transaction.dart';
 import '../entities/period_summary.dart';
+import '../entities/category_statistic.dart';
+import 'package:stalvi/core/l10n/app_localizations.dart';
 
 /// Immutable result returned by every export method.
 /// Contains the raw bytes of the generated file and its saved filename/path.
@@ -45,7 +47,11 @@ abstract class IExportService {
     List<Transaction> transactions, {
     required PeriodSummary summary,
     required DateTime month,
+    required AppLocalizations l10n,
     List<Account> accounts = const [],
     List<Category> categories = const [],
+    List<CategoryStatistic> topExpenseCategories = const [],
+    List<CategoryStatistic> topIncomeCategories = const [],
+    String defaultCurrency = 'EUR',
   });
 }

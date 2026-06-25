@@ -169,5 +169,18 @@
   - [x] Validate cross-platform imports/exports with comprehensive test suites covering CSV parsing, encryption/decryption envelopes, PDF statements, and full DB restorations.
   - [x] Ensure 100% build health, clean lint checks (0 issues on `flutter analyze`), and successfully compile and execute all 360+ tests suite.
 
+- [x] **Phase 24: Financial Immutability, Export Engine & UI Polish**
+  - [x] Update `Transaction` entity and Drift database schema to store a snapshot of currency exchange rates at the time of creation.
+  - [x] Remove the redundant "Net Balance" summary from the Accounts tab, leaving a clean "Statistics" section header and entry point.
+  - [x] Center the transaction amount initially in the "Add Transaction" screen, allowing it to dynamically expand leftwards on large inputs.
+  - [x] Calculate all Statistics (dashboard summaries and top categories) dynamically in real-time, performing live currency conversions based on full unrounded integer cents across multi-currency accounts.
+  - [x] Fix the missing visibility toggle (eye icon) on the backup confirmation password field.
+  - [x] Resolve global UI overflows, text truncation ("..."), and visual alignment issues across buttons and error messages.
+  - [x] Modify export services (PDF, CSV, JSON) to append timestamps (`yyyyMMdd_HHmmss`) to filenames.
+  - [x] Enhance PDF generation: Fully localize strings (`AppLocalizations`), format amounts with the default user currency, and append `pw.PieGrid` charts for top income and expense categories.
+  - [x] Enhance CSV generation to include all newly added transaction data (e.g., historical exchange rates).
+  - [x] Modify import service: Force a complete memory clear, background state flush, and app restart upon successful data import.
+  - [x] Standardize 100% build health, clean lint checks (0 issues on `flutter analyze`), and successfully compile and execute all 363 tests in the test suite.
+
 ## Upcoming Phases
-- [ ] **Phase 24: Integration Testing (E2E), final security audit, and store preparation.**
+- [ ] **Phase 25: Integration Testing (E2E), final security audit, and store preparation.**

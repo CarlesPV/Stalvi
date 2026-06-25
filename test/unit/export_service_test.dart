@@ -1,8 +1,11 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:encrypt/encrypt.dart' as enc;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
+import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 import 'package:stalvi/core/errors/app_exceptions.dart';
 import 'package:stalvi/data/repositories/export_service_impl.dart';
 import 'package:stalvi/domain/entities/account.dart';
@@ -10,7 +13,31 @@ import 'package:stalvi/domain/entities/category.dart';
 import 'package:stalvi/domain/entities/period_summary.dart';
 import 'package:stalvi/domain/entities/tag.dart';
 import 'package:stalvi/domain/entities/transaction.dart';
+import 'package:flutter/widgets.dart';
+import 'package:stalvi/core/l10n/app_localizations.dart';
 import 'package:stalvi/domain/entities/transaction_type.dart';
+
+class FakePathProviderPlatform extends Fake
+    with MockPlatformInterfaceMixin
+    implements PathProviderPlatform {
+  final String tempDir;
+  FakePathProviderPlatform(this.tempDir);
+
+  @override
+  Future<String?> getApplicationDocumentsPath() async {
+    return tempDir;
+  }
+
+  @override
+  Future<String?> getDownloadsPath() async {
+    return tempDir;
+  }
+
+  @override
+  Future<String?> getExternalStoragePath() async {
+    return tempDir;
+  }
+}
 
 // ──────────────────────────────────────────────────────────────────────────────
 // Test helpers
@@ -50,15 +77,26 @@ List<Tag> get _emptyTags => const [];
 
 void main() {
   late ExportServiceImpl service;
+  late Directory tempDir;
 
-  setUp(() {
+  setUp(() async {
+    tempDir = await Directory.systemTemp.createTemp('export_service_test');
+    PathProviderPlatform.instance = FakePathProviderPlatform(tempDir.path);
     service = ExportServiceImpl();
+  });
+
+  tearDown(() async {
+    if (await tempDir.exists()) {
+      await tempDir.delete(recursive: true);
+    }
   });
 
   // ─────────────────────── CSV formatting ──────────────────────────────────
 
   group('generateCsv', () {
-    test('result has correct MIME type and .csv filename', () async {
+    test(
+        'result has correct MIME type and matches Konta_Export_yyyyMMdd_HHmmss.csv filename pattern',
+        () async {
       // Arrange
       final tx = _makeTransaction();
 
@@ -71,10 +109,13 @@ void main() {
 
       // Assert
       expect(result.mimeType, equals('text/csv'));
-      expect(result.filename, endsWith('.csv'));
+      expect(
+          result.filename, matches(RegExp(r'^Konta_Export_\d{8}_\d{6}\.csv$')));
     });
 
-    test('CSV output has a header row as the first line', () async {
+    test(
+        'CSV output has a header row as the first line with exchange_rate_snapshot and transfer_id',
+        () async {
       // Arrange
       final tx = _makeTransaction();
 
@@ -90,6 +131,8 @@ void main() {
       expect(lines.first, contains('Date'));
       expect(lines.first, contains('Type'));
       expect(lines.first, contains('Amount'));
+      expect(lines.first, contains('exchange_rate_snapshot'));
+      expect(lines.first, contains('transfer_id'));
     });
 
     test('amount is converted from cents to decimal string', () async {
@@ -222,7 +265,9 @@ void main() {
   group('generateEncryptedJson', () {
     const password = 'S3cur3P@ssw0rd!';
 
-    test('result has correct MIME type and .enc filename', () async {
+    test(
+        'result has correct MIME type and matches Konta_Export_yyyyMMdd_HHmmss.kbak filename pattern',
+        () async {
       // Arrange
       final tx = _makeTransaction();
 
@@ -237,7 +282,8 @@ void main() {
 
       // Assert
       expect(result.mimeType, equals('application/octet-stream'));
-      expect(result.filename, endsWith('.kbak'));
+      expect(result.filename,
+          matches(RegExp(r'^Konta_Export_\d{8}_\d{6}\.kbak$')));
     });
 
     test('envelope is at least 33 bytes (16 salt + 16 iv + 1 byte cipher)',
@@ -417,7 +463,9 @@ void main() {
   // ──────────────────────── PDF generation ──────────────────────────────────
 
   group('generateMonthlyPdf', () {
-    test('result has correct MIME type and .pdf filename', () async {
+    test(
+        'result has correct MIME type and matches Konta_Export_yyyyMMdd_HHmmss.pdf filename pattern',
+        () async {
       // Arrange
       final tx = _makeTransaction();
       const summary = PeriodSummary(totalIncome: 10000, totalExpense: 5000);
@@ -427,13 +475,15 @@ void main() {
         [tx],
         summary: summary,
         month: DateTime(2025, 6),
+        l10n: lookupAppLocalizations(const Locale('en')),
         accounts: _emptyAccounts,
         categories: _emptyCategories,
       );
 
       // Assert
       expect(result.mimeType, equals('application/pdf'));
-      expect(result.filename, endsWith('.pdf'));
+      expect(
+          result.filename, matches(RegExp(r'^Konta_Export_\d{8}_\d{6}\.pdf$')));
     });
 
     test('PDF bytes start with the PDF magic bytes (%PDF)', () async {
@@ -445,6 +495,7 @@ void main() {
         [],
         summary: summary,
         month: DateTime(2025, 6),
+        l10n: lookupAppLocalizations(const Locale('en')),
         accounts: _emptyAccounts,
         categories: _emptyCategories,
       );

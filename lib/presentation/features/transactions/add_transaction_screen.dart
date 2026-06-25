@@ -282,42 +282,54 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 8),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.baseline,
-                textBaseline: TextBaseline.alphabetic,
-                children: [
-                  Text(
-                    NumberFormat.simpleCurrency(
-                      name: state.currency ?? 'EUR',
-                    ).currencySymbol,
-                    style: theme.textTheme.displaySmall?.copyWith(
-                      color: activeColor,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  const SizedBox(width: 4),
-                  IntrinsicWidth(
-                    child: TextField(
-                      controller: _amountController,
-                      keyboardType:
-                          const TextInputType.numberWithOptions(decimal: true),
-                      style: theme.textTheme.displayLarge?.copyWith(
-                        color: activeColor,
-                        fontWeight: FontWeight.w800,
-                        letterSpacing: -1.0,
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  return SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: ConstrainedBox(
+                      constraints:
+                          BoxConstraints(minWidth: constraints.maxWidth),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.baseline,
+                        textBaseline: TextBaseline.alphabetic,
+                        children: [
+                          Text(
+                            NumberFormat.simpleCurrency(
+                              name: state.currency ?? 'EUR',
+                            ).currencySymbol,
+                            style: theme.textTheme.displaySmall?.copyWith(
+                              color: activeColor,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(width: 4),
+                          IntrinsicWidth(
+                            child: TextField(
+                              controller: _amountController,
+                              keyboardType:
+                                  const TextInputType.numberWithOptions(
+                                      decimal: true),
+                              style: theme.textTheme.displayLarge?.copyWith(
+                                color: activeColor,
+                                fontWeight: FontWeight.w800,
+                                letterSpacing: -1.0,
+                              ),
+                              textAlign: TextAlign.center,
+                              decoration: const InputDecoration(
+                                hintText: '0.00',
+                                hintStyle: TextStyle(color: Colors.grey),
+                                border: InputBorder.none,
+                                contentPadding: EdgeInsets.zero,
+                              ),
+                              autofocus: true,
+                            ),
+                          ),
+                        ],
                       ),
-                      textAlign: TextAlign.center,
-                      decoration: const InputDecoration(
-                        hintText: '0.00',
-                        hintStyle: TextStyle(color: Colors.grey),
-                        border: InputBorder.none,
-                        contentPadding: EdgeInsets.zero,
-                      ),
-                      autofocus: true,
                     ),
-                  ),
-                ],
+                  );
+                },
               ),
 
               const SizedBox(height: 40),
