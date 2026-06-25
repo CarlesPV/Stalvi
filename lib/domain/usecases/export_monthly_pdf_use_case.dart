@@ -5,7 +5,6 @@ import 'package:stalvi/domain/repositories/i_profile_repository.dart';
 import 'package:stalvi/domain/repositories/i_transaction_repository.dart';
 import 'package:stalvi/core/l10n/app_localizations.dart';
 import 'package:stalvi/core/utils/currency_converter.dart';
-import 'package:stalvi/domain/entities/transaction.dart';
 import 'package:stalvi/domain/entities/transaction_type.dart';
 import 'package:stalvi/domain/repositories/i_exchange_rate_repository.dart';
 import 'package:stalvi/domain/use_cases/statistics/get_period_summary_use_case.dart';
@@ -103,7 +102,8 @@ class ExportMonthlyPdfUseCase {
         await _transactionRepository.watchAllTransactions().first;
 
     final currentRates = await _exchangeRateRepository.getLatestRates(
-        baseCurrency: targetCurrency);
+      baseCurrency: targetCurrency,
+    );
 
     final monthTransactions = allTransactions.where((tx) {
       return !tx.date.isBefore(startDate) && !tx.date.isAfter(endDate);

@@ -817,6 +817,9 @@ class AppLocalizationsCa extends AppLocalizations {
   String get currencyAUD => 'Dòlar Australià (AUD)';
 
   @override
+  String get currencyCNY => 'Iuan Xinès (CNY)';
+
+  @override
   String get errorDestinationAccountRequired =>
       'Si us plau, seleccioneu un compte de destí';
 
@@ -930,4 +933,10 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get btnViewDetails => 'Veure detalls';
+
+  @override
+  String get btnOpen => 'Obrir';
+
+  @override
+  String get errorOpenFileFailed => 'No s\'ha pogut obrir el fitxer';
 }

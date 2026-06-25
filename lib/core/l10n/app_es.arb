@@ -248,6 +248,7 @@
   "currencyCHF": "Franco Suizo (CHF)",
   "currencyCAD": "Dólar Canadiense (CAD)",
   "currencyAUD": "Dólar Australiano (AUD)",
+  "currencyCNY": "Yuan Chino (CNY)",
   "errorDestinationAccountRequired": "Por favor, seleccione una cuenta de destino",
   "errorSameAccountTransfer": "Las cuentas de origen y destino no pueden ser la misma",
   "savingsGoal": "Objetivo de ahorro",
@@ -1058,6 +1059,9 @@
   "@currencyAUD": {
     "description": "Currency name for AUD"
   },
+  "@currencyCNY": {
+    "description": "Currency name for CNY"
+  },
   "@errorDestinationAccountRequired": {
     "description": "Validation error when destination account is required for transfer"
   },
@@ -1195,5 +1199,13 @@
   "btnViewDetails": "Ver detalles",
   "@btnViewDetails": {
     "description": "Text button label to view details of statistics"
+  },
+  "btnOpen": "Abrir",
+  "@btnOpen": {
+    "description": "Button label to open a file"
+  },
+  "errorOpenFileFailed": "No se pudo abrir el archivo",
+  "@errorOpenFileFailed": {
+    "description": "Error message when opening a file fails"
   }
 }

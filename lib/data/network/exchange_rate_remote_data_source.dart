@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 
 import 'package:stalvi/core/errors/app_exceptions.dart';
+import 'package:stalvi/core/utils/currency_converter.dart';
 import 'package:stalvi/data/models/exchange_rate_model.dart';
 
 // ---------------------------------------------------------------------------
@@ -59,7 +60,12 @@ class ExchangeRateRemoteDataSourceImpl
     required String baseCurrency,
   }) async {
     final uri = Uri.parse('$_baseUrl/latest').replace(
-      queryParameters: {'from': baseCurrency},
+      queryParameters: {
+        'from': baseCurrency,
+        'to': CurrencyConverter.supportedCurrencies
+            .where((c) => c != baseCurrency)
+            .join(','),
+      },
     );
 
     // Redundant runtime guard — catches any accidental URI manipulation.

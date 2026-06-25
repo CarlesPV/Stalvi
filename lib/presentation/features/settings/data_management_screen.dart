@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:open_filex/open_filex.dart';
 import 'package:stalvi/core/l10n/app_localizations.dart';
 import 'package:stalvi/infrastructure/services/biometric_auth_service.dart';
 import 'package:stalvi/presentation/features/settings/profile_settings_controller.dart';
@@ -109,7 +110,8 @@ class _DataManagementScreenState extends ConsumerState<DataManagementScreen> {
                                 : Icons.visibility,
                           ),
                           onPressed: () => setDialogState(
-                              () => obscureConfirm = !obscureConfirm),
+                            () => obscureConfirm = !obscureConfirm,
+                          ),
                         ),
                       ),
                     ),
@@ -219,13 +221,36 @@ class _DataManagementScreenState extends ConsumerState<DataManagementScreen> {
   void _showExportSuccess(
     BuildContext context,
     String? filePath,
-    String successMsg,
-  ) {
+    String successMsg, {
+    bool showOpenAction = false,
+  }) {
     if (!context.mounted) return;
+    final hasFilePath = filePath != null && filePath.isNotEmpty;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(filePath != null ? 'Saved to $filePath' : successMsg),
-        duration: const Duration(seconds: 4),
+        content: Text(hasFilePath ? 'Saved to $filePath' : successMsg),
+        duration: const Duration(seconds: 6),
+        action: (hasFilePath && showOpenAction)
+            ? SnackBarAction(
+                label: AppLocalizations.of(context)!.btnOpen,
+                onPressed: () async {
+                  try {
+                    await OpenFilex.open(filePath);
+                  } catch (_) {
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            AppLocalizations.of(context)!.errorOpenFileFailed,
+                          ),
+                          backgroundColor: Theme.of(context).colorScheme.error,
+                        ),
+                      );
+                    }
+                  }
+                },
+              )
+            : null,
       ),
     );
   }
@@ -332,7 +357,12 @@ class _DataManagementScreenState extends ConsumerState<DataManagementScreen> {
           .read(profileSettingsControllerProvider.notifier)
           .exportTransactionsCsv();
       if (!context.mounted) return;
-      _showExportSuccess(context, result.filePath, l10n.exportSuccess);
+      _showExportSuccess(
+        context,
+        result.filePath,
+        l10n.exportSuccess,
+        showOpenAction: true,
+      );
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -352,7 +382,12 @@ class _DataManagementScreenState extends ConsumerState<DataManagementScreen> {
           .read(profileSettingsControllerProvider.notifier)
           .exportMonthlyPdf();
       if (!context.mounted) return;
-      _showExportSuccess(context, result.filePath, l10n.exportSuccess);
+      _showExportSuccess(
+        context,
+        result.filePath,
+        l10n.exportSuccess,
+        showOpenAction: true,
+      );
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(

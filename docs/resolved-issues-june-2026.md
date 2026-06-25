@@ -256,6 +256,36 @@ SQL-based database aggregation is incapable of parsing dynamic JSON objects (spe
 ### Future Prevention Guideline
 - Whenever a database column contains structured JSON properties (such as dynamic snapshots or metadata logs) that dictate financial calculations, perform the mathematical aggregation in the Dart domain/repository layer instead of using database-level SQL functions.
 
+---
+
+## 11. Currency Engine Optimization, Reactivity, and Advanced Reports (Phase 25)
+
+### Problem Description
+1. **Network Sync Overhead**: The currency sync downloaded exchange rate data for unnecessary global currencies on every launch, increasing payload size and latency.
+2. **Reactivity Deficit on Base Currency Changes**: When the user updated their default currency in settings, statistics and dashboard overview components failed to redraw in real-time, requiring a manual application restart.
+3. **Inaccurate Cross-Currency Transfers**: Transfer movements between accounts configured in different currencies (e.g. USD to EUR) used static base values instead of dynamically calculating the destination conversion leg.
+4. **Export Report Completeness**: PDF exports lacked visual category distributions, percentages, or localized translations.
+5. **Form bottom overlaps & UX limits**: On tight viewports or when opening the OS soft-keyboard, forms like `AddTransactionScreen` and `ProfileSettingsScreen` threw `BottomOverflow` rendering errors, and files exported successfully gave no direct action to view/open them.
+
+### Root Causes
+1. **Unconstrained API Payload**: `ExchangeRateRemoteDataSource` synced all 32+ global currencies without caching.
+2. **State Decoupling**: Riverpod statistics providers did not watch the default user profile currency configuration state, missing rebuild triggers when configuration settings changed.
+3. **Static Transfer calculations**: `AddTransactionUseCase` added dual transaction records with identical unadjusted amounts even if target accounts had differing currencies.
+4. **Form Viewport Limits**: Form layouts did not use scrolling wrappers, causing constraints to overflow when height shrunk due to the keyboard.
+
+### Solutions Applied
+1. **Target Currency Caching**: Restricted exchange rate sync to the 8 supported currencies, and cached results in local database tables with a 24-hour expiration check.
+2. **Provider State Coupling**: Refactored `statisticsProviders` to watch profile state configurations, ensuring automatic, immediate recalculations on default currency changes.
+3. **Cross-Currency Transfer Math**: Updated transfer logic in `AddTransactionUseCase` to detect differing currencies, retrieve the appropriate snapshot rate, and compute the correct adjusted amount for the destination account.
+4. **Advanced Localized PDF Generation**: Injected category breakdown summaries, percentages, and `pw.PieGrid` pie charts to the monthly statement export PDF.
+5. **Direct File Open action**: Integrated the `open_filex` package, adding interactive "Open" buttons on success export snackbars.
+6. **Form Scroll Layouts**: Audited forms, wrapping parent layout views in `SafeArea` and `SingleChildScrollView` to prevent keyboard-related layout crashes.
+
+### Future Prevention Guideline
+- Always watch configuration settings (e.g., locale, currency, mode) in down-stream providers that compute data summaries.
+- Use `SingleChildScrollView` or layout-wrapping scroll components for any page containing input text fields to safely support soft keyboards.
+
+
 
 
 

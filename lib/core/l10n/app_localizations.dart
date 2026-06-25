@@ -1588,6 +1588,12 @@ abstract class AppLocalizations {
   /// **'Australian Dollar (AUD)'**
   String get currencyAUD;
 
+  /// Currency name for CNY
+  ///
+  /// In en, this message translates to:
+  /// **'Chinese Yuan (CNY)'**
+  String get currencyCNY;
+
   /// Validation error when destination account is required for transfer
   ///
   /// In en, this message translates to:
@@ -1779,6 +1785,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'View Details'**
   String get btnViewDetails;
+
+  /// Button label to open a file
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get btnOpen;
+
+  /// Error message when opening a file fails
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open file'**
+  String get errorOpenFileFailed;
 }
 
 class _AppLocalizationsDelegate

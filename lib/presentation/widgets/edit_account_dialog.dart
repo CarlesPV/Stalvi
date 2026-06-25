@@ -484,6 +484,7 @@ class _EditAccountDialogState extends ConsumerState<EditAccountDialog> {
                   DropdownMenuItem(value: 'CHF', child: Text(l10n.currencyCHF)),
                   DropdownMenuItem(value: 'CAD', child: Text(l10n.currencyCAD)),
                   DropdownMenuItem(value: 'AUD', child: Text(l10n.currencyAUD)),
+                  DropdownMenuItem(value: 'CNY', child: Text(l10n.currencyCNY)),
                 ],
                 // null disables the dropdown — currency is immutable after creation
                 onChanged: null,

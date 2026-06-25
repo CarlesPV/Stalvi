@@ -64,8 +64,12 @@ class CurrencyFormatter {
     int decimalDigits = 2,
     bool showSign = false,
   }) {
-    final millions = _formatMillions(amount,
-        locale: locale, currencyCode: currencyCode, showSign: showSign);
+    final millions = _formatMillions(
+      amount,
+      locale: locale,
+      currencyCode: currencyCode,
+      showSign: showSign,
+    );
     if (millions != null) return millions;
 
     final format = NumberFormat.simpleCurrency(
@@ -92,11 +96,13 @@ class CurrencyFormatter {
     int decimalDigits = 2,
     bool showSign = false,
   }) {
-    final millions = _formatMillions(amount,
-        locale: locale,
-        currencyCode: currencyCode,
-        showSign: showSign,
-        useCurrencyCode: true);
+    final millions = _formatMillions(
+      amount,
+      locale: locale,
+      currencyCode: currencyCode,
+      showSign: showSign,
+      useCurrencyCode: true,
+    );
     if (millions != null) return millions;
 
     final format = NumberFormat.currency(

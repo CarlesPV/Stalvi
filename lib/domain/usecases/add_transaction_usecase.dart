@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'package:stalvi/core/errors/app_exceptions.dart';
+import 'package:stalvi/domain/entities/account.dart';
+import 'package:stalvi/domain/entities/exchange_rate.dart';
 import 'package:stalvi/domain/entities/transaction.dart';
 import 'package:stalvi/domain/entities/transaction_type.dart';
 import 'package:stalvi/domain/repositories/i_account_repository.dart';
@@ -111,6 +113,7 @@ class AddTransactionUseCase {
       );
     }
 
+    Account? destinationAccount;
     // Transfer-specific validation.
     if (params.type == TransactionType.transfer) {
       if (params.destinationAccountId == null) {
@@ -125,7 +128,7 @@ class AddTransactionUseCase {
           code: 'SAME_ACCOUNT_TRANSFER',
         );
       }
-      final destinationAccount =
+      destinationAccount =
           await _accountRepository.getAccountById(params.destinationAccountId!);
       if (destinationAccount == null) {
         throw NotFoundException(
@@ -141,44 +144,103 @@ class AddTransactionUseCase {
     String? exchangeRateSnapshot;
     final String originalCurrency = params.currency ?? account.currency;
 
+    ExchangeRate? effectiveRates;
     try {
       final localRates = await _exchangeRateRepository.getLocalRates(
         baseCurrency: profile.defaultCurrency,
       );
       if (localRates != null) {
+        effectiveRates = localRates;
         final ratesMap = Map<String, double>.from(localRates.rates);
         ratesMap[localRates.baseCurrency] = 1.0;
         exchangeRateSnapshot = jsonEncode(ratesMap);
       }
-    } catch (_) {
-      // Ignore if local rates cannot be fetched
+    } catch (_) {}
+
+    if (originalCurrency != profile.defaultCurrency ||
+        (params.type == TransactionType.transfer &&
+            destinationAccount != null &&
+            destinationAccount.currency != originalCurrency)) {
+      bool needsLatest = effectiveRates == null;
+      if (!needsLatest) {
+        if (originalCurrency != profile.defaultCurrency &&
+            effectiveRates.rateFor(originalCurrency) == null) {
+          needsLatest = true;
+        }
+        if (params.type == TransactionType.transfer &&
+            destinationAccount != null) {
+          final dCurr = destinationAccount.currency;
+          if (dCurr != originalCurrency &&
+              dCurr != profile.defaultCurrency &&
+              effectiveRates.rateFor(dCurr) == null) {
+            needsLatest = true;
+          }
+        }
+      }
+
+      if (needsLatest) {
+        try {
+          final rateSnapshot = await _exchangeRateRepository.getLatestRates(
+            baseCurrency: profile.defaultCurrency,
+          );
+          effectiveRates = rateSnapshot;
+          if (exchangeRateSnapshot == null) {
+            final ratesMap = Map<String, double>.from(rateSnapshot.rates);
+            ratesMap[rateSnapshot.baseCurrency] = 1.0;
+            exchangeRateSnapshot = jsonEncode(ratesMap);
+          }
+        } on AppException {
+          rethrow;
+        } catch (e) {
+          throw ValidationException(
+            message: 'Failed to convert currency: $e',
+            code: 'CONVERSION_FAILED',
+          );
+        }
+      }
     }
 
     if (originalCurrency != profile.defaultCurrency) {
-      try {
-        final rateSnapshot = await _exchangeRateRepository.getLatestRates(
-          baseCurrency: profile.defaultCurrency,
+      exchangeRate = effectiveRates?.rateFor(originalCurrency);
+      if (exchangeRate == null) {
+        throw const ValidationException(
+          message: 'Exchange rate not available for the requested currency',
+          code: 'RATE_NOT_FOUND',
         );
-        exchangeRate = rateSnapshot.rateFor(originalCurrency);
-        if (exchangeRate == null) {
-          throw const ValidationException(
-            message: 'Exchange rate not available for the requested currency',
-            code: 'RATE_NOT_FOUND',
-          );
+      }
+      convertedAmount = (params.amount / exchangeRate).round();
+    }
+
+    int destinationAmount = params.amount;
+    int? destConvertedAmount;
+    double? destExchangeRate;
+
+    if (params.type == TransactionType.transfer && destinationAccount != null) {
+      final destCurrency = destinationAccount.currency;
+      if (destCurrency != originalCurrency) {
+        double amountInBase = params.amount.toDouble();
+        if (originalCurrency != profile.defaultCurrency) {
+          amountInBase = params.amount / exchangeRate!;
         }
-        convertedAmount = (params.amount / exchangeRate).round();
-        if (exchangeRateSnapshot == null) {
-          final ratesMap = Map<String, double>.from(rateSnapshot.rates);
-          ratesMap[rateSnapshot.baseCurrency] = 1.0;
-          exchangeRateSnapshot = jsonEncode(ratesMap);
+
+        if (destCurrency == profile.defaultCurrency) {
+          destinationAmount = amountInBase.round();
+          destConvertedAmount = null;
+          destExchangeRate = null;
+        } else {
+          destExchangeRate = effectiveRates?.rateFor(destCurrency);
+          if (destExchangeRate == null) {
+            throw const ValidationException(
+              message: 'Exchange rate not available for destination currency',
+              code: 'RATE_NOT_FOUND',
+            );
+          }
+          destinationAmount = (amountInBase * destExchangeRate).round();
+          destConvertedAmount = (destinationAmount / destExchangeRate).round();
         }
-      } on AppException {
-        rethrow;
-      } catch (e) {
-        throw ValidationException(
-          message: 'Failed to convert currency: $e',
-          code: 'CONVERSION_FAILED',
-        );
+      } else {
+        destConvertedAmount = convertedAmount;
+        destExchangeRate = exchangeRate;
       }
     }
 
@@ -216,15 +278,15 @@ class AddTransactionUseCase {
 
       final destinationTxn = Transaction(
         id: destinationTxnId,
-        amount: params.amount,
+        amount: destinationAmount,
         date: params.date,
         type: TransactionType.transfer,
         accountId: params.destinationAccountId!,
         categoryId: params.categoryId,
         notes: sanitizedNotes,
-        originalCurrency: originalCurrency,
-        convertedAmount: convertedAmount,
-        exchangeRate: exchangeRate,
+        originalCurrency: destinationAccount!.currency,
+        convertedAmount: destConvertedAmount,
+        exchangeRate: destExchangeRate,
         exchangeRateSnapshot: exchangeRateSnapshot,
         createdAt: now,
         modifiedAt: now,

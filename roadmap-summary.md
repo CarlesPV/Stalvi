@@ -388,11 +388,29 @@ This document lists the completed phases of the Stalvi development roadmap, prov
   - 100% passing rate on code analysis (`flutter analyze` with 0 issues).
   - 100% success rate on the complete 363 tests suite (`flutter test`).
 
+### Phase 25: Currency Engine Optimization, Reactivity, and Advanced Reports
+* **Completion Date:** June 25, 2026
+* **Objective:** Optimize the currency exchange engine, ensure real-time dashboard and statistics reactivity on currency updates, implement multi-currency cross-account transfers, generate advanced localized PDF reports with pie charts/visual statistics, implement direct file opening capabilities via `open_filex`, and perform a UI/UX audit for overflow issues.
+* **Accomplishments:**
+  - **Yuan Integration:** Fully integrated Chinese Yuan (CNY) into default currency options, models, localizations, and calculations.
+  - **Currency Cache Optimization:** Updated `ExchangeRateRemoteDataSource` to store rate data locally for 24 hours, restricting outbound queries to only the 8 supported currencies to minimize network overhead.
+  - **Dynamic Reactivity:** Refactored Riverpod provider hierarchies so statistics and dashboard summaries immediately recalculate and update when default currency configurations are changed.
+  - **Cross-Currency Transfers:** Upgraded `AddTransactionUseCase` to detect transfer requests across different currencies, querying dynamic exchange rate snapshots to calculate accurate destination amounts.
+  - **Advanced PDF Reports:** Rewrote PDF monthly exports to include beautiful income/expense pie charts, category breakdown percentages, and detailed summaries all converted to the default currency.
+  - **Direct File Opening:** Added the `open_filex` dependency and integrated interactive "Open" actions on success Snackbars when exporting CSV/PDF reports in the Data Management Screen.
+  - **UI/UX & Translation Audit:** Wrapped sensitive input forms (e.g. `AddTransactionScreen` and `ProfileSettingsScreen` PIN/currency selections) inside `SafeArea` and `SingleChildScrollView` widgets to guarantee zero `BottomOverflow` keyboard rendering bugs. Audited and synchronized the translation ARB catalogs for English, Spanish, and Catalan.
+* **Verification:**
+  - Zero issues on static analysis (`flutter analyze`).
+  - All automated tests pass successfully: **368 tests passed** (including mock repository verifications and widget layout assertions).
+
 ## Recent Updates
-- Configured launcher icons and splash screens.
-- Implemented encrypted backup import/restore services (`ImportServiceImpl`).
-- Removed redundant Net Balance from accounts, centered amount inputs, and localized export PDFs with pie charts.
-- Synced localization files for EN, ES, CA.
-- Achieved 100% pass rate with all 363 tests passing successfully and 0 lint issues.
+- Integrated Chinese Yuan (CNY) and optimized exchange rate API payload sizes (caching 8 target currencies for 24h).
+- Added multi-currency support to transfer transactions, dynamically resolving rates at transaction time.
+- Enhanced Riverpod state management to reactively redraw statistics and dashboard modules upon default currency updates.
+- Refactored monthly PDF export layouts to incorporate localized titles, default-currency formatting, and top categories pie charts.
+- Configured native file openers using `open_filex` for post-export feedback on success Snackbars.
+- Completed comprehensive UI form overflows audit using scroll views and keyboard safety widgets.
+- Achieved 100% pass rate with all 368 tests passing successfully and 0 lint issues.
+
 
 

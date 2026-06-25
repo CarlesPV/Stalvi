@@ -356,156 +356,25 @@ class ExportServiceImpl implements IExportService {
             pw.SizedBox(height: 20),
 
             // Income vs Expense Chart
-            pw.Text(
-              l10n.overview,
-              style: pw.TextStyle(fontSize: 12, fontWeight: pw.FontWeight.bold),
-            ),
-            pw.SizedBox(height: 10),
-            pw.Container(
-              alignment: pw.Alignment.center,
-              child: pw.Column(
-                children: [
-                  pw.CustomPaint(
-                    size: const PdfPoint(300, 120),
-                    painter: (PdfGraphics canvas, PdfPoint size) {
-                      final double maxVal = max(
-                        1.0,
-                        max(
-                          summary.totalIncome.toDouble(),
-                          summary.totalExpense.toDouble(),
-                        ),
-                      );
-                      final double incomeHeight =
-                          (summary.totalIncome / maxVal) * 80.0;
-                      final double expenseHeight =
-                          (summary.totalExpense / maxVal) * 80.0;
-
-                      // Draw grid lines
-                      canvas
-                        ..setStrokeColor(PdfColors.grey300)
-                        ..setLineWidth(0.5)
-                        // Grid line at 50%
-                        ..moveTo(20, 50)
-                        ..lineTo(280, 50)
-                        // Grid line at 100%
-                        ..moveTo(20, 90)
-                        ..lineTo(280, 90)
-                        ..strokePath();
-
-                      // Draw Income Bar (Green)
-                      canvas
-                        ..setFillColor(PdfColors.green700)
-                        ..drawRect(60, 10, 40, incomeHeight)
-                        ..fillPath();
-
-                      // Draw Expense Bar (Red)
-                      canvas
-                        ..setFillColor(PdfColors.red700)
-                        ..drawRect(180, 10, 40, expenseHeight)
-                        ..fillPath();
-
-                      // Draw baseline
-                      canvas
-                        ..setStrokeColor(PdfColors.grey400)
-                        ..setLineWidth(1)
-                        ..moveTo(20, 10)
-                        ..lineTo(280, 10)
-                        ..strokePath();
-                    },
-                  ),
-                  pw.SizedBox(height: 4),
-                  pw.Row(
-                    mainAxisAlignment: pw.MainAxisAlignment.center,
-                    children: [
-                      pw.SizedBox(width: 40),
-                      pw.Container(
-                        width: 80,
-                        alignment: pw.Alignment.center,
-                        child: pw.Text(
-                          l10n.income,
-                          style: pw.TextStyle(
-                            fontSize: 8,
-                            fontWeight: pw.FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                      pw.SizedBox(width: 40),
-                      pw.Container(
-                        width: 80,
-                        alignment: pw.Alignment.center,
-                        child: pw.Text(
-                          l10n.expenses,
-                          style: pw.TextStyle(
-                            fontSize: 8,
-                            fontWeight: pw.FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                      pw.SizedBox(width: 40),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            pw.SizedBox(height: 20),
+            _buildIncomeExpenseChart(summary, l10n),
 
             // Top Spending Categories Chart
-            if (topExpenseCategories.isNotEmpty) ...[
-              pw.Text(
+            if (topExpenseCategories.isNotEmpty)
+              _buildCategorySection(
                 l10n.statisticsTopSpending,
-                style:
-                    pw.TextStyle(fontSize: 12, fontWeight: pw.FontWeight.bold),
+                topExpenseCategories,
+                symbol,
+                l10n,
               ),
-              pw.SizedBox(height: 10),
-              pw.SizedBox(
-                height: 150,
-                child: pw.Chart(
-                  grid: pw.PieGrid(),
-                  datasets: topExpenseCategories.map((cat) {
-                    final colorHex = cat.categoryColor.replaceFirst('#', '');
-                    final color = colorHex.length == 6 || colorHex.length == 8
-                        ? PdfColor.fromHex(colorHex)
-                        : PdfColors.grey;
-                    return pw.PieDataSet(
-                      value: cat.totalAmount,
-                      color: color,
-                      legend:
-                          '${cat.categoryName} ($symbol ${_centsToDecimal(cat.totalAmount.toInt())})',
-                    );
-                  }).toList(),
-                ),
-              ),
-              pw.SizedBox(height: 20),
-            ],
 
             // Top Income Categories Chart
-            if (topIncomeCategories.isNotEmpty) ...[
-              pw.Text(
+            if (topIncomeCategories.isNotEmpty)
+              _buildCategorySection(
                 l10n.statisticsTopIncome,
-                style:
-                    pw.TextStyle(fontSize: 12, fontWeight: pw.FontWeight.bold),
+                topIncomeCategories,
+                symbol,
+                l10n,
               ),
-              pw.SizedBox(height: 10),
-              pw.SizedBox(
-                height: 150,
-                child: pw.Chart(
-                  grid: pw.PieGrid(),
-                  datasets: topIncomeCategories.map((cat) {
-                    final colorHex = cat.categoryColor.replaceFirst('#', '');
-                    final color = colorHex.length == 6 || colorHex.length == 8
-                        ? PdfColor.fromHex(colorHex)
-                        : PdfColors.grey;
-                    return pw.PieDataSet(
-                      value: cat.totalAmount,
-                      color: color,
-                      legend:
-                          '${cat.categoryName} ($symbol ${_centsToDecimal(cat.totalAmount.toInt())})',
-                    );
-                  }).toList(),
-                ),
-              ),
-              pw.SizedBox(height: 20),
-            ],
 
             pw.SizedBox(height: 12),
             pw.Text(
@@ -683,5 +552,167 @@ class ExportServiceImpl implements IExportService {
       default:
         return currencyCode;
     }
+  }
+
+  static pw.Widget _buildIncomeExpenseChart(
+    PeriodSummary summary,
+    AppLocalizations l10n,
+  ) {
+    return pw.Column(
+      crossAxisAlignment: pw.CrossAxisAlignment.start,
+      children: [
+        pw.Text(
+          l10n.overview,
+          style: pw.TextStyle(fontSize: 12, fontWeight: pw.FontWeight.bold),
+        ),
+        pw.SizedBox(height: 10),
+        pw.Container(
+          alignment: pw.Alignment.center,
+          child: pw.Column(
+            children: [
+              pw.CustomPaint(
+                size: const PdfPoint(300, 120),
+                painter: (PdfGraphics canvas, PdfPoint size) {
+                  final double maxVal = max(
+                    1.0,
+                    max(
+                      summary.totalIncome.toDouble(),
+                      summary.totalExpense.toDouble(),
+                    ),
+                  );
+                  final double incomeHeight =
+                      (summary.totalIncome / maxVal) * 80.0;
+                  final double expenseHeight =
+                      (summary.totalExpense / maxVal) * 80.0;
+
+                  // Draw grid lines
+                  canvas
+                    ..setStrokeColor(PdfColors.grey300)
+                    ..setLineWidth(0.5)
+                    // Grid line at 50%
+                    ..moveTo(20, 50)
+                    ..lineTo(280, 50)
+                    // Grid line at 100%
+                    ..moveTo(20, 90)
+                    ..lineTo(280, 90)
+                    ..strokePath();
+
+                  // Draw Income Bar (Green)
+                  canvas
+                    ..setFillColor(PdfColors.green700)
+                    ..drawRect(60, 10, 40, incomeHeight)
+                    ..fillPath();
+
+                  // Draw Expense Bar (Red)
+                  canvas
+                    ..setFillColor(PdfColors.red700)
+                    ..drawRect(180, 10, 40, expenseHeight)
+                    ..fillPath();
+
+                  // Draw baseline
+                  canvas
+                    ..setStrokeColor(PdfColors.grey400)
+                    ..setLineWidth(1)
+                    ..moveTo(20, 10)
+                    ..lineTo(280, 10)
+                    ..strokePath();
+                },
+              ),
+              pw.SizedBox(height: 4),
+              pw.Row(
+                mainAxisAlignment: pw.MainAxisAlignment.center,
+                children: [
+                  pw.SizedBox(width: 40),
+                  pw.Container(
+                    width: 80,
+                    alignment: pw.Alignment.center,
+                    child: pw.Text(
+                      l10n.income,
+                      style: pw.TextStyle(
+                        fontSize: 8,
+                        fontWeight: pw.FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  pw.SizedBox(width: 40),
+                  pw.Container(
+                    width: 80,
+                    alignment: pw.Alignment.center,
+                    child: pw.Text(
+                      l10n.expenses,
+                      style: pw.TextStyle(
+                        fontSize: 8,
+                        fontWeight: pw.FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  pw.SizedBox(width: 40),
+                ],
+              ),
+            ],
+          ),
+        ),
+        pw.SizedBox(height: 20),
+      ],
+    );
+  }
+
+  static pw.Widget _buildCategorySection(
+    String title,
+    List<CategoryStatistic> categories,
+    String symbol,
+    AppLocalizations l10n,
+  ) {
+    if (categories.isEmpty) return pw.SizedBox();
+
+    final totalAmount =
+        categories.fold<double>(0, (sum, cat) => sum + cat.totalAmount);
+
+    return pw.Column(
+      crossAxisAlignment: pw.CrossAxisAlignment.start,
+      children: [
+        pw.Text(
+          title,
+          style: pw.TextStyle(fontSize: 12, fontWeight: pw.FontWeight.bold),
+        ),
+        pw.SizedBox(height: 10),
+        pw.SizedBox(
+          height: 150,
+          child: pw.Chart(
+            grid: pw.PieGrid(),
+            datasets: categories.map((cat) {
+              final colorHex = cat.categoryColor.replaceFirst('#', '');
+              final color = colorHex.length == 6 || colorHex.length == 8
+                  ? PdfColor.fromHex(colorHex)
+                  : PdfColors.grey;
+              final percentage =
+                  totalAmount > 0 ? (cat.totalAmount / totalAmount * 100) : 0.0;
+              return pw.PieDataSet(
+                value: cat.totalAmount,
+                color: color,
+                legend:
+                    '${cat.categoryName} (${percentage.toStringAsFixed(1)}%)',
+              );
+            }).toList(),
+          ),
+        ),
+        pw.SizedBox(height: 10),
+        pw.TableHelper.fromTextArray(
+          border: pw.TableBorder.all(color: PdfColors.grey400, width: 0.5),
+          headerStyle:
+              pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 9),
+          cellStyle: const pw.TextStyle(fontSize: 8),
+          headerDecoration: const pw.BoxDecoration(color: PdfColors.grey300),
+          headers: [l10n.labelCategory, l10n.labelAmount],
+          data: categories.map((cat) {
+            return [
+              cat.categoryName,
+              '$symbol ${_centsToDecimal(cat.totalAmount.toInt())}',
+            ];
+          }).toList(),
+        ),
+        pw.SizedBox(height: 20),
+      ],
+    );
   }
 }

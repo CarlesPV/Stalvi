@@ -1055,6 +1055,10 @@
   "@currencyAUD": {
     "description": "Currency name for AUD"
   },
+  "currencyCNY": "Chinese Yuan (CNY)",
+  "@currencyCNY": {
+    "description": "Currency name for CNY"
+  },
   "errorDestinationAccountRequired": "Please select a destination account",
   "@errorDestinationAccountRequired": {
     "description": "Validation error when destination account is required for transfer"
@@ -1195,5 +1199,13 @@
   "btnViewDetails": "View Details",
   "@btnViewDetails": {
     "description": "Text button label to view details of statistics"
+  },
+  "btnOpen": "Open",
+  "@btnOpen": {
+    "description": "Button label to open a file"
+  },
+  "errorOpenFileFailed": "Could not open file",
+  "@errorOpenFileFailed": {
+    "description": "Error message when opening a file fails"
   }
 }

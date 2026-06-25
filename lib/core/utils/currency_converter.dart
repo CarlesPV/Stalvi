@@ -3,6 +3,18 @@ import 'package:stalvi/domain/entities/transaction.dart';
 import 'package:stalvi/domain/entities/exchange_rate.dart';
 
 class CurrencyConverter {
+  /// The 8 supported currencies.
+  static const List<String> supportedCurrencies = [
+    'EUR',
+    'USD',
+    'GBP',
+    'JPY',
+    'CHF',
+    'CAD',
+    'AUD',
+    'CNY',
+  ];
+
   /// Converts the transaction amount to the target currency.
   ///
   /// It first attempts to use the [Transaction.exchangeRateSnapshot] saved at the time

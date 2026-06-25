@@ -476,6 +476,62 @@ void main() {
 
         expect(capturedOrigin!.notes, isNull);
       });
+
+      test('calculates correct destination amount for cross-currency transfers',
+          () async {
+        final params = _transferParams(amount: 5000); // 50.00 EUR
+        final originAccount = _buildAccount(id: 'account_1', currency: 'EUR');
+        final destAccount =
+            _buildAccount(id: 'account_2', currency: 'USD', isDefault: false);
+        final profile = _buildProfile(defaultCurrency: 'EUR');
+
+        // Mock rates: base EUR. USD rate = 1.08. So 50 EUR * 1.08 = 54 USD.
+        final localRates =
+            _buildExchangeRate(base: 'EUR'); // Contains USD: 1.08
+
+        when(() => mockAccountRepo.getAccountById('account_1'))
+            .thenAnswer((_) async => originAccount);
+        when(() => mockAccountRepo.getAccountById('account_2'))
+            .thenAnswer((_) async => destAccount);
+        when(() => mockProfileRepo.getProfileById(originAccount.userId))
+            .thenAnswer((_) async => profile);
+        when(() => mockExchangeRateRepo.getLocalRates(baseCurrency: 'EUR'))
+            .thenAnswer((_) async => localRates);
+
+        Transaction? capturedOrigin;
+        Transaction? capturedDest;
+
+        when(
+          () => mockTransactionRepo.createTransferPair(
+            originTransaction: any(named: 'originTransaction'),
+            destinationTransaction: any(named: 'destinationTransaction'),
+          ),
+        ).thenAnswer((inv) async {
+          capturedOrigin =
+              inv.namedArguments[#originTransaction] as Transaction;
+          capturedDest =
+              inv.namedArguments[#destinationTransaction] as Transaction;
+          return TransferPair(
+            origin: capturedOrigin!,
+            destination: capturedDest!,
+          );
+        });
+
+        await usecase.execute(params);
+
+        expect(capturedOrigin, isNotNull);
+        expect(capturedDest, isNotNull);
+
+        // Origin should have 5000 EUR
+        expect(capturedOrigin!.amount, 5000);
+        expect(capturedOrigin!.originalCurrency, 'EUR');
+
+        // Dest should have 5400 USD
+        expect(capturedDest!.amount, 5400);
+        expect(capturedDest!.originalCurrency, 'USD');
+        expect(capturedDest!.exchangeRate, 1.08);
+        expect(capturedDest!.convertedAmount, 5000); // (5400 / 1.08).round()
+      });
     });
 
     // ── Transfer validation failures ─────────────────────────────────────────

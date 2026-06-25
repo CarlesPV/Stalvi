@@ -805,6 +805,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get currencyAUD => 'Australian Dollar (AUD)';
 
   @override
+  String get currencyCNY => 'Chinese Yuan (CNY)';
+
+  @override
   String get errorDestinationAccountRequired =>
       'Please select a destination account';
 
@@ -914,4 +917,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get btnViewDetails => 'View Details';
+
+  @override
+  String get btnOpen => 'Open';
+
+  @override
+  String get errorOpenFileFailed => 'Could not open file';
 }

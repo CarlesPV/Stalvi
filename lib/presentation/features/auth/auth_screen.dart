@@ -444,6 +444,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
               DropdownMenuItem(value: 'CHF', child: Text(l10n.currencyCHF)),
               DropdownMenuItem(value: 'CAD', child: Text(l10n.currencyCAD)),
               DropdownMenuItem(value: 'AUD', child: Text(l10n.currencyAUD)),
+              DropdownMenuItem(value: 'CNY', child: Text(l10n.currencyCNY)),
             ],
             onChanged: (currency) {
               if (currency != null) {

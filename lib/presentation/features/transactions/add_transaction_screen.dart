@@ -163,388 +163,391 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
           onPressed: isLoading ? null : () => Navigator.of(context).pop(),
         ),
       ),
-      body: AbsorbPointer(
-        absorbing: isLoading,
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // ── Income/Expense/Transfer Custom Segmented Control ──────────
-              Container(
-                height: 54,
-                padding: const EdgeInsets.all(4),
-                decoration: BoxDecoration(
-                  color: colorScheme.surfaceContainerHighest
-                      .withValues(alpha: 0.5),
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () {
-                          ref
-                              .read(addTransactionNotifierProvider.notifier)
-                              .updateType(TransactionType.expense);
-                        },
-                        child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 200),
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            color: state.type == TransactionType.expense
-                                ? financialColors.negative
-                                : Colors.transparent,
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Text(
-                            AppLocalizations.of(context)!.expense,
-                            style: theme.textTheme.bodyMedium?.copyWith(
-                              fontWeight: FontWeight.w700,
-                              color: state.type == TransactionType.expense
-                                  ? colorScheme.onPrimary
-                                  : colorScheme.onSurfaceVariant,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () {
-                          ref
-                              .read(addTransactionNotifierProvider.notifier)
-                              .updateType(TransactionType.income);
-                        },
-                        child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 200),
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            color: state.type == TransactionType.income
-                                ? financialColors.positive
-                                : Colors.transparent,
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Text(
-                            AppLocalizations.of(context)!.income,
-                            style: theme.textTheme.bodyMedium?.copyWith(
-                              fontWeight: FontWeight.w700,
-                              color: state.type == TransactionType.income
-                                  ? colorScheme.onPrimary
-                                  : colorScheme.onSurfaceVariant,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () {
-                          ref
-                              .read(addTransactionNotifierProvider.notifier)
-                              .updateType(TransactionType.transfer);
-                        },
-                        child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 200),
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            color: state.type == TransactionType.transfer
-                                ? colorScheme.primary
-                                : Colors.transparent,
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Text(
-                            AppLocalizations.of(context)!.filterTransfer,
-                            style: theme.textTheme.bodyMedium?.copyWith(
-                              fontWeight: FontWeight.w700,
-                              color: state.type == TransactionType.transfer
-                                  ? colorScheme.onPrimary
-                                  : colorScheme.onSurfaceVariant,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              const SizedBox(height: 32),
-
-              // ── Large Amount Field ────────────────────────────────────────
-              Text(
-                AppLocalizations.of(context)!.labelAmount,
-                style: theme.textTheme.labelMedium?.copyWith(
-                  color: colorScheme.onSurfaceVariant,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 1.2,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 8),
-              LayoutBuilder(
-                builder: (context, constraints) {
-                  return SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: ConstrainedBox(
-                      constraints:
-                          BoxConstraints(minWidth: constraints.maxWidth),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.baseline,
-                        textBaseline: TextBaseline.alphabetic,
-                        children: [
-                          Text(
-                            NumberFormat.simpleCurrency(
-                              name: state.currency ?? 'EUR',
-                            ).currencySymbol,
-                            style: theme.textTheme.displaySmall?.copyWith(
-                              color: activeColor,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          const SizedBox(width: 4),
-                          IntrinsicWidth(
-                            child: TextField(
-                              controller: _amountController,
-                              keyboardType:
-                                  const TextInputType.numberWithOptions(
-                                      decimal: true),
-                              style: theme.textTheme.displayLarge?.copyWith(
-                                color: activeColor,
-                                fontWeight: FontWeight.w800,
-                                letterSpacing: -1.0,
-                              ),
-                              textAlign: TextAlign.center,
-                              decoration: const InputDecoration(
-                                hintText: '0.00',
-                                hintStyle: TextStyle(color: Colors.grey),
-                                border: InputBorder.none,
-                                contentPadding: EdgeInsets.zero,
-                              ),
-                              autofocus: true,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
-              ),
-
-              const SizedBox(height: 40),
-
-              // ── Selectors Card ────────────────────────────────────────────
-              Container(
-                decoration: BoxDecoration(
-                  color: colorScheme.surfaceContainerHighest
-                      .withValues(alpha: 0.3),
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(
-                    color: colorScheme.outline.withValues(alpha: 0.08),
+      body: SafeArea(
+        child: AbsorbPointer(
+          absorbing: isLoading,
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // ── Income/Expense/Transfer Custom Segmented Control ──────────
+                Container(
+                  height: 54,
+                  padding: const EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                    color: colorScheme.surfaceContainerHighest
+                        .withValues(alpha: 0.5),
+                    borderRadius: BorderRadius.circular(16),
                   ),
-                ),
-                child: Column(
-                  children: [
-                    if (state.type == TransactionType.transfer) ...[
-                      // From Account Selector
-                      _FormSelectorTile(
-                        label: AppLocalizations.of(context)!.labelFromAccount,
-                        value: selectedAccount?.name ??
-                            AppLocalizations.of(context)!.labelSelectAccount,
-                        icon: selectedAccount != null
-                            ? _getIconData(selectedAccount.icon)
-                            : Icons.account_balance_wallet_rounded,
-                        iconColor: selectedAccount != null
-                            ? _parseHexColor(selectedAccount.color)
-                            : colorScheme.onSurfaceVariant,
-                        onTap: () => _showAccountSelector(
-                          context,
-                          accountsAsync.valueOrNull ?? [],
-                          isSource: true,
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () {
+                            ref
+                                .read(addTransactionNotifierProvider.notifier)
+                                .updateType(TransactionType.expense);
+                          },
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 200),
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              color: state.type == TransactionType.expense
+                                  ? financialColors.negative
+                                  : Colors.transparent,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Text(
+                              AppLocalizations.of(context)!.expense,
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                fontWeight: FontWeight.w700,
+                                color: state.type == TransactionType.expense
+                                    ? colorScheme.onPrimary
+                                    : colorScheme.onSurfaceVariant,
+                              ),
+                            ),
+                          ),
                         ),
                       ),
-                      Divider(
-                        height: 1,
-                        color: colorScheme.outline.withValues(alpha: 0.08),
-                      ),
-                      // To Account Selector
-                      _FormSelectorTile(
-                        label: AppLocalizations.of(context)!.labelToAccount,
-                        value: selectedToAccount?.name ??
-                            AppLocalizations.of(context)!.labelSelectAccount,
-                        icon: selectedToAccount != null
-                            ? _getIconData(selectedToAccount.icon)
-                            : Icons.account_balance_wallet_rounded,
-                        iconColor: selectedToAccount != null
-                            ? _parseHexColor(selectedToAccount.color)
-                            : colorScheme.onSurfaceVariant,
-                        onTap: () => _showAccountSelector(
-                          context,
-                          accountsAsync.valueOrNull ?? [],
-                          isSource: false,
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () {
+                            ref
+                                .read(addTransactionNotifierProvider.notifier)
+                                .updateType(TransactionType.income);
+                          },
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 200),
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              color: state.type == TransactionType.income
+                                  ? financialColors.positive
+                                  : Colors.transparent,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Text(
+                              AppLocalizations.of(context)!.income,
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                fontWeight: FontWeight.w700,
+                                color: state.type == TransactionType.income
+                                    ? colorScheme.onPrimary
+                                    : colorScheme.onSurfaceVariant,
+                              ),
+                            ),
+                          ),
                         ),
                       ),
-                    ] else ...[
-                      // Account Selector
-                      _FormSelectorTile(
-                        label: AppLocalizations.of(context)!.labelAccount,
-                        value: selectedAccount?.name ??
-                            AppLocalizations.of(context)!.labelSelectAccount,
-                        icon: selectedAccount != null
-                            ? _getIconData(selectedAccount.icon)
-                            : Icons.account_balance_wallet_rounded,
-                        iconColor: selectedAccount != null
-                            ? _parseHexColor(selectedAccount.color)
-                            : colorScheme.onSurfaceVariant,
-                        onTap: () => _showAccountSelector(
-                          context,
-                          accountsAsync.valueOrNull ?? [],
-                          isSource: true,
-                        ),
-                      ),
-                      Divider(
-                        height: 1,
-                        color: colorScheme.outline.withValues(alpha: 0.08),
-                      ),
-                      // Category Selector
-                      _FormSelectorTile(
-                        label: AppLocalizations.of(context)!.labelCategory,
-                        value: selectedCategory?.name ??
-                            AppLocalizations.of(context)!.uncategorized,
-                        icon: selectedCategory != null
-                            ? _getIconData(selectedCategory.icon)
-                            : Icons.category_rounded,
-                        iconColor: selectedCategory != null
-                            ? _parseHexColor(selectedCategory.color)
-                            : colorScheme.onSurfaceVariant,
-                        onTap: () => _showCategorySelector(
-                          context,
-                          categoriesAsync.valueOrNull ?? [],
-                          state.type,
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () {
+                            ref
+                                .read(addTransactionNotifierProvider.notifier)
+                                .updateType(TransactionType.transfer);
+                          },
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 200),
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              color: state.type == TransactionType.transfer
+                                  ? colorScheme.primary
+                                  : Colors.transparent,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Text(
+                              AppLocalizations.of(context)!.filterTransfer,
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                fontWeight: FontWeight.w700,
+                                color: state.type == TransactionType.transfer
+                                    ? colorScheme.onPrimary
+                                    : colorScheme.onSurfaceVariant,
+                              ),
+                            ),
+                          ),
                         ),
                       ),
                     ],
-                    Divider(
-                      height: 1,
-                      color: colorScheme.outline.withValues(alpha: 0.08),
-                    ),
-                    // Date Selector
-                    _FormSelectorTile(
-                      label: AppLocalizations.of(context)!.labelDate,
-                      value: DateFormat.yMMMMEEEEd(
-                        Localizations.localeOf(context).toString(),
-                      ).format(state.date),
-                      icon: Icons.calendar_today_rounded,
-                      iconColor: colorScheme.primary,
-                      onTap: () => _selectDate(context, state.date),
-                    ),
-                    Divider(
-                      height: 1,
-                      color: colorScheme.outline.withValues(alpha: 0.08),
-                    ),
-                    // Currency Selector
-                    _FormSelectorTile(
-                      label: AppLocalizations.of(context)!.labelCurrency,
-                      value: state.currency ??
-                          AppLocalizations.of(context)!.labelSelectCurrency,
-                      icon: Icons.monetization_on_rounded,
-                      iconColor: colorScheme.secondary,
-                      onTap: () => _showCurrencySelector(context),
-                    ),
-                    Divider(
-                      height: 1,
-                      color: colorScheme.outline.withValues(alpha: 0.08),
-                    ),
-                    // Tag Selector
-                    _FormSelectorTile(
-                      label:
-                          "${AppLocalizations.of(context)!.labelTag} ${AppLocalizations.of(context)!.optionalPlaceholder}",
-                      value: selectedTag != null
-                          ? selectedTag.name
-                          : "${AppLocalizations.of(context)!.labelSelectTag} ${AppLocalizations.of(context)!.optionalPlaceholder}",
-                      icon: Icons.local_offer_rounded,
-                      iconColor: colorScheme.tertiary,
-                      onTap: () => _showTagSelector(context, tags),
-                    ),
-                  ],
-                ),
-              ),
-
-              const SizedBox(height: 24),
-
-              // ── Notes Text Field ──────────────────────────────────────────
-              TextField(
-                controller: _notesController,
-                maxLines: 3,
-                maxLength: 20,
-                style: theme.textTheme.bodyMedium,
-                decoration: InputDecoration(
-                  labelText:
-                      "${AppLocalizations.of(context)!.labelNotes} ${AppLocalizations.of(context)!.optionalPlaceholder}",
-                  labelStyle: TextStyle(color: colorScheme.onSurfaceVariant),
-                  alignLabelWithHint: true,
-                  hintText:
-                      "${AppLocalizations.of(context)!.labelNotesHint} ${AppLocalizations.of(context)!.optionalPlaceholder}",
-                  hintStyle: const TextStyle(color: Colors.grey),
-                  filled: true,
-                  fillColor: colorScheme.surfaceContainerHighest
-                      .withValues(alpha: 0.2),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(16),
-                    borderSide: BorderSide(
-                      color: colorScheme.outline.withValues(alpha: 0.08),
-                    ),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(16),
-                    borderSide: BorderSide(
-                      color: activeColor.withValues(alpha: 0.5),
-                    ),
                   ),
                 ),
-              ),
 
-              const SizedBox(height: 48),
+                const SizedBox(height: 32),
 
-              // ── Submit Button ─────────────────────────────────────────────
-              FilledButton(
-                onPressed: isLoading
-                    ? null
-                    : () {
-                        ref
-                            .read(addTransactionNotifierProvider.notifier)
-                            .submit();
-                      },
-                style: FilledButton.styleFrom(
-                  backgroundColor: activeColor,
-                  foregroundColor: colorScheme.onPrimary,
-                  minimumSize: const Size(double.infinity, 56),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
+                // ── Large Amount Field ────────────────────────────────────────
+                Text(
+                  AppLocalizations.of(context)!.labelAmount,
+                  style: theme.textTheme.labelMedium?.copyWith(
+                    color: colorScheme.onSurfaceVariant,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 1.2,
                   ),
-                  elevation: 2,
-                  shadowColor: activeColor.withValues(alpha: 0.3),
+                  textAlign: TextAlign.center,
                 ),
-                child: isLoading
-                    ? const SizedBox(
-                        width: 24,
-                        height: 24,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2.5,
-                          valueColor:
-                              AlwaysStoppedAnimation<Color>(Colors.white),
-                        ),
-                      )
-                    : Text(
-                        AppLocalizations.of(context)!.btnSaveTransaction,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
+                const SizedBox(height: 8),
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    return SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: ConstrainedBox(
+                        constraints:
+                            BoxConstraints(minWidth: constraints.maxWidth),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.baseline,
+                          textBaseline: TextBaseline.alphabetic,
+                          children: [
+                            Text(
+                              NumberFormat.simpleCurrency(
+                                name: state.currency ?? 'EUR',
+                              ).currencySymbol,
+                              style: theme.textTheme.displaySmall?.copyWith(
+                                color: activeColor,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            const SizedBox(width: 4),
+                            IntrinsicWidth(
+                              child: TextField(
+                                controller: _amountController,
+                                keyboardType:
+                                    const TextInputType.numberWithOptions(
+                                  decimal: true,
+                                ),
+                                style: theme.textTheme.displayLarge?.copyWith(
+                                  color: activeColor,
+                                  fontWeight: FontWeight.w800,
+                                  letterSpacing: -1.0,
+                                ),
+                                textAlign: TextAlign.center,
+                                decoration: const InputDecoration(
+                                  hintText: '0.00',
+                                  hintStyle: TextStyle(color: Colors.grey),
+                                  border: InputBorder.none,
+                                  contentPadding: EdgeInsets.zero,
+                                ),
+                                autofocus: true,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-              ),
-            ],
+                    );
+                  },
+                ),
+
+                const SizedBox(height: 40),
+
+                // ── Selectors Card ────────────────────────────────────────────
+                Container(
+                  decoration: BoxDecoration(
+                    color: colorScheme.surfaceContainerHighest
+                        .withValues(alpha: 0.3),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: colorScheme.outline.withValues(alpha: 0.08),
+                    ),
+                  ),
+                  child: Column(
+                    children: [
+                      if (state.type == TransactionType.transfer) ...[
+                        // From Account Selector
+                        _FormSelectorTile(
+                          label: AppLocalizations.of(context)!.labelFromAccount,
+                          value: selectedAccount?.name ??
+                              AppLocalizations.of(context)!.labelSelectAccount,
+                          icon: selectedAccount != null
+                              ? _getIconData(selectedAccount.icon)
+                              : Icons.account_balance_wallet_rounded,
+                          iconColor: selectedAccount != null
+                              ? _parseHexColor(selectedAccount.color)
+                              : colorScheme.onSurfaceVariant,
+                          onTap: () => _showAccountSelector(
+                            context,
+                            accountsAsync.valueOrNull ?? [],
+                            isSource: true,
+                          ),
+                        ),
+                        Divider(
+                          height: 1,
+                          color: colorScheme.outline.withValues(alpha: 0.08),
+                        ),
+                        // To Account Selector
+                        _FormSelectorTile(
+                          label: AppLocalizations.of(context)!.labelToAccount,
+                          value: selectedToAccount?.name ??
+                              AppLocalizations.of(context)!.labelSelectAccount,
+                          icon: selectedToAccount != null
+                              ? _getIconData(selectedToAccount.icon)
+                              : Icons.account_balance_wallet_rounded,
+                          iconColor: selectedToAccount != null
+                              ? _parseHexColor(selectedToAccount.color)
+                              : colorScheme.onSurfaceVariant,
+                          onTap: () => _showAccountSelector(
+                            context,
+                            accountsAsync.valueOrNull ?? [],
+                            isSource: false,
+                          ),
+                        ),
+                      ] else ...[
+                        // Account Selector
+                        _FormSelectorTile(
+                          label: AppLocalizations.of(context)!.labelAccount,
+                          value: selectedAccount?.name ??
+                              AppLocalizations.of(context)!.labelSelectAccount,
+                          icon: selectedAccount != null
+                              ? _getIconData(selectedAccount.icon)
+                              : Icons.account_balance_wallet_rounded,
+                          iconColor: selectedAccount != null
+                              ? _parseHexColor(selectedAccount.color)
+                              : colorScheme.onSurfaceVariant,
+                          onTap: () => _showAccountSelector(
+                            context,
+                            accountsAsync.valueOrNull ?? [],
+                            isSource: true,
+                          ),
+                        ),
+                        Divider(
+                          height: 1,
+                          color: colorScheme.outline.withValues(alpha: 0.08),
+                        ),
+                        // Category Selector
+                        _FormSelectorTile(
+                          label: AppLocalizations.of(context)!.labelCategory,
+                          value: selectedCategory?.name ??
+                              AppLocalizations.of(context)!.uncategorized,
+                          icon: selectedCategory != null
+                              ? _getIconData(selectedCategory.icon)
+                              : Icons.category_rounded,
+                          iconColor: selectedCategory != null
+                              ? _parseHexColor(selectedCategory.color)
+                              : colorScheme.onSurfaceVariant,
+                          onTap: () => _showCategorySelector(
+                            context,
+                            categoriesAsync.valueOrNull ?? [],
+                            state.type,
+                          ),
+                        ),
+                      ],
+                      Divider(
+                        height: 1,
+                        color: colorScheme.outline.withValues(alpha: 0.08),
+                      ),
+                      // Date Selector
+                      _FormSelectorTile(
+                        label: AppLocalizations.of(context)!.labelDate,
+                        value: DateFormat.yMMMMEEEEd(
+                          Localizations.localeOf(context).toString(),
+                        ).format(state.date),
+                        icon: Icons.calendar_today_rounded,
+                        iconColor: colorScheme.primary,
+                        onTap: () => _selectDate(context, state.date),
+                      ),
+                      Divider(
+                        height: 1,
+                        color: colorScheme.outline.withValues(alpha: 0.08),
+                      ),
+                      // Currency Selector
+                      _FormSelectorTile(
+                        label: AppLocalizations.of(context)!.labelCurrency,
+                        value: state.currency ??
+                            AppLocalizations.of(context)!.labelSelectCurrency,
+                        icon: Icons.monetization_on_rounded,
+                        iconColor: colorScheme.secondary,
+                        onTap: () => _showCurrencySelector(context),
+                      ),
+                      Divider(
+                        height: 1,
+                        color: colorScheme.outline.withValues(alpha: 0.08),
+                      ),
+                      // Tag Selector
+                      _FormSelectorTile(
+                        label:
+                            "${AppLocalizations.of(context)!.labelTag} ${AppLocalizations.of(context)!.optionalPlaceholder}",
+                        value: selectedTag != null
+                            ? selectedTag.name
+                            : "${AppLocalizations.of(context)!.labelSelectTag} ${AppLocalizations.of(context)!.optionalPlaceholder}",
+                        icon: Icons.local_offer_rounded,
+                        iconColor: colorScheme.tertiary,
+                        onTap: () => _showTagSelector(context, tags),
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 24),
+
+                // ── Notes Text Field ──────────────────────────────────────────
+                TextField(
+                  controller: _notesController,
+                  maxLines: 3,
+                  maxLength: 20,
+                  style: theme.textTheme.bodyMedium,
+                  decoration: InputDecoration(
+                    labelText:
+                        "${AppLocalizations.of(context)!.labelNotes} ${AppLocalizations.of(context)!.optionalPlaceholder}",
+                    labelStyle: TextStyle(color: colorScheme.onSurfaceVariant),
+                    alignLabelWithHint: true,
+                    hintText:
+                        "${AppLocalizations.of(context)!.labelNotesHint} ${AppLocalizations.of(context)!.optionalPlaceholder}",
+                    hintStyle: const TextStyle(color: Colors.grey),
+                    filled: true,
+                    fillColor: colorScheme.surfaceContainerHighest
+                        .withValues(alpha: 0.2),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: BorderSide(
+                        color: colorScheme.outline.withValues(alpha: 0.08),
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: BorderSide(
+                        color: activeColor.withValues(alpha: 0.5),
+                      ),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 48),
+
+                // ── Submit Button ─────────────────────────────────────────────
+                FilledButton(
+                  onPressed: isLoading
+                      ? null
+                      : () {
+                          ref
+                              .read(addTransactionNotifierProvider.notifier)
+                              .submit();
+                        },
+                  style: FilledButton.styleFrom(
+                    backgroundColor: activeColor,
+                    foregroundColor: colorScheme.onPrimary,
+                    minimumSize: const Size(double.infinity, 56),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    elevation: 2,
+                    shadowColor: activeColor.withValues(alpha: 0.3),
+                  ),
+                  child: isLoading
+                      ? const SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2.5,
+                            valueColor:
+                                AlwaysStoppedAnimation<Color>(Colors.white),
+                          ),
+                        )
+                      : Text(
+                          AppLocalizations.of(context)!.btnSaveTransaction,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

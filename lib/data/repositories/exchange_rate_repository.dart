@@ -34,7 +34,7 @@ class ExchangeRateRepository implements IExchangeRateRepository {
     final model = await _remoteDataSource.fetchLatestRates(
       baseCurrency: baseCurrency,
     );
-    final domainRates = model.toDomain();
+    final domainRates = model.toDomain().copyWith(date: DateTime.now());
     await _exchangeRateDao.saveRates(domainRates);
     return domainRates;
   }
@@ -49,6 +49,7 @@ class ExchangeRateRepository implements IExchangeRateRepository {
     final model = await _remoteDataSource.fetchLatestRates(
       baseCurrency: baseCurrency,
     );
-    await _exchangeRateDao.saveRates(model.toDomain());
+    await _exchangeRateDao
+        .saveRates(model.toDomain().copyWith(date: DateTime.now()));
   }
 }

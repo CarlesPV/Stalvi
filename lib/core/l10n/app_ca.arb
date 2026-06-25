@@ -248,6 +248,7 @@
   "currencyCHF": "Franc Suís (CHF)",
   "currencyCAD": "Dòlar Canadenc (CAD)",
   "currencyAUD": "Dòlar Australià (AUD)",
+  "currencyCNY": "Iuan Xinès (CNY)",
   "errorDestinationAccountRequired": "Si us plau, seleccioneu un compte de destí",
   "errorSameAccountTransfer": "Els comptes d'origen i destí no poden ser el mateix",
   "savingsGoal": "Objectiu d'estalvi",
@@ -1058,6 +1059,9 @@
   "@currencyAUD": {
     "description": "Currency name for AUD"
   },
+  "@currencyCNY": {
+    "description": "Currency name for CNY"
+  },
   "@errorDestinationAccountRequired": {
     "description": "Validation error when destination account is required for transfer"
   },
@@ -1195,5 +1199,13 @@
   "btnViewDetails": "Veure detalls",
   "@btnViewDetails": {
     "description": "Text button label to view details of statistics"
+  },
+  "btnOpen": "Obrir",
+  "@btnOpen": {
+    "description": "Button label to open a file"
+  },
+  "errorOpenFileFailed": "No s'ha pogut obrir el fitxer",
+  "@errorOpenFileFailed": {
+    "description": "Error message when opening a file fails"
   }
 }

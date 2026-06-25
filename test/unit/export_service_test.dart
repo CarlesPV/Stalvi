@@ -110,7 +110,9 @@ void main() {
       // Assert
       expect(result.mimeType, equals('text/csv'));
       expect(
-          result.filename, matches(RegExp(r'^Konta_Export_\d{8}_\d{6}\.csv$')));
+        result.filename,
+        matches(RegExp(r'^Konta_Export_\d{8}_\d{6}\.csv$')),
+      );
     });
 
     test(
@@ -282,8 +284,10 @@ void main() {
 
       // Assert
       expect(result.mimeType, equals('application/octet-stream'));
-      expect(result.filename,
-          matches(RegExp(r'^Konta_Export_\d{8}_\d{6}\.kbak$')));
+      expect(
+        result.filename,
+        matches(RegExp(r'^Konta_Export_\d{8}_\d{6}\.kbak$')),
+      );
     });
 
     test('envelope is at least 33 bytes (16 salt + 16 iv + 1 byte cipher)',
@@ -483,7 +487,9 @@ void main() {
       // Assert
       expect(result.mimeType, equals('application/pdf'));
       expect(
-          result.filename, matches(RegExp(r'^Konta_Export_\d{8}_\d{6}\.pdf$')));
+        result.filename,
+        matches(RegExp(r'^Konta_Export_\d{8}_\d{6}\.pdf$')),
+      );
     });
 
     test('PDF bytes start with the PDF magic bytes (%PDF)', () async {

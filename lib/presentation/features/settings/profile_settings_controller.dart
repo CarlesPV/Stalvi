@@ -5,6 +5,7 @@ import 'package:stalvi/domain/repositories/i_export_service.dart';
 import 'package:stalvi/domain/usecases/update_credentials_usecase.dart';
 import 'package:stalvi/presentation/providers/locale_provider.dart';
 import 'package:stalvi/presentation/providers/repository_providers.dart';
+import 'package:stalvi/presentation/providers/statistics_providers.dart';
 
 enum PinChangeStep { verifyOld, enterNew }
 
@@ -97,6 +98,11 @@ class ProfileSettingsController extends StateNotifier<ProfileSettingsState> {
       );
       await repo.updateProfile(updatedProfile);
       _ref.invalidate(defaultProfileProvider);
+      _ref.invalidate(statisticsCurrencyProvider);
+      _ref.invalidate(periodSummaryProvider);
+      _ref.invalidate(topExpenseCategoriesProvider);
+      _ref.invalidate(topIncomeCategoriesProvider);
+      _ref.invalidate(globalBalanceProvider);
       state = state.copyWith(profile: updatedProfile, isLoading: false);
     } catch (e) {
       state = state.copyWith(isLoading: false, error: e.toString());

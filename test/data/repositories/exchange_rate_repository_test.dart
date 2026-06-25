@@ -81,7 +81,10 @@ void main() {
         // Assert
         expect(result, isA<ExchangeRate>());
         expect(result.baseCurrency, 'EUR');
-        expect(result.date, DateTime(2026, 6, 13));
+        expect(
+          result.date.difference(DateTime.now()).inSeconds.abs() < 5,
+          true,
+        );
         expect(result.rates['USD'], closeTo(1.085, 0.001));
         expect(result.rates['GBP'], closeTo(0.856, 0.001));
 

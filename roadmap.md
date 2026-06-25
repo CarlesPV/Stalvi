@@ -140,7 +140,6 @@
   - [x] Standardize transfer list icons to use transfer-specific iconography.
   - [x] Run full automated testing (352 tests) and static analysis to ensure 100% build health and lint correctness.
 
-## Current Phase
 - [x] **Phase 22: Multi-Currency Snapshot, Auth Fallbacks & i18n Completeness**
   - [x] Implement historical exchange rate snapshots per transaction, stored in the database.
   - [x] Integrate background synchronization of exchange rates on application startup.
@@ -182,5 +181,15 @@
   - [x] Modify import service: Force a complete memory clear, background state flush, and app restart upon successful data import.
   - [x] Standardize 100% build health, clean lint checks (0 issues on `flutter analyze`), and successfully compile and execute all 363 tests in the test suite.
 
-## Upcoming Phases
-- [ ] **Phase 25: Integration Testing (E2E), final security audit, and store preparation.**
+- [x] **Phase 25: Currency Engine Optimization, Reactivity, and Advanced Reports**
+  - [x] Integrate Chinese Yuan (CNY) into supported currencies.
+  - [x] Optimize `exchange_rate_remote_data_source.dart` to cache (24h) and limit requests to only the 8 supported currencies.
+  - [x] Refactor providers (`statistics_providers.dart`) to automatically recalculate upon detecting changes in the default currency.
+  - [x] Modify `add_transaction_usecase.dart` to calculate and apply dynamic exchange rates in transfers between accounts with different currencies.
+  - [x] Expand `export_monthly_pdf_use_case.dart` to include income/expense charts, category percentages, and amounts in the user's default currency.
+  - [x] Implement the "Open file" action using `open_filex` after exporting CSV/PDF.
+  - [x] UI Audit: Prevent overflows (keyboard/small screens) and review ARB files (ES, EN, CA).
+
+## Current Phase
+
+## Phase 26: Integration Testing (E2E), final security audit, and store preparation.

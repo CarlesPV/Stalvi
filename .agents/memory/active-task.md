@@ -1,22 +1,13 @@
-# Active Task: Phase 24 - Financial Immutability, Export Engine & UI Polish
+# Current Active Task: Phase 26 - Integration Testing (E2E), Final Security Audit, and Store Preparation
 
-## Objective
-Ensure historical transaction data integrity, improve data export capabilities (PDF/CSV/JSON), and fix critical UI/UX overflows and layout issues.
+## Main Objective
+Perform final E2E flow validations, conduct security audits, and compile final metadata mapping files for App Store & Google Play compliance.
 
-## Scope
-- **Domain/Data Layer:** - Update `Transaction` entity and Drift database schema to store a snapshot of currency exchange rates at the time of creation.
-  - Write database migration scripts to handle existing transactions.
-- **Presentation Layer:**
-  - Relocate the Statistics section from Settings to the top of the Accounts/Wallets view with proper visual separation.
-  - Fix the missing visibility toggle (eye icon) on the backup confirmation password field.
-  - Resolve global UI overflows, text truncation ("..."), and visual alignment issues across buttons and error messages.
-- **Infrastructure/Services Layer:**
-  - Modify export services (PDF, CSV, JSON) to append timestamps (`yyyyMMdd_HHmmss`) to filenames.
-  - Enhance PDF generation: Include user's default currency symbols on all totals and generate summary charts below the transaction table.
-  - Enhance CSV generation to include all newly added transaction data (e.g., historical exchange rates).
-  - Modify import service: Force a complete memory clear, background state flush, and app restart upon successful data import.
+## Atomic Tasks
+1. **E2E Integration Flow Verification:** Walk through the complete user onboarding and core accounting flows via automated integration testing to ensure zero regression.
+2. **Final Security Scan / Lint Verification:** Run all Static Analysis checks and dependency audit scripts to confirm production readiness.
+3. **App Store Metadata & Compliance Review:** Verify that all compliance and privacy mapping documents reflect the latest local-first secure database configurations.
 
 ## Constraints
-- Ensure all translations (English, Spanish, Catalan) are updated for any new UI text.
-- Maintain Clean Architecture boundaries.
-- Database migrations must not cause data loss for existing users.
+- Ensure all automated tests (368+ test suite) continue to pass.
+- Modifications must strictly adhere to Clean Architecture boundaries.
