@@ -13,11 +13,23 @@ class ObfuscatedText extends ConsumerWidget {
   /// The text style to apply.
   final TextStyle? style;
 
+  /// How visual overflow should be handled.
+  final TextOverflow? overflow;
+
+  /// An optional maximum number of lines for the text to span.
+  final int? maxLines;
+
+  /// Whether the text should break at soft line breaks.
+  final bool? softWrap;
+
   const ObfuscatedText(
     this.text, {
     super.key,
     this.obfuscationString = '***',
     this.style,
+    this.overflow,
+    this.maxLines,
+    this.softWrap,
   });
 
   @override
@@ -27,6 +39,9 @@ class ObfuscatedText extends ConsumerWidget {
     return Text(
       isDiscreet ? obfuscationString : text,
       style: style,
+      overflow: overflow,
+      maxLines: maxLines,
+      softWrap: softWrap,
     );
   }
 }

@@ -856,6 +856,8 @@ class _AccountItem extends ConsumerWidget {
                       fontWeight: FontWeight.w800,
                       color: colorScheme.onSurface,
                     ),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
                   ),
                   if (account.isDefault) ...[
                     const SizedBox(height: 4),
@@ -1125,6 +1127,8 @@ class _TransactionItem extends ConsumerWidget {
                   fontWeight: FontWeight.w800,
                   color: color,
                 ),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
               ),
             ),
           ],
@@ -1493,14 +1497,19 @@ class _BalanceCard extends ConsumerWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                AppLocalizations.of(context)!.balanceTotal,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: colorScheme.onPrimary.withValues(alpha: 0.75),
-                  fontWeight: FontWeight.w500,
-                  letterSpacing: 0.2,
+              Expanded(
+                child: Text(
+                  AppLocalizations.of(context)!.balanceTotal,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: colorScheme.onPrimary.withValues(alpha: 0.75),
+                    fontWeight: FontWeight.w500,
+                    letterSpacing: 0.2,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
                 ),
               ),
+              const SizedBox(width: 8),
               IconButton(
                 key: const ValueKey('discreetModeIconButton'),
                 padding: EdgeInsets.zero,
@@ -1574,6 +1583,8 @@ class _BalanceCard extends ConsumerWidget {
                       fontWeight: FontWeight.w800,
                       letterSpacing: -0.5,
                     ),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
                   );
                 },
               );
@@ -1692,6 +1703,8 @@ class _StatCard extends ConsumerWidget {
               color: colorScheme.onSurfaceVariant,
               fontWeight: FontWeight.w500,
             ),
+            overflow: TextOverflow.ellipsis,
+            maxLines: 1,
           ),
           const SizedBox(height: 6),
           summaryAsync.when(
@@ -1720,6 +1733,8 @@ class _StatCard extends ConsumerWidget {
                   fontWeight: FontWeight.w800,
                   color: accentColor,
                 ),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
               );
             },
           ),

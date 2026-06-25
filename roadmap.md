@@ -191,6 +191,14 @@
   - [x] Implement the "Open file" action using `open_filex` after exporting CSV/PDF.
   - [x] UI Audit: Prevent overflows (keyboard/small screens) and review ARB files (ES, EN, CA).
 
+- [x] **Phase 26: QA/Layout Readiness and Production Audit**
+  - [x] Audit layout widgets for potential overflows, adding Expanded, Flexible, ellipsis, and maxLines limits.
+  - [x] Expose text formatting options (overflow, maxLines, softWrap) in ObfuscatedText.
+  - [x] Apply layout safeguards to balance total label, balance amount value, statistics card (label/values), account item balance value, and transaction item amount value across Dashboard and Budgets & Goals screens.
+  - [x] Resolve trailing comma and deprecation warnings across all code and tests.
+  - [x] Clean unused legal markdown assets (privacy.md and terms.md) from assets directory to optimize space.
+  - [x] Ensure 100% build health, clean lint checks (0 issues on `flutter analyze`), and successfully execute all 381 tests.
+
 ## Current Phase
 
-## Phase 26: Integration Testing (E2E), final security audit, and store preparation.
+## Phase 27: Release preparation and store deployment.

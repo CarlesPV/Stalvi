@@ -48,6 +48,7 @@ import 'package:stalvi/domain/usecases/export_encrypted_json_use_case.dart';
 import 'package:stalvi/domain/usecases/import_encrypted_json_use_case.dart';
 import 'package:stalvi/domain/usecases/export_transactions_csv_use_case.dart';
 import 'package:stalvi/domain/usecases/export_monthly_pdf_use_case.dart';
+import 'package:stalvi/core/l10n/app_localizations.dart';
 import 'package:stalvi/presentation/providers/app_startup_provider.dart';
 import 'package:stalvi/presentation/providers/locale_provider.dart';
 import 'package:stalvi/presentation/providers/statistics_providers.dart';
@@ -335,6 +336,8 @@ final exportTransactionsCsvUseCaseProvider =
 /// Provides the [ExportMonthlyPdfUseCase] instance.
 final exportMonthlyPdfUseCaseProvider =
     Provider<ExportMonthlyPdfUseCase>((ref) {
+  final locale = ref.watch(localeProvider);
+  final l10n = lookupAppLocalizations(locale);
   return ExportMonthlyPdfUseCase(
     profileRepository: ref.watch(profileRepositoryProvider),
     accountRepository: ref.watch(accountRepositoryProvider),
@@ -344,5 +347,6 @@ final exportMonthlyPdfUseCaseProvider =
     getPeriodSummaryUseCase: ref.watch(getPeriodSummaryUseCaseProvider),
     getTopCategoriesUseCase: ref.watch(getTopCategoriesUseCaseProvider),
     exportService: ref.watch(exportServiceProvider),
+    l10n: l10n,
   );
 });

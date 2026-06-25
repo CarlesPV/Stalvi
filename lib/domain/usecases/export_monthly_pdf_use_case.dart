@@ -25,6 +25,7 @@ class ExportMonthlyPdfUseCase {
   final GetPeriodSummaryUseCase _getPeriodSummaryUseCase;
   final GetTopCategoriesUseCase _getTopCategoriesUseCase;
   final IExportService _exportService;
+  final AppLocalizations _l10n;
 
   const ExportMonthlyPdfUseCase({
     required IProfileRepository profileRepository,
@@ -35,6 +36,7 @@ class ExportMonthlyPdfUseCase {
     required GetPeriodSummaryUseCase getPeriodSummaryUseCase,
     required GetTopCategoriesUseCase getTopCategoriesUseCase,
     required IExportService exportService,
+    required AppLocalizations l10n,
   })  : _profileRepository = profileRepository,
         _accountRepository = accountRepository,
         _categoryRepository = categoryRepository,
@@ -42,14 +44,14 @@ class ExportMonthlyPdfUseCase {
         _exchangeRateRepository = exchangeRateRepository,
         _getPeriodSummaryUseCase = getPeriodSummaryUseCase,
         _getTopCategoriesUseCase = getTopCategoriesUseCase,
-        _exportService = exportService;
+        _exportService = exportService,
+        _l10n = l10n;
 
   /// Generates a monthly PDF report.
   ///
   /// Optionally pass a custom [month] — defaults to the current month.
   Future<ExportResult> call({
     required String targetCurrency,
-    required AppLocalizations l10n,
     DateTime? month,
   }) async {
     final now = DateTime.now();
@@ -68,6 +70,7 @@ class ExportMonthlyPdfUseCase {
     // Resolve profile for account lookup
     final profile = await _profileRepository.getFirstProfile();
     final userId = profile?.id ?? '';
+    final defaultCurrency = profile?.defaultCurrency ?? targetCurrency;
 
     final results = await Future.wait([
       _accountRepository.getAccountsByUserId(userId),
@@ -110,16 +113,40 @@ class ExportMonthlyPdfUseCase {
     }).toList()
       ..sort((a, b) => a.date.compareTo(b.date));
 
+    final accountMap = {for (final a in accounts) a.id: a.name};
+    final Map<String, String> transferDestinations = {};
+    for (final tx in monthTransactions) {
+      if (tx.type == TransactionType.transfer && tx.transferId != null) {
+        final otherLeg = allTransactions.firstWhere(
+          (t) => t.transferId == tx.transferId && t.id != tx.id,
+          orElse: () => tx,
+        );
+        if (otherLeg.id != tx.id) {
+          final thisAccountName = accountMap[tx.accountId] ?? tx.accountId;
+          final otherAccountName =
+              accountMap[otherLeg.accountId] ?? otherLeg.accountId;
+          if (tx.amount < 0) {
+            transferDestinations[tx.id] =
+                '$thisAccountName (${_l10n.destination_account}: $otherAccountName)';
+          } else {
+            transferDestinations[tx.id] =
+                '$otherAccountName (${_l10n.destination_account}: $thisAccountName)';
+          }
+        }
+      }
+    }
+
     return _exportService.generateMonthlyPdf(
       monthTransactions,
       summary: summary,
       month: targetMonth,
-      l10n: l10n,
+      l10n: _l10n,
       accounts: accounts,
       categories: categories,
       topExpenseCategories: topExpenseCategories,
       topIncomeCategories: topIncomeCategories,
-      defaultCurrency: targetCurrency,
+      defaultCurrency: defaultCurrency,
+      transferDestinations: transferDestinations,
     );
   }
 }

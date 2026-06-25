@@ -53,5 +53,6 @@ abstract class IExportService {
     List<CategoryStatistic> topExpenseCategories = const [],
     List<CategoryStatistic> topIncomeCategories = const [],
     String defaultCurrency = 'EUR',
+    Map<String, String> transferDestinations = const {},
   });
 }

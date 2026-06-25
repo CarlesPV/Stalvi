@@ -1207,5 +1207,93 @@
   "errorOpenFileFailed": "No s'ha pogut obrir el fitxer",
   "@errorOpenFileFailed": {
     "description": "Error message when opening a file fails"
+  },
+  "expense_vs_income": "Despeses vs Ingressos",
+  "@expense_vs_income": {
+    "description": "Title for the income vs expenses chart section in PDF"
+  },
+  "destination_account": "Compte de destí",
+  "@destination_account": {
+    "description": "Label for the destination account in transfers"
+  },
+  "chart_scale": "Escala del gràfic",
+  "@chart_scale": {
+    "description": "Label for the scale/axis of a chart in PDF"
+  },
+  "pdfDateFormat": "dd/MM/yyyy",
+  "@pdfDateFormat": {
+    "description": "Date format for PDF reports"
+  },
+  "pdfDateTimeFormat": "dd/MM/yyyy HH:mm",
+  "@pdfDateTimeFormat": {
+    "description": "Date and time format for PDF reports"
+  },
+  "pdfGeneratedOn": "Generat per {appTitle} el {date}",
+  "@pdfGeneratedOn": {
+    "description": "Footer showing generation timestamp and app title",
+    "placeholders": {
+      "appTitle": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "addBudget": "Afegir Pressupost",
+  "@addBudget": {
+    "description": "Button or title for adding a budget"
+  },
+  "editBudget": "Editar Pressupost",
+  "@editBudget": {
+    "description": "Button or title for editing a budget"
+  },
+  "deleteBudget": "Eliminar Pressupost",
+  "@deleteBudget": {
+    "description": "Button or title for deleting a budget"
+  },
+  "addSavingsGoal": "Afegir Meta d'Estalvi",
+  "@addSavingsGoal": {
+    "description": "Button or title for adding a savings goal"
+  },
+  "editSavingsGoal": "Editar Meta d'Estalvi",
+  "@editSavingsGoal": {
+    "description": "Button or title for editing a savings goal"
+  },
+  "deleteSavingsGoal": "Eliminar Meta d'Estalvi",
+  "@deleteSavingsGoal": {
+    "description": "Button or title for deleting a savings goal"
+  },
+  "targetAmount": "Quantitat Objectiu",
+  "@targetAmount": {
+    "description": "Label for target amount input"
+  },
+  "startDate": "Data d'Inici",
+  "@startDate": {
+    "description": "Label for start date input"
+  },
+  "endDate": "Data de Fi",
+  "@endDate": {
+    "description": "Label for end date input"
+  },
+  "goalName": "Nom de la Meta",
+  "@goalName": {
+    "description": "Label for goal name input"
+  },
+  "targetDate": "Data Objectiu",
+  "@targetDate": {
+    "description": "Label for target date input"
+  },
+  "errorEndDateBeforeStart": "La data de fi ha de ser posterior a la d'inici",
+  "@errorEndDateBeforeStart": {
+    "description": "Validation error for budget dates"
+  },
+  "errorNameRequired": "Si us plau, introdueix un nom",
+  "@errorNameRequired": {
+    "description": "Validation error for goal name"
+  },
+  "errorTargetDatePast": "La data objectiu ha de ser en el futur",
+  "@errorTargetDatePast": {
+    "description": "Validation error for target date"
   }
 }

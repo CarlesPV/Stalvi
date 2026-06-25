@@ -939,4 +939,67 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get errorOpenFileFailed => 'No s\'ha pogut obrir el fitxer';
+
+  @override
+  String get expense_vs_income => 'Despeses vs Ingressos';
+
+  @override
+  String get destination_account => 'Compte de destí';
+
+  @override
+  String get chart_scale => 'Escala del gràfic';
+
+  @override
+  String get pdfDateFormat => 'dd/MM/yyyy';
+
+  @override
+  String get pdfDateTimeFormat => 'dd/MM/yyyy HH:mm';
+
+  @override
+  String pdfGeneratedOn(String appTitle, String date) {
+    return 'Generat per $appTitle el $date';
+  }
+
+  @override
+  String get addBudget => 'Afegir Pressupost';
+
+  @override
+  String get editBudget => 'Editar Pressupost';
+
+  @override
+  String get deleteBudget => 'Eliminar Pressupost';
+
+  @override
+  String get addSavingsGoal => 'Afegir Meta d\'Estalvi';
+
+  @override
+  String get editSavingsGoal => 'Editar Meta d\'Estalvi';
+
+  @override
+  String get deleteSavingsGoal => 'Eliminar Meta d\'Estalvi';
+
+  @override
+  String get targetAmount => 'Quantitat Objectiu';
+
+  @override
+  String get startDate => 'Data d\'Inici';
+
+  @override
+  String get endDate => 'Data de Fi';
+
+  @override
+  String get goalName => 'Nom de la Meta';
+
+  @override
+  String get targetDate => 'Data Objectiu';
+
+  @override
+  String get errorEndDateBeforeStart =>
+      'La data de fi ha de ser posterior a la d\'inici';
+
+  @override
+  String get errorNameRequired => 'Si us plau, introdueix un nom';
+
+  @override
+  String get errorTargetDatePast => 'La data objectiu ha de ser en el futur';
 }

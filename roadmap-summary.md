@@ -403,6 +403,24 @@ This document lists the completed phases of the Stalvi development roadmap, prov
   - Zero issues on static analysis (`flutter analyze`).
   - All automated tests pass successfully: **368 tests passed** (including mock repository verifications and widget layout assertions).
 
+### Phase 26: QA/Layout Readiness and Production Audit
+* **Completion Date:** June 25, 2026
+* **Objective:** Audit layout widgets for potential overflows, resolve deprecations, clean unused assets, and verify that CI/CD and analyzer pass 100% cleanly.
+* **Accomplishments:**
+  - **Layout Constraints & Overflow Prevention:**
+    - Exposed text formatting options (overflow, maxLines, softWrap) in `ObfuscatedText` to safely wrap or truncate obfuscated text.
+    - Implemented text overflow safeguards on balance total, balance amount, statistics cards (label/values), account item balance value, and transaction item amount value across Dashboard and Budgets & Goals screens.
+  - **Code Polish & Deprecation Removal:**
+    - Resolved trailing comma warnings across the budgets screen and export monthly PDF tests.
+    - Cleaned deprecated properties in `DropdownButtonFormField` (replaced `value` with `initialValue`).
+    - Removed unused imports in `profile_settings_controller.dart`.
+    - Removed redundant mock methods from tests repository fake implementation classes.
+  - **Asset Optimization:**
+    - Cleaned up unused legal assets (`privacy.md` and `terms.md`) from `assets/legal` directory to save app package space.
+* **Verification:**
+  - 100% clean static analysis (`flutter analyze` with 0 issues).
+  - Clean `flutter test` execution: all 381 tests pass successfully.
+
 ## Recent Updates
 - Integrated Chinese Yuan (CNY) and optimized exchange rate API payload sizes (caching 8 target currencies for 24h).
 - Added multi-currency support to transfer transactions, dynamically resolving rates at transaction time.
@@ -410,7 +428,8 @@ This document lists the completed phases of the Stalvi development roadmap, prov
 - Refactored monthly PDF export layouts to incorporate localized titles, default-currency formatting, and top categories pie charts.
 - Configured native file openers using `open_filex` for post-export feedback on success Snackbars.
 - Completed comprehensive UI form overflows audit using scroll views and keyboard safety widgets.
-- Achieved 100% pass rate with all 368 tests passing successfully and 0 lint issues.
+- Cleaned unused legal assets, resolved lints/deprecation warnings, and added text overflow safeguards.
+- Achieved 100% pass rate with all 381 tests passing successfully and 0 lint issues.
 
 
 

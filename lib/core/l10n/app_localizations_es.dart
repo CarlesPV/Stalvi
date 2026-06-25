@@ -939,4 +939,67 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get errorOpenFileFailed => 'No se pudo abrir el archivo';
+
+  @override
+  String get expense_vs_income => 'Gastos vs Ingresos';
+
+  @override
+  String get destination_account => 'Cuenta de destino';
+
+  @override
+  String get chart_scale => 'Escala del gráfico';
+
+  @override
+  String get pdfDateFormat => 'dd/MM/yyyy';
+
+  @override
+  String get pdfDateTimeFormat => 'dd/MM/yyyy HH:mm';
+
+  @override
+  String pdfGeneratedOn(String appTitle, String date) {
+    return 'Generado por $appTitle el $date';
+  }
+
+  @override
+  String get addBudget => 'Añadir Presupuesto';
+
+  @override
+  String get editBudget => 'Editar Presupuesto';
+
+  @override
+  String get deleteBudget => 'Eliminar Presupuesto';
+
+  @override
+  String get addSavingsGoal => 'Añadir Meta de Ahorro';
+
+  @override
+  String get editSavingsGoal => 'Editar Meta de Ahorro';
+
+  @override
+  String get deleteSavingsGoal => 'Eliminar Meta de Ahorro';
+
+  @override
+  String get targetAmount => 'Cantidad Objetivo';
+
+  @override
+  String get startDate => 'Fecha de Inicio';
+
+  @override
+  String get endDate => 'Fecha de Fin';
+
+  @override
+  String get goalName => 'Nombre de la Meta';
+
+  @override
+  String get targetDate => 'Fecha Objetivo';
+
+  @override
+  String get errorEndDateBeforeStart =>
+      'La fecha de fin debe ser posterior a la de inicio';
+
+  @override
+  String get errorNameRequired => 'Por favor, introduce un nombre';
+
+  @override
+  String get errorTargetDatePast => 'La fecha objetivo debe ser en el futuro';
 }
