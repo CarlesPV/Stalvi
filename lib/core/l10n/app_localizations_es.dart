@@ -967,13 +967,19 @@ class AppLocalizationsEs extends AppLocalizations {
   String get editBudget => 'Editar Presupuesto';
 
   @override
+  String get budgetDetails => 'Detalles del Presupuesto';
+
+  @override
   String get deleteBudget => 'Eliminar Presupuesto';
 
   @override
   String get addSavingsGoal => 'Añadir Meta de Ahorro';
 
   @override
-  String get editSavingsGoal => 'Editar Meta de Ahorro';
+  String get editSavingsGoal => 'Editar Objetivo de Ahorro';
+
+  @override
+  String get savingsGoalDetails => 'Detalles del Objetivo de Ahorro';
 
   @override
   String get deleteSavingsGoal => 'Eliminar Meta de Ahorro';

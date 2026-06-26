@@ -435,13 +435,24 @@ This document lists the completed phases of the Stalvi development roadmap, prov
   - 100% clean static analysis (`flutter analyze` with 0 issues).
   - Executed the full automated test suite containing 393 unit and widget tests, achieving a 100% success rate (all tests passed!).
 
+### Phase 28: Financial Integrity, Editing, and Final Polish
+* **Completion Date:** June 26, 2026
+* **Objective:** Ensure data consistency in complex operations (cascading deletions), enable editing of financial goals/budgets, fix document export encoding for currency symbols, and polish internationalization/static analysis.
+* **Accomplishments:**
+  - **Entity Editing:** Enabled update operations (Update) in UI and Domain for Budgets and Savings Goals, allowing editing directly from detailed screens.
+  - **Dynamic Recalculation:** Implemented reactive budget recalculation including currency conversion when transactions are modified or deleted.
+  - **Trash Integrity:** Implemented cascading soft-delete and restore for Savings Goals, automatically reverting and reapplying balances to origin accounts.
+  - **PDF Unicode Support:** Embedded TTF fonts (Roboto) in the PDF export service to properly render currency symbols without placeholders.
+  - **Legal Update:** Reviewed and updated `privacy_*.md` and `terms_*.md` in Catalan, English, and Spanish to reflect the latest features.
+  - **UI/UX & Static Analysis Polish:** Automated formatting corrections via `dart fix --apply`, achieving 100% translation coverage and warning-free logs.
+* **Verification:**
+  - 100% clean static analysis (`flutter analyze` with 0 issues).
+  - Executed the full automated test suite containing 396 unit and widget tests, achieving a 100% success rate (all tests passed!).
+
 ## Recent Updates
-- Locked Currency and Target Amount fields in Edit mode for Budgets and Savings Goals sheets, and required Account mapping.
-- Added support to select active Savings Goals as destination targets in Transfer transactions.
-- Extended the Recycle Bin UI to list soft-deleted Budgets and Savings Goals with localized names.
-- Audited and updated the translation ARB catalogs for English, Spanish, and Catalan (100% parity).
-- Resolved test suite mock compiling issues and reached a 100% test pass rate (all 393 tests passing successfully).
-- Achieved a completely clean static analysis check with 0 issues on `flutter analyze`.
-
-
-
+- Enabled editing and update operations for Budgets and Savings Goals.
+- Added dynamic budget progress spent recalculation when transactions are modified/deleted.
+- Implemented cascading soft-delete/restore for Savings Goals with balance refunds.
+- Added full Unicode font support in PDF exports using Roboto font assets to fix currency symbol placeholders.
+- Updated Terms and Privacy policy legal markdown assets for Catalan, English, and Spanish.
+- Achieved a completely clean static analysis check with 0 issues on `flutter analyze` and 100% test pass rate (all 396 tests passing successfully).

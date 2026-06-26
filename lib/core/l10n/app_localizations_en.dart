@@ -951,6 +951,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get editBudget => 'Edit Budget';
 
   @override
+  String get budgetDetails => 'Budget Details';
+
+  @override
   String get deleteBudget => 'Delete Budget';
 
   @override
@@ -958,6 +961,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get editSavingsGoal => 'Edit Savings Goal';
+
+  @override
+  String get savingsGoalDetails => 'Savings Goal Details';
 
   @override
   String get deleteSavingsGoal => 'Delete Savings Goal';

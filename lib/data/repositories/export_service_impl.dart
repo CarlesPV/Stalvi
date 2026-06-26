@@ -1,4 +1,5 @@
 import "package:flutter/foundation.dart" hide Category;
+import 'package:flutter/services.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
@@ -256,7 +257,19 @@ class ExportServiceImpl implements IExportService {
       final categoryMap = {for (final c in categories) c.id: c.name};
 
       final monthLabel = DateFormat.yMMMM(l10n.localeName).format(month);
-      final pdf = pw.Document();
+
+      final fontData = await rootBundle.load('assets/fonts/Roboto-Regular.ttf');
+      final fontDataBold =
+          await rootBundle.load('assets/fonts/Roboto-Bold.ttf');
+      final ttf = pw.Font.ttf(fontData);
+      final ttfBold = pw.Font.ttf(fontDataBold);
+
+      final pdf = pw.Document(
+        theme: pw.ThemeData.withFont(
+          base: ttf,
+          bold: ttfBold,
+        ),
+      );
       final symbol = _getCurrencySymbol(defaultCurrency);
 
       // Filter only active (non-deleted) budgets and savings goals

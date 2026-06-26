@@ -2,6 +2,7 @@ import 'package:stalvi/core/errors/app_exceptions.dart';
 import 'package:stalvi/domain/entities/budget.dart';
 import 'package:stalvi/domain/repositories/i_budget_repository.dart';
 import 'package:stalvi/domain/repositories/i_category_repository.dart';
+import 'package:stalvi/domain/usecases/update_budget_progress_usecase.dart';
 
 class CreateBudgetParams {
   final String id;
@@ -24,8 +25,13 @@ class CreateBudgetParams {
 class CreateBudgetUseCase {
   final IBudgetRepository _budgetRepository;
   final ICategoryRepository _categoryRepository;
+  final UpdateBudgetProgressUseCase _updateBudgetProgressUseCase;
 
-  CreateBudgetUseCase(this._budgetRepository, this._categoryRepository);
+  CreateBudgetUseCase(
+    this._budgetRepository,
+    this._categoryRepository,
+    this._updateBudgetProgressUseCase,
+  );
 
   Future<Budget> execute(CreateBudgetParams params) async {
     if (params.targetAmount <= 0) {
@@ -67,6 +73,18 @@ class CreateBudgetUseCase {
     );
 
     await _budgetRepository.createBudget(budget);
-    return budget;
+
+    // Calculate the initial progress of the budget instantly based on existing transactions in its date range
+    await _updateBudgetProgressUseCase.execute(categoryId: params.categoryId);
+
+    // Fetch the updated budget to return
+    final updatedBudgets =
+        await _budgetRepository.getBudgetsByCategoryId(params.categoryId);
+    final updatedBudget = updatedBudgets.firstWhere(
+      (b) => b.id == params.id,
+      orElse: () => budget,
+    );
+
+    return updatedBudget;
   }
 }

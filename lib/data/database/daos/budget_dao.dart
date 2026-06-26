@@ -24,8 +24,9 @@ class BudgetDao extends DatabaseAccessor<AppDatabase> with _$BudgetDaoMixin {
 
   Future<List<BudgetTableData>> getBudgetsByCategoryId(String categoryId) {
     return (select(budgets)
-          ..where((t) =>
-              t.categoryId.equals(categoryId) & t.isDeleted.equals(false)))
+          ..where(
+            (t) => t.categoryId.equals(categoryId) & t.isDeleted.equals(false),
+          ))
         .get();
   }
 

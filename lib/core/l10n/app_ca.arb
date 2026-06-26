@@ -1245,6 +1245,10 @@
     "description": "Button or title for adding a budget"
   },
   "editBudget": "Editar Pressupost",
+  "budgetDetails": "Detalls del Pressupost",
+  "@budgetDetails": {
+    "description": "Title for budget details"
+  },
   "@editBudget": {
     "description": "Button or title for editing a budget"
   },
@@ -1257,6 +1261,10 @@
     "description": "Button or title for adding a savings goal"
   },
   "editSavingsGoal": "Editar Meta d'Estalvi",
+  "savingsGoalDetails": "Detalls de la Meta d'Estalvi",
+  "@savingsGoalDetails": {
+    "description": "Title for savings goal details"
+  },
   "@editSavingsGoal": {
     "description": "Button or title for editing a savings goal"
   },

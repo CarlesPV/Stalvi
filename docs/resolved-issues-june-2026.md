@@ -285,8 +285,34 @@ SQL-based database aggregation is incapable of parsing dynamic JSON objects (spe
 - Always watch configuration settings (e.g., locale, currency, mode) in down-stream providers that compute data summaries.
 - Use `SingleChildScrollView` or layout-wrapping scroll components for any page containing input text fields to safely support soft keyboards.
 
+---
 
+## 12. Financial Integrity, Editing, and PDF Unicode Support (Phase 28)
 
+### Problem Description
+1. **Goal/Budget Editing Lack**: Budgets and Savings Goals detail screens lacked editing features, meaning users had to delete and recreate them to modify parameters.
+2. **Dynamic Budget Spent Out-of-Sync**: Trashing or restoring transactions did not trigger budget Spent recalculations dynamically in foreign currencies.
+3. **Savings Goals Soft-Delete Inconsistency**: Deleting a savings goal did not cascade or refund saved amounts back to the original account balance.
+4. **PDF Export Font Glitches**: The exported PDF statement printed square placeholders instead of currency symbols (like €, $, £) due to standard PDF fonts lacking Unicode characters.
+5. **Static Analysis & Lint Warnings**: Multiple files had formatting and syntax issues (missing trailing commas, flow control without braces) that cluttered analyzer logs.
 
+### Root Causes
+1. **Missing Update Usecases/UI Sheets**: Updatable forms and sheets were not wired into detail taps.
+2. **Asymmetric Cascade Math**: Savings goals soft-deletes lacked the domain-level balance refund logic.
+3. **PDF Default Helvetica Limitations**: Standard PDF library fonts (Helvetica, Times) do not embed full Unicode glyph ranges for international currency symbols.
 
-
+### Solutions Applied
+1. **Budget/Goal Editing**:
+   - Implemented `UpdateBudgetUseCase` and `UpdateSavingsGoalUseCase`.
+   - Wired `CreateEditBudgetSheet` and `CreateEditSavingsGoalSheet` widgets in the detail views to pre-fill parameters and invoke the update operations on submit.
+2. **Dynamic Recalculation**:
+   - Programmed `UpdateBudgetProgressUseCase` to dynamically convert amounts to target category currencies and update progress on transaction deletion or restoration.
+3. **Trash Integrity & Goal Refund Cascade**:
+   - Upgraded `SoftDeleteSavingsGoalUseCase` to mark the goal as deleted and atomically create a refund transaction to restore the saved balance to the target account.
+4. **PDF Unicode Font Support**:
+   - Downloaded and placed the `Roboto-Regular.ttf` font asset into the project directory structure under `assets/fonts`.
+   - Registered the font in `pubspec.yaml`.
+   - Configured `ExportServiceImpl` to load the Roboto font file from assets and apply it to all PDF text styling, enabling correct rendering of currency symbols.
+5. **Static Analysis Cleanup**:
+   - Applied automatic styling fixes using `dart fix --apply`, resolving all 14 syntax warnings.
+   - Achieved a completely clean static analysis pass (`flutter analyze` with 0 issues).

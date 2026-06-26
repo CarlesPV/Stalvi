@@ -1245,6 +1245,10 @@
     "description": "Button or title for adding a budget"
   },
   "editBudget": "Edit Budget",
+  "budgetDetails": "Budget Details",
+  "@budgetDetails": {
+    "description": "Title for budget details"
+  },
   "@editBudget": {
     "description": "Button or title for editing a budget"
   },
@@ -1257,6 +1261,10 @@
     "description": "Button or title for adding a savings goal"
   },
   "editSavingsGoal": "Edit Savings Goal",
+  "savingsGoalDetails": "Savings Goal Details",
+  "@savingsGoalDetails": {
+    "description": "Title for savings goal details"
+  },
   "@editSavingsGoal": {
     "description": "Button or title for editing a savings goal"
   },

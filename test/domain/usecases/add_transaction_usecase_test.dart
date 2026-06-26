@@ -196,8 +196,11 @@ void main() {
             .thenAnswer((_) async => account);
         when(() => mockProfileRepo.getProfileById(account.userId))
             .thenAnswer((_) async => profile);
-        when(() => mockUpdateBudgetProgressUseCase.execute(
-            transaction: any(named: 'transaction'))).thenAnswer((_) async {});
+        when(
+          () => mockUpdateBudgetProgressUseCase.execute(
+            transaction: any(named: 'transaction'),
+          ),
+        ).thenAnswer((_) async {});
         when(() => mockTransactionRepo.createTransaction(any())).thenAnswer(
           (inv) async => inv.positionalArguments[0] as Transaction,
         );
@@ -233,8 +236,11 @@ void main() {
             .thenAnswer((_) async => profile);
         when(() => mockExchangeRateRepo.getLocalRates(baseCurrency: 'EUR'))
             .thenAnswer((_) async => localRates);
-        when(() => mockUpdateBudgetProgressUseCase.execute(
-            transaction: any(named: 'transaction'))).thenAnswer((_) async {});
+        when(
+          () => mockUpdateBudgetProgressUseCase.execute(
+            transaction: any(named: 'transaction'),
+          ),
+        ).thenAnswer((_) async {});
         when(() => mockTransactionRepo.createTransaction(any())).thenAnswer(
           (inv) async => inv.positionalArguments[0] as Transaction,
         );
@@ -265,8 +271,11 @@ void main() {
             .thenAnswer((_) async => profile);
         when(() => mockExchangeRateRepo.getLatestRates(baseCurrency: 'EUR'))
             .thenAnswer((_) async => rateSnapshot);
-        when(() => mockUpdateBudgetProgressUseCase.execute(
-            transaction: any(named: 'transaction'))).thenAnswer((_) async {});
+        when(
+          () => mockUpdateBudgetProgressUseCase.execute(
+            transaction: any(named: 'transaction'),
+          ),
+        ).thenAnswer((_) async {});
         when(() => mockTransactionRepo.createTransaction(any())).thenAnswer(
           (inv) async => inv.positionalArguments[0] as Transaction,
         );

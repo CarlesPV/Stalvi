@@ -215,7 +215,15 @@ final trashUsecasesProvider = Provider<TrashUsecases>((ref) {
   final db = ref.watch(appDatabaseProvider).requireValue;
   final transactionRepo = ref.watch(transactionRepositoryProvider);
   final accountRepo = ref.watch(accountRepositoryProvider);
-  return TrashUsecases(db.trashDao, transactionRepo, accountRepo);
+  final updateBudgetProgressUseCase =
+      ref.watch(updateBudgetProgressUseCaseProvider);
+  return TrashUsecases(
+    db.trashDao,
+    transactionRepo,
+    accountRepo,
+    updateBudgetProgressUseCase,
+    db.savingsGoalDao,
+  );
 });
 
 /// Fetches the default profile (usually Anonymous) seeded on DB creation.

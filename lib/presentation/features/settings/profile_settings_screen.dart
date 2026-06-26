@@ -580,89 +580,98 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                   ListTile(
                     leading: const Icon(Icons.palette_rounded),
                     title: Text(l10n.settingsThemeMode),
-                    trailing: DropdownButton<ThemeMode>(
-                      value: ref.watch(themeProvider),
-                      dropdownColor:
-                          Theme.of(context).colorScheme.surfaceContainerHighest,
-                      borderRadius: BorderRadius.circular(12),
-                      underline: const SizedBox(),
-                      icon: Icon(
-                        Icons.arrow_drop_down_rounded,
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    trailing: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 140),
+                      child: DropdownButton<ThemeMode>(
+                        value: ref.watch(themeProvider),
+                        dropdownColor: Theme.of(context)
+                            .colorScheme
+                            .surfaceContainerHighest,
+                        borderRadius: BorderRadius.circular(12),
+                        underline: const SizedBox(),
+                        icon: Icon(
+                          Icons.arrow_drop_down_rounded,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                        onChanged: (ThemeMode? newMode) {
+                          if (newMode != null) {
+                            ref
+                                .read(themeProvider.notifier)
+                                .setThemeMode(newMode);
+                          }
+                        },
+                        items: ThemeMode.values.map((ThemeMode mode) {
+                          String label;
+                          switch (mode) {
+                            case ThemeMode.system:
+                              label = l10n.themeModeSystem;
+                              break;
+                            case ThemeMode.light:
+                              label = l10n.themeModeLight;
+                              break;
+                            case ThemeMode.dark:
+                              label = l10n.themeModeDark;
+                              break;
+                          }
+                          return DropdownMenuItem<ThemeMode>(
+                            value: mode,
+                            child: Text(
+                              label,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium
+                                  ?.copyWith(
+                                    color:
+                                        Theme.of(context).colorScheme.onSurface,
+                                  ),
+                            ),
+                          );
+                        }).toList(),
                       ),
-                      onChanged: (ThemeMode? newMode) {
-                        if (newMode != null) {
-                          ref
-                              .read(themeProvider.notifier)
-                              .setThemeMode(newMode);
-                        }
-                      },
-                      items: ThemeMode.values.map((ThemeMode mode) {
-                        String label;
-                        switch (mode) {
-                          case ThemeMode.system:
-                            label = l10n.themeModeSystem;
-                            break;
-                          case ThemeMode.light:
-                            label = l10n.themeModeLight;
-                            break;
-                          case ThemeMode.dark:
-                            label = l10n.themeModeDark;
-                            break;
-                        }
-                        return DropdownMenuItem<ThemeMode>(
-                          value: mode,
-                          child: Text(
-                            label,
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyMedium
-                                ?.copyWith(
-                                  color:
-                                      Theme.of(context).colorScheme.onSurface,
-                                ),
-                          ),
-                        );
-                      }).toList(),
                     ),
                   ),
                   const Divider(),
                   ListTile(
                     leading: const Icon(Icons.language_rounded),
                     title: Text(l10n.settingsLanguage),
-                    trailing: DropdownButton<String>(
-                      value: ref.watch(localeProvider).languageCode,
-                      dropdownColor:
-                          Theme.of(context).colorScheme.surfaceContainerHighest,
-                      borderRadius: BorderRadius.circular(12),
-                      underline: const SizedBox(),
-                      icon: Icon(
-                        Icons.arrow_drop_down_rounded,
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    trailing: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 140),
+                      child: DropdownButton<String>(
+                        value: ref.watch(localeProvider).languageCode,
+                        dropdownColor: Theme.of(context)
+                            .colorScheme
+                            .surfaceContainerHighest,
+                        borderRadius: BorderRadius.circular(12),
+                        underline: const SizedBox(),
+                        icon: Icon(
+                          Icons.arrow_drop_down_rounded,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                        onChanged: (String? newLang) {
+                          if (newLang != null) {
+                            ref
+                                .read(localeProvider.notifier)
+                                .setLocale(Locale(newLang));
+                          }
+                        },
+                        items: const [
+                          DropdownMenuItem<String>(
+                            value: 'en',
+                            child:
+                                Text('English', style: TextStyle(fontSize: 14)),
+                          ),
+                          DropdownMenuItem<String>(
+                            value: 'es',
+                            child:
+                                Text('Español', style: TextStyle(fontSize: 14)),
+                          ),
+                          DropdownMenuItem<String>(
+                            value: 'ca',
+                            child:
+                                Text('Català', style: TextStyle(fontSize: 14)),
+                          ),
+                        ],
                       ),
-                      onChanged: (String? newLang) {
-                        if (newLang != null) {
-                          ref
-                              .read(localeProvider.notifier)
-                              .setLocale(Locale(newLang));
-                        }
-                      },
-                      items: const [
-                        DropdownMenuItem<String>(
-                          value: 'en',
-                          child:
-                              Text('English', style: TextStyle(fontSize: 14)),
-                        ),
-                        DropdownMenuItem<String>(
-                          value: 'es',
-                          child:
-                              Text('Español', style: TextStyle(fontSize: 14)),
-                        ),
-                        DropdownMenuItem<String>(
-                          value: 'ca',
-                          child: Text('Català', style: TextStyle(fontSize: 14)),
-                        ),
-                      ],
                     ),
                   ),
                   const Divider(),

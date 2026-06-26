@@ -134,4 +134,49 @@ void main() {
       ),
     ).called(1);
   });
+
+  test('recalculates budget correctly when a transaction is deleted', () async {
+    final currentBudget = testBudget.copyWith(currentAmount: 3500);
+    when(() => mockBudgetRepo.getBudgetsByCategoryId('cat1'))
+        .thenAnswer((_) async => [currentBudget]);
+
+    final tx1 = Transaction(
+      id: 'tx1',
+      amount: 1000,
+      date: DateTime(2023, 1, 15),
+      type: TransactionType.expense,
+      accountId: 'acc1',
+      categoryId: 'cat1',
+      originalCurrency: 'USD',
+      createdAt: DateTime.now(),
+      modifiedAt: DateTime.now(),
+    );
+
+    // Simulate tx2 being deleted by having watchFilteredTransactions return only tx1
+    when(() => mockTransactionRepo.watchFilteredTransactions(any()))
+        .thenAnswer((_) => Stream.value([tx1]));
+
+    when(() => mockAccountRepo.getAccountById('acc1'))
+        .thenAnswer((_) async => testAccount);
+
+    when(() => mockExchangeRateRepo.getLocalRates(baseCurrency: 'USD'))
+        .thenAnswer(
+      (_) async => ExchangeRate(
+        baseCurrency: 'USD',
+        date: DateTime.now(),
+        rates: {'EUR': 0.8},
+      ),
+    );
+
+    when(() => mockBudgetRepo.updateBudget(any())).thenAnswer((_) async {});
+
+    await usecase.execute(categoryId: 'cat1');
+
+    // Expected: Only tx1 remains (1000 USD)
+    verify(
+      () => mockBudgetRepo.updateBudget(
+        any(that: predicate<Budget>((b) => b.currentAmount == 1000)),
+      ),
+    ).called(1);
+  });
 }

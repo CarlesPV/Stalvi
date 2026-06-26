@@ -5,10 +5,13 @@ import 'package:stalvi/domain/entities/budget.dart';
 import 'package:stalvi/domain/entities/account.dart';
 import 'package:stalvi/domain/entities/account_type.dart';
 import 'package:stalvi/domain/usecases/create_budget_usecase.dart';
+import 'package:stalvi/domain/usecases/update_budget_usecase.dart';
 import 'package:stalvi/presentation/providers/budgets_goals_providers.dart';
 import 'package:stalvi/presentation/providers/repository_providers.dart';
 import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
+import 'package:stalvi/core/utils/icon_helper.dart';
+import 'package:stalvi/domain/entities/category_type.dart';
 
 class CreateEditBudgetSheet extends ConsumerStatefulWidget {
   final Budget? existingBudget;
@@ -65,6 +68,13 @@ class _CreateEditBudgetSheetState extends ConsumerState<CreateEditBudgetSheet> {
     super.dispose();
   }
 
+  Color _parseHexColor(String hexString) {
+    final buffer = StringBuffer();
+    if (hexString.length == 6 || hexString.length == 7) buffer.write('ff');
+    buffer.write(hexString.replaceFirst('#', ''));
+    return Color(int.parse(buffer.toString(), radix: 16));
+  }
+
   Future<void> _submit() async {
     final l10n = AppLocalizations.of(context)!;
     final amountDouble = double.tryParse(_amountController.text.trim()) ?? 0.0;
@@ -102,15 +112,13 @@ class _CreateEditBudgetSheetState extends ConsumerState<CreateEditBudgetSheet> {
       );
       await ref.read(budgetsNotifierProvider.notifier).createBudget(params);
     } else {
-      final updatedBudget = widget.existingBudget!.copyWith(
-        categoryId: _selectedCategoryId,
+      final params = UpdateBudgetParams(
+        id: widget.existingBudget!.id,
+        categoryId: _selectedCategoryId!,
         startDate: _startDate,
         endDate: _endDate,
-        modifiedAt: DateTime.now(),
       );
-      await ref
-          .read(budgetsNotifierProvider.notifier)
-          .updateBudget(updatedBudget);
+      await ref.read(budgetsNotifierProvider.notifier).updateBudget(params);
     }
 
     if (mounted) Navigator.of(context).pop();
@@ -176,7 +184,8 @@ class _CreateEditBudgetSheetState extends ConsumerState<CreateEditBudgetSheet> {
                     isDefault: false,
                     isDeleted: false,
                     createdAt: DateTime.now(),
-                    modifiedAt: DateTime.now()),
+                    modifiedAt: DateTime.now(),
+                  ),
           )
         : null;
     final currencyToShow =
@@ -208,7 +217,7 @@ class _CreateEditBudgetSheetState extends ConsumerState<CreateEditBudgetSheet> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    isEditing ? l10n.editBudget : l10n.addBudget,
+                    isEditing ? l10n.budgetDetails : l10n.addBudget,
                     style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w800,
                       color: colorScheme.onSurface,
@@ -254,21 +263,37 @@ class _CreateEditBudgetSheetState extends ConsumerState<CreateEditBudgetSheet> {
                       ]
                     : [
                         DropdownMenuItem(
-                            value: 'EUR', child: Text(l10n.currencyEUR)),
+                          value: 'EUR',
+                          child: Text(l10n.currencyEUR),
+                        ),
                         DropdownMenuItem(
-                            value: 'USD', child: Text(l10n.currencyUSD)),
+                          value: 'USD',
+                          child: Text(l10n.currencyUSD),
+                        ),
                         DropdownMenuItem(
-                            value: 'GBP', child: Text(l10n.currencyGBP)),
+                          value: 'GBP',
+                          child: Text(l10n.currencyGBP),
+                        ),
                         DropdownMenuItem(
-                            value: 'JPY', child: Text(l10n.currencyJPY)),
+                          value: 'JPY',
+                          child: Text(l10n.currencyJPY),
+                        ),
                         DropdownMenuItem(
-                            value: 'CHF', child: Text(l10n.currencyCHF)),
+                          value: 'CHF',
+                          child: Text(l10n.currencyCHF),
+                        ),
                         DropdownMenuItem(
-                            value: 'CAD', child: Text(l10n.currencyCAD)),
+                          value: 'CAD',
+                          child: Text(l10n.currencyCAD),
+                        ),
                         DropdownMenuItem(
-                            value: 'AUD', child: Text(l10n.currencyAUD)),
+                          value: 'AUD',
+                          child: Text(l10n.currencyAUD),
+                        ),
                         DropdownMenuItem(
-                            value: 'CNY', child: Text(l10n.currencyCNY)),
+                          value: 'CNY',
+                          child: Text(l10n.currencyCNY),
+                        ),
                       ],
                 onChanged: isEditing
                     ? null
@@ -313,14 +338,36 @@ class _CreateEditBudgetSheetState extends ConsumerState<CreateEditBudgetSheet> {
                             ? [
                                 DropdownMenuItem(
                                   value: existingAccount.id,
-                                  child: Text(existingAccount.name),
+                                  child: Row(
+                                    children: [
+                                      Icon(
+                                        getIconData(existingAccount.icon),
+                                        color: _parseHexColor(
+                                          existingAccount.color,
+                                        ),
+                                        size: 20,
+                                      ),
+                                      const SizedBox(width: 8),
+                                      Text(existingAccount.name),
+                                    ],
+                                  ),
                                 ),
                               ]
                             : [])
                         : filteredAccounts.map((a) {
                             return DropdownMenuItem(
                               value: a.id,
-                              child: Text(a.name),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    getIconData(a.icon),
+                                    color: _parseHexColor(a.color),
+                                    size: 20,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Text(a.name),
+                                ],
+                              ),
                             );
                           }).toList(),
                     onChanged: isEditing
@@ -335,7 +382,15 @@ class _CreateEditBudgetSheetState extends ConsumerState<CreateEditBudgetSheet> {
               ),
               const SizedBox(height: 16),
               categoriesAsync.when(
-                data: (categories) {
+                data: (categoriesList) {
+                  final filteredCategories = categoriesList.where((c) {
+                    if (isEditing) {
+                      return c.id == widget.existingBudget!.categoryId;
+                    }
+                    return c.associatedType == CategoryType.expense ||
+                        c.associatedType == null;
+                  }).toList();
+
                   return DropdownButtonFormField<String>(
                     initialValue: _selectedCategoryId,
                     decoration: InputDecoration(
@@ -344,15 +399,27 @@ class _CreateEditBudgetSheetState extends ConsumerState<CreateEditBudgetSheet> {
                         borderRadius: BorderRadius.circular(16),
                       ),
                     ),
-                    items: categories.map((c) {
+                    items: filteredCategories.map((c) {
                       return DropdownMenuItem(
                         value: c.id,
-                        child: Text(c.name),
+                        child: Row(
+                          children: [
+                            Icon(
+                              getIconData(c.icon),
+                              color: _parseHexColor(c.color),
+                              size: 20,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(c.name),
+                          ],
+                        ),
                       );
                     }).toList(),
-                    onChanged: (val) {
-                      setState(() => _selectedCategoryId = val);
-                    },
+                    onChanged: isEditing
+                        ? null
+                        : (val) {
+                            setState(() => _selectedCategoryId = val);
+                          },
                   );
                 },
                 loading: () => const Center(child: CircularProgressIndicator()),
@@ -363,7 +430,7 @@ class _CreateEditBudgetSheetState extends ConsumerState<CreateEditBudgetSheet> {
                 children: [
                   Expanded(
                     child: InkWell(
-                      onTap: () => _pickDate(true),
+                      onTap: isEditing ? null : () => _pickDate(true),
                       child: InputDecorator(
                         decoration: InputDecoration(
                           labelText: l10n.startDate,
@@ -378,7 +445,7 @@ class _CreateEditBudgetSheetState extends ConsumerState<CreateEditBudgetSheet> {
                   const SizedBox(width: 16),
                   Expanded(
                     child: InkWell(
-                      onTap: () => _pickDate(false),
+                      onTap: isEditing ? null : () => _pickDate(false),
                       child: InputDecorator(
                         decoration: InputDecoration(
                           labelText: l10n.endDate,
@@ -405,37 +472,42 @@ class _CreateEditBudgetSheetState extends ConsumerState<CreateEditBudgetSheet> {
                           borderRadius: BorderRadius.circular(16),
                         ),
                       ),
-                      child: Text(l10n.btnCancel),
+                      child: Text(
+                        isEditing ? l10n.btnCancel : l10n.btnCancel,
+                      ), // Wait, close/cancel is fine
                     ),
                   ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: FilledButton(
-                      onPressed: isLoading ? null : _submit,
-                      style: FilledButton.styleFrom(
-                        backgroundColor: colorScheme.primary,
-                        foregroundColor: colorScheme.onPrimary,
-                        minimumSize: const Size(0, 54),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
+                  if (!isEditing) ...[
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: FilledButton(
+                        onPressed: isLoading ? null : _submit,
+                        style: FilledButton.styleFrom(
+                          backgroundColor: colorScheme.primary,
+                          foregroundColor: colorScheme.onPrimary,
+                          minimumSize: const Size(0, 54),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
                         ),
-                      ),
-                      child: isLoading
-                          ? const SizedBox(
-                              width: 24,
-                              height: 24,
-                              child: CircularProgressIndicator(
-                                color: Colors.white,
-                                strokeWidth: 2,
+                        child: isLoading
+                            ? const SizedBox(
+                                width: 24,
+                                height: 24,
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            : Text(
+                                l10n.btnSave,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
-                            )
-                          : Text(
-                              l10n.btnSave,
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.bold),
-                            ),
+                      ),
                     ),
-                  ),
+                  ],
                 ],
               ),
             ],

@@ -664,8 +664,10 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                             ),
                           ),
                           trailing: isSelected
-                              ? Icon(Icons.check_circle_rounded,
-                                  color: accColor)
+                              ? Icon(
+                                  Icons.check_circle_rounded,
+                                  color: accColor,
+                                )
                               : null,
                           onTap: () {
                             if (isSource) {
@@ -723,8 +725,10 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                             ),
                           ),
                           trailing: isSelected
-                              ? Icon(Icons.check_circle_rounded,
-                                  color: goalColor)
+                              ? Icon(
+                                  Icons.check_circle_rounded,
+                                  color: goalColor,
+                                )
                               : null,
                           onTap: () {
                             ref

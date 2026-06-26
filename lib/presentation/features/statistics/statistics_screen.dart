@@ -755,24 +755,30 @@ class _CategoryChartSectionState extends State<_CategoryChartSection> {
                 ),
               ),
               const SizedBox(width: 10),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    widget.title,
-                    style: theme.textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.w800,
-                      color: colorScheme.onSurface,
-                      letterSpacing: -0.2,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      widget.title,
+                      style: theme.textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.w800,
+                        color: colorScheme.onSurface,
+                        letterSpacing: -0.2,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
                     ),
-                  ),
-                  Text(
-                    widget.subtitle,
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: colorScheme.onSurfaceVariant,
+                    Text(
+                      widget.subtitle,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: colorScheme.onSurfaceVariant,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ],
           ),
@@ -1068,6 +1074,8 @@ class _TouchedCategoryInfo extends ConsumerWidget {
                   fontWeight: FontWeight.w700,
                   color: catColor,
                 ),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
               ),
             ),
             const SizedBox(width: 8),
@@ -1093,14 +1101,18 @@ class _TouchedCategoryInfo extends ConsumerWidget {
               ),
             ),
             const SizedBox(width: 8),
-            Text(
-              ref.watch(currencyFormatterProvider).format(
-                    category.totalAmount / 100.0,
-                    currencyCode: ref.watch(statisticsCurrencyProvider),
-                  ),
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: catColor,
-                fontWeight: FontWeight.w700,
+            Flexible(
+              child: Text(
+                ref.watch(currencyFormatterProvider).format(
+                      category.totalAmount / 100.0,
+                      currencyCode: ref.watch(statisticsCurrencyProvider),
+                    ),
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: catColor,
+                  fontWeight: FontWeight.w700,
+                ),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
               ),
             ),
           ],

@@ -420,6 +420,12 @@ class TransactionDetailsDialog extends ConsumerWidget {
                   ref.invalidate(topExpenseCategoriesProvider);
                   ref.invalidate(topIncomeCategoriesProvider);
 
+                  if (transaction.type == TransactionType.expense) {
+                    await ref
+                        .read(updateBudgetProgressUseCaseProvider)
+                        .execute(transaction: transaction);
+                  }
+
                   if (context.mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(

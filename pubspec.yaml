@@ -75,6 +75,7 @@ flutter:
   assets:
     - assets/legal/
     - assets/icon/
+    - assets/fonts/
 
 flutter_launcher_icons:
   android: "launcher_icon"

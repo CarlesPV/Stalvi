@@ -1245,6 +1245,10 @@
     "description": "Button or title for adding a budget"
   },
   "editBudget": "Editar Presupuesto",
+  "budgetDetails": "Detalles del Presupuesto",
+  "@budgetDetails": {
+    "description": "Title for budget details"
+  },
   "@editBudget": {
     "description": "Button or title for editing a budget"
   },
@@ -1256,7 +1260,11 @@
   "@addSavingsGoal": {
     "description": "Button or title for adding a savings goal"
   },
-  "editSavingsGoal": "Editar Meta de Ahorro",
+  "editSavingsGoal": "Editar Objetivo de Ahorro",
+  "savingsGoalDetails": "Detalles del Objetivo de Ahorro",
+  "@savingsGoalDetails": {
+    "description": "Title for savings goal details"
+  },
   "@editSavingsGoal": {
     "description": "Button or title for editing a savings goal"
   },

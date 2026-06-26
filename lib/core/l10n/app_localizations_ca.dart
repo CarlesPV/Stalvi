@@ -967,6 +967,9 @@ class AppLocalizationsCa extends AppLocalizations {
   String get editBudget => 'Editar Pressupost';
 
   @override
+  String get budgetDetails => 'Detalls del Pressupost';
+
+  @override
   String get deleteBudget => 'Eliminar Pressupost';
 
   @override
@@ -974,6 +977,9 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get editSavingsGoal => 'Editar Meta d\'Estalvi';
+
+  @override
+  String get savingsGoalDetails => 'Detalls de la Meta d\'Estalvi';
 
   @override
   String get deleteSavingsGoal => 'Eliminar Meta d\'Estalvi';

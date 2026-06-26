@@ -1846,6 +1846,12 @@ abstract class AppLocalizations {
   /// **'Edit Budget'**
   String get editBudget;
 
+  /// Title for budget details
+  ///
+  /// In en, this message translates to:
+  /// **'Budget Details'**
+  String get budgetDetails;
+
   /// Button or title for deleting a budget
   ///
   /// In en, this message translates to:
@@ -1863,6 +1869,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Edit Savings Goal'**
   String get editSavingsGoal;
+
+  /// Title for savings goal details
+  ///
+  /// In en, this message translates to:
+  /// **'Savings Goal Details'**
+  String get savingsGoalDetails;
 
   /// Button or title for deleting a savings goal
   ///

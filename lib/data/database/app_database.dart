@@ -66,7 +66,7 @@ part 'app_database.g.dart';
     TrashDao,
     ExchangeRateDao,
     BudgetDao,
-    SavingsGoalDao
+    SavingsGoalDao,
   ],
 )
 class AppDatabase extends _$AppDatabase {

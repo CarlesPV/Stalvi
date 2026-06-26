@@ -7,11 +7,17 @@ Your privacy is extremely important to us. This Privacy Policy explains how Stal
 * **Financial Data**: All transaction logs, account balances, and budgets are kept strictly on your device. We have no backend server and no access to your financial data.
 
 ## 2. Security
-* **Device Authentication**: Stalvi uses device PIN and biometric authentication (Fingerprint or FaceID) to secure access to the app.
-* **Encryption**: The local database is encrypted using SQLCipher with a cryptographic key generated and stored securely in the device's keychain/Keystore.
+* **Biometric Authentication**: Stalvi uses device biometric authentication (Fingerprint or Face ID) as a primary login method, in conjunction with a secure PIN. Biometric credentials are managed exclusively by the device's operating system (Android Keystore / iOS Secure Enclave) and are never read or transmitted by the app.
+* **Encrypted Local Storage**: The local database is encrypted using SQLCipher. The cryptographic key is generated on first launch and stored securely in the device's keychain (iOS) or Keystore (Android). No data leaves the device in an unencrypted form.
+* **Device PIN**: A user-defined PIN (4–8 digits) serves as a fallback and additional security layer, stored using Flutter Secure Storage backed by platform-level encryption.
 
-## 3. Third-Party Services
+## 3. Data Export & Import
+* **Export**: Stalvi allows you to export your financial data in several formats (encrypted backup, CSV, PDF). Encrypted backups are protected with an AES-256 password you choose. You are solely responsible for the security and confidentiality of exported files and passwords.
+* **Import / Restore**: You may import a previously exported encrypted backup to restore your data. Importing will overwrite all current on-device data. Stalvi never uploads, syncs, or shares exported files with any server.
+* **Your Ownership**: All exported data belongs entirely to you. Stalvi does not retain any copy.
+
+## 4. Third-Party Services
 We do not use any tracking tools, analytics, or third-party advertising SDKs that collect or share your data.
 
-## 4. Contact Us
+## 5. Contact Us
 If you have any questions or feedback regarding our privacy practices, you can contact us at privacy@stalvi.app.

@@ -204,9 +204,27 @@
   - [x] Require Account selection when creating a Budget.
   - [x] Include active Savings Goals in the Destination selector dropdown for Transfer transactions alongside standard Accounts.
   - [x] Render soft-deleted Budgets and Savings Goals inside the Recycle Bin (Trash) lists.
-  - [x] Localize all new UI elements and options in English, Spanish, and Catalan, ensuring 100% localization parity.
-  - [x] Fix compilation issues across test mocks, unit tests, and widget tests (393/393 passing).
-
-## Current Phase
-
-## Phase 28: Release preparation and store deployment.
+   - [x] Localize all new UI elements and options in English, Spanish, and Catalan, ensuring 100% localization parity.
+   - [x] Fix compilation issues across test mocks, unit tests, and widget tests (393/393 passing).
+ 
+ - [x] **Phase 28: Financial Integrity, Editing, and Final Polish**
+   - [x] **Entity Editing:** Enable update operations (Update) in UI and Domain for Budgets and Savings Goals.
+   - [x] **Dynamic Recalculation:** Implement reactive budget recalculation including currency conversion when transactions are modified or deleted.
+   - [x] **Trash Integrity:** Cascading soft-delete and restore for Savings Goals, reverting and reapplying balances to origin accounts.
+   - [x] **PDF Unicode Support:** Embed TTF fonts (e.g., Roboto) in the PDF export service to properly render currency symbols.
+   - [x] **Legal Update:** Review and update `privacy_*.md` and `terms_*.md` in ES, EN, CA to reflect the latest features.
+   - [x] **UI/UX & i18n QA:** Complete review to fix RenderFlex overflows and achieve 100% translation coverage in `.arb` files.
+   - [x] **CI/CD Validation:** Ensure all unit tests pass and GitHub Actions workflows complete successfully.
+ 
+ ## Current Phase
+ 
+ ## Phase 29: Release preparation and store deployment.
+ **Objective:** Prepare build bundles, finalize store assets, perform final sanity checks on production environments.
+ 
+ - [ ] Generate release Android App Bundle (AAB) and iOS IPA
+ - [ ] Verify store listing assets (localized descriptions, screenshots)
+ - [ ] Conduct pre-release test flight and internal Google Play tracks tests
+ - [ ] Final production compliance check
+ 
+ ## Next Steps
+ ## Phase 30: Launch and monitoring.

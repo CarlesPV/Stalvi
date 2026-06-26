@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:stalvi/core/l10n/app_localizations.dart';
 import 'package:stalvi/domain/entities/savings_goal.dart';
 import 'package:stalvi/domain/usecases/create_savings_goal_usecase.dart';
+import 'package:stalvi/domain/usecases/update_savings_goal_usecase.dart';
 import 'package:stalvi/presentation/providers/budgets_goals_providers.dart';
 import 'package:stalvi/presentation/providers/repository_providers.dart';
 import 'package:intl/intl.dart';
@@ -119,16 +120,16 @@ class _CreateEditSavingsGoalSheetState
           .read(savingsGoalsNotifierProvider.notifier)
           .createSavingsGoal(params);
     } else {
-      final updatedGoal = widget.existingGoal!.copyWith(
+      final params = UpdateSavingsGoalParams(
+        id: widget.existingGoal!.id,
         name: name,
         targetDate: _targetDate,
         color: _selectedColor,
         icon: _selectedIcon,
-        modifiedAt: DateTime.now(),
       );
       await ref
           .read(savingsGoalsNotifierProvider.notifier)
-          .updateSavingsGoal(updatedGoal);
+          .updateSavingsGoal(params);
     }
 
     if (mounted) Navigator.of(context).pop();
@@ -192,7 +193,7 @@ class _CreateEditSavingsGoalSheetState
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    isEditing ? l10n.editSavingsGoal : l10n.addSavingsGoal,
+                    isEditing ? l10n.savingsGoalDetails : l10n.addSavingsGoal,
                     style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w800,
                       color: colorScheme.onSurface,
@@ -210,6 +211,7 @@ class _CreateEditSavingsGoalSheetState
               const SizedBox(height: 24),
               TextField(
                 controller: _nameController,
+                enabled: !isEditing,
                 decoration: InputDecoration(
                   labelText: l10n.goalName,
                   border: OutlineInputBorder(
@@ -248,21 +250,37 @@ class _CreateEditSavingsGoalSheetState
                       ]
                     : [
                         DropdownMenuItem(
-                            value: 'EUR', child: Text(l10n.currencyEUR)),
+                          value: 'EUR',
+                          child: Text(l10n.currencyEUR),
+                        ),
                         DropdownMenuItem(
-                            value: 'USD', child: Text(l10n.currencyUSD)),
+                          value: 'USD',
+                          child: Text(l10n.currencyUSD),
+                        ),
                         DropdownMenuItem(
-                            value: 'GBP', child: Text(l10n.currencyGBP)),
+                          value: 'GBP',
+                          child: Text(l10n.currencyGBP),
+                        ),
                         DropdownMenuItem(
-                            value: 'JPY', child: Text(l10n.currencyJPY)),
+                          value: 'JPY',
+                          child: Text(l10n.currencyJPY),
+                        ),
                         DropdownMenuItem(
-                            value: 'CHF', child: Text(l10n.currencyCHF)),
+                          value: 'CHF',
+                          child: Text(l10n.currencyCHF),
+                        ),
                         DropdownMenuItem(
-                            value: 'CAD', child: Text(l10n.currencyCAD)),
+                          value: 'CAD',
+                          child: Text(l10n.currencyCAD),
+                        ),
                         DropdownMenuItem(
-                            value: 'AUD', child: Text(l10n.currencyAUD)),
+                          value: 'AUD',
+                          child: Text(l10n.currencyAUD),
+                        ),
                         DropdownMenuItem(
-                            value: 'CNY', child: Text(l10n.currencyCNY)),
+                          value: 'CNY',
+                          child: Text(l10n.currencyCNY),
+                        ),
                       ],
                 onChanged: isEditing
                     ? null
@@ -274,7 +292,7 @@ class _CreateEditSavingsGoalSheetState
               ),
               const SizedBox(height: 16),
               InkWell(
-                onTap: _pickDate,
+                onTap: isEditing ? null : _pickDate,
                 child: InputDecorator(
                   decoration: InputDecoration(
                     labelText: l10n.targetDate,
@@ -297,7 +315,9 @@ class _CreateEditSavingsGoalSheetState
                   final isSelected = _selectedColor == colorHex;
 
                   return GestureDetector(
-                    onTap: () => setState(() => _selectedColor = colorHex),
+                    onTap: isEditing
+                        ? null
+                        : () => setState(() => _selectedColor = colorHex),
                     child: Container(
                       width: 38,
                       height: 38,
@@ -341,7 +361,9 @@ class _CreateEditSavingsGoalSheetState
                   final activeColor = _parseHexColor(_selectedColor);
 
                   return GestureDetector(
-                    onTap: () => setState(() => _selectedIcon = name),
+                    onTap: isEditing
+                        ? null
+                        : () => setState(() => _selectedIcon = name),
                     child: Container(
                       width: 44,
                       height: 44,
@@ -383,34 +405,37 @@ class _CreateEditSavingsGoalSheetState
                       child: Text(l10n.btnCancel),
                     ),
                   ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: FilledButton(
-                      onPressed: isLoading ? null : _submit,
-                      style: FilledButton.styleFrom(
-                        backgroundColor: colorScheme.primary,
-                        foregroundColor: colorScheme.onPrimary,
-                        minimumSize: const Size(0, 54),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
+                  if (!isEditing) ...[
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: FilledButton(
+                        onPressed: isLoading ? null : _submit,
+                        style: FilledButton.styleFrom(
+                          backgroundColor: colorScheme.primary,
+                          foregroundColor: colorScheme.onPrimary,
+                          minimumSize: const Size(0, 54),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
                         ),
-                      ),
-                      child: isLoading
-                          ? const SizedBox(
-                              width: 24,
-                              height: 24,
-                              child: CircularProgressIndicator(
-                                color: Colors.white,
-                                strokeWidth: 2,
+                        child: isLoading
+                            ? const SizedBox(
+                                width: 24,
+                                height: 24,
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            : Text(
+                                l10n.btnSave,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
-                            )
-                          : Text(
-                              l10n.btnSave,
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.bold),
-                            ),
+                      ),
                     ),
-                  ),
+                  ],
                 ],
               ),
             ],

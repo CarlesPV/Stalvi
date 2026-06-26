@@ -253,14 +253,19 @@ class _BudgetCard extends ConsumerWidget {
                         ],
                       ),
                     ),
-                    Text(
-                      progressStr,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.w800,
-                        color: isOverspent
-                            ? financialColors.negative
-                            : colorScheme.onSurface,
-                      ),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          progressStr,
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.w800,
+                            color: isOverspent
+                                ? financialColors.negative
+                                : colorScheme.onSurface,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -440,14 +445,19 @@ class _SavingsGoalCard extends ConsumerWidget {
                         ],
                       ),
                     ),
-                    Text(
-                      progressStr,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.w800,
-                        color: progress >= 1.0
-                            ? financialColors.positive
-                            : colorScheme.onSurface,
-                      ),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          progressStr,
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.w800,
+                            color: progress >= 1.0
+                                ? financialColors.positive
+                                : colorScheme.onSurface,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),

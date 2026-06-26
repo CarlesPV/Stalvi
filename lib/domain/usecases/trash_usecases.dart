@@ -1,7 +1,10 @@
 import 'package:stalvi/data/database/daos/trash_dao.dart';
 import 'package:stalvi/domain/entities/trash_item.dart';
+import 'package:stalvi/domain/entities/transaction_type.dart';
 import 'package:stalvi/domain/repositories/i_account_repository.dart';
 import 'package:stalvi/domain/repositories/i_transaction_repository.dart';
+import 'package:stalvi/domain/usecases/update_budget_progress_usecase.dart';
+import 'package:stalvi/data/database/daos/savings_goal_dao.dart';
 
 /// Use cases for the Trash (soft-delete recovery) screen.
 ///
@@ -20,11 +23,15 @@ class TrashUsecases {
   final TrashDao _trashDao;
   final ITransactionRepository _transactionRepository;
   final IAccountRepository _accountRepository;
+  final UpdateBudgetProgressUseCase _updateBudgetProgressUseCase;
+  final SavingsGoalDao _savingsGoalDao;
 
   TrashUsecases(
     this._trashDao,
     this._transactionRepository,
     this._accountRepository,
+    this._updateBudgetProgressUseCase,
+    this._savingsGoalDao,
   );
 
   Future<List<TrashItem>> getTrashItems() => _trashDao.getTrashItems();
@@ -42,9 +49,21 @@ class TrashUsecases {
   Future<void> restoreItem(String id, TrashItemType type) async {
     if (type == TrashItemType.transaction) {
       await _transactionRepository.restoreTransaction(id);
+      final txn = await _transactionRepository.getTransactionById(id);
+      if (txn != null && txn.type == TransactionType.expense) {
+        await _updateBudgetProgressUseCase.execute(transaction: txn);
+      }
+    } else if (type == TrashItemType.savingsGoal) {
+      await _savingsGoalDao.cascadeRestore(id);
     } else {
       await _trashDao.restoreItem(id, type);
     }
+  }
+
+  /// Soft deletes a savings goal along with its related transfer transactions
+  /// and automatically reverts the balances to the origin accounts.
+  Future<void> softDeleteSavingsGoal(String id) async {
+    await _savingsGoalDao.cascadeSoftDelete(id);
   }
 
   /// Permanently deletes an item from the database.

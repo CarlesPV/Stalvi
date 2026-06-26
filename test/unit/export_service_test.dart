@@ -76,6 +76,7 @@ List<Tag> get _emptyTags => const [];
 // ──────────────────────────────────────────────────────────────────────────────
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
   late ExportServiceImpl service;
   late Directory tempDir;
 
