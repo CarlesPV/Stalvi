@@ -1,4 +1,4 @@
-package com.example.stalvi
+package com.peirov.stalvi
 
 import io.flutter.embedding.android.FlutterFragmentActivity
 
