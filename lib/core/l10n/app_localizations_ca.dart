@@ -602,17 +602,6 @@ class AppLocalizationsCa extends AppLocalizations {
   String get btnClose => 'Tancar';
 
   @override
-  String get setAsDefaultAccount => 'Establir com a compte predeterminat';
-
-  @override
-  String get setAsDefaultAccountSuccess =>
-      'Compte establert com a predeterminat';
-
-  @override
-  String get setAsDefaultAccountError =>
-      'Error en establir el compte predeterminat';
-
-  @override
   String get filterSheetTitle => 'Filtrar transaccions';
 
   @override
@@ -696,16 +685,6 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get unknownAccount => 'Compte desconegut';
-
-  @override
-  String get editAccountDetails => 'Editar detalls del compte';
-
-  @override
-  String get markAccountAsDefault =>
-      'Marcar aquest compte com a predeterminat per a noves transaccions';
-
-  @override
-  String get alreadyDefaultAccount => 'Aquest ja és el compte predeterminat';
 
   @override
   String get categories => 'Categories';

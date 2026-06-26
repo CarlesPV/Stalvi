@@ -593,15 +593,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get btnClose => 'Close';
 
   @override
-  String get setAsDefaultAccount => 'Set as Default Account';
-
-  @override
-  String get setAsDefaultAccountSuccess => 'Account set as default';
-
-  @override
-  String get setAsDefaultAccountError => 'Failed to set default account';
-
-  @override
   String get filterSheetTitle => 'Filter Transactions';
 
   @override
@@ -685,16 +676,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get unknownAccount => 'Unknown Account';
-
-  @override
-  String get editAccountDetails => 'Edit account details';
-
-  @override
-  String get markAccountAsDefault =>
-      'Mark this account as the default for new transactions';
-
-  @override
-  String get alreadyDefaultAccount => 'This is already the default account';
 
   @override
   String get categories => 'Categories';

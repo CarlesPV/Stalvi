@@ -316,3 +316,10 @@ SQL-based database aggregation is incapable of parsing dynamic JSON objects (spe
 5. **Static Analysis Cleanup**:
    - Applied automatic styling fixes using `dart fix --apply`, resolving all 14 syntax warnings.
    - Achieved a completely clean static analysis pass (`flutter analyze` with 0 issues).
+
+## 2026-06-26 - Phase 29: UI Cleanup and Space Optimization
+- **UI:** Removed the long press context menu from the account list (`_AccountItem`) on the Dashboard to streamline UX.
+- **Code Optimization:** Removed `_showContextMenu` and `_setAsDefault` functions from `dashboard_screen.dart`. Cleaned up unused local variables.
+- **Localization:** Removed unused translation keys (`setAsDefaultAccount`, `setAsDefaultAccountSuccess`, `setAsDefaultAccountError`, `editAccountDetails`, `markAccountAsDefault`, `alreadyDefaultAccount`) from `app_ca.arb`, `app_en.arb`, and `app_es.arb` to optimize file sizes.
+- **Validation:** Ensured all 396 tests and static analysis pass cleanly without any errors.
+

@@ -766,18 +766,6 @@
   "@btnClose": {
     "description": "Close button label"
   },
-  "setAsDefaultAccount": "Set as Default Account",
-  "@setAsDefaultAccount": {
-    "description": "Context menu option to set account as default"
-  },
-  "setAsDefaultAccountSuccess": "Account set as default",
-  "@setAsDefaultAccountSuccess": {
-    "description": "Snackbar message when account is set as default"
-  },
-  "setAsDefaultAccountError": "Failed to set default account",
-  "@setAsDefaultAccountError": {
-    "description": "Snackbar error when setting default account fails"
-  },
   "filterSheetTitle": "Filter Transactions",
   "@filterSheetTitle": {
     "description": "Title for the transaction filter bottom sheet"
@@ -890,18 +878,6 @@
   "unknownAccount": "Unknown Account",
   "@unknownAccount": {
     "description": "Fallback label when account is not found"
-  },
-  "editAccountDetails": "Edit account details",
-  "@editAccountDetails": {
-    "description": "Subtitle for editing account details"
-  },
-  "markAccountAsDefault": "Mark this account as the default for new transactions",
-  "@markAccountAsDefault": {
-    "description": "Subtitle for setting account as default"
-  },
-  "alreadyDefaultAccount": "This is already the default account",
-  "@alreadyDefaultAccount": {
-    "description": "Subtitle indicating account is already default"
   },
   "categories": "Categories",
   "@categories": {

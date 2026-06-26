@@ -218,9 +218,11 @@
  
  ## Current Phase
  
- ## Phase 29: Release preparation and store deployment.
- **Objective:** Prepare build bundles, finalize store assets, perform final sanity checks on production environments.
+ ## Phase 29: Release preparation and UI Optimization.
+ **Objective:** Prepare build bundles, finalize store assets, perform final sanity checks on production environments, and optimize UI space and code size.
  
+ - [x] Optimize dashboard by removing the long press context menu for setting default accounts.
+ - [x] Perform a full translation/code cleanup to remove unused arb keys and comments to optimize space.
  - [ ] Generate release Android App Bundle (AAB) and iOS IPA
  - [ ] Verify store listing assets (localized descriptions, screenshots)
  - [ ] Conduct pre-release test flight and internal Google Play tracks tests

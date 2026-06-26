@@ -182,9 +182,6 @@
   "errorDeleteTransaction": "Error al eliminar la transacció",
   "deleteTransactionConfirmation": "Estàs segur que vols eliminar aquesta transacció? Es mourà a la paperera de reciclatge.",
   "btnClose": "Tancar",
-  "setAsDefaultAccount": "Establir com a compte predeterminat",
-  "setAsDefaultAccountSuccess": "Compte establert com a predeterminat",
-  "setAsDefaultAccountError": "Error en establir el compte predeterminat",
   "filterSheetTitle": "Filtrar transaccions",
   "filterSheetApply": "Aplicar filtres",
   "filterSheetClearAll": "Netejar tot",
@@ -212,9 +209,6 @@
   "replaceDefaultAccountConfirm": "El compte predeterminat anterior serà reemplaçat. Vols continuar?",
   "btnContinue": "Continuar",
   "unknownAccount": "Compte desconegut",
-  "editAccountDetails": "Editar detalls del compte",
-  "markAccountAsDefault": "Marcar aquest compte com a predeterminat per a noves transaccions",
-  "alreadyDefaultAccount": "Aquest ja és el compte predeterminat",
   "categories": "Categories",
   "tags": "Etiquetes",
   "deleteCategoryTitle": "Eliminar categoria?",
@@ -836,15 +830,6 @@
   "@btnClose": {
     "description": "Close button label"
   },
-  "@setAsDefaultAccount": {
-    "description": "Context menu option to set account as default"
-  },
-  "@setAsDefaultAccountSuccess": {
-    "description": "Snackbar message when account is set as default"
-  },
-  "@setAsDefaultAccountError": {
-    "description": "Snackbar error when setting default account fails"
-  },
   "@filterSheetTitle": {
     "description": "Title for the transaction filter bottom sheet"
   },
@@ -930,15 +915,6 @@
   },
   "@unknownAccount": {
     "description": "Fallback label when account is not found"
-  },
-  "@editAccountDetails": {
-    "description": "Subtitle for editing account details"
-  },
-  "@markAccountAsDefault": {
-    "description": "Subtitle for setting account as default"
-  },
-  "@alreadyDefaultAccount": {
-    "description": "Subtitle indicating account is already default"
   },
   "@categories": {
     "description": "Label for categories tab or section"

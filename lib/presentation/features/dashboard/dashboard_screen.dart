@@ -741,45 +741,10 @@ class _AccountItem extends ConsumerWidget {
     }
   }
 
-  Future<void> _setAsDefault(BuildContext context, WidgetRef ref) async {
-    final l10n = AppLocalizations.of(context)!;
-    final colorScheme = Theme.of(context).colorScheme;
-    try {
-      await ref.read(accountRepositoryProvider).setDefaultAccount(account.id);
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.setAsDefaultAccountSuccess),
-            backgroundColor: colorScheme.primary,
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-          ),
-        );
-      }
-    } catch (e) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.setAsDefaultAccountError),
-            backgroundColor: colorScheme.error,
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-          ),
-        );
-      }
-    }
-  }
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final l10n = AppLocalizations.of(context)!;
-
     final accColor = _parseHexColor(account.color);
     final accIcon = _getIconData(account.icon);
 
@@ -791,8 +756,6 @@ class _AccountItem extends ConsumerWidget {
 
     return GestureDetector(
       onTap: () => EditAccountDialog.show(context, account),
-      onLongPress: () =>
-          _showContextMenu(context, ref, l10n, colorScheme, theme),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         decoration: BoxDecoration(
@@ -888,141 +851,7 @@ class _AccountItem extends ConsumerWidget {
       ),
     );
   }
-
-  void _showContextMenu(
-    BuildContext context,
-    WidgetRef ref,
-    AppLocalizations l10n,
-    ColorScheme colorScheme,
-    ThemeData theme,
-  ) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      builder: (ctx) {
-        return Material(
-          color: colorScheme.surface,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-          child: Container(
-            padding: const EdgeInsets.fromLTRB(24, 12, 24, 32),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Center(
-                  child: Container(
-                    width: 48,
-                    height: 5,
-                    decoration: BoxDecoration(
-                      color:
-                          colorScheme.onSurfaceVariant.withValues(alpha: 0.2),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                Text(
-                  account.name,
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w700,
-                    color: colorScheme.onSurface,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  account.currency,
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: colorScheme.onSurfaceVariant,
-                  ),
-                ),
-                const SizedBox(height: 20),
-                const Divider(),
-                const SizedBox(height: 8),
-                // Edit action
-                ListTile(
-                  leading:
-                      Icon(Icons.edit_outlined, color: colorScheme.primary),
-                  title: Text(
-                    l10n.btnSave,
-                    style: TextStyle(color: colorScheme.onSurface),
-                  ),
-                  subtitle: Text(
-                    l10n.editAccountDetails,
-                    style: TextStyle(
-                      color: colorScheme.onSurfaceVariant,
-                      fontSize: 12,
-                    ),
-                  ),
-                  onTap: () {
-                    Navigator.of(ctx).pop();
-                    EditAccountDialog.show(context, account);
-                  },
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                // Set as Default action
-                if (!account.isDefault)
-                  ListTile(
-                    key: const ValueKey('setAsDefaultButton'),
-                    leading: Icon(
-                      Icons.star_rounded,
-                      color: colorScheme.secondary,
-                    ),
-                    title: Text(
-                      l10n.setAsDefaultAccount,
-                      style: TextStyle(color: colorScheme.onSurface),
-                    ),
-                    subtitle: Text(
-                      l10n.markAccountAsDefault,
-                      style: TextStyle(
-                        color: colorScheme.onSurfaceVariant,
-                        fontSize: 12,
-                      ),
-                    ),
-                    onTap: () {
-                      Navigator.of(ctx).pop();
-                      _setAsDefault(context, ref);
-                    },
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  )
-                else
-                  ListTile(
-                    leading: Icon(
-                      Icons.star_rounded,
-                      color: colorScheme.primary,
-                    ),
-                    title: Text(
-                      l10n.defaultAccountLabel,
-                      style: TextStyle(
-                        color: colorScheme.primary,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    subtitle: Text(
-                      l10n.alreadyDefaultAccount,
-                      style: TextStyle(
-                        color: colorScheme.onSurfaceVariant,
-                        fontSize: 12,
-                      ),
-                    ),
-                    enabled: false,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
 }
-
-// ─── Real Transaction Item Widget ─────────────────────────────────────────────
 
 class _TransactionItem extends ConsumerWidget {
   final Transaction transaction;

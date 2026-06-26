@@ -1192,24 +1192,6 @@ abstract class AppLocalizations {
   /// **'Close'**
   String get btnClose;
 
-  /// Context menu option to set account as default
-  ///
-  /// In en, this message translates to:
-  /// **'Set as Default Account'**
-  String get setAsDefaultAccount;
-
-  /// Snackbar message when account is set as default
-  ///
-  /// In en, this message translates to:
-  /// **'Account set as default'**
-  String get setAsDefaultAccountSuccess;
-
-  /// Snackbar error when setting default account fails
-  ///
-  /// In en, this message translates to:
-  /// **'Failed to set default account'**
-  String get setAsDefaultAccountError;
-
   /// Title for the transaction filter bottom sheet
   ///
   /// In en, this message translates to:
@@ -1371,24 +1353,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Unknown Account'**
   String get unknownAccount;
-
-  /// Subtitle for editing account details
-  ///
-  /// In en, this message translates to:
-  /// **'Edit account details'**
-  String get editAccountDetails;
-
-  /// Subtitle for setting account as default
-  ///
-  /// In en, this message translates to:
-  /// **'Mark this account as the default for new transactions'**
-  String get markAccountAsDefault;
-
-  /// Subtitle indicating account is already default
-  ///
-  /// In en, this message translates to:
-  /// **'This is already the default account'**
-  String get alreadyDefaultAccount;
 
   /// Label for categories tab or section
   ///

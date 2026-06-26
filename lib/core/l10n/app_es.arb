@@ -182,9 +182,6 @@
   "errorDeleteTransaction": "Error al eliminar la transacción",
   "deleteTransactionConfirmation": "¿Estás seguro de que quieres eliminar esta transacción? Se moverá a la papelera de reciclaje.",
   "btnClose": "Cerrar",
-  "setAsDefaultAccount": "Establecer como cuenta predeterminada",
-  "setAsDefaultAccountSuccess": "Cuenta establecida como predeterminada",
-  "setAsDefaultAccountError": "Error al establecer la cuenta predeterminada",
   "filterSheetTitle": "Filtrar transacciones",
   "filterSheetApply": "Aplicar filtros",
   "filterSheetClearAll": "Limpiar todo",
@@ -212,9 +209,6 @@
   "replaceDefaultAccountConfirm": "La cuenta predeterminada anterior será reemplazada. ¿Continuar?",
   "btnContinue": "Continuar",
   "unknownAccount": "Cuenta desconocida",
-  "editAccountDetails": "Editar detalles de la cuenta",
-  "markAccountAsDefault": "Marcar esta cuenta como predeterminada para nuevas transacciones",
-  "alreadyDefaultAccount": "Esta ya es la cuenta predeterminada",
   "categories": "Categorías",
   "tags": "Etiquetas",
   "deleteCategoryTitle": "¿Eliminar categoría?",
@@ -836,15 +830,6 @@
   "@btnClose": {
     "description": "Close button label"
   },
-  "@setAsDefaultAccount": {
-    "description": "Context menu option to set account as default"
-  },
-  "@setAsDefaultAccountSuccess": {
-    "description": "Snackbar message when account is set as default"
-  },
-  "@setAsDefaultAccountError": {
-    "description": "Snackbar error when setting default account fails"
-  },
   "@filterSheetTitle": {
     "description": "Title for the transaction filter bottom sheet"
   },
@@ -930,15 +915,6 @@
   },
   "@unknownAccount": {
     "description": "Fallback label when account is not found"
-  },
-  "@editAccountDetails": {
-    "description": "Subtitle for editing account details"
-  },
-  "@markAccountAsDefault": {
-    "description": "Subtitle for setting account as default"
-  },
-  "@alreadyDefaultAccount": {
-    "description": "Subtitle indicating account is already default"
   },
   "@categories": {
     "description": "Label for categories tab or section"
