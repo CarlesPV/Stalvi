@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import "package:flutter/foundation.dart" hide Category;
 import 'package:flutter/services.dart';
 import 'dart:convert';
