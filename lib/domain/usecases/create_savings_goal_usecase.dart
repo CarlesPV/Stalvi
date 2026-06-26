@@ -9,6 +9,7 @@ class CreateSavingsGoalParams {
   final DateTime? targetDate;
   final String color;
   final String icon;
+  final String currency;
 
   const CreateSavingsGoalParams({
     required this.id,
@@ -17,6 +18,7 @@ class CreateSavingsGoalParams {
     this.targetDate,
     required this.color,
     required this.icon,
+    required this.currency,
   });
 }
 
@@ -53,6 +55,7 @@ class CreateSavingsGoalUseCase {
       createdAt: now,
       modifiedAt: now,
       isDeleted: false,
+      currency: params.currency,
     );
 
     await _savingsGoalRepository.createSavingsGoal(goal);

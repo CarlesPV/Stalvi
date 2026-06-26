@@ -3,16 +3,20 @@ import 'package:mocktail/mocktail.dart';
 import 'package:stalvi/core/l10n/app_localizations.dart';
 import 'package:stalvi/domain/entities/account.dart';
 import 'package:stalvi/domain/entities/account_type.dart';
+import 'package:stalvi/domain/entities/budget.dart';
 import 'package:stalvi/domain/entities/period_summary.dart';
 import 'package:stalvi/domain/entities/profile.dart';
 import 'package:stalvi/domain/entities/exchange_rate.dart';
+import 'package:stalvi/domain/entities/savings_goal.dart';
 import 'package:stalvi/domain/entities/transaction.dart';
 import 'package:stalvi/domain/entities/transaction_type.dart';
 import 'package:stalvi/domain/repositories/i_account_repository.dart';
+import 'package:stalvi/domain/repositories/i_budget_repository.dart';
 import 'package:stalvi/domain/repositories/i_category_repository.dart';
 import 'package:stalvi/domain/repositories/i_exchange_rate_repository.dart';
 import 'package:stalvi/domain/repositories/i_export_service.dart';
 import 'package:stalvi/domain/repositories/i_profile_repository.dart';
+import 'package:stalvi/domain/repositories/i_savings_goal_repository.dart';
 import 'package:stalvi/domain/repositories/i_transaction_repository.dart';
 import 'package:stalvi/domain/usecases/export_monthly_pdf_use_case.dart';
 import 'package:stalvi/domain/use_cases/statistics/get_period_summary_use_case.dart';
@@ -36,6 +40,11 @@ class MockGetPeriodSummaryUseCase extends Mock
 class MockGetTopCategoriesUseCase extends Mock
     implements GetTopCategoriesUseCase {}
 
+class MockBudgetRepository extends Mock implements IBudgetRepository {}
+
+class MockSavingsGoalRepository extends Mock
+    implements ISavingsGoalRepository {}
+
 class MockExportService extends Mock implements IExportService {}
 
 class MockAppLocalizations extends Mock implements AppLocalizations {}
@@ -53,6 +62,8 @@ void main() {
   late MockExchangeRateRepository exchangeRateRepository;
   late MockGetPeriodSummaryUseCase getPeriodSummaryUseCase;
   late MockGetTopCategoriesUseCase getTopCategoriesUseCase;
+  late MockBudgetRepository budgetRepository;
+  late MockSavingsGoalRepository savingsGoalRepository;
   late MockExportService exportService;
   late MockAppLocalizations l10n;
 
@@ -71,6 +82,8 @@ void main() {
     exchangeRateRepository = MockExchangeRateRepository();
     getPeriodSummaryUseCase = MockGetPeriodSummaryUseCase();
     getTopCategoriesUseCase = MockGetTopCategoriesUseCase();
+    budgetRepository = MockBudgetRepository();
+    savingsGoalRepository = MockSavingsGoalRepository();
     exportService = MockExportService();
     l10n = MockAppLocalizations();
 
@@ -82,10 +95,82 @@ void main() {
       exchangeRateRepository: exchangeRateRepository,
       getPeriodSummaryUseCase: getPeriodSummaryUseCase,
       getTopCategoriesUseCase: getTopCategoriesUseCase,
+      budgetRepository: budgetRepository,
+      savingsGoalRepository: savingsGoalRepository,
       exportService: exportService,
       l10n: l10n,
     );
   });
+
+  /// Helper: stubs all common repository calls to return sensible defaults
+  void stubCommonMocks({
+    required Profile profile,
+    required List<Account> accounts,
+    required List<Transaction> transactions,
+    List<Budget> budgets = const [],
+    List<SavingsGoal> savingsGoals = const [],
+  }) {
+    final now = DateTime.now();
+    when(() => l10n.destination_account).thenReturn('Destination Account');
+    when(() => profileRepository.getFirstProfile())
+        .thenAnswer((_) async => profile);
+    when(() => accountRepository.getAccountsByUserId(any()))
+        .thenAnswer((_) async => accounts);
+    when(() => categoryRepository.getAllCategories())
+        .thenAnswer((_) async => []);
+    when(
+      () => getPeriodSummaryUseCase.execute(
+        startDate: any(named: 'startDate'),
+        endDate: any(named: 'endDate'),
+        targetCurrency: any(named: 'targetCurrency'),
+      ),
+    ).thenAnswer(
+      (_) async => const PeriodSummary(totalIncome: 0, totalExpense: 0),
+    );
+    when(
+      () => getTopCategoriesUseCase.execute(
+        startDate: any(named: 'startDate'),
+        endDate: any(named: 'endDate'),
+        targetCurrency: any(named: 'targetCurrency'),
+        type: any(named: 'type'),
+      ),
+    ).thenAnswer((_) async => []);
+    when(() => transactionRepository.watchAllTransactions())
+        .thenAnswer((_) => Stream.value(transactions));
+    when(
+      () => exchangeRateRepository.getLatestRates(
+        baseCurrency: any(named: 'baseCurrency'),
+      ),
+    ).thenAnswer(
+      (_) async => ExchangeRate(baseCurrency: 'EUR', date: now, rates: {}),
+    );
+    when(() => budgetRepository.getBudgets()).thenAnswer((_) async => budgets);
+    when(() => savingsGoalRepository.getSavingsGoals())
+        .thenAnswer((_) async => savingsGoals);
+    when(
+      () => exportService.generateMonthlyPdf(
+        any(),
+        summary: any(named: 'summary'),
+        month: any(named: 'month'),
+        l10n: any(named: 'l10n'),
+        accounts: any(named: 'accounts'),
+        categories: any(named: 'categories'),
+        topExpenseCategories: any(named: 'topExpenseCategories'),
+        topIncomeCategories: any(named: 'topIncomeCategories'),
+        defaultCurrency: any(named: 'defaultCurrency'),
+        transferDestinations: any(named: 'transferDestinations'),
+        budgets: any(named: 'budgets'),
+        budgetCategoryNames: any(named: 'budgetCategoryNames'),
+        savingsGoals: any(named: 'savingsGoals'),
+      ),
+    ).thenAnswer(
+      (_) async => const ExportResult(
+        bytes: [],
+        filename: 'test.pdf',
+        mimeType: 'application/pdf',
+      ),
+    );
+  }
 
   test(
       'passes correct defaultCurrency and transferDestinations to generateMonthlyPdf',
@@ -155,53 +240,11 @@ void main() {
       transferId: 'trans1',
     );
 
-    when(() => l10n.destination_account).thenReturn('Destination Account');
-    when(() => profileRepository.getFirstProfile())
-        .thenAnswer((_) async => profile);
-    when(() => accountRepository.getAccountsByUserId('user1'))
-        .thenAnswer((_) async => [account1, account2]);
-    when(() => categoryRepository.getAllCategories())
-        .thenAnswer((_) async => []);
-    when(
-      () => getPeriodSummaryUseCase.execute(
-        startDate: any(named: 'startDate'),
-        endDate: any(named: 'endDate'),
-        targetCurrency: any(named: 'targetCurrency'),
-      ),
-    ).thenAnswer(
-        (_) async => const PeriodSummary(totalIncome: 0, totalExpense: 0));
-
-    when(
-      () => getTopCategoriesUseCase.execute(
-        startDate: any(named: 'startDate'),
-        endDate: any(named: 'endDate'),
-        targetCurrency: any(named: 'targetCurrency'),
-        type: any(named: 'type'),
-      ),
-    ).thenAnswer((_) async => []);
-
-    when(() => transactionRepository.watchAllTransactions())
-        .thenAnswer((_) => Stream.value([tx1, tx2]));
-    when(() =>
-        exchangeRateRepository.getLatestRates(
-            baseCurrency: any(named: 'baseCurrency'))).thenAnswer(
-        (_) async => ExchangeRate(baseCurrency: 'EUR', date: now, rates: {}));
-
-    when(
-      () => exportService.generateMonthlyPdf(
-        any(),
-        summary: any(named: 'summary'),
-        month: any(named: 'month'),
-        l10n: any(named: 'l10n'),
-        accounts: any(named: 'accounts'),
-        categories: any(named: 'categories'),
-        topExpenseCategories: any(named: 'topExpenseCategories'),
-        topIncomeCategories: any(named: 'topIncomeCategories'),
-        defaultCurrency: any(named: 'defaultCurrency'),
-        transferDestinations: any(named: 'transferDestinations'),
-      ),
-    ).thenAnswer((_) async => const ExportResult(
-        bytes: [], filename: 'test.pdf', mimeType: 'application/pdf'));
+    stubCommonMocks(
+      profile: profile,
+      accounts: [account1, account2],
+      transactions: [tx1, tx2],
+    );
 
     await usecase(targetCurrency: 'EUR', month: now);
 
@@ -217,6 +260,9 @@ void main() {
         topIncomeCategories: any(named: 'topIncomeCategories'),
         defaultCurrency: captureAny(named: 'defaultCurrency'),
         transferDestinations: captureAny(named: 'transferDestinations'),
+        budgets: any(named: 'budgets'),
+        budgetCategoryNames: any(named: 'budgetCategoryNames'),
+        savingsGoals: any(named: 'savingsGoals'),
       ),
     );
 
@@ -305,56 +351,17 @@ void main() {
       exchangeRateRepository: exchangeRateRepository,
       getPeriodSummaryUseCase: getPeriodSummaryUseCase,
       getTopCategoriesUseCase: getTopCategoriesUseCase,
+      budgetRepository: budgetRepository,
+      savingsGoalRepository: savingsGoalRepository,
       exportService: exportService,
       l10n: esL10n,
     );
 
-    when(() => profileRepository.getFirstProfile())
-        .thenAnswer((_) async => profile);
-    when(() => accountRepository.getAccountsByUserId('user1'))
-        .thenAnswer((_) async => [account1, account2]);
-    when(() => categoryRepository.getAllCategories())
-        .thenAnswer((_) async => []);
-    when(
-      () => getPeriodSummaryUseCase.execute(
-        startDate: any(named: 'startDate'),
-        endDate: any(named: 'endDate'),
-        targetCurrency: any(named: 'targetCurrency'),
-      ),
-    ).thenAnswer(
-        (_) async => const PeriodSummary(totalIncome: 0, totalExpense: 0));
-
-    when(
-      () => getTopCategoriesUseCase.execute(
-        startDate: any(named: 'startDate'),
-        endDate: any(named: 'endDate'),
-        targetCurrency: any(named: 'targetCurrency'),
-        type: any(named: 'type'),
-      ),
-    ).thenAnswer((_) async => []);
-
-    when(() => transactionRepository.watchAllTransactions())
-        .thenAnswer((_) => Stream.value([tx1, tx2]));
-    when(() =>
-        exchangeRateRepository.getLatestRates(
-            baseCurrency: any(named: 'baseCurrency'))).thenAnswer(
-        (_) async => ExchangeRate(baseCurrency: 'EUR', date: now, rates: {}));
-
-    when(
-      () => exportService.generateMonthlyPdf(
-        any(),
-        summary: any(named: 'summary'),
-        month: any(named: 'month'),
-        l10n: any(named: 'l10n'),
-        accounts: any(named: 'accounts'),
-        categories: any(named: 'categories'),
-        topExpenseCategories: any(named: 'topExpenseCategories'),
-        topIncomeCategories: any(named: 'topIncomeCategories'),
-        defaultCurrency: any(named: 'defaultCurrency'),
-        transferDestinations: any(named: 'transferDestinations'),
-      ),
-    ).thenAnswer((_) async => const ExportResult(
-        bytes: [], filename: 'test.pdf', mimeType: 'application/pdf'));
+    stubCommonMocks(
+      profile: profile,
+      accounts: [account1, account2],
+      transactions: [tx1, tx2],
+    );
 
     await esUsecase(targetCurrency: 'EUR', month: now);
 
@@ -370,6 +377,9 @@ void main() {
         topIncomeCategories: any(named: 'topIncomeCategories'),
         defaultCurrency: any(named: 'defaultCurrency'),
         transferDestinations: captureAny(named: 'transferDestinations'),
+        budgets: any(named: 'budgets'),
+        budgetCategoryNames: any(named: 'budgetCategoryNames'),
+        savingsGoals: any(named: 'savingsGoals'),
       ),
     );
 
@@ -377,6 +387,301 @@ void main() {
     expect(result.captured[1], {
       'tx1': 'Bank (Cuenta de destino: Wallet)',
       'tx2': 'Bank (Cuenta de destino: Wallet)',
+    });
+  });
+
+  group('Budget and SavingsGoal data passed to generateMonthlyPdf', () {
+    late Profile baseProfile;
+    late Account baseAccount;
+
+    setUp(() {
+      final now = DateTime(2023, 10, 15);
+      baseProfile = Profile(
+        id: 'user1',
+        name: 'User',
+        username: 'user',
+        password: 'pwd',
+        defaultCurrency: 'EUR',
+        createdAt: now,
+        modifiedAt: now,
+      );
+      baseAccount = Account(
+        id: 'acc1',
+        userId: 'user1',
+        name: 'Bank',
+        type: AccountType.bank,
+        initialBalance: 0,
+        currency: 'EUR',
+        color: '#000000',
+        icon: 'bank',
+        isDefault: true,
+        isDeleted: false,
+        createdAt: now,
+        modifiedAt: now,
+      );
+    });
+
+    test('only active budgets (non-deleted) are passed to the service',
+        () async {
+      final now = DateTime(2023, 10, 15);
+      final activeBudget = Budget(
+        id: 'b1',
+        accountId: 'acc1',
+        categoryId: 'cat1',
+        targetAmount: 10000,
+        currentAmount: 5000,
+        startDate: DateTime(2023, 10, 1),
+        endDate: DateTime(2023, 10, 31),
+        createdAt: now,
+        modifiedAt: now,
+        isDeleted: false,
+      );
+      final deletedBudget = Budget(
+        id: 'b2',
+        accountId: 'acc1',
+        categoryId: 'cat2',
+        targetAmount: 20000,
+        currentAmount: 0,
+        startDate: DateTime(2023, 10, 1),
+        endDate: DateTime(2023, 10, 31),
+        createdAt: now,
+        modifiedAt: now,
+        isDeleted: true,
+      );
+
+      stubCommonMocks(
+        profile: baseProfile,
+        accounts: [baseAccount],
+        transactions: [],
+        budgets: [activeBudget, deletedBudget],
+        savingsGoals: [],
+      );
+
+      await usecase(targetCurrency: 'EUR', month: now);
+
+      final captured = verify(
+        () => exportService.generateMonthlyPdf(
+          any(),
+          summary: any(named: 'summary'),
+          month: any(named: 'month'),
+          l10n: any(named: 'l10n'),
+          accounts: any(named: 'accounts'),
+          categories: any(named: 'categories'),
+          topExpenseCategories: any(named: 'topExpenseCategories'),
+          topIncomeCategories: any(named: 'topIncomeCategories'),
+          defaultCurrency: any(named: 'defaultCurrency'),
+          transferDestinations: any(named: 'transferDestinations'),
+          budgets: captureAny(named: 'budgets'),
+          budgetCategoryNames: any(named: 'budgetCategoryNames'),
+          savingsGoals: any(named: 'savingsGoals'),
+        ),
+      ).captured;
+
+      final passedBudgets = captured[0] as List<Budget>;
+      expect(passedBudgets.length, 1);
+      expect(passedBudgets.first.id, 'b1');
+    });
+
+    test('only active savings goals (non-deleted) are passed to the service',
+        () async {
+      final now = DateTime(2023, 10, 15);
+      final activeGoal = SavingsGoal(
+        id: 'sg1',
+        name: 'Vacation',
+        targetAmount: 50000,
+        currentAmount: 25000,
+        currency: 'EUR',
+        color: '#FF5722',
+        icon: 'beach',
+        createdAt: now,
+        modifiedAt: now,
+        isDeleted: false,
+      );
+      final deletedGoal = SavingsGoal(
+        id: 'sg2',
+        name: 'Old Goal',
+        targetAmount: 10000,
+        currentAmount: 0,
+        currency: 'EUR',
+        color: '#9E9E9E',
+        icon: 'trash',
+        createdAt: now,
+        modifiedAt: now,
+        isDeleted: true,
+      );
+
+      stubCommonMocks(
+        profile: baseProfile,
+        accounts: [baseAccount],
+        transactions: [],
+        budgets: [],
+        savingsGoals: [activeGoal, deletedGoal],
+      );
+
+      await usecase(targetCurrency: 'EUR', month: now);
+
+      final captured = verify(
+        () => exportService.generateMonthlyPdf(
+          any(),
+          summary: any(named: 'summary'),
+          month: any(named: 'month'),
+          l10n: any(named: 'l10n'),
+          accounts: any(named: 'accounts'),
+          categories: any(named: 'categories'),
+          topExpenseCategories: any(named: 'topExpenseCategories'),
+          topIncomeCategories: any(named: 'topIncomeCategories'),
+          defaultCurrency: any(named: 'defaultCurrency'),
+          transferDestinations: any(named: 'transferDestinations'),
+          budgets: any(named: 'budgets'),
+          budgetCategoryNames: any(named: 'budgetCategoryNames'),
+          savingsGoals: captureAny(named: 'savingsGoals'),
+        ),
+      ).captured;
+
+      final passedGoals = captured[0] as List<SavingsGoal>;
+      expect(passedGoals.length, 1);
+      expect(passedGoals.first.id, 'sg1');
+      expect(passedGoals.first.name, 'Vacation');
+    });
+
+    test('budgetCategoryNames map is correctly built from categories',
+        () async {
+      final now = DateTime(2023, 10, 15);
+      final budget = Budget(
+        id: 'b1',
+        accountId: 'acc1',
+        categoryId: 'cat1',
+        targetAmount: 10000,
+        currentAmount: 5000,
+        startDate: DateTime(2023, 10, 1),
+        endDate: DateTime(2023, 10, 31),
+        createdAt: now,
+        modifiedAt: now,
+        isDeleted: false,
+      );
+
+      when(() => l10n.destination_account).thenReturn('Destination Account');
+      when(() => profileRepository.getFirstProfile())
+          .thenAnswer((_) async => baseProfile);
+      when(() => accountRepository.getAccountsByUserId(any()))
+          .thenAnswer((_) async => [baseAccount]);
+
+      // Return a category with id cat1, name Food
+      when(() => categoryRepository.getAllCategories())
+          .thenAnswer((_) async => []);
+      when(
+        () => getPeriodSummaryUseCase.execute(
+          startDate: any(named: 'startDate'),
+          endDate: any(named: 'endDate'),
+          targetCurrency: any(named: 'targetCurrency'),
+        ),
+      ).thenAnswer(
+        (_) async => const PeriodSummary(totalIncome: 0, totalExpense: 0),
+      );
+      when(
+        () => getTopCategoriesUseCase.execute(
+          startDate: any(named: 'startDate'),
+          endDate: any(named: 'endDate'),
+          targetCurrency: any(named: 'targetCurrency'),
+          type: any(named: 'type'),
+        ),
+      ).thenAnswer((_) async => []);
+      when(() => transactionRepository.watchAllTransactions())
+          .thenAnswer((_) => Stream.value([]));
+      when(
+        () => exchangeRateRepository.getLatestRates(
+          baseCurrency: any(named: 'baseCurrency'),
+        ),
+      ).thenAnswer(
+        (_) async => ExchangeRate(baseCurrency: 'EUR', date: now, rates: {}),
+      );
+      when(() => budgetRepository.getBudgets())
+          .thenAnswer((_) async => [budget]);
+      when(() => savingsGoalRepository.getSavingsGoals())
+          .thenAnswer((_) async => []);
+      when(
+        () => exportService.generateMonthlyPdf(
+          any(),
+          summary: any(named: 'summary'),
+          month: any(named: 'month'),
+          l10n: any(named: 'l10n'),
+          accounts: any(named: 'accounts'),
+          categories: any(named: 'categories'),
+          topExpenseCategories: any(named: 'topExpenseCategories'),
+          topIncomeCategories: any(named: 'topIncomeCategories'),
+          defaultCurrency: any(named: 'defaultCurrency'),
+          transferDestinations: any(named: 'transferDestinations'),
+          budgets: any(named: 'budgets'),
+          budgetCategoryNames: any(named: 'budgetCategoryNames'),
+          savingsGoals: any(named: 'savingsGoals'),
+        ),
+      ).thenAnswer(
+        (_) async => const ExportResult(
+          bytes: [],
+          filename: 'test.pdf',
+          mimeType: 'application/pdf',
+        ),
+      );
+
+      await usecase(targetCurrency: 'EUR', month: now);
+
+      final captured = verify(
+        () => exportService.generateMonthlyPdf(
+          any(),
+          summary: any(named: 'summary'),
+          month: any(named: 'month'),
+          l10n: any(named: 'l10n'),
+          accounts: any(named: 'accounts'),
+          categories: any(named: 'categories'),
+          topExpenseCategories: any(named: 'topExpenseCategories'),
+          topIncomeCategories: any(named: 'topIncomeCategories'),
+          defaultCurrency: any(named: 'defaultCurrency'),
+          transferDestinations: any(named: 'transferDestinations'),
+          budgets: any(named: 'budgets'),
+          budgetCategoryNames: captureAny(named: 'budgetCategoryNames'),
+          savingsGoals: any(named: 'savingsGoals'),
+        ),
+      ).captured;
+
+      final categoryNames = captured[0] as Map<String, String>;
+      // Without a category resolved (empty categories list), it falls back to categoryId
+      expect(categoryNames['cat1'], 'cat1');
+    });
+
+    test('empty budgets and savings goals produce empty lists in service call',
+        () async {
+      final now = DateTime(2023, 10, 15);
+
+      stubCommonMocks(
+        profile: baseProfile,
+        accounts: [baseAccount],
+        transactions: [],
+        budgets: [],
+        savingsGoals: [],
+      );
+
+      await usecase(targetCurrency: 'EUR', month: now);
+
+      final captured = verify(
+        () => exportService.generateMonthlyPdf(
+          any(),
+          summary: any(named: 'summary'),
+          month: any(named: 'month'),
+          l10n: any(named: 'l10n'),
+          accounts: any(named: 'accounts'),
+          categories: any(named: 'categories'),
+          topExpenseCategories: any(named: 'topExpenseCategories'),
+          topIncomeCategories: any(named: 'topIncomeCategories'),
+          defaultCurrency: any(named: 'defaultCurrency'),
+          transferDestinations: any(named: 'transferDestinations'),
+          budgets: captureAny(named: 'budgets'),
+          budgetCategoryNames: any(named: 'budgetCategoryNames'),
+          savingsGoals: captureAny(named: 'savingsGoals'),
+        ),
+      ).captured;
+
+      expect(captured[0] as List<Budget>, isEmpty);
+      expect(captured[1] as List<SavingsGoal>, isEmpty);
     });
   });
 }

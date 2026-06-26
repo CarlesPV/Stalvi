@@ -1002,4 +1002,34 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get errorTargetDatePast => 'La data objectiu ha de ser en el futur';
+
+  @override
+  String get pdfBudgetsTitle => 'Pressupostos';
+
+  @override
+  String get pdfBudgetsColCategory => 'Categoria';
+
+  @override
+  String get pdfBudgetsColDateRange => 'Rang de Dates';
+
+  @override
+  String get pdfBudgetsColSpent => '% Gastat';
+
+  @override
+  String get pdfBudgetsColMaxValue => 'Valor Màxim';
+
+  @override
+  String get pdfSavingsGoalsTitle => 'Metes d\'Estalvi';
+
+  @override
+  String get pdfSavingsColName => 'Nom';
+
+  @override
+  String get pdfSavingsColCompleted => '% Completat';
+
+  @override
+  String get pdfSavingsColTarget => 'Quantitat Objectiu';
+
+  @override
+  String get labelBudget => 'Pressupost';
 }

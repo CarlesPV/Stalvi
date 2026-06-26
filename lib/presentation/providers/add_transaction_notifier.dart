@@ -294,6 +294,10 @@ class AddTransactionNotifier extends AutoDisposeNotifier<AddTransactionState> {
       final id = const Uuid().v4();
       final trimmedNotes = state.notes.trim();
 
+      final savingsGoals =
+          ref.read(savingsGoalsStreamProvider).valueOrNull ?? [];
+      final isSavingsGoal = savingsGoals.any((g) => g.id == state.toAccountId);
+
       await useCase.execute(
         AddTransactionParams(
           id: id,
@@ -302,7 +306,13 @@ class AddTransactionNotifier extends AutoDisposeNotifier<AddTransactionState> {
           type: state.type,
           accountId: state.accountId!,
           destinationAccountId:
-              state.type == TransactionType.transfer ? state.toAccountId : null,
+              (state.type == TransactionType.transfer && !isSavingsGoal)
+                  ? state.toAccountId
+                  : null,
+          destinationSavingsGoalId:
+              (state.type == TransactionType.transfer && isSavingsGoal)
+                  ? state.toAccountId
+                  : null,
           categoryId: state.categoryId,
           notes: trimmedNotes.isEmpty ? null : trimmedNotes,
           currency: state.currency,

@@ -1917,6 +1917,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Target date must be in the future'**
   String get errorTargetDatePast;
+
+  /// Section title for the Budgets table in PDF export
+  ///
+  /// In en, this message translates to:
+  /// **'Budgets'**
+  String get pdfBudgetsTitle;
+
+  /// Column header for Category in PDF Budgets table
+  ///
+  /// In en, this message translates to:
+  /// **'Category'**
+  String get pdfBudgetsColCategory;
+
+  /// Column header for Date Range in PDF Budgets table
+  ///
+  /// In en, this message translates to:
+  /// **'Date Range'**
+  String get pdfBudgetsColDateRange;
+
+  /// Column header for Percentage Spent in PDF Budgets table
+  ///
+  /// In en, this message translates to:
+  /// **'% Spent'**
+  String get pdfBudgetsColSpent;
+
+  /// Column header for Maximum Budget Value in PDF Budgets table
+  ///
+  /// In en, this message translates to:
+  /// **'Max Value'**
+  String get pdfBudgetsColMaxValue;
+
+  /// Section title for the Savings Goals table in PDF export
+  ///
+  /// In en, this message translates to:
+  /// **'Savings Goals'**
+  String get pdfSavingsGoalsTitle;
+
+  /// Column header for Name in PDF Savings Goals table
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get pdfSavingsColName;
+
+  /// Column header for Percentage Completed in PDF Savings Goals table
+  ///
+  /// In en, this message translates to:
+  /// **'% Completed'**
+  String get pdfSavingsColCompleted;
+
+  /// Column header for Target Amount in PDF Savings Goals table
+  ///
+  /// In en, this message translates to:
+  /// **'Target Amount'**
+  String get pdfSavingsColTarget;
+
+  /// Singular label for budget
+  ///
+  /// In en, this message translates to:
+  /// **'Budget'**
+  String get labelBudget;
 }
 
 class _AppLocalizationsDelegate

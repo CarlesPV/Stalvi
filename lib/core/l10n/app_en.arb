@@ -1295,5 +1295,45 @@
   "errorTargetDatePast": "Target date must be in the future",
   "@errorTargetDatePast": {
     "description": "Validation error for target date"
+  },
+  "pdfBudgetsTitle": "Budgets",
+  "@pdfBudgetsTitle": {
+    "description": "Section title for the Budgets table in PDF export"
+  },
+  "pdfBudgetsColCategory": "Category",
+  "@pdfBudgetsColCategory": {
+    "description": "Column header for Category in PDF Budgets table"
+  },
+  "pdfBudgetsColDateRange": "Date Range",
+  "@pdfBudgetsColDateRange": {
+    "description": "Column header for Date Range in PDF Budgets table"
+  },
+  "pdfBudgetsColSpent": "% Spent",
+  "@pdfBudgetsColSpent": {
+    "description": "Column header for Percentage Spent in PDF Budgets table"
+  },
+  "pdfBudgetsColMaxValue": "Max Value",
+  "@pdfBudgetsColMaxValue": {
+    "description": "Column header for Maximum Budget Value in PDF Budgets table"
+  },
+  "pdfSavingsGoalsTitle": "Savings Goals",
+  "@pdfSavingsGoalsTitle": {
+    "description": "Section title for the Savings Goals table in PDF export"
+  },
+  "pdfSavingsColName": "Name",
+  "@pdfSavingsColName": {
+    "description": "Column header for Name in PDF Savings Goals table"
+  },
+  "pdfSavingsColCompleted": "% Completed",
+  "@pdfSavingsColCompleted": {
+    "description": "Column header for Percentage Completed in PDF Savings Goals table"
+  },
+  "pdfSavingsColTarget": "Target Amount",
+  "@pdfSavingsColTarget": {
+    "description": "Column header for Target Amount in PDF Savings Goals table"
+  },
+  "labelBudget": "Budget",
+  "@labelBudget": {
+    "description": "Singular label for budget"
   }
 }

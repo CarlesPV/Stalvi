@@ -5,6 +5,7 @@ import 'package:stalvi/domain/repositories/i_category_repository.dart';
 
 class CreateBudgetParams {
   final String id;
+  final String accountId;
   final String categoryId;
   final int targetAmount;
   final DateTime startDate;
@@ -12,6 +13,7 @@ class CreateBudgetParams {
 
   const CreateBudgetParams({
     required this.id,
+    required this.accountId,
     required this.categoryId,
     required this.targetAmount,
     required this.startDate,
@@ -53,6 +55,7 @@ class CreateBudgetUseCase {
 
     final budget = Budget(
       id: params.id,
+      accountId: params.accountId,
       categoryId: params.categoryId,
       targetAmount: params.targetAmount,
       currentAmount: 0,

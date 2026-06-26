@@ -1002,4 +1002,34 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get errorTargetDatePast => 'La fecha objetivo debe ser en el futuro';
+
+  @override
+  String get pdfBudgetsTitle => 'Presupuestos';
+
+  @override
+  String get pdfBudgetsColCategory => 'Categoría';
+
+  @override
+  String get pdfBudgetsColDateRange => 'Rango de Fechas';
+
+  @override
+  String get pdfBudgetsColSpent => '% Gastado';
+
+  @override
+  String get pdfBudgetsColMaxValue => 'Valor Máximo';
+
+  @override
+  String get pdfSavingsGoalsTitle => 'Metas de Ahorro';
+
+  @override
+  String get pdfSavingsColName => 'Nombre';
+
+  @override
+  String get pdfSavingsColCompleted => '% Completado';
+
+  @override
+  String get pdfSavingsColTarget => 'Cantidad Objetivo';
+
+  @override
+  String get labelBudget => 'Presupuesto';
 }

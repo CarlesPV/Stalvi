@@ -83,6 +83,35 @@ class TrashDao extends DatabaseAccessor<AppDatabase> with _$TrashDaoMixin {
       );
     }
 
+    // Budgets
+    final budgetRows =
+        await (select(budgets)..where((b) => b.isDeleted.equals(true))).get();
+    for (final b in budgetRows) {
+      items.add(
+        TrashItem(
+          id: b.id,
+          name: 'Budget',
+          type: TrashItemType.budget,
+          daysRemaining: 30 - now.difference(b.modifiedAt).inDays,
+        ),
+      );
+    }
+
+    // Savings Goals
+    final goalRows = await (select(savingsGoals)
+          ..where((s) => s.isDeleted.equals(true)))
+        .get();
+    for (final s in goalRows) {
+      items.add(
+        TrashItem(
+          id: s.id,
+          name: s.name,
+          type: TrashItemType.savingsGoal,
+          daysRemaining: 30 - now.difference(s.modifiedAt).inDays,
+        ),
+      );
+    }
+
     // Sort items by days remaining (those expiring sooner first)
     items.sort((a, b) => a.daysRemaining.compareTo(b.daysRemaining));
 

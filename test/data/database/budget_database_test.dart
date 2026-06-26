@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:stalvi/data/database/app_database.dart';
 import 'package:stalvi/data/repositories/budget_repository.dart';
 import 'package:stalvi/domain/entities/budget.dart';
+import 'package:stalvi/data/database/tables/account_table.dart';
 // ignore: depend_on_referenced_packages
 import 'package:sqlite3/open.dart';
 
@@ -29,8 +30,8 @@ void main() {
   group('BudgetRepository / AppDatabase', () {
     final testBudget = Budget(
       id: 'budget-1',
-      categoryId:
-          'category-1', // Assuming category exists or no foreign key constraint enforcement in test memory DB
+      accountId: 'account-1',
+      categoryId: 'category-1',
       targetAmount: 50000,
       currentAmount: 10000,
       startDate: DateTime(2023, 1, 1),
@@ -40,18 +41,46 @@ void main() {
       isDeleted: false,
     );
 
-    test('can create and retrieve a budget', () async {
-      // First insert a dummy category so the foreign key constraint is satisfied
+    Future<void> insertDummyDependencies() async {
+      final now = DateTime.now();
+      await db.into(db.profiles).insert(
+            ProfilesCompanion.insert(
+              id: 'user-1',
+              name: 'User 1',
+              username: 'user1',
+              password: '',
+              createdAt: now,
+              modifiedAt: now,
+            ),
+          );
+      await db.into(db.accounts).insert(
+            AccountsCompanion.insert(
+              id: 'account-1',
+              name: 'Account 1',
+              userId: 'user-1',
+              type: AccountType.cash,
+              initialBalance: 0,
+              currency: 'EUR',
+              color: 'blue',
+              icon: 'wallet',
+              createdAt: now,
+              modifiedAt: now,
+            ),
+          );
       await db.into(db.categories).insert(
             CategoriesCompanion.insert(
               id: 'category-1',
               name: 'Food',
               icon: 'food',
               color: 'red',
-              createdAt: DateTime.now(),
-              modifiedAt: DateTime.now(),
+              createdAt: now,
+              modifiedAt: now,
             ),
           );
+    }
+
+    test('can create and retrieve a budget', () async {
+      await insertDummyDependencies();
 
       await repository.createBudget(testBudget);
 
@@ -63,16 +92,7 @@ void main() {
     });
 
     test('soft delete hides budget from getBudgets', () async {
-      await db.into(db.categories).insert(
-            CategoriesCompanion.insert(
-              id: 'category-1',
-              name: 'Food',
-              icon: 'food',
-              color: 'red',
-              createdAt: DateTime.now(),
-              modifiedAt: DateTime.now(),
-            ),
-          );
+      await insertDummyDependencies();
 
       await repository.createBudget(testBudget);
       await repository.deleteBudget(testBudget.id);
@@ -85,16 +105,7 @@ void main() {
     });
 
     test('update budget modifies values', () async {
-      await db.into(db.categories).insert(
-            CategoriesCompanion.insert(
-              id: 'category-1',
-              name: 'Food',
-              icon: 'food',
-              color: 'red',
-              createdAt: DateTime.now(),
-              modifiedAt: DateTime.now(),
-            ),
-          );
+      await insertDummyDependencies();
 
       await repository.createBudget(testBudget);
 

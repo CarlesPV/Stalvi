@@ -12,7 +12,9 @@ import 'package:stalvi/domain/repositories/i_account_repository.dart';
 import 'package:stalvi/domain/repositories/i_profile_repository.dart';
 import 'package:stalvi/domain/repositories/i_exchange_rate_repository.dart';
 import 'package:stalvi/domain/repositories/i_transaction_repository.dart';
+import 'package:stalvi/domain/repositories/i_savings_goal_repository.dart';
 import 'package:stalvi/domain/usecases/add_transaction_usecase.dart';
+import 'package:stalvi/domain/usecases/update_budget_progress_usecase.dart';
 
 // ---------------------------------------------------------------------------
 // Mocks & Fakes
@@ -27,6 +29,12 @@ class MockProfileRepository extends Mock implements IProfileRepository {}
 
 class MockExchangeRateRepository extends Mock
     implements IExchangeRateRepository {}
+
+class MockSavingsGoalRepository extends Mock
+    implements ISavingsGoalRepository {}
+
+class MockUpdateBudgetProgressUseCase extends Mock
+    implements UpdateBudgetProgressUseCase {}
 
 class FakeTransaction extends Fake implements Transaction {}
 
@@ -143,6 +151,8 @@ void main() {
   late MockAccountRepository mockAccountRepo;
   late MockProfileRepository mockProfileRepo;
   late MockExchangeRateRepository mockExchangeRateRepo;
+  late MockSavingsGoalRepository mockSavingsGoalRepo;
+  late MockUpdateBudgetProgressUseCase mockUpdateBudgetProgressUseCase;
 
   setUpAll(() {
     registerFallbackValue(FakeTransaction());
@@ -154,6 +164,8 @@ void main() {
     mockAccountRepo = MockAccountRepository();
     mockProfileRepo = MockProfileRepository();
     mockExchangeRateRepo = MockExchangeRateRepository();
+    mockSavingsGoalRepo = MockSavingsGoalRepository();
+    mockUpdateBudgetProgressUseCase = MockUpdateBudgetProgressUseCase();
 
     when(
       () => mockExchangeRateRepo.getLocalRates(
@@ -166,6 +178,8 @@ void main() {
       mockAccountRepo,
       mockProfileRepo,
       mockExchangeRateRepo,
+      mockSavingsGoalRepo,
+      mockUpdateBudgetProgressUseCase,
     );
   });
 
@@ -182,6 +196,8 @@ void main() {
             .thenAnswer((_) async => account);
         when(() => mockProfileRepo.getProfileById(account.userId))
             .thenAnswer((_) async => profile);
+        when(() => mockUpdateBudgetProgressUseCase.execute(
+            transaction: any(named: 'transaction'))).thenAnswer((_) async {});
         when(() => mockTransactionRepo.createTransaction(any())).thenAnswer(
           (inv) async => inv.positionalArguments[0] as Transaction,
         );
@@ -217,6 +233,8 @@ void main() {
             .thenAnswer((_) async => profile);
         when(() => mockExchangeRateRepo.getLocalRates(baseCurrency: 'EUR'))
             .thenAnswer((_) async => localRates);
+        when(() => mockUpdateBudgetProgressUseCase.execute(
+            transaction: any(named: 'transaction'))).thenAnswer((_) async {});
         when(() => mockTransactionRepo.createTransaction(any())).thenAnswer(
           (inv) async => inv.positionalArguments[0] as Transaction,
         );
@@ -247,6 +265,8 @@ void main() {
             .thenAnswer((_) async => profile);
         when(() => mockExchangeRateRepo.getLatestRates(baseCurrency: 'EUR'))
             .thenAnswer((_) async => rateSnapshot);
+        when(() => mockUpdateBudgetProgressUseCase.execute(
+            transaction: any(named: 'transaction'))).thenAnswer((_) async {});
         when(() => mockTransactionRepo.createTransaction(any())).thenAnswer(
           (inv) async => inv.positionalArguments[0] as Transaction,
         );
@@ -559,7 +579,7 @@ void main() {
           () => usecase.execute(params),
           throwsA(
             isA<ValidationException>()
-                .having((e) => e.code, 'code', 'MISSING_DESTINATION_ACCOUNT'),
+                .having((e) => e.code, 'code', 'MISSING_DESTINATION'),
           ),
         );
       });

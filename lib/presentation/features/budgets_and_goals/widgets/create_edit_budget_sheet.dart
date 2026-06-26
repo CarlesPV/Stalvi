@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:stalvi/core/l10n/app_localizations.dart';
 import 'package:stalvi/domain/entities/budget.dart';
+import 'package:stalvi/domain/entities/account.dart';
+import 'package:stalvi/domain/entities/account_type.dart';
 import 'package:stalvi/domain/usecases/create_budget_usecase.dart';
 import 'package:stalvi/presentation/providers/budgets_goals_providers.dart';
 import 'package:stalvi/presentation/providers/repository_providers.dart';
@@ -30,6 +32,8 @@ class CreateEditBudgetSheet extends ConsumerStatefulWidget {
 class _CreateEditBudgetSheetState extends ConsumerState<CreateEditBudgetSheet> {
   final _amountController = TextEditingController();
   String? _selectedCategoryId;
+  String? _selectedAccountId;
+  String _selectedCurrency = 'EUR';
   DateTime _startDate = DateTime.now();
   DateTime _endDate = DateTime.now().add(const Duration(days: 30));
 
@@ -40,8 +44,18 @@ class _CreateEditBudgetSheetState extends ConsumerState<CreateEditBudgetSheet> {
       final b = widget.existingBudget!;
       _amountController.text = (b.targetAmount / 100).toStringAsFixed(2);
       _selectedCategoryId = b.categoryId;
+      _selectedAccountId = b.accountId;
       _startDate = b.startDate;
       _endDate = b.endDate;
+    } else {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        final profileAsync = ref.read(defaultProfileProvider);
+        if (profileAsync.hasValue) {
+          setState(() {
+            _selectedCurrency = profileAsync.value!.defaultCurrency;
+          });
+        }
+      });
     }
   }
 
@@ -56,7 +70,12 @@ class _CreateEditBudgetSheetState extends ConsumerState<CreateEditBudgetSheet> {
     final amountDouble = double.tryParse(_amountController.text.trim()) ?? 0.0;
     final targetAmountCents = (amountDouble * 100).round();
 
-    if (targetAmountCents <= 0) {
+    if (widget.existingBudget == null && _selectedAccountId == null) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(l10n.errorAccountRequired)));
+      return;
+    }
+    if (widget.existingBudget == null && targetAmountCents <= 0) {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text(l10n.errorInvalidAmount)));
       return;
@@ -75,6 +94,7 @@ class _CreateEditBudgetSheetState extends ConsumerState<CreateEditBudgetSheet> {
     if (widget.existingBudget == null) {
       final params = CreateBudgetParams(
         id: const Uuid().v4(),
+        accountId: _selectedAccountId!,
         categoryId: _selectedCategoryId!,
         targetAmount: targetAmountCents,
         startDate: _startDate,
@@ -84,7 +104,6 @@ class _CreateEditBudgetSheetState extends ConsumerState<CreateEditBudgetSheet> {
     } else {
       final updatedBudget = widget.existingBudget!.copyWith(
         categoryId: _selectedCategoryId,
-        targetAmount: targetAmountCents,
         startDate: _startDate,
         endDate: _endDate,
         modifiedAt: DateTime.now(),
@@ -131,12 +150,37 @@ class _CreateEditBudgetSheetState extends ConsumerState<CreateEditBudgetSheet> {
     final mediaQuery = MediaQuery.of(context);
     final l10n = AppLocalizations.of(context)!;
     final categoriesAsync = ref.watch(categoriesListProvider);
+    final accountsAsync = ref.watch(accountsListProvider);
     final isEditing = widget.existingBudget != null;
     final state = ref.watch(budgetsNotifierProvider);
     final isLoading = state is AsyncLoading;
 
     final locale = Localizations.localeOf(context).toString();
     final df = DateFormat.yMMMd(locale);
+
+    final accounts = accountsAsync.valueOrNull ?? [];
+    final existingAccount = isEditing
+        ? accounts.firstWhere(
+            (a) => a.id == widget.existingBudget!.accountId,
+            orElse: () => accounts.isNotEmpty
+                ? accounts.first
+                : Account(
+                    id: '',
+                    name: '',
+                    userId: '',
+                    type: AccountType.cash,
+                    initialBalance: 0,
+                    currency: 'EUR',
+                    color: '',
+                    icon: '',
+                    isDefault: false,
+                    isDeleted: false,
+                    createdAt: DateTime.now(),
+                    modifiedAt: DateTime.now()),
+          )
+        : null;
+    final currencyToShow =
+        isEditing ? (existingAccount?.currency ?? 'EUR') : _selectedCurrency;
 
     return Material(
       color: colorScheme.surface,
@@ -182,13 +226,112 @@ class _CreateEditBudgetSheetState extends ConsumerState<CreateEditBudgetSheet> {
               const SizedBox(height: 24),
               TextField(
                 controller: _amountController,
+                enabled: !isEditing,
                 keyboardType:
                     const TextInputType.numberWithOptions(decimal: true),
                 decoration: InputDecoration(
                   labelText: l10n.targetAmount,
                   border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16)),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
                 ),
+              ),
+              const SizedBox(height: 16),
+              DropdownButtonFormField<String>(
+                initialValue: currencyToShow,
+                decoration: InputDecoration(
+                  labelText: l10n.labelCurrency,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                ),
+                items: isEditing
+                    ? [
+                        DropdownMenuItem(
+                          value: currencyToShow,
+                          child: Text(currencyToShow),
+                        ),
+                      ]
+                    : [
+                        DropdownMenuItem(
+                            value: 'EUR', child: Text(l10n.currencyEUR)),
+                        DropdownMenuItem(
+                            value: 'USD', child: Text(l10n.currencyUSD)),
+                        DropdownMenuItem(
+                            value: 'GBP', child: Text(l10n.currencyGBP)),
+                        DropdownMenuItem(
+                            value: 'JPY', child: Text(l10n.currencyJPY)),
+                        DropdownMenuItem(
+                            value: 'CHF', child: Text(l10n.currencyCHF)),
+                        DropdownMenuItem(
+                            value: 'CAD', child: Text(l10n.currencyCAD)),
+                        DropdownMenuItem(
+                            value: 'AUD', child: Text(l10n.currencyAUD)),
+                        DropdownMenuItem(
+                            value: 'CNY', child: Text(l10n.currencyCNY)),
+                      ],
+                onChanged: isEditing
+                    ? null
+                    : (val) {
+                        if (val != null) {
+                          setState(() {
+                            _selectedCurrency = val;
+                            _selectedAccountId = null;
+                          });
+                        }
+                      },
+              ),
+              const SizedBox(height: 16),
+              accountsAsync.when(
+                data: (accountsList) {
+                  final filteredAccounts = accountsList
+                      .where((a) => a.currency == currencyToShow)
+                      .toList();
+
+                  if (!isEditing &&
+                      _selectedAccountId == null &&
+                      filteredAccounts.isNotEmpty) {
+                    final defaultAcc = filteredAccounts.firstWhere(
+                      (a) => a.isDefault,
+                      orElse: () => filteredAccounts.first,
+                    );
+                    _selectedAccountId = defaultAcc.id;
+                  }
+
+                  return DropdownButtonFormField<String>(
+                    initialValue: isEditing
+                        ? widget.existingBudget!.accountId
+                        : _selectedAccountId,
+                    decoration: InputDecoration(
+                      labelText: l10n.labelAccount,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                    ),
+                    items: isEditing
+                        ? (existingAccount != null
+                            ? [
+                                DropdownMenuItem(
+                                  value: existingAccount.id,
+                                  child: Text(existingAccount.name),
+                                ),
+                              ]
+                            : [])
+                        : filteredAccounts.map((a) {
+                            return DropdownMenuItem(
+                              value: a.id,
+                              child: Text(a.name),
+                            );
+                          }).toList(),
+                    onChanged: isEditing
+                        ? null
+                        : (val) {
+                            setState(() => _selectedAccountId = val);
+                          },
+                  );
+                },
+                loading: () => const Center(child: CircularProgressIndicator()),
+                error: (e, st) => Text(l10n.unexpectedError),
               ),
               const SizedBox(height: 16),
               categoriesAsync.when(
@@ -198,7 +341,8 @@ class _CreateEditBudgetSheetState extends ConsumerState<CreateEditBudgetSheet> {
                     decoration: InputDecoration(
                       labelText: l10n.labelCategory,
                       border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(16)),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
                     ),
                     items: categories.map((c) {
                       return DropdownMenuItem(
@@ -224,7 +368,8 @@ class _CreateEditBudgetSheetState extends ConsumerState<CreateEditBudgetSheet> {
                         decoration: InputDecoration(
                           labelText: l10n.startDate,
                           border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(16)),
+                            borderRadius: BorderRadius.circular(16),
+                          ),
                         ),
                         child: Text(df.format(_startDate)),
                       ),
@@ -238,7 +383,8 @@ class _CreateEditBudgetSheetState extends ConsumerState<CreateEditBudgetSheet> {
                         decoration: InputDecoration(
                           labelText: l10n.endDate,
                           border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(16)),
+                            borderRadius: BorderRadius.circular(16),
+                          ),
                         ),
                         child: Text(df.format(_endDate)),
                       ),
@@ -256,7 +402,8 @@ class _CreateEditBudgetSheetState extends ConsumerState<CreateEditBudgetSheet> {
                       style: OutlinedButton.styleFrom(
                         minimumSize: const Size(0, 54),
                         shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16)),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
                       ),
                       child: Text(l10n.btnCancel),
                     ),
@@ -270,17 +417,23 @@ class _CreateEditBudgetSheetState extends ConsumerState<CreateEditBudgetSheet> {
                         foregroundColor: colorScheme.onPrimary,
                         minimumSize: const Size(0, 54),
                         shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16)),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
                       ),
                       child: isLoading
                           ? const SizedBox(
                               width: 24,
                               height: 24,
                               child: CircularProgressIndicator(
-                                  color: Colors.white, strokeWidth: 2))
-                          : Text(l10n.btnSave,
+                                color: Colors.white,
+                                strokeWidth: 2,
+                              ),
+                            )
+                          : Text(
+                              l10n.btnSave,
                               style:
-                                  const TextStyle(fontWeight: FontWeight.bold)),
+                                  const TextStyle(fontWeight: FontWeight.bold),
+                            ),
                     ),
                   ),
                 ],

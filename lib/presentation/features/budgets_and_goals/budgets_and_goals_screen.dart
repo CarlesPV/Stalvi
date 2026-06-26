@@ -7,6 +7,7 @@ import 'package:stalvi/core/utils/currency_formatter.dart';
 import 'package:stalvi/domain/entities/budget.dart';
 import 'package:stalvi/domain/entities/category.dart';
 import 'package:stalvi/domain/entities/savings_goal.dart';
+import 'package:stalvi/domain/entities/account.dart';
 import 'package:stalvi/presentation/providers/repository_providers.dart';
 import 'package:stalvi/presentation/widgets/progress_bar_widget.dart';
 import 'package:stalvi/presentation/widgets/empty_state_widget.dart';
@@ -173,10 +174,22 @@ class _BudgetCard extends ConsumerWidget {
         : 0.0;
 
     final formatter = ref.watch(currencyFormatterProvider);
+    final accounts = ref.watch(accountsListProvider).valueOrNull ?? [];
+    Account? budgetAccount;
+    for (final a in accounts) {
+      if (a.id == budget.accountId) {
+        budgetAccount = a;
+        break;
+      }
+    }
+    final currencyToShow = budgetAccount?.currency ?? formatter.currencyCode;
 
-    final spentStr = formatter.format(spentDouble);
-    final targetStr = formatter.format(targetDouble);
-    final remainingStr = formatter.format(remainingDouble.abs());
+    final spentStr =
+        formatter.format(spentDouble, currencyCode: currencyToShow);
+    final targetStr =
+        formatter.format(targetDouble, currencyCode: currencyToShow);
+    final remainingStr =
+        formatter.format(remainingDouble.abs(), currencyCode: currencyToShow);
     final progressStr =
         CurrencyFormatter.formatPercentage(progress, decimalDigits: 0);
 
@@ -365,8 +378,9 @@ class _SavingsGoalCard extends ConsumerWidget {
 
     final formatter = ref.watch(currencyFormatterProvider);
 
-    final savedStr = formatter.format(savedDouble);
-    final targetStr = formatter.format(targetDouble);
+    final savedStr = formatter.format(savedDouble, currencyCode: goal.currency);
+    final targetStr =
+        formatter.format(targetDouble, currencyCode: goal.currency);
     final progressStr =
         CurrencyFormatter.formatPercentage(progress, decimalDigits: 0);
 

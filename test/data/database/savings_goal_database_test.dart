@@ -33,6 +33,7 @@ void main() {
       targetAmount: 1500000, // 15,000.00
       currentAmount: 200000, // 2,000.00
       targetDate: DateTime(2025, 12, 31),
+      currency: 'EUR',
       color: 'blue',
       icon: 'car',
       createdAt: DateTime(2023, 1, 1),

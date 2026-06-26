@@ -30,6 +30,7 @@ void main() {
     name: 'New Car',
     targetAmount: 2000000, // 20k
     targetDate: now.add(const Duration(days: 365)),
+    currency: 'EUR',
     color: '#000000',
     icon: 'car',
   );
@@ -52,6 +53,7 @@ void main() {
         name: 'New Car',
         targetAmount: 0,
         targetDate: now.add(const Duration(days: 365)),
+        currency: 'EUR',
         color: '#000000',
         icon: 'car',
       );
@@ -73,6 +75,7 @@ void main() {
         name: 'New Car',
         targetAmount: 2000000,
         targetDate: now.subtract(const Duration(days: 1)),
+        currency: 'EUR',
         color: '#000000',
         icon: 'car',
       );
@@ -97,6 +100,7 @@ void main() {
         name: 'New Car',
         targetAmount: 2000000,
         targetDate: null,
+        currency: 'EUR',
         color: '#000000',
         icon: 'car',
       );

@@ -129,6 +129,7 @@ void main() {
     test('createBudget success', () async {
       final params = CreateBudgetParams(
         id: '1',
+        accountId: 'account1',
         categoryId: 'cat1',
         targetAmount: 10000,
         startDate: DateTime.now(),
@@ -144,6 +145,7 @@ void main() {
     test('updateBudget success', () async {
       final budget = Budget(
         id: '1',
+        accountId: 'account1',
         categoryId: 'cat1',
         targetAmount: 10000,
         currentAmount: 0,
@@ -173,6 +175,7 @@ void main() {
         id: '1',
         name: 'Goal 1',
         targetAmount: 10000,
+        currency: 'EUR',
         color: '#FFFFFF',
         icon: 'icon',
       );
@@ -189,6 +192,7 @@ void main() {
         name: 'Goal 1',
         targetAmount: 10000,
         currentAmount: 0,
+        currency: 'EUR',
         color: '#FFFFFF',
         icon: 'icon',
         createdAt: DateTime.now(),

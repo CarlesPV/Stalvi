@@ -4,6 +4,7 @@ import 'package:stalvi/core/l10n/app_localizations.dart';
 import 'package:stalvi/domain/entities/savings_goal.dart';
 import 'package:stalvi/domain/usecases/create_savings_goal_usecase.dart';
 import 'package:stalvi/presentation/providers/budgets_goals_providers.dart';
+import 'package:stalvi/presentation/providers/repository_providers.dart';
 import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 
@@ -33,6 +34,7 @@ class _CreateEditSavingsGoalSheetState
   DateTime? _targetDate;
   String _selectedColor = '#4CAF50';
   String _selectedIcon = 'savings';
+  String _selectedCurrency = 'EUR';
 
   final List<String> _colors = [
     '#2196F3',
@@ -40,7 +42,7 @@ class _CreateEditSavingsGoalSheetState
     '#FFC107',
     '#E91E63',
     '#9C27B0',
-    '#FF5722'
+    '#FF5722',
   ];
   final List<Map<String, dynamic>> _icons = [
     {'name': 'savings', 'icon': Icons.savings_rounded},
@@ -59,6 +61,16 @@ class _CreateEditSavingsGoalSheetState
       _targetDate = g.targetDate;
       _selectedColor = g.color;
       _selectedIcon = g.icon;
+      _selectedCurrency = g.currency;
+    } else {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        final profileAsync = ref.read(defaultProfileProvider);
+        if (profileAsync.hasValue) {
+          setState(() {
+            _selectedCurrency = profileAsync.value!.defaultCurrency;
+          });
+        }
+      });
     }
   }
 
@@ -87,7 +99,7 @@ class _CreateEditSavingsGoalSheetState
           .showSnackBar(SnackBar(content: Text(l10n.errorNameRequired)));
       return;
     }
-    if (targetAmountCents <= 0) {
+    if (widget.existingGoal == null && targetAmountCents <= 0) {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text(l10n.errorInvalidAmount)));
       return;
@@ -101,6 +113,7 @@ class _CreateEditSavingsGoalSheetState
         targetDate: _targetDate,
         color: _selectedColor,
         icon: _selectedIcon,
+        currency: _selectedCurrency,
       );
       await ref
           .read(savingsGoalsNotifierProvider.notifier)
@@ -108,7 +121,6 @@ class _CreateEditSavingsGoalSheetState
     } else {
       final updatedGoal = widget.existingGoal!.copyWith(
         name: name,
-        targetAmount: targetAmountCents,
         targetDate: _targetDate,
         color: _selectedColor,
         icon: _selectedIcon,
@@ -201,19 +213,64 @@ class _CreateEditSavingsGoalSheetState
                 decoration: InputDecoration(
                   labelText: l10n.goalName,
                   border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16)),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
                 ),
               ),
               const SizedBox(height: 16),
               TextField(
                 controller: _amountController,
+                enabled: !isEditing,
                 keyboardType:
                     const TextInputType.numberWithOptions(decimal: true),
                 decoration: InputDecoration(
                   labelText: l10n.targetAmount,
                   border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16)),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
                 ),
+              ),
+              const SizedBox(height: 16),
+              DropdownButtonFormField<String>(
+                initialValue: _selectedCurrency,
+                decoration: InputDecoration(
+                  labelText: l10n.labelCurrency,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                ),
+                items: isEditing
+                    ? [
+                        DropdownMenuItem(
+                          value: _selectedCurrency,
+                          child: Text(_selectedCurrency),
+                        ),
+                      ]
+                    : [
+                        DropdownMenuItem(
+                            value: 'EUR', child: Text(l10n.currencyEUR)),
+                        DropdownMenuItem(
+                            value: 'USD', child: Text(l10n.currencyUSD)),
+                        DropdownMenuItem(
+                            value: 'GBP', child: Text(l10n.currencyGBP)),
+                        DropdownMenuItem(
+                            value: 'JPY', child: Text(l10n.currencyJPY)),
+                        DropdownMenuItem(
+                            value: 'CHF', child: Text(l10n.currencyCHF)),
+                        DropdownMenuItem(
+                            value: 'CAD', child: Text(l10n.currencyCAD)),
+                        DropdownMenuItem(
+                            value: 'AUD', child: Text(l10n.currencyAUD)),
+                        DropdownMenuItem(
+                            value: 'CNY', child: Text(l10n.currencyCNY)),
+                      ],
+                onChanged: isEditing
+                    ? null
+                    : (val) {
+                        if (val != null) {
+                          setState(() => _selectedCurrency = val);
+                        }
+                      },
               ),
               const SizedBox(height: 16),
               InkWell(
@@ -222,11 +279,14 @@ class _CreateEditSavingsGoalSheetState
                   decoration: InputDecoration(
                     labelText: l10n.targetDate,
                     border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(16)),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
                   ),
-                  child: Text(_targetDate != null
-                      ? df.format(_targetDate!)
-                      : l10n.optionalPlaceholder),
+                  child: Text(
+                    _targetDate != null
+                        ? df.format(_targetDate!)
+                        : l10n.optionalPlaceholder,
+                  ),
                 ),
               ),
               const SizedBox(height: 20),
@@ -253,15 +313,19 @@ class _CreateEditSavingsGoalSheetState
                         boxShadow: isSelected
                             ? [
                                 BoxShadow(
-                                    color: color.withValues(alpha: 0.4),
-                                    blurRadius: 8,
-                                    spreadRadius: 1)
+                                  color: color.withValues(alpha: 0.4),
+                                  blurRadius: 8,
+                                  spreadRadius: 1,
+                                ),
                               ]
                             : null,
                       ),
                       child: isSelected
-                          ? const Icon(Icons.check,
-                              color: Colors.white, size: 18)
+                          ? const Icon(
+                              Icons.check,
+                              color: Colors.white,
+                              size: 18,
+                            )
                           : null,
                     ),
                   );
@@ -288,15 +352,17 @@ class _CreateEditSavingsGoalSheetState
                                 .withValues(alpha: 0.3),
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                            color:
-                                isSelected ? activeColor : Colors.transparent,
-                            width: 2),
+                          color: isSelected ? activeColor : Colors.transparent,
+                          width: 2,
+                        ),
                       ),
-                      child: Icon(icon,
-                          color: isSelected
-                              ? activeColor
-                              : colorScheme.onSurfaceVariant,
-                          size: 22),
+                      child: Icon(
+                        icon,
+                        color: isSelected
+                            ? activeColor
+                            : colorScheme.onSurfaceVariant,
+                        size: 22,
+                      ),
                     ),
                   );
                 }).toList(),
@@ -311,7 +377,8 @@ class _CreateEditSavingsGoalSheetState
                       style: OutlinedButton.styleFrom(
                         minimumSize: const Size(0, 54),
                         shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16)),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
                       ),
                       child: Text(l10n.btnCancel),
                     ),
@@ -325,17 +392,23 @@ class _CreateEditSavingsGoalSheetState
                         foregroundColor: colorScheme.onPrimary,
                         minimumSize: const Size(0, 54),
                         shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16)),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
                       ),
                       child: isLoading
                           ? const SizedBox(
                               width: 24,
                               height: 24,
                               child: CircularProgressIndicator(
-                                  color: Colors.white, strokeWidth: 2))
-                          : Text(l10n.btnSave,
+                                color: Colors.white,
+                                strokeWidth: 2,
+                              ),
+                            )
+                          : Text(
+                              l10n.btnSave,
                               style:
-                                  const TextStyle(fontWeight: FontWeight.bold)),
+                                  const TextStyle(fontWeight: FontWeight.bold),
+                            ),
                     ),
                   ),
                 ],

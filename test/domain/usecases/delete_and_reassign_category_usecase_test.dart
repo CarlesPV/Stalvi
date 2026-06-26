@@ -29,6 +29,7 @@ class FakeTransaction extends Fake implements Transaction {
     TransactionType? type,
     String? accountId,
     String? categoryId,
+    String? savingsGoalId,
     String? notes,
     String? originalCurrency,
     int? convertedAmount,

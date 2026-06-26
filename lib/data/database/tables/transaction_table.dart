@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart';
 import 'account_table.dart';
 import 'category_table.dart';
+import 'savings_goal_table.dart';
 
 enum TransactionType {
   income,
@@ -19,6 +20,10 @@ class Transactions extends Table {
       text().named('account_id').references(Accounts, #id)();
   TextColumn get categoryId =>
       text().named('category_id').nullable().references(Categories, #id)();
+  TextColumn get savingsGoalId => text()
+      .named('savings_goal_id')
+      .nullable()
+      .references(SavingsGoals, #id)();
   TextColumn get notes => text().nullable()();
   TextColumn get originalCurrency => text().named('original_currency')();
   IntColumn get convertedAmount =>

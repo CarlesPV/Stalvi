@@ -8,7 +8,10 @@ class SavingsGoal {
   final String icon;
   final DateTime createdAt;
   final DateTime modifiedAt;
+  final DateTime? deletedAt;
   final bool isDeleted;
+  final bool isCompleted;
+  final String currency;
 
   const SavingsGoal({
     required this.id,
@@ -20,7 +23,10 @@ class SavingsGoal {
     required this.icon,
     required this.createdAt,
     required this.modifiedAt,
+    this.deletedAt,
     this.isDeleted = false,
+    this.isCompleted = false,
+    required this.currency,
   });
 
   @override
@@ -37,7 +43,10 @@ class SavingsGoal {
         other.icon == icon &&
         other.createdAt == createdAt &&
         other.modifiedAt == modifiedAt &&
-        other.isDeleted == isDeleted;
+        other.deletedAt == deletedAt &&
+        other.isDeleted == isDeleted &&
+        other.isCompleted == isCompleted &&
+        other.currency == currency;
   }
 
   @override
@@ -51,7 +60,10 @@ class SavingsGoal {
         icon.hashCode ^
         createdAt.hashCode ^
         modifiedAt.hashCode ^
-        isDeleted.hashCode;
+        deletedAt.hashCode ^
+        isDeleted.hashCode ^
+        isCompleted.hashCode ^
+        currency.hashCode;
   }
 
   SavingsGoal copyWith({
@@ -64,7 +76,10 @@ class SavingsGoal {
     String? icon,
     DateTime? createdAt,
     DateTime? modifiedAt,
+    DateTime? deletedAt,
     bool? isDeleted,
+    bool? isCompleted,
+    String? currency,
   }) {
     return SavingsGoal(
       id: id ?? this.id,
@@ -76,7 +91,10 @@ class SavingsGoal {
       icon: icon ?? this.icon,
       createdAt: createdAt ?? this.createdAt,
       modifiedAt: modifiedAt ?? this.modifiedAt,
+      deletedAt: deletedAt ?? this.deletedAt,
       isDeleted: isDeleted ?? this.isDeleted,
+      isCompleted: isCompleted ?? this.isCompleted,
+      currency: currency ?? this.currency,
     );
   }
 }

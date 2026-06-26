@@ -43,6 +43,7 @@ void main() {
 
   final validParams = CreateBudgetParams(
     id: 'budget_1',
+    accountId: 'account_1',
     categoryId: 'cat_1',
     targetAmount: 50000,
     startDate: now,
@@ -66,6 +67,7 @@ void main() {
     test('should throw validation error when target amount is 0', () async {
       final params = CreateBudgetParams(
         id: 'budget_1',
+        accountId: 'account_1',
         categoryId: 'cat_1',
         targetAmount: 0,
         startDate: now,
@@ -86,6 +88,7 @@ void main() {
         () async {
       final params = CreateBudgetParams(
         id: 'budget_1',
+        accountId: 'account_1',
         categoryId: 'cat_1',
         targetAmount: 50000,
         startDate: now,

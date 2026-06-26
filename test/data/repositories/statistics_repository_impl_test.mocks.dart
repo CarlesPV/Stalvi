@@ -130,9 +130,20 @@ class _Fake$CategoriesTable_8 extends _i1.SmartFake
         );
 }
 
-class _Fake$TransactionsTable_9 extends _i1.SmartFake
+class _Fake$SavingsGoalsTable_9 extends _i1.SmartFake
+    implements _i2.$SavingsGoalsTable {
+  _Fake$SavingsGoalsTable_9(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _Fake$TransactionsTable_10 extends _i1.SmartFake
     implements _i2.$TransactionsTable {
-  _Fake$TransactionsTable_9(
+  _Fake$TransactionsTable_10(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -141,8 +152,8 @@ class _Fake$TransactionsTable_9 extends _i1.SmartFake
         );
 }
 
-class _FakePeriodSummary_10 extends _i1.SmartFake implements _i5.PeriodSummary {
-  _FakePeriodSummary_10(
+class _FakePeriodSummary_11 extends _i1.SmartFake implements _i5.PeriodSummary {
+  _FakePeriodSummary_11(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -151,8 +162,8 @@ class _FakePeriodSummary_10 extends _i1.SmartFake implements _i5.PeriodSummary {
         );
 }
 
-class _FakeFuture_11<T1> extends _i1.SmartFake implements _i6.Future<T1> {
-  _FakeFuture_11(
+class _FakeFuture_12<T1> extends _i1.SmartFake implements _i6.Future<T1> {
+  _FakeFuture_12(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -161,9 +172,9 @@ class _FakeFuture_11<T1> extends _i1.SmartFake implements _i6.Future<T1> {
         );
 }
 
-class _FakeInsertStatement_12<T1 extends _i3.Table, D1> extends _i1.SmartFake
+class _FakeInsertStatement_13<T1 extends _i3.Table, D1> extends _i1.SmartFake
     implements _i3.InsertStatement<T1, D1> {
-  _FakeInsertStatement_12(
+  _FakeInsertStatement_13(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -172,9 +183,9 @@ class _FakeInsertStatement_12<T1 extends _i3.Table, D1> extends _i1.SmartFake
         );
 }
 
-class _FakeUpdateStatement_13<T extends _i3.Table, D> extends _i1.SmartFake
+class _FakeUpdateStatement_14<T extends _i3.Table, D> extends _i1.SmartFake
     implements _i3.UpdateStatement<T, D> {
-  _FakeUpdateStatement_13(
+  _FakeUpdateStatement_14(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -183,9 +194,9 @@ class _FakeUpdateStatement_13<T extends _i3.Table, D> extends _i1.SmartFake
         );
 }
 
-class _FakeSimpleSelectStatement_14<T1 extends _i3.HasResultSet, D>
+class _FakeSimpleSelectStatement_15<T1 extends _i3.HasResultSet, D>
     extends _i1.SmartFake implements _i3.SimpleSelectStatement<T1, D> {
-  _FakeSimpleSelectStatement_14(
+  _FakeSimpleSelectStatement_15(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -194,9 +205,9 @@ class _FakeSimpleSelectStatement_14<T1 extends _i3.HasResultSet, D>
         );
 }
 
-class _FakeJoinedSelectStatement_15<FirstT extends _i3.HasResultSet, FirstD>
+class _FakeJoinedSelectStatement_16<FirstT extends _i3.HasResultSet, FirstD>
     extends _i1.SmartFake implements _i3.JoinedSelectStatement<FirstT, FirstD> {
-  _FakeJoinedSelectStatement_15(
+  _FakeJoinedSelectStatement_16(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -205,9 +216,9 @@ class _FakeJoinedSelectStatement_15<FirstT extends _i3.HasResultSet, FirstD>
         );
 }
 
-class _FakeBaseSelectStatement_16<Row> extends _i1.SmartFake
+class _FakeBaseSelectStatement_17<Row> extends _i1.SmartFake
     implements _i3.BaseSelectStatement<Row> {
-  _FakeBaseSelectStatement_16(
+  _FakeBaseSelectStatement_17(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -216,9 +227,9 @@ class _FakeBaseSelectStatement_16<Row> extends _i1.SmartFake
         );
 }
 
-class _FakeDeleteStatement_17<T1 extends _i3.Table, D1> extends _i1.SmartFake
+class _FakeDeleteStatement_18<T1 extends _i3.Table, D1> extends _i1.SmartFake
     implements _i3.DeleteStatement<T1, D1> {
-  _FakeDeleteStatement_17(
+  _FakeDeleteStatement_18(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -227,8 +238,8 @@ class _FakeDeleteStatement_17<T1 extends _i3.Table, D1> extends _i1.SmartFake
         );
 }
 
-class _FakeSelectable_18<T> extends _i1.SmartFake implements _i3.Selectable<T> {
-  _FakeSelectable_18(
+class _FakeSelectable_19<T> extends _i1.SmartFake implements _i3.Selectable<T> {
+  _FakeSelectable_19(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -237,9 +248,9 @@ class _FakeSelectable_18<T> extends _i1.SmartFake implements _i3.Selectable<T> {
         );
 }
 
-class _FakeGenerationContext_19 extends _i1.SmartFake
+class _FakeGenerationContext_20 extends _i1.SmartFake
     implements _i3.GenerationContext {
-  _FakeGenerationContext_19(
+  _FakeGenerationContext_20(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -248,8 +259,8 @@ class _FakeGenerationContext_19 extends _i1.SmartFake
         );
 }
 
-class _FakeProfile_20 extends _i1.SmartFake implements _i7.Profile {
-  _FakeProfile_20(
+class _FakeProfile_21 extends _i1.SmartFake implements _i7.Profile {
+  _FakeProfile_21(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -258,8 +269,8 @@ class _FakeProfile_20 extends _i1.SmartFake implements _i7.Profile {
         );
 }
 
-class _FakeAccount_21 extends _i1.SmartFake implements _i8.Account {
-  _FakeAccount_21(
+class _FakeAccount_22 extends _i1.SmartFake implements _i8.Account {
+  _FakeAccount_22(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -367,9 +378,18 @@ class MockStatisticsDao extends _i1.Mock implements _i9.StatisticsDao {
       ) as _i2.$CategoriesTable);
 
   @override
+  _i2.$SavingsGoalsTable get savingsGoals => (super.noSuchMethod(
+        Invocation.getter(#savingsGoals),
+        returnValue: _Fake$SavingsGoalsTable_9(
+          this,
+          Invocation.getter(#savingsGoals),
+        ),
+      ) as _i2.$SavingsGoalsTable);
+
+  @override
   _i2.$TransactionsTable get transactions => (super.noSuchMethod(
         Invocation.getter(#transactions),
-        returnValue: _Fake$TransactionsTable_9(
+        returnValue: _Fake$TransactionsTable_10(
           this,
           Invocation.getter(#transactions),
         ),
@@ -402,7 +422,7 @@ class MockStatisticsDao extends _i1.Mock implements _i9.StatisticsDao {
           ],
           {#accountId: accountId},
         ),
-        returnValue: _i6.Future<_i5.PeriodSummary>.value(_FakePeriodSummary_10(
+        returnValue: _i6.Future<_i5.PeriodSummary>.value(_FakePeriodSummary_11(
           this,
           Invocation.method(
             #getPeriodSummaryAggregates,
@@ -568,7 +588,7 @@ class MockStatisticsDao extends _i1.Mock implements _i9.StatisticsDao {
               ),
               (T v) => _i6.Future<T>.value(v),
             ) ??
-            _FakeFuture_11<T>(
+            _FakeFuture_12<T>(
               this,
               Invocation.method(
                 #doWhenOpened,
@@ -585,7 +605,7 @@ class MockStatisticsDao extends _i1.Mock implements _i9.StatisticsDao {
           #into,
           [table],
         ),
-        returnValue: _FakeInsertStatement_12<T, D>(
+        returnValue: _FakeInsertStatement_13<T, D>(
           this,
           Invocation.method(
             #into,
@@ -602,7 +622,7 @@ class MockStatisticsDao extends _i1.Mock implements _i9.StatisticsDao {
           #update,
           [table],
         ),
-        returnValue: _FakeUpdateStatement_13<Tbl, R>(
+        returnValue: _FakeUpdateStatement_14<Tbl, R>(
           this,
           Invocation.method(
             #update,
@@ -622,7 +642,7 @@ class MockStatisticsDao extends _i1.Mock implements _i9.StatisticsDao {
           [table],
           {#distinct: distinct},
         ),
-        returnValue: _FakeSimpleSelectStatement_14<T, R>(
+        returnValue: _FakeSimpleSelectStatement_15<T, R>(
           this,
           Invocation.method(
             #select,
@@ -643,7 +663,7 @@ class MockStatisticsDao extends _i1.Mock implements _i9.StatisticsDao {
           [table],
           {#distinct: distinct},
         ),
-        returnValue: _FakeJoinedSelectStatement_15<T, R>(
+        returnValue: _FakeJoinedSelectStatement_16<T, R>(
           this,
           Invocation.method(
             #selectOnly,
@@ -661,7 +681,7 @@ class MockStatisticsDao extends _i1.Mock implements _i9.StatisticsDao {
           #selectExpressions,
           [columns],
         ),
-        returnValue: _FakeBaseSelectStatement_16<_i3.TypedResult>(
+        returnValue: _FakeBaseSelectStatement_17<_i3.TypedResult>(
           this,
           Invocation.method(
             #selectExpressions,
@@ -678,7 +698,7 @@ class MockStatisticsDao extends _i1.Mock implements _i9.StatisticsDao {
           #delete,
           [table],
         ),
-        returnValue: _FakeDeleteStatement_17<T, D>(
+        returnValue: _FakeDeleteStatement_18<T, D>(
           this,
           Invocation.method(
             #delete,
@@ -760,7 +780,7 @@ class MockStatisticsDao extends _i1.Mock implements _i9.StatisticsDao {
             #readsFrom: readsFrom,
           },
         ),
-        returnValue: _FakeSelectable_18<_i3.QueryRow>(
+        returnValue: _FakeSelectable_19<_i3.QueryRow>(
           this,
           Invocation.method(
             #customSelect,
@@ -788,7 +808,7 @@ class MockStatisticsDao extends _i1.Mock implements _i9.StatisticsDao {
             #readsFrom: readsFrom,
           },
         ),
-        returnValue: _FakeSelectable_18<_i3.QueryRow>(
+        returnValue: _FakeSelectable_19<_i3.QueryRow>(
           this,
           Invocation.method(
             #customSelectQuery,
@@ -840,7 +860,7 @@ class MockStatisticsDao extends _i1.Mock implements _i9.StatisticsDao {
               ),
               (T v) => _i6.Future<T>.value(v),
             ) ??
-            _FakeFuture_11<T>(
+            _FakeFuture_12<T>(
               this,
               Invocation.method(
                 #transaction,
@@ -867,7 +887,7 @@ class MockStatisticsDao extends _i1.Mock implements _i9.StatisticsDao {
               ),
               (T v) => _i6.Future<T>.value(v),
             ) ??
-            _FakeFuture_11<T>(
+            _FakeFuture_12<T>(
               this,
               Invocation.method(
                 #exclusively,
@@ -909,7 +929,7 @@ class MockStatisticsDao extends _i1.Mock implements _i9.StatisticsDao {
               ),
               (T v) => _i6.Future<T>.value(v),
             ) ??
-            _FakeFuture_11<T>(
+            _FakeFuture_12<T>(
               this,
               Invocation.method(
                 #runWithInterceptor,
@@ -934,7 +954,7 @@ class MockStatisticsDao extends _i1.Mock implements _i9.StatisticsDao {
             #startIndex: startIndex,
           },
         ),
-        returnValue: _FakeGenerationContext_19(
+        returnValue: _FakeGenerationContext_20(
           this,
           Invocation.method(
             #$write,
@@ -962,7 +982,7 @@ class MockStatisticsDao extends _i1.Mock implements _i9.StatisticsDao {
           ],
           {#startIndex: startIndex},
         ),
-        returnValue: _FakeGenerationContext_19(
+        returnValue: _FakeGenerationContext_20(
           this,
           Invocation.method(
             #$writeInsertable,
@@ -1027,7 +1047,7 @@ class MockIProfileRepository extends _i1.Mock
           #createProfile,
           [profile],
         ),
-        returnValue: _i6.Future<_i7.Profile>.value(_FakeProfile_20(
+        returnValue: _i6.Future<_i7.Profile>.value(_FakeProfile_21(
           this,
           Invocation.method(
             #createProfile,
@@ -1061,7 +1081,7 @@ class MockIProfileRepository extends _i1.Mock
           #updateProfile,
           [profile],
         ),
-        returnValue: _i6.Future<_i7.Profile>.value(_FakeProfile_20(
+        returnValue: _i6.Future<_i7.Profile>.value(_FakeProfile_21(
           this,
           Invocation.method(
             #updateProfile,
@@ -1097,7 +1117,7 @@ class MockIAccountRepository extends _i1.Mock
           #createAccount,
           [account],
         ),
-        returnValue: _i6.Future<_i8.Account>.value(_FakeAccount_21(
+        returnValue: _i6.Future<_i8.Account>.value(_FakeAccount_22(
           this,
           Invocation.method(
             #createAccount,
@@ -1142,7 +1162,7 @@ class MockIAccountRepository extends _i1.Mock
           #updateAccount,
           [account],
         ),
-        returnValue: _i6.Future<_i8.Account>.value(_FakeAccount_21(
+        returnValue: _i6.Future<_i8.Account>.value(_FakeAccount_22(
           this,
           Invocation.method(
             #updateAccount,

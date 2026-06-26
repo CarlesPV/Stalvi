@@ -14,8 +14,12 @@ class SavingsGoals extends Table {
   TextColumn get icon => text()();
   DateTimeColumn get createdAt => dateTime().named('created_at')();
   DateTimeColumn get modifiedAt => dateTime().named('modified_at')();
+  DateTimeColumn get deletedAt => dateTime().named('deleted_at').nullable()();
   BoolColumn get isDeleted =>
       boolean().named('is_deleted').withDefault(const Constant(false))();
+  BoolColumn get isCompleted =>
+      boolean().named('is_completed').withDefault(const Constant(false))();
+  TextColumn get currency => text().withDefault(const Constant('EUR'))();
 
   @override
   Set<Column> get primaryKey => {id};

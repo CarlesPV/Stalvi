@@ -1,5 +1,7 @@
 import '../entities/account.dart';
+import '../entities/budget.dart';
 import '../entities/category.dart';
+import '../entities/savings_goal.dart';
 import '../entities/tag.dart';
 import '../entities/transaction.dart';
 import '../entities/period_summary.dart';
@@ -54,5 +56,8 @@ abstract class IExportService {
     List<CategoryStatistic> topIncomeCategories = const [],
     String defaultCurrency = 'EUR',
     Map<String, String> transferDestinations = const {},
+    List<Budget> budgets = const [],
+    Map<String, String> budgetCategoryNames = const {},
+    List<SavingsGoal> savingsGoals = const [],
   });
 }

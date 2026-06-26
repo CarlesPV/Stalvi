@@ -15,9 +15,11 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:stalvi/core/errors/app_exceptions.dart';
 import 'package:stalvi/core/l10n/app_localizations.dart';
 import 'package:stalvi/domain/entities/account.dart';
+import 'package:stalvi/domain/entities/budget.dart';
 import 'package:stalvi/domain/entities/category.dart';
 import 'package:stalvi/domain/entities/category_statistic.dart';
 import 'package:stalvi/domain/entities/period_summary.dart';
+import 'package:stalvi/domain/entities/savings_goal.dart';
 import 'package:stalvi/domain/entities/tag.dart';
 import 'package:stalvi/domain/entities/transaction.dart';
 import 'package:stalvi/domain/entities/transaction_type.dart';
@@ -244,6 +246,9 @@ class ExportServiceImpl implements IExportService {
     List<CategoryStatistic> topIncomeCategories = const [],
     String defaultCurrency = 'EUR',
     Map<String, String> transferDestinations = const {},
+    List<Budget> budgets = const [],
+    Map<String, String> budgetCategoryNames = const {},
+    List<SavingsGoal> savingsGoals = const [],
   }) async {
     try {
       await initializeDateFormatting(l10n.localeName);
@@ -253,6 +258,11 @@ class ExportServiceImpl implements IExportService {
       final monthLabel = DateFormat.yMMMM(l10n.localeName).format(month);
       final pdf = pw.Document();
       final symbol = _getCurrencySymbol(defaultCurrency);
+
+      // Filter only active (non-deleted) budgets and savings goals
+      final activeBudgets = budgets.where((b) => !b.isDeleted).toList();
+      final activeSavingsGoals =
+          savingsGoals.where((g) => !g.isDeleted).toList();
 
       pdf.addPage(
         pw.MultiPage(
@@ -340,6 +350,19 @@ class ExportServiceImpl implements IExportService {
                 6: pw.Alignment.centerLeft,
               },
               data: transactions.map((tx) {
+                // For transfers: show "Origin → Destination" in the account column
+                String accountCell;
+                if (tx.type == TransactionType.transfer) {
+                  final originName = accountMap[tx.accountId] ?? tx.accountId;
+                  if (transferDestinations.containsKey(tx.id)) {
+                    accountCell = transferDestinations[tx.id]!;
+                  } else {
+                    accountCell = originName;
+                  }
+                } else {
+                  accountCell = accountMap[tx.accountId] ?? tx.accountId;
+                }
+
                 return [
                   DateFormat(l10n.pdfDateFormat).format(tx.date),
                   tx.type == TransactionType.income
@@ -347,10 +370,7 @@ class ExportServiceImpl implements IExportService {
                       : tx.type == TransactionType.expense
                           ? l10n.expense
                           : l10n.filterTransfer,
-                  tx.type == TransactionType.transfer &&
-                          transferDestinations.containsKey(tx.id)
-                      ? transferDestinations[tx.id]!
-                      : (accountMap[tx.accountId] ?? tx.accountId),
+                  accountCell,
                   tx.categoryId != null
                       ? (categoryMap[tx.categoryId!] ?? '')
                       : '-',
@@ -362,8 +382,8 @@ class ExportServiceImpl implements IExportService {
             ),
             pw.SizedBox(height: 20),
 
-            // Income vs Expense Chart
-            _buildIncomeExpenseChart(summary, l10n),
+            // Income vs Expense Chart with 4 reference lines, labels on left
+            _buildIncomeExpenseChart(summary, l10n, symbol, defaultCurrency),
 
             // Top Spending Categories Chart
             if (topExpenseCategories.isNotEmpty)
@@ -380,6 +400,25 @@ class ExportServiceImpl implements IExportService {
                 l10n.statisticsTopIncome,
                 topIncomeCategories,
                 symbol,
+                l10n,
+              ),
+
+            // Budgets Table
+            if (activeBudgets.isNotEmpty)
+              _buildBudgetsTable(
+                activeBudgets,
+                budgetCategoryNames,
+                defaultCurrency,
+                symbol,
+                l10n,
+              ),
+
+            // Savings Goals Table
+            if (activeSavingsGoals.isNotEmpty)
+              _buildSavingsGoalsTable(
+                activeSavingsGoals,
+                symbol,
+                defaultCurrency,
                 l10n,
               ),
 
@@ -572,10 +611,29 @@ class ExportServiceImpl implements IExportService {
     }
   }
 
+  /// Builds the Income vs Expenses bar chart.
+  ///
+  /// Business rules:
+  /// - Remove textual scale label (old l10n.chart_scale header removed).
+  /// - Draw exactly 4 reference scale lines across the chart.
+  /// - Render numerical values (formatted with the user's default currency)
+  ///   strictly on the LEFT side of these lines for full visibility.
   static pw.Widget _buildIncomeExpenseChart(
     PeriodSummary summary,
     AppLocalizations l10n,
+    String currencySymbol,
+    String defaultCurrency,
   ) {
+    // Chart drawing area constants
+    const double chartLeft = 60.0; // left margin reserved for scale labels
+    const double chartRight = 300.0;
+    const double chartWidth = chartRight - chartLeft;
+    const double chartBottom = 10.0; // baseline y (PDF y-axis grows upward)
+    const double chartTop = 100.0; // top of chart area
+    const double chartHeight = chartTop - chartBottom;
+    const double totalWidth = chartRight + 10.0;
+    const double totalHeight = chartTop + 20.0; // extra for x-labels
+
     final double maxVal = max(
       1.0,
       max(
@@ -583,24 +641,29 @@ class ExportServiceImpl implements IExportService {
         summary.totalExpense.toDouble(),
       ),
     );
-    final double incomeHeight = (summary.totalIncome / maxVal) * 80.0;
-    final double expenseHeight = (summary.totalExpense / maxVal) * 80.0;
+
+    // Bar positions (centred in left/right halves of the chart area)
+    const double barWidth = 40.0;
+    const double incomeCenterX = chartLeft + chartWidth * 0.25;
+    const double expenseCenterX = chartLeft + chartWidth * 0.75;
+
+    final double incomeBarHeight = (summary.totalIncome / maxVal) * chartHeight;
+    final double expenseBarHeight =
+        (summary.totalExpense / maxVal) * chartHeight;
+
+    // 4 reference lines at 25%, 50%, 75%, 100% of maxVal
+    const int numLines = 4;
+    final List<double> scaleValues = List.generate(
+      numLines,
+      (i) => maxVal * (i + 1) / numLines,
+    );
 
     return pw.Column(
       crossAxisAlignment: pw.CrossAxisAlignment.start,
       children: [
-        pw.Row(
-          mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-          children: [
-            pw.Text(
-              l10n.expense_vs_income,
-              style: pw.TextStyle(fontSize: 12, fontWeight: pw.FontWeight.bold),
-            ),
-            pw.Text(
-              l10n.chart_scale,
-              style: const pw.TextStyle(fontSize: 8, color: PdfColors.grey600),
-            ),
-          ],
+        pw.Text(
+          l10n.expense_vs_income,
+          style: pw.TextStyle(fontSize: 12, fontWeight: pw.FontWeight.bold),
         ),
         pw.SizedBox(height: 10),
         pw.Container(
@@ -608,65 +671,81 @@ class ExportServiceImpl implements IExportService {
           child: pw.Column(
             children: [
               pw.SizedBox(
-                width: 300,
-                height: 120,
+                width: totalWidth,
+                height: totalHeight,
                 child: pw.Stack(
                   children: [
                     pw.Positioned.fill(
                       child: pw.CustomPaint(
                         painter: (PdfGraphics canvas, PdfPoint size) {
-                          // Draw grid lines
-                          canvas
-                            ..setStrokeColor(PdfColors.grey300)
-                            ..setLineWidth(0.5)
-                            // Grid line at 50%
-                            ..moveTo(20, 50)
-                            ..lineTo(280, 50)
-                            // Grid line at 100%
-                            ..moveTo(20, 90)
-                            ..lineTo(280, 90)
-                            ..strokePath();
+                          // Draw 4 horizontal reference lines
+                          for (int i = 0; i < numLines; i++) {
+                            final double fraction = (i + 1) / numLines;
+                            final double lineY =
+                                chartBottom + fraction * chartHeight;
+
+                            canvas
+                              ..setStrokeColor(PdfColors.grey300)
+                              ..setLineWidth(0.5)
+                              ..moveTo(chartLeft, lineY)
+                              ..lineTo(chartRight, lineY)
+                              ..strokePath();
+                          }
 
                           // Draw Income Bar (Green)
                           canvas
                             ..setFillColor(PdfColors.green700)
-                            ..drawRect(60, 10, 40, incomeHeight)
+                            ..drawRect(
+                              incomeCenterX - barWidth / 2,
+                              chartBottom,
+                              barWidth,
+                              incomeBarHeight,
+                            )
                             ..fillPath();
 
                           // Draw Expense Bar (Red)
                           canvas
                             ..setFillColor(PdfColors.red700)
-                            ..drawRect(180, 10, 40, expenseHeight)
+                            ..drawRect(
+                              expenseCenterX - barWidth / 2,
+                              chartBottom,
+                              barWidth,
+                              expenseBarHeight,
+                            )
                             ..fillPath();
 
                           // Draw baseline
                           canvas
                             ..setStrokeColor(PdfColors.grey400)
                             ..setLineWidth(1)
-                            ..moveTo(20, 10)
-                            ..lineTo(280, 10)
+                            ..moveTo(chartLeft, chartBottom)
+                            ..lineTo(chartRight, chartBottom)
                             ..strokePath();
                         },
                       ),
                     ),
-                    pw.Positioned(
-                      left: 0,
-                      bottom: 86,
-                      child: pw.Text(
-                        _centsToDecimal(maxVal.toInt(), l10n.localeName),
-                        style: const pw.TextStyle(
-                            fontSize: 6, color: PdfColors.grey600),
-                      ),
-                    ),
-                    pw.Positioned(
-                      left: 0,
-                      bottom: 46,
-                      child: pw.Text(
-                        _centsToDecimal(maxVal.toInt() ~/ 2, l10n.localeName),
-                        style: const pw.TextStyle(
-                            fontSize: 6, color: PdfColors.grey600),
-                      ),
-                    ),
+
+                    // Scale value labels – positioned strictly on the left side
+                    ...List.generate(numLines, (i) {
+                      final double fraction = (i + 1) / numLines;
+                      final double lineY = chartBottom + fraction * chartHeight;
+                      // Convert canvas y to Stack bottom offset
+                      final double bottomOffset = lineY - 4;
+                      final scaleVal = scaleValues[i].toInt();
+                      final label =
+                          '$currencySymbol ${_centsToDecimal(scaleVal, l10n.localeName)}';
+                      return pw.Positioned(
+                        left: 0,
+                        bottom: bottomOffset,
+                        child: pw.Text(
+                          label,
+                          style: const pw.TextStyle(
+                            fontSize: 5,
+                            color: PdfColors.grey700,
+                          ),
+                        ),
+                      );
+                    }),
                   ],
                 ),
               ),
@@ -674,9 +753,9 @@ class ExportServiceImpl implements IExportService {
               pw.Row(
                 mainAxisAlignment: pw.MainAxisAlignment.center,
                 children: [
-                  pw.SizedBox(width: 40),
+                  pw.SizedBox(width: chartLeft.toDouble()),
                   pw.Container(
-                    width: 80,
+                    width: chartWidth / 2,
                     alignment: pw.Alignment.center,
                     child: pw.Text(
                       l10n.income,
@@ -686,9 +765,8 @@ class ExportServiceImpl implements IExportService {
                       ),
                     ),
                   ),
-                  pw.SizedBox(width: 40),
                   pw.Container(
-                    width: 80,
+                    width: chartWidth / 2,
                     alignment: pw.Alignment.center,
                     child: pw.Text(
                       l10n.expenses,
@@ -698,7 +776,6 @@ class ExportServiceImpl implements IExportService {
                       ),
                     ),
                   ),
-                  pw.SizedBox(width: 40),
                 ],
               ),
             ],
@@ -841,6 +918,267 @@ class ExportServiceImpl implements IExportService {
                     padding: const pw.EdgeInsets.all(4),
                     child: pw.Text(
                       '$symbol ${_centsToDecimal(cat.totalAmount.toInt(), l10n.localeName)}',
+                      textAlign: pw.TextAlign.right,
+                      style: const pw.TextStyle(fontSize: 8),
+                    ),
+                  ),
+                ],
+              );
+            }),
+          ],
+        ),
+        pw.SizedBox(height: 20),
+      ],
+    );
+  }
+
+  /// Builds the Budgets table section.
+  ///
+  /// Columns: Category | Date Range | % Spent | Max Value (with currency)
+  /// Only active (non-deleted) budgets are included.
+  static pw.Widget _buildBudgetsTable(
+    List<Budget> budgets,
+    Map<String, String> categoryNames,
+    String defaultCurrency,
+    String currencySymbol,
+    AppLocalizations l10n,
+  ) {
+    final dateFormat = DateFormat(l10n.pdfDateFormat);
+
+    return pw.Column(
+      crossAxisAlignment: pw.CrossAxisAlignment.start,
+      children: [
+        pw.Text(
+          l10n.pdfBudgetsTitle,
+          style: pw.TextStyle(fontSize: 12, fontWeight: pw.FontWeight.bold),
+        ),
+        pw.SizedBox(height: 8),
+        pw.Table(
+          border: pw.TableBorder.all(color: PdfColors.grey400, width: 0.5),
+          columnWidths: {
+            0: const pw.FlexColumnWidth(2),
+            1: const pw.FlexColumnWidth(2),
+            2: const pw.FixedColumnWidth(55),
+            3: const pw.FlexColumnWidth(2),
+          },
+          children: [
+            // Header row
+            pw.TableRow(
+              decoration: const pw.BoxDecoration(color: PdfColors.grey300),
+              children: [
+                pw.Padding(
+                  padding: const pw.EdgeInsets.all(4),
+                  child: pw.Text(
+                    l10n.pdfBudgetsColCategory,
+                    style: pw.TextStyle(
+                      fontWeight: pw.FontWeight.bold,
+                      fontSize: 9,
+                    ),
+                  ),
+                ),
+                pw.Padding(
+                  padding: const pw.EdgeInsets.all(4),
+                  child: pw.Text(
+                    l10n.pdfBudgetsColDateRange,
+                    style: pw.TextStyle(
+                      fontWeight: pw.FontWeight.bold,
+                      fontSize: 9,
+                    ),
+                  ),
+                ),
+                pw.Padding(
+                  padding: const pw.EdgeInsets.all(4),
+                  child: pw.Text(
+                    l10n.pdfBudgetsColSpent,
+                    textAlign: pw.TextAlign.right,
+                    style: pw.TextStyle(
+                      fontWeight: pw.FontWeight.bold,
+                      fontSize: 9,
+                    ),
+                  ),
+                ),
+                pw.Padding(
+                  padding: const pw.EdgeInsets.all(4),
+                  child: pw.Text(
+                    '${l10n.pdfBudgetsColMaxValue} ($defaultCurrency)',
+                    textAlign: pw.TextAlign.right,
+                    style: pw.TextStyle(
+                      fontWeight: pw.FontWeight.bold,
+                      fontSize: 9,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            // Data rows
+            ...budgets.map((budget) {
+              final categoryName =
+                  categoryNames[budget.categoryId] ?? budget.categoryId;
+              final dateRange =
+                  '${dateFormat.format(budget.startDate)} – ${dateFormat.format(budget.endDate)}';
+              final spentPct = budget.targetAmount > 0
+                  ? (budget.currentAmount / budget.targetAmount * 100)
+                  : 0.0;
+              final maxValueLabel =
+                  '$currencySymbol ${_centsToDecimal(budget.targetAmount, l10n.localeName)} $defaultCurrency';
+
+              // Color-code row background when overspent
+              final pw.BoxDecoration? rowDecoration = spentPct > 100
+                  ? const pw.BoxDecoration(color: PdfColors.red50)
+                  : null;
+
+              return pw.TableRow(
+                decoration: rowDecoration,
+                children: [
+                  pw.Padding(
+                    padding: const pw.EdgeInsets.all(4),
+                    child: pw.Text(
+                      categoryName,
+                      style: const pw.TextStyle(fontSize: 8),
+                    ),
+                  ),
+                  pw.Padding(
+                    padding: const pw.EdgeInsets.all(4),
+                    child: pw.Text(
+                      dateRange,
+                      style: const pw.TextStyle(fontSize: 8),
+                    ),
+                  ),
+                  pw.Padding(
+                    padding: const pw.EdgeInsets.all(4),
+                    child: pw.Text(
+                      '${spentPct.toStringAsFixed(1)}%',
+                      textAlign: pw.TextAlign.right,
+                      style: pw.TextStyle(
+                        fontSize: 8,
+                        color:
+                            spentPct > 100 ? PdfColors.red700 : PdfColors.black,
+                      ),
+                    ),
+                  ),
+                  pw.Padding(
+                    padding: const pw.EdgeInsets.all(4),
+                    child: pw.Text(
+                      maxValueLabel,
+                      textAlign: pw.TextAlign.right,
+                      style: const pw.TextStyle(fontSize: 8),
+                    ),
+                  ),
+                ],
+              );
+            }),
+          ],
+        ),
+        pw.SizedBox(height: 20),
+      ],
+    );
+  }
+
+  /// Builds the Savings Goals table section.
+  ///
+  /// Columns: Name | % Completed | Target Amount (with goal currency)
+  /// Only active (non-deleted) goals are included.
+  static pw.Widget _buildSavingsGoalsTable(
+    List<SavingsGoal> goals,
+    String currencySymbol,
+    String defaultCurrency,
+    AppLocalizations l10n,
+  ) {
+    return pw.Column(
+      crossAxisAlignment: pw.CrossAxisAlignment.start,
+      children: [
+        pw.Text(
+          l10n.pdfSavingsGoalsTitle,
+          style: pw.TextStyle(fontSize: 12, fontWeight: pw.FontWeight.bold),
+        ),
+        pw.SizedBox(height: 8),
+        pw.Table(
+          border: pw.TableBorder.all(color: PdfColors.grey400, width: 0.5),
+          columnWidths: {
+            0: const pw.FlexColumnWidth(3),
+            1: const pw.FixedColumnWidth(65),
+            2: const pw.FlexColumnWidth(2),
+          },
+          children: [
+            // Header row
+            pw.TableRow(
+              decoration: const pw.BoxDecoration(color: PdfColors.grey300),
+              children: [
+                pw.Padding(
+                  padding: const pw.EdgeInsets.all(4),
+                  child: pw.Text(
+                    l10n.pdfSavingsColName,
+                    style: pw.TextStyle(
+                      fontWeight: pw.FontWeight.bold,
+                      fontSize: 9,
+                    ),
+                  ),
+                ),
+                pw.Padding(
+                  padding: const pw.EdgeInsets.all(4),
+                  child: pw.Text(
+                    l10n.pdfSavingsColCompleted,
+                    textAlign: pw.TextAlign.right,
+                    style: pw.TextStyle(
+                      fontWeight: pw.FontWeight.bold,
+                      fontSize: 9,
+                    ),
+                  ),
+                ),
+                pw.Padding(
+                  padding: const pw.EdgeInsets.all(4),
+                  child: pw.Text(
+                    '${l10n.pdfSavingsColTarget} ($defaultCurrency)',
+                    textAlign: pw.TextAlign.right,
+                    style: pw.TextStyle(
+                      fontWeight: pw.FontWeight.bold,
+                      fontSize: 9,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            // Data rows
+            ...goals.map((goal) {
+              final completedPct = goal.targetAmount > 0
+                  ? (goal.currentAmount / goal.targetAmount * 100)
+                  : 0.0;
+              final targetLabel =
+                  '$currencySymbol ${_centsToDecimal(goal.targetAmount, l10n.localeName)} $defaultCurrency';
+
+              // Highlight completed goals
+              final pw.BoxDecoration? rowDecoration =
+                  goal.isCompleted || completedPct >= 100
+                      ? const pw.BoxDecoration(color: PdfColors.green50)
+                      : null;
+
+              return pw.TableRow(
+                decoration: rowDecoration,
+                children: [
+                  pw.Padding(
+                    padding: const pw.EdgeInsets.all(4),
+                    child: pw.Text(
+                      goal.name,
+                      style: const pw.TextStyle(fontSize: 8),
+                    ),
+                  ),
+                  pw.Padding(
+                    padding: const pw.EdgeInsets.all(4),
+                    child: pw.Text(
+                      '${completedPct.clamp(0.0, 100.0).toStringAsFixed(1)}%',
+                      textAlign: pw.TextAlign.right,
+                      style: pw.TextStyle(
+                        fontSize: 8,
+                        color: (goal.isCompleted || completedPct >= 100)
+                            ? PdfColors.green700
+                            : PdfColors.black,
+                      ),
+                    ),
+                  ),
+                  pw.Padding(
+                    padding: const pw.EdgeInsets.all(4),
+                    child: pw.Text(
+                      targetLabel,
                       textAlign: pw.TextAlign.right,
                       style: const pw.TextStyle(fontSize: 8),
                     ),

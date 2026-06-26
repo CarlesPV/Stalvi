@@ -42,6 +42,9 @@ import 'package:stalvi/domain/usecases/wipe_all_data_usecase.dart';
 import 'package:stalvi/domain/usecases/trash_usecases.dart';
 import 'package:stalvi/domain/usecases/create_account_usecase.dart';
 import 'package:stalvi/domain/usecases/update_account_usecase.dart';
+import 'package:stalvi/domain/usecases/delete_account_usecase.dart';
+import 'package:stalvi/domain/usecases/soft_delete_savings_goal_usecase.dart';
+import 'package:stalvi/domain/usecases/update_budget_progress_usecase.dart';
 import 'package:stalvi/domain/usecases/delete_and_reassign_category_usecase.dart';
 import 'package:stalvi/domain/usecases/delete_and_reassign_tag_usecase.dart';
 import 'package:stalvi/domain/usecases/export_encrypted_json_use_case.dart';
@@ -113,6 +116,21 @@ final exchangeRateRepositoryProvider = Provider<IExchangeRateRepository>((ref) {
   );
 });
 
+/// Provides the [UpdateBudgetProgressUseCase] instance.
+final updateBudgetProgressUseCaseProvider =
+    Provider<UpdateBudgetProgressUseCase>((ref) {
+  final budgetRepo = ref.watch(budgetRepositoryProvider);
+  final transactionRepo = ref.watch(transactionRepositoryProvider);
+  final accountRepo = ref.watch(accountRepositoryProvider);
+  final exchangeRateRepo = ref.watch(exchangeRateRepositoryProvider);
+  return UpdateBudgetProgressUseCase(
+    budgetRepo,
+    transactionRepo,
+    accountRepo,
+    exchangeRateRepo,
+  );
+});
+
 /// Provides the [AddTransactionUseCase] instance.
 final addTransactionUseCaseProvider = Provider<AddTransactionUseCase>((ref) {
   final transactionRepo = ref.watch(transactionRepositoryProvider);
@@ -124,6 +142,8 @@ final addTransactionUseCaseProvider = Provider<AddTransactionUseCase>((ref) {
     accountRepo,
     profileRepo,
     exchangeRateRepo,
+    ref.watch(savingsGoalRepositoryProvider),
+    ref.watch(updateBudgetProgressUseCaseProvider),
   );
 });
 
@@ -157,6 +177,13 @@ final initializeDefaultDataUseCaseProvider =
 final createAccountUseCaseProvider = Provider<CreateAccountUseCase>((ref) {
   final accountRepo = ref.watch(accountRepositoryProvider);
   return CreateAccountUseCase(accountRepo);
+});
+
+/// Provides the [DeleteAccountUseCase] instance.
+final deleteAccountUseCaseProvider = Provider<DeleteAccountUseCase>((ref) {
+  final accountRepo = ref.watch(accountRepositoryProvider);
+  final budgetRepo = ref.watch(budgetRepositoryProvider);
+  return DeleteAccountUseCase(accountRepo, budgetRepo);
 });
 
 /// Provides the [UpdateAccountUseCase] instance.
@@ -262,6 +289,14 @@ final deleteAndReassignTagUseCaseProvider =
   return DeleteAndReassignTagUseCase(tagRepo, transactionRepo);
 });
 
+/// Provides the [SoftDeleteSavingsGoalUseCase] instance.
+final softDeleteSavingsGoalUseCaseProvider =
+    Provider<SoftDeleteSavingsGoalUseCase>((ref) {
+  final savingsGoalRepo = ref.watch(savingsGoalRepositoryProvider);
+  final transactionRepo = ref.watch(transactionRepositoryProvider);
+  return SoftDeleteSavingsGoalUseCase(savingsGoalRepo, transactionRepo);
+});
+
 /// Provides the [IExportService] implementation.
 final exportServiceProvider = Provider<IExportService>((ref) {
   return ExportServiceImpl();
@@ -346,6 +381,8 @@ final exportMonthlyPdfUseCaseProvider =
     exchangeRateRepository: ref.watch(exchangeRateRepositoryProvider),
     getPeriodSummaryUseCase: ref.watch(getPeriodSummaryUseCaseProvider),
     getTopCategoriesUseCase: ref.watch(getTopCategoriesUseCaseProvider),
+    budgetRepository: ref.watch(budgetRepositoryProvider),
+    savingsGoalRepository: ref.watch(savingsGoalRepositoryProvider),
     exportService: ref.watch(exportServiceProvider),
     l10n: l10n,
   );

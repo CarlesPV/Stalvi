@@ -8,6 +8,7 @@ class Transaction {
   final TransactionType type;
   final String accountId;
   final String? categoryId;
+  final String? savingsGoalId;
   final String? notes;
   final String originalCurrency;
   final int? convertedAmount;
@@ -32,6 +33,7 @@ class Transaction {
     required this.type,
     required this.accountId,
     this.categoryId,
+    this.savingsGoalId,
     this.notes,
     required this.originalCurrency,
     this.convertedAmount,
@@ -53,6 +55,7 @@ class Transaction {
         other.type == type &&
         other.accountId == accountId &&
         other.categoryId == categoryId &&
+        other.savingsGoalId == savingsGoalId &&
         other.notes == notes &&
         other.originalCurrency == originalCurrency &&
         other.convertedAmount == convertedAmount &&
@@ -71,6 +74,7 @@ class Transaction {
         type.hashCode ^
         accountId.hashCode ^
         categoryId.hashCode ^
+        savingsGoalId.hashCode ^
         notes.hashCode ^
         originalCurrency.hashCode ^
         convertedAmount.hashCode ^
@@ -88,6 +92,7 @@ class Transaction {
     TransactionType? type,
     String? accountId,
     String? categoryId,
+    String? savingsGoalId,
     String? notes,
     String? originalCurrency,
     int? convertedAmount,
@@ -105,6 +110,7 @@ class Transaction {
       type: type ?? this.type,
       accountId: accountId ?? this.accountId,
       categoryId: categoryId ?? this.categoryId,
+      savingsGoalId: savingsGoalId ?? this.savingsGoalId,
       notes: notes ?? this.notes,
       originalCurrency: originalCurrency ?? this.originalCurrency,
       convertedAmount: convertedAmount ?? this.convertedAmount,

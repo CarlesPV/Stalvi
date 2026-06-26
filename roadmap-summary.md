@@ -421,15 +421,27 @@ This document lists the completed phases of the Stalvi development roadmap, prov
   - 100% clean static analysis (`flutter analyze` with 0 issues).
   - Clean `flutter test` execution: all 381 tests pass successfully.
 
+### Phase 27: UI Constraints for Budgets, Goals, and Recycle Bin
+* **Completion Date:** June 25, 2026
+* **Objective:** Implement input locking constraints on budget and savings goal forms, require account mapping on budget creation, embed savings goals as transfer destinations, and display soft-deleted budgets and savings goals inside the Recycle Bin with complete English, Spanish, and Catalan localization.
+* **Accomplishments:**
+  - **Edit-Mode Lockdowns:** Locked Currency and Target Amount fields in Edit mode for Budgets and Savings Goals sheets to preserve financial settings integrity.
+  - **Account Mapping Requirement:** Enforced mandatory Account selection during Budget creation.
+  - **Transfer Target Integration:** Extended the Transfer destination selector to display active Savings Goals alongside standard Accounts.
+  - **Recycle Bin Expansion:** Added support to display soft-deleted Budgets and Savings Goals inside the Recycle Bin list, rendering localized titles and metadata.
+  - **Full Translation Alignment:** Localized all new components and messages in English, Spanish, and Catalan, ensuring complete i18n parity.
+  - **Test Suite Updates:** Updated mock classes and database models inside the testing suite to align with constructor modifications.
+* **Verification:**
+  - 100% clean static analysis (`flutter analyze` with 0 issues).
+  - Executed the full automated test suite containing 393 unit and widget tests, achieving a 100% success rate (all tests passed!).
+
 ## Recent Updates
-- Integrated Chinese Yuan (CNY) and optimized exchange rate API payload sizes (caching 8 target currencies for 24h).
-- Added multi-currency support to transfer transactions, dynamically resolving rates at transaction time.
-- Enhanced Riverpod state management to reactively redraw statistics and dashboard modules upon default currency updates.
-- Refactored monthly PDF export layouts to incorporate localized titles, default-currency formatting, and top categories pie charts.
-- Configured native file openers using `open_filex` for post-export feedback on success Snackbars.
-- Completed comprehensive UI form overflows audit using scroll views and keyboard safety widgets.
-- Cleaned unused legal assets, resolved lints/deprecation warnings, and added text overflow safeguards.
-- Achieved 100% pass rate with all 381 tests passing successfully and 0 lint issues.
+- Locked Currency and Target Amount fields in Edit mode for Budgets and Savings Goals sheets, and required Account mapping.
+- Added support to select active Savings Goals as destination targets in Transfer transactions.
+- Extended the Recycle Bin UI to list soft-deleted Budgets and Savings Goals with localized names.
+- Audited and updated the translation ARB catalogs for English, Spanish, and Catalan (100% parity).
+- Resolved test suite mock compiling issues and reached a 100% test pass rate (all 393 tests passing successfully).
+- Achieved a completely clean static analysis check with 0 issues on `flutter analyze`.
 
 
 

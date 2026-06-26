@@ -1295,5 +1295,45 @@
   "errorTargetDatePast": "La data objectiu ha de ser en el futur",
   "@errorTargetDatePast": {
     "description": "Validation error for target date"
+  },
+  "pdfBudgetsTitle": "Pressupostos",
+  "@pdfBudgetsTitle": {
+    "description": "Section title for the Budgets table in PDF export"
+  },
+  "pdfBudgetsColCategory": "Categoria",
+  "@pdfBudgetsColCategory": {
+    "description": "Column header for Category in PDF Budgets table"
+  },
+  "pdfBudgetsColDateRange": "Rang de Dates",
+  "@pdfBudgetsColDateRange": {
+    "description": "Column header for Date Range in PDF Budgets table"
+  },
+  "pdfBudgetsColSpent": "% Gastat",
+  "@pdfBudgetsColSpent": {
+    "description": "Column header for Percentage Spent in PDF Budgets table"
+  },
+  "pdfBudgetsColMaxValue": "Valor Màxim",
+  "@pdfBudgetsColMaxValue": {
+    "description": "Column header for Maximum Budget Value in PDF Budgets table"
+  },
+  "pdfSavingsGoalsTitle": "Metes d'Estalvi",
+  "@pdfSavingsGoalsTitle": {
+    "description": "Section title for the Savings Goals table in PDF export"
+  },
+  "pdfSavingsColName": "Nom",
+  "@pdfSavingsColName": {
+    "description": "Column header for Name in PDF Savings Goals table"
+  },
+  "pdfSavingsColCompleted": "% Completat",
+  "@pdfSavingsColCompleted": {
+    "description": "Column header for Percentage Completed in PDF Savings Goals table"
+  },
+  "pdfSavingsColTarget": "Quantitat Objectiu",
+  "@pdfSavingsColTarget": {
+    "description": "Column header for Target Amount in PDF Savings Goals table"
+  },
+  "labelBudget": "Pressupost",
+  "@labelBudget": {
+    "description": "Singular label for budget"
   }
 }

@@ -199,6 +199,14 @@
   - [x] Clean unused legal markdown assets (privacy.md and terms.md) from assets directory to optimize space.
   - [x] Ensure 100% build health, clean lint checks (0 issues on `flutter analyze`), and successfully execute all 381 tests.
 
+- [x] **Phase 27: UI Constraints for Budgets, Goals, and Recycle Bin**
+  - [x] Implement edit-mode locks (read-only states) for Currency and Target Amount fields in Budgets and Savings Goals sheets.
+  - [x] Require Account selection when creating a Budget.
+  - [x] Include active Savings Goals in the Destination selector dropdown for Transfer transactions alongside standard Accounts.
+  - [x] Render soft-deleted Budgets and Savings Goals inside the Recycle Bin (Trash) lists.
+  - [x] Localize all new UI elements and options in English, Spanish, and Catalan, ensuring 100% localization parity.
+  - [x] Fix compilation issues across test mocks, unit tests, and widget tests (393/393 passing).
+
 ## Current Phase
 
-## Phase 27: Release preparation and store deployment.
+## Phase 28: Release preparation and store deployment.

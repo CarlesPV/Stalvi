@@ -199,8 +199,8 @@ class _EditAccountDialogState extends ConsumerState<EditAccountDialog> {
                           });
                           try {
                             await ref
-                                .read(accountRepositoryProvider)
-                                .deleteAccount(widget.account.id);
+                                .read(deleteAccountUseCaseProvider)
+                                .execute(widget.account.id);
                             if (dialogContext.mounted) {
                               Navigator.of(dialogContext).pop(true);
                             }

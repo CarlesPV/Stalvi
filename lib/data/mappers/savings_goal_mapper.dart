@@ -14,7 +14,10 @@ class SavingsGoalMapper {
       icon: data.icon,
       createdAt: data.createdAt,
       modifiedAt: data.modifiedAt,
+      deletedAt: data.deletedAt,
       isDeleted: data.isDeleted,
+      isCompleted: data.isCompleted,
+      currency: data.currency,
     );
   }
 
@@ -29,7 +32,10 @@ class SavingsGoalMapper {
       icon: goal.icon,
       createdAt: goal.createdAt,
       modifiedAt: goal.modifiedAt,
+      deletedAt: drift.Value(goal.deletedAt),
       isDeleted: drift.Value(goal.isDeleted),
+      isCompleted: drift.Value(goal.isCompleted),
+      currency: drift.Value(goal.currency),
     );
   }
 }

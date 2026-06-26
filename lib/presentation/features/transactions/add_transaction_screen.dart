@@ -9,6 +9,7 @@ import 'package:stalvi/domain/entities/category.dart';
 import 'package:stalvi/domain/entities/tag.dart';
 import 'package:stalvi/domain/entities/category_type.dart';
 import 'package:stalvi/domain/entities/transaction_type.dart';
+import 'package:stalvi/domain/entities/savings_goal.dart';
 import 'package:stalvi/presentation/providers/add_transaction_notifier.dart';
 import 'package:stalvi/presentation/providers/repository_providers.dart';
 import 'package:stalvi/core/utils/currency_formatter.dart';
@@ -125,12 +126,28 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
             orElse: () => accounts.first,
           );
 
-    final selectedToAccount = accounts.isEmpty || state.toAccountId == null
-        ? null
-        : accounts.firstWhere(
-            (a) => a.id == state.toAccountId,
-            orElse: () => accounts.first,
-          );
+    final savingsGoalsAsync = ref.watch(savingsGoalsStreamProvider);
+    final savingsGoals = savingsGoalsAsync.valueOrNull ?? [];
+
+    Account? selectedToAccount;
+    SavingsGoal? selectedToSavingsGoal;
+
+    if (state.toAccountId != null) {
+      for (final a in accounts) {
+        if (a.id == state.toAccountId) {
+          selectedToAccount = a;
+          break;
+        }
+      }
+      if (selectedToAccount == null) {
+        for (final sg in savingsGoals) {
+          if (sg.id == state.toAccountId) {
+            selectedToSavingsGoal = sg;
+            break;
+          }
+        }
+      }
+    }
 
     final categories = categoriesAsync.valueOrNull ?? [];
     final selectedCategory = state.categoryId == null
@@ -371,20 +388,26 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                           height: 1,
                           color: colorScheme.outline.withValues(alpha: 0.08),
                         ),
-                        // To Account Selector
+                        // To Account / Savings Goal Selector
                         _FormSelectorTile(
                           label: AppLocalizations.of(context)!.labelToAccount,
                           value: selectedToAccount?.name ??
+                              selectedToSavingsGoal?.name ??
                               AppLocalizations.of(context)!.labelSelectAccount,
                           icon: selectedToAccount != null
                               ? _getIconData(selectedToAccount.icon)
-                              : Icons.account_balance_wallet_rounded,
+                              : (selectedToSavingsGoal != null
+                                  ? _getIconData(selectedToSavingsGoal.icon)
+                                  : Icons.account_balance_wallet_rounded),
                           iconColor: selectedToAccount != null
                               ? _parseHexColor(selectedToAccount.color)
-                              : colorScheme.onSurfaceVariant,
+                              : (selectedToSavingsGoal != null
+                                  ? _parseHexColor(selectedToSavingsGoal.color)
+                                  : colorScheme.onSurfaceVariant),
                           onTap: () => _showAccountSelector(
                             context,
-                            accountsAsync.valueOrNull ?? [],
+                            accounts,
+                            savingsGoals: savingsGoals,
                             isSource: false,
                           ),
                         ),
@@ -560,6 +583,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
   void _showAccountSelector(
     BuildContext context,
     List<Account> accounts, {
+    List<SavingsGoal> savingsGoals = const [],
     required bool isSource,
   }) {
     final theme = Theme.of(context);
@@ -593,66 +617,124 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
               Flexible(
                 child: ListView.builder(
                   shrinkWrap: true,
-                  itemCount: accounts.length,
+                  itemCount: isSource
+                      ? accounts.length
+                      : accounts.length + savingsGoals.length,
                   itemBuilder: (context, index) {
-                    final account = accounts[index];
-                    final isSelected = isSource
-                        ? state.accountId == account.id
-                        : state.toAccountId == account.id;
-                    final accColor = _parseHexColor(account.color);
+                    if (isSource || index < accounts.length) {
+                      final account = accounts[index];
+                      final isSelected = isSource
+                          ? state.accountId == account.id
+                          : state.toAccountId == account.id;
+                      final accColor = _parseHexColor(account.color);
 
-                    return Container(
-                      margin: const EdgeInsets.only(bottom: 10),
-                      decoration: BoxDecoration(
-                        color: isSelected
-                            ? accColor.withValues(alpha: 0.08)
-                            : colorScheme.surfaceContainerHighest
-                                .withValues(alpha: 0.2),
-                        borderRadius: BorderRadius.circular(14),
-                        border: Border.all(
+                      return Container(
+                        margin: const EdgeInsets.only(bottom: 10),
+                        decoration: BoxDecoration(
                           color: isSelected
-                              ? accColor.withValues(alpha: 0.4)
-                              : Colors.transparent,
-                        ),
-                      ),
-                      child: ListTile(
-                        leading: CircleAvatar(
-                          backgroundColor: accColor.withValues(alpha: 0.12),
-                          child: Icon(
-                            _getIconData(account.icon),
-                            color: accColor,
-                            size: 20,
+                              ? accColor.withValues(alpha: 0.08)
+                              : colorScheme.surfaceContainerHighest
+                                  .withValues(alpha: 0.2),
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(
+                            color: isSelected
+                                ? accColor.withValues(alpha: 0.4)
+                                : Colors.transparent,
                           ),
                         ),
-                        title: Text(
-                          account.name,
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            fontWeight: FontWeight.w700,
+                        child: ListTile(
+                          leading: CircleAvatar(
+                            backgroundColor: accColor.withValues(alpha: 0.12),
+                            child: Icon(
+                              _getIconData(account.icon),
+                              color: accColor,
+                              size: 20,
+                            ),
+                          ),
+                          title: Text(
+                            account.name,
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          subtitle: Text(
+                            account.currency,
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: colorScheme.onSurfaceVariant,
+                            ),
+                          ),
+                          trailing: isSelected
+                              ? Icon(Icons.check_circle_rounded,
+                                  color: accColor)
+                              : null,
+                          onTap: () {
+                            if (isSource) {
+                              ref
+                                  .read(addTransactionNotifierProvider.notifier)
+                                  .updateAccount(account.id);
+                            } else {
+                              ref
+                                  .read(addTransactionNotifierProvider.notifier)
+                                  .updateToAccount(account.id);
+                            }
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                      );
+                    } else {
+                      final sgIndex = index - accounts.length;
+                      final goal = savingsGoals[sgIndex];
+                      final isSelected = state.toAccountId == goal.id;
+                      final goalColor = _parseHexColor(goal.color);
+
+                      return Container(
+                        margin: const EdgeInsets.only(bottom: 10),
+                        decoration: BoxDecoration(
+                          color: isSelected
+                              ? goalColor.withValues(alpha: 0.08)
+                              : colorScheme.surfaceContainerHighest
+                                  .withValues(alpha: 0.2),
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(
+                            color: isSelected
+                                ? goalColor.withValues(alpha: 0.4)
+                                : Colors.transparent,
                           ),
                         ),
-                        subtitle: Text(
-                          account.currency,
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: colorScheme.onSurfaceVariant,
+                        child: ListTile(
+                          leading: CircleAvatar(
+                            backgroundColor: goalColor.withValues(alpha: 0.12),
+                            child: Icon(
+                              _getIconData(goal.icon),
+                              color: goalColor,
+                              size: 20,
+                            ),
                           ),
-                        ),
-                        trailing: isSelected
-                            ? Icon(Icons.check_circle_rounded, color: accColor)
-                            : null,
-                        onTap: () {
-                          if (isSource) {
+                          title: Text(
+                            goal.name,
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          subtitle: Text(
+                            AppLocalizations.of(context)!.savingsGoal,
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: colorScheme.onSurfaceVariant,
+                            ),
+                          ),
+                          trailing: isSelected
+                              ? Icon(Icons.check_circle_rounded,
+                                  color: goalColor)
+                              : null,
+                          onTap: () {
                             ref
                                 .read(addTransactionNotifierProvider.notifier)
-                                .updateAccount(account.id);
-                          } else {
-                            ref
-                                .read(addTransactionNotifierProvider.notifier)
-                                .updateToAccount(account.id);
-                          }
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                    );
+                                .updateToAccount(goal.id);
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                      );
+                    }
                   },
                 ),
               ),

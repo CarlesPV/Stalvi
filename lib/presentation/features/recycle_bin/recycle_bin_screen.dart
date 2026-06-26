@@ -83,6 +83,9 @@ class _TrashItemTile extends ConsumerWidget {
     }
 
     String getFormattedTitle() {
+      if (item.type == TrashItemType.budget) {
+        return l10n.labelBudget;
+      }
       if (item.type != TrashItemType.transaction || item.metadata == null) {
         return item.name;
       }

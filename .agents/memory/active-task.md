@@ -1,15 +1,25 @@
-# Active Task: Phase 26 - Production Readiness, PDF Export Enhancement & Budgets/Goals UI
+# Active Task: Phase 27 - Advanced Budgets, Goals, and Reporting
 
-## Current Objective
-Finalize the PDF export functionality with localized data, currency injection, and chart scales. Implement the Budgets and Savings Goals UI/State integration. Perform a complete QA pass for 3 languages, UI overflows, and CI/CD validation to ensure production readiness.
+## Current State
+The core Clean Architecture structure, Riverpod state management, and encrypted local database (Drift) are implemented up to Phase 26. We are now integrating complex business rules linking accounts, budgets, goals, and strictly formatting the PDF exports.
 
-## Context
-- The data layer for Budgets and Goals is complete, but the UI (`budgets_and_goals_screen.dart`) requires Riverpod state management integration.
-- `export_monthly_pdf_use_case.dart` needs updates to handle localized text, dynamic currency formats, chart scales, and destination accounts for transfers.
-- The app supports English, Spanish, and Catalan. Complete L10n coverage and UI overflow testing are mandatory before launch.
+## Objectives
+1. **Reporting Enhancements**: 
+   - Modify PDF export to adjust the Income vs Expense chart (remove text scale, use 4 reference lines with localized currency values on the left).
+   - Display the destination account/wallet for Transfer-type transactions in the PDF.
+   - Append active Budgets and Savings Goals tables at the end of the PDF, localized in EN, ES, and CA.
+2. **Budgets & Goals Domain Rules**:
+   - Implement soft-delete (30-day trash retention) for Budgets and Savings Goals.
+   - Lock currency and target amounts upon creation for both Budgets and Goals.
+   - Bind Budgets to a specific account upon creation. If the account is deleted, fallback automatically to the user's default account.
+   - Auto-calculate and update Budget spent amounts when a transaction occurs, applying real-time currency conversion if the transaction currency differs from the budget currency.
+3. **Savings Goals Funding Rules**:
+   - Allow Savings Goals to be the destination of Transfer transactions.
+   - Automatically mark a Savings Goal as completed when the target is reached, enabling hard-delete options.
+   - If a Savings Goal is soft-deleted, trigger a rollback workflow to refund the collected money back to the origin accounts.
 
-## Next Steps
-1. **PDF Enhancements (Currency, Scales, Transfers):** Modify PDF generation logic to include default user currency, exact chart scales in the income vs. expense summary, and destination account details for transfers.
-2. **PDF Localization (i18n):** Inject `AppLocalizations` into the PDF generation flow so all text, dates, and tables match the user's selected language.
-3. **Budgets & Goals UI:** Implement the provider logic and complete the UI in `budgets_and_goals_screen.dart` respecting Clean Architecture.
-4. **Holistic QA & CI/CD:** Validate 100% localization coverage in ARB files, fix any UI overflows, and ensure all unit/integration tests and GitHub Workflows pass successfully.
+## Architecture Guidelines
+- Strict Clean Architecture separation (Domain -> Data -> Presentation).
+- Use `CurrencyConverter` for all multi-currency calculations.
+- Maintain soft-delete logic consistently within DAOs and Use Cases.
+- Ensure all new strings are added to `.arb` files for i18n support.
