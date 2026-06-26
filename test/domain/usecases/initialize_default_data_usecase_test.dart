@@ -1,9 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
-import 'package:stalvi/domain/entities/account.dart';
-import 'package:stalvi/domain/entities/account_type.dart';
-import 'package:stalvi/domain/repositories/i_account_repository.dart';
 import 'package:stalvi/domain/usecases/initialize_default_data_usecase.dart';
 
 import 'package:stalvi/domain/entities/category.dart';
@@ -12,13 +9,9 @@ import 'package:stalvi/domain/repositories/i_category_repository.dart';
 import 'package:stalvi/domain/entities/tag.dart';
 import 'package:stalvi/domain/repositories/i_tag_repository.dart';
 
-class MockAccountRepository extends Mock implements IAccountRepository {}
-
 class MockCategoryRepository extends Mock implements ICategoryRepository {}
 
 class MockTagRepository extends Mock implements ITagRepository {}
-
-class FakeAccount extends Fake implements Account {}
 
 class FakeCategory extends Fake implements Category {}
 
@@ -26,27 +19,23 @@ class FakeTag extends Fake implements Tag {}
 
 void main() {
   late InitializeDefaultDataUseCase useCase;
-  late MockAccountRepository mockAccountRepository;
   late MockCategoryRepository mockCategoryRepository;
   late MockTagRepository mockTagRepository;
 
   setUpAll(() {
-    registerFallbackValue(FakeAccount());
     registerFallbackValue(FakeCategory());
     registerFallbackValue(FakeTag());
   });
 
   setUp(() {
-    mockAccountRepository = MockAccountRepository();
     mockCategoryRepository = MockCategoryRepository();
     mockTagRepository = MockTagRepository();
     useCase = InitializeDefaultDataUseCase(
-      mockAccountRepository,
       mockCategoryRepository,
       mockTagRepository,
     );
 
-    // Default stubbing for category calls to make existing tests pass without modification
+    // Default stubbing for category calls
     when(() => mockCategoryRepository.getAllCategories())
         .thenAnswer((_) async => <Category>[]);
     when(() => mockCategoryRepository.getCategoryById(any()))
@@ -79,245 +68,15 @@ void main() {
 
   group('InitializeDefaultDataUseCase Unit Tests', () {
     test(
-        'should create default wallet named "Mi cartera" with 0.0 balance if user has no existing accounts',
-        () async {
-      // Arrange
-      const userId = 'user_123';
-      const walletName = 'Mi cartera';
-      const currency = 'EUR';
-
-      when(() => mockAccountRepository.getAccountsByUserId(userId))
-          .thenAnswer((_) async => <Account>[]);
-
-      when(() => mockAccountRepository.createAccount(any())).thenAnswer(
-        (invocation) async => invocation.positionalArguments[0] as Account,
-      );
-
-      // Act
-      await useCase.execute(
-        userId: userId,
-        walletName: walletName,
-        currency: currency,
-      );
-
-      // Assert
-      verify(() => mockAccountRepository.getAccountsByUserId(userId)).called(1);
-
-      final capturedAccount =
-          verify(() => mockAccountRepository.createAccount(captureAny()))
-              .captured
-              .first as Account;
-      expect(capturedAccount.userId, userId);
-      expect(capturedAccount.name, walletName);
-      expect(capturedAccount.type, AccountType.cash);
-      expect(capturedAccount.initialBalance, 0.0);
-      expect(capturedAccount.currency, currency);
-      expect(capturedAccount.color, '#4CAF50');
-      expect(capturedAccount.icon, 'wallet');
-      expect(capturedAccount.isDefault, true);
-      expect(capturedAccount.isDeleted, false);
-      expect(capturedAccount.createdAt, isA<DateTime>());
-      expect(capturedAccount.modifiedAt, isA<DateTime>());
-
-      verifyNoMoreInteractions(mockAccountRepository);
-    });
-
-    test(
-        'should return early and NOT create default wallet if user already has accounts',
-        () async {
-      // Arrange
-      const userId = 'user_123';
-      const walletName = 'Mi cartera';
-      const currency = 'EUR';
-
-      final existingAccount = Account(
-        id: 'acc_existing',
-        userId: userId,
-        name: 'Savings',
-        type: AccountType.savings,
-        initialBalance: 100.0,
-        currency: currency,
-        color: '#123456',
-        icon: 'savings',
-        isDefault: true,
-        isDeleted: false,
-        createdAt: DateTime.now(),
-        modifiedAt: DateTime.now(),
-      );
-
-      when(() => mockAccountRepository.getAccountsByUserId(userId))
-          .thenAnswer((_) async => <Account>[existingAccount]);
-
-      // Act
-      await useCase.execute(
-        userId: userId,
-        walletName: walletName,
-        currency: currency,
-      );
-
-      // Assert
-      verify(() => mockAccountRepository.getAccountsByUserId(userId)).called(1);
-      verifyNever(() => mockAccountRepository.createAccount(any()));
-      verifyNoMoreInteractions(mockAccountRepository);
-    });
-
-    test(
-        'should resolve localized wallet name to "My Wallet" when locale is "en"',
-        () async {
-      // Arrange
-      const userId = 'user_123';
-      const currency = 'USD';
-
-      when(() => mockAccountRepository.getAccountsByUserId(userId))
-          .thenAnswer((_) async => <Account>[]);
-      when(() => mockAccountRepository.createAccount(any())).thenAnswer(
-        (invocation) async => invocation.positionalArguments[0] as Account,
-      );
-
-      // Act
-      await useCase.execute(
-        userId: userId,
-        currency: currency,
-        locale: 'en',
-      );
-
-      // Assert
-      final capturedAccount =
-          verify(() => mockAccountRepository.createAccount(captureAny()))
-              .captured
-              .first as Account;
-      expect(capturedAccount.name, 'My Wallet');
-    });
-
-    test(
-        'should resolve localized wallet name to "La meva cartera" when locale is "ca"',
-        () async {
-      // Arrange
-      const userId = 'user_123';
-      const currency = 'EUR';
-
-      when(() => mockAccountRepository.getAccountsByUserId(userId))
-          .thenAnswer((_) async => <Account>[]);
-      when(() => mockAccountRepository.createAccount(any())).thenAnswer(
-        (invocation) async => invocation.positionalArguments[0] as Account,
-      );
-
-      // Act
-      await useCase.execute(
-        userId: userId,
-        currency: currency,
-        locale: 'ca',
-      );
-
-      // Assert
-      final capturedAccount =
-          verify(() => mockAccountRepository.createAccount(captureAny()))
-              .captured
-              .first as Account;
-      expect(capturedAccount.name, 'La meva cartera');
-    });
-
-    test(
-        'should resolve localized wallet name to "Mi cartera" when locale is "es"',
-        () async {
-      // Arrange
-      const userId = 'user_123';
-      const currency = 'EUR';
-
-      when(() => mockAccountRepository.getAccountsByUserId(userId))
-          .thenAnswer((_) async => <Account>[]);
-      when(() => mockAccountRepository.createAccount(any())).thenAnswer(
-        (invocation) async => invocation.positionalArguments[0] as Account,
-      );
-
-      // Act
-      await useCase.execute(
-        userId: userId,
-        currency: currency,
-        locale: 'es',
-      );
-
-      // Assert
-      final capturedAccount =
-          verify(() => mockAccountRepository.createAccount(captureAny()))
-              .captured
-              .first as Account;
-      expect(capturedAccount.name, 'Mi cartera');
-    });
-
-    test('should fallback to default "My wallet" when locale is unsupported',
-        () async {
-      // Arrange
-      const userId = 'user_123';
-      const currency = 'EUR';
-
-      when(() => mockAccountRepository.getAccountsByUserId(userId))
-          .thenAnswer((_) async => <Account>[]);
-      when(() => mockAccountRepository.createAccount(any())).thenAnswer(
-        (invocation) async => invocation.positionalArguments[0] as Account,
-      );
-
-      // Act
-      await useCase.execute(
-        userId: userId,
-        currency: currency,
-        locale:
-            'fr', // French is not supported, should trigger exception fallback
-      );
-
-      // Assert
-      final capturedAccount =
-          verify(() => mockAccountRepository.createAccount(captureAny()))
-              .captured
-              .first as Account;
-      expect(capturedAccount.name, 'My wallet');
-    });
-
-    test(
-        'should fallback to default "My wallet" when locale is null and walletName is null',
-        () async {
-      // Arrange
-      const userId = 'user_123';
-      const currency = 'EUR';
-
-      when(() => mockAccountRepository.getAccountsByUserId(userId))
-          .thenAnswer((_) async => <Account>[]);
-      when(() => mockAccountRepository.createAccount(any())).thenAnswer(
-        (invocation) async => invocation.positionalArguments[0] as Account,
-      );
-
-      // Act
-      await useCase.execute(
-        userId: userId,
-        currency: currency,
-      );
-
-      // Assert
-      final capturedAccount =
-          verify(() => mockAccountRepository.createAccount(captureAny()))
-              .captured
-              .first as Account;
-      expect(capturedAccount.name, 'My wallet');
-    });
-
-    test(
         'should seed default typical categories and typical tags in selected locale',
         () async {
       // Arrange
       const userId = 'user_123';
-      const currency = 'EUR';
       const locale = 'es';
-
-      when(() => mockAccountRepository.getAccountsByUserId(userId))
-          .thenAnswer((_) async => <Account>[]);
-      when(() => mockAccountRepository.createAccount(any())).thenAnswer(
-        (invocation) async => invocation.positionalArguments[0] as Account,
-      );
 
       // Act
       await useCase.execute(
         userId: userId,
-        currency: currency,
         locale: locale,
       );
 
@@ -357,55 +116,33 @@ void main() {
     });
 
     test(
-        'should catch and silence exceptions during initialization to prevent app lockup',
+        'should seed categories and tags in English when no locale is specified',
         () async {
       // Arrange
       const userId = 'user_123';
-      const currency = 'EUR';
-
-      when(() => mockAccountRepository.getAccountsByUserId(userId))
-          .thenAnswer((_) async => <Account>[]);
-
-      // Throw exception for first category, but succeed for others
-      int categoryCallCount = 0;
-      when(() => mockCategoryRepository.createCategory(any())).thenAnswer(
-        (invocation) async {
-          categoryCallCount++;
-          if (categoryCallCount == 1) {
-            throw Exception('Already exists');
-          }
-          return invocation.positionalArguments[0] as Category;
-        },
-      );
-
-      when(() => mockAccountRepository.createAccount(any()))
-          .thenThrow(Exception('Account exists'));
-
-      when(() => mockTagRepository.createTag(any()))
-          .thenThrow(Exception('Tag exists'));
 
       // Act
-      // If it throws, the test will fail. If it succeeds, it means exceptions were silenced.
-      await useCase.execute(
-        userId: userId,
-        currency: currency,
-      );
+      await useCase.execute(userId: userId);
 
       // Assert
-      verify(() => mockAccountRepository.createAccount(any())).called(1);
-      // English is default: 13 categories and 6 tags
-      verify(() => mockCategoryRepository.createCategory(any())).called(13);
-      verify(() => mockTagRepository.createTag(any())).called(6);
+      final capturedCategories =
+          verify(() => mockCategoryRepository.createCategory(captureAny()))
+              .captured;
+      expect(capturedCategories.length, 13);
+      final names =
+          capturedCategories.map((c) => (c as Category).name).toList();
+      expect(names, contains('Food'));
+      expect(names, contains('Transport'));
+      expect(names, contains('Salary'));
     });
 
     test(
-        'should permanently delete duplicate/old default categories and tags instead of soft-deleting them (ensuring clean recycle bin)',
-        () async {
+        'should permanently delete duplicate/old default categories and tags '
+        'instead of soft-deleting them (ensuring clean recycle bin)', () async {
       // Arrange
       const userId = 'user_123';
-      const currency = 'EUR';
 
-      // Setup duplicate categories and tags
+      // Setup duplicate categories and tags with old random UUIDs
       final oldCategory = Category(
         id: 'old-random-uuid-cat',
         name: 'Food',
@@ -425,12 +162,6 @@ void main() {
         modifiedAt: DateTime.now(),
       );
 
-      when(() => mockAccountRepository.getAccountsByUserId(userId))
-          .thenAnswer((_) async => <Account>[]);
-      when(() => mockAccountRepository.createAccount(any())).thenAnswer(
-        (invocation) async => invocation.positionalArguments[0] as Account,
-      );
-
       when(() => mockCategoryRepository.getAllCategories())
           .thenAnswer((_) async => [oldCategory]);
       when(() => mockTagRepository.getAllTags())
@@ -439,7 +170,6 @@ void main() {
       // Act
       await useCase.execute(
         userId: userId,
-        currency: currency,
         locale: 'en',
       );
 
@@ -459,116 +189,18 @@ void main() {
     });
 
     test(
-        'should resolve localized wallet name to "La meva cartera" when locale is "ca_ES" (with country code)',
+        'should ensure absolutely no categories or tags have isDeleted: true during setup',
         () async {
       // Arrange
       const userId = 'user_123';
-      const currency = 'EUR';
-
-      when(() => mockAccountRepository.getAccountsByUserId(userId))
-          .thenAnswer((_) async => <Account>[]);
-      when(() => mockAccountRepository.createAccount(any())).thenAnswer(
-        (invocation) async => invocation.positionalArguments[0] as Account,
-      );
 
       // Act
       await useCase.execute(
         userId: userId,
-        currency: currency,
-        locale: 'ca_ES',
-      );
-
-      // Assert
-      final capturedAccount =
-          verify(() => mockAccountRepository.createAccount(captureAny()))
-              .captured
-              .first as Account;
-      expect(capturedAccount.name, 'La meva cartera');
-    });
-
-    test(
-        'should resolve localized wallet name to "Mi cartera" when locale is "es_US" (with country code)',
-        () async {
-      // Arrange
-      const userId = 'user_123';
-      const currency = 'EUR';
-
-      when(() => mockAccountRepository.getAccountsByUserId(userId))
-          .thenAnswer((_) async => <Account>[]);
-      when(() => mockAccountRepository.createAccount(any())).thenAnswer(
-        (invocation) async => invocation.positionalArguments[0] as Account,
-      );
-
-      // Act
-      await useCase.execute(
-        userId: userId,
-        currency: currency,
-        locale: 'es_US',
-      );
-
-      // Assert
-      final capturedAccount =
-          verify(() => mockAccountRepository.createAccount(captureAny()))
-              .captured
-              .first as Account;
-      expect(capturedAccount.name, 'Mi cartera');
-    });
-
-    test(
-        'should resolve localized wallet name to "My Wallet" when locale is "en_GB" (with country code)',
-        () async {
-      // Arrange
-      const userId = 'user_123';
-      const currency = 'EUR';
-
-      when(() => mockAccountRepository.getAccountsByUserId(userId))
-          .thenAnswer((_) async => <Account>[]);
-      when(() => mockAccountRepository.createAccount(any())).thenAnswer(
-        (invocation) async => invocation.positionalArguments[0] as Account,
-      );
-
-      // Act
-      await useCase.execute(
-        userId: userId,
-        currency: currency,
-        locale: 'en_GB',
-      );
-
-      // Assert
-      final capturedAccount =
-          verify(() => mockAccountRepository.createAccount(captureAny()))
-              .captured
-              .first as Account;
-      expect(capturedAccount.name, 'My Wallet');
-    });
-
-    test(
-        'should ensure absolutely no categories, tags, or accounts have isDeleted: true during setup',
-        () async {
-      // Arrange
-      const userId = 'user_123';
-      const currency = 'EUR';
-
-      when(() => mockAccountRepository.getAccountsByUserId(userId))
-          .thenAnswer((_) async => <Account>[]);
-      when(() => mockAccountRepository.createAccount(any())).thenAnswer(
-        (invocation) async => invocation.positionalArguments[0] as Account,
-      );
-
-      // Act
-      await useCase.execute(
-        userId: userId,
-        currency: currency,
         locale: 'en',
       );
 
       // Assert
-      final capturedAccount =
-          verify(() => mockAccountRepository.createAccount(captureAny()))
-              .captured
-              .first as Account;
-      expect(capturedAccount.isDeleted, isFalse);
-
       final capturedCategories =
           verify(() => mockCategoryRepository.createCategory(captureAny()))
               .captured;

@@ -128,4 +128,35 @@ class TransactionDao extends DatabaseAccessor<AppDatabase>
 
     yield* baseQuery.watch().map((rows) => rows.cast<Transaction>().toList());
   }
+
+  // ── Savings Goal Cascade ──────────────────────────────────────────────────
+
+  Future<List<Transaction>> getTransfersForGoal(String savingsGoalId) {
+    return (select(transactions)
+          ..where(
+            (t) =>
+                t.savingsGoalId.equals(savingsGoalId) &
+                t.type.equalsValue(TransactionType.transfer),
+          ))
+        .get();
+  }
+
+  Future<void> setDeletedStatusForGoalTransfers(
+    String savingsGoalId,
+    bool isDeleted,
+  ) async {
+    final now = DateTime.now();
+    await (update(transactions)
+          ..where(
+            (t) =>
+                t.savingsGoalId.equals(savingsGoalId) &
+                t.type.equalsValue(TransactionType.transfer),
+          ))
+        .write(
+      TransactionsCompanion(
+        isDeleted: Value(isDeleted),
+        modifiedAt: Value(now),
+      ),
+    );
+  }
 }

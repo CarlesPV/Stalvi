@@ -1,5 +1,6 @@
 class Budget {
   final String id;
+  final String accountId;
   final String categoryId;
   final int targetAmount; // Stored in cents
   final int currentAmount; // Stored in cents
@@ -7,10 +8,12 @@ class Budget {
   final DateTime endDate;
   final DateTime createdAt;
   final DateTime modifiedAt;
+  final DateTime? deletedAt;
   final bool isDeleted;
 
   const Budget({
     required this.id,
+    required this.accountId,
     required this.categoryId,
     required this.targetAmount,
     this.currentAmount = 0,
@@ -18,6 +21,7 @@ class Budget {
     required this.endDate,
     required this.createdAt,
     required this.modifiedAt,
+    this.deletedAt,
     this.isDeleted = false,
   });
 
@@ -27,6 +31,7 @@ class Budget {
 
     return other is Budget &&
         other.id == id &&
+        other.accountId == accountId &&
         other.categoryId == categoryId &&
         other.targetAmount == targetAmount &&
         other.currentAmount == currentAmount &&
@@ -34,12 +39,14 @@ class Budget {
         other.endDate == endDate &&
         other.createdAt == createdAt &&
         other.modifiedAt == modifiedAt &&
+        other.deletedAt == deletedAt &&
         other.isDeleted == isDeleted;
   }
 
   @override
   int get hashCode {
     return id.hashCode ^
+        accountId.hashCode ^
         categoryId.hashCode ^
         targetAmount.hashCode ^
         currentAmount.hashCode ^
@@ -47,11 +54,13 @@ class Budget {
         endDate.hashCode ^
         createdAt.hashCode ^
         modifiedAt.hashCode ^
+        deletedAt.hashCode ^
         isDeleted.hashCode;
   }
 
   Budget copyWith({
     String? id,
+    String? accountId,
     String? categoryId,
     int? targetAmount,
     int? currentAmount,
@@ -59,10 +68,12 @@ class Budget {
     DateTime? endDate,
     DateTime? createdAt,
     DateTime? modifiedAt,
+    DateTime? deletedAt,
     bool? isDeleted,
   }) {
     return Budget(
       id: id ?? this.id,
+      accountId: accountId ?? this.accountId,
       categoryId: categoryId ?? this.categoryId,
       targetAmount: targetAmount ?? this.targetAmount,
       currentAmount: currentAmount ?? this.currentAmount,
@@ -70,6 +81,7 @@ class Budget {
       endDate: endDate ?? this.endDate,
       createdAt: createdAt ?? this.createdAt,
       modifiedAt: modifiedAt ?? this.modifiedAt,
+      deletedAt: deletedAt ?? this.deletedAt,
       isDeleted: isDeleted ?? this.isDeleted,
     );
   }

@@ -148,30 +148,6 @@ abstract class AppLocalizations {
   /// **'Expenses'**
   String get expenses;
 
-  /// Generic fallback error message
-  ///
-  /// In en, this message translates to:
-  /// **'Something went wrong. Please try again.'**
-  String get errorGeneric;
-
-  /// Error message when database operation fails
-  ///
-  /// In en, this message translates to:
-  /// **'Database error occurred. Please contact support.'**
-  String get errorDatabase;
-
-  /// Error message when authentication fails
-  ///
-  /// In en, this message translates to:
-  /// **'Authentication failed. Please check your credentials.'**
-  String get errorAuth;
-
-  /// Error message when network request fails
-  ///
-  /// In en, this message translates to:
-  /// **'Network error. Please check your internet connection.'**
-  String get errorNetwork;
-
   /// App name branding
   ///
   /// In en, this message translates to:
@@ -202,12 +178,6 @@ abstract class AppLocalizations {
   /// **'Try Again'**
   String get tryAgain;
 
-  /// Loading message during biometric initialization
-  ///
-  /// In en, this message translates to:
-  /// **'Checking biometrics…'**
-  String get authCheckingBiometrics;
-
   /// Error title for biometric authentication failure
   ///
   /// In en, this message translates to:
@@ -232,35 +202,17 @@ abstract class AppLocalizations {
   /// **'Security lockout active'**
   String get authLockoutActive;
 
-  /// Prompt title to verify identity
-  ///
-  /// In en, this message translates to:
-  /// **'Verify Your Identity'**
-  String get authVerifyIdentity;
-
   /// Prompt description to verify identity
   ///
   /// In en, this message translates to:
-  /// **'Use biometrics or your device PIN to continue.'**
+  /// **'Use biometrics or your device PIN to continue'**
   String get authVerifyMessage;
 
-  /// Button label during verification state
+  /// Loading message when processing security authentication
   ///
   /// In en, this message translates to:
-  /// **'Verifying…'**
-  String get authVerifying;
-
-  /// Button label to trigger biometric authentication
-  ///
-  /// In en, this message translates to:
-  /// **'Authenticate'**
-  String get authAuthenticate;
-
-  /// Button label to skip biometric authentication
-  ///
-  /// In en, this message translates to:
-  /// **'Skip for now'**
-  String get authSkip;
+  /// **'Processing security authentication…'**
+  String get authProcessing;
 
   /// Footer text describing security
   ///
@@ -658,12 +610,6 @@ abstract class AppLocalizations {
   /// **'Default Language'**
   String get authSetupLanguageLabel;
 
-  /// Label for terms and conditions checkbox
-  ///
-  /// In en, this message translates to:
-  /// **'I accept the Terms & Conditions and Privacy Policy'**
-  String get authSetupTermsCheckbox;
-
   /// Button label to submit setup form
   ///
   /// In en, this message translates to:
@@ -717,18 +663,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Incorrect PIN. Please try again.'**
   String get authPinIncorrect;
-
-  /// Default wallet name when user profile is initialized
-  ///
-  /// In en, this message translates to:
-  /// **'My Wallet'**
-  String get defaultWalletName;
-
-  /// Default wallet name when user profile is initialized
-  ///
-  /// In en, this message translates to:
-  /// **'Default Wallet'**
-  String get defaultWallet;
 
   /// Label indicating number of accounts
   ///
@@ -807,12 +741,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Privacy Policy'**
   String get privacyPolicy;
-
-  /// General localized label for My Wallet
-  ///
-  /// In en, this message translates to:
-  /// **'My Wallet'**
-  String get myWallet;
 
   /// Label for default currency selector during setup
   ///
@@ -1192,12 +1120,6 @@ abstract class AppLocalizations {
   /// **'Icon'**
   String get createAccountIconLabel;
 
-  /// Success message after account creation
-  ///
-  /// In en, this message translates to:
-  /// **'Account created successfully'**
-  String get createAccountSuccess;
-
   /// Error message when account name is empty
   ///
   /// In en, this message translates to:
@@ -1269,24 +1191,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Close'**
   String get btnClose;
-
-  /// Context menu option to set account as default
-  ///
-  /// In en, this message translates to:
-  /// **'Set as Default Account'**
-  String get setAsDefaultAccount;
-
-  /// Snackbar message when account is set as default
-  ///
-  /// In en, this message translates to:
-  /// **'Account set as default'**
-  String get setAsDefaultAccountSuccess;
-
-  /// Snackbar error when setting default account fails
-  ///
-  /// In en, this message translates to:
-  /// **'Failed to set default account'**
-  String get setAsDefaultAccountError;
 
   /// Title for the transaction filter bottom sheet
   ///
@@ -1449,24 +1353,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Unknown Account'**
   String get unknownAccount;
-
-  /// Subtitle for editing account details
-  ///
-  /// In en, this message translates to:
-  /// **'Edit account details'**
-  String get editAccountDetails;
-
-  /// Subtitle for setting account as default
-  ///
-  /// In en, this message translates to:
-  /// **'Mark this account as the default for new transactions'**
-  String get markAccountAsDefault;
-
-  /// Subtitle indicating account is already default
-  ///
-  /// In en, this message translates to:
-  /// **'This is already the default account'**
-  String get alreadyDefaultAccount;
 
   /// Label for categories tab or section
   ///
@@ -1665,6 +1551,408 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Australian Dollar (AUD)'**
   String get currencyAUD;
+
+  /// Currency name for CNY
+  ///
+  /// In en, this message translates to:
+  /// **'Chinese Yuan (CNY)'**
+  String get currencyCNY;
+
+  /// Validation error when destination account is required for transfer
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a destination account'**
+  String get errorDestinationAccountRequired;
+
+  /// Validation error when source and destination accounts are the same
+  ///
+  /// In en, this message translates to:
+  /// **'Source and destination accounts cannot be the same'**
+  String get errorSameAccountTransfer;
+
+  /// Singular name for savings goal trash item
+  ///
+  /// In en, this message translates to:
+  /// **'Savings Goal'**
+  String get savingsGoal;
+
+  /// Progress message showing spent amount out of budget target
+  ///
+  /// In en, this message translates to:
+  /// **'{spent} of {target}'**
+  String budgetSpentOf(String spent, String target);
+
+  /// Section title for data export and import options
+  ///
+  /// In en, this message translates to:
+  /// **'Data Portability'**
+  String get dataPortabilityTitle;
+
+  /// Settings option for data management
+  ///
+  /// In en, this message translates to:
+  /// **'Data Management'**
+  String get settingsDataManagement;
+
+  /// Button label to export an encrypted full backup
+  ///
+  /// In en, this message translates to:
+  /// **'Export Encrypted Backup'**
+  String get exportEncryptedBackup;
+
+  /// Subtitle for the encrypted backup export option
+  ///
+  /// In en, this message translates to:
+  /// **'Export all data as a password-protected backup file'**
+  String get exportEncryptedBackupSubtitle;
+
+  /// Button label to import and restore from an encrypted backup
+  ///
+  /// In en, this message translates to:
+  /// **'Import / Restore Backup'**
+  String get importRestoreBackup;
+
+  /// Subtitle for the import/restore option
+  ///
+  /// In en, this message translates to:
+  /// **'Restore your data from a Stalvi backup file'**
+  String get importRestoreBackupSubtitle;
+
+  /// Button label to export all transactions as a CSV file
+  ///
+  /// In en, this message translates to:
+  /// **'Export Transactions (CSV)'**
+  String get exportTransactionsCsv;
+
+  /// Subtitle for the CSV export option
+  ///
+  /// In en, this message translates to:
+  /// **'Export all transactions to a spreadsheet-compatible CSV file'**
+  String get exportTransactionsCsvSubtitle;
+
+  /// Button label to export the current month's report as a PDF
+  ///
+  /// In en, this message translates to:
+  /// **'Export Monthly Report (PDF)'**
+  String get exportMonthlyPdf;
+
+  /// Subtitle for the PDF monthly report export option
+  ///
+  /// In en, this message translates to:
+  /// **'Generate a PDF summary for the current month'**
+  String get exportMonthlyPdfSubtitle;
+
+  /// Title for the dialog where user sets a backup password
+  ///
+  /// In en, this message translates to:
+  /// **'Set Backup Password'**
+  String get exportPasswordDialogTitle;
+
+  /// Subtitle in the export password dialog
+  ///
+  /// In en, this message translates to:
+  /// **'This password will be required to restore your backup. Store it safely.'**
+  String get exportPasswordDialogSubtitle;
+
+  /// Label for the backup password input field
+  ///
+  /// In en, this message translates to:
+  /// **'Backup Password'**
+  String get exportPasswordLabel;
+
+  /// Label for the confirm password input field
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Password'**
+  String get exportPasswordConfirmLabel;
+
+  /// Error when export passwords do not match
+  ///
+  /// In en, this message translates to:
+  /// **'Passwords do not match.'**
+  String get exportPasswordMismatch;
+
+  /// Error when export password is too short
+  ///
+  /// In en, this message translates to:
+  /// **'Password must be at least 6 characters.'**
+  String get exportPasswordTooShort;
+
+  /// Title for the dialog where user enters restore password
+  ///
+  /// In en, this message translates to:
+  /// **'Enter Backup Password'**
+  String get importPasswordDialogTitle;
+
+  /// Subtitle in the import password dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the password used when the backup was created.'**
+  String get importPasswordDialogSubtitle;
+
+  /// Title for the import confirmation dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Restore Backup?'**
+  String get importConfirmTitle;
+
+  /// Warning message in the import confirmation dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Restoring a backup will overwrite all current data. This cannot be undone. Are you sure?'**
+  String get importConfirmMessage;
+
+  /// Snackbar message when export succeeds
+  ///
+  /// In en, this message translates to:
+  /// **'Export successful. File saved.'**
+  String get exportSuccess;
+
+  /// Snackbar message when import/restore succeeds
+  ///
+  /// In en, this message translates to:
+  /// **'Backup restored successfully. Please restart the app.'**
+  String get importSuccess;
+
+  /// Snackbar message when export fails
+  ///
+  /// In en, this message translates to:
+  /// **'Export failed. Please try again.'**
+  String get exportFailed;
+
+  /// Snackbar message when import/restore fails
+  ///
+  /// In en, this message translates to:
+  /// **'Restore failed. Check your password and file.'**
+  String get importFailed;
+
+  /// Generic export button label
+  ///
+  /// In en, this message translates to:
+  /// **'Export'**
+  String get btnExport;
+
+  /// Generic restore button label
+  ///
+  /// In en, this message translates to:
+  /// **'Restore'**
+  String get btnRestore;
+
+  /// Label for other categories slice in statistics charts when count exceeds display limit
+  ///
+  /// In en, this message translates to:
+  /// **'Other ({count} categories)'**
+  String statisticsOtherCategories(int count);
+
+  /// Text button label to view details of statistics
+  ///
+  /// In en, this message translates to:
+  /// **'View Details'**
+  String get btnViewDetails;
+
+  /// Button label to open a file
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get btnOpen;
+
+  /// Error message when opening a file fails
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open file'**
+  String get errorOpenFileFailed;
+
+  /// Title for the income vs expenses chart section in PDF
+  ///
+  /// In en, this message translates to:
+  /// **'Expenses vs Income'**
+  String get expense_vs_income;
+
+  /// Label for the destination account in transfers
+  ///
+  /// In en, this message translates to:
+  /// **'Destination Account'**
+  String get destination_account;
+
+  /// Label for the scale/axis of a chart in PDF
+  ///
+  /// In en, this message translates to:
+  /// **'Chart Scale'**
+  String get chart_scale;
+
+  /// Date format for PDF reports
+  ///
+  /// In en, this message translates to:
+  /// **'MM/dd/yyyy'**
+  String get pdfDateFormat;
+
+  /// Date and time format for PDF reports
+  ///
+  /// In en, this message translates to:
+  /// **'MM/dd/yyyy HH:mm'**
+  String get pdfDateTimeFormat;
+
+  /// Footer showing generation timestamp and app title
+  ///
+  /// In en, this message translates to:
+  /// **'Generated by {appTitle} on {date}'**
+  String pdfGeneratedOn(String appTitle, String date);
+
+  /// Button or title for adding a budget
+  ///
+  /// In en, this message translates to:
+  /// **'Add Budget'**
+  String get addBudget;
+
+  /// Button or title for editing a budget
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Budget'**
+  String get editBudget;
+
+  /// Title for budget details
+  ///
+  /// In en, this message translates to:
+  /// **'Budget Details'**
+  String get budgetDetails;
+
+  /// Button or title for deleting a budget
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Budget'**
+  String get deleteBudget;
+
+  /// Button or title for adding a savings goal
+  ///
+  /// In en, this message translates to:
+  /// **'Add Savings Goal'**
+  String get addSavingsGoal;
+
+  /// Button or title for editing a savings goal
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Savings Goal'**
+  String get editSavingsGoal;
+
+  /// Title for savings goal details
+  ///
+  /// In en, this message translates to:
+  /// **'Savings Goal Details'**
+  String get savingsGoalDetails;
+
+  /// Button or title for deleting a savings goal
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Savings Goal'**
+  String get deleteSavingsGoal;
+
+  /// Label for target amount input
+  ///
+  /// In en, this message translates to:
+  /// **'Target Amount'**
+  String get targetAmount;
+
+  /// Label for start date input
+  ///
+  /// In en, this message translates to:
+  /// **'Start Date'**
+  String get startDate;
+
+  /// Label for end date input
+  ///
+  /// In en, this message translates to:
+  /// **'End Date'**
+  String get endDate;
+
+  /// Label for goal name input
+  ///
+  /// In en, this message translates to:
+  /// **'Goal Name'**
+  String get goalName;
+
+  /// Label for target date input
+  ///
+  /// In en, this message translates to:
+  /// **'Target Date'**
+  String get targetDate;
+
+  /// Validation error for budget dates
+  ///
+  /// In en, this message translates to:
+  /// **'End date must be after start date'**
+  String get errorEndDateBeforeStart;
+
+  /// Validation error for goal name
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a name'**
+  String get errorNameRequired;
+
+  /// Validation error for target date
+  ///
+  /// In en, this message translates to:
+  /// **'Target date must be in the future'**
+  String get errorTargetDatePast;
+
+  /// Section title for the Budgets table in PDF export
+  ///
+  /// In en, this message translates to:
+  /// **'Budgets'**
+  String get pdfBudgetsTitle;
+
+  /// Column header for Category in PDF Budgets table
+  ///
+  /// In en, this message translates to:
+  /// **'Category'**
+  String get pdfBudgetsColCategory;
+
+  /// Column header for Date Range in PDF Budgets table
+  ///
+  /// In en, this message translates to:
+  /// **'Date Range'**
+  String get pdfBudgetsColDateRange;
+
+  /// Column header for Percentage Spent in PDF Budgets table
+  ///
+  /// In en, this message translates to:
+  /// **'% Spent'**
+  String get pdfBudgetsColSpent;
+
+  /// Column header for Maximum Budget Value in PDF Budgets table
+  ///
+  /// In en, this message translates to:
+  /// **'Max Value'**
+  String get pdfBudgetsColMaxValue;
+
+  /// Section title for the Savings Goals table in PDF export
+  ///
+  /// In en, this message translates to:
+  /// **'Savings Goals'**
+  String get pdfSavingsGoalsTitle;
+
+  /// Column header for Name in PDF Savings Goals table
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get pdfSavingsColName;
+
+  /// Column header for Percentage Completed in PDF Savings Goals table
+  ///
+  /// In en, this message translates to:
+  /// **'% Completed'**
+  String get pdfSavingsColCompleted;
+
+  /// Column header for Target Amount in PDF Savings Goals table
+  ///
+  /// In en, this message translates to:
+  /// **'Target Amount'**
+  String get pdfSavingsColTarget;
+
+  /// Singular label for budget
+  ///
+  /// In en, this message translates to:
+  /// **'Budget'**
+  String get labelBudget;
 }
 
 class _AppLocalizationsDelegate

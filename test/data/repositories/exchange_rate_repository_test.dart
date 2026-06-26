@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
 import 'package:stalvi/core/errors/app_exceptions.dart';
+import 'package:stalvi/data/database/daos/exchange_rate_dao.dart';
 import 'package:stalvi/data/models/exchange_rate_model.dart';
 import 'package:stalvi/data/network/exchange_rate_remote_data_source.dart';
 import 'package:stalvi/data/repositories/exchange_rate_repository.dart';
@@ -13,6 +14,10 @@ import 'package:stalvi/domain/entities/exchange_rate.dart';
 
 class MockExchangeRateRemoteDataSource extends Mock
     implements IExchangeRateRemoteDataSource {}
+
+class MockExchangeRateDao extends Mock implements ExchangeRateDao {}
+
+class FakeExchangeRate extends Fake implements ExchangeRate {}
 
 // ---------------------------------------------------------------------------
 // Test helpers
@@ -33,11 +38,20 @@ ExchangeRateModel _buildModel({
 
 void main() {
   late MockExchangeRateRemoteDataSource mockDataSource;
+  late MockExchangeRateDao mockDao;
   late ExchangeRateRepository repository;
+
+  setUpAll(() {
+    registerFallbackValue(FakeExchangeRate());
+  });
 
   setUp(() {
     mockDataSource = MockExchangeRateRemoteDataSource();
-    repository = ExchangeRateRepository(remoteDataSource: mockDataSource);
+    mockDao = MockExchangeRateDao();
+    repository = ExchangeRateRepository(
+      remoteDataSource: mockDataSource,
+      exchangeRateDao: mockDao,
+    );
   });
 
   group('ExchangeRateRepository — getLatestRates', () {
@@ -58,6 +72,8 @@ void main() {
         when(
           () => mockDataSource.fetchLatestRates(baseCurrency: 'EUR'),
         ).thenAnswer((_) async => model);
+        when(() => mockDao.saveRates(any())).thenAnswer((_) async {});
+        when(() => mockDao.getRates(any())).thenAnswer((_) async => null);
 
         // Act
         final result = await repository.getLatestRates(baseCurrency: 'EUR');
@@ -65,7 +81,10 @@ void main() {
         // Assert
         expect(result, isA<ExchangeRate>());
         expect(result.baseCurrency, 'EUR');
-        expect(result.date, DateTime(2026, 6, 13));
+        expect(
+          result.date.difference(DateTime.now()).inSeconds.abs() < 5,
+          true,
+        );
         expect(result.rates['USD'], closeTo(1.085, 0.001));
         expect(result.rates['GBP'], closeTo(0.856, 0.001));
 
@@ -88,6 +107,8 @@ void main() {
         when(
           () => mockDataSource.fetchLatestRates(baseCurrency: 'USD'),
         ).thenAnswer((_) async => model);
+        when(() => mockDao.saveRates(any())).thenAnswer((_) async {});
+        when(() => mockDao.getRates(any())).thenAnswer((_) async => null);
 
         // Act
         final result = await repository.getLatestRates(baseCurrency: 'USD');
@@ -116,6 +137,7 @@ void main() {
         when(
           () => mockDataSource.fetchLatestRates(baseCurrency: 'EUR'),
         ).thenThrow(expectedException);
+        when(() => mockDao.getRates(any())).thenAnswer((_) async => null);
 
         // Act & Assert
         await expectLater(
@@ -147,6 +169,7 @@ void main() {
         when(
           () => mockDataSource.fetchLatestRates(baseCurrency: 'XYZ'),
         ).thenThrow(exception);
+        when(() => mockDao.getRates(any())).thenAnswer((_) async => null);
 
         // Act & Assert
         await expectLater(
@@ -173,6 +196,7 @@ void main() {
         when(
           () => mockDataSource.fetchLatestRates(baseCurrency: 'EUR'),
         ).thenThrow(exception);
+        when(() => mockDao.getRates(any())).thenAnswer((_) async => null);
 
         // Act & Assert
         await expectLater(

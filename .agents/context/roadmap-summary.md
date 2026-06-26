@@ -223,19 +223,194 @@ This document lists the completed phases of the Stalvi development roadmap, prov
   - Wrote a dedicated suite of 21 test scenarios in `test/data/database/daos/transaction_filter_query_test.dart` checking all concurrent permutations of filters against an in-memory database.
   - Verified that the entire regression test suite passes cleanly.
 
-### Phase 16: Rebranding, Filter Integration, and UX Enhancements
+### Phase 16: UI, Localization, and Soft-Deleted Data Fixes
 * **Completion Date:** June 17, 2026
-* **Objective:** Rename the application globally from "Konta" to "Stalvi", integrate transaction filters directly in the dashboard UI, improve account type & icon settings, and enforce statistics updates on screen entry.
+* **Objective:** Fix validation error displays in dialogs, resolve ChoiceChip text layout clipping and update the generic "Other" type icon, support multi-language locale-aware date displays, implement dashboard account clicks for updates/deletion, and ensure soft-deleted database entities are excluded from statistical aggregates.
 * **Accomplishments:**
-  - **Global Rebranding:** Executed a full project rename from "Konta" to "Stalvi". Updated Gradle config (`build.gradle.kts`), AndroidManifest, MainActivity package declarations/path, iOS `.pbxproj` configurations, Xcode schemas, pubspec configurations, ARB translations, legal docs, and developer assets.
-  - **Transaction Tab Filters:** Added inline `FilterChip` widgets within the main dashboard transactions tab to support filtering on-the-fly by transaction type (All, Income, Expense, Transfer) in all supported languages.
-  - **Account Customization & "Other" Option:** Expanded the `AccountType` enum with the `other` case, updated Drift mapping logic, updated database tables, and updated `create_account_dialog.dart` to offer an "Other" option. Replaced unrelated/confusing account icons with appropriate wallet, business, savings, and credit card icons.
-  - **Forced Recalculation:** Configured `statistics_screen.dart`'s `initState` to invalidate period statistics and top categories providers, ensuring the analytical charts and metrics are computed fresh every time the screen is loaded.
-  - **Localization Compliance:** Eliminated hardcoded strings in the create account dialog and transaction details popup, adding corresponding localization strings in English, Spanish, and Catalan.
+  - **Validation Inline Errors:** Configured name inputs in `CreateAccountDialog` and `EditAccountDialog` to display validation failures inline via the standard `errorText` field.
+  - **Account Types UI Polish:** Heightened choice chip containers to `56` to avoid vertical layout clipping. Replaced `Icons.more_horiz_rounded` with `Icons.monetization_on_rounded` for the "Other" account type choice.
+  - **Account Details & Updates:** Integrated `EditAccountDialog` triggers directly on account tap list gestures from the primary dashboard scope, permitting full name/type/color customization and soft-deletes (Recycle Bin moves).
+  - **Soft-Deleted Balance Synchronization:** Enforced database transaction logic in `TransactionRepository.deleteTransaction` and `TrashDao.restoreItem` to revert/re-apply financial amounts to parent accounts dynamically on delete or restore.
+  - **Exclusions in Statistics:** Updated SQLite aggregation projections inside `StatisticsDao` to join with the `Accounts` table and filter out soft-deleted items across transactions, categories, and accounts.
 * **Verification:**
-  - Re-generated all locale bundles (`flutter gen-l10n`) and updated build files via `build_runner`.
-  - Verified that `flutter analyze` runs without critical warnings.
-  - Ran the entire test suite and verified all 244 test specifications pass successfully.
+  - Integrated dedicated tests inside `statistics_dao_test.dart` and `trash_dao_test.dart` verifying exclusions and balance restoration actions.
+  - Regenerated code wrappers (`build_runner` and `gen-l10n`) cleanly.
+  - Achieved 100% test pass rate with all 246 tests passing successfully.
+
+### Phase 17: Multi-Account Statistics, Transaction Transfers, and Localization Polish
+* **Completion Date:** June 18, 2026
+* **Objective:** Support multi-account filtering on the Statistics screen, implement transaction transfer flows in the creation form, perform validation checks, and localize the dashboard multi-account summary text using pluralized `.arb` strings.
+* **Accomplishments:**
+  - **Multi-Account Statistics:** Configured `StatisticsFilterNotifier` to automatically load data for the `isDefault` account on startup, and added an account selector dropdown at the top of the Statistics screen to filter totals and top categories by account.
+  - **Transaction Transfers UI:** Added support for the `Transfer` type in `AddTransactionScreen`. When selected, it dynamically displays "From Account" and "To Account" dropdown selectors.
+  - **Transfer Validation:** Implemented validation preventing users from selecting the same account for both source and destination in a transfer.
+  - **Dashboard Pluralization:** Wired the `acrossAccountsCount` localization key from the `.arb` bundles into the Dashboard balance card, replacing the hardcoded English text.
+* **Verification:**
+  - Standard static analysis pass (`flutter analyze` with 0 issues).
+  - Resolved `dashboard_screen_test.dart` failures caused by multiple listeners on the single-subscription `transactionsStream` by converting it to a broadcast stream.
+  - Achieved 100% test pass rate with all 314 tests passing successfully.
+
+### Phase 18: Dynamic Initial Database Entity Localization & UI Polish
+* **Completion Date:** June 18, 2026
+* **Objective:** Dynamically localize the default database entities (e.g. default account/wallet name) on initialization to match the device's locale settings, ensuring Clean Architecture principles are followed by passing localized values from the presentation layer, and resolve layout widget constraints in widget test environments.
+* **Accomplishments:**
+  - **Dynamic Wallet Localization:** Refactored `InitializeDefaultDataUseCase` to accept a dynamic `walletName` argument rather than hardcoding.
+  - **Clean Architecture Providers:** Updated `AppStartupProvider` and `AuthNotifier` to read the active locale, resolve the localized wallet name (e.g., using direct lookup of localization bundles `lookupAppLocalizations(locale).defaultWalletName` with appropriate Catalan, Spanish, and English fallbacks), and inject it into the initialization flow.
+  - **Material Dialog Wrappers:** Wrapped bottom sheets in `Material` inside `CreateAccountDialog` and `EditAccountDialog` to prevent background ink splash errors/warnings when executing widget tests that render list tiles.
+  - **Test Suite Updates:** Updated unit and widget tests (including `initialize_default_data_usecase_test.dart` and `auth_notifier_test.dart`) to mock and verify dynamic wallet name resolutions under Catalan, Spanish, and English environments.
+* **Verification:**
+  - Standard static analysis pass (`flutter analyze` with 0 issues).
+  - Clean build generation and l10n compilation (`flutter gen-l10n`).
+  - Achieved 100% test pass rate with all 322 tests passing successfully.
+
+#### Phase 19: Complex Cascades, Riverpod Reactivity & Deep UX Polish
+* **Completion Date:** June 18, 2026
+* **Objective:** Implement referential integrity (cascading deletes), double-entry transaction mirroring for transfers, real-time provider invalidations, system wipe and cold restart, UI/UX details refinements, dynamic menu structures, global localization coverage audit, and CI workflow compilation safety.
+* **Accomplishments:**
+  - **Transfer Mirroring Logic:** Built transfer creation logic generating paired database records linked by `transferId` (representing origin and destination accounts). Ensured that soft-deleting, hard-deleting, or restoring one leg of a transfer automatically performs the same action on the other leg.
+  - **Reactivity & Provider Invalidation:** Ensured creating, editing, restoring, or deleting transactions/accounts immediately invalidates target providers (e.g. accountsListProvider, transactionsStreamProvider, periodSummaryProvider, categoriesListProvider) to guarantee real-time UI updates.
+  - **UI/UX Refinements:**
+    - Hidden empty "Notes" section inside the transaction details sheet.
+    - Standardized modal sheets title to show the localized transaction type (Income, Expense, Transfer) instead of a generic header.
+    - consistently formatted all inputs/errors inline.
+  - **Reorganization of Settings:** Moved "Categories & Tags" out of "Profile & Security" screen and placed it directly as a main Settings page option, located between "Statistics" and "Profile & Security".
+  - **Cascading Deletes:** Deleting or trashing an account cascades trashing to all associated transactions, automatically adjusting account balances and keeping totals synchronized.
+  - **Recycle Bin Hard Delete Refresh:** Configured permanent deletes in the Recycle Bin to force a global provider refresh, updating accounts and statistics immediately.
+  - **App Wipe and Cold Restart:** Modified "Delete all data" action to completely drop the database and call `SystemNavigator.pop()` to trigger a cold application exit.
+  - **Global Localization Audit:** Fully localized the category/tag management sheets, delete error warnings, and reassign forms. Replaced all remaining hardcoded labels in `DashboardScreen`, `CategoriesTagsManagementScreen`, `EditAccountDialog`, `CreateAccountDialog`, and `TransactionDetailsDialog`.
+  - **CI/CD Integration:** Integrated `flutter gen-l10n` build steps into the Stalvi Flutter CI (`ci.yml`) and Security Audit (`security.yml`) workflows.
+* **Verification:**
+  - Standard static analysis pass (`flutter analyze` with 0 issues).
+  - Clean build generation and l10n compilation (`flutter gen-l10n`).
+  - Fixed 54 auto-fixable lint issues (trailing commas) and cleaned up unused declarations/imports in tests.
+  - Achieved 100% test pass rate with all 351 tests passing successfully.
+
+### Phase 20: Advanced Localization Audit & Mobile Layout Robustness
+* **Completion Date:** June 18, 2026
+* **Objective:** Conduct a comprehensive audit of the core layout structures, ensure all text fields and labels adapt gracefully to tight mobile screen viewports, eliminate inline localization checks in the Transfer UI, and verify 100% automated test compliance.
+* **Accomplishments:**
+  - **Localization Refactoring:** Replaced hardcoded inline language code checks in `AddTransactionScreen` for "From Account", "To Account", "Select Source Account", and "Select Destination Account" with fully localized keys (`labelFromAccount`, `labelToAccount`, `selectSourceAccount`, `selectDestinationAccount`) in `app_en.arb`, `app_es.arb`, and `app_ca.arb`.
+  - **Layout Constraints & Overflow Prevention:**
+    - Modified `_FormSelectorTile` inside `AddTransactionScreen` to restrict text fields using `maxLines: 1` and `overflow: TextOverflow.ellipsis`.
+    - Enhanced `_AccountItem` and `_TransactionItem` inside `DashboardScreen` by wrapping trailing balance and amount columns/texts in `Flexible` controls and setting truncation parameters on the account types and dates.
+    - Updated `_PieChartWithLegend` and `_TouchedCategoryInfo` in `StatisticsScreen` to wrap category name labels in `Flexible` widgets and enforce single-line truncation to handle long category names elegantly.
+  - **Code Generation:** Re-ran `flutter gen-l10n` to successfully compile the newly added localization keys across all targets.
+* **Verification:**
+  - Standard static analysis pass (`flutter analyze` with 0 issues).
+  - Executed the full automated test suite containing 352 unit and widget tests with a 100% success rate.
+
+### Phase 21: Transfer Flow Polish, Recycle Bin Refinements & Validation
+* **Completion Date:** June 19, 2026
+* **Objective:** Polish transfer movements, ensure exact record counts, update recycle bin behaviors, and verify that balance calculations are correct when deleting/restoring transactions.
+* **Accomplishments:**
+  - **Transfer Flow Polish:**
+    - Cleared note field default value on transfer creation forms to start empty.
+    - Implemented database-level mirroring for transfers. Exactly 1 leg of a transfer is shown in the global lists, while filtered account lists show the correct leg without duplicates.
+    - Standardized list tile transfer icons to consistently show `Icons.swap_horiz_rounded` regardless of whether they represent an incoming or outgoing leg.
+    - Integrated a raw transaction query stream (`watchRawTransactions`) in `TransactionRepository` and created `rawTransactionsStreamProvider`. This is used in `TransactionDetailsDialog` to retrieve the mirror transaction leg, dynamically identifying and displaying both origin and destination accounts correctly.
+  - **Recycle Bin Polish:**
+    - Disabled "Delete All / Empty Sweep" option inside the recycle bin to avoid accidental deletion.
+    - Enforced automatic provider auto-disposal to refresh the Recycle Bin screen whenever users enter the view.
+    - Modified delete mirroring so deleting a transfer places exactly 1 consolidated item inside the recycle bin list.
+    - Structured additional metadata fields (`amount`, `txType`, `currency`) in `TrashDao` for `TrashItem` instances. Refactored the Recycle Bin list tiles to dynamically render items formatted as `<Note/Type> - <Amount>` using localized translations.
+  - **Robust Calculations:**
+    - Ensured that trashing, restoring, or hard-deleting a transaction (including mirrored transfers) properly reverts or re-applies the financial balances for both accounts.
+* **Verification:**
+  - Run full suite of 352 unit and widget tests ensuring a 100% pass rate.
+  - Static analysis (`flutter analyze`) returns 0 issues and 0 warnings.
+
+### Phase 22: Multi-Currency Snapshot, Auth Fallbacks & i18n Completeness
+* **Completion Date:** June 19, 2026
+* **Objective:** Implement historical exchange rate snapshots per transaction, add background synchronization of exchange rates, resolve fallback PIN authentication when biometric authentication fails or is cancelled in sensitive flows, and complete full internationalization (i18n) coverage.
+* **Accomplishments:**
+  - **Multi-Currency Snapshot & Sync:**
+    - Modified the `Transactions` table and entity to include `exchangeRateSnapshot` for storing exchange rates at transaction creation time.
+    - Implemented background synchronization (`SyncExchangeRatesUseCase`) running on app startup to keep currency exchange rates up-to-date in the database.
+  - **Auth & Onboarding UX:**
+    - Updated profile registration and startup flows to resolve localized wallet names ("My Wallet", "Mi cartera", "La meva cartera") dynamically.
+    - Refactored `AuthScreen` PIN fallback logic to allow entering the PIN if biometric authentication fails, is locked out, or is cancelled, ensuring users can delete all data or access sensitive areas securely.
+  - **100% Localization Coverage:**
+    - Conducted a comprehensive audit of missing UI states. Extracted and localized all loading, error, and progress feedback states across English, Spanish, and Catalan.
+    - Updated `AppLocalizations` definitions and regenerated l10n bindings cleanly.
+* **Verification:**
+  - Clean run of static analysis (`flutter analyze` with 0 issues).
+  - Executed the entire suite of 357 unit, integration, and widget tests, achieving a 100% success rate (all tests passed!).
+
+### Phase 22.1: Multi-Currency Immutability & Background Sync
+* **Completion Date:** June 19, 2026
+* **Objective:** Ensure financial accuracy by saving local JSON exchange rate snapshots inside transactions, isolating default wallet initialization to the onboarding registration flow, and calculating statistics and dashboard summaries using historical snapshot math instead of pure SQL database sums.
+* **Accomplishments:**
+  - **Local Exchange Rate Caching**: Created ExchangeRate entity, local/remote data sources, and database table.
+  - **Historical Rate Snapshots**: Added `exchangeRateSnapshot` text column to the `Transactions` table to persist historical exchange rates as a JSON string when transactions are created.
+  - **Registration-scoped Initialization**: Isolated the default wallet creation to onboarding registration only, avoiding premature wallet initialization on app start.
+  - **Dynamic Snapshot Calculations**: Refactored `StatisticsDao` and `StatisticsRepositoryImpl` to query the list of transactions in a period and aggregate the sums in the Dart layer by parsing the `exchangeRateSnapshot` JSON, ensuring correct currency calculations even if default profile currencies change.
+* **Verification:**
+  - Fixed test assertion issues in `profile_settings_screen_test.dart` and aligned biometrics fallback verification string.
+  - Updated `statistics_dao_test.dart` to assert transaction queries on the updated DAO methods.
+  - Clean pass of static analysis (`dart analyze`) with 0 errors/warnings on edited code.
+  - Executed the full automated test suite (361 tests passed successfully!).
+
+### Phase 22.2: Localization Completeness, Unused Translation Cleanup, and Layout Polish
+* **Completion Date:** June 21, 2026
+* **Objective:** Audit the translation catalog to remove unused keys, localize hardcoded budget spent formatting, polish UI layouts to avoid text overflows, map validation errors to localized keys, and ensure all tests and lint checks pass cleanly.
+* **Accomplishments:**
+  - **Unused Key Cleanup**: Audited the three `.arb` localization files (`app_en.arb`, `app_es.arb`, `app_ca.arb`) and removed 15 unused translation keys (`authAuthenticate`, `authCheckingBiometrics`, `authSetupTermsCheckbox`, `authSkip`, `authVerifyIdentity`, `authVerifying`, `createAccountSuccess`, `defaultWallet`, `defaultWalletName`, `errorAuth`, `errorDatabase`, `errorGeneric`, `errorNetwork`, `myWallet`) to keep the localization bundles clean and minimal.
+  - **Budget Spent Localization**: Extracted the hardcoded budget progress spent string format (previously `'$spentStr of $targetStr'`) into a new localizable key `budgetSpentOf` across all three supported languages (English, Spanish, Catalan), adapting the format to `{spent} of {target}` / `{spent} de {target}` dynamically.
+  - **Validation Error Mapping**: Linked the `INVALID_NAME` `ValidationException` code inside `EditAccountDialog` to return the localized `createAccountErrorName` message, ensuring dynamic localization for validation errors.
+* **Verification:**
+  - Standard static analysis pass (`flutter analyze`) with 0 errors on modified files.
+  - Executed the full automated test suite containing 361 unit and widget tests, achieving a 100% success rate (all tests passed!).
+
+### Phase 23: Backups, and Import/Export Validations
+* **Completion Date:** June 22, 2026
+* **Objective:** Design and implement a secure, encrypted local backup system using AES-256-CBC, validate imports/exports cross-platform, clean up formatting, resolve static analysis, and verify all tests pass successfully.
+* **Accomplishments:**
+  - **Encrypted Local Backups**: Added cryptographic JSON exports/imports using user-defined passwords. Derived keys via PBKDF2-HMAC-SHA256 from user-specified passwords, incorporating random salt and IV headers.
+  - **Database Restoration**: Implemented `IImportService` and `ImportServiceImpl` to decrypt, validate, parse, and restore full database snapshots (Accounts, Categories, Tags, and Transactions).
+  - **Atomic Transaction Import**: Ensured that the database is atomically wiped (transactions, accounts, categories, tags) inside a single Drift transaction block and re-populated in foreign-key safe order. Kept user profiles intact during import.
+  - **Launcher Icons & Splash Screen**: Configured `flutter_launcher_icons` and `flutter_native_splash` utilizing rounded rectangle (squircle) logos, conforming to light/dark themes (`#F8FAFC` / `#0B0F19`) and Android 12+ guidelines.
+  - **Test Suite expansion**: Created unit test suite for `ImportServiceImpl` utilizing `mocktail` (4 new unit tests), verifying decryption errors, parsing exceptions, unsupported versions, and successful database restoration.
+* **Verification:**
+  - Standard static analysis pass (`flutter analyze` with 0 issues).
+  - Executed the entire suite of 359 unit, integration, and widget tests, achieving a 100% success rate (all tests passed!).
+
+### Phase 24: Financial Immutability, Export Engine & UI Polish
+* **Completion Date:** June 24, 2026
+* **Objective:** Ensure historical transaction data integrity, improve data export capabilities (PDF/CSV/JSON), and fix critical UI/UX overflows and layout issues.
+* **Accomplishments:**
+  - **Financial Immutability**: Added an `exchangeRateSnapshot` field to transactions and updated database mapping logic to store snapshots at creation time, preserving historical balance integrity. Calculate all Statistics (dashboard summaries and top categories) dynamically in real-time, performing live currency conversions based on full unrounded integer cents across multi-currency accounts.
+  - **Export Engine Enhancements**: Enhanced CSV and PDF generation to export complete data fields (including historical rates), formatted totals using active local currency symbols, and appended timestamps to filenames. Fully localized PDF strings (`AppLocalizations`) and appended `pw.PieGrid` charts for top income and expense categories.
+  - **Data Import Flow**: Modified the backup import pipeline to invalidate Riverpod providers, purge memory caches, and trigger a clean application restart via the navigator key to prevent transient state issues after data restoration.
+  - **UI/UX Polish**: Removed the redundant "Net Balance" summary from the Accounts tab, leaving a clean "Statistics" section header and entry point. Centered the transaction amount initially in the "Add Transaction" screen, allowing it to dynamically expand leftwards on large inputs. Fix the missing visibility toggle (eye icon) on the backup confirmation password field and resolved global UI overflows.
+* **Verification:**
+  - Resolved BuildContext async gap warnings (`use_build_context_synchronously`) in `data_management_screen.dart`.
+  - Deleted unnecessary scratch file `test_downloads.dart`.
+  - 100% passing rate on code analysis (`flutter analyze` with 0 issues).
+  - 100% success rate on the complete 363 tests suite (`flutter test`).
+
+### Phase 25: Currency Engine Optimization, Reactivity, and Advanced Reports
+* **Completion Date:** June 25, 2026
+* **Objective:** Optimize the currency exchange engine, ensure real-time dashboard and statistics reactivity on currency updates, implement multi-currency cross-account transfers, generate advanced localized PDF reports with pie charts/visual statistics, implement direct file opening capabilities via `open_filex`, and perform a UI/UX audit for overflow issues.
+* **Accomplishments:**
+  - **Yuan Integration:** Fully integrated Chinese Yuan (CNY) into default currency options, models, localizations, and calculations.
+  - **Currency Cache Optimization:** Updated `ExchangeRateRemoteDataSource` to store rate data locally for 24 hours, restricting outbound queries to only the 8 supported currencies to minimize network overhead.
+  - **Dynamic Reactivity:** Refactored Riverpod provider hierarchies so statistics and dashboard summaries immediately recalculate and update when default currency configurations are changed.
+  - **Cross-Currency Transfers:** Upgraded `AddTransactionUseCase` to detect transfer requests across different currencies, querying dynamic exchange rate snapshots to calculate accurate destination amounts.
+  - **Advanced PDF Reports:** Rewrote PDF monthly exports to include beautiful income/expense pie charts, category breakdown percentages, and detailed summaries all converted to the default currency.
+  - **Direct File Opening:** Added the `open_filex` dependency and integrated interactive "Open" actions on success Snackbars when exporting CSV/PDF reports in the Data Management Screen.
+  - **UI/UX & Translation Audit:** Wrapped sensitive input forms (e.g. `AddTransactionScreen` and `ProfileSettingsScreen` PIN/currency selections) inside `SafeArea` and `SingleChildScrollView` widgets to guarantee zero `BottomOverflow` keyboard rendering bugs. Audited and synchronized the translation ARB catalogs for English, Spanish, and Catalan.
+* **Verification:**
+  - Zero issues on static analysis (`flutter analyze`).
+  - All automated tests pass successfully: **368 tests passed** (including mock repository verifications and widget layout assertions).
+
+## Recent Updates
+- Integrated Chinese Yuan (CNY) and optimized exchange rate API payload sizes (caching 8 target currencies for 24h).
+- Added multi-currency support to transfer transactions, dynamically resolving rates at transaction time.
+- Enhanced Riverpod state management to reactively redraw statistics and dashboard modules upon default currency updates.
+- Refactored monthly PDF export layouts to incorporate localized titles, default-currency formatting, and top categories pie charts.
+- Configured native file openers using `open_filex` for post-export feedback on success Snackbars.
+- Completed comprehensive UI form overflows audit using scroll views and keyboard safety widgets.
+- Achieved 100% pass rate with all 368 tests passing successfully and 0 lint issues.
 
 
 

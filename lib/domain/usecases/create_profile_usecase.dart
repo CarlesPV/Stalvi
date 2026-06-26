@@ -1,11 +1,16 @@
 import 'dart:convert';
 import 'package:crypto/crypto.dart';
+import 'package:flutter/widgets.dart';
 import 'package:uuid/uuid.dart';
 
 import 'package:stalvi/core/errors/app_exceptions.dart';
+import 'package:stalvi/core/l10n/app_localizations.dart';
 import 'package:stalvi/core/security/secure_storage_manager.dart';
+import 'package:stalvi/domain/entities/account_type.dart';
 import 'package:stalvi/domain/entities/profile.dart';
 import 'package:stalvi/domain/repositories/i_profile_repository.dart';
+import 'package:stalvi/domain/usecases/create_account_usecase.dart';
+import 'package:stalvi/domain/usecases/initialize_default_data_usecase.dart';
 
 class CreateProfileParams {
   final String name;
@@ -25,11 +30,28 @@ class CreateProfileParams {
   });
 }
 
+/// Use case responsible for creating or updating a user profile during
+/// onboarding.
+///
+/// **Default account creation contract:**
+/// - The default account is created ONLY after the profile has been
+///   successfully persisted.
+/// - It uses [CreateProfileParams.defaultCurrency] so that the account's
+///   currency always matches what the user selected.
+/// - The account name is resolved from the application's localization system
+///   using [CreateProfileParams.locale], with a safe fallback to English.
 class CreateProfileUseCase {
   final IProfileRepository _profileRepository;
   final SecureStorageManager _secureStorageManager;
+  final CreateAccountUseCase _createAccountUseCase;
+  final InitializeDefaultDataUseCase _initializeDefaultDataUseCase;
 
-  CreateProfileUseCase(this._profileRepository, this._secureStorageManager);
+  CreateProfileUseCase(
+    this._profileRepository,
+    this._secureStorageManager,
+    this._createAccountUseCase,
+    this._initializeDefaultDataUseCase,
+  );
 
   Future<Profile> execute(CreateProfileParams params) async {
     // 1. Terms acceptance check
@@ -100,7 +122,55 @@ class CreateProfileUseCase {
       await _profileRepository.createProfile(profile);
     }
 
+    // 6. Create the default account using the user's chosen currency.
+    //    This happens explicitly here — AFTER the profile exists — so the
+    //    account's currency is guaranteed to match the profile's currency.
+    await _createDefaultAccount(
+      userId: profile.id,
+      currency: profile.defaultCurrency,
+      locale: params.locale,
+    );
+
+    // 7. Seed default categories and tags (no account creation).
+    await _initializeDefaultDataUseCase.execute(
+      userId: profile.id,
+      locale: params.locale,
+    );
+
     return profile;
+  }
+
+  /// Creates the default "main wallet" account for a newly created profile.
+  ///
+  /// The account name is resolved from the l10n system.  If the locale lookup
+  /// fails (e.g. unsupported locale), it falls back to the English string.
+  Future<void> _createDefaultAccount({
+    required String userId,
+    required String currency,
+    required String locale,
+  }) async {
+    // Resolve the localized wallet name.
+    var walletName = 'Main Account';
+    try {
+      final langCode = locale.split('_').first.split('-').first.toLowerCase();
+      walletName = lookupAppLocalizations(Locale(langCode)).defaultAccountName;
+    } catch (_) {
+      // Keep the English fallback set above.
+    }
+
+    final params = CreateAccountParams(
+      id: const Uuid().v4(),
+      userId: userId,
+      name: walletName,
+      type: AccountType.cash,
+      initialBalance: 0.0,
+      currency: currency,
+      color: '#4CAF50',
+      icon: 'wallet',
+      isDefault: true,
+    );
+
+    await _createAccountUseCase.execute(params);
   }
 
   String _hashPin(String pin) {

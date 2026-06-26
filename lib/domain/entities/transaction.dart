@@ -8,10 +8,12 @@ class Transaction {
   final TransactionType type;
   final String accountId;
   final String? categoryId;
+  final String? savingsGoalId;
   final String? notes;
   final String originalCurrency;
   final int? convertedAmount;
   final double? exchangeRate;
+  final String? exchangeRateSnapshot;
   final DateTime createdAt;
   final DateTime modifiedAt;
 
@@ -31,10 +33,12 @@ class Transaction {
     required this.type,
     required this.accountId,
     this.categoryId,
+    this.savingsGoalId,
     this.notes,
     required this.originalCurrency,
     this.convertedAmount,
     this.exchangeRate,
+    this.exchangeRateSnapshot,
     required this.createdAt,
     required this.modifiedAt,
     this.transferId,
@@ -51,10 +55,12 @@ class Transaction {
         other.type == type &&
         other.accountId == accountId &&
         other.categoryId == categoryId &&
+        other.savingsGoalId == savingsGoalId &&
         other.notes == notes &&
         other.originalCurrency == originalCurrency &&
         other.convertedAmount == convertedAmount &&
         other.exchangeRate == exchangeRate &&
+        other.exchangeRateSnapshot == exchangeRateSnapshot &&
         other.createdAt == createdAt &&
         other.modifiedAt == modifiedAt &&
         other.transferId == transferId;
@@ -68,10 +74,12 @@ class Transaction {
         type.hashCode ^
         accountId.hashCode ^
         categoryId.hashCode ^
+        savingsGoalId.hashCode ^
         notes.hashCode ^
         originalCurrency.hashCode ^
         convertedAmount.hashCode ^
         exchangeRate.hashCode ^
+        exchangeRateSnapshot.hashCode ^
         createdAt.hashCode ^
         modifiedAt.hashCode ^
         transferId.hashCode;
@@ -84,10 +92,12 @@ class Transaction {
     TransactionType? type,
     String? accountId,
     String? categoryId,
+    String? savingsGoalId,
     String? notes,
     String? originalCurrency,
     int? convertedAmount,
     double? exchangeRate,
+    String? exchangeRateSnapshot,
     DateTime? createdAt,
     DateTime? modifiedAt,
     String? transferId,
@@ -100,10 +110,12 @@ class Transaction {
       type: type ?? this.type,
       accountId: accountId ?? this.accountId,
       categoryId: categoryId ?? this.categoryId,
+      savingsGoalId: savingsGoalId ?? this.savingsGoalId,
       notes: notes ?? this.notes,
       originalCurrency: originalCurrency ?? this.originalCurrency,
       convertedAmount: convertedAmount ?? this.convertedAmount,
       exchangeRate: exchangeRate ?? this.exchangeRate,
+      exchangeRateSnapshot: exchangeRateSnapshot ?? this.exchangeRateSnapshot,
       createdAt: createdAt ?? this.createdAt,
       modifiedAt: modifiedAt ?? this.modifiedAt,
       transferId: clearTransferId ? null : (transferId ?? this.transferId),

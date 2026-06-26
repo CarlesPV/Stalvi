@@ -93,4 +93,23 @@ class AccountDao extends DatabaseAccessor<AppDatabase> with _$AccountDaoMixin {
       );
     });
   }
+
+  /// Adjusts the initial balance of an account. Can be positive or negative.
+  Future<void> adjustBalance(String accountId, double amountDelta) async {
+    final account = await (select(accounts)
+          ..where((a) => a.id.equals(accountId)))
+        .getSingleOrNull();
+
+    if (account == null) {
+      throw Exception('adjustBalance: no account found with id "$accountId".');
+    }
+
+    final now = DateTime.now();
+    await (update(accounts)..where((a) => a.id.equals(accountId))).write(
+      AccountsCompanion(
+        initialBalance: Value(account.initialBalance + amountDelta),
+        modifiedAt: Value(now),
+      ),
+    );
+  }
 }

@@ -3,11 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:intl/intl.dart';
 import 'package:stalvi/core/l10n/app_localizations.dart';
 import 'package:stalvi/core/theme/app_theme.dart';
 import 'package:stalvi/domain/entities/budget.dart';
 import 'package:stalvi/domain/entities/category.dart';
 import 'package:stalvi/domain/entities/savings_goal.dart';
+import 'package:stalvi/domain/entities/profile.dart';
+import 'package:stalvi/domain/entities/account.dart';
+import 'package:stalvi/domain/entities/account_type.dart';
 import 'package:stalvi/presentation/features/budgets_and_goals/budgets_and_goals_screen.dart';
 import 'package:stalvi/presentation/providers/repository_providers.dart';
 import 'package:stalvi/core/utils/currency_formatter.dart';
@@ -67,6 +71,7 @@ void main() {
 
   final testBudgetNormal = Budget(
     id: 'b_normal',
+    accountId: 'acc_1',
     categoryId: 'cat_food',
     targetAmount: 20000, // €200.00
     currentAmount: 8000, // €80.00
@@ -78,6 +83,7 @@ void main() {
 
   final testBudgetExceeded = Budget(
     id: 'b_exceeded',
+    accountId: 'acc_1',
     categoryId: 'cat_food',
     targetAmount: 10000, // €100.00
     currentAmount: 12000, // €120.00
@@ -97,6 +103,32 @@ void main() {
     icon: 'directions_car',
     createdAt: DateTime(2026, 6, 1),
     modifiedAt: DateTime(2026, 6, 1),
+    currency: 'EUR',
+  );
+
+  final testAccount = Account(
+    id: 'acc_1',
+    userId: 'user_1',
+    name: 'Main Account',
+    type: AccountType.cash,
+    initialBalance: 1000.0,
+    currency: 'EUR',
+    color: '#000000',
+    icon: 'wallet',
+    isDefault: true,
+    isDeleted: false,
+    createdAt: DateTime(2026, 6, 1),
+    modifiedAt: DateTime(2026, 6, 1),
+  );
+
+  final testProfile = Profile(
+    id: 'user_1',
+    name: 'Test User',
+    username: 'testuser',
+    password: 'pw',
+    defaultCurrency: 'EUR',
+    createdAt: DateTime(2026, 6, 1),
+    modifiedAt: DateTime(2026, 6, 1),
   );
 
   Widget createTestWidget({
@@ -111,6 +143,8 @@ void main() {
         categoriesListProvider.overrideWith((ref) => categoriesStream),
         currencyFormatterProvider
             .overrideWith((ref) => CurrencyFormatter(currencyCode: 'EUR')),
+        accountsListProvider.overrideWith((ref) => Stream.value([testAccount])),
+        defaultProfileProvider.overrideWith((ref) => testProfile),
       ],
       child: MaterialApp(
         theme: AppTheme.lightTheme,
@@ -256,13 +290,59 @@ void main() {
       final sgTarget = CurrencyFormatter().format(30000.0);
       expect(find.text('$sgSaved saved of $sgTarget'), findsOneWidget);
       expect(find.text('50%'), findsOneWidget);
-      expect(find.text('Target date: Dec 31, 2027'), findsOneWidget);
+      final targetDateStr =
+          DateFormat.yMMMd('en_US').format(testSavingsGoal.targetDate!);
+      expect(find.text('Target date: $targetDateStr'), findsOneWidget);
 
       // Check the icon is rendered
       expect(find.byIcon(Icons.directions_car_rounded), findsOneWidget);
 
       // Verify progress bar is rendered
       expect(find.byType(ProgressBarWidget), findsOneWidget);
+    });
+
+    testWidgets(
+        'shows Add Budget bottom sheet when FAB is tapped on Budgets tab',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(
+        createTestWidget(
+          budgetsStream: Stream.value([testBudgetNormal]),
+          savingsGoalsStream: Stream.value([testSavingsGoal]),
+          categoriesStream: Stream.value([testCategory]),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+
+      expect(find.byType(FloatingActionButton), findsOneWidget);
+      await tester.tap(find.byType(FloatingActionButton));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Add Budget'), findsOneWidget);
+    });
+
+    testWidgets(
+        'shows Add Savings Goal bottom sheet when FAB is tapped on Savings Goals tab',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(
+        createTestWidget(
+          budgetsStream: Stream.value([testBudgetNormal]),
+          savingsGoalsStream: Stream.value([testSavingsGoal]),
+          categoriesStream: Stream.value([testCategory]),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+
+      // Switch to Savings Goals tab
+      await tester.tap(find.text('Savings Goals'));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(FloatingActionButton), findsOneWidget);
+      await tester.tap(find.byType(FloatingActionButton));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Add Savings Goal'), findsOneWidget);
     });
   });
 }

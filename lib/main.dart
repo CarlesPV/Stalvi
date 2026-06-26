@@ -3,6 +3,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:stalvi/core/l10n/app_localizations.dart';
 
+import 'package:stalvi/core/utils/navigator_key.dart';
 import 'package:stalvi/core/theme/app_theme.dart';
 import 'package:stalvi/presentation/features/splash/splash_screen.dart';
 import 'package:stalvi/presentation/providers/locale_provider.dart';
@@ -40,6 +41,7 @@ class StalviApp extends ConsumerWidget {
     final activeThemeMode = ref.watch(themeProvider);
 
     return MaterialApp(
+      navigatorKey: navigatorKey,
       title: 'Stalvi',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,

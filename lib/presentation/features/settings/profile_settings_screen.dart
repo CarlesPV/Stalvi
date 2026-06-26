@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:stalvi/core/l10n/app_localizations.dart';
 import 'package:stalvi/infrastructure/services/biometric_auth_service.dart';
 import 'package:stalvi/presentation/features/settings/profile_settings_controller.dart';
+import 'package:stalvi/presentation/features/settings/pin_verification_sheet.dart';
 import 'package:stalvi/presentation/features/splash/splash_screen.dart';
 import 'package:stalvi/presentation/providers/auth_notifier.dart';
 import 'package:stalvi/presentation/providers/locale_provider.dart';
@@ -66,6 +67,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
       'CHF': l10n.currencyCHF,
       'CAD': l10n.currencyCAD,
       'AUD': l10n.currencyAUD,
+      'CNY': l10n.currencyCNY,
     };
     String selected = currencies.keys.contains(currentCurrency)
         ? currentCurrency
@@ -170,191 +172,199 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                   }
                 }
 
-                return Padding(
-                  padding: EdgeInsets.only(
-                    bottom: MediaQuery.of(context).viewInsets.bottom,
-                    left: 24,
-                    right: 24,
-                    top: 24,
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        title,
-                        style: Theme.of(context).textTheme.titleLarge,
+                return SafeArea(
+                  child: SingleChildScrollView(
+                    child: Padding(
+                      padding: EdgeInsets.only(
+                        bottom: MediaQuery.of(context).viewInsets.bottom,
+                        left: 24,
+                        right: 24,
+                        top: 24,
                       ),
-                      const SizedBox(height: 16),
-                      TextField(
-                        controller: currentController,
-                        keyboardType: TextInputType.number,
-                        obscureText: true,
-                        autofocus: true,
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(letterSpacing: 8, fontSize: 24),
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly,
-                        ],
-                        maxLength: 8,
-                        decoration: const InputDecoration(
-                          counterText: '',
-                          border: OutlineInputBorder(),
-                        ),
-                        onChanged: (val) {
-                          setState(() {
-                            localError = null;
-                          });
-                        },
-                      ),
-                      const SizedBox(height: 16),
-                      if (state.error != null || localError != null)
-                        Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: Colors.red.shade100,
-                            borderRadius: BorderRadius.circular(8),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            title,
+                            style: Theme.of(context).textTheme.titleLarge,
                           ),
-                          child: Row(
-                            children: [
-                              const Icon(
-                                Icons.error_outline,
-                                color: Colors.red,
+                          const SizedBox(height: 16),
+                          TextField(
+                            controller: currentController,
+                            keyboardType: TextInputType.number,
+                            obscureText: true,
+                            autofocus: true,
+                            textAlign: TextAlign.center,
+                            style:
+                                const TextStyle(letterSpacing: 8, fontSize: 24),
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly,
+                            ],
+                            maxLength: 8,
+                            decoration: const InputDecoration(
+                              counterText: '',
+                              border: OutlineInputBorder(),
+                            ),
+                            onChanged: (val) {
+                              setState(() {
+                                localError = null;
+                              });
+                            },
+                          ),
+                          const SizedBox(height: 16),
+                          if (state.error != null || localError != null)
+                            Container(
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: Colors.red.shade100,
+                                borderRadius: BorderRadius.circular(8),
                               ),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: Text(
-                                  localError ??
-                                      ((state.error!.contains(
-                                                'old_pin_incorrect',
-                                              ) ||
-                                              state.error!.contains(
-                                                'Incorrect Old PIN.',
-                                              ))
-                                          ? '${l10n.incorrectOldPin}\n${l10n.authPinAttemptsRemaining(6 - state.failedAttempts)}'
-                                          : (state.error!.contains(
-                                                    'maximum_pin_attempts',
+                              child: Row(
+                                children: [
+                                  const Icon(
+                                    Icons.error_outline,
+                                    color: Colors.red,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: Text(
+                                      localError ??
+                                          ((state.error!.contains(
+                                                    'old_pin_incorrect',
                                                   ) ||
                                                   state.error!.contains(
-                                                    'Maximum PIN attempts',
+                                                    'Incorrect Old PIN.',
                                                   ))
-                                              ? l10n.errorMaxPinAttempts
-                                              : state.error!),
-                                  style: const TextStyle(
-                                    color: Colors.red,
-                                    fontWeight: FontWeight.bold,
+                                              ? '${l10n.incorrectOldPin}\n${l10n.authPinAttemptsRemaining(6 - state.failedAttempts)}'
+                                              : (state.error!.contains(
+                                                        'maximum_pin_attempts',
+                                                      ) ||
+                                                      state.error!.contains(
+                                                        'Maximum PIN attempts',
+                                                      ))
+                                                  ? l10n.errorMaxPinAttempts
+                                                  : state.error!),
+                                      style: const TextStyle(
+                                        color: Colors.red,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
                                   ),
-                                ),
+                                ],
                               ),
-                            ],
-                          ),
-                        ),
-                      const SizedBox(height: 24),
-                      if (state.isLoading)
-                        const CircularProgressIndicator()
-                      else
-                        ElevatedButton(
-                          onPressed: currentController.text.length >= 4
-                              ? () async {
-                                  if (state.pinChangeStep ==
-                                      PinChangeStep.verifyOld) {
-                                    try {
-                                      await ref
-                                          .read(
-                                            profileSettingsControllerProvider
-                                                .notifier,
-                                          )
-                                          .verifyOldPin(oldPinController.text);
-                                    } catch (_) {
-                                      oldPinController.clear();
-                                      setState(() {});
-                                    }
-                                  } else {
-                                    if (localStep == 1) {
-                                      setState(() {
-                                        localStep = 2;
-                                      });
-                                    } else if (localStep == 2) {
-                                      if (newPinController.text !=
-                                          confirmPinController.text) {
-                                        setState(() {
-                                          localError = l10n.pinsDoNotMatch;
-                                          newPinController.clear();
-                                          confirmPinController.clear();
-                                          localStep = 1;
-                                        });
-                                        return;
-                                      }
-                                      try {
-                                        await ref
-                                            .read(
-                                              profileSettingsControllerProvider
-                                                  .notifier,
-                                            )
-                                            .changePin(
-                                              oldPinController.text,
-                                              newPinController.text,
-                                            );
-                                        if (context.mounted) {
-                                          Navigator.of(context).pop();
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(
-                                            SnackBar(
-                                              content: Text(
-                                                l10n.pinUpdatedSuccessfully,
-                                              ),
-                                            ),
-                                          );
+                            ),
+                          const SizedBox(height: 24),
+                          if (state.isLoading)
+                            const CircularProgressIndicator()
+                          else
+                            ElevatedButton(
+                              onPressed: currentController.text.length >= 4
+                                  ? () async {
+                                      if (state.pinChangeStep ==
+                                          PinChangeStep.verifyOld) {
+                                        try {
+                                          await ref
+                                              .read(
+                                                profileSettingsControllerProvider
+                                                    .notifier,
+                                              )
+                                              .verifyOldPin(
+                                                oldPinController.text,
+                                              );
+                                        } catch (_) {
+                                          oldPinController.clear();
+                                          setState(() {});
                                         }
-                                      } catch (e) {
-                                        if (context.mounted) {
-                                          final errorMsg = e.toString();
-                                          String displayError = errorMsg;
-                                          if (errorMsg.contains(
-                                                'pin_length_invalid',
-                                              ) ||
-                                              errorMsg.contains(
-                                                'between 4 and 8',
-                                              )) {
-                                            displayError = l10n
-                                                .authSetupValidationErrorPinLength;
-                                          } else if (errorMsg.contains(
-                                                'pin_not_numeric',
-                                              ) ||
-                                              errorMsg.contains(
-                                                'only numeric digits',
-                                              )) {
-                                            displayError =
-                                                l10n.errorPinNotNumeric;
-                                          } else if (errorMsg
-                                                  .contains('no_pin_set') ||
-                                              errorMsg.contains(
-                                                'No PIN is currently set',
-                                              )) {
-                                            displayError = l10n.errorNoPinSet;
-                                          }
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(
-                                            SnackBar(
-                                              content: Text(displayError),
-                                            ),
-                                          );
+                                      } else {
+                                        if (localStep == 1) {
                                           setState(() {
-                                            localStep = 1;
-                                            newPinController.clear();
-                                            confirmPinController.clear();
+                                            localStep = 2;
                                           });
+                                        } else if (localStep == 2) {
+                                          if (newPinController.text !=
+                                              confirmPinController.text) {
+                                            setState(() {
+                                              localError = l10n.pinsDoNotMatch;
+                                              newPinController.clear();
+                                              confirmPinController.clear();
+                                              localStep = 1;
+                                            });
+                                            return;
+                                          }
+                                          try {
+                                            await ref
+                                                .read(
+                                                  profileSettingsControllerProvider
+                                                      .notifier,
+                                                )
+                                                .changePin(
+                                                  oldPinController.text,
+                                                  newPinController.text,
+                                                );
+                                            if (context.mounted) {
+                                              Navigator.of(context).pop();
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                SnackBar(
+                                                  content: Text(
+                                                    l10n.pinUpdatedSuccessfully,
+                                                  ),
+                                                ),
+                                              );
+                                            }
+                                          } catch (e) {
+                                            if (context.mounted) {
+                                              final errorMsg = e.toString();
+                                              String displayError = errorMsg;
+                                              if (errorMsg.contains(
+                                                    'pin_length_invalid',
+                                                  ) ||
+                                                  errorMsg.contains(
+                                                    'between 4 and 8',
+                                                  )) {
+                                                displayError = l10n
+                                                    .authSetupValidationErrorPinLength;
+                                              } else if (errorMsg.contains(
+                                                    'pin_not_numeric',
+                                                  ) ||
+                                                  errorMsg.contains(
+                                                    'only numeric digits',
+                                                  )) {
+                                                displayError =
+                                                    l10n.errorPinNotNumeric;
+                                              } else if (errorMsg
+                                                      .contains('no_pin_set') ||
+                                                  errorMsg.contains(
+                                                    'No PIN is currently set',
+                                                  )) {
+                                                displayError =
+                                                    l10n.errorNoPinSet;
+                                              }
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                SnackBar(
+                                                  content: Text(displayError),
+                                                ),
+                                              );
+                                              setState(() {
+                                                localStep = 1;
+                                                newPinController.clear();
+                                                confirmPinController.clear();
+                                              });
+                                            }
+                                          }
                                         }
                                       }
                                     }
-                                  }
-                                }
-                              : null,
-                          child: Text(
-                            localStep == 2 ? l10n.btnSave : l10n.btnNext,
-                          ),
-                        ),
-                      const SizedBox(height: 24),
-                    ],
+                                  : null,
+                              child: Text(
+                                localStep == 2 ? l10n.btnSave : l10n.btnNext,
+                              ),
+                            ),
+                          const SizedBox(height: 24),
+                        ],
+                      ),
+                    ),
                   ),
                 );
               },
@@ -391,7 +401,9 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
           signInTitle: l10n.authSignInTitle,
           cancelButton: l10n.btnCancel,
         );
-        return didAuthenticate;
+        if (didAuthenticate) {
+          return true;
+        }
       } catch (_) {
         // Biometrics failed / cancelled — fall through to PIN.
       }
@@ -403,7 +415,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
       context: context,
       isScrollControlled: true,
       isDismissible: true,
-      builder: (sheetCtx) => _PinVerificationSheet(
+      builder: (sheetCtx) => PinVerificationSheet(
         onVerified: () => Navigator.of(sheetCtx).pop(true),
         onCancelled: () => Navigator.of(sheetCtx).pop(false),
       ),
@@ -531,454 +543,183 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
       ),
       body: state.isLoading && state.profile == null
           ? const Center(child: CircularProgressIndicator())
-          : ListView(
-              padding: const EdgeInsets.all(24),
-              children: [
-                // ── Profile & Security ────────────────────────────────────
-                if (state.profile != null) ...[
-                  ListTile(
-                    leading: const Icon(Icons.person),
-                    title: Text(l10n.usernameLabel),
-                    subtitle: Text(state.profile!.username),
-                    trailing: const Icon(Icons.edit),
-                    onTap: () =>
-                        _editUsername(context, state.profile!.username),
-                  ),
-                  const Divider(),
-                  ListTile(
-                    leading: const Icon(Icons.currency_exchange),
-                    title: Text(l10n.authSetupCurrencyLabel),
-                    subtitle: Text(state.profile!.defaultCurrency),
-                    trailing: const Icon(Icons.edit),
-                    onTap: () =>
-                        _editCurrency(context, state.profile!.defaultCurrency),
-                  ),
-                  const Divider(),
-                ],
-                ListTile(
-                  leading: const Icon(Icons.lock),
-                  title: Text(l10n.changePinButton),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () => _changePinFlow(context),
-                ),
-                const Divider(),
-                ListTile(
-                  leading: const Icon(Icons.palette_rounded),
-                  title: Text(l10n.settingsThemeMode),
-                  trailing: DropdownButton<ThemeMode>(
-                    value: ref.watch(themeProvider),
-                    dropdownColor:
-                        Theme.of(context).colorScheme.surfaceContainerHighest,
-                    borderRadius: BorderRadius.circular(12),
-                    underline: const SizedBox(),
-                    icon: Icon(
-                      Icons.arrow_drop_down_rounded,
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+          : SafeArea(
+              child: ListView(
+                padding: const EdgeInsets.all(24),
+                children: [
+                  // ── Profile & Security ────────────────────────────────────
+                  if (state.profile != null) ...[
+                    ListTile(
+                      leading: const Icon(Icons.person),
+                      title: Text(l10n.usernameLabel),
+                      subtitle: Text(state.profile!.username),
+                      trailing: const Icon(Icons.edit),
+                      onTap: () =>
+                          _editUsername(context, state.profile!.username),
                     ),
-                    onChanged: (ThemeMode? newMode) {
-                      if (newMode != null) {
-                        ref.read(themeProvider.notifier).setThemeMode(newMode);
-                      }
-                    },
-                    items: ThemeMode.values.map((ThemeMode mode) {
-                      String label;
-                      switch (mode) {
-                        case ThemeMode.system:
-                          label = l10n.themeModeSystem;
-                          break;
-                        case ThemeMode.light:
-                          label = l10n.themeModeLight;
-                          break;
-                        case ThemeMode.dark:
-                          label = l10n.themeModeDark;
-                          break;
-                      }
-                      return DropdownMenuItem<ThemeMode>(
-                        value: mode,
-                        child: Text(
-                          label,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyMedium
-                              ?.copyWith(
-                                color: Theme.of(context).colorScheme.onSurface,
-                              ),
+                    const Divider(),
+                    ListTile(
+                      leading: const Icon(Icons.currency_exchange),
+                      title: Text(l10n.authSetupCurrencyLabel),
+                      subtitle: Text(state.profile!.defaultCurrency),
+                      trailing: const Icon(Icons.edit),
+                      onTap: () => _editCurrency(
+                        context,
+                        state.profile!.defaultCurrency,
+                      ),
+                    ),
+                    const Divider(),
+                  ],
+                  ListTile(
+                    leading: const Icon(Icons.lock),
+                    title: Text(l10n.changePinButton),
+                    trailing: const Icon(Icons.chevron_right),
+                    onTap: () => _changePinFlow(context),
+                  ),
+                  const Divider(),
+                  ListTile(
+                    leading: const Icon(Icons.palette_rounded),
+                    title: Text(l10n.settingsThemeMode),
+                    trailing: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 140),
+                      child: DropdownButton<ThemeMode>(
+                        value: ref.watch(themeProvider),
+                        dropdownColor: Theme.of(context)
+                            .colorScheme
+                            .surfaceContainerHighest,
+                        borderRadius: BorderRadius.circular(12),
+                        underline: const SizedBox(),
+                        icon: Icon(
+                          Icons.arrow_drop_down_rounded,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                        onChanged: (ThemeMode? newMode) {
+                          if (newMode != null) {
+                            ref
+                                .read(themeProvider.notifier)
+                                .setThemeMode(newMode);
+                          }
+                        },
+                        items: ThemeMode.values.map((ThemeMode mode) {
+                          String label;
+                          switch (mode) {
+                            case ThemeMode.system:
+                              label = l10n.themeModeSystem;
+                              break;
+                            case ThemeMode.light:
+                              label = l10n.themeModeLight;
+                              break;
+                            case ThemeMode.dark:
+                              label = l10n.themeModeDark;
+                              break;
+                          }
+                          return DropdownMenuItem<ThemeMode>(
+                            value: mode,
+                            child: Text(
+                              label,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium
+                                  ?.copyWith(
+                                    color:
+                                        Theme.of(context).colorScheme.onSurface,
+                                  ),
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                  ),
+                  const Divider(),
+                  ListTile(
+                    leading: const Icon(Icons.language_rounded),
+                    title: Text(l10n.settingsLanguage),
+                    trailing: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 140),
+                      child: DropdownButton<String>(
+                        value: ref.watch(localeProvider).languageCode,
+                        dropdownColor: Theme.of(context)
+                            .colorScheme
+                            .surfaceContainerHighest,
+                        borderRadius: BorderRadius.circular(12),
+                        underline: const SizedBox(),
+                        icon: Icon(
+                          Icons.arrow_drop_down_rounded,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                        onChanged: (String? newLang) {
+                          if (newLang != null) {
+                            ref
+                                .read(localeProvider.notifier)
+                                .setLocale(Locale(newLang));
+                          }
+                        },
+                        items: const [
+                          DropdownMenuItem<String>(
+                            value: 'en',
+                            child:
+                                Text('English', style: TextStyle(fontSize: 14)),
+                          ),
+                          DropdownMenuItem<String>(
+                            value: 'es',
+                            child:
+                                Text('Español', style: TextStyle(fontSize: 14)),
+                          ),
+                          DropdownMenuItem<String>(
+                            value: 'ca',
+                            child:
+                                Text('Català', style: TextStyle(fontSize: 14)),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const Divider(),
+                  ListTile(
+                    leading: const Icon(Icons.description_rounded),
+                    title: Text(l10n.termsAndConditions),
+                    trailing: const Icon(Icons.chevron_right),
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => const TermsAndConditionsViewer(
+                            showPrivacyPolicy: false,
+                          ),
                         ),
                       );
-                    }).toList(),
-                  ),
-                ),
-                const Divider(),
-                ListTile(
-                  leading: const Icon(Icons.language_rounded),
-                  title: Text(l10n.settingsLanguage),
-                  trailing: DropdownButton<String>(
-                    value: ref.watch(localeProvider).languageCode,
-                    dropdownColor:
-                        Theme.of(context).colorScheme.surfaceContainerHighest,
-                    borderRadius: BorderRadius.circular(12),
-                    underline: const SizedBox(),
-                    icon: Icon(
-                      Icons.arrow_drop_down_rounded,
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    ),
-                    onChanged: (String? newLang) {
-                      if (newLang != null) {
-                        ref
-                            .read(localeProvider.notifier)
-                            .setLocale(Locale(newLang));
-                      }
                     },
-                    items: const [
-                      DropdownMenuItem<String>(
-                        value: 'en',
-                        child: Text('English', style: TextStyle(fontSize: 14)),
-                      ),
-                      DropdownMenuItem<String>(
-                        value: 'es',
-                        child: Text('Español', style: TextStyle(fontSize: 14)),
-                      ),
-                      DropdownMenuItem<String>(
-                        value: 'ca',
-                        child: Text('Català', style: TextStyle(fontSize: 14)),
-                      ),
-                    ],
                   ),
-                ),
-                const Divider(),
-                ListTile(
-                  leading: const Icon(Icons.description_rounded),
-                  title: Text(l10n.termsAndConditions),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => const TermsAndConditionsViewer(
-                          showPrivacyPolicy: false,
-                        ),
-                      ),
-                    );
-                  },
-                ),
-                const Divider(),
-                ListTile(
-                  leading: const Icon(Icons.privacy_tip_rounded),
-                  title: Text(l10n.privacyPolicy),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => const TermsAndConditionsViewer(
-                          showPrivacyPolicy: true,
-                        ),
-                      ),
-                    );
-                  },
-                ),
-                const SizedBox(height: 48),
-                ElevatedButton.icon(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red.withValues(alpha: 0.1),
-                    foregroundColor: Colors.red,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                  ),
-                  icon: const Icon(Icons.delete_forever),
-                  label: Text(l10n.deleteAllDataButton),
-                  onPressed: () => _confirmDeleteAllData(context),
-                ),
-              ],
-            ),
-    );
-  }
-}
-
-// ─── PIN Verification Sheet ───────────────────────────────────────────────────
-
-/// A self-contained modal bottom sheet that presents a numeric PIN dial-pad.
-/// It delegates PIN verification to [authNotifierProvider] so that the
-/// brute-force lockout rules remain consistent across the whole app.
-class _PinVerificationSheet extends ConsumerStatefulWidget {
-  final VoidCallback onVerified;
-  final VoidCallback onCancelled;
-
-  const _PinVerificationSheet({
-    required this.onVerified,
-    required this.onCancelled,
-  });
-
-  @override
-  ConsumerState<_PinVerificationSheet> createState() =>
-      _PinVerificationSheetState();
-}
-
-class _PinVerificationSheetState extends ConsumerState<_PinVerificationSheet> {
-  String _enteredPin = '';
-  int _requiredPinLength = 4;
-  bool _isVerifying = false;
-  String? _errorText;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadPinLength();
-  }
-
-  Future<void> _loadPinLength() async {
-    final length =
-        await ref.read(authNotifierProvider.notifier).getRequiredPinLength();
-    if (mounted) setState(() => _requiredPinLength = length);
-  }
-
-  Future<void> _onDigitTapped(String digit) async {
-    if (_isVerifying) return;
-    if (_enteredPin.length >= _requiredPinLength) return;
-
-    final newPin = _enteredPin + digit;
-    setState(() {
-      _enteredPin = newPin;
-      _errorText = null;
-    });
-
-    if (newPin.length == _requiredPinLength) {
-      await _verifyPin(newPin);
-    }
-  }
-
-  Future<void> _verifyPin(String pin) async {
-    setState(() => _isVerifying = true);
-    final ok = await ref
-        .read(profileSettingsControllerProvider.notifier)
-        .verifyDeleteDataPin(pin);
-    if (!mounted) return;
-    if (ok) {
-      widget.onVerified();
-    } else {
-      final remaining =
-          6 - ref.read(profileSettingsControllerProvider).failedDeleteAttempts;
-      setState(() {
-        _isVerifying = false;
-        _enteredPin = '';
-        _errorText = remaining > 0
-            ? AppLocalizations.of(context)!.authPinAttemptsRemaining(remaining)
-            : null;
-      });
-    }
-  }
-
-  Widget _buildDot(int index) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-    final isFilled = index < _enteredPin.length;
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 8),
-      width: 14,
-      height: 14,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: isFilled
-            ? colorScheme.primary
-            : colorScheme.primary.withValues(alpha: 0.12),
-        border: Border.all(
-          color: isFilled
-              ? colorScheme.primary
-              : colorScheme.outlineVariant.withValues(alpha: 0.6),
-          width: 1.5,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDialKey(String digit) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-    return AspectRatio(
-      aspectRatio: 1.5,
-      child: Container(
-        margin: const EdgeInsets.all(6),
-        child: InkWell(
-          onTap: () => _onDigitTapped(digit),
-          borderRadius: BorderRadius.circular(16),
-          child: Center(
-            child: Text(
-              digit,
-              style: theme.textTheme.headlineMedium?.copyWith(
-                fontWeight: FontWeight.w600,
-                color: colorScheme.onSurface,
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-    final l10n = AppLocalizations.of(context)!;
-
-    // Watch for lockout triggered by verifyPin
-    final authState = ref.watch(authNotifierProvider);
-    final isPinLockedOut = authState.valueOrNull == AuthStatus.pinLockedOut;
-    final isBiometricLockedOut = authState.valueOrNull == AuthStatus.lockedOut;
-
-    final settingsState = ref.watch(profileSettingsControllerProvider);
-    final isDeleteLockedOut = settingsState.failedDeleteAttempts >= 6;
-
-    if (isDeleteLockedOut) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (context.mounted && Navigator.of(context).canPop()) {
-          Navigator.of(context).pop(false);
-        }
-      });
-    }
-
-    return Padding(
-      padding: EdgeInsets.only(
-        bottom: MediaQuery.of(context).viewInsets.bottom + 24,
-        left: 24,
-        right: 24,
-        top: 24,
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Handle bar
-          Container(
-            width: 40,
-            height: 4,
-            decoration: BoxDecoration(
-              color: colorScheme.outlineVariant,
-              borderRadius: BorderRadius.circular(2),
-            ),
-          ),
-          const SizedBox(height: 20),
-          Text(
-            l10n.authVerifyMessage,
-            style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          const SizedBox(height: 20),
-          if (isPinLockedOut || isBiometricLockedOut) ...[
-            Icon(Icons.lock_rounded, color: colorScheme.error, size: 40),
-            const SizedBox(height: 12),
-            Text(
-              l10n.authLockedTitle,
-              style: theme.textTheme.bodyMedium
-                  ?.copyWith(color: colorScheme.error),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 12),
-            TextButton(
-              onPressed: widget.onCancelled,
-              child: Text(l10n.btnCancel),
-            ),
-          ] else ...[
-            // PIN dots
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: List.generate(
-                _requiredPinLength,
-                (i) => _buildDot(i),
-              ),
-            ),
-            const SizedBox(height: 16),
-            if (_errorText != null)
-              Text(
-                _errorText!,
-                style: theme.textTheme.bodySmall
-                    ?.copyWith(color: colorScheme.error),
-                textAlign: TextAlign.center,
-              ),
-            const SizedBox(height: 8),
-            if (_isVerifying)
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: 16),
-                child: CircularProgressIndicator(strokeWidth: 2),
-              )
-            else
-              Table(
-                children: [
-                  TableRow(
-                    children: [
-                      _buildDialKey('1'),
-                      _buildDialKey('2'),
-                      _buildDialKey('3'),
-                    ],
-                  ),
-                  TableRow(
-                    children: [
-                      _buildDialKey('4'),
-                      _buildDialKey('5'),
-                      _buildDialKey('6'),
-                    ],
-                  ),
-                  TableRow(
-                    children: [
-                      _buildDialKey('7'),
-                      _buildDialKey('8'),
-                      _buildDialKey('9'),
-                    ],
-                  ),
-                  TableRow(
-                    children: [
-                      // Cancel
-                      AspectRatio(
-                        aspectRatio: 1.5,
-                        child: Container(
-                          margin: const EdgeInsets.all(6),
-                          child: TextButton(
-                            onPressed: widget.onCancelled,
-                            child: Text(
-                              l10n.btnCancel,
-                              style: theme.textTheme.labelLarge?.copyWith(
-                                color: colorScheme.onSurfaceVariant,
-                              ),
-                            ),
+                  const Divider(),
+                  ListTile(
+                    leading: const Icon(Icons.privacy_tip_rounded),
+                    title: Text(l10n.privacyPolicy),
+                    trailing: const Icon(Icons.chevron_right),
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => const TermsAndConditionsViewer(
+                            showPrivacyPolicy: true,
                           ),
                         ),
-                      ),
-                      _buildDialKey('0'),
-                      // Backspace
-                      AspectRatio(
-                        aspectRatio: 1.5,
-                        child: Container(
-                          margin: const EdgeInsets.all(6),
-                          child: IconButton(
-                            icon: Icon(
-                              Icons.backspace_outlined,
-                              size: 24,
-                              color: colorScheme.onSurfaceVariant,
-                            ),
-                            onPressed: () {
-                              if (_enteredPin.isNotEmpty) {
-                                setState(() {
-                                  _enteredPin = _enteredPin.substring(
-                                    0,
-                                    _enteredPin.length - 1,
-                                  );
-                                  _errorText = null;
-                                });
-                              }
-                            },
-                            onLongPress: () {
-                              setState(() {
-                                _enteredPin = '';
-                                _errorText = null;
-                              });
-                            },
-                          ),
-                        ),
-                      ),
-                    ],
+                      );
+                    },
+                  ),
+                  const Divider(),
+
+                  const SizedBox(height: 48),
+                  ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red.withValues(alpha: 0.1),
+                      foregroundColor: Colors.red,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                    ),
+                    icon: const Icon(Icons.delete_forever),
+                    label: Text(l10n.deleteAllDataButton),
+                    onPressed: () => _confirmDeleteAllData(context),
                   ),
                 ],
               ),
-          ],
-        ],
-      ),
+            ),
     );
   }
 }

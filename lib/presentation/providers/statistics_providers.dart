@@ -1,25 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:stalvi/data/database/tables/transaction_table.dart';
+import 'package:stalvi/domain/entities/transaction_type.dart';
 import 'package:stalvi/domain/entities/account.dart';
 import 'package:stalvi/domain/entities/category_statistic.dart';
 import 'package:stalvi/domain/entities/period_summary.dart';
 import 'package:stalvi/domain/use_cases/statistics/get_period_summary_use_case.dart';
 import 'package:stalvi/domain/use_cases/statistics/get_top_categories_use_case.dart';
 import 'package:stalvi/presentation/providers/repository_providers.dart';
+import 'package:stalvi/core/utils/currency_converter.dart';
 
 // ─── Use-case providers ───────────────────────────────────────────────────────
 
-/// Provides the [GetPeriodSummaryUseCase], wired to [statisticsRepositoryProvider].
+/// Provides the [GetPeriodSummaryUseCase], wired to [transactionRepositoryProvider] and [exchangeRateRepositoryProvider].
 final getPeriodSummaryUseCaseProvider =
     Provider<GetPeriodSummaryUseCase>((ref) {
-  return GetPeriodSummaryUseCase(ref.watch(statisticsRepositoryProvider));
+  return GetPeriodSummaryUseCase(
+    ref.watch(transactionRepositoryProvider),
+    ref.watch(exchangeRateRepositoryProvider),
+  );
 });
 
-/// Provides the [GetTopCategoriesUseCase], wired to [statisticsRepositoryProvider].
+/// Provides the [GetTopCategoriesUseCase], wired to [transactionRepositoryProvider], [categoryRepositoryProvider], and [exchangeRateRepositoryProvider].
 final getTopCategoriesUseCaseProvider =
     Provider<GetTopCategoriesUseCase>((ref) {
-  return GetTopCategoriesUseCase(ref.watch(statisticsRepositoryProvider));
+  return GetTopCategoriesUseCase(
+    ref.watch(transactionRepositoryProvider),
+    ref.watch(categoryRepositoryProvider),
+    ref.watch(exchangeRateRepositoryProvider),
+  );
 });
 
 // ─── Filter State ─────────────────────────────────────────────────────────────
@@ -197,10 +205,12 @@ final periodSummaryProvider =
   // just switched filter tabs, avoiding unnecessary flickering.
   ref.keepAlive();
   final filter = ref.watch(statisticsFilterProvider);
+  final targetCurrency = ref.watch(statisticsCurrencyProvider);
   final useCase = ref.watch(getPeriodSummaryUseCaseProvider);
   return useCase.execute(
     startDate: filter.dateRange.start,
     endDate: filter.dateRange.end,
+    targetCurrency: targetCurrency,
     accountId: filter.accountId,
   );
 });
@@ -210,10 +220,12 @@ final topExpenseCategoriesProvider =
     FutureProvider.autoDispose<List<CategoryStatistic>>((ref) async {
   ref.keepAlive();
   final filter = ref.watch(statisticsFilterProvider);
+  final targetCurrency = ref.watch(statisticsCurrencyProvider);
   final useCase = ref.watch(getTopCategoriesUseCaseProvider);
   return useCase.execute(
     startDate: filter.dateRange.start,
     endDate: filter.dateRange.end,
+    targetCurrency: targetCurrency,
     type: TransactionType.expense,
     accountId: filter.accountId,
   );
@@ -224,11 +236,56 @@ final topIncomeCategoriesProvider =
     FutureProvider.autoDispose<List<CategoryStatistic>>((ref) async {
   ref.keepAlive();
   final filter = ref.watch(statisticsFilterProvider);
+  final targetCurrency = ref.watch(statisticsCurrencyProvider);
   final useCase = ref.watch(getTopCategoriesUseCaseProvider);
   return useCase.execute(
     startDate: filter.dateRange.start,
     endDate: filter.dateRange.end,
+    targetCurrency: targetCurrency,
     type: TransactionType.income,
     accountId: filter.accountId,
   );
+});
+
+/// Computes the currency code to use for displaying statistics.
+/// Returns the selected account's currency, or the user's default currency if "All Accounts" is selected.
+final statisticsCurrencyProvider = Provider.autoDispose<String>((ref) {
+  final filter = ref.watch(statisticsFilterProvider);
+  if (filter.accountId != null) {
+    final accounts = ref.watch(accountsListProvider).valueOrNull ?? [];
+    try {
+      return accounts.firstWhere((a) => a.id == filter.accountId).currency;
+    } catch (_) {}
+  }
+  final profile = ref.watch(defaultProfileProvider).valueOrNull;
+  return profile?.defaultCurrency ?? 'EUR';
+});
+
+/// Calculates the global balance using dynamic currency conversion in Dart.
+final globalBalanceProvider = StreamProvider.autoDispose<double>((ref) async* {
+  final profile = await ref.watch(defaultProfileProvider.future);
+  final targetCurrency = profile.defaultCurrency;
+
+  final transactionsStream =
+      ref.watch(transactionRepositoryProvider).watchAllTransactions();
+  final exchangeRateRepo = ref.watch(exchangeRateRepositoryProvider);
+
+  await for (final transactions in transactionsStream) {
+    final rates =
+        await exchangeRateRepo.getLocalRates(baseCurrency: targetCurrency);
+
+    double balance = 0;
+    for (final tx in transactions) {
+      double amount =
+          CurrencyConverter.convertAmount(tx, targetCurrency, rates);
+
+      if (tx.type == TransactionType.income) {
+        balance += amount;
+      } else if (tx.type == TransactionType.expense) {
+        balance -= amount;
+      }
+    }
+
+    yield balance / 100.0;
+  }
 });

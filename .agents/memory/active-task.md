@@ -1,26 +1,23 @@
-# Active Task: Phase 21 - Transfer Flow Polish, Recycle Bin Refinements & Validation
+# Active Task: Phase 28 - Financial Data Integrity & Polish
 
-## Current Status
-- All E2E bugs, transfer details lookup failures, and recycle bin localization issues have been resolved.
-- Full automated test suite (352 tests) and static analysis pass cleanly.
-- Documentation, roadmap, and resolved issues logs have been updated.
+## Current Objective
+Implement advanced CRUD operations, ensure reactive financial recalculations, fix PDF encoding, and polish i18n/legal documents.
 
-## Completed Objectives
-1. **Empty Note Default**: Cleared note field default value on transfer creation forms to start empty.
-2. **Transfer Deduplication**: Paired transfers are deduplicated in global lists but display correctly for both accounts under filters.
-3. **Transaction Details Lookup**: Created `watchRawTransactions()` and `rawTransactionsStreamProvider` to search both legs of a transfer, allowing the details modal to show the origin and destination accounts correctly.
-4. **Recycle Bin Operations & i18n**:
-   - Disabled bulk "delete all/empty sweep" to avoid accidental deletions.
-   - Added metadata tracking to `TrashItem` (`amount`, `txType`, `currency`) in `TrashDao`.
-   - Updated Recycle Bin list tiles to dynamically render items formatted as `<Note/Type> - <Amount>` using localized translations.
-   - Ensured deleting a transfer places exactly 1 item in the Recycle Bin.
-   - Wired Recycle Bin provider to `autoDispose` for automatic refresh on entry.
-5. **Icon & Balance Synchronization**:
-   - Standardized transfer icons on the dashboard.
-   - Ensured trashing, restoring, or hard-deleting transactions (including mirrored transfers) properly reverts or re-applies account balances for both accounts.
-6. **UI Overflow Sweep**: Audited all screen layouts to ensure no overflows or truncated ellipsis ("...") occur under dynamic screens.
+## Context
+- **Architecture:** Clean Architecture + Riverpod + Drift
+- **Focus Areas:**
+  1. UI/Domain connection for Editing Budgets and Savings Goals.
+  2. Reactive Budget calculation integrating currency conversion upon transaction deletion.
+  3. ACID transactions for soft-deleting/restoring Savings Goals (cascading to transfers and updating origin accounts balances).
+  4. PDF Export unicode font embedding.
+  5. Legal docs updates and full i18n coverage.
 
-## Architectural Guidelines
-- **Clean Architecture:** Pass parameters to the Domain layer and use repository/use-case bounds for transactions logic.
-- **Unfiltered Streams:** Use raw unfiltered streams for detail dialog queries to verify related entity pairs (e.g. transfers), and filtered streams for general listings to prevent duplicate visibility.
-- **Reactivity:** Use Riverpod invalidations to force refresh state upon mutations.
+## Next Steps
+1. Execute the atomic prompts to implement the logic layer by layer.
+2. Run unit tests for the new complex cascading deletion logic.
+3. Validate UI for overflow and localization correctness.
+4. Update tests, workflows, and documentation.
+
+## Rules
+- All file modifications must be done directly via tools. NO code output in chat.
+- Keep Clean Architecture boundaries strictly intact.

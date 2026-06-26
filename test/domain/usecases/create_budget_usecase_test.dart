@@ -7,10 +7,14 @@ import 'package:stalvi/domain/entities/category_type.dart';
 import 'package:stalvi/domain/repositories/i_budget_repository.dart';
 import 'package:stalvi/domain/repositories/i_category_repository.dart';
 import 'package:stalvi/domain/usecases/create_budget_usecase.dart';
+import 'package:stalvi/domain/usecases/update_budget_progress_usecase.dart';
 
 class MockBudgetRepository extends Mock implements IBudgetRepository {}
 
 class MockCategoryRepository extends Mock implements ICategoryRepository {}
+
+class MockUpdateBudgetProgressUseCase extends Mock
+    implements UpdateBudgetProgressUseCase {}
 
 class FakeBudget extends Fake implements Budget {}
 
@@ -18,6 +22,7 @@ void main() {
   late CreateBudgetUseCase usecase;
   late MockBudgetRepository mockBudgetRepo;
   late MockCategoryRepository mockCategoryRepo;
+  late MockUpdateBudgetProgressUseCase mockUpdateBudgetProgressUseCase;
 
   final now = DateTime.now();
 
@@ -28,7 +33,12 @@ void main() {
   setUp(() {
     mockBudgetRepo = MockBudgetRepository();
     mockCategoryRepo = MockCategoryRepository();
-    usecase = CreateBudgetUseCase(mockBudgetRepo, mockCategoryRepo);
+    mockUpdateBudgetProgressUseCase = MockUpdateBudgetProgressUseCase();
+    usecase = CreateBudgetUseCase(
+      mockBudgetRepo,
+      mockCategoryRepo,
+      mockUpdateBudgetProgressUseCase,
+    );
   });
 
   final validCategory = Category(
@@ -43,6 +53,7 @@ void main() {
 
   final validParams = CreateBudgetParams(
     id: 'budget_1',
+    accountId: 'account_1',
     categoryId: 'cat_1',
     targetAmount: 50000,
     startDate: now,
@@ -55,6 +66,13 @@ void main() {
           .thenAnswer((_) async => validCategory);
       when(() => mockBudgetRepo.createBudget(any()))
           .thenAnswer((inv) async => inv.positionalArguments[0] as Budget);
+      when(
+        () => mockUpdateBudgetProgressUseCase.execute(
+          categoryId: any(named: 'categoryId'),
+        ),
+      ).thenAnswer((_) async {});
+      when(() => mockBudgetRepo.getBudgetsByCategoryId(any()))
+          .thenAnswer((_) async => []);
 
       final result = await usecase.execute(validParams);
 
@@ -66,6 +84,7 @@ void main() {
     test('should throw validation error when target amount is 0', () async {
       final params = CreateBudgetParams(
         id: 'budget_1',
+        accountId: 'account_1',
         categoryId: 'cat_1',
         targetAmount: 0,
         startDate: now,
@@ -86,6 +105,7 @@ void main() {
         () async {
       final params = CreateBudgetParams(
         id: 'budget_1',
+        accountId: 'account_1',
         categoryId: 'cat_1',
         targetAmount: 50000,
         startDate: now,

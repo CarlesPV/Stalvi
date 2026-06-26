@@ -33,22 +33,6 @@ class AppLocalizationsCa extends AppLocalizations {
   String get expenses => 'Despeses';
 
   @override
-  String get errorGeneric =>
-      'Alguna cosa ha anat malament. Si us plau, torneu-ho a provar.';
-
-  @override
-  String get errorDatabase =>
-      'S\'ha produït un error a la base de dades. Si us plau, contacteu amb el suport.';
-
-  @override
-  String get errorAuth =>
-      'L\'autenticació ha fallat. Si us plau, verifiqueu les vostres credencials.';
-
-  @override
-  String get errorNetwork =>
-      'Error de xarxa. Si us plau, comproveu la vostra connexió a internet.';
-
-  @override
   String get appTitle => 'Stalvi';
 
   @override
@@ -65,9 +49,6 @@ class AppLocalizationsCa extends AppLocalizations {
   String get tryAgain => 'Torna-ho a provar';
 
   @override
-  String get authCheckingBiometrics => 'Comprovant biometria…';
-
-  @override
   String get authError => 'Error d\'autenticació';
 
   @override
@@ -81,20 +62,11 @@ class AppLocalizationsCa extends AppLocalizations {
   String get authLockoutActive => 'Bloqueig de seguretat actiu';
 
   @override
-  String get authVerifyIdentity => 'Verifiqueu la vostra identitat';
-
-  @override
   String get authVerifyMessage =>
-      'Utilitzeu la biometria o el PIN del dispositiu per continuar.';
+      'Utilitzeu la biometria o el PIN del dispositiu per continuar';
 
   @override
-  String get authVerifying => 'Verificant…';
-
-  @override
-  String get authAuthenticate => 'Autenticar';
-
-  @override
-  String get authSkip => 'Omet de moment';
+  String get authProcessing => 'Processant l\'autenticació de seguretat…';
 
   @override
   String get authProtectedBy => 'Protegit per la biometria del dispositiu';
@@ -314,10 +286,6 @@ class AppLocalizationsCa extends AppLocalizations {
   String get authSetupLanguageLabel => 'Idioma predeterminat';
 
   @override
-  String get authSetupTermsCheckbox =>
-      'Accepto els Termes i Condicions i la Política de Privacitat';
-
-  @override
   String get authSetupCreateButton => 'Crear perfil';
 
   @override
@@ -348,12 +316,6 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get authPinIncorrect => 'PIN incorrecte. Torneu-ho a provar.';
-
-  @override
-  String get defaultWalletName => 'La meva cartera';
-
-  @override
-  String get defaultWallet => 'Moneder Principal';
 
   @override
   String acrossAccountsCount(int count) {
@@ -404,9 +366,6 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get privacyPolicy => 'Política de privadesa';
-
-  @override
-  String get myWallet => 'La meva cartera';
 
   @override
   String get authSetupCurrencyLabel => 'Divisa predeterminada';
@@ -605,9 +564,6 @@ class AppLocalizationsCa extends AppLocalizations {
   String get createAccountIconLabel => 'Icona';
 
   @override
-  String get createAccountSuccess => 'Compte creat amb èxit';
-
-  @override
   String get createAccountErrorName =>
       'Si us plau, introdueix un nom per al compte';
 
@@ -644,17 +600,6 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get btnClose => 'Tancar';
-
-  @override
-  String get setAsDefaultAccount => 'Establir com a compte predeterminat';
-
-  @override
-  String get setAsDefaultAccountSuccess =>
-      'Compte establert com a predeterminat';
-
-  @override
-  String get setAsDefaultAccountError =>
-      'Error en establir el compte predeterminat';
 
   @override
   String get filterSheetTitle => 'Filtrar transaccions';
@@ -740,16 +685,6 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get unknownAccount => 'Compte desconegut';
-
-  @override
-  String get editAccountDetails => 'Editar detalls del compte';
-
-  @override
-  String get markAccountAsDefault =>
-      'Marcar aquest compte com a predeterminat per a noves transaccions';
-
-  @override
-  String get alreadyDefaultAccount => 'Aquest ja és el compte predeterminat';
 
   @override
   String get categories => 'Categories';
@@ -859,4 +794,227 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get currencyAUD => 'Dòlar Australià (AUD)';
+
+  @override
+  String get currencyCNY => 'Iuan Xinès (CNY)';
+
+  @override
+  String get errorDestinationAccountRequired =>
+      'Si us plau, seleccioneu un compte de destí';
+
+  @override
+  String get errorSameAccountTransfer =>
+      'Els comptes d\'origen i destí no poden ser el mateix';
+
+  @override
+  String get savingsGoal => 'Objectiu d\'estalvi';
+
+  @override
+  String budgetSpentOf(String spent, String target) {
+    return '$spent de $target';
+  }
+
+  @override
+  String get dataPortabilityTitle => 'Portabilitat de dades';
+
+  @override
+  String get settingsDataManagement => 'Gestió de Dades';
+
+  @override
+  String get exportEncryptedBackup => 'Exportar còpia de seguretat xifrada';
+
+  @override
+  String get exportEncryptedBackupSubtitle =>
+      'Exporta totes les dades com a arxiu de còpia de seguretat protegit amb contrasenya';
+
+  @override
+  String get importRestoreBackup => 'Importar / Restaurar còpia de seguretat';
+
+  @override
+  String get importRestoreBackupSubtitle =>
+      'Restaura les teves dades des d\'un arxiu de còpia de seguretat de Stalvi';
+
+  @override
+  String get exportTransactionsCsv => 'Exportar transaccions (CSV)';
+
+  @override
+  String get exportTransactionsCsvSubtitle =>
+      'Exporta totes les transaccions a un arxiu CSV compatible amb fulls de càlcul';
+
+  @override
+  String get exportMonthlyPdf => 'Exportar informe mensual (PDF)';
+
+  @override
+  String get exportMonthlyPdfSubtitle =>
+      'Genera un resum en PDF per al mes actual';
+
+  @override
+  String get exportPasswordDialogTitle =>
+      'Establir contrasenya de còpia de seguretat';
+
+  @override
+  String get exportPasswordDialogSubtitle =>
+      'Aquesta contrasenya serà necessària per restaurar la còpia de seguretat. Guarda-la en un lloc segur.';
+
+  @override
+  String get exportPasswordLabel => 'Contrasenya de còpia de seguretat';
+
+  @override
+  String get exportPasswordConfirmLabel => 'Confirmar contrasenya';
+
+  @override
+  String get exportPasswordMismatch => 'Les contrasenyes no coincideixen.';
+
+  @override
+  String get exportPasswordTooShort =>
+      'La contrasenya ha de tenir almenys 6 caràcters.';
+
+  @override
+  String get importPasswordDialogTitle =>
+      'Introduir contrasenya de còpia de seguretat';
+
+  @override
+  String get importPasswordDialogSubtitle =>
+      'Introdueix la contrasenya que vas fer servir quan vas crear la còpia de seguretat.';
+
+  @override
+  String get importConfirmTitle => 'Restaurar còpia de seguretat?';
+
+  @override
+  String get importConfirmMessage =>
+      'Restaurar una còpia de seguretat sobreescriurà totes les dades actuals. Aquesta acció no es pot desfer. Estàs segur?';
+
+  @override
+  String get exportSuccess => 'Exportació correcta. Arxiu desat.';
+
+  @override
+  String get importSuccess =>
+      'Còpia de seguretat restaurada correctament. Si us plau, reinicia l\'aplicació.';
+
+  @override
+  String get exportFailed =>
+      'Error en exportar. Si us plau, torna-ho a provar.';
+
+  @override
+  String get importFailed =>
+      'Error en restaurar. Comprova la contrasenya i l\'arxiu.';
+
+  @override
+  String get btnExport => 'Exportar';
+
+  @override
+  String get btnRestore => 'Restaurar';
+
+  @override
+  String statisticsOtherCategories(int count) {
+    return 'Altres ($count categories)';
+  }
+
+  @override
+  String get btnViewDetails => 'Veure detalls';
+
+  @override
+  String get btnOpen => 'Obrir';
+
+  @override
+  String get errorOpenFileFailed => 'No s\'ha pogut obrir el fitxer';
+
+  @override
+  String get expense_vs_income => 'Despeses vs Ingressos';
+
+  @override
+  String get destination_account => 'Compte de destí';
+
+  @override
+  String get chart_scale => 'Escala del gràfic';
+
+  @override
+  String get pdfDateFormat => 'dd/MM/yyyy';
+
+  @override
+  String get pdfDateTimeFormat => 'dd/MM/yyyy HH:mm';
+
+  @override
+  String pdfGeneratedOn(String appTitle, String date) {
+    return 'Generat per $appTitle el $date';
+  }
+
+  @override
+  String get addBudget => 'Afegir Pressupost';
+
+  @override
+  String get editBudget => 'Editar Pressupost';
+
+  @override
+  String get budgetDetails => 'Detalls del Pressupost';
+
+  @override
+  String get deleteBudget => 'Eliminar Pressupost';
+
+  @override
+  String get addSavingsGoal => 'Afegir Meta d\'Estalvi';
+
+  @override
+  String get editSavingsGoal => 'Editar Meta d\'Estalvi';
+
+  @override
+  String get savingsGoalDetails => 'Detalls de la Meta d\'Estalvi';
+
+  @override
+  String get deleteSavingsGoal => 'Eliminar Meta d\'Estalvi';
+
+  @override
+  String get targetAmount => 'Quantitat Objectiu';
+
+  @override
+  String get startDate => 'Data d\'Inici';
+
+  @override
+  String get endDate => 'Data de Fi';
+
+  @override
+  String get goalName => 'Nom de la Meta';
+
+  @override
+  String get targetDate => 'Data Objectiu';
+
+  @override
+  String get errorEndDateBeforeStart =>
+      'La data de fi ha de ser posterior a la d\'inici';
+
+  @override
+  String get errorNameRequired => 'Si us plau, introdueix un nom';
+
+  @override
+  String get errorTargetDatePast => 'La data objectiu ha de ser en el futur';
+
+  @override
+  String get pdfBudgetsTitle => 'Pressupostos';
+
+  @override
+  String get pdfBudgetsColCategory => 'Categoria';
+
+  @override
+  String get pdfBudgetsColDateRange => 'Rang de Dates';
+
+  @override
+  String get pdfBudgetsColSpent => '% Gastat';
+
+  @override
+  String get pdfBudgetsColMaxValue => 'Valor Màxim';
+
+  @override
+  String get pdfSavingsGoalsTitle => 'Metes d\'Estalvi';
+
+  @override
+  String get pdfSavingsColName => 'Nom';
+
+  @override
+  String get pdfSavingsColCompleted => '% Completat';
+
+  @override
+  String get pdfSavingsColTarget => 'Quantitat Objectiu';
+
+  @override
+  String get labelBudget => 'Pressupost';
 }

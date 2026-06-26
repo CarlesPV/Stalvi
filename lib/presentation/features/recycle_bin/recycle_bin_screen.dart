@@ -78,11 +78,14 @@ class _TrashItemTile extends ConsumerWidget {
         case TrashItemType.budget:
           return l10n.budgets;
         case TrashItemType.savingsGoal:
-          return 'Savings Goal';
+          return l10n.savingsGoal;
       }
     }
 
     String getFormattedTitle() {
+      if (item.type == TrashItemType.budget) {
+        return l10n.labelBudget;
+      }
       if (item.type != TrashItemType.transaction || item.metadata == null) {
         return item.name;
       }

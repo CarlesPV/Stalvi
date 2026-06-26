@@ -91,6 +91,7 @@ Future<String> _seedTransaction(
   String? notes,
   String currency = 'EUR',
   bool isDeleted = false,
+  String? exchangeRateSnapshot,
 }) async {
   final now = DateTime.now();
   await db.into(db.transactions).insert(
@@ -104,6 +105,7 @@ Future<String> _seedTransaction(
           notes: drift.Value(notes),
           originalCurrency: currency,
           isDeleted: drift.Value(isDeleted),
+          exchangeRateSnapshot: drift.Value(exchangeRateSnapshot),
           createdAt: now,
           modifiedAt: now,
         ),
@@ -153,6 +155,23 @@ void main() {
 
       expect(result.length, 2);
       expect(result.map((t) => t.id), containsAll(['t1', 't2']));
+    });
+
+    test('retrieves exchangeRateSnapshot correctly', () async {
+      await _seedProfile(database, 'u1');
+      await _seedAccount(database, id: 'acc1', userId: 'u1');
+      await _seedTransaction(
+        database,
+        id: 't_snapshot',
+        accountId: 'acc1',
+        exchangeRateSnapshot: '{"EUR": 1.0, "USD": 1.1}',
+      );
+
+      final stream = dao.watchFiltered();
+      final result = await stream.first;
+
+      expect(result.length, 1);
+      expect(result.first.exchangeRateSnapshot, '{"EUR": 1.0, "USD": 1.1}');
     });
   });
 

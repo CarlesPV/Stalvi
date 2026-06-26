@@ -33,21 +33,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get expenses => 'Expenses';
 
   @override
-  String get errorGeneric => 'Something went wrong. Please try again.';
-
-  @override
-  String get errorDatabase =>
-      'Database error occurred. Please contact support.';
-
-  @override
-  String get errorAuth =>
-      'Authentication failed. Please check your credentials.';
-
-  @override
-  String get errorNetwork =>
-      'Network error. Please check your internet connection.';
-
-  @override
   String get appTitle => 'Stalvi';
 
   @override
@@ -64,9 +49,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tryAgain => 'Try Again';
 
   @override
-  String get authCheckingBiometrics => 'Checking biometrics…';
-
-  @override
   String get authError => 'Authentication Error';
 
   @override
@@ -80,20 +62,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get authLockoutActive => 'Security lockout active';
 
   @override
-  String get authVerifyIdentity => 'Verify Your Identity';
-
-  @override
   String get authVerifyMessage =>
-      'Use biometrics or your device PIN to continue.';
+      'Use biometrics or your device PIN to continue';
 
   @override
-  String get authVerifying => 'Verifying…';
-
-  @override
-  String get authAuthenticate => 'Authenticate';
-
-  @override
-  String get authSkip => 'Skip for now';
+  String get authProcessing => 'Processing security authentication…';
 
   @override
   String get authProtectedBy => 'Protected by device biometrics';
@@ -307,10 +280,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get authSetupLanguageLabel => 'Default Language';
 
   @override
-  String get authSetupTermsCheckbox =>
-      'I accept the Terms & Conditions and Privacy Policy';
-
-  @override
   String get authSetupCreateButton => 'Create Profile';
 
   @override
@@ -340,12 +309,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get authPinIncorrect => 'Incorrect PIN. Please try again.';
-
-  @override
-  String get defaultWalletName => 'My Wallet';
-
-  @override
-  String get defaultWallet => 'Default Wallet';
 
   @override
   String acrossAccountsCount(int count) {
@@ -396,9 +359,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get privacyPolicy => 'Privacy Policy';
-
-  @override
-  String get myWallet => 'My Wallet';
 
   @override
   String get authSetupCurrencyLabel => 'Default Currency';
@@ -596,9 +556,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get createAccountIconLabel => 'Icon';
 
   @override
-  String get createAccountSuccess => 'Account created successfully';
-
-  @override
   String get createAccountErrorName => 'Please enter an account name';
 
   @override
@@ -634,15 +591,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get btnClose => 'Close';
-
-  @override
-  String get setAsDefaultAccount => 'Set as Default Account';
-
-  @override
-  String get setAsDefaultAccountSuccess => 'Account set as default';
-
-  @override
-  String get setAsDefaultAccountError => 'Failed to set default account';
 
   @override
   String get filterSheetTitle => 'Filter Transactions';
@@ -728,16 +676,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get unknownAccount => 'Unknown Account';
-
-  @override
-  String get editAccountDetails => 'Edit account details';
-
-  @override
-  String get markAccountAsDefault =>
-      'Mark this account as the default for new transactions';
-
-  @override
-  String get alreadyDefaultAccount => 'This is already the default account';
 
   @override
   String get categories => 'Categories';
@@ -846,4 +784,222 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get currencyAUD => 'Australian Dollar (AUD)';
+
+  @override
+  String get currencyCNY => 'Chinese Yuan (CNY)';
+
+  @override
+  String get errorDestinationAccountRequired =>
+      'Please select a destination account';
+
+  @override
+  String get errorSameAccountTransfer =>
+      'Source and destination accounts cannot be the same';
+
+  @override
+  String get savingsGoal => 'Savings Goal';
+
+  @override
+  String budgetSpentOf(String spent, String target) {
+    return '$spent of $target';
+  }
+
+  @override
+  String get dataPortabilityTitle => 'Data Portability';
+
+  @override
+  String get settingsDataManagement => 'Data Management';
+
+  @override
+  String get exportEncryptedBackup => 'Export Encrypted Backup';
+
+  @override
+  String get exportEncryptedBackupSubtitle =>
+      'Export all data as a password-protected backup file';
+
+  @override
+  String get importRestoreBackup => 'Import / Restore Backup';
+
+  @override
+  String get importRestoreBackupSubtitle =>
+      'Restore your data from a Stalvi backup file';
+
+  @override
+  String get exportTransactionsCsv => 'Export Transactions (CSV)';
+
+  @override
+  String get exportTransactionsCsvSubtitle =>
+      'Export all transactions to a spreadsheet-compatible CSV file';
+
+  @override
+  String get exportMonthlyPdf => 'Export Monthly Report (PDF)';
+
+  @override
+  String get exportMonthlyPdfSubtitle =>
+      'Generate a PDF summary for the current month';
+
+  @override
+  String get exportPasswordDialogTitle => 'Set Backup Password';
+
+  @override
+  String get exportPasswordDialogSubtitle =>
+      'This password will be required to restore your backup. Store it safely.';
+
+  @override
+  String get exportPasswordLabel => 'Backup Password';
+
+  @override
+  String get exportPasswordConfirmLabel => 'Confirm Password';
+
+  @override
+  String get exportPasswordMismatch => 'Passwords do not match.';
+
+  @override
+  String get exportPasswordTooShort =>
+      'Password must be at least 6 characters.';
+
+  @override
+  String get importPasswordDialogTitle => 'Enter Backup Password';
+
+  @override
+  String get importPasswordDialogSubtitle =>
+      'Enter the password used when the backup was created.';
+
+  @override
+  String get importConfirmTitle => 'Restore Backup?';
+
+  @override
+  String get importConfirmMessage =>
+      'Restoring a backup will overwrite all current data. This cannot be undone. Are you sure?';
+
+  @override
+  String get exportSuccess => 'Export successful. File saved.';
+
+  @override
+  String get importSuccess =>
+      'Backup restored successfully. Please restart the app.';
+
+  @override
+  String get exportFailed => 'Export failed. Please try again.';
+
+  @override
+  String get importFailed => 'Restore failed. Check your password and file.';
+
+  @override
+  String get btnExport => 'Export';
+
+  @override
+  String get btnRestore => 'Restore';
+
+  @override
+  String statisticsOtherCategories(int count) {
+    return 'Other ($count categories)';
+  }
+
+  @override
+  String get btnViewDetails => 'View Details';
+
+  @override
+  String get btnOpen => 'Open';
+
+  @override
+  String get errorOpenFileFailed => 'Could not open file';
+
+  @override
+  String get expense_vs_income => 'Expenses vs Income';
+
+  @override
+  String get destination_account => 'Destination Account';
+
+  @override
+  String get chart_scale => 'Chart Scale';
+
+  @override
+  String get pdfDateFormat => 'MM/dd/yyyy';
+
+  @override
+  String get pdfDateTimeFormat => 'MM/dd/yyyy HH:mm';
+
+  @override
+  String pdfGeneratedOn(String appTitle, String date) {
+    return 'Generated by $appTitle on $date';
+  }
+
+  @override
+  String get addBudget => 'Add Budget';
+
+  @override
+  String get editBudget => 'Edit Budget';
+
+  @override
+  String get budgetDetails => 'Budget Details';
+
+  @override
+  String get deleteBudget => 'Delete Budget';
+
+  @override
+  String get addSavingsGoal => 'Add Savings Goal';
+
+  @override
+  String get editSavingsGoal => 'Edit Savings Goal';
+
+  @override
+  String get savingsGoalDetails => 'Savings Goal Details';
+
+  @override
+  String get deleteSavingsGoal => 'Delete Savings Goal';
+
+  @override
+  String get targetAmount => 'Target Amount';
+
+  @override
+  String get startDate => 'Start Date';
+
+  @override
+  String get endDate => 'End Date';
+
+  @override
+  String get goalName => 'Goal Name';
+
+  @override
+  String get targetDate => 'Target Date';
+
+  @override
+  String get errorEndDateBeforeStart => 'End date must be after start date';
+
+  @override
+  String get errorNameRequired => 'Please enter a name';
+
+  @override
+  String get errorTargetDatePast => 'Target date must be in the future';
+
+  @override
+  String get pdfBudgetsTitle => 'Budgets';
+
+  @override
+  String get pdfBudgetsColCategory => 'Category';
+
+  @override
+  String get pdfBudgetsColDateRange => 'Date Range';
+
+  @override
+  String get pdfBudgetsColSpent => '% Spent';
+
+  @override
+  String get pdfBudgetsColMaxValue => 'Max Value';
+
+  @override
+  String get pdfSavingsGoalsTitle => 'Savings Goals';
+
+  @override
+  String get pdfSavingsColName => 'Name';
+
+  @override
+  String get pdfSavingsColCompleted => '% Completed';
+
+  @override
+  String get pdfSavingsColTarget => 'Target Amount';
+
+  @override
+  String get labelBudget => 'Budget';
 }

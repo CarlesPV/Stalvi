@@ -325,6 +325,7 @@ class _SpinnerContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 24),
       child: Column(
@@ -340,7 +341,7 @@ class _SpinnerContent extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Text(
-            'Processing security authentication…',
+            l10n.authProcessing,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: colorScheme.onSurfaceVariant,
                 ),

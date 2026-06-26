@@ -3,10 +3,10 @@
 Stalvi is a local-first financial application designed to help users track their income, expenses, budgets, and savings goals. It supports multiple currencies, provides detailed statistics, and focuses heavily on data security, performance, and an intuitive user experience.
 
 ## Core Features
-- **Movements & Transactions:** Track income, expenses, and transfers. Supports recurring movements and soft deletion (30-day trash).
-- **Budgets & Savings Goals:** Set monthly limits and target goals with visual tracking and notifications.
+- **Movements & Transactions:** Track income, expenses, and transfers. Supports recurring movements, soft deletion (30-day trash), and cascading soft-delete/trash logic.
+- **Budgets & Savings Goals:** Set monthly limits and target goals with visual tracking, notifications, and full editing capabilities.
 - **Advanced Filtering & Statistics:** Concurrently filter transactions by multiple dimensions (type, category, date range, amount range, tag, currency) using reactive Drift query builders. Render interactive pie/donut charts with dynamic totals and eager statistics data pre-warming on screen initialization to eliminate loading latency.
-- **Import & Export:** Export to CSV/Excel and password-protected PDF/JSON backups.
+- **Import & Export:** Export to CSV/Excel and password-protected PDF/JSON backups with full Unicode font support in PDF exports to render currency symbols without placeholders.
 - **High Security:** PIN/Biometric lock, SQLCipher database encryption, discreet mode, and background UI blurring.
 
 ## Tech Stack

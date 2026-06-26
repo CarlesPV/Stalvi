@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:stalvi/core/errors/app_exceptions.dart';
@@ -11,7 +12,9 @@ import 'package:stalvi/domain/repositories/i_account_repository.dart';
 import 'package:stalvi/domain/repositories/i_profile_repository.dart';
 import 'package:stalvi/domain/repositories/i_exchange_rate_repository.dart';
 import 'package:stalvi/domain/repositories/i_transaction_repository.dart';
+import 'package:stalvi/domain/repositories/i_savings_goal_repository.dart';
 import 'package:stalvi/domain/usecases/add_transaction_usecase.dart';
+import 'package:stalvi/domain/usecases/update_budget_progress_usecase.dart';
 
 // ---------------------------------------------------------------------------
 // Mocks & Fakes
@@ -26,6 +29,12 @@ class MockProfileRepository extends Mock implements IProfileRepository {}
 
 class MockExchangeRateRepository extends Mock
     implements IExchangeRateRepository {}
+
+class MockSavingsGoalRepository extends Mock
+    implements ISavingsGoalRepository {}
+
+class MockUpdateBudgetProgressUseCase extends Mock
+    implements UpdateBudgetProgressUseCase {}
 
 class FakeTransaction extends Fake implements Transaction {}
 
@@ -142,6 +151,8 @@ void main() {
   late MockAccountRepository mockAccountRepo;
   late MockProfileRepository mockProfileRepo;
   late MockExchangeRateRepository mockExchangeRateRepo;
+  late MockSavingsGoalRepository mockSavingsGoalRepo;
+  late MockUpdateBudgetProgressUseCase mockUpdateBudgetProgressUseCase;
 
   setUpAll(() {
     registerFallbackValue(FakeTransaction());
@@ -153,11 +164,22 @@ void main() {
     mockAccountRepo = MockAccountRepository();
     mockProfileRepo = MockProfileRepository();
     mockExchangeRateRepo = MockExchangeRateRepository();
+    mockSavingsGoalRepo = MockSavingsGoalRepository();
+    mockUpdateBudgetProgressUseCase = MockUpdateBudgetProgressUseCase();
+
+    when(
+      () => mockExchangeRateRepo.getLocalRates(
+        baseCurrency: any(named: 'baseCurrency'),
+      ),
+    ).thenAnswer((_) async => null);
+
     usecase = AddTransactionUseCase(
       mockTransactionRepo,
       mockAccountRepo,
       mockProfileRepo,
       mockExchangeRateRepo,
+      mockSavingsGoalRepo,
+      mockUpdateBudgetProgressUseCase,
     );
   });
 
@@ -174,6 +196,11 @@ void main() {
             .thenAnswer((_) async => account);
         when(() => mockProfileRepo.getProfileById(account.userId))
             .thenAnswer((_) async => profile);
+        when(
+          () => mockUpdateBudgetProgressUseCase.execute(
+            transaction: any(named: 'transaction'),
+          ),
+        ).thenAnswer((_) async {});
         when(() => mockTransactionRepo.createTransaction(any())).thenAnswer(
           (inv) async => inv.positionalArguments[0] as Transaction,
         );
@@ -184,8 +211,51 @@ void main() {
         expect(result.convertedAmount, isNull);
         expect(result.exchangeRate, isNull);
 
-        verifyZeroInteractions(mockExchangeRateRepo);
+        verify(() => mockExchangeRateRepo.getLocalRates(baseCurrency: 'EUR'))
+            .called(1);
+        verifyNever(
+          () => mockExchangeRateRepo.getLatestRates(
+            baseCurrency: any(named: 'baseCurrency'),
+          ),
+        );
         verify(() => mockTransactionRepo.createTransaction(any())).called(1);
+      });
+
+      test(
+          'attaches JSON exchange rate snapshot when local rates are available',
+          () async {
+        final params = _incomeParams();
+        final account = _buildAccount();
+        final profile = _buildProfile();
+        final localRates =
+            _buildExchangeRate(base: 'EUR'); // EUR: {'USD': 1.08, 'GBP': 0.85}
+
+        when(() => mockAccountRepo.getAccountById(params.accountId))
+            .thenAnswer((_) async => account);
+        when(() => mockProfileRepo.getProfileById(account.userId))
+            .thenAnswer((_) async => profile);
+        when(() => mockExchangeRateRepo.getLocalRates(baseCurrency: 'EUR'))
+            .thenAnswer((_) async => localRates);
+        when(
+          () => mockUpdateBudgetProgressUseCase.execute(
+            transaction: any(named: 'transaction'),
+          ),
+        ).thenAnswer((_) async {});
+        when(() => mockTransactionRepo.createTransaction(any())).thenAnswer(
+          (inv) async => inv.positionalArguments[0] as Transaction,
+        );
+
+        final result = await usecase.execute(params);
+
+        expect(result.exchangeRateSnapshot, isNotNull);
+        final decoded =
+            jsonDecode(result.exchangeRateSnapshot!) as Map<String, dynamic>;
+        expect(decoded['EUR'], 1.0);
+        expect(decoded['USD'], 1.08);
+        expect(decoded['GBP'], 0.85);
+
+        verify(() => mockExchangeRateRepo.getLocalRates(baseCurrency: 'EUR'))
+            .called(1);
       });
 
       test('calculates convertedAmount when currencies differ', () async {
@@ -201,6 +271,11 @@ void main() {
             .thenAnswer((_) async => profile);
         when(() => mockExchangeRateRepo.getLatestRates(baseCurrency: 'EUR'))
             .thenAnswer((_) async => rateSnapshot);
+        when(
+          () => mockUpdateBudgetProgressUseCase.execute(
+            transaction: any(named: 'transaction'),
+          ),
+        ).thenAnswer((_) async {});
         when(() => mockTransactionRepo.createTransaction(any())).thenAnswer(
           (inv) async => inv.positionalArguments[0] as Transaction,
         );
@@ -430,6 +505,62 @@ void main() {
 
         expect(capturedOrigin!.notes, isNull);
       });
+
+      test('calculates correct destination amount for cross-currency transfers',
+          () async {
+        final params = _transferParams(amount: 5000); // 50.00 EUR
+        final originAccount = _buildAccount(id: 'account_1', currency: 'EUR');
+        final destAccount =
+            _buildAccount(id: 'account_2', currency: 'USD', isDefault: false);
+        final profile = _buildProfile(defaultCurrency: 'EUR');
+
+        // Mock rates: base EUR. USD rate = 1.08. So 50 EUR * 1.08 = 54 USD.
+        final localRates =
+            _buildExchangeRate(base: 'EUR'); // Contains USD: 1.08
+
+        when(() => mockAccountRepo.getAccountById('account_1'))
+            .thenAnswer((_) async => originAccount);
+        when(() => mockAccountRepo.getAccountById('account_2'))
+            .thenAnswer((_) async => destAccount);
+        when(() => mockProfileRepo.getProfileById(originAccount.userId))
+            .thenAnswer((_) async => profile);
+        when(() => mockExchangeRateRepo.getLocalRates(baseCurrency: 'EUR'))
+            .thenAnswer((_) async => localRates);
+
+        Transaction? capturedOrigin;
+        Transaction? capturedDest;
+
+        when(
+          () => mockTransactionRepo.createTransferPair(
+            originTransaction: any(named: 'originTransaction'),
+            destinationTransaction: any(named: 'destinationTransaction'),
+          ),
+        ).thenAnswer((inv) async {
+          capturedOrigin =
+              inv.namedArguments[#originTransaction] as Transaction;
+          capturedDest =
+              inv.namedArguments[#destinationTransaction] as Transaction;
+          return TransferPair(
+            origin: capturedOrigin!,
+            destination: capturedDest!,
+          );
+        });
+
+        await usecase.execute(params);
+
+        expect(capturedOrigin, isNotNull);
+        expect(capturedDest, isNotNull);
+
+        // Origin should have 5000 EUR
+        expect(capturedOrigin!.amount, 5000);
+        expect(capturedOrigin!.originalCurrency, 'EUR');
+
+        // Dest should have 5400 USD
+        expect(capturedDest!.amount, 5400);
+        expect(capturedDest!.originalCurrency, 'USD');
+        expect(capturedDest!.exchangeRate, 1.08);
+        expect(capturedDest!.convertedAmount, 5000); // (5400 / 1.08).round()
+      });
     });
 
     // ── Transfer validation failures ─────────────────────────────────────────
@@ -457,7 +588,7 @@ void main() {
           () => usecase.execute(params),
           throwsA(
             isA<ValidationException>()
-                .having((e) => e.code, 'code', 'MISSING_DESTINATION_ACCOUNT'),
+                .having((e) => e.code, 'code', 'MISSING_DESTINATION'),
           ),
         );
       });

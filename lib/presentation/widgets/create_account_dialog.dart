@@ -318,6 +318,7 @@ class _CreateAccountDialogState extends ConsumerState<CreateAccountDialog> {
                   DropdownMenuItem(value: 'CHF', child: Text(l10n.currencyCHF)),
                   DropdownMenuItem(value: 'CAD', child: Text(l10n.currencyCAD)),
                   DropdownMenuItem(value: 'AUD', child: Text(l10n.currencyAUD)),
+                  DropdownMenuItem(value: 'CNY', child: Text(l10n.currencyCNY)),
                 ],
                 onChanged: (val) {
                   if (val != null) setState(() => _selectedCurrency = val);

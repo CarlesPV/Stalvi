@@ -531,9 +531,11 @@ class _NetBalanceCard extends ConsumerWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  ref
-                      .watch(currencyFormatterProvider)
-                      .format(net.abs(), showSign: false),
+                  ref.watch(currencyFormatterProvider).format(
+                        net.abs(),
+                        currencyCode: ref.watch(statisticsCurrencyProvider),
+                        showSign: false,
+                      ),
                   style: theme.textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.w800,
                     color: accentColor,
@@ -617,7 +619,10 @@ class _SummaryCard extends ConsumerWidget {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  ref.watch(currencyFormatterProvider).format(amount),
+                  ref.watch(currencyFormatterProvider).format(
+                        amount,
+                        currencyCode: ref.watch(statisticsCurrencyProvider),
+                      ),
                   style: theme.textTheme.titleSmall?.copyWith(
                     fontWeight: FontWeight.w800,
                     color: accentColor,
@@ -750,24 +755,30 @@ class _CategoryChartSectionState extends State<_CategoryChartSection> {
                 ),
               ),
               const SizedBox(width: 10),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    widget.title,
-                    style: theme.textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.w800,
-                      color: colorScheme.onSurface,
-                      letterSpacing: -0.2,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      widget.title,
+                      style: theme.textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.w800,
+                        color: colorScheme.onSurface,
+                        letterSpacing: -0.2,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
                     ),
-                  ),
-                  Text(
-                    widget.subtitle,
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: colorScheme.onSurfaceVariant,
+                    Text(
+                      widget.subtitle,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: colorScheme.onSurfaceVariant,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ],
           ),
@@ -967,9 +978,11 @@ class _PieChartWithLegend extends ConsumerWidget {
                       ),
                       const SizedBox(width: 12),
                       Text(
-                        ref
-                            .watch(currencyFormatterProvider)
-                            .format(cat.totalAmount / 100.0),
+                        ref.watch(currencyFormatterProvider).format(
+                              cat.totalAmount / 100.0,
+                              currencyCode:
+                                  ref.watch(statisticsCurrencyProvider),
+                            ),
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: catColor,
                           fontWeight: FontWeight.w700,
@@ -996,7 +1009,8 @@ class _PieChartWithLegend extends ConsumerWidget {
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(
-                    'Other (${categories.length - 6} categories)',
+                    AppLocalizations.of(context)!
+                        .statisticsOtherCategories(categories.length - 6),
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: colorScheme.onSurfaceVariant,
                       fontWeight: FontWeight.w500,
@@ -1004,9 +1018,10 @@ class _PieChartWithLegend extends ConsumerWidget {
                   ),
                 ),
                 Text(
-                  ref
-                      .watch(currencyFormatterProvider)
-                      .format(otherTotal / 100.0),
+                  ref.watch(currencyFormatterProvider).format(
+                        otherTotal / 100.0,
+                        currencyCode: ref.watch(statisticsCurrencyProvider),
+                      ),
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: colorScheme.onSurfaceVariant,
                     fontWeight: FontWeight.w600,
@@ -1059,6 +1074,8 @@ class _TouchedCategoryInfo extends ConsumerWidget {
                   fontWeight: FontWeight.w700,
                   color: catColor,
                 ),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
               ),
             ),
             const SizedBox(width: 8),
@@ -1084,13 +1101,18 @@ class _TouchedCategoryInfo extends ConsumerWidget {
               ),
             ),
             const SizedBox(width: 8),
-            Text(
-              ref
-                  .watch(currencyFormatterProvider)
-                  .format(category.totalAmount / 100.0),
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: catColor,
-                fontWeight: FontWeight.w700,
+            Flexible(
+              child: Text(
+                ref.watch(currencyFormatterProvider).format(
+                      category.totalAmount / 100.0,
+                      currencyCode: ref.watch(statisticsCurrencyProvider),
+                    ),
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: catColor,
+                  fontWeight: FontWeight.w700,
+                ),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
               ),
             ),
           ],

@@ -1,28 +1,37 @@
 import 'package:stalvi/core/errors/app_exceptions.dart';
+import 'package:stalvi/domain/entities/account.dart';
+import 'package:stalvi/domain/entities/category.dart';
+import 'package:stalvi/domain/entities/tag.dart';
+import 'package:stalvi/domain/repositories/i_account_repository.dart';
+import 'package:stalvi/domain/repositories/i_category_repository.dart';
 import 'package:stalvi/domain/repositories/i_export_service.dart';
+import 'package:stalvi/domain/repositories/i_profile_repository.dart';
+import 'package:stalvi/domain/repositories/i_tag_repository.dart';
 import 'package:stalvi/domain/repositories/i_transaction_repository.dart';
 
-/// Use case that retrieves all transactions for an account and produces an
-/// AES-256-CBC-encrypted JSON export secured by a user-supplied [password].
 class ExportEncryptedJsonUseCase {
-  final ITransactionRepository _repository;
+  final IProfileRepository _profileRepository;
+  final IAccountRepository _accountRepository;
+  final ICategoryRepository _categoryRepository;
+  final ITagRepository _tagRepository;
+  final ITransactionRepository _transactionRepository;
   final IExportService _exportService;
 
   const ExportEncryptedJsonUseCase({
-    required ITransactionRepository repository,
+    required IProfileRepository profileRepository,
+    required IAccountRepository accountRepository,
+    required ICategoryRepository categoryRepository,
+    required ITagRepository tagRepository,
+    required ITransactionRepository transactionRepository,
     required IExportService exportService,
-  })  : _repository = repository,
+  })  : _profileRepository = profileRepository,
+        _accountRepository = accountRepository,
+        _categoryRepository = categoryRepository,
+        _tagRepository = tagRepository,
+        _transactionRepository = transactionRepository,
         _exportService = exportService;
 
-  /// Fetches all transactions for [accountId] and generates an encrypted JSON
-  /// export using [password].
-  ///
-  /// Throws a [ValidationException] if [password] is empty.
-  /// Throws an [AppException] subclass on any other failure.
-  Future<ExportResult> call(
-    String accountId, {
-    required String password,
-  }) async {
+  Future<ExportResult> call({required String password}) async {
     if (password.isEmpty) {
       throw const ValidationException(
         message: 'A password is required for encrypted export',
@@ -30,11 +39,32 @@ class ExportEncryptedJsonUseCase {
       );
     }
 
-    final transactions =
-        await _repository.getTransactionsByAccountId(accountId);
+    final profile = await _profileRepository.getFirstProfile();
+    if (profile == null) {
+      throw const ValidationException(
+        message: 'No profile found',
+        code: 'NO_PROFILE',
+      );
+    }
+
+    final results = await Future.wait([
+      _accountRepository.getAccountsByUserId(profile.id),
+      _categoryRepository.getAllCategories(),
+      _tagRepository.getAllTags(),
+    ]);
+
+    final accounts = List<Account>.from(results[0] as Iterable);
+    final categories = List<Category>.from(results[1] as Iterable);
+    final tags = List<Tag>.from(results[2] as Iterable);
+
+    final allTransactions =
+        await _transactionRepository.watchAllTransactions().first;
 
     return _exportService.generateEncryptedJson(
-      transactions,
+      accounts: accounts,
+      categories: categories,
+      tags: tags,
+      transactions: allTransactions,
       password: password,
     );
   }

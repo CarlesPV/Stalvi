@@ -46,9 +46,14 @@
 ## Epic 4: Multi-Currency Handling
 **User Story 4.1:** As a traveler, I want to log an expense in a foreign currency and see its value accurately reflected in my default currency.
 * **Acceptance Criteria:**
-  * App fetches daily exchange rates via free API.
-  * Transactions save the local currency, original amount, and the exchange rate at the time of creation.
-  * Summation for charts only uses the converted default currency value.
+  * App fetches daily exchange rates via free API, caching only the 8 supported target currencies (EUR, USD, GBP, JPY, CAD, AUD, CHF, CNY) locally for up to 24 hours.
+  * Transactions save the local currency, original amount, and the exchange rate snapshot (JSON encoded string) at the time of creation to ensure financial immutability.
+  * Summation for charts only uses the converted default currency value, reactively recalculating and updating statistics immediately upon settings modifications (such as changing the default currency).
+
+**User Story 4.2: Cross-Currency transfers:** As a user, I want to transfer money between accounts with different currencies and see correct balances on both sides.
+* **Acceptance Criteria:**
+  * Transfers between accounts with different currencies calculate the destination leg using the exchange rate active at transaction creation.
+  * Origin leg reduces the source balance by the sent amount. Destination leg increases the target balance by the converted amount.
 
 ## Epic 5: Consolidated Settings & Profile & Security
 **User Story 5.1:** As a user, I want all configuration, layout, and compliance options organized under a unified settings layout, consolidating profile-related settings under 'Profile & Security' and placing system-wide utilities like the Recycle Bin at the top level of the Settings tab.
@@ -56,3 +61,9 @@
   - Theme Mode, Language selection, Terms & Conditions, and Privacy Policy options are housed under the "Profile & Security" settings menu.
   - The Recycle Bin is accessible directly via a dedicated tile on the primary Settings tab list.
   - Redundant or standalone Profile navigation options and avatars are removed from the main AppBar and screens to focus on a clean dashboard structure.
+
+## Epic 6: File Exports & Native View Access
+**User Story 6.1:** As a user, I want to quickly view exported CSV or PDF reports using my system's default viewer.
+* **Acceptance Criteria:**
+  - When a CSV or PDF report is exported successfully, the system displays a confirmation snackbar showing the export folder/file path.
+  - The snackbar includes a functional "Open" action button which launches the file natively via the OS handler (using `open_filex`).

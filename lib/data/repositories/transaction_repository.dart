@@ -8,6 +8,7 @@ import 'package:stalvi/data/mappers/transaction_mapper.dart';
 import 'package:stalvi/domain/entities/transaction.dart' as domain;
 import 'package:stalvi/domain/entities/transaction_type.dart' as domain;
 import 'package:stalvi/domain/repositories/i_transaction_repository.dart';
+import 'package:stalvi/core/utils/currency_converter.dart';
 
 /// Concrete implementation of [ITransactionRepository] backed by Drift.
 ///
@@ -35,9 +36,7 @@ class TransactionRepository implements ITransactionRepository {
 
         // 2. Adjust account balance.
         await _adjustBalance(
-          transaction.accountId,
-          transaction.amount,
-          transaction.type,
+          dbTransaction,
           _BalanceOp.add,
         );
 
@@ -72,9 +71,7 @@ class TransactionRepository implements ITransactionRepository {
         await _db.into(_db.transactions).insert(originTransaction.toDb());
         // Debit origin account.
         await _adjustBalance(
-          originTransaction.accountId,
-          originTransaction.amount,
-          domain.TransactionType.expense,
+          originTransaction.toDb(),
           _BalanceOp.add,
         );
 
@@ -82,9 +79,7 @@ class TransactionRepository implements ITransactionRepository {
         await _db.into(_db.transactions).insert(destinationTransaction.toDb());
         // Credit destination account.
         await _adjustBalance(
-          destinationTransaction.accountId,
-          destinationTransaction.amount,
-          domain.TransactionType.income,
+          destinationTransaction.toDb(),
           _BalanceOp.add,
         );
 
@@ -489,40 +484,72 @@ class TransactionRepository implements ITransactionRepository {
   /// [op] controls the direction: [_BalanceOp.add] applies the transaction
   /// (income → +, expense/transfer-out → −), [_BalanceOp.revert] undoes it.
   Future<void> _adjustBalance(
-    String accountId,
-    int amountCents,
-    domain.TransactionType type,
+    db.Transaction transaction,
     _BalanceOp op,
   ) async {
     final accountRow = await (_db.select(_db.accounts)
-          ..where((a) => a.id.equals(accountId)))
+          ..where((a) => a.id.equals(transaction.accountId)))
         .getSingleOrNull();
     if (accountRow == null) {
       throw NotFoundException(
-        message: 'Account with id "$accountId" not found',
+        message: 'Account with id "${transaction.accountId}" not found',
         code: 'ACCOUNT_NOT_FOUND',
       );
     }
 
-    final double delta = amountCents / 100.0;
+    final domain.Transaction domainTxn = transaction.toDomain();
+    final double convertedAmount = CurrencyConverter.convertAmount(
+      domainTxn,
+      accountRow.currency,
+      null,
+    );
+
+    final double delta = convertedAmount / 100.0;
     final bool applying = op == _BalanceOp.add;
     double newBalance;
 
-    switch (type) {
+    switch (_mapDbTypeToDomain(transaction.type)) {
       case domain.TransactionType.income:
         newBalance = applying
             ? accountRow.initialBalance + delta
             : accountRow.initialBalance - delta;
         break;
       case domain.TransactionType.expense:
-      case domain.TransactionType.transfer:
         newBalance = applying
             ? accountRow.initialBalance - delta
             : accountRow.initialBalance + delta;
         break;
+      case domain.TransactionType.transfer:
+        bool isOrigin = true;
+        if (transaction.transferId != null) {
+          final mirror =
+              await _findMirror(transaction.id, transaction.transferId!);
+          isOrigin = transaction.id.endsWith('_dst')
+              ? false
+              : (mirror != null
+                  ? (transaction.createdAt.isBefore(mirror.createdAt) ||
+                      (transaction.createdAt
+                              .isAtSameMomentAs(mirror.createdAt) &&
+                          transaction.id.compareTo(mirror.id) < 0))
+                  : true);
+        }
+
+        if (isOrigin) {
+          // Origin deducts the amount
+          newBalance = applying
+              ? accountRow.initialBalance - delta
+              : accountRow.initialBalance + delta;
+        } else {
+          // Destination adds the amount
+          newBalance = applying
+              ? accountRow.initialBalance + delta
+              : accountRow.initialBalance - delta;
+        }
+        break;
     }
 
-    await (_db.update(_db.accounts)..where((a) => a.id.equals(accountId)))
+    await (_db.update(_db.accounts)
+          ..where((a) => a.id.equals(transaction.accountId)))
         .write(
       db.AccountsCompanion(
         initialBalance: Value(newBalance),
@@ -533,7 +560,6 @@ class TransactionRepository implements ITransactionRepository {
 
   /// Reverts the balance impact of [txn] based on its type.
   Future<void> _revertBalance(db.Transaction txn) async {
-    final domainType = _mapDbTypeToDomain(txn.type);
     // For a transfer-destination leg the amount was credited (income direction),
     // so reverting it uses expense direction — but we stored it with the
     // income sign convention. We detect destination legs by checking whether
@@ -560,18 +586,16 @@ class TransactionRepository implements ITransactionRepository {
 
       if (isOrigin) {
         // Was debited; revert by adding back (income direction).
+        // Since we pass db.Transaction to _adjustBalance, we need to temporarily
+        // change its type to income for the revert operation to add the balance back.
         await _adjustBalance(
-          txn.accountId,
-          txn.amount,
-          domain.TransactionType.income,
+          txn.copyWith(type: db_table.TransactionType.income),
           _BalanceOp.add,
         );
       } else {
         // Was credited; revert by subtracting (expense direction).
         await _adjustBalance(
-          txn.accountId,
-          txn.amount,
-          domain.TransactionType.expense,
+          txn.copyWith(type: db_table.TransactionType.expense),
           _BalanceOp.add,
         );
       }
@@ -579,16 +603,13 @@ class TransactionRepository implements ITransactionRepository {
     }
 
     await _adjustBalance(
-      txn.accountId,
-      txn.amount,
-      domainType,
+      txn,
       _BalanceOp.revert,
     );
   }
 
   /// Re-applies the balance impact of [txn] based on its type (used in restore).
   Future<void> _applyBalance(db.Transaction txn) async {
-    final domainType = _mapDbTypeToDomain(txn.type);
     if (txn.type == db_table.TransactionType.transfer &&
         txn.transferId != null) {
       final mirror = await _findMirror(txn.id, txn.transferId!);
@@ -602,23 +623,19 @@ class TransactionRepository implements ITransactionRepository {
 
       if (isOrigin) {
         await _adjustBalance(
-          txn.accountId,
-          txn.amount,
-          domain.TransactionType.expense,
+          txn.copyWith(type: db_table.TransactionType.expense),
           _BalanceOp.add,
         );
       } else {
         await _adjustBalance(
-          txn.accountId,
-          txn.amount,
-          domain.TransactionType.income,
+          txn.copyWith(type: db_table.TransactionType.income),
           _BalanceOp.add,
         );
       }
       return;
     }
 
-    await _adjustBalance(txn.accountId, txn.amount, domainType, _BalanceOp.add);
+    await _adjustBalance(txn, _BalanceOp.add);
   }
 
   db_table.TransactionType _mapDomainTypeToDB(

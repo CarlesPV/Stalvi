@@ -231,6 +231,95 @@ on Android devices, preventing the database from loading and blocking app launch
 - Add metadata to generic audit/trash tables if localized representation is required without direct joins.
 - Use `autoDispose` for providers that monitor transient screen lists (like trash bins) to prevent caching stale items.
 
+---
 
+## 10. Refactoring Statistics & Dashboard Aggregations to Use Historical Exchange Rate Snapshots
 
+### Problem Description
+Previously, `StatisticsDao` performed database-level aggregation using raw SQLite `SUM()` commands. This bypassed transaction-specific historical exchange rates (stored as JSON string in `exchangeRateSnapshot` table column). When a user changed their default currency or loaded statistics, the calculations failed to reflect historical exchange rates dynamically, resulting in financial inaccuracies or falling back to static current rates.
+
+### Root Cause
+SQL-based database aggregation is incapable of parsing dynamic JSON objects (specifically the JSON-encoded `exchangeRateSnapshot` rates) inline on standard sqlite configurations. As a result, calculating accurate localized figures for multi-currency transactions requires moving the aggregation and conversion calculations from the SQLite database engine to the application's Dart repository layer.
+
+### Solution Applied
+1. **DAO Layer Refactoring**:
+   - Replaced custom aggregate database queries (`getPeriodSummary` and `getTopCategories`) in [statistics_dao.dart](file:///home/carlesp/Proyectos/Konta/lib/data/database/daos/statistics_dao.dart) with data-fetching methods: `getTransactionsForPeriod` and `getTransactionsWithCategoryForPeriod`.
+   - These methods retrieve the full list of matched `Transaction` and joined `TransactionWithCategory` records rather than raw SQL aggregate sums.
+2. **Repository Layer Aggregation**:
+   - Modified `StatisticsRepositoryImpl` in [statistics_repository_impl.dart](file:///home/carlesp/Proyectos/Konta/lib/data/repositories/statistics_repository_impl.dart) to parse the `exchangeRateSnapshot` JSON dictionary dynamically for each transaction.
+   - Performed the conversion from the transaction's `originalCurrency` to the active target currency (either the selected account's currency, or the user's default currency fallback) utilizing the transaction's historical rate snapshot.
+   - Handled cases where the snapshot is missing, corrupt, or does not contain the target rate, falling back safely.
+3. **Tests Refactoring**:
+   - Rewrote `statistics_dao_test.dart` to assert correct transaction retrieval, filtering, and exclusion behaviors for the new DAO methods.
+   - Wrote rigorous unit tests in `statistics_repository_impl_test.dart` to mock repository dependencies, feed custom exchange rate JSON snapshots, and assert that income/expense sums and category aggregates map correctly with exact currency conversions.
+
+### Future Prevention Guideline
+- Whenever a database column contains structured JSON properties (such as dynamic snapshots or metadata logs) that dictate financial calculations, perform the mathematical aggregation in the Dart domain/repository layer instead of using database-level SQL functions.
+
+---
+
+## 11. Currency Engine Optimization, Reactivity, and Advanced Reports (Phase 25)
+
+### Problem Description
+1. **Network Sync Overhead**: The currency sync downloaded exchange rate data for unnecessary global currencies on every launch, increasing payload size and latency.
+2. **Reactivity Deficit on Base Currency Changes**: When the user updated their default currency in settings, statistics and dashboard overview components failed to redraw in real-time, requiring a manual application restart.
+3. **Inaccurate Cross-Currency Transfers**: Transfer movements between accounts configured in different currencies (e.g. USD to EUR) used static base values instead of dynamically calculating the destination conversion leg.
+4. **Export Report Completeness**: PDF exports lacked visual category distributions, percentages, or localized translations.
+5. **Form bottom overlaps & UX limits**: On tight viewports or when opening the OS soft-keyboard, forms like `AddTransactionScreen` and `ProfileSettingsScreen` threw `BottomOverflow` rendering errors, and files exported successfully gave no direct action to view/open them.
+
+### Root Causes
+1. **Unconstrained API Payload**: `ExchangeRateRemoteDataSource` synced all 32+ global currencies without caching.
+2. **State Decoupling**: Riverpod statistics providers did not watch the default user profile currency configuration state, missing rebuild triggers when configuration settings changed.
+3. **Static Transfer calculations**: `AddTransactionUseCase` added dual transaction records with identical unadjusted amounts even if target accounts had differing currencies.
+4. **Form Viewport Limits**: Form layouts did not use scrolling wrappers, causing constraints to overflow when height shrunk due to the keyboard.
+
+### Solutions Applied
+1. **Target Currency Caching**: Restricted exchange rate sync to the 8 supported currencies, and cached results in local database tables with a 24-hour expiration check.
+2. **Provider State Coupling**: Refactored `statisticsProviders` to watch profile state configurations, ensuring automatic, immediate recalculations on default currency changes.
+3. **Cross-Currency Transfer Math**: Updated transfer logic in `AddTransactionUseCase` to detect differing currencies, retrieve the appropriate snapshot rate, and compute the correct adjusted amount for the destination account.
+4. **Advanced Localized PDF Generation**: Injected category breakdown summaries, percentages, and `pw.PieGrid` pie charts to the monthly statement export PDF.
+5. **Direct File Open action**: Integrated the `open_filex` package, adding interactive "Open" buttons on success export snackbars.
+6. **Form Scroll Layouts**: Audited forms, wrapping parent layout views in `SafeArea` and `SingleChildScrollView` to prevent keyboard-related layout crashes.
+
+### Future Prevention Guideline
+- Always watch configuration settings (e.g., locale, currency, mode) in down-stream providers that compute data summaries.
+- Use `SingleChildScrollView` or layout-wrapping scroll components for any page containing input text fields to safely support soft keyboards.
+
+---
+
+## 12. Financial Integrity, Editing, and PDF Unicode Support (Phase 28)
+
+### Problem Description
+1. **Goal/Budget Editing Lack**: Budgets and Savings Goals detail screens lacked editing features, meaning users had to delete and recreate them to modify parameters.
+2. **Dynamic Budget Spent Out-of-Sync**: Trashing or restoring transactions did not trigger budget Spent recalculations dynamically in foreign currencies.
+3. **Savings Goals Soft-Delete Inconsistency**: Deleting a savings goal did not cascade or refund saved amounts back to the original account balance.
+4. **PDF Export Font Glitches**: The exported PDF statement printed square placeholders instead of currency symbols (like €, $, £) due to standard PDF fonts lacking Unicode characters.
+5. **Static Analysis & Lint Warnings**: Multiple files had formatting and syntax issues (missing trailing commas, flow control without braces) that cluttered analyzer logs.
+
+### Root Causes
+1. **Missing Update Usecases/UI Sheets**: Updatable forms and sheets were not wired into detail taps.
+2. **Asymmetric Cascade Math**: Savings goals soft-deletes lacked the domain-level balance refund logic.
+3. **PDF Default Helvetica Limitations**: Standard PDF library fonts (Helvetica, Times) do not embed full Unicode glyph ranges for international currency symbols.
+
+### Solutions Applied
+1. **Budget/Goal Editing**:
+   - Implemented `UpdateBudgetUseCase` and `UpdateSavingsGoalUseCase`.
+   - Wired `CreateEditBudgetSheet` and `CreateEditSavingsGoalSheet` widgets in the detail views to pre-fill parameters and invoke the update operations on submit.
+2. **Dynamic Recalculation**:
+   - Programmed `UpdateBudgetProgressUseCase` to dynamically convert amounts to target category currencies and update progress on transaction deletion or restoration.
+3. **Trash Integrity & Goal Refund Cascade**:
+   - Upgraded `SoftDeleteSavingsGoalUseCase` to mark the goal as deleted and atomically create a refund transaction to restore the saved balance to the target account.
+4. **PDF Unicode Font Support**:
+   - Downloaded and placed the `Roboto-Regular.ttf` font asset into the project directory structure under `assets/fonts`.
+   - Registered the font in `pubspec.yaml`.
+   - Configured `ExportServiceImpl` to load the Roboto font file from assets and apply it to all PDF text styling, enabling correct rendering of currency symbols.
+5. **Static Analysis Cleanup**:
+   - Applied automatic styling fixes using `dart fix --apply`, resolving all 14 syntax warnings.
+   - Achieved a completely clean static analysis pass (`flutter analyze` with 0 issues).
+
+## 2026-06-26 - Phase 29: UI Cleanup and Space Optimization
+- **UI:** Removed the long press context menu from the account list (`_AccountItem`) on the Dashboard to streamline UX.
+- **Code Optimization:** Removed `_showContextMenu` and `_setAsDefault` functions from `dashboard_screen.dart`. Cleaned up unused local variables.
+- **Localization:** Removed unused translation keys (`setAsDefaultAccount`, `setAsDefaultAccountSuccess`, `setAsDefaultAccountError`, `editAccountDetails`, `markAccountAsDefault`, `alreadyDefaultAccount`) from `app_ca.arb`, `app_en.arb`, and `app_es.arb` to optimize file sizes.
+- **Validation:** Ensured all 396 tests and static analysis pass cleanly without any errors.
 

@@ -319,6 +319,140 @@ This document lists the completed phases of the Stalvi development roadmap, prov
   - Run full suite of 352 unit and widget tests ensuring a 100% pass rate.
   - Static analysis (`flutter analyze`) returns 0 issues and 0 warnings.
 
+### Phase 22: Multi-Currency Snapshot, Auth Fallbacks & i18n Completeness
+* **Completion Date:** June 19, 2026
+* **Objective:** Implement historical exchange rate snapshots per transaction, add background synchronization of exchange rates, resolve fallback PIN authentication when biometric authentication fails or is cancelled in sensitive flows, and complete full internationalization (i18n) coverage.
+* **Accomplishments:**
+  - **Multi-Currency Snapshot & Sync:**
+    - Modified the `Transactions` table and entity to include `exchangeRateSnapshot` for storing exchange rates at transaction creation time.
+    - Implemented background synchronization (`SyncExchangeRatesUseCase`) running on app startup to keep currency exchange rates up-to-date in the database.
+  - **Auth & Onboarding UX:**
+    - Updated profile registration and startup flows to resolve localized wallet names ("My Wallet", "Mi cartera", "La meva cartera") dynamically.
+    - Refactored `AuthScreen` PIN fallback logic to allow entering the PIN if biometric authentication fails, is locked out, or is cancelled, ensuring users can delete all data or access sensitive areas securely.
+  - **100% Localization Coverage:**
+    - Conducted a comprehensive audit of missing UI states. Extracted and localized all loading, error, and progress feedback states across English, Spanish, and Catalan.
+    - Updated `AppLocalizations` definitions and regenerated l10n bindings cleanly.
+* **Verification:**
+  - Clean run of static analysis (`flutter analyze` with 0 issues).
+  - Executed the entire suite of 357 unit, integration, and widget tests, achieving a 100% success rate (all tests passed!).
 
+### Phase 22.1: Multi-Currency Immutability & Background Sync
+* **Completion Date:** June 19, 2026
+* **Objective:** Ensure financial accuracy by saving local JSON exchange rate snapshots inside transactions, isolating default wallet initialization to the onboarding registration flow, and calculating statistics and dashboard summaries using historical snapshot math instead of pure SQL database sums.
+* **Accomplishments:**
+  - **Local Exchange Rate Caching**: Created ExchangeRate entity, local/remote data sources, and database table.
+  - **Historical Rate Snapshots**: Added `exchangeRateSnapshot` text column to the `Transactions` table to persist historical exchange rates as a JSON string when transactions are created.
+  - **Registration-scoped Initialization**: Isolated the default wallet creation to onboarding registration only, avoiding premature wallet initialization on app start.
+  - **Dynamic Snapshot Calculations**: Refactored `StatisticsDao` and `StatisticsRepositoryImpl` to query the list of transactions in a period and aggregate the sums in the Dart layer by parsing the `exchangeRateSnapshot` JSON, ensuring correct currency calculations even if default profile currencies change.
+* **Verification:**
+  - Fixed test assertion issues in `profile_settings_screen_test.dart` and aligned biometrics fallback verification string.
+  - Updated `statistics_dao_test.dart` to assert transaction queries on the updated DAO methods.
+  - Clean pass of static analysis (`dart analyze`) with 0 errors/warnings on edited code.
+  - Executed the full automated test suite (361 tests passed successfully!).
 
+### Phase 22.2: Localization Completeness, Unused Translation Cleanup, and Layout Polish
+* **Completion Date:** June 21, 2026
+* **Objective:** Audit the translation catalog to remove unused keys, localize hardcoded budget spent formatting, polish UI layouts to avoid text overflows, map validation errors to localized keys, and ensure all tests and lint checks pass cleanly.
+* **Accomplishments:**
+  - **Unused Key Cleanup**: Audited the three `.arb` localization files (`app_en.arb`, `app_es.arb`, `app_ca.arb`) and removed 15 unused translation keys (`authAuthenticate`, `authCheckingBiometrics`, `authSetupTermsCheckbox`, `authSkip`, `authVerifyIdentity`, `authVerifying`, `createAccountSuccess`, `defaultWallet`, `defaultWalletName`, `errorAuth`, `errorDatabase`, `errorGeneric`, `errorNetwork`, `myWallet`) to keep the localization bundles clean and minimal.
+  - **Budget Spent Localization**: Extracted the hardcoded budget progress spent string format (previously `'$spentStr of $targetStr'`) into a new localizable key `budgetSpentOf` across all three supported languages (English, Spanish, Catalan), adapting the format to `{spent} of {target}` / `{spent} de {target}` dynamically.
+  - **Validation Error Mapping**: Linked the `INVALID_NAME` `ValidationException` code inside `EditAccountDialog` to return the localized `createAccountErrorName` message, ensuring dynamic localization for validation errors.
+* **Verification:**
+  - Standard static analysis pass (`flutter analyze`) with 0 errors on modified files.
+  - Executed the full automated test suite containing 361 unit and widget tests, achieving a 100% success rate (all tests passed!).
 
+### Phase 23: Backups, and Import/Export Validations
+* **Completion Date:** June 22, 2026
+* **Objective:** Design and implement a secure, encrypted local backup system using AES-256-CBC, validate imports/exports cross-platform, clean up formatting, resolve static analysis, and verify all tests pass successfully.
+* **Accomplishments:**
+  - **Encrypted Local Backups**: Added cryptographic JSON exports/imports using user-defined passwords. Derived keys via PBKDF2-HMAC-SHA256 from user-specified passwords, incorporating random salt and IV headers.
+  - **Database Restoration**: Implemented `IImportService` and `ImportServiceImpl` to decrypt, validate, parse, and restore full database snapshots (Accounts, Categories, Tags, and Transactions).
+  - **Atomic Transaction Import**: Ensured that the database is atomically wiped (transactions, accounts, categories, tags) inside a single Drift transaction block and re-populated in foreign-key safe order. Kept user profiles intact during import.
+  - **Launcher Icons & Splash Screen**: Configured `flutter_launcher_icons` and `flutter_native_splash` utilizing rounded rectangle (squircle) logos, conforming to light/dark themes (`#F8FAFC` / `#0B0F19`) and Android 12+ guidelines.
+  - **Test Suite expansion**: Created unit test suite for `ImportServiceImpl` utilizing `mocktail` (4 new unit tests), verifying decryption errors, parsing exceptions, unsupported versions, and successful database restoration.
+* **Verification:**
+  - Standard static analysis pass (`flutter analyze` with 0 issues).
+  - Executed the entire suite of 359 unit, integration, and widget tests, achieving a 100% success rate (all tests passed!).
+
+### Phase 24: Financial Immutability, Export Engine & UI Polish
+* **Completion Date:** June 24, 2026
+* **Objective:** Ensure historical transaction data integrity, improve data export capabilities (PDF/CSV/JSON), and fix critical UI/UX overflows and layout issues.
+* **Accomplishments:**
+  - **Financial Immutability**: Added an `exchangeRateSnapshot` field to transactions and updated database mapping logic to store snapshots at creation time, preserving historical balance integrity. Calculate all Statistics (dashboard summaries and top categories) dynamically in real-time, performing live currency conversions based on full unrounded integer cents across multi-currency accounts.
+  - **Export Engine Enhancements**: Enhanced CSV and PDF generation to export complete data fields (including historical rates), formatted totals using active local currency symbols, and appended timestamps to filenames. Fully localized PDF strings (`AppLocalizations`) and appended `pw.PieGrid` charts for top income and expense categories.
+  - **Data Import Flow**: Modified the backup import pipeline to invalidate Riverpod providers, purge memory caches, and trigger a clean application restart via the navigator key to prevent transient state issues after data restoration.
+  - **UI/UX Polish**: Removed the redundant "Net Balance" summary from the Accounts tab, leaving a clean "Statistics" section header and entry point. Centered the transaction amount initially in the "Add Transaction" screen, allowing it to dynamically expand leftwards on large inputs. Fix the missing visibility toggle (eye icon) on the backup confirmation password field and resolved global UI overflows.
+* **Verification:**
+  - Resolved BuildContext async gap warnings (`use_build_context_synchronously`) in `data_management_screen.dart`.
+  - Deleted unnecessary scratch file `test_downloads.dart`.
+  - 100% passing rate on code analysis (`flutter analyze` with 0 issues).
+  - 100% success rate on the complete 363 tests suite (`flutter test`).
+
+### Phase 25: Currency Engine Optimization, Reactivity, and Advanced Reports
+* **Completion Date:** June 25, 2026
+* **Objective:** Optimize the currency exchange engine, ensure real-time dashboard and statistics reactivity on currency updates, implement multi-currency cross-account transfers, generate advanced localized PDF reports with pie charts/visual statistics, implement direct file opening capabilities via `open_filex`, and perform a UI/UX audit for overflow issues.
+* **Accomplishments:**
+  - **Yuan Integration:** Fully integrated Chinese Yuan (CNY) into default currency options, models, localizations, and calculations.
+  - **Currency Cache Optimization:** Updated `ExchangeRateRemoteDataSource` to store rate data locally for 24 hours, restricting outbound queries to only the 8 supported currencies to minimize network overhead.
+  - **Dynamic Reactivity:** Refactored Riverpod provider hierarchies so statistics and dashboard summaries immediately recalculate and update when default currency configurations are changed.
+  - **Cross-Currency Transfers:** Upgraded `AddTransactionUseCase` to detect transfer requests across different currencies, querying dynamic exchange rate snapshots to calculate accurate destination amounts.
+  - **Advanced PDF Reports:** Rewrote PDF monthly exports to include beautiful income/expense pie charts, category breakdown percentages, and detailed summaries all converted to the default currency.
+  - **Direct File Opening:** Added the `open_filex` dependency and integrated interactive "Open" actions on success Snackbars when exporting CSV/PDF reports in the Data Management Screen.
+  - **UI/UX & Translation Audit:** Wrapped sensitive input forms (e.g. `AddTransactionScreen` and `ProfileSettingsScreen` PIN/currency selections) inside `SafeArea` and `SingleChildScrollView` widgets to guarantee zero `BottomOverflow` keyboard rendering bugs. Audited and synchronized the translation ARB catalogs for English, Spanish, and Catalan.
+* **Verification:**
+  - Zero issues on static analysis (`flutter analyze`).
+  - All automated tests pass successfully: **368 tests passed** (including mock repository verifications and widget layout assertions).
+
+### Phase 26: QA/Layout Readiness and Production Audit
+* **Completion Date:** June 25, 2026
+* **Objective:** Audit layout widgets for potential overflows, resolve deprecations, clean unused assets, and verify that CI/CD and analyzer pass 100% cleanly.
+* **Accomplishments:**
+  - **Layout Constraints & Overflow Prevention:**
+    - Exposed text formatting options (overflow, maxLines, softWrap) in `ObfuscatedText` to safely wrap or truncate obfuscated text.
+    - Implemented text overflow safeguards on balance total, balance amount, statistics cards (label/values), account item balance value, and transaction item amount value across Dashboard and Budgets & Goals screens.
+  - **Code Polish & Deprecation Removal:**
+    - Resolved trailing comma warnings across the budgets screen and export monthly PDF tests.
+    - Cleaned deprecated properties in `DropdownButtonFormField` (replaced `value` with `initialValue`).
+    - Removed unused imports in `profile_settings_controller.dart`.
+    - Removed redundant mock methods from tests repository fake implementation classes.
+  - **Asset Optimization:**
+    - Cleaned up unused legal assets (`privacy.md` and `terms.md`) from `assets/legal` directory to save app package space.
+* **Verification:**
+  - 100% clean static analysis (`flutter analyze` with 0 issues).
+  - Clean `flutter test` execution: all 381 tests pass successfully.
+
+### Phase 27: UI Constraints for Budgets, Goals, and Recycle Bin
+* **Completion Date:** June 25, 2026
+* **Objective:** Implement input locking constraints on budget and savings goal forms, require account mapping on budget creation, embed savings goals as transfer destinations, and display soft-deleted budgets and savings goals inside the Recycle Bin with complete English, Spanish, and Catalan localization.
+* **Accomplishments:**
+  - **Edit-Mode Lockdowns:** Locked Currency and Target Amount fields in Edit mode for Budgets and Savings Goals sheets to preserve financial settings integrity.
+  - **Account Mapping Requirement:** Enforced mandatory Account selection during Budget creation.
+  - **Transfer Target Integration:** Extended the Transfer destination selector to display active Savings Goals alongside standard Accounts.
+  - **Recycle Bin Expansion:** Added support to display soft-deleted Budgets and Savings Goals inside the Recycle Bin list, rendering localized titles and metadata.
+  - **Full Translation Alignment:** Localized all new components and messages in English, Spanish, and Catalan, ensuring complete i18n parity.
+  - **Test Suite Updates:** Updated mock classes and database models inside the testing suite to align with constructor modifications.
+* **Verification:**
+  - 100% clean static analysis (`flutter analyze` with 0 issues).
+  - Executed the full automated test suite containing 393 unit and widget tests, achieving a 100% success rate (all tests passed!).
+
+### Phase 28: Financial Integrity, Editing, and Final Polish
+* **Completion Date:** June 26, 2026
+* **Objective:** Ensure data consistency in complex operations (cascading deletions), enable editing of financial goals/budgets, fix document export encoding for currency symbols, and polish internationalization/static analysis.
+* **Accomplishments:**
+  - **Entity Editing:** Enabled update operations (Update) in UI and Domain for Budgets and Savings Goals, allowing editing directly from detailed screens.
+  - **Dynamic Recalculation:** Implemented reactive budget recalculation including currency conversion when transactions are modified or deleted.
+  - **Trash Integrity:** Implemented cascading soft-delete and restore for Savings Goals, automatically reverting and reapplying balances to origin accounts.
+  - **PDF Unicode Support:** Embedded TTF fonts (Roboto) in the PDF export service to properly render currency symbols without placeholders.
+  - **Legal Update:** Reviewed and updated `privacy_*.md` and `terms_*.md` in Catalan, English, and Spanish to reflect the latest features.
+  - **UI/UX & Static Analysis Polish:** Automated formatting corrections via `dart fix --apply`, achieving 100% translation coverage and warning-free logs.
+* **Verification:**
+  - 100% clean static analysis (`flutter analyze` with 0 issues).
+  - Executed the full automated test suite containing 396 unit and widget tests, achieving a 100% success rate (all tests passed!).
+
+## Recent Updates
+- Enabled editing and update operations for Budgets and Savings Goals.
+- Added dynamic budget progress spent recalculation when transactions are modified/deleted.
+- Implemented cascading soft-delete/restore for Savings Goals with balance refunds.
+- Added full Unicode font support in PDF exports using Roboto font assets to fix currency symbol placeholders.
+- Updated Terms and Privacy policy legal markdown assets for Catalan, English, and Spanish.
+- Achieved a completely clean static analysis check with 0 issues on `flutter analyze` and 100% test pass rate (all 396 tests passing successfully).

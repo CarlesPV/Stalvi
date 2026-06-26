@@ -62,3 +62,21 @@ class NotFoundException extends AppException {
     super.details,
   });
 }
+
+/// Exception thrown when an export operation fails.
+class ExportException extends AppException {
+  const ExportException({
+    required super.message,
+    super.code,
+    super.details,
+  });
+}
+
+/// Exception thrown when a backup import/restore operation fails.
+class ImportException extends AppException {
+  const ImportException({
+    required super.message,
+    super.code,
+    super.details,
+  });
+}

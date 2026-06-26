@@ -26,7 +26,6 @@ class FakeCreateProfileParams extends Fake implements CreateProfileParams {}
 void main() {
   late MockSecureStorageManager mockSecureStorage;
   late MockCreateProfileUseCase mockCreateProfileUseCase;
-  late MockInitializeDefaultDataUseCase mockInitializeDefaultDataUseCase;
   late MockBiometricAuthService mockBiometricAuth;
 
   setUpAll(() {
@@ -36,7 +35,6 @@ void main() {
   setUp(() {
     mockSecureStorage = MockSecureStorageManager();
     mockCreateProfileUseCase = MockCreateProfileUseCase();
-    mockInitializeDefaultDataUseCase = MockInitializeDefaultDataUseCase();
     mockBiometricAuth = MockBiometricAuthService();
 
     // Default stubbing
@@ -58,8 +56,6 @@ void main() {
         secureStorageProvider.overrideWithValue(mockSecureStorage),
         createProfileUseCaseProvider
             .overrideWithValue(mockCreateProfileUseCase),
-        initializeDefaultDataUseCaseProvider
-            .overrideWithValue(mockInitializeDefaultDataUseCase),
         biometricAuthServiceProvider.overrideWithValue(mockBiometricAuth),
       ],
     );
@@ -281,14 +277,6 @@ void main() {
           modifiedAt: DateTime.now(),
         ),
       );
-      when(
-        () => mockInitializeDefaultDataUseCase.execute(
-          userId: any(named: 'userId'),
-          currency: any(named: 'currency'),
-          walletName: any(named: 'walletName'),
-          locale: any(named: 'locale'),
-        ),
-      ).thenAnswer((_) async => {});
 
       final container = createContainer();
       await container.read(authNotifierProvider.future);
@@ -307,14 +295,6 @@ void main() {
       final state = container.read(authNotifierProvider);
       expect(state.value, equals(AuthStatus.authenticated));
       verify(() => mockCreateProfileUseCase.execute(any())).called(1);
-      verify(
-        () => mockInitializeDefaultDataUseCase.execute(
-          userId: 'uuid',
-          currency: 'EUR',
-          walletName: any(named: 'walletName'),
-          locale: any(named: 'locale'),
-        ),
-      ).called(1);
     });
 
     group('verifyPin Login Tests', () {
@@ -416,14 +396,6 @@ void main() {
             modifiedAt: DateTime.now(),
           ),
         );
-        when(
-          () => mockInitializeDefaultDataUseCase.execute(
-            userId: any(named: 'userId'),
-            currency: any(named: 'currency'),
-            walletName: any(named: 'walletName'),
-            locale: any(named: 'locale'),
-          ),
-        ).thenAnswer((_) async => {});
 
         final container = createContainer();
         await container.read(authNotifierProvider.future);

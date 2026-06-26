@@ -5,6 +5,8 @@ import 'package:stalvi/domain/entities/trash_item.dart';
 import 'package:stalvi/domain/repositories/i_account_repository.dart';
 import 'package:stalvi/domain/repositories/i_transaction_repository.dart';
 import 'package:stalvi/domain/usecases/trash_usecases.dart';
+import 'package:stalvi/data/database/daos/savings_goal_dao.dart';
+import 'package:stalvi/domain/usecases/update_budget_progress_usecase.dart';
 
 // ---------------------------------------------------------------------------
 // Mocks
@@ -17,6 +19,11 @@ class MockTransactionRepository extends Mock
 
 class MockAccountRepository extends Mock implements IAccountRepository {}
 
+class MockSavingsGoalDao extends Mock implements SavingsGoalDao {}
+
+class MockUpdateBudgetProgressUseCase extends Mock
+    implements UpdateBudgetProgressUseCase {}
+
 // ---------------------------------------------------------------------------
 // Tests
 // ---------------------------------------------------------------------------
@@ -26,6 +33,8 @@ void main() {
   late MockTrashDao mockTrashDao;
   late MockTransactionRepository mockTransactionRepo;
   late MockAccountRepository mockAccountRepo;
+  late MockSavingsGoalDao mockSavingsGoalDao;
+  late MockUpdateBudgetProgressUseCase mockUpdateBudgetProgressUseCase;
 
   setUpAll(() {
     // Register fallback values for enum types used with any() in mocktail.
@@ -36,10 +45,14 @@ void main() {
     mockTrashDao = MockTrashDao();
     mockTransactionRepo = MockTransactionRepository();
     mockAccountRepo = MockAccountRepository();
+    mockSavingsGoalDao = MockSavingsGoalDao();
+    mockUpdateBudgetProgressUseCase = MockUpdateBudgetProgressUseCase();
     trashUsecases = TrashUsecases(
       mockTrashDao,
       mockTransactionRepo,
       mockAccountRepo,
+      mockUpdateBudgetProgressUseCase,
+      mockSavingsGoalDao,
     );
   });
 
@@ -69,6 +82,8 @@ void main() {
       test('routes to transactionRepository.restoreTransaction', () async {
         when(() => mockTransactionRepo.restoreTransaction(any()))
             .thenAnswer((_) async {});
+        when(() => mockTransactionRepo.getTransactionById(any()))
+            .thenAnswer((_) async => null);
 
         await trashUsecases.restoreItem('txn_1', TrashItemType.transaction);
 
@@ -80,6 +95,8 @@ void main() {
       test('does NOT call trashDao.restoreItem for transactions', () async {
         when(() => mockTransactionRepo.restoreTransaction(any()))
             .thenAnswer((_) async {});
+        when(() => mockTransactionRepo.getTransactionById(any()))
+            .thenAnswer((_) async => null);
 
         await trashUsecases.restoreItem('txn_1', TrashItemType.transaction);
 
@@ -95,7 +112,6 @@ void main() {
         TrashItemType.category,
         TrashItemType.account,
         TrashItemType.budget,
-        TrashItemType.savingsGoal,
       ]) {
         test('routes ${type.name} to trashDao.restoreItem', () async {
           when(() => mockTrashDao.restoreItem(any(), type))

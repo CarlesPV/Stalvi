@@ -32,22 +32,6 @@
   "@expenses": {
     "description": "Label for plural negative financial expenses"
   },
-  "errorGeneric": "Something went wrong. Please try again.",
-  "@errorGeneric": {
-    "description": "Generic fallback error message"
-  },
-  "errorDatabase": "Database error occurred. Please contact support.",
-  "@errorDatabase": {
-    "description": "Error message when database operation fails"
-  },
-  "errorAuth": "Authentication failed. Please check your credentials.",
-  "@errorAuth": {
-    "description": "Error message when authentication fails"
-  },
-  "errorNetwork": "Network error. Please check your internet connection.",
-  "@errorNetwork": {
-    "description": "Error message when network request fails"
-  },
   "appTitle": "Stalvi",
   "@appTitle": {
     "description": "App name branding"
@@ -68,10 +52,6 @@
   "@tryAgain": {
     "description": "General button label to retry an operation"
   },
-  "authCheckingBiometrics": "Checking biometrics…",
-  "@authCheckingBiometrics": {
-    "description": "Loading message during biometric initialization"
-  },
   "authError": "Authentication Error",
   "@authError": {
     "description": "Error title for biometric authentication failure"
@@ -88,25 +68,13 @@
   "@authLockoutActive": {
     "description": "Warning chip label for active biometric lockout"
   },
-  "authVerifyIdentity": "Verify Your Identity",
-  "@authVerifyIdentity": {
-    "description": "Prompt title to verify identity"
-  },
-  "authVerifyMessage": "Use biometrics or your device PIN to continue.",
+  "authVerifyMessage": "Use biometrics or your device PIN to continue",
   "@authVerifyMessage": {
     "description": "Prompt description to verify identity"
   },
-  "authVerifying": "Verifying…",
-  "@authVerifying": {
-    "description": "Button label during verification state"
-  },
-  "authAuthenticate": "Authenticate",
-  "@authAuthenticate": {
-    "description": "Button label to trigger biometric authentication"
-  },
-  "authSkip": "Skip for now",
-  "@authSkip": {
-    "description": "Button label to skip biometric authentication"
+  "authProcessing": "Processing security authentication…",
+  "@authProcessing": {
+    "description": "Loading message when processing security authentication"
   },
   "authProtectedBy": "Protected by device biometrics",
   "@authProtectedBy": {
@@ -395,10 +363,6 @@
   "@authSetupLanguageLabel": {
     "description": "Label for language selection"
   },
-  "authSetupTermsCheckbox": "I accept the Terms & Conditions and Privacy Policy",
-  "@authSetupTermsCheckbox": {
-    "description": "Label for terms and conditions checkbox"
-  },
   "authSetupCreateButton": "Create Profile",
   "@authSetupCreateButton": {
     "description": "Button label to submit setup form"
@@ -439,14 +403,6 @@
   "authPinIncorrect": "Incorrect PIN. Please try again.",
   "@authPinIncorrect": {
     "description": "Error message when PIN is incorrect"
-  },
-  "defaultWalletName": "My Wallet",
-  "@defaultWalletName": {
-    "description": "Default wallet name when user profile is initialized"
-  },
-  "defaultWallet": "Default Wallet",
-  "@defaultWallet": {
-    "description": "Default wallet name when user profile is initialized"
   },
   "acrossAccountsCount": "{count, plural, =1{1 account} other{{count} accounts}}",
   "@acrossAccountsCount": {
@@ -504,10 +460,6 @@
   "privacyPolicy": "Privacy Policy",
   "@privacyPolicy": {
     "description": "Title for the Privacy Policy screen"
-  },
-  "myWallet": "My Wallet",
-  "@myWallet": {
-    "description": "General localized label for My Wallet"
   },
   "authSetupCurrencyLabel": "Default Currency",
   "@authSetupCurrencyLabel": {
@@ -766,10 +718,6 @@
   "@createAccountIconLabel": {
     "description": "Label for icon selection"
   },
-  "createAccountSuccess": "Account created successfully",
-  "@createAccountSuccess": {
-    "description": "Success message after account creation"
-  },
   "createAccountErrorName": "Please enter an account name",
   "@createAccountErrorName": {
     "description": "Error message when account name is empty"
@@ -817,18 +765,6 @@
   "btnClose": "Close",
   "@btnClose": {
     "description": "Close button label"
-  },
-  "setAsDefaultAccount": "Set as Default Account",
-  "@setAsDefaultAccount": {
-    "description": "Context menu option to set account as default"
-  },
-  "setAsDefaultAccountSuccess": "Account set as default",
-  "@setAsDefaultAccountSuccess": {
-    "description": "Snackbar message when account is set as default"
-  },
-  "setAsDefaultAccountError": "Failed to set default account",
-  "@setAsDefaultAccountError": {
-    "description": "Snackbar error when setting default account fails"
   },
   "filterSheetTitle": "Filter Transactions",
   "@filterSheetTitle": {
@@ -942,18 +878,6 @@
   "unknownAccount": "Unknown Account",
   "@unknownAccount": {
     "description": "Fallback label when account is not found"
-  },
-  "editAccountDetails": "Edit account details",
-  "@editAccountDetails": {
-    "description": "Subtitle for editing account details"
-  },
-  "markAccountAsDefault": "Mark this account as the default for new transactions",
-  "@markAccountAsDefault": {
-    "description": "Subtitle for setting account as default"
-  },
-  "alreadyDefaultAccount": "This is already the default account",
-  "@alreadyDefaultAccount": {
-    "description": "Subtitle indicating account is already default"
   },
   "categories": "Categories",
   "@categories": {
@@ -1078,20 +1002,322 @@
   "selectDestinationAccount": "Select Destination Account",
   "@selectDestinationAccount": {
     "description": "Title for the destination account picker modal"
-  }
-,
+  },
   "currencyEUR": "Euro (EUR)",
-  "@currencyEUR": { "description": "Currency name for EUR" },
+  "@currencyEUR": {
+    "description": "Currency name for EUR"
+  },
   "currencyUSD": "US Dollar (USD)",
-  "@currencyUSD": { "description": "Currency name for USD" },
+  "@currencyUSD": {
+    "description": "Currency name for USD"
+  },
   "currencyGBP": "British Pound (GBP)",
-  "@currencyGBP": { "description": "Currency name for GBP" },
+  "@currencyGBP": {
+    "description": "Currency name for GBP"
+  },
   "currencyJPY": "Japanese Yen (JPY)",
-  "@currencyJPY": { "description": "Currency name for JPY" },
+  "@currencyJPY": {
+    "description": "Currency name for JPY"
+  },
   "currencyCHF": "Swiss Franc (CHF)",
-  "@currencyCHF": { "description": "Currency name for CHF" },
+  "@currencyCHF": {
+    "description": "Currency name for CHF"
+  },
   "currencyCAD": "Canadian Dollar (CAD)",
-  "@currencyCAD": { "description": "Currency name for CAD" },
+  "@currencyCAD": {
+    "description": "Currency name for CAD"
+  },
   "currencyAUD": "Australian Dollar (AUD)",
-  "@currencyAUD": { "description": "Currency name for AUD" }
+  "@currencyAUD": {
+    "description": "Currency name for AUD"
+  },
+  "currencyCNY": "Chinese Yuan (CNY)",
+  "@currencyCNY": {
+    "description": "Currency name for CNY"
+  },
+  "errorDestinationAccountRequired": "Please select a destination account",
+  "@errorDestinationAccountRequired": {
+    "description": "Validation error when destination account is required for transfer"
+  },
+  "errorSameAccountTransfer": "Source and destination accounts cannot be the same",
+  "@errorSameAccountTransfer": {
+    "description": "Validation error when source and destination accounts are the same"
+  },
+  "savingsGoal": "Savings Goal",
+  "@savingsGoal": {
+    "description": "Singular name for savings goal trash item"
+  },
+  "budgetSpentOf": "{spent} of {target}",
+  "@budgetSpentOf": {
+    "description": "Progress message showing spent amount out of budget target",
+    "placeholders": {
+      "spent": {
+        "type": "String"
+      },
+      "target": {
+        "type": "String"
+      }
+    }
+  },
+  "dataPortabilityTitle": "Data Portability",
+  "@dataPortabilityTitle": {
+    "description": "Section title for data export and import options"
+  },
+  "settingsDataManagement": "Data Management",
+  "@settingsDataManagement": {
+    "description": "Settings option for data management"
+  },
+  "exportEncryptedBackup": "Export Encrypted Backup",
+  "@exportEncryptedBackup": {
+    "description": "Button label to export an encrypted full backup"
+  },
+  "exportEncryptedBackupSubtitle": "Export all data as a password-protected backup file",
+  "@exportEncryptedBackupSubtitle": {
+    "description": "Subtitle for the encrypted backup export option"
+  },
+  "importRestoreBackup": "Import / Restore Backup",
+  "@importRestoreBackup": {
+    "description": "Button label to import and restore from an encrypted backup"
+  },
+  "importRestoreBackupSubtitle": "Restore your data from a Stalvi backup file",
+  "@importRestoreBackupSubtitle": {
+    "description": "Subtitle for the import/restore option"
+  },
+  "exportTransactionsCsv": "Export Transactions (CSV)",
+  "@exportTransactionsCsv": {
+    "description": "Button label to export all transactions as a CSV file"
+  },
+  "exportTransactionsCsvSubtitle": "Export all transactions to a spreadsheet-compatible CSV file",
+  "@exportTransactionsCsvSubtitle": {
+    "description": "Subtitle for the CSV export option"
+  },
+  "exportMonthlyPdf": "Export Monthly Report (PDF)",
+  "@exportMonthlyPdf": {
+    "description": "Button label to export the current month's report as a PDF"
+  },
+  "exportMonthlyPdfSubtitle": "Generate a PDF summary for the current month",
+  "@exportMonthlyPdfSubtitle": {
+    "description": "Subtitle for the PDF monthly report export option"
+  },
+  "exportPasswordDialogTitle": "Set Backup Password",
+  "@exportPasswordDialogTitle": {
+    "description": "Title for the dialog where user sets a backup password"
+  },
+  "exportPasswordDialogSubtitle": "This password will be required to restore your backup. Store it safely.",
+  "@exportPasswordDialogSubtitle": {
+    "description": "Subtitle in the export password dialog"
+  },
+  "exportPasswordLabel": "Backup Password",
+  "@exportPasswordLabel": {
+    "description": "Label for the backup password input field"
+  },
+  "exportPasswordConfirmLabel": "Confirm Password",
+  "@exportPasswordConfirmLabel": {
+    "description": "Label for the confirm password input field"
+  },
+  "exportPasswordMismatch": "Passwords do not match.",
+  "@exportPasswordMismatch": {
+    "description": "Error when export passwords do not match"
+  },
+  "exportPasswordTooShort": "Password must be at least 6 characters.",
+  "@exportPasswordTooShort": {
+    "description": "Error when export password is too short"
+  },
+  "importPasswordDialogTitle": "Enter Backup Password",
+  "@importPasswordDialogTitle": {
+    "description": "Title for the dialog where user enters restore password"
+  },
+  "importPasswordDialogSubtitle": "Enter the password used when the backup was created.",
+  "@importPasswordDialogSubtitle": {
+    "description": "Subtitle in the import password dialog"
+  },
+  "importConfirmTitle": "Restore Backup?",
+  "@importConfirmTitle": {
+    "description": "Title for the import confirmation dialog"
+  },
+  "importConfirmMessage": "Restoring a backup will overwrite all current data. This cannot be undone. Are you sure?",
+  "@importConfirmMessage": {
+    "description": "Warning message in the import confirmation dialog"
+  },
+  "exportSuccess": "Export successful. File saved.",
+  "@exportSuccess": {
+    "description": "Snackbar message when export succeeds"
+  },
+  "importSuccess": "Backup restored successfully. Please restart the app.",
+  "@importSuccess": {
+    "description": "Snackbar message when import/restore succeeds"
+  },
+  "exportFailed": "Export failed. Please try again.",
+  "@exportFailed": {
+    "description": "Snackbar message when export fails"
+  },
+  "importFailed": "Restore failed. Check your password and file.",
+  "@importFailed": {
+    "description": "Snackbar message when import/restore fails"
+  },
+  "btnExport": "Export",
+  "@btnExport": {
+    "description": "Generic export button label"
+  },
+  "btnRestore": "Restore",
+  "@btnRestore": {
+    "description": "Generic restore button label"
+  },
+  "statisticsOtherCategories": "Other ({count} categories)",
+  "@statisticsOtherCategories": {
+    "description": "Label for other categories slice in statistics charts when count exceeds display limit",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "btnViewDetails": "View Details",
+  "@btnViewDetails": {
+    "description": "Text button label to view details of statistics"
+  },
+  "btnOpen": "Open",
+  "@btnOpen": {
+    "description": "Button label to open a file"
+  },
+  "errorOpenFileFailed": "Could not open file",
+  "@errorOpenFileFailed": {
+    "description": "Error message when opening a file fails"
+  },
+  "expense_vs_income": "Expenses vs Income",
+  "@expense_vs_income": {
+    "description": "Title for the income vs expenses chart section in PDF"
+  },
+  "destination_account": "Destination Account",
+  "@destination_account": {
+    "description": "Label for the destination account in transfers"
+  },
+  "chart_scale": "Chart Scale",
+  "@chart_scale": {
+    "description": "Label for the scale/axis of a chart in PDF"
+  },
+  "pdfDateFormat": "MM/dd/yyyy",
+  "@pdfDateFormat": {
+    "description": "Date format for PDF reports"
+  },
+  "pdfDateTimeFormat": "MM/dd/yyyy HH:mm",
+  "@pdfDateTimeFormat": {
+    "description": "Date and time format for PDF reports"
+  },
+  "pdfGeneratedOn": "Generated by {appTitle} on {date}",
+  "@pdfGeneratedOn": {
+    "description": "Footer showing generation timestamp and app title",
+    "placeholders": {
+      "appTitle": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "addBudget": "Add Budget",
+  "@addBudget": {
+    "description": "Button or title for adding a budget"
+  },
+  "editBudget": "Edit Budget",
+  "budgetDetails": "Budget Details",
+  "@budgetDetails": {
+    "description": "Title for budget details"
+  },
+  "@editBudget": {
+    "description": "Button or title for editing a budget"
+  },
+  "deleteBudget": "Delete Budget",
+  "@deleteBudget": {
+    "description": "Button or title for deleting a budget"
+  },
+  "addSavingsGoal": "Add Savings Goal",
+  "@addSavingsGoal": {
+    "description": "Button or title for adding a savings goal"
+  },
+  "editSavingsGoal": "Edit Savings Goal",
+  "savingsGoalDetails": "Savings Goal Details",
+  "@savingsGoalDetails": {
+    "description": "Title for savings goal details"
+  },
+  "@editSavingsGoal": {
+    "description": "Button or title for editing a savings goal"
+  },
+  "deleteSavingsGoal": "Delete Savings Goal",
+  "@deleteSavingsGoal": {
+    "description": "Button or title for deleting a savings goal"
+  },
+  "targetAmount": "Target Amount",
+  "@targetAmount": {
+    "description": "Label for target amount input"
+  },
+  "startDate": "Start Date",
+  "@startDate": {
+    "description": "Label for start date input"
+  },
+  "endDate": "End Date",
+  "@endDate": {
+    "description": "Label for end date input"
+  },
+  "goalName": "Goal Name",
+  "@goalName": {
+    "description": "Label for goal name input"
+  },
+  "targetDate": "Target Date",
+  "@targetDate": {
+    "description": "Label for target date input"
+  },
+  "errorEndDateBeforeStart": "End date must be after start date",
+  "@errorEndDateBeforeStart": {
+    "description": "Validation error for budget dates"
+  },
+  "errorNameRequired": "Please enter a name",
+  "@errorNameRequired": {
+    "description": "Validation error for goal name"
+  },
+  "errorTargetDatePast": "Target date must be in the future",
+  "@errorTargetDatePast": {
+    "description": "Validation error for target date"
+  },
+  "pdfBudgetsTitle": "Budgets",
+  "@pdfBudgetsTitle": {
+    "description": "Section title for the Budgets table in PDF export"
+  },
+  "pdfBudgetsColCategory": "Category",
+  "@pdfBudgetsColCategory": {
+    "description": "Column header for Category in PDF Budgets table"
+  },
+  "pdfBudgetsColDateRange": "Date Range",
+  "@pdfBudgetsColDateRange": {
+    "description": "Column header for Date Range in PDF Budgets table"
+  },
+  "pdfBudgetsColSpent": "% Spent",
+  "@pdfBudgetsColSpent": {
+    "description": "Column header for Percentage Spent in PDF Budgets table"
+  },
+  "pdfBudgetsColMaxValue": "Max Value",
+  "@pdfBudgetsColMaxValue": {
+    "description": "Column header for Maximum Budget Value in PDF Budgets table"
+  },
+  "pdfSavingsGoalsTitle": "Savings Goals",
+  "@pdfSavingsGoalsTitle": {
+    "description": "Section title for the Savings Goals table in PDF export"
+  },
+  "pdfSavingsColName": "Name",
+  "@pdfSavingsColName": {
+    "description": "Column header for Name in PDF Savings Goals table"
+  },
+  "pdfSavingsColCompleted": "% Completed",
+  "@pdfSavingsColCompleted": {
+    "description": "Column header for Percentage Completed in PDF Savings Goals table"
+  },
+  "pdfSavingsColTarget": "Target Amount",
+  "@pdfSavingsColTarget": {
+    "description": "Column header for Target Amount in PDF Savings Goals table"
+  },
+  "labelBudget": "Budget",
+  "@labelBudget": {
+    "description": "Singular label for budget"
+  }
 }

@@ -28,6 +28,10 @@ import 'daos/account_dao.dart';
 import 'daos/statistics_dao.dart';
 import 'daos/transaction_dao.dart';
 import 'daos/trash_dao.dart';
+import 'tables/exchange_rate_table.dart';
+import 'daos/exchange_rate_dao.dart';
+import 'daos/budget_dao.dart';
+import 'daos/savings_goal_dao.dart';
 
 part 'app_database.g.dart';
 
@@ -53,8 +57,17 @@ part 'app_database.g.dart';
     Transactions,
     Budgets,
     SavingsGoals,
+    ExchangeRates,
   ],
-  daos: [AccountDao, TransactionDao, StatisticsDao, TrashDao],
+  daos: [
+    AccountDao,
+    TransactionDao,
+    StatisticsDao,
+    TrashDao,
+    ExchangeRateDao,
+    BudgetDao,
+    SavingsGoalDao,
+  ],
 )
 class AppDatabase extends _$AppDatabase {
   /// Private constructor — use the [create] factory instead.
@@ -79,7 +92,7 @@ class AppDatabase extends _$AppDatabase {
 
   /// Bump this version whenever you add, modify, or remove tables.
   @override
-  int get schemaVersion => 5;
+  int get schemaVersion => 8;
 
   @override
   MigrationStrategy get migration {
@@ -99,23 +112,6 @@ class AppDatabase extends _$AppDatabase {
             username: 'anonymous',
             password: '',
             defaultCurrency: const Value('EUR'),
-            createdAt: now,
-            modifiedAt: now,
-          ),
-        );
-
-        // Seed Default Account 'Mi Cartera'
-        await into(accounts).insert(
-          AccountsCompanion.insert(
-            id: uuid.v4(),
-            userId: defaultUserId,
-            name: 'Mi Cartera',
-            type: AccountType.cash,
-            initialBalance: 0.0,
-            currency: 'EUR',
-            color: '#4CAF50',
-            icon: 'wallet',
-            isDefault: const Value(true),
             createdAt: now,
             modifiedAt: now,
           ),
@@ -171,6 +167,24 @@ class AppDatabase extends _$AppDatabase {
         }
         if (from < 5) {
           await m.addColumn(transactions, transactions.transferId);
+        }
+        if (from < 6) {
+          await m.createTable(exchangeRates);
+          await m.addColumn(transactions, transactions.exchangeRateSnapshot);
+        }
+        if (from < 7) {
+          final existingRates = await select(exchangeRates).get();
+          String fallbackJson = '{"EUR": 1.0}';
+          if (existingRates.isNotEmpty) {
+            fallbackJson = existingRates.first.rates;
+          }
+          await customStatement(
+            'UPDATE transactions SET exchange_rate_snapshot = ? WHERE exchange_rate_snapshot IS NULL',
+            [Variable.withString(fallbackJson)],
+          );
+        }
+        if (from < 8) {
+          await m.addColumn(savingsGoals, savingsGoals.currency);
         }
       },
     );

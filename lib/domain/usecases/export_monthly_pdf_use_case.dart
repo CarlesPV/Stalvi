@@ -1,29 +1,68 @@
+import 'package:stalvi/domain/repositories/i_account_repository.dart';
+import 'package:stalvi/domain/repositories/i_budget_repository.dart';
+import 'package:stalvi/domain/repositories/i_category_repository.dart';
 import 'package:stalvi/domain/repositories/i_export_service.dart';
+import 'package:stalvi/domain/repositories/i_profile_repository.dart';
+import 'package:stalvi/domain/repositories/i_savings_goal_repository.dart';
 import 'package:stalvi/domain/repositories/i_transaction_repository.dart';
-import 'package:stalvi/domain/repositories/i_statistics_repository.dart';
+import 'package:stalvi/core/l10n/app_localizations.dart';
+
+import 'package:stalvi/domain/entities/budget.dart';
+import 'package:stalvi/domain/entities/savings_goal.dart';
+import 'package:stalvi/domain/entities/transaction_type.dart';
+import 'package:stalvi/domain/repositories/i_exchange_rate_repository.dart';
+import 'package:stalvi/domain/use_cases/statistics/get_period_summary_use_case.dart';
+import 'package:stalvi/domain/use_cases/statistics/get_top_categories_use_case.dart';
 
 /// Use case that generates a PDF summary report for the **current calendar month**.
 ///
-/// It fetches all transactions for the given account that fall within the
-/// current month, and delegates PDF generation to [IExportService].
+/// It fetches all transactions that fall within the current month across all
+/// accounts, resolves Account and Category names, and delegates PDF generation
+/// to [IExportService]. The generated PDF includes columns:
+/// Date, Type, Account, Category, Amount, Currency, and Notes.
+/// It also includes Budget and Savings Goal summary tables.
 class ExportMonthlyPdfUseCase {
+  final IProfileRepository _profileRepository;
+  final IAccountRepository _accountRepository;
+  final ICategoryRepository _categoryRepository;
   final ITransactionRepository _transactionRepository;
-  final IStatisticsRepository _statisticsRepository;
+  final IExchangeRateRepository _exchangeRateRepository;
+  final GetPeriodSummaryUseCase _getPeriodSummaryUseCase;
+  final GetTopCategoriesUseCase _getTopCategoriesUseCase;
+  final IBudgetRepository _budgetRepository;
+  final ISavingsGoalRepository _savingsGoalRepository;
   final IExportService _exportService;
+  final AppLocalizations _l10n;
 
   const ExportMonthlyPdfUseCase({
+    required IProfileRepository profileRepository,
+    required IAccountRepository accountRepository,
+    required ICategoryRepository categoryRepository,
     required ITransactionRepository transactionRepository,
-    required IStatisticsRepository statisticsRepository,
+    required IExchangeRateRepository exchangeRateRepository,
+    required GetPeriodSummaryUseCase getPeriodSummaryUseCase,
+    required GetTopCategoriesUseCase getTopCategoriesUseCase,
+    required IBudgetRepository budgetRepository,
+    required ISavingsGoalRepository savingsGoalRepository,
     required IExportService exportService,
-  })  : _transactionRepository = transactionRepository,
-        _statisticsRepository = statisticsRepository,
-        _exportService = exportService;
+    required AppLocalizations l10n,
+  })  : _profileRepository = profileRepository,
+        _accountRepository = accountRepository,
+        _categoryRepository = categoryRepository,
+        _transactionRepository = transactionRepository,
+        _exchangeRateRepository = exchangeRateRepository,
+        _getPeriodSummaryUseCase = getPeriodSummaryUseCase,
+        _getTopCategoriesUseCase = getTopCategoriesUseCase,
+        _budgetRepository = budgetRepository,
+        _savingsGoalRepository = savingsGoalRepository,
+        _exportService = exportService,
+        _l10n = l10n;
 
-  /// Generates a monthly PDF report for [accountId].
+  /// Generates a monthly PDF report.
   ///
   /// Optionally pass a custom [month] — defaults to the current month.
-  Future<ExportResult> call(
-    String accountId, {
+  Future<ExportResult> call({
+    required String targetCurrency,
     DateTime? month,
   }) async {
     final now = DateTime.now();
@@ -39,25 +78,109 @@ class ExportMonthlyPdfUseCase {
       59,
     );
 
-    // Fetch all transactions and filter to the target month client-side.
-    // For large datasets consider adding a date-range query to the repository.
+    // Resolve profile for account lookup
+    final profile = await _profileRepository.getFirstProfile();
+    final userId = profile?.id ?? '';
+    final defaultCurrency = profile?.defaultCurrency ?? targetCurrency;
+
+    final results = await Future.wait([
+      _accountRepository.getAccountsByUserId(userId),
+      _categoryRepository.getAllCategories(),
+      _getPeriodSummaryUseCase.execute(
+        startDate: startDate,
+        endDate: endDate,
+        targetCurrency: targetCurrency,
+      ),
+      _getTopCategoriesUseCase.execute(
+        startDate: startDate,
+        endDate: endDate,
+        targetCurrency: targetCurrency,
+        type: TransactionType.expense,
+      ),
+      _getTopCategoriesUseCase.execute(
+        startDate: startDate,
+        endDate: endDate,
+        targetCurrency: targetCurrency,
+        type: TransactionType.income,
+      ),
+      _budgetRepository.getBudgets(),
+      _savingsGoalRepository.getSavingsGoals(),
+    ]);
+
+    final accounts = results[0] as dynamic;
+    final categories = results[1] as dynamic;
+    final summary = results[2] as dynamic;
+    final topExpenseCategories = results[3] as dynamic;
+    final topIncomeCategories = results[4] as dynamic;
+    final allBudgets = results[5] as List<Budget>;
+    final allSavingsGoals = results[6] as List<SavingsGoal>;
+
+    // Fetch and filter transactions to target month
     final allTransactions =
-        await _transactionRepository.getTransactionsByAccountId(accountId);
+        await _transactionRepository.watchAllTransactions().first;
+
+    await _exchangeRateRepository.getLatestRates(
+      baseCurrency: targetCurrency,
+    );
 
     final monthTransactions = allTransactions.where((tx) {
       return !tx.date.isBefore(startDate) && !tx.date.isAfter(endDate);
     }).toList()
       ..sort((a, b) => a.date.compareTo(b.date));
 
-    final summary = await _statisticsRepository.getPeriodSummary(
-      startDate: startDate,
-      endDate: endDate,
-    );
+    final accountMap = {for (final a in accounts) a.id: a.name};
+    final categoryMap = {for (final c in categories) c.id: c.name};
+
+    // Build transfer destination labels for each transfer transaction
+    final Map<String, String> transferDestinations = {};
+    for (final tx in monthTransactions) {
+      if (tx.type == TransactionType.transfer && tx.transferId != null) {
+        final otherLeg = allTransactions.firstWhere(
+          (t) => t.transferId == tx.transferId && t.id != tx.id,
+          orElse: () => tx,
+        );
+        if (otherLeg.id != tx.id) {
+          final thisAccountName = accountMap[tx.accountId] ?? tx.accountId;
+          final otherAccountName =
+              accountMap[otherLeg.accountId] ?? otherLeg.accountId;
+          if (tx.amount < 0) {
+            // Outgoing leg: "From: thisAccount → To: otherAccount"
+            transferDestinations[tx.id] =
+                '$thisAccountName (${_l10n.destination_account}: $otherAccountName)';
+          } else {
+            // Incoming leg: "From: otherAccount → To: thisAccount"
+            transferDestinations[tx.id] =
+                '$otherAccountName (${_l10n.destination_account}: $thisAccountName)';
+          }
+        }
+      }
+    }
+
+    // Build a category-name map specifically for budgets
+    final Map<String, String> budgetCategoryNames = {
+      for (final b in allBudgets)
+        b.categoryId: categoryMap[b.categoryId] ?? b.categoryId,
+    };
+
+    // Filter active (non-deleted) budgets and savings goals
+    final activeBudgets = allBudgets.where((b) => !b.isDeleted).toList();
+    final activeSavingsGoals =
+        allSavingsGoals.where((g) => !g.isDeleted).toList();
 
     return _exportService.generateMonthlyPdf(
       monthTransactions,
       summary: summary,
       month: targetMonth,
+      l10n: _l10n,
+      accounts: accounts,
+      categories: categories,
+      topExpenseCategories: topExpenseCategories,
+      topIncomeCategories: topIncomeCategories,
+      defaultCurrency: defaultCurrency,
+      transferDestinations: transferDestinations,
+      budgets: activeBudgets,
+      budgetCategoryNames: budgetCategoryNames,
+      savingsGoals: activeSavingsGoals,
     );
   }
 }

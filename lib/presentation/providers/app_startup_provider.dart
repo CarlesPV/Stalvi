@@ -1,9 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
-import 'package:stalvi/core/l10n/app_localizations.dart';
 import 'package:stalvi/data/database/app_database.dart';
 import 'package:stalvi/domain/usecases/auto_purge_usecase.dart';
+import 'package:stalvi/domain/usecases/sync_exchange_rates_usecase.dart';
 import 'package:stalvi/presentation/providers/locale_provider.dart';
 import 'package:stalvi/presentation/providers/repository_providers.dart';
 
@@ -52,13 +52,17 @@ final appStartupProvider = FutureProvider<void>((ref) async {
     final locale = ref.read(localeProvider);
     final initializeDefaultDataUseCase =
         ref.read(initializeDefaultDataUseCaseProvider);
-    final l10n = lookupAppLocalizations(locale);
     await initializeDefaultDataUseCase.execute(
       userId: profile.id,
-      currency: profile.defaultCurrency,
-      walletName: l10n.defaultWalletName,
       locale: locale.languageCode,
     );
+
+    // Run silent background sync for exchange rates
+    final syncRatesUseCase = SyncExchangeRatesUseCase(
+      ref.read(exchangeRateRepositoryProvider),
+    );
+    // Note: this deliberately runs without awaiting it to avoid blocking startup
+    syncRatesUseCase.execute(baseCurrency: profile.defaultCurrency);
   } catch (e) {
     // Safe to ignore if profile is not setup yet (e.g., first launch)
     debugPrint(
