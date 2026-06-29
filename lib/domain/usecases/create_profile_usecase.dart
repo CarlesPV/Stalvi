@@ -6,11 +6,11 @@ import 'package:uuid/uuid.dart';
 import 'package:stalvi/core/errors/app_exceptions.dart';
 import 'package:stalvi/core/l10n/app_localizations.dart';
 import 'package:stalvi/core/security/secure_storage_manager.dart';
-import 'package:stalvi/domain/entities/account_type.dart';
-import 'package:stalvi/domain/entities/profile.dart';
-import 'package:stalvi/domain/repositories/i_profile_repository.dart';
-import 'package:stalvi/domain/usecases/create_account_usecase.dart';
-import 'package:stalvi/domain/usecases/initialize_default_data_usecase.dart';
+import '../entities/account_type.dart';
+import '../entities/profile.dart';
+import '../repositories/i_profile_repository.dart';
+import 'create_account_usecase.dart';
+import 'initialize_default_data_usecase.dart';
 
 class CreateProfileParams {
   final String name;

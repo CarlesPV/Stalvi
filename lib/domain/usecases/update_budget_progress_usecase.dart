@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart' show DateTimeRange;
 import 'package:stalvi/core/utils/currency_converter.dart';
-import 'package:stalvi/domain/entities/exchange_rate.dart';
-import 'package:stalvi/domain/entities/transaction.dart';
-import 'package:stalvi/domain/entities/transaction_type.dart';
-import 'package:stalvi/domain/repositories/i_account_repository.dart';
-import 'package:stalvi/domain/repositories/i_budget_repository.dart';
-import 'package:stalvi/domain/repositories/i_exchange_rate_repository.dart';
-import 'package:stalvi/domain/repositories/i_transaction_repository.dart';
+import '../entities/exchange_rate.dart';
+import '../entities/transaction.dart';
+import '../entities/transaction_type.dart';
+import '../repositories/i_account_repository.dart';
+import '../repositories/i_budget_repository.dart';
+import '../repositories/i_exchange_rate_repository.dart';
+import '../repositories/i_transaction_repository.dart';
 
 class UpdateBudgetProgressUseCase {
   final IBudgetRepository _budgetRepository;

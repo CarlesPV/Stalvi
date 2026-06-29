@@ -1,4 +1,4 @@
-import 'package:stalvi/data/network/exchange_rate_remote_data_source.dart';
+import '../network/exchange_rate_remote_data_source.dart';
 import 'package:stalvi/domain/entities/exchange_rate.dart';
 import 'package:stalvi/domain/repositories/i_exchange_rate_repository.dart';
 
@@ -11,7 +11,7 @@ import 'package:stalvi/domain/repositories/i_exchange_rate_repository.dart';
 ///
 /// Caching (e.g., TTL-based local storage of rates) is deferred to a future
 /// phase and will be added here without changing the interface contract.
-import 'package:stalvi/data/database/daos/exchange_rate_dao.dart';
+import '../database/daos/exchange_rate_dao.dart';
 
 class ExchangeRateRepository implements IExchangeRateRepository {
   final IExchangeRateRemoteDataSource _remoteDataSource;

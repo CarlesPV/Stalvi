@@ -6,7 +6,7 @@ import 'package:stalvi/domain/entities/category_statistic.dart';
 import 'package:stalvi/domain/entities/period_summary.dart';
 import 'package:stalvi/domain/use_cases/statistics/get_period_summary_use_case.dart';
 import 'package:stalvi/domain/use_cases/statistics/get_top_categories_use_case.dart';
-import 'package:stalvi/presentation/providers/repository_providers.dart';
+import 'repository_providers.dart';
 import 'package:stalvi/core/utils/currency_converter.dart';
 
 // ─── Use-case providers ───────────────────────────────────────────────────────

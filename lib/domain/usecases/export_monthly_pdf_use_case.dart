@@ -1,18 +1,18 @@
-import 'package:stalvi/domain/repositories/i_account_repository.dart';
-import 'package:stalvi/domain/repositories/i_budget_repository.dart';
-import 'package:stalvi/domain/repositories/i_category_repository.dart';
-import 'package:stalvi/domain/repositories/i_export_service.dart';
-import 'package:stalvi/domain/repositories/i_profile_repository.dart';
-import 'package:stalvi/domain/repositories/i_savings_goal_repository.dart';
-import 'package:stalvi/domain/repositories/i_transaction_repository.dart';
+import '../repositories/i_account_repository.dart';
+import '../repositories/i_budget_repository.dart';
+import '../repositories/i_category_repository.dart';
+import '../repositories/i_export_service.dart';
+import '../repositories/i_profile_repository.dart';
+import '../repositories/i_savings_goal_repository.dart';
+import '../repositories/i_transaction_repository.dart';
 import 'package:stalvi/core/l10n/app_localizations.dart';
 
-import 'package:stalvi/domain/entities/budget.dart';
-import 'package:stalvi/domain/entities/savings_goal.dart';
-import 'package:stalvi/domain/entities/transaction_type.dart';
-import 'package:stalvi/domain/repositories/i_exchange_rate_repository.dart';
-import 'package:stalvi/domain/use_cases/statistics/get_period_summary_use_case.dart';
-import 'package:stalvi/domain/use_cases/statistics/get_top_categories_use_case.dart';
+import '../entities/budget.dart';
+import '../entities/savings_goal.dart';
+import '../entities/transaction_type.dart';
+import '../repositories/i_exchange_rate_repository.dart';
+import '../use_cases/statistics/get_period_summary_use_case.dart';
+import '../use_cases/statistics/get_top_categories_use_case.dart';
 
 /// Use case that generates a PDF summary report for the **current calendar month**.
 ///

@@ -1,4 +1,4 @@
-import 'package:stalvi/data/database/daos/statistics_dao.dart';
+import '../database/daos/statistics_dao.dart';
 import 'package:stalvi/data/database/tables/transaction_table.dart'
     show TransactionType;
 import 'package:stalvi/domain/entities/category_statistic.dart';

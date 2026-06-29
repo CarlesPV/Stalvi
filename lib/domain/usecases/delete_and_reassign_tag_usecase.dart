@@ -1,5 +1,5 @@
-import 'package:stalvi/domain/repositories/i_tag_repository.dart';
-import 'package:stalvi/domain/repositories/i_transaction_repository.dart';
+import '../repositories/i_tag_repository.dart';
+import '../repositories/i_transaction_repository.dart';
 
 class DeleteAndReassignTagUseCase {
   final ITagRepository _tagRepo;

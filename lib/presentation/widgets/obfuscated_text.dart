@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:stalvi/presentation/providers/discreet_mode_provider.dart';
+import '../providers/discreet_mode_provider.dart';
 
 /// A widget that displays text which can be obfuscated based on [discreetModeProvider].
 class ObfuscatedText extends ConsumerWidget {

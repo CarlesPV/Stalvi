@@ -4,9 +4,9 @@ import 'package:stalvi/core/errors/app_exceptions.dart';
 import 'package:stalvi/core/utils/currency_formatter.dart';
 import 'package:stalvi/domain/entities/transaction_type.dart';
 import 'package:stalvi/domain/usecases/add_transaction_usecase.dart';
-import 'package:stalvi/presentation/providers/repository_providers.dart';
-import 'package:stalvi/presentation/providers/statistics_providers.dart';
-import 'package:stalvi/presentation/providers/locale_provider.dart';
+import 'repository_providers.dart';
+import 'statistics_providers.dart';
+import 'locale_provider.dart';
 import 'package:stalvi/core/l10n/app_localizations.dart';
 
 /// State representation for the Add Transaction form.

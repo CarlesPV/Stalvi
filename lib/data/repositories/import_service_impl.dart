@@ -3,12 +3,12 @@ import 'dart:convert';
 import 'package:drift/drift.dart';
 
 import 'package:stalvi/core/errors/app_exceptions.dart';
-import 'package:stalvi/data/database/app_database.dart' as db;
+import '../database/app_database.dart' as db;
 import 'package:stalvi/data/database/tables/account_table.dart'
     as account_table;
 import 'package:stalvi/data/database/tables/category_table.dart'
     as category_table;
-import 'package:stalvi/data/database/tables/transaction_table.dart' as tx_table;
+import '../database/tables/transaction_table.dart' as tx_table;
 import 'package:stalvi/domain/repositories/i_export_service.dart';
 import 'package:stalvi/domain/repositories/i_import_service.dart';
 

@@ -9,9 +9,9 @@ import 'package:stalvi/core/theme/app_theme.dart';
 import 'package:stalvi/core/utils/currency_formatter.dart';
 import 'package:stalvi/domain/entities/category_statistic.dart';
 import 'package:stalvi/domain/entities/period_summary.dart';
-import 'package:stalvi/presentation/providers/repository_providers.dart';
-import 'package:stalvi/presentation/providers/statistics_providers.dart';
-import 'package:stalvi/presentation/widgets/empty_state_widget.dart';
+import '../../providers/repository_providers.dart';
+import '../../providers/statistics_providers.dart';
+import '../../widgets/empty_state_widget.dart';
 
 // ─── Main Screen ──────────────────────────────────────────────────────────────
 
@@ -766,16 +766,12 @@ class _CategoryChartSectionState extends State<_CategoryChartSection> {
                         color: colorScheme.onSurface,
                         letterSpacing: -0.2,
                       ),
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
                     ),
                     Text(
                       widget.subtitle,
                       style: theme.textTheme.bodySmall?.copyWith(
                         color: colorScheme.onSurfaceVariant,
                       ),
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
                     ),
                   ],
                 ),
@@ -1074,8 +1070,6 @@ class _TouchedCategoryInfo extends ConsumerWidget {
                   fontWeight: FontWeight.w700,
                   color: catColor,
                 ),
-                overflow: TextOverflow.ellipsis,
-                maxLines: 1,
               ),
             ),
             const SizedBox(width: 8),
@@ -1111,8 +1105,6 @@ class _TouchedCategoryInfo extends ConsumerWidget {
                   color: catColor,
                   fontWeight: FontWeight.w700,
                 ),
-                overflow: TextOverflow.ellipsis,
-                maxLines: 1,
               ),
             ),
           ],

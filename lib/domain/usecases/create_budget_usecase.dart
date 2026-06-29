@@ -1,8 +1,8 @@
 import 'package:stalvi/core/errors/app_exceptions.dart';
-import 'package:stalvi/domain/entities/budget.dart';
-import 'package:stalvi/domain/repositories/i_budget_repository.dart';
-import 'package:stalvi/domain/repositories/i_category_repository.dart';
-import 'package:stalvi/domain/usecases/update_budget_progress_usecase.dart';
+import '../entities/budget.dart';
+import '../repositories/i_budget_repository.dart';
+import '../repositories/i_category_repository.dart';
+import 'update_budget_progress_usecase.dart';
 
 class CreateBudgetParams {
   final String id;

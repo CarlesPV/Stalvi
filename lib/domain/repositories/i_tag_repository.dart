@@ -1,4 +1,4 @@
-import 'package:stalvi/domain/entities/tag.dart';
+import '../entities/tag.dart';
 
 abstract class ITagRepository {
   Future<Tag> createTag(Tag tag);

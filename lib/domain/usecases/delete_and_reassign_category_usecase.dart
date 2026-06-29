@@ -1,6 +1,6 @@
-import 'package:stalvi/domain/entities/category.dart';
-import 'package:stalvi/domain/repositories/i_category_repository.dart';
-import 'package:stalvi/domain/repositories/i_transaction_repository.dart';
+import '../entities/category.dart';
+import '../repositories/i_category_repository.dart';
+import '../repositories/i_transaction_repository.dart';
 
 class DeleteAndReassignCategoryUseCase {
   final ICategoryRepository _categoryRepo;

@@ -2,8 +2,8 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:stalvi/core/l10n/app_localizations.dart';
-import 'package:stalvi/presentation/features/dashboard/dashboard_screen.dart';
-import 'package:stalvi/presentation/providers/auth_notifier.dart';
+import '../dashboard/dashboard_screen.dart';
+import '../../providers/auth_notifier.dart';
 
 class BiometricOptInScreen extends ConsumerStatefulWidget {
   const BiometricOptInScreen({super.key});

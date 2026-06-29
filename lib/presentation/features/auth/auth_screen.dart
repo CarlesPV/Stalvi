@@ -5,12 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:stalvi/core/errors/app_exceptions.dart';
 import 'package:stalvi/core/l10n/app_localizations.dart';
-import 'package:stalvi/presentation/features/dashboard/dashboard_screen.dart';
-import 'package:stalvi/presentation/features/auth/biometric_opt_in_screen.dart';
+import '../dashboard/dashboard_screen.dart';
+import 'biometric_opt_in_screen.dart';
 import 'package:stalvi/infrastructure/services/biometric_auth_service.dart';
-import 'package:stalvi/presentation/providers/auth_notifier.dart';
-import 'package:stalvi/presentation/providers/locale_provider.dart';
-import 'package:stalvi/presentation/widgets/terms_and_conditions_viewer.dart';
+import '../../providers/auth_notifier.dart';
+import '../../providers/locale_provider.dart';
+import '../../widgets/terms_and_conditions_viewer.dart';
 
 class AuthScreen extends ConsumerStatefulWidget {
   const AuthScreen({super.key});

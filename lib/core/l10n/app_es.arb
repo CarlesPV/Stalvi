@@ -1,6 +1,5 @@
 {
   "@@locale": "es",
-  "dashboard": "Panel de control",
   "transactions": "Transacciones",
   "budgets": "Presupuestos",
   "settings": "Ajustes",
@@ -139,7 +138,6 @@
   "recycleBinRestoredMessage": "Elemento restaurado",
   "recycleBinDeletedMessage": "Elemento eliminado permanentemente",
   "recycleBinDaysRemaining": "Expira en {days} días",
-  "optional": "Opcional",
   "errorCategoryRequired": "Por favor, seleccione una categoría",
   "errorCurrencyRequired": "Por favor, seleccione una moneda",
   "labelCurrency": "Moneda",
@@ -246,9 +244,6 @@
   "errorDestinationAccountRequired": "Por favor, seleccione una cuenta de destino",
   "errorSameAccountTransfer": "Las cuentas de origen y destino no pueden ser la misma",
   "savingsGoal": "Objetivo de ahorro",
-  "@dashboard": {
-    "description": "Title for the dashboard screen"
-  },
   "@transactions": {
     "description": "Title for the transactions screen or tab"
   },
@@ -701,9 +696,6 @@
       }
     }
   },
-  "@optional": {
-    "description": "Label indicating an input field is optional"
-  },
   "@errorCategoryRequired": {
     "description": "Validation error when category is not selected"
   },
@@ -1059,10 +1051,6 @@
       }
     }
   },
-  "dataPortabilityTitle": "Portabilidad de datos",
-  "@dataPortabilityTitle": {
-    "description": "Section title for data export and import options"
-  },
   "settingsDataManagement": "Gestión de Datos",
   "@settingsDataManagement": {
     "description": "Settings option for data management"
@@ -1220,13 +1208,9 @@
   "@addBudget": {
     "description": "Button or title for adding a budget"
   },
-  "editBudget": "Editar Presupuesto",
   "budgetDetails": "Detalles del Presupuesto",
   "@budgetDetails": {
     "description": "Title for budget details"
-  },
-  "@editBudget": {
-    "description": "Button or title for editing a budget"
   },
   "deleteBudget": "Eliminar Presupuesto",
   "@deleteBudget": {
@@ -1236,13 +1220,9 @@
   "@addSavingsGoal": {
     "description": "Button or title for adding a savings goal"
   },
-  "editSavingsGoal": "Editar Objetivo de Ahorro",
   "savingsGoalDetails": "Detalles del Objetivo de Ahorro",
   "@savingsGoalDetails": {
     "description": "Title for savings goal details"
-  },
-  "@editSavingsGoal": {
-    "description": "Button or title for editing a savings goal"
   },
   "deleteSavingsGoal": "Eliminar Meta de Ahorro",
   "@deleteSavingsGoal": {
@@ -1275,10 +1255,6 @@
   "errorNameRequired": "Por favor, introduce un nombre",
   "@errorNameRequired": {
     "description": "Validation error for goal name"
-  },
-  "errorTargetDatePast": "La fecha objetivo debe ser en el futuro",
-  "@errorTargetDatePast": {
-    "description": "Validation error for target date"
   },
   "pdfBudgetsTitle": "Presupuestos",
   "@pdfBudgetsTitle": {
@@ -1319,5 +1295,14 @@
   "labelBudget": "Presupuesto",
   "@labelBudget": {
     "description": "Singular label for budget"
+  },
+  "exportSavedTo": "Guardado en {filePath}",
+  "@exportSavedTo": {
+    "description": "Snackbar message showing the path where exported backup or CSV file is saved",
+    "placeholders": {
+      "filePath": {
+        "type": "String"
+      }
+    }
   }
 }

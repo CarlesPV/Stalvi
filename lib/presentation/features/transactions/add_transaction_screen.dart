@@ -10,8 +10,8 @@ import 'package:stalvi/domain/entities/tag.dart';
 import 'package:stalvi/domain/entities/category_type.dart';
 import 'package:stalvi/domain/entities/transaction_type.dart';
 import 'package:stalvi/domain/entities/savings_goal.dart';
-import 'package:stalvi/presentation/providers/add_transaction_notifier.dart';
-import 'package:stalvi/presentation/providers/repository_providers.dart';
+import '../../providers/add_transaction_notifier.dart';
+import '../../providers/repository_providers.dart';
 import 'package:stalvi/core/utils/currency_formatter.dart';
 
 import 'package:stalvi/core/utils/icon_helper.dart';
@@ -596,6 +596,8 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
 
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
@@ -774,6 +776,8 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
 
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
@@ -904,6 +908,8 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
 
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
@@ -994,6 +1000,8 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
 
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),

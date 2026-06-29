@@ -1,6 +1,6 @@
 import 'package:drift/drift.dart';
-import 'package:stalvi/data/database/app_database.dart' as db;
-import 'package:stalvi/data/mappers/tag_mapper.dart';
+import '../database/app_database.dart' as db;
+import '../mappers/tag_mapper.dart';
 import 'package:stalvi/domain/entities/tag.dart';
 import 'package:stalvi/domain/repositories/i_tag_repository.dart';
 

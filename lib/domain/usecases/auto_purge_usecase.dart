@@ -1,4 +1,4 @@
-import '../../data/database/daos/trash_dao.dart';
+import 'package:stalvi/data/database/daos/trash_dao.dart';
 
 class AutoPurgeUseCase {
   final TrashDao _trashDao;

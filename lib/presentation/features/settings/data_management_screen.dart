@@ -4,9 +4,9 @@ import 'package:file_picker/file_picker.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:stalvi/core/l10n/app_localizations.dart';
 import 'package:stalvi/infrastructure/services/biometric_auth_service.dart';
-import 'package:stalvi/presentation/features/settings/profile_settings_controller.dart';
-import 'package:stalvi/presentation/features/settings/pin_verification_sheet.dart';
-import 'package:stalvi/presentation/features/splash/splash_screen.dart';
+import 'profile_settings_controller.dart';
+import 'pin_verification_sheet.dart';
+import '../splash/splash_screen.dart';
 
 class DataManagementScreen extends ConsumerStatefulWidget {
   const DataManagementScreen({super.key});
@@ -228,7 +228,11 @@ class _DataManagementScreenState extends ConsumerState<DataManagementScreen> {
     final hasFilePath = filePath != null && filePath.isNotEmpty;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(hasFilePath ? 'Saved to $filePath' : successMsg),
+        content: Text(
+          hasFilePath
+              ? AppLocalizations.of(context)!.exportSavedTo(filePath)
+              : successMsg,
+        ),
         duration: const Duration(seconds: 6),
         action: (hasFilePath && showOpenAction)
             ? SnackBarAction(

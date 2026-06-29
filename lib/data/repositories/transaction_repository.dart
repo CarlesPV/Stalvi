@@ -1,10 +1,10 @@
 import 'package:drift/drift.dart';
 
 import 'package:stalvi/core/errors/app_exceptions.dart';
-import 'package:stalvi/data/database/app_database.dart' as db;
-import 'package:stalvi/data/database/daos/transaction_dao.dart';
-import 'package:stalvi/data/database/tables/transaction_table.dart' as db_table;
-import 'package:stalvi/data/mappers/transaction_mapper.dart';
+import '../database/app_database.dart' as db;
+import '../database/daos/transaction_dao.dart';
+import '../database/tables/transaction_table.dart' as db_table;
+import '../mappers/transaction_mapper.dart';
 import 'package:stalvi/domain/entities/transaction.dart' as domain;
 import 'package:stalvi/domain/entities/transaction_type.dart' as domain;
 import 'package:stalvi/domain/repositories/i_transaction_repository.dart';

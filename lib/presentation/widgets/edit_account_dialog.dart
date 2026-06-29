@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:stalvi/domain/entities/account.dart';
 import 'package:stalvi/domain/entities/account_type.dart';
-import 'package:stalvi/presentation/providers/repository_providers.dart';
+import '../providers/repository_providers.dart';
 import 'package:stalvi/domain/usecases/update_account_usecase.dart';
 import 'package:stalvi/core/l10n/app_localizations.dart';
 import 'package:stalvi/core/errors/app_exceptions.dart';
@@ -16,6 +16,7 @@ class EditAccountDialog extends ConsumerStatefulWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      useSafeArea: true,
       backgroundColor: Colors.transparent,
       builder: (context) => EditAccountDialog(account: account),
     );

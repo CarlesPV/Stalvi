@@ -4,8 +4,8 @@ import 'package:stalvi/core/l10n/app_localizations.dart';
 import 'package:stalvi/domain/entities/savings_goal.dart';
 import 'package:stalvi/domain/usecases/create_savings_goal_usecase.dart';
 import 'package:stalvi/domain/usecases/update_savings_goal_usecase.dart';
-import 'package:stalvi/presentation/providers/budgets_goals_providers.dart';
-import 'package:stalvi/presentation/providers/repository_providers.dart';
+import '../../../providers/budgets_goals_providers.dart';
+import '../../../providers/repository_providers.dart';
 import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 
@@ -18,6 +18,7 @@ class CreateEditSavingsGoalSheet extends ConsumerStatefulWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      useSafeArea: true,
       backgroundColor: Colors.transparent,
       builder: (context) => CreateEditSavingsGoalSheet(existingGoal: goal),
     );

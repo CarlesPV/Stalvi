@@ -8,26 +8,26 @@ import 'package:stalvi/domain/entities/account.dart';
 import 'package:stalvi/domain/entities/account_type.dart';
 import 'package:stalvi/domain/entities/transaction.dart';
 import 'package:stalvi/domain/entities/transaction_type.dart';
-import 'package:stalvi/presentation/features/transactions/add_transaction_screen.dart';
-import 'package:stalvi/presentation/features/transactions/transaction_filter_sheet.dart';
-import 'package:stalvi/presentation/features/budgets_and_goals/budgets_and_goals_screen.dart';
-import 'package:stalvi/presentation/features/statistics/statistics_screen.dart';
-import 'package:stalvi/presentation/providers/repository_providers.dart';
-import 'package:stalvi/presentation/providers/auth_notifier.dart';
-import 'package:stalvi/presentation/providers/locale_provider.dart';
-import 'package:stalvi/presentation/features/settings/profile_settings_screen.dart';
-import 'package:stalvi/presentation/features/settings/categories_tags_management_screen.dart';
-import 'package:stalvi/presentation/features/settings/data_management_screen.dart';
-import 'package:stalvi/presentation/features/recycle_bin/recycle_bin_screen.dart';
-import 'package:stalvi/presentation/widgets/empty_state_widget.dart';
-import 'package:stalvi/presentation/providers/discreet_mode_provider.dart';
-import 'package:stalvi/presentation/widgets/obfuscated_text.dart';
-import 'package:stalvi/presentation/providers/statistics_providers.dart';
-import 'package:stalvi/presentation/widgets/create_account_dialog.dart';
-import 'package:stalvi/presentation/widgets/edit_account_dialog.dart';
-import 'package:stalvi/presentation/features/transactions/transaction_details_dialog.dart';
+import '../transactions/add_transaction_screen.dart';
+import '../transactions/transaction_filter_sheet.dart';
+import '../budgets_and_goals/budgets_and_goals_screen.dart';
+import '../statistics/statistics_screen.dart';
+import '../../providers/repository_providers.dart';
+import '../../providers/auth_notifier.dart';
+import '../../providers/locale_provider.dart';
+import '../settings/profile_settings_screen.dart';
+import '../settings/categories_tags_management_screen.dart';
+import '../settings/data_management_screen.dart';
+import '../recycle_bin/recycle_bin_screen.dart';
+import '../../widgets/empty_state_widget.dart';
+import '../../providers/discreet_mode_provider.dart';
+import '../../widgets/obfuscated_text.dart';
+import '../../providers/statistics_providers.dart';
+import '../../widgets/create_account_dialog.dart';
+import '../../widgets/edit_account_dialog.dart';
+import '../transactions/transaction_details_dialog.dart';
 import 'package:stalvi/core/utils/icon_helper.dart';
-import 'package:stalvi/presentation/providers/transaction_filter_provider.dart';
+import '../../providers/transaction_filter_provider.dart';
 
 /// The main application scaffold — shown after successful authentication.
 ///
@@ -819,8 +819,6 @@ class _AccountItem extends ConsumerWidget {
                       fontWeight: FontWeight.w800,
                       color: colorScheme.onSurface,
                     ),
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 1,
                   ),
                   if (account.isDefault) ...[
                     const SizedBox(height: 4),
@@ -956,8 +954,6 @@ class _TransactionItem extends ConsumerWidget {
                   fontWeight: FontWeight.w800,
                   color: color,
                 ),
-                overflow: TextOverflow.ellipsis,
-                maxLines: 1,
               ),
             ),
           ],
@@ -1334,8 +1330,6 @@ class _BalanceCard extends ConsumerWidget {
                     fontWeight: FontWeight.w500,
                     letterSpacing: 0.2,
                   ),
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 1,
                 ),
               ),
               const SizedBox(width: 8),
@@ -1412,8 +1406,6 @@ class _BalanceCard extends ConsumerWidget {
                       fontWeight: FontWeight.w800,
                       letterSpacing: -0.5,
                     ),
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 1,
                   );
                 },
               );
@@ -1521,7 +1513,6 @@ class _StatCard extends ConsumerWidget {
               ),
               const Spacer(),
               // Trend placeholder
-              // TODO: Implement actual trend indicator instead of a permanent skeleton
               const SizedBox(width: 36, height: 14),
             ],
           ),
@@ -1532,8 +1523,6 @@ class _StatCard extends ConsumerWidget {
               color: colorScheme.onSurfaceVariant,
               fontWeight: FontWeight.w500,
             ),
-            overflow: TextOverflow.ellipsis,
-            maxLines: 1,
           ),
           const SizedBox(height: 6),
           summaryAsync.when(
@@ -1562,8 +1551,6 @@ class _StatCard extends ConsumerWidget {
                   fontWeight: FontWeight.w800,
                   color: accentColor,
                 ),
-                overflow: TextOverflow.ellipsis,
-                maxLines: 1,
               );
             },
           ),

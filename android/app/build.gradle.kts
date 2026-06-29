@@ -42,6 +42,20 @@ android {
     buildTypes {
         release {
             signingConfig = signingConfigs.getByName("release")
+            // R8 code shrinking, obfuscation and resource shrinking for release.
+            // minifyEnabled activates full R8 (replaces ProGuard) which removes
+            // unused code and obfuscates class/method names.
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro",
+            )
+        }
+        debug {
+            // Keep debug builds fast – no minification.
+            isMinifyEnabled = false
+            isShrinkResources = false
         }
     }
 }

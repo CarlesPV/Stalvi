@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:stalvi/core/l10n/app_localizations.dart';
-import 'package:stalvi/presentation/features/settings/profile_settings_controller.dart';
-import 'package:stalvi/presentation/providers/auth_notifier.dart';
+import 'profile_settings_controller.dart';
+import '../../providers/auth_notifier.dart';
 
 class PinVerificationSheet extends ConsumerStatefulWidget {
   final VoidCallback onVerified;
@@ -149,143 +149,145 @@ class _PinVerificationSheetState extends ConsumerState<PinVerificationSheet> {
         right: 24,
         top: 24,
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Handle bar
-          Container(
-            width: 40,
-            height: 4,
-            decoration: BoxDecoration(
-              color: colorScheme.outlineVariant,
-              borderRadius: BorderRadius.circular(2),
-            ),
-          ),
-          const SizedBox(height: 20),
-          Text(
-            l10n.authVerifyMessage,
-            style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          const SizedBox(height: 20),
-          if (isPinLockedOut || isBiometricLockedOut) ...[
-            Icon(Icons.lock_rounded, color: colorScheme.error, size: 40),
-            const SizedBox(height: 12),
-            Text(
-              l10n.authLockedTitle,
-              style: theme.textTheme.bodyMedium
-                  ?.copyWith(color: colorScheme.error),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 12),
-            TextButton(
-              onPressed: widget.onCancelled,
-              child: Text(l10n.btnCancel),
-            ),
-          ] else ...[
-            // PIN dots
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: List.generate(
-                _requiredPinLength,
-                (i) => _buildDot(i),
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Handle bar
+            Container(
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: colorScheme.outlineVariant,
+                borderRadius: BorderRadius.circular(2),
               ),
             ),
-            const SizedBox(height: 16),
-            if (_errorText != null)
+            const SizedBox(height: 20),
+            Text(
+              l10n.authVerifyMessage,
+              style: theme.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            const SizedBox(height: 20),
+            if (isPinLockedOut || isBiometricLockedOut) ...[
+              Icon(Icons.lock_rounded, color: colorScheme.error, size: 40),
+              const SizedBox(height: 12),
               Text(
-                _errorText!,
-                style: theme.textTheme.bodySmall
+                l10n.authLockedTitle,
+                style: theme.textTheme.bodyMedium
                     ?.copyWith(color: colorScheme.error),
                 textAlign: TextAlign.center,
               ),
-            const SizedBox(height: 8),
-            if (_isVerifying)
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: 16),
-                child: CircularProgressIndicator(strokeWidth: 2),
-              )
-            else
-              Table(
-                children: [
-                  TableRow(
-                    children: [
-                      _buildDialKey('1'),
-                      _buildDialKey('2'),
-                      _buildDialKey('3'),
-                    ],
-                  ),
-                  TableRow(
-                    children: [
-                      _buildDialKey('4'),
-                      _buildDialKey('5'),
-                      _buildDialKey('6'),
-                    ],
-                  ),
-                  TableRow(
-                    children: [
-                      _buildDialKey('7'),
-                      _buildDialKey('8'),
-                      _buildDialKey('9'),
-                    ],
-                  ),
-                  TableRow(
-                    children: [
-                      // Cancel
-                      AspectRatio(
-                        aspectRatio: 1.5,
-                        child: Container(
-                          margin: const EdgeInsets.all(6),
-                          child: TextButton(
-                            onPressed: widget.onCancelled,
-                            child: Text(
-                              l10n.btnCancel,
-                              style: theme.textTheme.labelLarge?.copyWith(
-                                color: colorScheme.onSurfaceVariant,
+              const SizedBox(height: 12),
+              TextButton(
+                onPressed: widget.onCancelled,
+                child: Text(l10n.btnCancel),
+              ),
+            ] else ...[
+              // PIN dots
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: List.generate(
+                  _requiredPinLength,
+                  (i) => _buildDot(i),
+                ),
+              ),
+              const SizedBox(height: 16),
+              if (_errorText != null)
+                Text(
+                  _errorText!,
+                  style: theme.textTheme.bodySmall
+                      ?.copyWith(color: colorScheme.error),
+                  textAlign: TextAlign.center,
+                ),
+              const SizedBox(height: 8),
+              if (_isVerifying)
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 16),
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                )
+              else
+                Table(
+                  children: [
+                    TableRow(
+                      children: [
+                        _buildDialKey('1'),
+                        _buildDialKey('2'),
+                        _buildDialKey('3'),
+                      ],
+                    ),
+                    TableRow(
+                      children: [
+                        _buildDialKey('4'),
+                        _buildDialKey('5'),
+                        _buildDialKey('6'),
+                      ],
+                    ),
+                    TableRow(
+                      children: [
+                        _buildDialKey('7'),
+                        _buildDialKey('8'),
+                        _buildDialKey('9'),
+                      ],
+                    ),
+                    TableRow(
+                      children: [
+                        // Cancel
+                        AspectRatio(
+                          aspectRatio: 1.5,
+                          child: Container(
+                            margin: const EdgeInsets.all(6),
+                            child: TextButton(
+                              onPressed: widget.onCancelled,
+                              child: Text(
+                                l10n.btnCancel,
+                                style: theme.textTheme.labelLarge?.copyWith(
+                                  color: colorScheme.onSurfaceVariant,
+                                ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                      _buildDialKey('0'),
-                      // Backspace
-                      AspectRatio(
-                        aspectRatio: 1.5,
-                        child: Container(
-                          margin: const EdgeInsets.all(6),
-                          child: IconButton(
-                            icon: Icon(
-                              Icons.backspace_outlined,
-                              size: 24,
-                              color: colorScheme.onSurfaceVariant,
-                            ),
-                            onPressed: () {
-                              if (_enteredPin.isNotEmpty) {
+                        _buildDialKey('0'),
+                        // Backspace
+                        AspectRatio(
+                          aspectRatio: 1.5,
+                          child: Container(
+                            margin: const EdgeInsets.all(6),
+                            child: IconButton(
+                              icon: Icon(
+                                Icons.backspace_outlined,
+                                size: 24,
+                                color: colorScheme.onSurfaceVariant,
+                              ),
+                              onPressed: () {
+                                if (_enteredPin.isNotEmpty) {
+                                  setState(() {
+                                    _enteredPin = _enteredPin.substring(
+                                      0,
+                                      _enteredPin.length - 1,
+                                    );
+                                    _errorText = null;
+                                  });
+                                }
+                              },
+                              onLongPress: () {
                                 setState(() {
-                                  _enteredPin = _enteredPin.substring(
-                                    0,
-                                    _enteredPin.length - 1,
-                                  );
+                                  _enteredPin = '';
                                   _errorText = null;
                                 });
-                              }
-                            },
-                            onLongPress: () {
-                              setState(() {
-                                _enteredPin = '';
-                                _errorText = null;
-                              });
-                            },
+                              },
+                            ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+                      ],
+                    ),
+                  ],
+                ),
+            ],
           ],
-        ],
+        ),
       ),
     );
   }

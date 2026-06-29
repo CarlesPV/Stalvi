@@ -1,6 +1,6 @@
 import 'package:stalvi/core/errors/app_exceptions.dart';
-import 'package:stalvi/domain/repositories/i_account_repository.dart';
-import 'package:stalvi/domain/repositories/i_budget_repository.dart';
+import '../repositories/i_account_repository.dart';
+import '../repositories/i_budget_repository.dart';
 
 class DeleteAccountUseCase {
   final IAccountRepository _accountRepository;

@@ -3,8 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:stalvi/core/l10n/app_localizations.dart';
 import 'package:stalvi/domain/entities/category.dart';
 import 'package:stalvi/domain/entities/tag.dart';
-import 'package:stalvi/presentation/providers/repository_providers.dart';
-import 'package:stalvi/presentation/widgets/category_icon_picker.dart';
+import '../../providers/repository_providers.dart';
+import '../../widgets/category_icon_picker.dart';
 import 'package:uuid/uuid.dart';
 
 class CategoriesTagsManagementScreen extends ConsumerStatefulWidget {
@@ -428,6 +428,7 @@ class _CategoryDialog extends StatefulWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      useSafeArea: true,
       builder: (ctx) => _CategoryDialog(category: category, ref: ref),
     );
   }
@@ -566,6 +567,7 @@ class _TagDialog extends StatefulWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      useSafeArea: true,
       builder: (ctx) => _TagDialog(tag: tag, ref: ref),
     );
   }

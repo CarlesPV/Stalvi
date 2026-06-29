@@ -1,9 +1,9 @@
 import 'package:stalvi/data/database/daos/trash_dao.dart';
-import 'package:stalvi/domain/entities/trash_item.dart';
-import 'package:stalvi/domain/entities/transaction_type.dart';
-import 'package:stalvi/domain/repositories/i_account_repository.dart';
-import 'package:stalvi/domain/repositories/i_transaction_repository.dart';
-import 'package:stalvi/domain/usecases/update_budget_progress_usecase.dart';
+import '../entities/trash_item.dart';
+import '../entities/transaction_type.dart';
+import '../repositories/i_account_repository.dart';
+import '../repositories/i_transaction_repository.dart';
+import 'update_budget_progress_usecase.dart';
 import 'package:stalvi/data/database/daos/savings_goal_dao.dart';
 
 /// Use cases for the Trash (soft-delete recovery) screen.

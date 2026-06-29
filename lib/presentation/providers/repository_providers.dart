@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:stalvi/core/utils/navigator_key.dart';
-import 'package:stalvi/presentation/features/splash/splash_screen.dart';
+import '../features/splash/splash_screen.dart';
 import 'package:stalvi/data/repositories/account_repository.dart';
 import 'package:stalvi/data/repositories/category_repository.dart';
 import 'package:stalvi/data/repositories/tag_repository.dart';
@@ -52,9 +52,9 @@ import 'package:stalvi/domain/usecases/import_encrypted_json_use_case.dart';
 import 'package:stalvi/domain/usecases/export_transactions_csv_use_case.dart';
 import 'package:stalvi/domain/usecases/export_monthly_pdf_use_case.dart';
 import 'package:stalvi/core/l10n/app_localizations.dart';
-import 'package:stalvi/presentation/providers/app_startup_provider.dart';
-import 'package:stalvi/presentation/providers/locale_provider.dart';
-import 'package:stalvi/presentation/providers/statistics_providers.dart';
+import 'app_startup_provider.dart';
+import 'locale_provider.dart';
+import 'statistics_providers.dart';
 
 /// Provides the [IProfileRepository] implementation.
 /// Requires the database to be initialized, using [appDatabaseProvider.requireValue].

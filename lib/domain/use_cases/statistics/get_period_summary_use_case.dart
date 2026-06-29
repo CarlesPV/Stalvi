@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart' show DateTimeRange;
-import 'package:stalvi/domain/entities/transaction_type.dart';
-import 'package:stalvi/domain/entities/period_summary.dart';
-import 'package:stalvi/domain/repositories/i_transaction_repository.dart';
-import 'package:stalvi/domain/repositories/i_exchange_rate_repository.dart';
+import '../../entities/transaction_type.dart';
+import '../../entities/period_summary.dart';
+import '../../repositories/i_transaction_repository.dart';
+import '../../repositories/i_exchange_rate_repository.dart';
 import 'package:stalvi/core/utils/currency_converter.dart';
 
 class GetPeriodSummaryUseCase {

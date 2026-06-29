@@ -1,6 +1,5 @@
 {
   "@@locale": "ca",
-  "dashboard": "Tauler de control",
   "transactions": "Transaccions",
   "budgets": "Pressupostos",
   "settings": "Ajustos",
@@ -139,7 +138,6 @@
   "recycleBinRestoredMessage": "Element restaurat",
   "recycleBinDeletedMessage": "Element eliminat permanentment",
   "recycleBinDaysRemaining": "Expira en {days} dies",
-  "optional": "Opcional",
   "errorCategoryRequired": "Si us plau, seleccioneu una categoria",
   "errorCurrencyRequired": "Si us plau, seleccioneu una moneda",
   "labelCurrency": "Moneda",
@@ -246,9 +244,6 @@
   "errorDestinationAccountRequired": "Si us plau, seleccioneu un compte de destí",
   "errorSameAccountTransfer": "Els comptes d'origen i destí no poden ser el mateix",
   "savingsGoal": "Objectiu d'estalvi",
-  "@dashboard": {
-    "description": "Title for the dashboard screen"
-  },
   "@transactions": {
     "description": "Title for the transactions screen or tab"
   },
@@ -701,9 +696,6 @@
       }
     }
   },
-  "@optional": {
-    "description": "Label indicating an input field is optional"
-  },
   "@errorCategoryRequired": {
     "description": "Validation error when category is not selected"
   },
@@ -1059,10 +1051,6 @@
       }
     }
   },
-  "dataPortabilityTitle": "Portabilitat de dades",
-  "@dataPortabilityTitle": {
-    "description": "Section title for data export and import options"
-  },
   "settingsDataManagement": "Gestió de Dades",
   "@settingsDataManagement": {
     "description": "Settings option for data management"
@@ -1220,13 +1208,9 @@
   "@addBudget": {
     "description": "Button or title for adding a budget"
   },
-  "editBudget": "Editar Pressupost",
   "budgetDetails": "Detalls del Pressupost",
   "@budgetDetails": {
     "description": "Title for budget details"
-  },
-  "@editBudget": {
-    "description": "Button or title for editing a budget"
   },
   "deleteBudget": "Eliminar Pressupost",
   "@deleteBudget": {
@@ -1236,13 +1220,9 @@
   "@addSavingsGoal": {
     "description": "Button or title for adding a savings goal"
   },
-  "editSavingsGoal": "Editar Meta d'Estalvi",
   "savingsGoalDetails": "Detalls de la Meta d'Estalvi",
   "@savingsGoalDetails": {
     "description": "Title for savings goal details"
-  },
-  "@editSavingsGoal": {
-    "description": "Button or title for editing a savings goal"
   },
   "deleteSavingsGoal": "Eliminar Meta d'Estalvi",
   "@deleteSavingsGoal": {
@@ -1275,10 +1255,6 @@
   "errorNameRequired": "Si us plau, introdueix un nom",
   "@errorNameRequired": {
     "description": "Validation error for goal name"
-  },
-  "errorTargetDatePast": "La data objectiu ha de ser en el futur",
-  "@errorTargetDatePast": {
-    "description": "Validation error for target date"
   },
   "pdfBudgetsTitle": "Pressupostos",
   "@pdfBudgetsTitle": {
@@ -1319,5 +1295,14 @@
   "labelBudget": "Pressupost",
   "@labelBudget": {
     "description": "Singular label for budget"
+  },
+  "exportSavedTo": "Desat a {filePath}",
+  "@exportSavedTo": {
+    "description": "Snackbar message showing the path where exported backup or CSV file is saved",
+    "placeholders": {
+      "filePath": {
+        "type": "String"
+      }
+    }
   }
 }

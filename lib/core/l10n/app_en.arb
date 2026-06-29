@@ -1,9 +1,5 @@
 {
   "@@locale": "en",
-  "dashboard": "Dashboard",
-  "@dashboard": {
-    "description": "Title for the dashboard screen"
-  },
   "transactions": "Transactions",
   "@transactions": {
     "description": "Title for the transactions screen or tab"
@@ -594,10 +590,6 @@
       }
     }
   },
-  "optional": "Optional",
-  "@optional": {
-    "description": "Label indicating an input field is optional"
-  },
   "errorCategoryRequired": "Please select a category",
   "@errorCategoryRequired": {
     "description": "Validation error when category is not selected"
@@ -1059,10 +1051,6 @@
       }
     }
   },
-  "dataPortabilityTitle": "Data Portability",
-  "@dataPortabilityTitle": {
-    "description": "Section title for data export and import options"
-  },
   "settingsDataManagement": "Data Management",
   "@settingsDataManagement": {
     "description": "Settings option for data management"
@@ -1220,13 +1208,9 @@
   "@addBudget": {
     "description": "Button or title for adding a budget"
   },
-  "editBudget": "Edit Budget",
   "budgetDetails": "Budget Details",
   "@budgetDetails": {
     "description": "Title for budget details"
-  },
-  "@editBudget": {
-    "description": "Button or title for editing a budget"
   },
   "deleteBudget": "Delete Budget",
   "@deleteBudget": {
@@ -1236,13 +1220,9 @@
   "@addSavingsGoal": {
     "description": "Button or title for adding a savings goal"
   },
-  "editSavingsGoal": "Edit Savings Goal",
   "savingsGoalDetails": "Savings Goal Details",
   "@savingsGoalDetails": {
     "description": "Title for savings goal details"
-  },
-  "@editSavingsGoal": {
-    "description": "Button or title for editing a savings goal"
   },
   "deleteSavingsGoal": "Delete Savings Goal",
   "@deleteSavingsGoal": {
@@ -1275,10 +1255,6 @@
   "errorNameRequired": "Please enter a name",
   "@errorNameRequired": {
     "description": "Validation error for goal name"
-  },
-  "errorTargetDatePast": "Target date must be in the future",
-  "@errorTargetDatePast": {
-    "description": "Validation error for target date"
   },
   "pdfBudgetsTitle": "Budgets",
   "@pdfBudgetsTitle": {
@@ -1319,5 +1295,14 @@
   "labelBudget": "Budget",
   "@labelBudget": {
     "description": "Singular label for budget"
+  },
+  "exportSavedTo": "Saved to {filePath}",
+  "@exportSavedTo": {
+    "description": "Snackbar message showing the path where exported backup or CSV file is saved",
+    "placeholders": {
+      "filePath": {
+        "type": "String"
+      }
+    }
   }
 }

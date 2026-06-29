@@ -1,4 +1,4 @@
-import '../../domain/entities/savings_goal.dart';
+import 'package:stalvi/domain/entities/savings_goal.dart';
 import '../database/app_database.dart';
 import 'package:drift/drift.dart' as drift;
 

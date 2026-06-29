@@ -5,8 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:stalvi/infrastructure/services/biometric_auth_service.dart';
 
 import 'package:stalvi/domain/usecases/create_profile_usecase.dart';
-import 'package:stalvi/presentation/providers/locale_provider.dart';
-import 'package:stalvi/presentation/providers/repository_providers.dart';
+import 'locale_provider.dart';
+import 'repository_providers.dart';
 import 'package:stalvi/core/l10n/app_localizations.dart';
 
 /// Describes the current authentication status for this session.

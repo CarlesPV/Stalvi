@@ -8,8 +8,8 @@ import 'package:stalvi/domain/entities/account.dart';
 import 'package:stalvi/domain/entities/category.dart';
 import 'package:stalvi/domain/entities/transaction.dart';
 import 'package:stalvi/domain/entities/transaction_type.dart';
-import 'package:stalvi/presentation/providers/repository_providers.dart';
-import 'package:stalvi/presentation/providers/statistics_providers.dart';
+import '../../providers/repository_providers.dart';
+import '../../providers/statistics_providers.dart';
 
 import 'package:stalvi/core/utils/icon_helper.dart';
 
@@ -25,6 +25,7 @@ class TransactionDetailsDialog extends ConsumerWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      useSafeArea: true,
       backgroundColor: Colors.transparent,
       builder: (context) => TransactionDetailsDialog(transaction: transaction),
     );

@@ -8,12 +8,12 @@ import 'package:stalvi/domain/entities/budget.dart';
 import 'package:stalvi/domain/entities/category.dart';
 import 'package:stalvi/domain/entities/savings_goal.dart';
 import 'package:stalvi/domain/entities/account.dart';
-import 'package:stalvi/presentation/providers/repository_providers.dart';
-import 'package:stalvi/presentation/widgets/progress_bar_widget.dart';
-import 'package:stalvi/presentation/widgets/empty_state_widget.dart';
+import '../../providers/repository_providers.dart';
+import '../../widgets/progress_bar_widget.dart';
+import '../../widgets/empty_state_widget.dart';
 import 'package:stalvi/core/utils/icon_helper.dart';
-import 'package:stalvi/presentation/features/budgets_and_goals/widgets/create_edit_budget_sheet.dart';
-import 'package:stalvi/presentation/features/budgets_and_goals/widgets/create_edit_savings_goal_sheet.dart';
+import 'widgets/create_edit_budget_sheet.dart';
+import 'widgets/create_edit_savings_goal_sheet.dart';
 
 /// Screen displaying Budgets and Savings Goals in a tabbed interface.
 ///
@@ -281,8 +281,6 @@ class _BudgetCard extends ConsumerWidget {
                           color: colorScheme.onSurfaceVariant,
                           fontWeight: FontWeight.w500,
                         ),
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
                       ),
                     ),
                     const SizedBox(width: 8),
@@ -293,8 +291,6 @@ class _BudgetCard extends ConsumerWidget {
                           color: statusColor,
                           fontWeight: FontWeight.w600,
                         ),
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
                       ),
                     ),
                   ],
@@ -473,8 +469,6 @@ class _SavingsGoalCard extends ConsumerWidget {
                           color: colorScheme.onSurfaceVariant,
                           fontWeight: FontWeight.w500,
                         ),
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
                       ),
                     ),
                     if (progress >= 1.0) ...[
@@ -486,8 +480,6 @@ class _SavingsGoalCard extends ConsumerWidget {
                             color: financialColors.positive,
                             fontWeight: FontWeight.bold,
                           ),
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
                         ),
                       ),
                     ],

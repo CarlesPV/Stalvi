@@ -9,9 +9,6 @@ class AppLocalizationsEs extends AppLocalizations {
   AppLocalizationsEs([String locale = 'es']) : super(locale);
 
   @override
-  String get dashboard => 'Panel de control';
-
-  @override
   String get transactions => 'Transacciones';
 
   @override
@@ -468,9 +465,6 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
-  String get optional => 'Opcional';
-
-  @override
   String get errorCategoryRequired => 'Por favor, seleccione una categoría';
 
   @override
@@ -815,9 +809,6 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
-  String get dataPortabilityTitle => 'Portabilidad de datos';
-
-  @override
   String get settingsDataManagement => 'Gestión de Datos';
 
   @override
@@ -943,9 +934,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String get addBudget => 'Añadir Presupuesto';
 
   @override
-  String get editBudget => 'Editar Presupuesto';
-
-  @override
   String get budgetDetails => 'Detalles del Presupuesto';
 
   @override
@@ -953,9 +941,6 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get addSavingsGoal => 'Añadir Meta de Ahorro';
-
-  @override
-  String get editSavingsGoal => 'Editar Objetivo de Ahorro';
 
   @override
   String get savingsGoalDetails => 'Detalles del Objetivo de Ahorro';
@@ -986,9 +971,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String get errorNameRequired => 'Por favor, introduce un nombre';
 
   @override
-  String get errorTargetDatePast => 'La fecha objetivo debe ser en el futuro';
-
-  @override
   String get pdfBudgetsTitle => 'Presupuestos';
 
   @override
@@ -1017,4 +999,9 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get labelBudget => 'Presupuesto';
+
+  @override
+  String exportSavedTo(String filePath) {
+    return 'Guardado en $filePath';
+  }
 }

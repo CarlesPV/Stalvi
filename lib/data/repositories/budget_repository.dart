@@ -1,5 +1,5 @@
-import '../../domain/entities/budget.dart';
-import '../../domain/repositories/i_budget_repository.dart';
+import 'package:stalvi/domain/entities/budget.dart';
+import 'package:stalvi/domain/repositories/i_budget_repository.dart';
 import '../database/app_database.dart';
 import '../mappers/budget_mapper.dart';
 

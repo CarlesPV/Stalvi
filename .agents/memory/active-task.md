@@ -1,23 +1,17 @@
-# Active Task: Phase 28 - Financial Data Integrity & Polish
+# Active Task: Phase 29 - Pre-Release Polish, Security, and Compliance
 
-## Current Objective
-Implement advanced CRUD operations, ensure reactive financial recalculations, fix PDF encoding, and polish i18n/legal documents.
+## Objective
+Finalize the Stalvi application for production deployment on the Google Play Store. This phase focuses on achieving UI resilience, absolute code cleanliness, stringent security validation, full trilingual support, and comprehensive documentation synchronization.
 
-## Context
-- **Architecture:** Clean Architecture + Riverpod + Drift
-- **Focus Areas:**
-  1. UI/Domain connection for Editing Budgets and Savings Goals.
-  2. Reactive Budget calculation integrating currency conversion upon transaction deletion.
-  3. ACID transactions for soft-deleting/restoring Savings Goals (cascading to transfers and updating origin accounts balances).
-  4. PDF Export unicode font embedding.
-  5. Legal docs updates and full i18n coverage.
+## Sub-tasks
+- [ ] **UI/UX Resilience:** Identify and fix all `RenderFlex` overflow issues across the app. Ensure proper padding, dynamic text scaling, and keyboard inset handling on all forms and pop-ups.
+- [ ] **L10n Synchronization:** Audit `lib/core/l10n/` files to ensure 100% parity across English, Spanish, and Catalan. Remove unused keys.
+- [ ] **Codebase Cleanup:** Remove dead code, unused imports, leftover test strings, and unreferenced assets. Ensure `flutter analyze` returns zero issues.
+- [ ] **Security & Secrets Audit:** Verify `.gitignore` completeness, ensure no hardcoded secrets or API keys exist, and confirm ProGuard/R8 obfuscation is configured for Android release.
+- [ ] **Store Compliance:** Verify the integration of legal terms, privacy policies, and necessary Play Store metadata within the app.
+- [ ] **Documentation Update:** Synchronize `roadmap.md`, `README.md`, and inline architectural comments to accurately reflect the 100% updated state of the project.
 
-## Next Steps
-1. Execute the atomic prompts to implement the logic layer by layer.
-2. Run unit tests for the new complex cascading deletion logic.
-3. Validate UI for overflow and localization correctness.
-4. Update tests, workflows, and documentation.
-
-## Rules
-- All file modifications must be done directly via tools. NO code output in chat.
-- Keep Clean Architecture boundaries strictly intact.
+## Context & Rules
+- Do not hallucinate or create non-existent files.
+- Everything MUST remain functionally intact; run tests after modifications.
+- Modify files directly without printing output in the chat.

@@ -1,8 +1,8 @@
 import 'dart:ui';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:stalvi/core/security/secure_storage_manager.dart';
-import 'package:stalvi/presentation/providers/repository_providers.dart';
-import 'package:stalvi/presentation/providers/app_startup_provider.dart';
+import 'repository_providers.dart';
+import 'app_startup_provider.dart';
 
 /// Provider for the [SecureStorageManager] dependencies.
 /// This is exposed as a separate provider to allow mocking during tests.

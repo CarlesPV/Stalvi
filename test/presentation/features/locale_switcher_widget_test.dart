@@ -53,7 +53,7 @@ void main() {
     await tester.pumpAndSettle();
 
     // Verify initial state defaults to English
-    expect(find.text('Dashboard'), findsOneWidget);
+    expect(find.text('Settings'), findsOneWidget);
     expect(find.text('Transactions'), findsOneWidget);
     expect(find.text('Add Transaction'), findsOneWidget);
     expect(find.text('Income'), findsOneWidget);
@@ -63,7 +63,7 @@ void main() {
     await tester.pumpAndSettle();
 
     // Verify Spanish translations are displayed
-    expect(find.text('Panel de control'), findsOneWidget);
+    expect(find.text('Ajustes'), findsOneWidget);
     expect(find.text('Transacciones'), findsOneWidget);
     expect(find.text('Añadir transacción'), findsOneWidget);
     expect(find.text('Ingresos'), findsOneWidget);
@@ -73,7 +73,7 @@ void main() {
     await tester.pumpAndSettle();
 
     // Verify Catalan translations are displayed
-    expect(find.text('Tauler de control'), findsOneWidget);
+    expect(find.text('Ajustos'), findsOneWidget);
     expect(find.text('Transaccions'), findsOneWidget);
     expect(find.text('Afegir transacció'), findsOneWidget);
     expect(find.text('Ingressos'), findsOneWidget);
@@ -89,7 +89,7 @@ class TestLocaleScreen extends StatelessWidget {
     return Scaffold(
       body: Column(
         children: [
-          Text(l10n.dashboard),
+          Text(l10n.settings),
           Text(l10n.transactions),
           Text(l10n.addTransaction),
           Text(l10n.income),
