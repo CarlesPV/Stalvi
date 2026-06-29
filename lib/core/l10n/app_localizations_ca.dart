@@ -9,9 +9,6 @@ class AppLocalizationsCa extends AppLocalizations {
   AppLocalizationsCa([String locale = 'ca']) : super(locale);
 
   @override
-  String get dashboard => 'Tauler de control';
-
-  @override
   String get transactions => 'Transaccions';
 
   @override
@@ -468,9 +465,6 @@ class AppLocalizationsCa extends AppLocalizations {
   }
 
   @override
-  String get optional => 'Opcional';
-
-  @override
   String get errorCategoryRequired => 'Si us plau, seleccioneu una categoria';
 
   @override
@@ -815,9 +809,6 @@ class AppLocalizationsCa extends AppLocalizations {
   }
 
   @override
-  String get dataPortabilityTitle => 'Portabilitat de dades';
-
-  @override
   String get settingsDataManagement => 'Gestió de Dades';
 
   @override
@@ -943,9 +934,6 @@ class AppLocalizationsCa extends AppLocalizations {
   String get addBudget => 'Afegir Pressupost';
 
   @override
-  String get editBudget => 'Editar Pressupost';
-
-  @override
   String get budgetDetails => 'Detalls del Pressupost';
 
   @override
@@ -953,9 +941,6 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get addSavingsGoal => 'Afegir Meta d\'Estalvi';
-
-  @override
-  String get editSavingsGoal => 'Editar Meta d\'Estalvi';
 
   @override
   String get savingsGoalDetails => 'Detalls de la Meta d\'Estalvi';
@@ -986,9 +971,6 @@ class AppLocalizationsCa extends AppLocalizations {
   String get errorNameRequired => 'Si us plau, introdueix un nom';
 
   @override
-  String get errorTargetDatePast => 'La data objectiu ha de ser en el futur';
-
-  @override
   String get pdfBudgetsTitle => 'Pressupostos';
 
   @override
@@ -1017,4 +999,9 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get labelBudget => 'Pressupost';
+
+  @override
+  String exportSavedTo(String filePath) {
+    return 'Desat a $filePath';
+  }
 }

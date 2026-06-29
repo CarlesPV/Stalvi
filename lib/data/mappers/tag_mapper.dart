@@ -1,5 +1,5 @@
 import 'package:stalvi/domain/entities/tag.dart';
-import 'package:stalvi/data/database/app_database.dart' as db;
+import '../database/app_database.dart' as db;
 
 extension TagMapper on Tag {
   db.Tag toDb() {

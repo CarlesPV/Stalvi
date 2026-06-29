@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:stalvi/domain/entities/account_type.dart';
 import 'package:stalvi/domain/usecases/create_account_usecase.dart';
-import 'package:stalvi/presentation/providers/repository_providers.dart';
+import '../providers/repository_providers.dart';
 import 'package:stalvi/core/l10n/app_localizations.dart';
 import 'package:uuid/uuid.dart';
 
@@ -13,6 +13,7 @@ class CreateAccountDialog extends ConsumerStatefulWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      useSafeArea: true,
       backgroundColor: Colors.transparent,
       builder: (context) => const CreateAccountDialog(),
     );

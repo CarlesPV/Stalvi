@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'package:drift/drift.dart';
 
-import 'package:stalvi/data/database/app_database.dart';
-import 'package:stalvi/data/database/tables/exchange_rate_table.dart';
+import '../app_database.dart';
+import '../tables/exchange_rate_table.dart';
 import 'package:stalvi/domain/entities/exchange_rate.dart';
 
 part 'exchange_rate_dao.g.dart';

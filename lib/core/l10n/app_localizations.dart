@@ -100,12 +100,6 @@ abstract class AppLocalizations {
     Locale('es')
   ];
 
-  /// Title for the dashboard screen
-  ///
-  /// In en, this message translates to:
-  /// **'Dashboard'**
-  String get dashboard;
-
   /// Title for the transactions screen or tab
   ///
   /// In en, this message translates to:
@@ -934,12 +928,6 @@ abstract class AppLocalizations {
   /// **'Expires in {days} days'**
   String recycleBinDaysRemaining(int days);
 
-  /// Label indicating an input field is optional
-  ///
-  /// In en, this message translates to:
-  /// **'Optional'**
-  String get optional;
-
   /// Validation error when category is not selected
   ///
   /// In en, this message translates to:
@@ -1582,12 +1570,6 @@ abstract class AppLocalizations {
   /// **'{spent} of {target}'**
   String budgetSpentOf(String spent, String target);
 
-  /// Section title for data export and import options
-  ///
-  /// In en, this message translates to:
-  /// **'Data Portability'**
-  String get dataPortabilityTitle;
-
   /// Settings option for data management
   ///
   /// In en, this message translates to:
@@ -1804,12 +1786,6 @@ abstract class AppLocalizations {
   /// **'Add Budget'**
   String get addBudget;
 
-  /// Button or title for editing a budget
-  ///
-  /// In en, this message translates to:
-  /// **'Edit Budget'**
-  String get editBudget;
-
   /// Title for budget details
   ///
   /// In en, this message translates to:
@@ -1827,12 +1803,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Add Savings Goal'**
   String get addSavingsGoal;
-
-  /// Button or title for editing a savings goal
-  ///
-  /// In en, this message translates to:
-  /// **'Edit Savings Goal'**
-  String get editSavingsGoal;
 
   /// Title for savings goal details
   ///
@@ -1887,12 +1857,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Please enter a name'**
   String get errorNameRequired;
-
-  /// Validation error for target date
-  ///
-  /// In en, this message translates to:
-  /// **'Target date must be in the future'**
-  String get errorTargetDatePast;
 
   /// Section title for the Budgets table in PDF export
   ///
@@ -1953,6 +1917,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Budget'**
   String get labelBudget;
+
+  /// Snackbar message showing the path where exported backup or CSV file is saved
+  ///
+  /// In en, this message translates to:
+  /// **'Saved to {filePath}'**
+  String exportSavedTo(String filePath);
 }
 
 class _AppLocalizationsDelegate

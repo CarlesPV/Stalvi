@@ -1,13 +1,13 @@
 import 'package:stalvi/core/errors/app_exceptions.dart';
-import 'package:stalvi/domain/entities/account.dart';
-import 'package:stalvi/domain/entities/category.dart';
-import 'package:stalvi/domain/entities/tag.dart';
-import 'package:stalvi/domain/repositories/i_account_repository.dart';
-import 'package:stalvi/domain/repositories/i_category_repository.dart';
-import 'package:stalvi/domain/repositories/i_export_service.dart';
-import 'package:stalvi/domain/repositories/i_profile_repository.dart';
-import 'package:stalvi/domain/repositories/i_tag_repository.dart';
-import 'package:stalvi/domain/repositories/i_transaction_repository.dart';
+import '../entities/account.dart';
+import '../entities/category.dart';
+import '../entities/tag.dart';
+import '../repositories/i_account_repository.dart';
+import '../repositories/i_category_repository.dart';
+import '../repositories/i_export_service.dart';
+import '../repositories/i_profile_repository.dart';
+import '../repositories/i_tag_repository.dart';
+import '../repositories/i_transaction_repository.dart';
 
 class ExportEncryptedJsonUseCase {
   final IProfileRepository _profileRepository;

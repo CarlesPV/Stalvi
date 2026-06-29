@@ -9,9 +9,6 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get dashboard => 'Dashboard';
-
-  @override
   String get transactions => 'Transactions';
 
   @override
@@ -461,9 +458,6 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get optional => 'Optional';
-
-  @override
   String get errorCategoryRequired => 'Please select a category';
 
   @override
@@ -805,9 +799,6 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get dataPortabilityTitle => 'Data Portability';
-
-  @override
   String get settingsDataManagement => 'Data Management';
 
   @override
@@ -929,9 +920,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get addBudget => 'Add Budget';
 
   @override
-  String get editBudget => 'Edit Budget';
-
-  @override
   String get budgetDetails => 'Budget Details';
 
   @override
@@ -939,9 +927,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get addSavingsGoal => 'Add Savings Goal';
-
-  @override
-  String get editSavingsGoal => 'Edit Savings Goal';
 
   @override
   String get savingsGoalDetails => 'Savings Goal Details';
@@ -969,9 +954,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get errorNameRequired => 'Please enter a name';
-
-  @override
-  String get errorTargetDatePast => 'Target date must be in the future';
 
   @override
   String get pdfBudgetsTitle => 'Budgets';
@@ -1002,4 +984,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get labelBudget => 'Budget';
+
+  @override
+  String exportSavedTo(String filePath) {
+    return 'Saved to $filePath';
+  }
 }

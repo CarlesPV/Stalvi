@@ -1,7 +1,7 @@
 import 'package:stalvi/domain/entities/account.dart';
 import 'package:stalvi/domain/entities/account_type.dart';
-import 'package:stalvi/data/database/app_database.dart' as db;
-import 'package:stalvi/data/database/tables/account_table.dart' as db_table;
+import '../database/app_database.dart' as db;
+import '../database/tables/account_table.dart' as db_table;
 
 extension AccountMapper on Account {
   db.Account toDb() {

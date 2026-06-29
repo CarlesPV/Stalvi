@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 
 import 'package:stalvi/core/errors/app_exceptions.dart';
 import 'package:stalvi/core/utils/currency_converter.dart';
-import 'package:stalvi/data/models/exchange_rate_model.dart';
+import '../models/exchange_rate_model.dart';
 
 // ---------------------------------------------------------------------------
 // Abstract interface

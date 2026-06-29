@@ -449,10 +449,29 @@ This document lists the completed phases of the Stalvi development roadmap, prov
   - 100% clean static analysis (`flutter analyze` with 0 issues).
   - Executed the full automated test suite containing 396 unit and widget tests, achieving a 100% success rate (all tests passed!).
 
+### Phase 29: Release Preparation and UI Optimization
+* **Completion Date:** June 29, 2026
+* **Objective:** Prepare build bundles, finalize store assets, sanitize the repository, configure production-ready security controls, and audit app compliance.
+* **Accomplishments:**
+  - **Store Compliance & Legal Documentation:** Standardized and formatted full legal documents (Terms & Conditions and Privacy Policy) in English, Spanish, and Catalan under `assets/legal/`. Implemented a compliant user consent dialog for first launch data collection and added an explicit "Delete Account" option in the UI settings.
+  - **Android Obfuscation & Hardening:** Enabled ProGuard/R8 code obfuscation and resource shrinking in `build.gradle`, cleaned up application permissions (stripped unnecessary hardware permissions), and ran a secret scanner audit.
+  - **Git Sanitation:** Sanitized the repository's git history using helper scripts to ensure no private/sensitive keys or variables are stored in the historical tree.
+  - **Codebase Optimization & Refactoring:** Deleted all unused classes, methods, imports, and debug logs. Standardized static analysis compliance across all files with 0 warnings on `flutter analyze`.
+  - **Dashboard Simplification:** Removed the long-press context menu on the dashboard.
+* **Verification:**
+  - 100% clean static analysis (`flutter analyze` with 0 issues).
+  - Executed the full automated test suite containing 396 unit and widget tests, achieving a 100% success rate.
+
 ## Recent Updates
+- Completed release preparation and UI optimization (Phase 29).
+- Populated legal documentation in English, Spanish, and Catalan inside `assets/legal/`.
+- Implemented user consent dialog on onboarding and "Delete Account" in settings.
+- Hardened Android builds with code obfuscation, resource shrinking, and minimal permissions.
+- Purged unused code, debug prints, and sanitized the git history.
 - Enabled editing and update operations for Budgets and Savings Goals.
 - Added dynamic budget progress spent recalculation when transactions are modified/deleted.
 - Implemented cascading soft-delete/restore for Savings Goals with balance refunds.
 - Added full Unicode font support in PDF exports using Roboto font assets to fix currency symbol placeholders.
 - Updated Terms and Privacy policy legal markdown assets for Catalan, English, and Spanish.
-- Achieved a completely clean static analysis check with 0 issues on `flutter analyze` and 100% test pass rate (all 396 tests passing successfully).
+- Achieved a completely clean static analysis check with 0 issues on `flutter analyze` and 100% test pass rate.
+

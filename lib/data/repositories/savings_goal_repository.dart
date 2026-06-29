@@ -1,5 +1,5 @@
-import '../../domain/entities/savings_goal.dart';
-import '../../domain/repositories/i_savings_goal_repository.dart';
+import 'package:stalvi/domain/entities/savings_goal.dart';
+import 'package:stalvi/domain/repositories/i_savings_goal_repository.dart';
 import '../database/app_database.dart';
 import '../mappers/savings_goal_mapper.dart';
 

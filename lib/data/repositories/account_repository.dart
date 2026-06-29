@@ -1,8 +1,8 @@
 import 'package:drift/drift.dart';
 import 'package:stalvi/core/errors/app_exceptions.dart';
-import 'package:stalvi/data/database/app_database.dart' as db;
-import 'package:stalvi/data/database/daos/account_dao.dart';
-import 'package:stalvi/data/mappers/account_mapper.dart';
+import '../database/app_database.dart' as db;
+import '../database/daos/account_dao.dart';
+import '../mappers/account_mapper.dart';
 import 'package:stalvi/domain/entities/account.dart';
 import 'package:stalvi/domain/repositories/i_account_repository.dart';
 

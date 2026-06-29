@@ -1,7 +1,7 @@
 import 'package:stalvi/core/errors/app_exceptions.dart';
-import 'package:stalvi/domain/entities/account.dart';
-import 'package:stalvi/domain/entities/account_type.dart';
-import 'package:stalvi/domain/repositories/i_account_repository.dart';
+import '../entities/account.dart';
+import '../entities/account_type.dart';
+import '../repositories/i_account_repository.dart';
 
 /// Parameters for updating an existing [Account].
 ///

@@ -1,5 +1,5 @@
-import 'package:stalvi/data/database/app_database.dart' as db;
-import 'package:stalvi/data/mappers/profile_mapper.dart';
+import '../database/app_database.dart' as db;
+import '../mappers/profile_mapper.dart';
 import 'package:stalvi/domain/entities/profile.dart';
 import 'package:stalvi/domain/repositories/i_profile_repository.dart';
 

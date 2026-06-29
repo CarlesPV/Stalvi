@@ -1,6 +1,6 @@
 import 'package:stalvi/core/errors/app_exceptions.dart';
-import 'package:stalvi/domain/entities/savings_goal.dart';
-import 'package:stalvi/domain/repositories/i_savings_goal_repository.dart';
+import '../entities/savings_goal.dart';
+import '../repositories/i_savings_goal_repository.dart';
 
 class CreateSavingsGoalParams {
   final String id;

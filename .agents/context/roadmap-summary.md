@@ -403,14 +403,75 @@ This document lists the completed phases of the Stalvi development roadmap, prov
   - Zero issues on static analysis (`flutter analyze`).
   - All automated tests pass successfully: **368 tests passed** (including mock repository verifications and widget layout assertions).
 
+### Phase 26: QA/Layout Readiness and Production Audit
+* **Completion Date:** June 25, 2026
+* **Objective:** Audit layout widgets for potential overflows, resolve deprecations, clean unused assets, and verify that CI/CD and analyzer pass 100% cleanly.
+* **Accomplishments:**
+  - **Layout Constraints & Overflow Prevention:**
+    - Exposed text formatting options (overflow, maxLines, softWrap) in `ObfuscatedText` to safely wrap or truncate obfuscated text.
+    - Implemented text overflow safeguards on balance total, balance amount, statistics cards (label/values), account item balance value, and transaction item amount value across Dashboard and Budgets & Goals screens.
+  - **Code Polish & Deprecation Removal:**
+    - Resolved trailing comma warnings across the budgets screen and export monthly PDF tests.
+    - Cleaned deprecated properties in `DropdownButtonFormField` (replaced `value` with `initialValue`).
+    - Removed unused imports in `profile_settings_controller.dart`.
+    - Removed redundant mock methods from tests repository fake implementation classes.
+  - **Asset Optimization:**
+    - Cleaned up unused legal assets (`privacy.md` and `terms.md`) from `assets/legal` directory to save app package space.
+* **Verification:**
+  - 100% clean static analysis (`flutter analyze` with 0 issues).
+  - Clean `flutter test` execution: all 381 tests pass successfully.
+
+### Phase 27: UI Constraints for Budgets, Goals, and Recycle Bin
+* **Completion Date:** June 25, 2026
+* **Objective:** Implement input locking constraints on budget and savings goal forms, require account mapping on budget creation, embed savings goals as transfer destinations, and display soft-deleted budgets and savings goals inside the Recycle Bin with complete English, Spanish, and Catalan localization.
+* **Accomplishments:**
+  - **Edit-Mode Lockdowns:** Locked Currency and Target Amount fields in Edit mode for Budgets and Savings Goals sheets to preserve financial settings integrity.
+  - **Account Mapping Requirement:** Enforced mandatory Account selection during Budget creation.
+  - **Transfer Target Integration:** Extended the Transfer destination selector to display active Savings Goals alongside standard Accounts.
+  - **Recycle Bin Expansion:** Added support to display soft-deleted Budgets and Savings Goals inside the Recycle Bin list, rendering localized titles and metadata.
+  - **Full Translation Alignment:** Localized all new components and messages in English, Spanish, and Catalan, ensuring complete i18n parity.
+  - **Test Suite Updates:** Updated mock classes and database models inside the testing suite to align with constructor modifications.
+* **Verification:**
+  - 100% clean static analysis (`flutter analyze` with 0 issues).
+  - Executed the full automated test suite containing 393 unit and widget tests, achieving a 100% success rate (all tests passed!).
+
+### Phase 28: Financial Integrity, Editing, and Final Polish
+* **Completion Date:** June 26, 2026
+* **Objective:** Ensure data consistency in complex operations (cascading deletions), enable editing of financial goals/budgets, fix document export encoding for currency symbols, and polish internationalization/static analysis.
+* **Accomplishments:**
+  - **Entity Editing:** Enabled update operations (Update) in UI and Domain for Budgets and Savings Goals, allowing editing directly from detailed screens.
+  - **Dynamic Recalculation:** Implemented reactive budget recalculation including currency conversion when transactions are modified or deleted.
+  - **Trash Integrity:** Implemented cascading soft-delete and restore for Savings Goals, automatically reverting and reapplying balances to origin accounts.
+  - **PDF Unicode Support:** Embedded TTF fonts (Roboto) in the PDF export service to properly render currency symbols without placeholders.
+  - **Legal Update:** Reviewed and updated `privacy_*.md` and `terms_*.md` in Catalan, English, and Spanish to reflect the latest features.
+  - **UI/UX & Static Analysis Polish:** Automated formatting corrections via `dart fix --apply`, achieving 100% translation coverage and warning-free logs.
+* **Verification:**
+  - 100% clean static analysis (`flutter analyze` with 0 issues).
+  - Executed the full automated test suite containing 396 unit and widget tests, achieving a 100% success rate (all tests passed!).
+
+### Phase 29: Release Preparation and UI Optimization
+* **Completion Date:** June 29, 2026
+* **Objective:** Prepare build bundles, finalize store assets, sanitize the repository, configure production-ready security controls, and audit app compliance.
+* **Accomplishments:**
+  - **Store Compliance & Legal Documentation:** Standardized and formatted full legal documents (Terms & Conditions and Privacy Policy) in English, Spanish, and Catalan under `assets/legal/`. Implemented a compliant user consent dialog for first launch data collection and added an explicit "Delete Account" option in the UI settings.
+  - **Android Obfuscation & Hardening:** Enabled ProGuard/R8 code obfuscation and resource shrinking in `build.gradle`, cleaned up application permissions (stripped unnecessary hardware permissions), and ran a secret scanner audit.
+  - **Git Sanitation:** Sanitized the repository's git history using helper scripts to ensure no private/sensitive keys or variables are stored in the historical tree.
+  - **Codebase Optimization & Refactoring:** Deleted all unused classes, methods, imports, and debug logs. Standardized static analysis compliance across all files with 0 warnings on `flutter analyze`.
+  - **Dashboard Simplification:** Removed the long-press context menu on the dashboard.
+* **Verification:**
+  - 100% clean static analysis (`flutter analyze` with 0 issues).
+  - Executed the full automated test suite containing 396 unit and widget tests, achieving a 100% success rate.
+
 ## Recent Updates
-- Integrated Chinese Yuan (CNY) and optimized exchange rate API payload sizes (caching 8 target currencies for 24h).
-- Added multi-currency support to transfer transactions, dynamically resolving rates at transaction time.
-- Enhanced Riverpod state management to reactively redraw statistics and dashboard modules upon default currency updates.
-- Refactored monthly PDF export layouts to incorporate localized titles, default-currency formatting, and top categories pie charts.
-- Configured native file openers using `open_filex` for post-export feedback on success Snackbars.
-- Completed comprehensive UI form overflows audit using scroll views and keyboard safety widgets.
-- Achieved 100% pass rate with all 368 tests passing successfully and 0 lint issues.
-
-
+- Completed release preparation and UI optimization (Phase 29).
+- Populated legal documentation in English, Spanish, and Catalan inside `assets/legal/`.
+- Implemented user consent dialog on onboarding and "Delete Account" in settings.
+- Hardened Android builds with code obfuscation, resource shrinking, and minimal permissions.
+- Purged unused code, debug prints, and sanitized the git history.
+- Enabled editing and update operations for Budgets and Savings Goals.
+- Added dynamic budget progress spent recalculation when transactions are modified/deleted.
+- Implemented cascading soft-delete/restore for Savings Goals with balance refunds.
+- Added full Unicode font support in PDF exports using Roboto font assets to fix currency symbol placeholders.
+- Updated Terms and Privacy policy legal markdown assets for Catalan, English, and Spanish.
+- Achieved a completely clean static analysis check with 0 issues on `flutter analyze` and 100% test pass rate.
 

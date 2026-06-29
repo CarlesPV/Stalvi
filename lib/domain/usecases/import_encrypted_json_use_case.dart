@@ -1,5 +1,5 @@
 import 'package:stalvi/core/errors/app_exceptions.dart';
-import 'package:stalvi/domain/repositories/i_import_service.dart';
+import '../repositories/i_import_service.dart';
 
 /// Use case that restores the entire Stalvi database from an encrypted
 /// JSON backup file previously produced by [ExportEncryptedJsonUseCase].

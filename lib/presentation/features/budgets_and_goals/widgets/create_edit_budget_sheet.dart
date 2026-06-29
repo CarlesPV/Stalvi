@@ -6,8 +6,8 @@ import 'package:stalvi/domain/entities/account.dart';
 import 'package:stalvi/domain/entities/account_type.dart';
 import 'package:stalvi/domain/usecases/create_budget_usecase.dart';
 import 'package:stalvi/domain/usecases/update_budget_usecase.dart';
-import 'package:stalvi/presentation/providers/budgets_goals_providers.dart';
-import 'package:stalvi/presentation/providers/repository_providers.dart';
+import '../../../providers/budgets_goals_providers.dart';
+import '../../../providers/repository_providers.dart';
 import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 import 'package:stalvi/core/utils/icon_helper.dart';
@@ -22,6 +22,7 @@ class CreateEditBudgetSheet extends ConsumerStatefulWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      useSafeArea: true,
       backgroundColor: Colors.transparent,
       builder: (context) => CreateEditBudgetSheet(existingBudget: budget),
     );

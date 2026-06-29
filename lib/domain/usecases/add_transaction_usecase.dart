@@ -1,16 +1,16 @@
 import 'dart:convert';
 import 'package:stalvi/core/errors/app_exceptions.dart';
-import 'package:stalvi/domain/entities/account.dart';
-import 'package:stalvi/domain/entities/exchange_rate.dart';
-import 'package:stalvi/domain/entities/savings_goal.dart';
-import 'package:stalvi/domain/entities/transaction.dart';
-import 'package:stalvi/domain/entities/transaction_type.dart';
-import 'package:stalvi/domain/repositories/i_account_repository.dart';
-import 'package:stalvi/domain/repositories/i_profile_repository.dart';
-import 'package:stalvi/domain/repositories/i_exchange_rate_repository.dart';
-import 'package:stalvi/domain/repositories/i_savings_goal_repository.dart';
-import 'package:stalvi/domain/repositories/i_transaction_repository.dart';
-import 'package:stalvi/domain/usecases/update_budget_progress_usecase.dart';
+import '../entities/account.dart';
+import '../entities/exchange_rate.dart';
+import '../entities/savings_goal.dart';
+import '../entities/transaction.dart';
+import '../entities/transaction_type.dart';
+import '../repositories/i_account_repository.dart';
+import '../repositories/i_profile_repository.dart';
+import '../repositories/i_exchange_rate_repository.dart';
+import '../repositories/i_savings_goal_repository.dart';
+import '../repositories/i_transaction_repository.dart';
+import 'update_budget_progress_usecase.dart';
 import 'package:stalvi/core/utils/input_sanitizer.dart';
 import 'package:uuid/uuid.dart';
 

@@ -1,9 +1,9 @@
 import 'package:stalvi/core/errors/app_exceptions.dart';
-import 'package:stalvi/domain/repositories/i_account_repository.dart';
-import 'package:stalvi/domain/repositories/i_category_repository.dart';
-import 'package:stalvi/domain/repositories/i_export_service.dart';
-import 'package:stalvi/domain/repositories/i_profile_repository.dart';
-import 'package:stalvi/domain/repositories/i_transaction_repository.dart';
+import '../repositories/i_account_repository.dart';
+import '../repositories/i_category_repository.dart';
+import '../repositories/i_export_service.dart';
+import '../repositories/i_profile_repository.dart';
+import '../repositories/i_transaction_repository.dart';
 
 /// Use case that retrieves **all non-deleted transactions** across every
 /// account and packages them into a CSV [ExportResult].

@@ -1,7 +1,7 @@
 import 'dart:developer';
 
-import 'package:stalvi/domain/entities/exchange_rate.dart';
-import 'package:stalvi/domain/repositories/i_exchange_rate_repository.dart';
+import '../entities/exchange_rate.dart';
+import '../repositories/i_exchange_rate_repository.dart';
 
 class SyncExchangeRatesUseCase {
   final IExchangeRateRepository _repository;

@@ -3,13 +3,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:stalvi/core/l10n/app_localizations.dart';
 import 'package:stalvi/infrastructure/services/biometric_auth_service.dart';
-import 'package:stalvi/presentation/features/settings/profile_settings_controller.dart';
-import 'package:stalvi/presentation/features/settings/pin_verification_sheet.dart';
-import 'package:stalvi/presentation/features/splash/splash_screen.dart';
-import 'package:stalvi/presentation/providers/auth_notifier.dart';
-import 'package:stalvi/presentation/providers/locale_provider.dart';
-import 'package:stalvi/presentation/providers/theme_provider.dart';
-import 'package:stalvi/presentation/widgets/terms_and_conditions_viewer.dart';
+import 'profile_settings_controller.dart';
+import 'pin_verification_sheet.dart';
+import '../splash/splash_screen.dart';
+import '../../providers/auth_notifier.dart';
+import '../../providers/locale_provider.dart';
+import '../../providers/theme_provider.dart';
+import '../../widgets/terms_and_conditions_viewer.dart';
 
 class ProfileSettingsScreen extends ConsumerStatefulWidget {
   const ProfileSettingsScreen({super.key});

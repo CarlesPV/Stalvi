@@ -5,7 +5,7 @@ import '../tables/budget_table.dart';
 import '../tables/category_table.dart';
 import '../tables/savings_goal_table.dart';
 import '../tables/transaction_table.dart';
-import '../../../domain/entities/trash_item.dart';
+import 'package:stalvi/domain/entities/trash_item.dart';
 
 part 'trash_dao.g.dart';
 

@@ -1,6 +1,6 @@
 import 'package:stalvi/core/errors/app_exceptions.dart';
-import 'package:stalvi/domain/entities/budget.dart';
-import 'package:stalvi/domain/repositories/i_budget_repository.dart';
+import '../entities/budget.dart';
+import '../repositories/i_budget_repository.dart';
 
 class UpdateBudgetParams {
   final String id;

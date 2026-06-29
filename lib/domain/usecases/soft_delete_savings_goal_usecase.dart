@@ -1,8 +1,8 @@
 import 'package:stalvi/core/errors/app_exceptions.dart';
-import 'package:stalvi/domain/entities/transaction.dart';
-import 'package:stalvi/domain/entities/transaction_type.dart';
-import 'package:stalvi/domain/repositories/i_savings_goal_repository.dart';
-import 'package:stalvi/domain/repositories/i_transaction_repository.dart';
+import '../entities/transaction.dart';
+import '../entities/transaction_type.dart';
+import '../repositories/i_savings_goal_repository.dart';
+import '../repositories/i_transaction_repository.dart';
 import 'package:uuid/uuid.dart';
 
 class SoftDeleteSavingsGoalUseCase {

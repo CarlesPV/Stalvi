@@ -2,8 +2,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:stalvi/domain/entities/profile.dart';
 import 'package:stalvi/domain/repositories/i_export_service.dart';
 import 'package:stalvi/domain/usecases/update_credentials_usecase.dart';
-import 'package:stalvi/presentation/providers/repository_providers.dart';
-import 'package:stalvi/presentation/providers/statistics_providers.dart';
+import '../../providers/repository_providers.dart';
+import '../../providers/statistics_providers.dart';
 
 enum PinChangeStep { verifyOld, enterNew }
 

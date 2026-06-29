@@ -4,8 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:stalvi/core/l10n/app_localizations.dart';
 import 'package:stalvi/domain/entities/transaction_type.dart';
-import 'package:stalvi/presentation/providers/repository_providers.dart';
-import 'package:stalvi/presentation/providers/transaction_filter_provider.dart';
+import '../../providers/repository_providers.dart';
+import '../../providers/transaction_filter_provider.dart';
 
 /// Advanced filter bottom sheet for the Transactions section.
 ///

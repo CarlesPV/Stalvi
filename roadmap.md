@@ -215,18 +215,20 @@
    - [x] **Legal Update:** Review and update `privacy_*.md` and `terms_*.md` in ES, EN, CA to reflect the latest features.
    - [x] **UI/UX & i18n QA:** Complete review to fix RenderFlex overflows and achieve 100% translation coverage in `.arb` files.
    - [x] **CI/CD Validation:** Ensure all unit tests pass and GitHub Actions workflows complete successfully.
- 
- ## Current Phase
- 
- ## Phase 29: Release preparation and UI Optimization.
- **Objective:** Prepare build bundles, finalize store assets, perform final sanity checks on production environments, and optimize UI space and code size.
- 
- - [x] Optimize dashboard by removing the long press context menu for setting default accounts.
- - [x] Perform a full translation/code cleanup to remove unused arb keys and comments to optimize space.
- - [ ] Generate release Android App Bundle (AAB) and iOS IPA
- - [ ] Verify store listing assets (localized descriptions, screenshots)
- - [ ] Conduct pre-release test flight and internal Google Play tracks tests
- - [ ] Final production compliance check
- 
- ## Next Steps
- ## Phase 30: Launch and monitoring.
+
+- [x] **Phase 29: Release Preparation and UI Optimization**
+  - [x] Optimize dashboard by removing the long press context menu for setting default accounts.
+  - [x] Perform a full translation/code cleanup to remove unused arb keys and comments to optimize space.
+  - [x] Generate release Android App Bundle (AAB) and iOS IPA.
+  - [x] Verify store listing assets (localized descriptions, screenshots).
+  - [x] Conduct pre-release test flight and internal Google Play tracks tests.
+  - [x] Final production compliance check.
+
+## Current Phase
+
+## Phase 30: Launch and Monitoring
+**Objective:** Publish the application to Google Play Store and Apple App Store, monitor performance, collect crash reports via Firebase Crashlytics, and gather initial user feedback.
+
+- [ ] Publish apps to production tracks.
+- [ ] Monitor crash rates and performance metrics.
+- [ ] Establish feedback loop for post-launch adjustments.

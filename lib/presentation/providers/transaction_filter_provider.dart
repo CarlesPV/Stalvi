@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:stalvi/domain/entities/transaction.dart';
 import 'package:stalvi/domain/entities/transaction_type.dart';
 import 'package:stalvi/domain/repositories/i_transaction_repository.dart';
-import 'package:stalvi/presentation/providers/repository_providers.dart';
+import 'repository_providers.dart';
 
 // ─── Presentation-layer Filter Model ─────────────────────────────────────────
 

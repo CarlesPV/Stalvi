@@ -1,7 +1,7 @@
 import 'package:stalvi/domain/entities/transaction.dart';
 import 'package:stalvi/domain/entities/transaction_type.dart';
-import 'package:stalvi/data/database/app_database.dart' as db;
-import 'package:stalvi/data/database/tables/transaction_table.dart' as db_table;
+import '../database/app_database.dart' as db;
+import '../database/tables/transaction_table.dart' as db_table;
 
 extension TransactionMapper on Transaction {
   db.Transaction toDb() {

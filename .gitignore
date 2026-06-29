@@ -1,6 +1,7 @@
 # ==============================================================================
 # SECRETS & ENVIRONMENT VARIABLES (CRITICAL)
 # ==============================================================================
+# Real values go in .env (never .env.example which is safe to commit)
 .env
 .env.*
 *.env
@@ -15,6 +16,7 @@ key.properties
 local.properties
 android/key.properties
 android/app/key.properties
+android/local.properties
 google-services.json
 GoogleService-Info.plist
 firebase_app_id_file.json
@@ -22,6 +24,8 @@ amplifyconfiguration.dart
 secrets/
 credentials/
 *.json.enc
+upload-keystore.jks
+*.upload-keystore.jks
 
 # ==============================================================================
 # FLUTTER & DART

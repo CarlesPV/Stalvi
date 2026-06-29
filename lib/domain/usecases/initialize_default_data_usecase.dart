@@ -1,8 +1,8 @@
-import 'package:stalvi/domain/entities/category.dart';
-import 'package:stalvi/domain/entities/category_type.dart';
-import 'package:stalvi/domain/repositories/i_category_repository.dart';
-import 'package:stalvi/domain/entities/tag.dart';
-import 'package:stalvi/domain/repositories/i_tag_repository.dart';
+import '../entities/category.dart';
+import '../entities/category_type.dart';
+import '../repositories/i_category_repository.dart';
+import '../entities/tag.dart';
+import '../repositories/i_tag_repository.dart';
 
 /// Use case that seeds a user's default data (categories and tags).
 ///

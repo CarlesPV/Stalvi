@@ -1,7 +1,7 @@
 import 'package:stalvi/domain/entities/category.dart';
 import 'package:stalvi/domain/entities/category_type.dart';
-import 'package:stalvi/data/database/app_database.dart' as db;
-import 'package:stalvi/data/database/tables/category_table.dart' as db_table;
+import '../database/app_database.dart' as db;
+import '../database/tables/category_table.dart' as db_table;
 
 extension CategoryMapper on Category {
   db.Category toDb() {

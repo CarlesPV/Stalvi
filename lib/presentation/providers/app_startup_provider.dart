@@ -4,8 +4,8 @@ import 'package:flutter/widgets.dart';
 import 'package:stalvi/data/database/app_database.dart';
 import 'package:stalvi/domain/usecases/auto_purge_usecase.dart';
 import 'package:stalvi/domain/usecases/sync_exchange_rates_usecase.dart';
-import 'package:stalvi/presentation/providers/locale_provider.dart';
-import 'package:stalvi/presentation/providers/repository_providers.dart';
+import 'locale_provider.dart';
+import 'repository_providers.dart';
 
 /// Provides the singleton [AppDatabase] instance.
 ///

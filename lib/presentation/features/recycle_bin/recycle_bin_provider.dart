@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../domain/entities/trash_item.dart';
-import '../../../domain/usecases/trash_usecases.dart';
+import 'package:stalvi/domain/entities/trash_item.dart';
+import 'package:stalvi/domain/usecases/trash_usecases.dart';
 import '../../providers/repository_providers.dart';
 import '../../providers/statistics_providers.dart';
 
