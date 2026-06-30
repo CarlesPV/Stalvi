@@ -345,7 +345,7 @@ class _LogoBadge extends StatelessWidget {
         child: LayoutBuilder(
           builder: (context, constraints) {
             return Image.asset(
-              'assets/icon/logo_transparent.png',
+              'assets/icon/app_icon.png',
               fit: BoxFit.contain,
               width: constraints.maxWidth,
               height: constraints.maxHeight,

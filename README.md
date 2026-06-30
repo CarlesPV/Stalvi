@@ -44,6 +44,7 @@ lib/
 - **30-Day Recycle Bin (Trash):** Soft-deleted transactions, budgets, and savings goals are moved to a temporary trash. Balances are recalculated in real time. Items older than 30 days are automatically purged on startup.
 - **Immutability:** Saves currency exchange rate snapshots within each transaction at creation time to preserve historical balance integrity.
 - **Safe Category Deletion:** Prompts users to reassign transactions to a new target category when attempting to delete a category that is in active use. Reassignment targets are strictly filtered based on the category type (Expense to Expense/Custom, Income to Income/Custom, Custom to all).
+- **Unified Branding:** Consistent and dynamic usage of a single high-quality logo asset across Splash, Authentication, and Dashboard screens to reduce binary size and ensure a cohesive visual identity.
 
 ### 📊 Advanced Budgets & Savings Goals
 - **Budgets:** Set category-specific monthly spending limits mapped to specific accounts, with automatic locks on currency and target amounts post-creation.

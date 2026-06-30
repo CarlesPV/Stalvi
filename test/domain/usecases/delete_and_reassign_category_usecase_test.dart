@@ -172,8 +172,10 @@ void main() {
       // Deleting custom category should return ALL other categories
       final replacementsCustom =
           await useCase.getReplacementCategories(catCustom);
-      expect(replacementsCustom.map((c) => c.id).toList(),
-          ['inc1', 'exp1', 'cus2']);
+      expect(
+        replacementsCustom.map((c) => c.id).toList(),
+        ['inc1', 'exp1', 'cus2'],
+      );
     });
   });
 }

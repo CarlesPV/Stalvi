@@ -224,11 +224,13 @@
   - [x] Conduct pre-release test flight and internal Google Play tracks tests.
   - [x] Final production compliance check.
 
-- [ ] **Phase 30: Launch and Monitoring**
+- [x] **Phase 30: UI Polish, Translations, and Launch Readiness**
   - [x] Implement safe category deletion business logic (reassigning transactions when deleting active categories).
   - [x] Define reassignment target filtering rules (Expense to Expense/Custom, Income to Income/Custom, Custom to all).
   - [x] Build category deletion reassignment popup dialog/ModalBottomSheet.
   - [x] Write and run unit test suites for deletion reassignment.
+  - [x] Consolidate app branding by exclusively using `assets/icon/app_icon.png` across all screens (Splash, Auth, Dashboard), scaling dynamically.
+  - [x] Audit and review translations across English, Spanish, and Catalan to ensure 100% accuracy.
   - [ ] Publish apps to production tracks.
   - [ ] Monitor crash rates and performance metrics.
   - [ ] Establish feedback loop for post-launch adjustments.
