@@ -8,6 +8,7 @@ import 'package:stalvi/domain/entities/account.dart';
 import 'package:stalvi/domain/entities/account_type.dart';
 import 'package:stalvi/domain/entities/transaction.dart';
 import 'package:stalvi/domain/entities/transaction_type.dart';
+import 'package:stalvi/domain/entities/category.dart';
 import '../transactions/add_transaction_screen.dart';
 import '../transactions/transaction_filter_sheet.dart';
 import '../budgets_and_goals/budgets_and_goals_screen.dart';
@@ -183,11 +184,19 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen>
             // Mini logo for context
             ClipRRect(
               borderRadius: BorderRadius.circular(10),
-              child: Image.asset(
-                'assets/icon/app_icon.png',
+              child: SizedBox(
                 width: 34,
                 height: 34,
-                fit: BoxFit.contain,
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    return Image.asset(
+                      'assets/icon/logo_transparent.png',
+                      fit: BoxFit.contain,
+                      width: constraints.maxWidth,
+                      height: constraints.maxHeight,
+                    );
+                  },
+                ),
               ),
             ),
             const SizedBox(width: 10),
@@ -859,6 +868,13 @@ class _TransactionItem extends ConsumerWidget {
     required this.transaction,
   });
 
+  Color _parseHexColor(String hexString) {
+    final buffer = StringBuffer();
+    if (hexString.length == 6 || hexString.length == 7) buffer.write('ff');
+    buffer.write(hexString.replaceFirst('#', ''));
+    return Color(int.parse(buffer.toString(), radix: 16));
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
@@ -882,9 +898,31 @@ class _TransactionItem extends ConsumerWidget {
     final color =
         isIncome ? financialColors.positive : financialColors.negative;
 
-    final icon = transaction.type == TransactionType.transfer
-        ? Icons.swap_horiz_rounded
-        : (isIncome ? Icons.trending_up_rounded : Icons.trending_down_rounded);
+    final categories = ref.watch(categoriesListProvider).valueOrNull ?? [];
+    Category? category;
+    if (transaction.categoryId != null) {
+      for (final c in categories) {
+        if (c.id == transaction.categoryId) {
+          category = c;
+          break;
+        }
+      }
+    }
+
+    final Color iconColor;
+    final IconData icon;
+
+    if (isTransfer) {
+      icon = Icons.swap_horiz_rounded;
+      iconColor = Colors.blue;
+    } else if (category != null) {
+      icon = getIconData(category.icon);
+      iconColor = _parseHexColor(category.color);
+    } else {
+      icon = isIncome ? Icons.trending_up_rounded : Icons.trending_down_rounded;
+      iconColor =
+          isIncome ? financialColors.positive : financialColors.negative;
+    }
 
     final dateStr = DateFormat.yMMMd(Localizations.localeOf(context).toString())
         .format(transaction.date);
@@ -906,12 +944,12 @@ class _TransactionItem extends ConsumerWidget {
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.12),
+                color: iconColor.withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(
                 icon,
-                color: color,
+                color: iconColor,
                 size: 20,
               ),
             ),
@@ -1333,18 +1371,22 @@ class _BalanceCard extends ConsumerWidget {
                 ),
               ),
               const SizedBox(width: 8),
-              IconButton(
-                key: const ValueKey('discreetModeIconButton'),
-                padding: EdgeInsets.zero,
-                constraints: const BoxConstraints(),
-                icon: Icon(
-                  isDiscreet ? Icons.visibility_off : Icons.visibility,
-                  color: colorScheme.onPrimary.withValues(alpha: 0.85),
-                  size: 20,
+              Padding(
+                padding: const EdgeInsets.only(left: 8.0),
+                child: IconButton(
+                  key: const ValueKey('discreetModeIconButton'),
+                  iconSize: 32.0,
+                  padding: const EdgeInsets.all(8.0),
+                  constraints: const BoxConstraints(),
+                  icon: Icon(
+                    isDiscreet ? Icons.visibility_off : Icons.visibility,
+                    color: colorScheme.onPrimary.withValues(alpha: 0.85),
+                    size: 32.0,
+                  ),
+                  onPressed: () {
+                    ref.read(discreetModeProvider.notifier).toggle();
+                  },
                 ),
-                onPressed: () {
-                  ref.read(discreetModeProvider.notifier).toggle();
-                },
               ),
             ],
           ),

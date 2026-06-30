@@ -375,6 +375,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
           ),
           const SizedBox(height: 8),
           DropdownButtonFormField<String>(
+            isExpanded: true,
             initialValue: activeLocale.languageCode,
             decoration: InputDecoration(
               filled: true,
@@ -395,9 +396,30 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
               ),
             ),
             items: const [
-              DropdownMenuItem(value: 'en', child: Text('English')),
-              DropdownMenuItem(value: 'es', child: Text('Español')),
-              DropdownMenuItem(value: 'ca', child: Text('Català')),
+              DropdownMenuItem(
+                value: 'en',
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerLeft,
+                  child: Text('English'),
+                ),
+              ),
+              DropdownMenuItem(
+                value: 'es',
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerLeft,
+                  child: Text('Español'),
+                ),
+              ),
+              DropdownMenuItem(
+                value: 'ca',
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerLeft,
+                  child: Text('Català'),
+                ),
+              ),
             ],
             onChanged: (langCode) {
               if (langCode != null) {
@@ -417,6 +439,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
           ),
           const SizedBox(height: 8),
           DropdownButtonFormField<String>(
+            isExpanded: true,
             initialValue: _selectedCurrency,
             decoration: InputDecoration(
               filled: true,
@@ -437,15 +460,74 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
               ),
             ),
             items: [
-              DropdownMenuItem(value: 'EUR', child: Text(l10n.currencyEUR)),
-              DropdownMenuItem(value: 'USD', child: Text(l10n.currencyUSD)),
-              DropdownMenuItem(value: 'GBP', child: Text(l10n.currencyGBP)),
-              DropdownMenuItem(value: 'JPY', child: Text(l10n.currencyJPY)),
-              DropdownMenuItem(value: 'CHF', child: Text(l10n.currencyCHF)),
-              DropdownMenuItem(value: 'CAD', child: Text(l10n.currencyCAD)),
-              DropdownMenuItem(value: 'AUD', child: Text(l10n.currencyAUD)),
-              DropdownMenuItem(value: 'CNY', child: Text(l10n.currencyCNY)),
+              DropdownMenuItem(
+                value: 'EUR',
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerLeft,
+                  child: Text(l10n.currencyEUR),
+                ),
+              ),
+              DropdownMenuItem(
+                value: 'USD',
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerLeft,
+                  child: Text(l10n.currencyUSD),
+                ),
+              ),
+              DropdownMenuItem(
+                value: 'GBP',
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerLeft,
+                  child: Text(l10n.currencyGBP),
+                ),
+              ),
+              DropdownMenuItem(
+                value: 'JPY',
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerLeft,
+                  child: Text(l10n.currencyJPY),
+                ),
+              ),
+              DropdownMenuItem(
+                value: 'CHF',
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerLeft,
+                  child: Text(l10n.currencyCHF),
+                ),
+              ),
+              DropdownMenuItem(
+                value: 'CAD',
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerLeft,
+                  child: Text(l10n.currencyCAD),
+                ),
+              ),
+              DropdownMenuItem(
+                value: 'AUD',
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerLeft,
+                  child: Text(l10n.currencyAUD),
+                ),
+              ),
+              DropdownMenuItem(
+                value: 'CNY',
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerLeft,
+                  child: Text(l10n.currencyCNY),
+                ),
+              ),
             ],
+            validator: (val) => (val == null || val.isEmpty)
+                ? l10n.errorCurrencyRequired
+                : null,
             onChanged: (currency) {
               if (currency != null) {
                 setState(() {
@@ -1000,9 +1082,15 @@ class _BrandHeader extends StatelessWidget {
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(16),
-            child: Image.asset(
-              'assets/icon/app_icon.png',
-              fit: BoxFit.cover,
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                return Image.asset(
+                  'assets/icon/logo_transparent.png',
+                  fit: BoxFit.contain,
+                  width: constraints.maxWidth,
+                  height: constraints.maxHeight,
+                );
+              },
             ),
           ),
         ),

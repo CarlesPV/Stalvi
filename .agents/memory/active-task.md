@@ -1,17 +1,23 @@
-# Active Task: Phase 29 - Pre-Release Polish, Security, and Compliance
+# Active Task: Phase 30 - UI/UX Stabilization & Data Integrity
 
 ## Objective
-Finalize the Stalvi application for production deployment on the Google Play Store. This phase focuses on achieving UI resilience, absolute code cleanliness, stringent security validation, full trilingual support, and comprehensive documentation synchronization.
+Refine user interface consistency, resolve layout overflows, enhance form validation UX, and implement safe entity deletion workflows for categories.
 
-## Sub-tasks
-- [ ] **UI/UX Resilience:** Identify and fix all `RenderFlex` overflow issues across the app. Ensure proper padding, dynamic text scaling, and keyboard inset handling on all forms and pop-ups.
-- [ ] **L10n Synchronization:** Audit `lib/core/l10n/` files to ensure 100% parity across English, Spanish, and Catalan. Remove unused keys.
-- [ ] **Codebase Cleanup:** Remove dead code, unused imports, leftover test strings, and unreferenced assets. Ensure `flutter analyze` returns zero issues.
-- [ ] **Security & Secrets Audit:** Verify `.gitignore` completeness, ensure no hardcoded secrets or API keys exist, and confirm ProGuard/R8 obfuscation is configured for Android release.
-- [ ] **Store Compliance:** Verify the integration of legal terms, privacy policies, and necessary Play Store metadata within the app.
-- [ ] **Documentation Update:** Synchronize `roadmap.md`, `README.md`, and inline architectural comments to accurately reflect the 100% updated state of the project.
+## Context
+The core architecture (Clean Architecture + Riverpod + Drift/SQLCipher) is stable. This phase focuses on resolving critical UX friction points reported in Phase 29, specifically around asset management, visibility of sensitive data, error handling, and data reassignment.
 
-## Context & Rules
-- Do not hallucinate or create non-existent files.
-- Everything MUST remain functionally intact; run tests after modifications.
-- Modify files directly without printing output in the chat.
+## Current State
+- **Status**: IN_PROGRESS
+- **Priority**: HIGH
+
+## Tasks
+- [ ] **Asset Unification:** Remove redundant cropped app icons. Use a single primary logo and scale/crop dynamically via Flutter widgets.
+- [ ] **Dashboard UX:** Increase the size and hit target of the "Eye" visibility toggle icon for balance and statistics.
+- [ ] **Validation UI:** Refactor error messaging globally (especially auth/registration) to show inline below input fields instead of snackbars/popups.
+- [ ] **Overflow Resolution:** Audit and fix layout overflows across all screens, specifically the currency selector in the registration flow.
+- [ ] **Transaction Details:** Update `transaction_details_dialog.dart` to display the specific Transaction Type in the header/title.
+- [ ] **Category Reassignment Logic:** Enhance `delete_and_reassign_category_usecase.dart` and the settings UI to force reassignment of existing transactions when a category is deleted. Enforce filtering: Expense -> Expense/Custom, Income -> Income/Custom, Custom -> All.
+- [ ] **Custom Category Icons:** Ensure custom icons map and render correctly across all lists (transactions, savings goals, etc.).
+
+## Next Steps
+Execute the atomic prompts defined for Phase 30 sequentially to complete these tasks.

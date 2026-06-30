@@ -224,11 +224,11 @@
   - [x] Conduct pre-release test flight and internal Google Play tracks tests.
   - [x] Final production compliance check.
 
-## Current Phase
-
-## Phase 30: Launch and Monitoring
-**Objective:** Publish the application to Google Play Store and Apple App Store, monitor performance, collect crash reports via Firebase Crashlytics, and gather initial user feedback.
-
-- [ ] Publish apps to production tracks.
-- [ ] Monitor crash rates and performance metrics.
-- [ ] Establish feedback loop for post-launch adjustments.
+- [ ] **Phase 30: Launch and Monitoring**
+  - [x] Implement safe category deletion business logic (reassigning transactions when deleting active categories).
+  - [x] Define reassignment target filtering rules (Expense to Expense/Custom, Income to Income/Custom, Custom to all).
+  - [x] Build category deletion reassignment popup dialog/ModalBottomSheet.
+  - [x] Write and run unit test suites for deletion reassignment.
+  - [ ] Publish apps to production tracks.
+  - [ ] Monitor crash rates and performance metrics.
+  - [ ] Establish feedback loop for post-launch adjustments.

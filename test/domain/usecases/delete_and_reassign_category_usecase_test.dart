@@ -169,10 +169,11 @@ void main() {
           await useCase.getReplacementCategories(catIncome);
       expect(replacementsIncome.map((c) => c.id).toList(), ['cus1', 'cus2']);
 
-      // Deleting custom category should return other custom cats
+      // Deleting custom category should return ALL other categories
       final replacementsCustom =
           await useCase.getReplacementCategories(catCustom);
-      expect(replacementsCustom.map((c) => c.id).toList(), ['cus2']);
+      expect(replacementsCustom.map((c) => c.id).toList(),
+          ['inc1', 'exp1', 'cus2']);
     });
   });
 }

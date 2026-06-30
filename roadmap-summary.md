@@ -462,7 +462,19 @@ This document lists the completed phases of the Stalvi development roadmap, prov
   - 100% clean static analysis (`flutter analyze` with 0 issues).
   - Executed the full automated test suite containing 396 unit and widget tests, achieving a 100% success rate.
 
+### Phase 30: Safe Category Deletion & Launch Preparation
+* **Completion Date:** June 30, 2026
+* **Objective:** Implement safe category deletion logic to prevent dangling database references, enforce category type-based filtering during transaction reassignment, build UI prompts, and verify integration via unit tests.
+* **Accomplishments:**
+  - **Safe Category Deletion Domain Logic:** Updated the `DeleteAndReassignCategoryUseCase` logic to enforce type constraints: Expense categories can only be reassigned to other Expense or Custom categories; Income to Income or Custom; Custom categories can be reassigned to all other categories.
+  - **UI Prompts and Dialogs:** Configured settings category deletion checks to identify if a category is actively in use by transactions. If true, the app prompts the user with an `AlertDialog` containing a filtered list of eligible replacement categories to execute the transaction reassignment atomically before deleting.
+  - **Comprehensive Verification:** Wrote robust unit tests in `delete_and_reassign_category_usecase_test.dart` to cover the new filtering behaviors.
+* **Verification:**
+  - 100% clean static analysis (`flutter analyze` with 0 issues).
+  - Executed the full unit and widget test suite with all tests passing successfully.
+
 ## Recent Updates
+- Implemented Safe Category Deletion business logic, filtering rules, UI dialogs, and expanded test coverage (Phase 30).
 - Completed release preparation and UI optimization (Phase 29).
 - Populated legal documentation in English, Spanish, and Catalan inside `assets/legal/`.
 - Implemented user consent dialog on onboarding and "Delete Account" in settings.

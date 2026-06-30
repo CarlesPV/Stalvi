@@ -164,4 +164,20 @@ void main() {
       Icons.category,
     );
   });
+
+  // ---------------------------------------------------------------------------
+  // Test 7 – iconDataForKey parses code points successfully
+  // ---------------------------------------------------------------------------
+
+  test('iconDataForKey parses hex and decimal code points successfully', () {
+    // Hex code point
+    final hexIcon = CategoryIconPicker.iconDataForKey('0xe3af');
+    expect(hexIcon.codePoint, 0xe3af);
+    expect(hexIcon.fontFamily, 'MaterialIcons');
+
+    // Decimal code point
+    final decIcon = CategoryIconPicker.iconDataForKey('58287');
+    expect(decIcon.codePoint, 58287);
+    expect(decIcon.fontFamily, 'MaterialIcons');
+  });
 }

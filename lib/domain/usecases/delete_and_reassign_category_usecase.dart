@@ -19,8 +19,9 @@ class DeleteAndReassignCategoryUseCase {
   }
 
   /// Returns a list of categories that can be used as replacements when deleting [categoryToDelete].
-  /// a) Default categories matching the specific transaction type (Income or Expense).
-  /// b) ALL user-created custom categories (since they are type-agnostic).
+  /// - Deleting EXPENSE -> options are EXPENSE or CUSTOM
+  /// - Deleting INCOME -> options are INCOME or CUSTOM
+  /// - Deleting CUSTOM -> ALL categories are options
   Future<List<Category>> getReplacementCategories(
     Category categoryToDelete,
   ) async {
@@ -29,15 +30,14 @@ class DeleteAndReassignCategoryUseCase {
     return allCategories.where((c) {
       if (c.id == categoryToDelete.id) return false;
 
-      // b) ALL user-created custom categories (since they are type-agnostic).
-      if (c.associatedType == null) return true;
-
-      // a) Default categories matching the specific transaction type.
-      if (categoryToDelete.associatedType != null) {
-        return c.associatedType == categoryToDelete.associatedType;
+      // c) If deleting CUSTOM -> ALL categories are options
+      if (categoryToDelete.associatedType == null) {
+        return true;
       }
 
-      return false;
+      // a/b) If deleting EXPENSE/INCOME -> options are same type OR CUSTOM
+      return c.associatedType == null ||
+          c.associatedType == categoryToDelete.associatedType;
     }).toList();
   }
 

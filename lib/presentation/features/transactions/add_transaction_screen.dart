@@ -99,14 +99,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
             }
           },
           error: (err, _) {
-            final message = _getLocalizedError(context, err);
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(message),
-                backgroundColor: colorScheme.error,
-                behavior: SnackBarBehavior.floating,
-              ),
-            );
+            // Errors are displayed inline — no SnackBar needed here.
           },
           loading: () {},
         );
@@ -531,7 +524,46 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                   ),
                 ),
 
-                const SizedBox(height: 48),
+                const SizedBox(height: 24),
+
+                // ── Inline Validation / Submission Error ──────────────────────
+                if (state.submissionStatus.hasError) ...[
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
+                    decoration: BoxDecoration(
+                      color: colorScheme.errorContainer.withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: colorScheme.error.withValues(alpha: 0.35),
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.error_outline_rounded,
+                          color: colorScheme.error,
+                          size: 20,
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            _getLocalizedError(
+                              context,
+                              state.submissionStatus.error!,
+                            ),
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: colorScheme.error,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                ],
 
                 // ── Submit Button ─────────────────────────────────────────────
                 FilledButton(

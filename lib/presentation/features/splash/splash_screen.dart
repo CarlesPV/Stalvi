@@ -342,9 +342,15 @@ class _LogoBadge extends StatelessWidget {
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(30),
-        child: Image.asset(
-          'assets/icon/app_icon.png',
-          fit: BoxFit.cover,
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return Image.asset(
+              'assets/icon/logo_transparent.png',
+              fit: BoxFit.contain,
+              width: constraints.maxWidth,
+              height: constraints.maxHeight,
+            );
+          },
         ),
       ),
     );
