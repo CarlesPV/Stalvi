@@ -398,5 +398,57 @@ void main() {
       expect(captured.destinationAccountId, 'acc_dest');
       expect(captured.notes, isNull);
     });
+
+    test('submit populates state.errors, and updates dynamically clear them',
+        () async {
+      buildContainer();
+
+      final notifier = container.read(addTransactionNotifierProvider.notifier);
+      notifier.updateAmount('not-a-number');
+      notifier.updateAccount(testAccount.id);
+
+      final success = await notifier.submit();
+      expect(success, isFalse);
+
+      var state = container.read(addTransactionNotifierProvider);
+      expect(state.errors.containsKey('amount'), isTrue);
+      expect(state.errors['amount'], 'INVALID_AMOUNT');
+      expect(state.errors.containsKey('categoryId'), isTrue);
+      expect(state.errors['categoryId'], 'CATEGORY_REQUIRED');
+
+      // Update amount -> should clear amount error
+      notifier.updateAmount('12.50');
+      state = container.read(addTransactionNotifierProvider);
+      expect(state.errors.containsKey('amount'), isFalse);
+      expect(state.errors.containsKey('categoryId'),
+          isTrue); // category error still there
+
+      // Update category -> should clear category error
+      notifier.updateCategory(testCategory.id);
+      state = container.read(addTransactionNotifierProvider);
+      expect(state.errors.containsKey('categoryId'), isFalse);
+      expect(state.errors.isEmpty, isTrue);
+    });
+
+    test('updateType completely clears errors and resets submissionStatus',
+        () async {
+      buildContainer();
+
+      final notifier = container.read(addTransactionNotifierProvider.notifier);
+      notifier.updateAmount('not-a-number');
+
+      final success = await notifier.submit();
+      expect(success, isFalse);
+
+      var state = container.read(addTransactionNotifierProvider);
+      expect(state.errors.isNotEmpty, isTrue);
+      expect(state.submissionStatus.hasError, isTrue);
+
+      // Switch type to income
+      notifier.updateType(TransactionType.income);
+      state = container.read(addTransactionNotifierProvider);
+      expect(state.errors.isEmpty, isTrue);
+      expect(state.submissionStatus.hasError, isFalse);
+    });
   });
 }

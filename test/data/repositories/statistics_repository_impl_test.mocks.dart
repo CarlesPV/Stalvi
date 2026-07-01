@@ -406,32 +406,34 @@ class MockStatisticsDao extends _i1.Mock implements _i9.StatisticsDao {
       ) as _i6.Stream<double>);
 
   @override
-  _i6.Future<_i5.PeriodSummary> getPeriodSummaryAggregates(
+  _i6.Future<_i5.PeriodSummary> getPeriodSummaryAggregates({
     DateTime? startDate,
     DateTime? endDate,
-    String? targetCurrency, {
+    required String? targetCurrency,
     String? accountId,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
           #getPeriodSummaryAggregates,
-          [
-            startDate,
-            endDate,
-            targetCurrency,
-          ],
-          {#accountId: accountId},
+          [],
+          {
+            #startDate: startDate,
+            #endDate: endDate,
+            #targetCurrency: targetCurrency,
+            #accountId: accountId,
+          },
         ),
         returnValue: _i6.Future<_i5.PeriodSummary>.value(_FakePeriodSummary_11(
           this,
           Invocation.method(
             #getPeriodSummaryAggregates,
-            [
-              startDate,
-              endDate,
-              targetCurrency,
-            ],
-            {#accountId: accountId},
+            [],
+            {
+              #startDate: startDate,
+              #endDate: endDate,
+              #targetCurrency: targetCurrency,
+              #accountId: accountId,
+            },
           ),
         )),
       ) as _i6.Future<_i5.PeriodSummary>);

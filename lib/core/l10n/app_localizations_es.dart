@@ -24,6 +24,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get income => 'Ingreso';
 
   @override
+  String get incomes => 'Ingresos';
+
+  @override
   String get expense => 'Gasto';
 
   @override
@@ -1004,4 +1007,20 @@ class AppLocalizationsEs extends AppLocalizations {
   String exportSavedTo(String filePath) {
     return 'Guardado en $filePath';
   }
+
+  @override
+  String get settingsAutomaticTransactions => 'Transacciones Automáticas';
+
+  @override
+  String get createAutomaticTransaction => 'Crear Transacción Automática';
+
+  @override
+  String get deleteAccountHasAutomaticTransactions =>
+      'No se puede eliminar la cuenta porque tiene transacciones automáticas vinculadas. Por favor elimínelas primero.';
+
+  @override
+  String get recurrenceDaysLabel => 'Recurrencia (Días)';
+
+  @override
+  String get nextExecution => 'Próxima Ejecución';
 }

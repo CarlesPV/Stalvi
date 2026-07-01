@@ -1305,5 +1305,10 @@
         "type": "String"
       }
     }
-  }
+  },
+  "settingsAutomaticTransactions": "Transaccions Automàtiques",
+  "createAutomaticTransaction": "Crear Transacció Automàtica",
+  "deleteAccountHasAutomaticTransactions": "No es pot suprimir el compte perquè té transaccions automàtiques vinculades. Si us plau, suprimiu-les primer.",
+  "recurrenceDaysLabel": "Recurrència (Dies)",
+  "nextExecution": "Proper Execució"
 }

@@ -31,7 +31,10 @@ import 'daos/trash_dao.dart';
 import 'tables/exchange_rate_table.dart';
 import 'daos/exchange_rate_dao.dart';
 import 'daos/budget_dao.dart';
+import 'daos/budget_dao.dart';
 import 'daos/savings_goal_dao.dart';
+import 'tables/automatic_transaction_table.dart';
+import 'daos/automatic_transaction_dao.dart';
 
 part 'app_database.g.dart';
 
@@ -58,6 +61,7 @@ part 'app_database.g.dart';
     Budgets,
     SavingsGoals,
     ExchangeRates,
+    AutomaticTransactions,
   ],
   daos: [
     AccountDao,
@@ -67,6 +71,7 @@ part 'app_database.g.dart';
     ExchangeRateDao,
     BudgetDao,
     SavingsGoalDao,
+    AutomaticTransactionDao,
   ],
 )
 class AppDatabase extends _$AppDatabase {
@@ -92,7 +97,7 @@ class AppDatabase extends _$AppDatabase {
 
   /// Bump this version whenever you add, modify, or remove tables.
   @override
-  int get schemaVersion => 8;
+  int get schemaVersion => 9;
 
   @override
   MigrationStrategy get migration {
@@ -185,6 +190,9 @@ class AppDatabase extends _$AppDatabase {
         }
         if (from < 8) {
           await m.addColumn(savingsGoals, savingsGoals.currency);
+        }
+        if (from < 9) {
+          await m.createTable(automaticTransactions);
         }
       },
     );

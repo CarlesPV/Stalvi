@@ -41,15 +41,21 @@ lib/
 ### 💰 Movement & Transaction Engine
 - **Income, Expense, & Transfers:** Record and categorize financial movements.
 - **Atomic Transfers:** Double-entry transfers link origin and destination accounts securely. Deleting or restoring one leg of a transfer automatically mirrors the action on the other leg.
+- **Inline Input Validation:** Form inputs perform real-time validation checks, displaying errors inline and dynamically clearing or resetting errors as values change.
 - **30-Day Recycle Bin (Trash):** Soft-deleted transactions, budgets, and savings goals are moved to a temporary trash. Balances are recalculated in real time. Items older than 30 days are automatically purged on startup.
 - **Immutability:** Saves currency exchange rate snapshots within each transaction at creation time to preserve historical balance integrity.
 - **Safe Category Deletion:** Prompts users to reassign transactions to a new target category when attempting to delete a category that is in active use. Reassignment targets are strictly filtered based on the category type (Expense to Expense/Custom, Income to Income/Custom, Custom to all).
 - **Unified Branding:** Consistent and dynamic usage of a single high-quality logo asset across Splash, Authentication, and Dashboard screens to reduce binary size and ensure a cohesive visual identity.
 
+### ⏰ Automatic & Recurring Transactions
+- **Automated Engine:** Evaluates and automatically generates scheduled transactions based on customizable recurrence intervals (days) and next execution dates.
+- **Management UX:** Interactive sheets for adding, updating, and triggering automatic transactions from settings.
+
 ### 📊 Advanced Budgets & Savings Goals
 - **Budgets:** Set category-specific monthly spending limits mapped to specific accounts, with automatic locks on currency and target amounts post-creation.
 - **Savings Goals:** Track financial progress with dedicated targets. Savings goals can be selected directly as destinations in transfers.
 - **Dynamic Recalculation:** Progress bars and spent percentages dynamically recalculate in real-time when transactions are added, edited, or deleted.
+- **Rolling 30-Day Statistics:** Dynamic balance, category distribution, and aggregation statistics are evaluated over a rolling 30-day window for instant dashboard trends.
 
 ### 🔍 Concurrent Filters & Analytical Charts
 - **Multi-Dimensional Search:** Filter transactions simultaneously by transaction type, category, date range, amount range, tag, and currency using reactive Drift query builders.

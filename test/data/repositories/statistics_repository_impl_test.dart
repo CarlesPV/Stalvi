@@ -36,9 +36,9 @@ void main() {
 
       when(
         mockDao.getPeriodSummaryAggregates(
-          startDate,
-          endDate,
-          targetCurrency,
+          startDate: startDate,
+          endDate: endDate,
+          targetCurrency: targetCurrency,
           accountId: null,
         ),
       ).thenAnswer(
@@ -65,9 +65,9 @@ void main() {
 
       when(
         mockDao.getPeriodSummaryAggregates(
-          startDate,
-          endDate,
-          targetCurrency,
+          startDate: startDate,
+          endDate: endDate,
+          targetCurrency: targetCurrency,
           accountId: 'a1',
         ),
       ).thenAnswer(

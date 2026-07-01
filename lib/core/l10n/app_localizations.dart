@@ -130,12 +130,11 @@ abstract class AppLocalizations {
   /// **'Income'**
   String get income;
 
-  ///// Label for plural positive financial incomes
-  ////
+  /// Label for income transactions (income is uncountable in English)
+  ///
   /// In en, this message translates to:
-  /// **'Incomes'**
+  /// **'Income'**
   String get incomes;
-
 
   /// Label for negative financial expense
   ///
@@ -1930,6 +1929,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Saved to {filePath}'**
   String exportSavedTo(String filePath);
+
+  /// Auto-generated
+  ///
+  /// In en, this message translates to:
+  /// **'Automatic Transactions'**
+  String get settingsAutomaticTransactions;
+
+  /// Auto-generated
+  ///
+  /// In en, this message translates to:
+  /// **'Create Automatic Transaction'**
+  String get createAutomaticTransaction;
+
+  /// Auto-generated
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot delete account because it has linked automatic transactions. Please delete them first.'**
+  String get deleteAccountHasAutomaticTransactions;
+
+  /// Auto-generated
+  ///
+  /// In en, this message translates to:
+  /// **'Recurrence (Days)'**
+  String get recurrenceDaysLabel;
+
+  /// Auto-generated
+  ///
+  /// In en, this message translates to:
+  /// **'Next Execution'**
+  String get nextExecution;
 }
 
 class _AppLocalizationsDelegate

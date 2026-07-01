@@ -1,14 +1,17 @@
 import 'package:stalvi/core/errors/app_exceptions.dart';
 import '../repositories/i_account_repository.dart';
 import '../repositories/i_budget_repository.dart';
+import '../repositories/i_automatic_transaction_repository.dart';
 
 class DeleteAccountUseCase {
   final IAccountRepository _accountRepository;
   final IBudgetRepository _budgetRepository;
+  final IAutomaticTransactionRepository _automaticTransactionRepository;
 
   DeleteAccountUseCase(
     this._accountRepository,
     this._budgetRepository,
+    this._automaticTransactionRepository,
   );
 
   Future<void> execute(String accountId) async {
@@ -18,6 +21,19 @@ class DeleteAccountUseCase {
       throw NotFoundException(
         message: 'Account with id "$accountId" not found',
         code: 'ACCOUNT_NOT_FOUND',
+      );
+    }
+
+    // Check for linked automatic transactions
+    final automaticTransactions =
+        await _automaticTransactionRepository.getAllAutomaticTransactions();
+    final hasLinkedAutomaticTxns =
+        automaticTransactions.any((t) => t.accountId == accountId);
+    if (hasLinkedAutomaticTxns) {
+      throw const ValidationException(
+        message:
+            'Cannot delete account because it is linked to one or more Automatic Transactions.',
+        code: 'ACCOUNT_HAS_AUTOMATIC_TRANSACTIONS',
       );
     }
 

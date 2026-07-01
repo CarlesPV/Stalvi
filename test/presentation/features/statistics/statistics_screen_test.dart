@@ -346,6 +346,14 @@ void main() {
         await tester.pump();
 
         for (final preset in StatisticsDatePreset.values) {
+          final chip = find.text(preset.label);
+          if (tester.any(chip) == false) {
+            await tester.drag(
+              find.byType(ListView).first,
+              const Offset(-300, 0),
+            );
+            await tester.pump(const Duration(milliseconds: 200));
+          }
           expect(find.text(preset.label), findsOneWidget);
         }
       },

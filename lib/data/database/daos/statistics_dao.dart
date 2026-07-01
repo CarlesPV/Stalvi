@@ -70,14 +70,18 @@ class StatisticsDao extends DatabaseAccessor<AppDatabase>
     });
   }
 
-  Future<PeriodSummary> getPeriodSummaryAggregates(
-    DateTime startDate,
-    DateTime endDate,
-    String targetCurrency, {
+  Future<PeriodSummary> getPeriodSummaryAggregates({
+    DateTime? startDate,
+    DateTime? endDate,
+    required String targetCurrency,
     String? accountId,
   }) async {
+    final now = DateTime.now();
+    final effectiveEnd = endDate ?? now;
+    final effectiveStart = startDate ?? now.subtract(const Duration(days: 30));
+
     var queryConditions =
-        transactions.date.isBetweenValues(startDate, endDate) &
+        transactions.date.isBetweenValues(effectiveStart, effectiveEnd) &
             transactions.isDeleted.equals(false) &
             accounts.isDeleted.equals(false);
 

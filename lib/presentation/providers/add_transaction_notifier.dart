@@ -22,6 +22,7 @@ class AddTransactionState {
   final String? currency;
   final String? tagId;
   final AsyncValue<void> submissionStatus;
+  final Map<String, String> errors;
 
   const AddTransactionState({
     required this.amountText,
@@ -34,6 +35,7 @@ class AddTransactionState {
     this.currency,
     this.tagId,
     required this.submissionStatus,
+    required this.errors,
   });
 
   factory AddTransactionState.initial() {
@@ -48,6 +50,7 @@ class AddTransactionState {
       currency: null,
       tagId: null,
       submissionStatus: const AsyncData<void>(null),
+      errors: const {},
     );
   }
 
@@ -62,6 +65,7 @@ class AddTransactionState {
     String? Function()? currency,
     String? Function()? tagId,
     AsyncValue<void>? submissionStatus,
+    Map<String, String>? errors,
   }) {
     return AddTransactionState(
       amountText: amountText ?? this.amountText,
@@ -74,6 +78,7 @@ class AddTransactionState {
       currency: currency != null ? currency() : this.currency,
       tagId: tagId != null ? tagId() : this.tagId,
       submissionStatus: submissionStatus ?? this.submissionStatus,
+      errors: errors ?? this.errors,
     );
   }
 }
@@ -134,7 +139,9 @@ class AddTransactionNotifier extends AutoDisposeNotifier<AddTransactionState> {
 
   /// Update the numeric string amount in the form state.
   void updateAmount(String text) {
-    state = state.copyWith(amountText: text);
+    final newErrors = Map<String, String>.from(state.errors);
+    newErrors.remove('amount');
+    state = state.copyWith(amountText: text, errors: newErrors);
   }
 
   /// Update the transaction type (income / expense / transfer) in the form state.
@@ -146,23 +153,37 @@ class AddTransactionNotifier extends AutoDisposeNotifier<AddTransactionState> {
         type: type,
         categoryId: () => null, // Reset selected category as its type changes
         toAccountIdFn: () => null, // Clear destination account if type changes
+        errors: const {}, // Completely clear form errors
+        submissionStatus:
+            const AsyncData<void>(null), // Reset submission status
       );
     }
   }
 
   /// Select account.
   void updateAccount(String accountId) {
-    state = state.copyWith(accountId: accountId);
+    final newErrors = Map<String, String>.from(state.errors);
+    newErrors.remove('accountId');
+    if (state.toAccountId != accountId) {
+      newErrors.remove('toAccountId');
+    }
+    state = state.copyWith(accountId: accountId, errors: newErrors);
   }
 
   /// Select destination account for transfers.
   void updateToAccount(String? toAccountId) {
-    state = state.copyWith(toAccountIdFn: () => toAccountId);
+    final newErrors = Map<String, String>.from(state.errors);
+    newErrors.remove('toAccountId');
+    state = state.copyWith(toAccountIdFn: () => toAccountId, errors: newErrors);
   }
 
   /// Select category.
   void updateCategory(String? categoryId) {
-    state = state.copyWith(categoryId: () => categoryId);
+    final newErrors = Map<String, String>.from(state.errors);
+    if (categoryId != null) {
+      newErrors.remove('categoryId');
+    }
+    state = state.copyWith(categoryId: () => categoryId, errors: newErrors);
   }
 
   /// Update notes.
@@ -172,12 +193,21 @@ class AddTransactionNotifier extends AutoDisposeNotifier<AddTransactionState> {
 
   /// Update date.
   void updateDate(DateTime date) {
-    state = state.copyWith(date: date);
+    final newErrors = Map<String, String>.from(state.errors);
+    final now = DateTime.now();
+    if (!date.isAfter(now)) {
+      newErrors.remove('date');
+    }
+    state = state.copyWith(date: date, errors: newErrors);
   }
 
   /// Update currency.
   void updateCurrency(String currency) {
-    state = state.copyWith(currency: () => currency);
+    final newErrors = Map<String, String>.from(state.errors);
+    if (currency.trim().isNotEmpty) {
+      newErrors.remove('currency');
+    }
+    state = state.copyWith(currency: () => currency, errors: newErrors);
   }
 
   /// Update tag.
@@ -192,92 +222,70 @@ class AddTransactionNotifier extends AutoDisposeNotifier<AddTransactionState> {
     final locale = ref.read(localeProvider);
     final l10n = lookupAppLocalizations(locale);
 
+    final validationErrors = <String, String>{};
+
     if (amountDouble == null || amountDouble <= 0) {
-      state = state.copyWith(
-        submissionStatus: AsyncValue.error(
-          ValidationException(
-            message: l10n.errorInvalidAmount,
-            code: 'INVALID_AMOUNT',
-          ),
-          StackTrace.current,
-        ),
-      );
-      return false;
+      validationErrors['amount'] = 'INVALID_AMOUNT';
     }
 
     if (state.accountId == null) {
-      state = state.copyWith(
-        submissionStatus: AsyncValue.error(
-          ValidationException(
-            message: l10n.errorAccountRequired,
-            code: 'ACCOUNT_REQUIRED',
-          ),
-          StackTrace.current,
-        ),
-      );
-      return false;
+      validationErrors['accountId'] = 'ACCOUNT_REQUIRED';
     }
 
     if (state.type == TransactionType.transfer) {
       if (state.toAccountId == null) {
-        state = state.copyWith(
-          submissionStatus: AsyncValue.error(
-            ValidationException(
-              message: l10n.errorDestinationAccountRequired,
-              code: 'TO_ACCOUNT_REQUIRED',
-            ),
-            StackTrace.current,
-          ),
-        );
-        return false;
-      }
-      if (state.accountId == state.toAccountId) {
-        state = state.copyWith(
-          submissionStatus: AsyncValue.error(
-            ValidationException(
-              message: l10n.errorSameAccountTransfer,
-              code: 'SAME_ACCOUNTS',
-            ),
-            StackTrace.current,
-          ),
-        );
-        return false;
+        validationErrors['toAccountId'] = 'TO_ACCOUNT_REQUIRED';
+      } else if (state.accountId == state.toAccountId) {
+        validationErrors['toAccountId'] = 'SAME_ACCOUNTS';
       }
     } else {
       if (state.categoryId == null) {
-        state = state.copyWith(
-          submissionStatus: AsyncValue.error(
-            ValidationException(
-              message: l10n.errorCategoryRequired,
-              code: 'CATEGORY_REQUIRED',
-            ),
-            StackTrace.current,
-          ),
-        );
-        return false;
+        validationErrors['categoryId'] = 'CATEGORY_REQUIRED';
       }
     }
 
     final now = DateTime.now();
     if (state.date.isAfter(now)) {
-      state = state.copyWith(
-        submissionStatus: AsyncValue.error(
-          ValidationException(
-            message: l10n.errorFutureDate,
-            code: 'FUTURE_DATE',
-          ),
-          StackTrace.current,
-        ),
-      );
-      return false;
+      validationErrors['date'] = 'FUTURE_DATE';
     }
 
     if (state.currency == null || state.currency!.trim().isEmpty) {
+      validationErrors['currency'] = 'CURRENCY_REQUIRED';
+    }
+
+    if (validationErrors.isNotEmpty) {
+      final firstKey = validationErrors.keys.first;
+      final firstCode = validationErrors[firstKey]!;
+      String message = '';
+      switch (firstCode) {
+        case 'INVALID_AMOUNT':
+          message = l10n.errorInvalidAmount;
+          break;
+        case 'ACCOUNT_REQUIRED':
+          message = l10n.errorAccountRequired;
+          break;
+        case 'TO_ACCOUNT_REQUIRED':
+          message = l10n.errorDestinationAccountRequired;
+          break;
+        case 'SAME_ACCOUNTS':
+          message = l10n.errorSameAccountTransfer;
+          break;
+        case 'CATEGORY_REQUIRED':
+          message = l10n.errorCategoryRequired;
+          break;
+        case 'FUTURE_DATE':
+          message = l10n.errorFutureDate;
+          break;
+        case 'CURRENCY_REQUIRED':
+          message = l10n.errorCurrencyRequired;
+          break;
+      }
       state = state.copyWith(
+        errors: validationErrors,
         submissionStatus: AsyncValue.error(
           ValidationException(
-            message: l10n.errorCurrencyRequired,
-            code: 'CURRENCY_REQUIRED',
+            message: message,
+            code: firstCode,
           ),
           StackTrace.current,
         ),
@@ -285,11 +293,14 @@ class AddTransactionNotifier extends AutoDisposeNotifier<AddTransactionState> {
       return false;
     }
 
-    state = state.copyWith(submissionStatus: const AsyncValue.loading());
+    state = state.copyWith(
+      errors: const {},
+      submissionStatus: const AsyncValue.loading(),
+    );
 
     try {
       final useCase = ref.read(addTransactionUseCaseProvider);
-      final cents = (amountDouble * 100).round();
+      final cents = (amountDouble! * 100).round();
 
       final id = const Uuid().v4();
       final trimmedNotes = state.notes.trim();

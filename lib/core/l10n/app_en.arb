@@ -20,9 +20,9 @@
   "@income": {
     "description": "Label for positive financial income"
   },
-  "incomes": "Incomes",
+  "incomes": "Income",
   "@incomes": {
-    "description": "Label for plural positive financial incomes"
+    "description": "Label for income transactions (income is uncountable in English)"
   },
   "expense": "Expense",
   "@expense": {
@@ -1308,5 +1308,25 @@
         "type": "String"
       }
     }
+  },
+  "settingsAutomaticTransactions": "Automatic Transactions",
+  "@settingsAutomaticTransactions": {
+    "description": "Auto-generated"
+  },
+  "createAutomaticTransaction": "Create Automatic Transaction",
+  "@createAutomaticTransaction": {
+    "description": "Auto-generated"
+  },
+  "deleteAccountHasAutomaticTransactions": "Cannot delete account because it has linked automatic transactions. Please delete them first.",
+  "@deleteAccountHasAutomaticTransactions": {
+    "description": "Auto-generated"
+  },
+  "recurrenceDaysLabel": "Recurrence (Days)",
+  "@recurrenceDaysLabel": {
+    "description": "Auto-generated"
+  },
+  "nextExecution": "Next Execution",
+  "@nextExecution": {
+    "description": "Auto-generated"
   }
 }

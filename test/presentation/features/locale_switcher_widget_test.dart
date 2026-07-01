@@ -92,7 +92,7 @@ class TestLocaleScreen extends StatelessWidget {
           Text(l10n.settings),
           Text(l10n.transactions),
           Text(l10n.addTransaction),
-          Text(l10n.income),
+          Text(l10n.incomes),
         ],
       ),
     );

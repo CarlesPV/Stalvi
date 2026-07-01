@@ -14,15 +14,15 @@ class StatisticsRepositoryImpl implements IStatisticsRepository {
 
   @override
   Future<PeriodSummary> getPeriodSummary({
-    required DateTime startDate,
-    required DateTime endDate,
+    DateTime? startDate,
+    DateTime? endDate,
     required String targetCurrency,
     String? accountId,
   }) async {
     return _dao.getPeriodSummaryAggregates(
-      startDate,
-      endDate,
-      targetCurrency,
+      startDate: startDate,
+      endDate: endDate,
+      targetCurrency: targetCurrency,
       accountId: accountId,
     );
   }

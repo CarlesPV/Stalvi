@@ -24,7 +24,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get income => 'Income';
 
   @override
-  String get incomes => 'Incomes';
+  String get incomes => 'Income';
 
   @override
   String get expense => 'Expense';
@@ -992,4 +992,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String exportSavedTo(String filePath) {
     return 'Saved to $filePath';
   }
+
+  @override
+  String get settingsAutomaticTransactions => 'Automatic Transactions';
+
+  @override
+  String get createAutomaticTransaction => 'Create Automatic Transaction';
+
+  @override
+  String get deleteAccountHasAutomaticTransactions =>
+      'Cannot delete account because it has linked automatic transactions. Please delete them first.';
+
+  @override
+  String get recurrenceDaysLabel => 'Recurrence (Days)';
+
+  @override
+  String get nextExecution => 'Next Execution';
 }

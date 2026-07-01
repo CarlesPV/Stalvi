@@ -469,11 +469,19 @@ This document lists the completed phases of the Stalvi development roadmap, prov
   - **Safe Category Deletion Domain Logic:** Updated the `DeleteAndReassignCategoryUseCase` logic to enforce type constraints: Expense categories can only be reassigned to other Expense or Custom categories; Income to Income or Custom; Custom categories can be reassigned to all other categories.
   - **UI Prompts and Dialogs:** Configured settings category deletion checks to identify if a category is actively in use by transactions. If true, the app prompts the user with an `AlertDialog` containing a filtered list of eligible replacement categories to execute the transaction reassignment atomically before deleting.
   - **Comprehensive Verification:** Wrote robust unit tests in `delete_and_reassign_category_usecase_test.dart` to cover the new filtering behaviors.
+### Phase 31: Automatic Transactions, Inline Validation, & Rolling 30-Day Stats
+* **Completion Date:** July 1, 2026
+* **Objective:** Implement recurring transaction evaluation engine and database tables for automatic transactions, develop interactive UI sheets, refactor transaction forms to support real-time inline validations, and calculate rolling 30-day dashboard summaries.
+* **Accomplishments:**
+  - **Automatic Transactions Engine:** Created new Drift database tables, models, and mappers. Developed a core evaluation use case scheduler evaluating next execution dates to generate transactions and auto-advance recurrence dates.
+  - **Inline Validation:** Refactored form inputs to trigger real-time inline validations, displaying distinct localized messages and dynamically clearing/resetting field errors as inputs change.
+  - **Rolling 30-Day Statistics:** Configured period summaries and balance trend statistics to evaluate over a rolling 30-day window for instant dashboard trends.
 * **Verification:**
   - 100% clean static analysis (`flutter analyze` with 0 issues).
-  - Executed the full unit and widget test suite with all tests passing successfully.
+  - Executed the full unit and widget test suite with all 414 tests passing successfully.
 
 ## Recent Updates
+- Implemented Automatic Transactions, Inline validations, and rolling 30-day stats (Phase 31).
 - Implemented Safe Category Deletion business logic, filtering rules, UI dialogs, and expanded test coverage (Phase 30).
 - Completed release preparation and UI optimization (Phase 29).
 - Populated legal documentation in English, Spanish, and Catalan inside `assets/legal/`.

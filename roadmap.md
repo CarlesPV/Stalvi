@@ -231,6 +231,14 @@
   - [x] Write and run unit test suites for deletion reassignment.
   - [x] Consolidate app branding by exclusively using `assets/icon/app_icon.png` across all screens (Splash, Auth, Dashboard), scaling dynamically.
   - [x] Audit and review translations across English, Spanish, and Catalan to ensure 100% accuracy.
-  - [ ] Publish apps to production tracks.
-  - [ ] Monitor crash rates and performance metrics.
-  - [ ] Establish feedback loop for post-launch adjustments.
+  - [x] Publish apps to production tracks.
+  - [x] Monitor crash rates and performance metrics.
+  - [x] Establish feedback loop for post-launch adjustments.
+
+- [x] **Phase 31: Automatic Transactions, Inline Validation, & Rolling 30-Day Stats**
+  - [x] Implement recurring transaction evaluation engine and database tables for automatic transactions.
+  - [x] Develop interactive UI sheets for adding, editing, and evaluating automatic transactions.
+  - [x] Refactor transaction creation form notifier to execute inline validations, clearing and resetting field errors dynamically as inputs change.
+  - [x] Implement rolling 30-day stats in statistics calculations for dashboard summaries.
+  - [x] Fully localize validation errors and automatic transactions elements in English, Spanish, and Catalan.
+  - [x] Fix compilation issues and test mocks, ensuring all unit and integration tests pass successfully.

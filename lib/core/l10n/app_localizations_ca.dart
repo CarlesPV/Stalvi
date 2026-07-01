@@ -1007,4 +1007,20 @@ class AppLocalizationsCa extends AppLocalizations {
   String exportSavedTo(String filePath) {
     return 'Desat a $filePath';
   }
+
+  @override
+  String get settingsAutomaticTransactions => 'Transaccions Automàtiques';
+
+  @override
+  String get createAutomaticTransaction => 'Crear Transacció Automàtica';
+
+  @override
+  String get deleteAccountHasAutomaticTransactions =>
+      'No es pot suprimir el compte perquè té transaccions automàtiques vinculades. Si us plau, suprimiu-les primer.';
+
+  @override
+  String get recurrenceDaysLabel => 'Recurrència (Dies)';
+
+  @override
+  String get nextExecution => 'Proper Execució';
 }

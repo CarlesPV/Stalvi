@@ -1220,6 +1220,8 @@ extension on StatisticsDatePreset {
   String getLocalizedLabel(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     switch (this) {
+      case StatisticsDatePreset.last30Days:
+        return 'Last 30 Days';
       case StatisticsDatePreset.thisMonth:
         return l10n.presetThisMonth;
       case StatisticsDatePreset.last3Months:

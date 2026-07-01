@@ -8,6 +8,7 @@ import 'package:stalvi/data/repositories/tag_repository.dart';
 import 'package:stalvi/data/repositories/profile_repository.dart';
 import 'package:stalvi/data/repositories/statistics_repository_impl.dart';
 import 'package:stalvi/data/repositories/transaction_repository.dart';
+import 'package:stalvi/data/repositories/automatic_transaction_repository.dart';
 import 'package:stalvi/data/repositories/exchange_rate_repository.dart';
 import 'package:stalvi/data/repositories/budget_repository.dart';
 import 'package:stalvi/data/repositories/savings_goal_repository.dart';
@@ -28,6 +29,7 @@ import 'package:stalvi/domain/repositories/i_category_repository.dart';
 import 'package:stalvi/domain/repositories/i_tag_repository.dart';
 import 'package:stalvi/domain/repositories/i_profile_repository.dart';
 import 'package:stalvi/domain/repositories/i_transaction_repository.dart';
+import 'package:stalvi/domain/repositories/i_automatic_transaction_repository.dart';
 import 'package:stalvi/domain/repositories/i_exchange_rate_repository.dart';
 import 'package:stalvi/domain/repositories/i_budget_repository.dart';
 import 'package:stalvi/domain/repositories/i_savings_goal_repository.dart';
@@ -85,6 +87,13 @@ final tagRepositoryProvider = Provider<ITagRepository>((ref) {
 final transactionRepositoryProvider = Provider<ITransactionRepository>((ref) {
   final db = ref.watch(appDatabaseProvider).requireValue;
   return TransactionRepository(db);
+});
+
+/// Provides the [IAutomaticTransactionRepository] implementation.
+final automaticTransactionRepositoryProvider =
+    Provider<IAutomaticTransactionRepository>((ref) {
+  final db = ref.watch(appDatabaseProvider).requireValue;
+  return AutomaticTransactionRepository(db);
 });
 
 /// Provides the [IBudgetRepository] implementation.
@@ -183,7 +192,8 @@ final createAccountUseCaseProvider = Provider<CreateAccountUseCase>((ref) {
 final deleteAccountUseCaseProvider = Provider<DeleteAccountUseCase>((ref) {
   final accountRepo = ref.watch(accountRepositoryProvider);
   final budgetRepo = ref.watch(budgetRepositoryProvider);
-  return DeleteAccountUseCase(accountRepo, budgetRepo);
+  final autoTxRepo = ref.watch(automaticTransactionRepositoryProvider);
+  return DeleteAccountUseCase(accountRepo, budgetRepo, autoTxRepo);
 });
 
 /// Provides the [UpdateAccountUseCase] instance.

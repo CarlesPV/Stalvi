@@ -59,6 +59,7 @@ class StatisticsFilter {
 
 /// Preset date ranges for the statistics filter chips.
 enum StatisticsDatePreset {
+  last30Days,
   thisMonth,
   last3Months,
   last6Months,
@@ -67,6 +68,8 @@ enum StatisticsDatePreset {
 
   String get label {
     switch (this) {
+      case last30Days:
+        return 'Last 30 Days';
       case thisMonth:
         return 'This Month';
       case last3Months:
@@ -83,6 +86,11 @@ enum StatisticsDatePreset {
   DateTimeRange toDateTimeRange() {
     final now = DateTime.now();
     switch (this) {
+      case last30Days:
+        return DateTimeRange(
+          start: now.subtract(const Duration(days: 30)),
+          end: now,
+        );
       case thisMonth:
         return DateTimeRange(
           start: DateTime(now.year, now.month, 1),
@@ -117,49 +125,14 @@ enum StatisticsDatePreset {
 
 /// Holds and mutates the active statistics filter state.
 class StatisticsFilterNotifier extends Notifier<StatisticsFilter> {
-  bool _hasInitializedDefaultAccount = false;
-
   @override
   StatisticsFilter build() {
-    const initialPreset = StatisticsDatePreset.thisMonth;
-
-    ref.listen<AsyncValue<List<Account>>>(accountsListProvider,
-        (previous, next) {
-      if (!_hasInitializedDefaultAccount) {
-        next.whenData((accounts) {
-          try {
-            final defaultAccount = accounts.firstWhere((a) => a.isDefault);
-            state = state.copyWith(accountIdFn: () => defaultAccount.id);
-            _hasInitializedDefaultAccount = true;
-          } catch (_) {
-            if (accounts.isNotEmpty) {
-              state = state.copyWith(accountIdFn: () => accounts.first.id);
-              _hasInitializedDefaultAccount = true;
-            }
-          }
-        });
-      }
-    });
-
-    final accountsAsync = ref.read(accountsListProvider);
-    String? initialAccountId;
-    accountsAsync.whenData((accounts) {
-      try {
-        final defaultAccount = accounts.firstWhere((a) => a.isDefault);
-        initialAccountId = defaultAccount.id;
-        _hasInitializedDefaultAccount = true;
-      } catch (_) {
-        if (accounts.isNotEmpty) {
-          initialAccountId = accounts.first.id;
-          _hasInitializedDefaultAccount = true;
-        }
-      }
-    });
+    const initialPreset = StatisticsDatePreset.last30Days;
 
     return StatisticsFilter(
       dateRange: initialPreset.toDateTimeRange(),
       preset: initialPreset,
-      accountId: initialAccountId,
+      accountId: null,
     );
   }
 

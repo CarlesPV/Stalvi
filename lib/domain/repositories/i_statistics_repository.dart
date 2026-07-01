@@ -4,8 +4,8 @@ import '../entities/category_statistic.dart';
 
 abstract class IStatisticsRepository {
   Future<PeriodSummary> getPeriodSummary({
-    required DateTime startDate,
-    required DateTime endDate,
+    DateTime? startDate,
+    DateTime? endDate,
     required String targetCurrency,
     String? accountId,
   });

@@ -20,6 +20,7 @@ import '../settings/profile_settings_screen.dart';
 import '../settings/categories_tags_management_screen.dart';
 import '../settings/data_management_screen.dart';
 import '../recycle_bin/recycle_bin_screen.dart';
+import '../settings/automatic_transactions_screen.dart' as stalvi_auto;
 import '../../widgets/empty_state_widget.dart';
 import '../../providers/discreet_mode_provider.dart';
 import '../../widgets/obfuscated_text.dart';
@@ -1036,7 +1037,7 @@ class _SettingsSkeletonTab extends ConsumerWidget {
 
     return ListView.separated(
       padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
-      itemCount: 5,
+      itemCount: 6,
       separatorBuilder: (_, __) => const SizedBox(height: 12),
       itemBuilder: (context, i) {
         if (i == 0) {
@@ -1146,6 +1147,55 @@ class _SettingsSkeletonTab extends ConsumerWidget {
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
+                    builder: (context) =>
+                        const stalvi_auto.AutomaticTransactionsScreen(),
+                  ),
+                );
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.autorenew_rounded,
+                      color: colorScheme.primary,
+                      size: 22,
+                    ),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Text(
+                        AppLocalizations.of(context)!
+                            .settingsAutomaticTransactions,
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.w700,
+                              color: colorScheme.onSurface,
+                            ),
+                      ),
+                    ),
+                    Icon(
+                      Icons.chevron_right_rounded,
+                      color:
+                          colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        }
+
+        if (i == 3) {
+          return Container(
+            height: 60,
+            decoration: BoxDecoration(
+              color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: InkWell(
+              borderRadius: BorderRadius.circular(14),
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
                     builder: (context) => const ProfileSettingsScreen(),
                   ),
                 );
@@ -1181,7 +1231,7 @@ class _SettingsSkeletonTab extends ConsumerWidget {
           );
         }
 
-        if (i == 3) {
+        if (i == 4) {
           return Container(
             height: 60,
             decoration: BoxDecoration(
@@ -1228,7 +1278,7 @@ class _SettingsSkeletonTab extends ConsumerWidget {
           );
         }
 
-        if (i == 4) {
+        if (i == 5) {
           return Container(
             height: 60,
             decoration: BoxDecoration(
@@ -1441,12 +1491,16 @@ class _BalanceCard extends ConsumerWidget {
                     totalBalance,
                     currencyCode: currency,
                   );
-                  return ObfuscatedText(
-                    balanceStr,
-                    style: theme.textTheme.headlineMedium?.copyWith(
-                      color: colorScheme.onPrimary,
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: -0.5,
+                  return FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerLeft,
+                    child: ObfuscatedText(
+                      balanceStr,
+                      style: theme.textTheme.headlineMedium?.copyWith(
+                        color: colorScheme.onPrimary,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: -0.5,
+                      ),
                     ),
                   );
                 },
@@ -1587,11 +1641,15 @@ class _StatCard extends ConsumerWidget {
                       100.0;
               final amountStr =
                   formatter.format(amount, currencyCode: currency);
-              return ObfuscatedText(
-                amountStr,
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w800,
-                  color: accentColor,
+              return FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerLeft,
+                child: ObfuscatedText(
+                  amountStr,
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w800,
+                    color: accentColor,
+                  ),
                 ),
               );
             },
