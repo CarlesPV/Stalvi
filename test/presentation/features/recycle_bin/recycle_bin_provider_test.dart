@@ -58,8 +58,10 @@ void main() {
       final sub = container.listen(recycleBinProvider, (_, __) {});
 
       // Wait for loading state
-      expect(container.read(recycleBinProvider),
-          const AsyncValue<List<TrashItem>>.loading());
+      expect(
+        container.read(recycleBinProvider),
+        const AsyncValue<List<TrashItem>>.loading(),
+      );
 
       // Emit items
       streamController.add(items);

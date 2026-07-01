@@ -661,18 +661,24 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                         items: [
                           DropdownMenuItem<String>(
                             value: 'en',
-                            child: Text(l10n.languageEnglish,
-                                style: const TextStyle(fontSize: 14)),
+                            child: Text(
+                              l10n.languageEnglish,
+                              style: const TextStyle(fontSize: 14),
+                            ),
                           ),
                           DropdownMenuItem<String>(
                             value: 'es',
-                            child: Text(l10n.languageSpanish,
-                                style: const TextStyle(fontSize: 14)),
+                            child: Text(
+                              l10n.languageSpanish,
+                              style: const TextStyle(fontSize: 14),
+                            ),
                           ),
                           DropdownMenuItem<String>(
                             value: 'ca',
-                            child: Text(l10n.languageCatalan,
-                                style: const TextStyle(fontSize: 14)),
+                            child: Text(
+                              l10n.languageCatalan,
+                              style: const TextStyle(fontSize: 14),
+                            ),
                           ),
                         ],
                       ),

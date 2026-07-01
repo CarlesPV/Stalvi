@@ -86,8 +86,10 @@ void main() {
               .captured;
       final updatedAutoTxn = captured.first as AutomaticTransaction;
 
-      expect(updatedAutoTxn.nextExecutionDate,
-          equals(pastDate.add(const Duration(days: 30))));
+      expect(
+        updatedAutoTxn.nextExecutionDate,
+        equals(pastDate.add(const Duration(days: 30))),
+      );
     });
 
     test(

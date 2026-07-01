@@ -24,6 +24,8 @@ import 'package:stalvi/domain/entities/profile.dart';
 import 'package:stalvi/domain/entities/budget.dart';
 import 'package:stalvi/domain/entities/savings_goal.dart';
 import 'package:stalvi/domain/entities/transaction.dart';
+import 'package:stalvi/domain/entities/transaction_type.dart';
+import 'package:stalvi/domain/entities/exchange_rate.dart';
 import 'package:stalvi/domain/repositories/i_account_repository.dart';
 import 'package:stalvi/domain/repositories/i_category_repository.dart';
 import 'package:stalvi/domain/repositories/i_tag_repository.dart';
@@ -248,6 +250,13 @@ final defaultProfileProvider = FutureProvider<Profile>((ref) async {
   return rows.first.toDomain();
 });
 
+/// Fetches the latest exchange rates for the given base currency.
+final latestExchangeRatesProvider = FutureProvider.family
+    .autoDispose<ExchangeRate?, String>((ref, baseCurrency) async {
+  final repo = ref.watch(exchangeRateRepositoryProvider);
+  return repo.getLocalRates(baseCurrency: baseCurrency);
+});
+
 /// Fetches the list of accounts associated with the default profile.
 final accountsListProvider = StreamProvider<List<Account>>((ref) async* {
   final profile = await ref.watch(defaultProfileProvider.future);
@@ -283,6 +292,46 @@ final transactionsStreamProvider = StreamProvider<List<Transaction>>((ref) {
 final rawTransactionsStreamProvider = StreamProvider<List<Transaction>>((ref) {
   final repo = ref.watch(transactionRepositoryProvider);
   return repo.watchRawTransactions();
+});
+
+/// Computes the real-time balance for a given account.
+final accountBalanceProvider =
+    Provider.family.autoDispose<AsyncValue<double>, String>((ref, accountId) {
+  final accountAsync = ref.watch(accountsListProvider);
+  final transactionsAsync = ref.watch(rawTransactionsStreamProvider);
+
+  if (accountAsync.isLoading || transactionsAsync.isLoading) {
+    return const AsyncLoading();
+  }
+  if (accountAsync.hasError) {
+    return AsyncError(accountAsync.error!, accountAsync.stackTrace!);
+  }
+  if (transactionsAsync.hasError) {
+    return AsyncError(transactionsAsync.error!, transactionsAsync.stackTrace!);
+  }
+
+  final account = accountAsync.value!.firstWhere((a) => a.id == accountId);
+  final transactions = transactionsAsync.value!;
+
+  double balance = account.initialBalance;
+  for (final tx in transactions) {
+    if (tx.accountId == accountId) {
+      if (tx.type == TransactionType.income) {
+        balance += tx.amount / 100.0;
+      } else if (tx.type == TransactionType.expense) {
+        balance -= tx.amount / 100.0;
+      } else if (tx.type == TransactionType.transfer) {
+        bool isOrigin = !tx.id.endsWith('_dst');
+        if (isOrigin) {
+          balance -= tx.amount / 100.0;
+        } else {
+          balance += tx.amount / 100.0;
+        }
+      }
+    }
+  }
+
+  return AsyncData(balance);
 });
 
 /// Fetches the list of all tags.

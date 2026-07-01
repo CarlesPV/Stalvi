@@ -29,6 +29,12 @@ class StatisticsDao extends DatabaseAccessor<AppDatabase>
     with _$StatisticsDaoMixin {
   StatisticsDao(super.db);
 
+  /// Generates a dynamic SQLite expression that calculates the converted transaction amount.
+  ///
+  /// Uses the following logic:
+  /// 1. If the transaction currency is already the target currency, use its original amount.
+  /// 2. If an exchange rate snapshot exists as a JSON string, extract the rates and convert.
+  /// 3. Otherwise, fall back to the pre-computed converted amount or the original amount.
   CustomExpression<double> _convertedAmountExpr(String targetCurrency) {
     return CustomExpression<double>('''
       CASE 
@@ -42,6 +48,9 @@ class StatisticsDao extends DatabaseAccessor<AppDatabase>
     ''');
   }
 
+  /// Watches the total net balance across all active (non-soft-deleted) accounts.
+  /// Conversions to the [targetCurrency] are done dynamically on the database side
+  /// using the exchange rate snapshots.
   Stream<double> watchGlobalBalance(String targetCurrency) {
     final convertedExpr = _convertedAmountExpr(targetCurrency);
     final balanceExpr = CustomExpression<double>('''
@@ -70,6 +79,8 @@ class StatisticsDao extends DatabaseAccessor<AppDatabase>
     });
   }
 
+  /// Watches Period Summary totals (Incomes vs Expenses) for a given date range.
+  /// Can be optionally filtered to a single account.
   Stream<PeriodSummary> watchPeriodSummaryAggregates({
     DateTime? startDate,
     DateTime? endDate,
@@ -80,6 +91,7 @@ class StatisticsDao extends DatabaseAccessor<AppDatabase>
     final effectiveEnd = endDate ?? now;
     final effectiveStart = startDate ?? now.subtract(const Duration(days: 30));
 
+    // Ensure we exclude soft-deleted transactions and transactions belonging to deleted accounts
     var queryConditions =
         transactions.date.isBetweenValues(effectiveStart, effectiveEnd) &
             transactions.isDeleted.equals(false) &

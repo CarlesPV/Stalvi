@@ -325,7 +325,13 @@ class CreateEditAutomaticTransactionNotifier extends AutoDisposeFamilyNotifier<
             targetDay = lastDayOfNextMonth;
           }
           return DateTime(
-              nextYear, nextMonth, targetDay, now.hour, now.minute, now.second);
+            nextYear,
+            nextMonth,
+            targetDay,
+            now.hour,
+            now.minute,
+            now.second,
+          );
         }
       }
 

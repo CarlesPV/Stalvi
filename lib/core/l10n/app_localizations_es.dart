@@ -32,9 +32,6 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
-  String get incomes => 'Ingresos';
-
-  @override
   String expense(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
@@ -1034,16 +1031,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String get createAutomaticTransaction => 'Crear Transacción Automática';
 
   @override
-  String get deleteAccountHasAutomaticTransactions =>
-      'No se puede eliminar la cuenta porque tiene transacciones automáticas vinculadas. Por favor elimínelas primero.';
-
-  @override
-  String get recurrenceDaysLabel => 'Recurrencia (Días)';
-
-  @override
-  String get nextExecution => 'Próxima Ejecución';
-
-  @override
   String get autoTxNewTemplate => 'Nueva Plantilla';
 
   @override
@@ -1084,10 +1071,6 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get autoTxRecurrenceApply => 'Aplicar';
-
-  @override
-  String get autoTxRecurrenceInvalidRange =>
-      'Por favor, introduce un número de días válido (1-365).';
 
   @override
   String get autoTxFormatWeekly => 'Semanal';

@@ -501,11 +501,23 @@ This document lists the completed phases of the Stalvi development roadmap, prov
   - **Soft-Delete for Auto-Transactions:** Built soft-deletion logic for automatic transactions. Trashed templates are moved to the Recycle Bin, disabled from generating new transactions, and purged after 30 days.
   - **Overflow Resolutions:** Fixed remaining ChoiceChip clippings, text truncations, and dialog window layout overflows on small mobile devices.
 * **Verification:**
-  - 100% clean static analysis (`flutter analyze` with 0 issues).
+  - 100% clean static analysis (`flutter analyze`) with 0 issues.
   - Executed the full automated test suite containing 446 unit and widget tests, achieving a 100% success rate (all tests passed!).
 
+### Phase 34: Final i18n Audit & Project Documentation Updates
+* **Completion Date:** July 1, 2026
+* **Objective:** Audit translation catalog coverage in presentation components, clean up unused localization strings, sync English, Spanish, and Catalan ARB bundles, and update project documentation (`README.md`, `roadmap.md`, `roadmap-summary.md`) to reflect release-ready state.
+* **Accomplishments:**
+  - **Localization Audit**: Replaced all remaining hardcoded strings in presentation files with dynamic localizations.
+  - **Unused Translation Cleanup**: Removed redundant localization keys (`incomes`, `deleteAccountHasAutomaticTransactions`, `recurrenceDaysLabel`, `nextExecution`, `autoTxRecurrenceInvalidRange`) from translation files and rebuilt localizations cleanly.
+  - **Documentation Updates**: Updated `README.md` and roadmaps to reflect all completed features, architecture, and verification stats.
+* **Verification:**
+  - 100% clean static analysis (`flutter analyze`) with 0 issues.
+  - Fully passing automated test suite (all 451 tests passed successfully!).
+
 ## Recent Updates
-- Completed final stabilization step, resolved all lints/compiler errors, and verified 100% pass rate on 446 automated tests (Phase 33).
+- Completed final cleanup of unused localization strings, synchronized ARB bundles, and updated documentation for Phase 34.
+- Completed final stabilization step, resolved all lints/compiler errors, and verified 100% pass rate on 451 automated tests (Phases 33 and 34).
 - Finalized Stabilization & Auto-Transactions with 100% test passing, static analysis fixed, and CI/CD/gitignore validated (Phase 32).
 - Implemented Automatic Transactions, Inline validations, and rolling 30-day stats (Phase 31).
 - Implemented Safe Category Deletion business logic, filtering rules, UI dialogs, and expanded test coverage (Phase 30).

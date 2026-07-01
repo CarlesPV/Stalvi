@@ -130,12 +130,6 @@ abstract class AppLocalizations {
   /// **'{count, plural, =1{Income} other{Incomes}}'**
   String income(int count);
 
-  /// Label for income transactions (income is uncountable in English)
-  ///
-  /// In en, this message translates to:
-  /// **'Income'**
-  String get incomes;
-
   /// Label for negative financial expense
   ///
   /// In en, this message translates to:
@@ -1948,24 +1942,6 @@ abstract class AppLocalizations {
   /// **'Create Automatic Transaction'**
   String get createAutomaticTransaction;
 
-  /// Auto-generated
-  ///
-  /// In en, this message translates to:
-  /// **'Cannot delete account because it has linked automatic transactions. Please delete them first.'**
-  String get deleteAccountHasAutomaticTransactions;
-
-  /// Auto-generated
-  ///
-  /// In en, this message translates to:
-  /// **'Recurrence (Days)'**
-  String get recurrenceDaysLabel;
-
-  /// Auto-generated
-  ///
-  /// In en, this message translates to:
-  /// **'Next Execution'**
-  String get nextExecution;
-
   /// FAB label on the Automatic Transactions list screen
   ///
   /// In en, this message translates to:
@@ -2049,12 +2025,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Apply'**
   String get autoTxRecurrenceApply;
-
-  /// Snackbar error when the custom recurrence value is outside the valid range
-  ///
-  /// In en, this message translates to:
-  /// **'Please enter a valid number of days (1-365).'**
-  String get autoTxRecurrenceInvalidRange;
 
   /// Short label for weekly recurrence shown on the list tile
   ///

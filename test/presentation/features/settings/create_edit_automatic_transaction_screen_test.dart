@@ -155,7 +155,7 @@ void main() {
 
     expect(find.text('Name is required'), findsOneWidget);
 
-    final nameField = find.byType(TextField).first;
+    final nameField = find.byType(TextField).at(1);
     await tester.scrollUntilVisible(
       nameField,
       50,
@@ -177,7 +177,7 @@ void main() {
     await tester.pumpWidget(createTestableWidget());
     await tester.pumpAndSettle();
 
-    final amountField = find.byType(TextField).at(1);
+    final amountField = find.byType(TextField).first;
     await tester.scrollUntilVisible(
       amountField,
       50,

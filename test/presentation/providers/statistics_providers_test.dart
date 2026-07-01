@@ -120,14 +120,24 @@ void main() {
 
     final mockExchangeRateRepo = MockExchangeRateRepository();
     when(() => mockExchangeRateRepo.getLocalRates(baseCurrency: 'EUR'))
-        .thenAnswer((_) async => ExchangeRate(
-            baseCurrency: 'EUR', date: DateTime.now(), rates: {'USD': 1.1}));
+        .thenAnswer(
+      (_) async => ExchangeRate(
+        baseCurrency: 'EUR',
+        date: DateTime.now(),
+        rates: {'USD': 1.1},
+      ),
+    );
 
     final container = ProviderContainer(
       overrides: [
         defaultProfileProvider.overrideWith((ref) => Future.value(profile)),
         accountsListProvider.overrideWith((ref) => Stream.value(accounts)),
         exchangeRateRepositoryProvider.overrideWithValue(mockExchangeRateRepo),
+        accountBalanceProvider.overrideWith((ref, accountId) {
+          if (accountId == 'acc1') return const AsyncData(100.0);
+          if (accountId == 'acc2') return const AsyncData(200.0);
+          return const AsyncData(0.0);
+        }),
       ],
     );
 

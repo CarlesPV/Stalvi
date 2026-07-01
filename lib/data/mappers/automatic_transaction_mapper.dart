@@ -36,16 +36,20 @@ class AutomaticTransactionMapper {
       currency: Value(model.currency),
       type: Value(_mapDomainTypeToDB(model.type)),
       accountId: Value(model.accountId),
-      categoryId: Value(model.categoryId),
-      tagId: Value(model.tagId),
-      notes: Value(model.notes),
+      categoryId: model.categoryId != null
+          ? Value(model.categoryId!)
+          : const Value.absent(),
+      tagId: model.tagId != null ? Value(model.tagId!) : const Value.absent(),
+      notes: model.notes != null ? Value(model.notes!) : const Value.absent(),
       recurrenceType: Value(model.recurrenceType),
       recurrenceDays: Value(model.recurrenceDays),
       nextExecutionDate: Value(model.nextExecutionDate),
       createdAt: Value(model.createdAt),
       isActive: Value(model.isActive),
       isDeleted: Value(model.isDeleted),
-      deletedAt: Value(model.deletedAt),
+      deletedAt: model.deletedAt != null
+          ? Value(model.deletedAt!)
+          : const Value.absent(),
     );
   }
 

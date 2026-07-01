@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:ffi';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:drift/drift.dart';
+import 'package:drift/drift.dart' hide isNull, isNotNull;
 import 'package:drift/native.dart';
 import 'package:stalvi/data/database/app_database.dart';
 import 'package:stalvi/data/database/tables/account_table.dart';
@@ -81,11 +81,15 @@ void main() {
     // Act
     await repository.createTransaction(tx);
 
-    // Assert: Balance should be 100 EUR + 50 EUR = 150 EUR
+    // Assert: Transaction is created, and account initialBalance is unchanged (reactive architecture)
+    final createdTx = await repository.getTransactionById('tx_1');
+    expect(createdTx, isNotNull);
+    expect(createdTx!.amount, 5400);
+
     final acc = await (db.select(db.accounts)
           ..where((a) => a.id.equals('acc_1')))
         .getSingle();
-    expect(acc.initialBalance, 150.0);
+    expect(acc.initialBalance, 100.0);
   });
 
   test('Transfer between identical currencies deducts and adds exact amount',
@@ -150,7 +154,12 @@ void main() {
       destinationTransaction: destTx,
     );
 
-    // Assert
+    // Assert: Transfer legs are created, and account initial balances are unchanged (reactive architecture)
+    final createdOrigin = await repository.getTransactionById('tx_transfer');
+    final createdDest = await repository.getTransactionById('tx_transfer_dst');
+    expect(createdOrigin, isNotNull);
+    expect(createdDest, isNotNull);
+
     final origin = await (db.select(db.accounts)
           ..where((a) => a.id.equals('acc_origin')))
         .getSingle();
@@ -158,8 +167,8 @@ void main() {
           ..where((a) => a.id.equals('acc_dest')))
         .getSingle();
 
-    expect(origin.initialBalance, 80.0); // 100 - 20
-    expect(dest.initialBalance, 70.0); // 50 + 20
+    expect(origin.initialBalance, 100.0);
+    expect(dest.initialBalance, 50.0);
   });
 
   test(
@@ -233,7 +242,12 @@ void main() {
       destinationTransaction: destTx,
     );
 
-    // Assert
+    // Assert: Transfer legs are created, and account initial balances are unchanged (reactive architecture)
+    final createdOrigin = await repository.getTransactionById('tx_cross');
+    final createdDest = await repository.getTransactionById('tx_cross_dst');
+    expect(createdOrigin, isNotNull);
+    expect(createdDest, isNotNull);
+
     final origin = await (db.select(db.accounts)
           ..where((a) => a.id.equals('acc_eur')))
         .getSingle();
@@ -241,7 +255,7 @@ void main() {
           ..where((a) => a.id.equals('acc_usd')))
         .getSingle();
 
-    expect(origin.initialBalance, 90.0); // 100 - 10
-    expect(dest.initialBalance, 60.8); // 50 + 10.8
+    expect(origin.initialBalance, 100.0);
+    expect(dest.initialBalance, 50.0);
   });
 }

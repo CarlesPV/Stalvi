@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:stalvi/data/database/tables/transaction_table.dart' as db
-    show TransactionType;
-
 import 'package:stalvi/domain/entities/category_statistic.dart';
 import 'package:stalvi/domain/entities/period_summary.dart';
+import 'package:stalvi/domain/entities/transaction.dart';
+import 'package:stalvi/domain/entities/transaction_type.dart';
+import 'package:stalvi/core/utils/currency_converter.dart';
 import 'package:stalvi/domain/use_cases/statistics/get_period_summary_use_case.dart';
 import 'package:stalvi/domain/use_cases/statistics/get_top_categories_use_case.dart';
 import 'repository_providers.dart';
@@ -169,45 +169,152 @@ final statisticsFilterProvider =
 /// Watches the current filter and emits a real-time [PeriodSummary] for the
 /// active date range. Backed by a Drift stream so any transaction insert /
 /// update / delete inside the period triggers a fresh emission automatically.
-final periodSummaryProvider = StreamProvider.autoDispose<PeriodSummary>((ref) {
+final periodSummaryProvider =
+    Provider.autoDispose<AsyncValue<PeriodSummary>>((ref) {
   final filter = ref.watch(statisticsFilterProvider);
   final targetCurrency = ref.watch(statisticsCurrencyProvider);
-  final repo = ref.watch(statisticsRepositoryProvider);
-  return repo.watchPeriodSummary(
-    startDate: filter.dateRange.start,
-    endDate: filter.dateRange.end,
-    targetCurrency: targetCurrency,
-    accountId: filter.accountId,
+
+  final transactionsAsync = ref.watch(transactionsStreamProvider);
+  final ratesAsync = ref.watch(latestExchangeRatesProvider(targetCurrency));
+
+  if (transactionsAsync.isLoading || ratesAsync.isLoading)
+    return const AsyncLoading();
+  if (transactionsAsync.hasError)
+    return AsyncError(transactionsAsync.error!, transactionsAsync.stackTrace!);
+
+  final transactions = transactionsAsync.value!;
+  final rates = ratesAsync.valueOrNull;
+
+  double totalIncome = 0;
+  double totalExpense = 0;
+
+  final start = filter.dateRange.start;
+  final end = filter.dateRange.end;
+  final effectiveEnd = DateTime(end.year, end.month, end.day, 23, 59, 59);
+
+  for (final tx in transactions) {
+    if (filter.accountId != null && tx.accountId != filter.accountId) continue;
+    if (tx.date.isBefore(start) || tx.date.isAfter(effectiveEnd)) continue;
+
+    final convertedAmount =
+        CurrencyConverter.convertAmount(tx, targetCurrency, rates) / 100.0;
+    if (tx.type == TransactionType.income) {
+      totalIncome += convertedAmount;
+    } else if (tx.type == TransactionType.expense) {
+      totalExpense += convertedAmount;
+    }
+  }
+
+  return AsyncData(
+    PeriodSummary(
+      totalIncome: (totalIncome * 100).round(),
+      totalExpense: (totalExpense * 100).round(),
+    ),
   );
 });
 
+List<CategoryStatistic> _calculateTopCategories(
+  List<Transaction> transactions,
+  StatisticsFilter filter,
+  String targetCurrency,
+  dynamic rates,
+  List<dynamic> categories,
+  TransactionType targetType,
+) {
+  final Map<String, double> categorySums = {};
+  final start = filter.dateRange.start;
+  final end = filter.dateRange.end;
+  final effectiveEnd = DateTime(end.year, end.month, end.day, 23, 59, 59);
+
+  for (final tx in transactions) {
+    if (tx.type != targetType) continue;
+    if (filter.accountId != null && tx.accountId != filter.accountId) continue;
+    if (tx.date.isBefore(start) || tx.date.isAfter(effectiveEnd)) continue;
+    if (tx.categoryId == null) continue;
+
+    final convertedAmount =
+        CurrencyConverter.convertAmount(tx, targetCurrency, rates) / 100.0;
+    categorySums[tx.categoryId!] =
+        (categorySums[tx.categoryId!] ?? 0) + convertedAmount;
+  }
+
+  final result = <CategoryStatistic>[];
+  for (final entry in categorySums.entries) {
+    final cat = categories
+        .cast<dynamic>()
+        .firstWhere((c) => c.id == entry.key, orElse: () => null);
+    if (cat == null) continue;
+    result.add(
+      CategoryStatistic(
+        categoryId: cat.id,
+        categoryName: cat.name,
+        categoryIcon: cat.icon,
+        categoryColor: cat.color,
+        totalAmount: (entry.value * 100).round(),
+      ),
+    );
+  }
+  result.sort((a, b) => b.totalAmount.compareTo(a.totalAmount));
+  return result;
+}
+
 /// Watches the current filter and emits a real-time top-expense category list.
 final topExpenseCategoriesProvider =
-    StreamProvider.autoDispose<List<CategoryStatistic>>((ref) {
+    Provider.autoDispose<AsyncValue<List<CategoryStatistic>>>((ref) {
   final filter = ref.watch(statisticsFilterProvider);
   final targetCurrency = ref.watch(statisticsCurrencyProvider);
-  final repo = ref.watch(statisticsRepositoryProvider);
-  return repo.watchTopCategories(
-    startDate: filter.dateRange.start,
-    endDate: filter.dateRange.end,
-    targetCurrency: targetCurrency,
-    type: db.TransactionType.expense,
-    accountId: filter.accountId,
+
+  final transactionsAsync = ref.watch(transactionsStreamProvider);
+  final categoriesAsync = ref.watch(categoriesListProvider);
+  final ratesAsync = ref.watch(latestExchangeRatesProvider(targetCurrency));
+
+  if (transactionsAsync.isLoading ||
+      categoriesAsync.isLoading ||
+      ratesAsync.isLoading) return const AsyncLoading();
+  if (transactionsAsync.hasError)
+    return AsyncError(transactionsAsync.error!, transactionsAsync.stackTrace!);
+  if (categoriesAsync.hasError)
+    return AsyncError(categoriesAsync.error!, categoriesAsync.stackTrace!);
+
+  return AsyncData(
+    _calculateTopCategories(
+      transactionsAsync.value!,
+      filter,
+      targetCurrency,
+      ratesAsync.valueOrNull,
+      categoriesAsync.value!,
+      TransactionType.expense,
+    ),
   );
 });
 
 /// Watches the current filter and emits a real-time top-income category list.
 final topIncomeCategoriesProvider =
-    StreamProvider.autoDispose<List<CategoryStatistic>>((ref) {
+    Provider.autoDispose<AsyncValue<List<CategoryStatistic>>>((ref) {
   final filter = ref.watch(statisticsFilterProvider);
   final targetCurrency = ref.watch(statisticsCurrencyProvider);
-  final repo = ref.watch(statisticsRepositoryProvider);
-  return repo.watchTopCategories(
-    startDate: filter.dateRange.start,
-    endDate: filter.dateRange.end,
-    targetCurrency: targetCurrency,
-    type: db.TransactionType.income,
-    accountId: filter.accountId,
+
+  final transactionsAsync = ref.watch(transactionsStreamProvider);
+  final categoriesAsync = ref.watch(categoriesListProvider);
+  final ratesAsync = ref.watch(latestExchangeRatesProvider(targetCurrency));
+
+  if (transactionsAsync.isLoading ||
+      categoriesAsync.isLoading ||
+      ratesAsync.isLoading) return const AsyncLoading();
+  if (transactionsAsync.hasError)
+    return AsyncError(transactionsAsync.error!, transactionsAsync.stackTrace!);
+  if (categoriesAsync.hasError)
+    return AsyncError(categoriesAsync.error!, categoriesAsync.stackTrace!);
+
+  return AsyncData(
+    _calculateTopCategories(
+      transactionsAsync.value!,
+      filter,
+      targetCurrency,
+      ratesAsync.valueOrNull,
+      categoriesAsync.value!,
+      TransactionType.income,
+    ),
   );
 });
 
@@ -227,29 +334,45 @@ final statisticsCurrencyProvider = Provider.autoDispose<String>((ref) {
 
 /// Calculates the global balance by summing the current balance of all accounts,
 /// converting each to the target currency using the real-time exchange rates.
-final globalBalanceProvider = FutureProvider.autoDispose<double>((ref) async {
-  final profile = await ref.watch(defaultProfileProvider.future);
-  final targetCurrency = profile.defaultCurrency;
+final globalBalanceProvider = Provider.autoDispose<AsyncValue<double>>((ref) {
+  final profileAsync = ref.watch(defaultProfileProvider);
+  if (profileAsync.isLoading) return const AsyncLoading();
+  if (profileAsync.hasError)
+    return AsyncError(profileAsync.error!, profileAsync.stackTrace!);
 
-  final accounts = await ref.watch(accountsListProvider.future);
-  final exchangeRateRepo = ref.watch(exchangeRateRepositoryProvider);
+  final targetCurrency = profileAsync.value!.defaultCurrency;
 
-  final rates =
-      await exchangeRateRepo.getLocalRates(baseCurrency: targetCurrency);
+  final accountsAsync = ref.watch(accountsListProvider);
+  if (accountsAsync.isLoading) return const AsyncLoading();
+  if (accountsAsync.hasError)
+    return AsyncError(accountsAsync.error!, accountsAsync.stackTrace!);
 
-  double balance = 0;
+  final accounts = accountsAsync.value!;
+
+  final ratesAsync = ref.watch(latestExchangeRatesProvider(targetCurrency));
+  if (ratesAsync.isLoading) return const AsyncLoading();
+
+  double totalBalance = 0;
+
   for (final account in accounts) {
+    final balanceAsync = ref.watch(accountBalanceProvider(account.id));
+    if (balanceAsync.isLoading) return const AsyncLoading();
+    if (balanceAsync.hasError)
+      return AsyncError(balanceAsync.error!, balanceAsync.stackTrace!);
+
+    double balance = balanceAsync.value!;
+
     if (account.currency == targetCurrency) {
-      balance += account.initialBalance;
+      totalBalance += balance;
     } else {
-      final rate = rates?.rateFor(account.currency);
+      final rate = ratesAsync.valueOrNull?.rateFor(account.currency);
       if (rate != null && rate != 0) {
-        balance += account.initialBalance / rate;
+        totalBalance += balance / rate;
       } else {
-        balance += account.initialBalance;
+        totalBalance += balance;
       }
     }
   }
 
-  return balance;
+  return AsyncData(totalBalance);
 });

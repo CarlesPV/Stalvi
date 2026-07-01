@@ -1,21 +1,21 @@
-# Active Task: Phase 34 - Reactive State Consolidation, UI/UX Refinement, and Production Readiness
-
-## Current Objective
-Finalize the application state management to ensure real-time statistic calculations across all modules, implement advanced recurrence logic for automatic transactions, polish UI elements (Splash screen, Recycle Bin), achieve 100% i18n coverage (EN, ES, CA), and optimize the codebase for zero CI/CD errors.
-
-## Sub-Tasks
-- [ ] **UI Polish**: Update splash screen to use `splash_icon.png` (rounded edges). 
-- [ ] **UI Polish**: Reorder Recycle Bin item subtitles (Expiration date first, then item type).
-- [ ] **Business Logic**: Upgrade automatic/recurring transactions to support Weekly (7 days), Monthly (30 days), Yearly (365 days), and Custom (Specific day of the month OR every X days).
-- [ ] **UI Logic**: Position custom field error messages directly below the input field inside the recurring transaction popup to prevent keyboard overlap.
-- [ ] **Reactive State**: Ensure all statistics (total balance, wallet balances, account stats) react instantly to any CRUD operation (including recycle bin restores/deletes) while respecting currency conversions.
-- [ ] **Localization**: Verify and complete missing translations across `app_en.arb`, `app_es.arb`, and `app_ca.arb` for all texts, buttons, and errors.
-- [ ] **Quality Assurance**: Ensure 100% passing rate for all unit/integration tests, GitHub Actions CI workflows, and `flutter analyze` (0 errors, 0 warnings, 0 info).
-- [ ] **Documentation**: Update `roadmap.md`, `README.md`, and inline documentation to reflect the final production-ready state.
-- [ ] **Optimization**: Execute a deep code cleanup (remove unused files, dead code, redundant comments, and orphan localization keys) to minimize app footprint. Re-verify tests post-cleanup.
+# Active Task: Phase 35 - Stabilization, Reactive Calculations, Bugfixing, and Final Polish
 
 ## Context
-- **Architecture**: Clean Architecture
-- **State Management**: Riverpod
-- **Database**: Drift + SQLCipher
-- **Current Status**: Pre-production polish. Code modifications must be written directly to the file system.
+Stalvi has reached Phase 34, completing core functionalities. The current focus is strictly on app stabilization, ensuring absolute real-time data consistency across all screens (especially with currency conversions), fixing existing UI/UX and database bugs in automatic transactions, and achieving a zero-warning codebase.
+
+## Current Objectives
+1. **Splash Screen Fix:** Ensure the app compiles with `splash_icon.png` as the native initial loading screen.
+2. **Reactive Financial Calculations:** Refactor Riverpod providers to listen to Drift Streams. All balances, total incomes, total expenses, and statistics must update instantly globally when any transaction is created, updated, or deleted, automatically applying currency conversions.
+3. **Automatic Transactions UI/UX:** Reorder the creation form (Name field between Amount and Account). Fix the recurrence radio button state mismatch (Custom vs. Standard options).
+4. **SQLite Bugfix:** Resolve the `SqliteException(1)` occurring during automatic transaction creation.
+5. **Quality Assurance:** Ensure 100% passing tests and completely clean outputs for `flutter analyze` (0 errors, 0 warnings, 0 info).
+6. **Documentation & Cleanup:** Update `roadmap.md`, `README.md`, and all inline documentation. Perform a deep cleanup of unused files, comments, and translation strings to optimize app size.
+
+## Actionable Steps
+- [ ] Execute native splash screen generation with `splash_icon.png`.
+- [ ] Implement reactive stream combinations (Drift + CurrencyConverter) in Riverpod providers for Dashboard and Accounts screens.
+- [ ] Refactor `CreateEditAutomaticTransactionScreen` UI layout and state management.
+- [ ] Debug and fix `automatic_transaction_dao.dart` or related mapper/entity logic causing the SQLite insert error.
+- [ ] Run `flutter analyze` and `flutter test`, fixing all issues recursively.
+- [ ] Clean up unused code/assets and update documentation files.
+- [ ] Final validation pipeline execution.

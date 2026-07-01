@@ -104,66 +104,20 @@ final _fakeIncomeCategories = [
   ),
 ];
 
-Stream<T> _makeShareable<T>(Stream<T> source) {
-  late StreamController<T> controller;
-  // ignore: cancel_subscriptions
-  StreamSubscription<T>? subscription;
-  T? lastValue;
-  bool hasValue = false;
-  Object? lastError;
-  StackTrace? lastStackTrace;
-  bool hasError = false;
-
-  controller = StreamController<T>.broadcast(
-    onListen: () {
-      if (hasValue) {
-        controller.add(lastValue as T);
-      } else if (hasError) {
-        controller.addError(lastError!, lastStackTrace);
-      }
-      subscription ??= source.listen(
-        (val) {
-          lastValue = val;
-          hasValue = true;
-          hasError = false;
-          controller.add(val);
-        },
-        onError: (err, stack) {
-          lastError = err;
-          lastStackTrace = stack;
-          hasError = true;
-          hasValue = false;
-          controller.addError(err, stack);
-        },
-        onDone: controller.close,
-      );
-    },
-    onCancel: () {
-      // Keep active
-    },
-  );
-
-  return controller.stream;
-}
-
 // ─── Widget factory ───────────────────────────────────────────────────────────
 
 /// Wraps [StatisticsScreen] inside a [ProviderScope] with overridden providers
 /// so no real database or use-cases are needed.
 Widget _buildTestWidget({
-  required Stream<PeriodSummary> summaryStream,
-  required Stream<List<CategoryStatistic>> expenseCatStream,
-  required Stream<List<CategoryStatistic>> incomeCatStream,
+  required AsyncValue<PeriodSummary> summaryState,
+  required AsyncValue<List<CategoryStatistic>> expenseCatState,
+  required AsyncValue<List<CategoryStatistic>> incomeCatState,
 }) {
-  final sharedSummary = _makeShareable(summaryStream);
-  final sharedExpense = _makeShareable(expenseCatStream);
-  final sharedIncome = _makeShareable(incomeCatStream);
-
   return ProviderScope(
     overrides: [
-      periodSummaryProvider.overrideWith((_) => sharedSummary),
-      topExpenseCategoriesProvider.overrideWith((_) => sharedExpense),
-      topIncomeCategoriesProvider.overrideWith((_) => sharedIncome),
+      periodSummaryProvider.overrideWith((ref) => summaryState),
+      topExpenseCategoriesProvider.overrideWith((ref) => expenseCatState),
+      topIncomeCategoriesProvider.overrideWith((ref) => incomeCatState),
     ],
     child: MaterialApp(
       theme: AppTheme.lightTheme,
@@ -193,10 +147,9 @@ void main() {
         // Arrange: futures that never resolve → AsyncValue.loading
         await tester.pumpWidget(
           _buildTestWidget(
-            summaryStream: StreamController<PeriodSummary>().stream,
-            expenseCatStream:
-                StreamController<List<CategoryStatistic>>().stream,
-            incomeCatStream: StreamController<List<CategoryStatistic>>().stream,
+            summaryState: const AsyncLoading<PeriodSummary>(),
+            expenseCatState: const AsyncLoading<List<CategoryStatistic>>(),
+            incomeCatState: const AsyncLoading<List<CategoryStatistic>>(),
           ),
         );
 
@@ -219,30 +172,20 @@ void main() {
     testWidgets(
       'shows inline error widget when periodSummaryProvider fails',
       (WidgetTester tester) async {
-        // Use a Completer so the error is delivered AFTER the widget tree is
-        // built, ensuring Riverpod catches it inside its own error zone.
-        // Directly passing Future.error() causes an unhandled async exception
-        // that the test runner intercepts before Riverpod can handle it.
-        final controller = StreamController<PeriodSummary>();
-
         await tester.pumpWidget(
           _buildTestWidget(
-            summaryStream: controller.stream,
-            expenseCatStream: Stream.value(_fakeExpenseCategories),
-            incomeCatStream: Stream.value(_fakeIncomeCategories),
+            summaryState: AsyncError<PeriodSummary>(
+                Exception('DB error'), StackTrace.empty),
+            expenseCatState: AsyncData(_fakeExpenseCategories),
+            incomeCatState: AsyncData(_fakeIncomeCategories),
           ),
         );
 
-        // Complete with error while widget is mounted — Riverpod catches it.
-        controller.addError(Exception('DB error'), StackTrace.empty);
-
         // Pump to let Riverpod rebuild the widget with the AsyncError state.
-        await tester.pump(const Duration(milliseconds: 200));
+        await tester.pump();
 
         // The _InlineError widget shows err.toString()
         expect(find.textContaining('DB error'), findsAtLeastNWidgets(1));
-
-        await controller.close();
       },
     );
 
@@ -252,9 +195,9 @@ void main() {
         // Arrange
         await tester.pumpWidget(
           _buildTestWidget(
-            summaryStream: Stream.value(_fakeSummary),
-            expenseCatStream: Stream.value(<CategoryStatistic>[]),
-            incomeCatStream: Stream.value(_fakeIncomeCategories),
+            summaryState: const AsyncData(_fakeSummary),
+            expenseCatState: const AsyncData(<CategoryStatistic>[]),
+            incomeCatState: AsyncData(_fakeIncomeCategories),
           ),
         );
 
@@ -273,9 +216,9 @@ void main() {
       (WidgetTester tester) async {
         await tester.pumpWidget(
           _buildTestWidget(
-            summaryStream: Stream.value(_fakeSummary),
-            expenseCatStream: Stream.value(_fakeExpenseCategories),
-            incomeCatStream: Stream.value(<CategoryStatistic>[]),
+            summaryState: const AsyncData(_fakeSummary),
+            expenseCatState: AsyncData(_fakeExpenseCategories),
+            incomeCatState: const AsyncData(<CategoryStatistic>[]),
           ),
         );
 
@@ -304,9 +247,9 @@ void main() {
         // Arrange
         await tester.pumpWidget(
           _buildTestWidget(
-            summaryStream: Stream.value(_fakeSummary),
-            expenseCatStream: Stream.value(_fakeExpenseCategories),
-            incomeCatStream: Stream.value(_fakeIncomeCategories),
+            summaryState: const AsyncData(_fakeSummary),
+            expenseCatState: AsyncData(_fakeExpenseCategories),
+            incomeCatState: AsyncData(_fakeIncomeCategories),
           ),
         );
 
@@ -345,9 +288,9 @@ void main() {
         // Income €5,000 > Expense €3,100 → Surplus
         await tester.pumpWidget(
           _buildTestWidget(
-            summaryStream: Stream.value(_fakeSummary),
-            expenseCatStream: Stream.value(_fakeExpenseCategories),
-            incomeCatStream: Stream.value(_fakeIncomeCategories),
+            summaryState: const AsyncData(_fakeSummary),
+            expenseCatState: AsyncData(_fakeExpenseCategories),
+            incomeCatState: AsyncData(_fakeIncomeCategories),
           ),
         );
 
@@ -367,9 +310,9 @@ void main() {
 
         await tester.pumpWidget(
           _buildTestWidget(
-            summaryStream: Stream.value(deficitSummary),
-            expenseCatStream: Stream.value(_fakeExpenseCategories),
-            incomeCatStream: Stream.value(_fakeIncomeCategories),
+            summaryState: const AsyncData(deficitSummary),
+            expenseCatState: AsyncData(_fakeExpenseCategories),
+            incomeCatState: AsyncData(_fakeIncomeCategories),
           ),
         );
 
@@ -386,9 +329,9 @@ void main() {
       (WidgetTester tester) async {
         await tester.pumpWidget(
           _buildTestWidget(
-            summaryStream: Stream.value(_fakeSummary),
-            expenseCatStream: Stream.value(_fakeExpenseCategories),
-            incomeCatStream: Stream.value(_fakeIncomeCategories),
+            summaryState: const AsyncData(_fakeSummary),
+            expenseCatState: AsyncData(_fakeExpenseCategories),
+            incomeCatState: AsyncData(_fakeIncomeCategories),
           ),
         );
 
@@ -413,9 +356,9 @@ void main() {
       (WidgetTester tester) async {
         await tester.pumpWidget(
           _buildTestWidget(
-            summaryStream: Stream.value(_fakeSummary),
-            expenseCatStream: Stream.value(_fakeExpenseCategories),
-            incomeCatStream: Stream.value(_fakeIncomeCategories),
+            summaryState: const AsyncData(_fakeSummary),
+            expenseCatState: AsyncData(_fakeExpenseCategories),
+            incomeCatState: AsyncData(_fakeIncomeCategories),
           ),
         );
 
@@ -437,9 +380,9 @@ void main() {
       (WidgetTester tester) async {
         await tester.pumpWidget(
           _buildTestWidget(
-            summaryStream: Stream.value(_fakeSummary),
-            expenseCatStream: Stream.value(_fakeExpenseCategories),
-            incomeCatStream: Stream.value(_fakeIncomeCategories),
+            summaryState: const AsyncData(_fakeSummary),
+            expenseCatState: AsyncData(_fakeExpenseCategories),
+            incomeCatState: AsyncData(_fakeIncomeCategories),
           ),
         );
 

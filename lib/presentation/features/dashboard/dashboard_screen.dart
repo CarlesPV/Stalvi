@@ -771,9 +771,12 @@ class _AccountItem extends ConsumerWidget {
     final accIcon = _getIconData(account.icon);
 
     final formatter = ref.watch(currencyFormatterProvider);
-    final balanceStr = formatter.format(
-      account.initialBalance,
-      currencyCode: account.currency,
+    final balanceAsync = ref.watch(accountBalanceProvider(account.id));
+    final balanceStr = balanceAsync.when(
+      data: (balance) =>
+          formatter.format(balance, currencyCode: account.currency),
+      loading: () => '...',
+      error: (_, __) => 'Error',
     );
 
     return GestureDetector(

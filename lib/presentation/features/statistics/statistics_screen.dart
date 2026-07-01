@@ -59,11 +59,11 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
       ref.invalidate(topIncomeCategoriesProvider);
 
       // Reading (not watching) subscribes to the provider and triggers the
-      // Future without rebuilding – the watch() calls in build() will pick up
+      // evaluation without rebuilding – the watch() calls in build() will pick up
       // the already-running future and show data as soon as it resolves.
-      ref.read(periodSummaryProvider.future).ignore();
-      ref.read(topExpenseCategoriesProvider.future).ignore();
-      ref.read(topIncomeCategoriesProvider.future).ignore();
+      ref.read(periodSummaryProvider);
+      ref.read(topExpenseCategoriesProvider);
+      ref.read(topIncomeCategoriesProvider);
     });
   }
 
