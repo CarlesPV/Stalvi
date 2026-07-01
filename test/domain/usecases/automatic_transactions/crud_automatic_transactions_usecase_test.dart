@@ -21,11 +21,14 @@ void main() {
     late ReadAutomaticTransactionUseCase readUseCase;
     late UpdateAutomaticTransactionUseCase updateUseCase;
     late DeleteAutomaticTransactionUseCase deleteUseCase;
+    late RestoreAutomaticTransactionUseCase restoreUseCase;
 
     final now = DateTime.now();
     final txn = AutomaticTransaction(
       id: '1',
+      name: 'Test txn',
       amount: 1000,
+      currency: 'EUR',
       type: TransactionType.expense,
       accountId: 'acc1',
       categoryId: null,
@@ -42,6 +45,7 @@ void main() {
       readUseCase = ReadAutomaticTransactionUseCase(repository);
       updateUseCase = UpdateAutomaticTransactionUseCase(repository);
       deleteUseCase = DeleteAutomaticTransactionUseCase(repository);
+      restoreUseCase = RestoreAutomaticTransactionUseCase(repository);
     });
 
     test('create execute calls repository', () async {
@@ -76,11 +80,40 @@ void main() {
       verify(() => repository.updateAutomaticTransaction(txn)).called(1);
     });
 
-    test('delete execute calls repository', () async {
-      when(() => repository.deleteAutomaticTransaction('1'))
-          .thenAnswer((_) async => null);
+    test('delete execute performs soft delete', () async {
+      when(() => repository.getAutomaticTransactionById('1'))
+          .thenAnswer((_) async => txn);
+      when(() => repository.updateAutomaticTransaction(any()))
+          .thenAnswer((_) async => txn);
+
       await deleteUseCase.execute('1');
-      verify(() => repository.deleteAutomaticTransaction('1')).called(1);
+
+      final captured =
+          verify(() => repository.updateAutomaticTransaction(captureAny()))
+              .captured;
+      final updatedTxn = captured.first as AutomaticTransaction;
+      expect(updatedTxn.isDeleted, isTrue);
+      expect(updatedTxn.isActive, isFalse);
+      expect(updatedTxn.deletedAt, isNotNull);
+    });
+
+    test('restore execute performs restore', () async {
+      final deletedTxn =
+          txn.copyWith(isDeleted: true, isActive: false, deletedAt: now);
+      when(() => repository.getAutomaticTransactionById('1'))
+          .thenAnswer((_) async => deletedTxn);
+      when(() => repository.updateAutomaticTransaction(any()))
+          .thenAnswer((_) async => deletedTxn);
+
+      await restoreUseCase.execute('1');
+
+      final captured =
+          verify(() => repository.updateAutomaticTransaction(captureAny()))
+              .captured;
+      final restoredTxn = captured.first as AutomaticTransaction;
+      expect(restoredTxn.isDeleted, isFalse);
+      expect(restoredTxn.isActive, isTrue);
+      expect(restoredTxn.deletedAt, isNull);
     });
   });
 }

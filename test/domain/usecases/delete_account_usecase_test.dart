@@ -35,7 +35,10 @@ void main() {
     mockBudgetRepo = MockBudgetRepository();
     mockAutomaticRepo = MockAutomaticTransactionRepository();
     usecase = DeleteAccountUseCase(
-        mockAccountRepo, mockBudgetRepo, mockAutomaticRepo);
+      mockAccountRepo,
+      mockBudgetRepo,
+      mockAutomaticRepo,
+    );
   });
 
   final testAccount = Account(
@@ -119,7 +122,9 @@ void main() {
   test('throws if account has linked automatic transactions', () async {
     final autoTxn = AutomaticTransaction(
       id: '1',
+      name: 'Test',
       amount: 1000,
+      currency: 'USD',
       type: TransactionType.expense,
       accountId: 'acc1',
       categoryId: null,

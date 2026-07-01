@@ -8,7 +8,9 @@ class AutomaticTransactionMapper {
   static AutomaticTransaction fromEntity(AutomaticTransactionEntity entity) {
     return AutomaticTransaction(
       id: entity.id,
+      name: entity.name,
       amount: entity.amount,
+      currency: entity.currency,
       type: _mapDbTypeToDomain(entity.type),
       accountId: entity.accountId,
       categoryId: entity.categoryId,
@@ -17,14 +19,20 @@ class AutomaticTransactionMapper {
       recurrenceDays: entity.recurrenceDays,
       nextExecutionDate: entity.nextExecutionDate,
       createdAt: entity.createdAt,
+      isActive: entity.isActive,
+      isDeleted: entity.isDeleted,
+      deletedAt: entity.deletedAt,
     );
   }
 
   static AutomaticTransactionsCompanion toCompanion(
-      AutomaticTransaction model) {
+    AutomaticTransaction model,
+  ) {
     return AutomaticTransactionsCompanion(
       id: Value(model.id),
+      name: Value(model.name),
       amount: Value(model.amount),
+      currency: Value(model.currency),
       type: Value(_mapDomainTypeToDB(model.type)),
       accountId: Value(model.accountId),
       categoryId: Value(model.categoryId),
@@ -33,11 +41,15 @@ class AutomaticTransactionMapper {
       recurrenceDays: Value(model.recurrenceDays),
       nextExecutionDate: Value(model.nextExecutionDate),
       createdAt: Value(model.createdAt),
+      isActive: Value(model.isActive),
+      isDeleted: Value(model.isDeleted),
+      deletedAt: Value(model.deletedAt),
     );
   }
 
   static db_table.TransactionType _mapDomainTypeToDB(
-      domain.TransactionType domainType) {
+    domain.TransactionType domainType,
+  ) {
     switch (domainType) {
       case domain.TransactionType.income:
         return db_table.TransactionType.income;
@@ -49,7 +61,8 @@ class AutomaticTransactionMapper {
   }
 
   static domain.TransactionType _mapDbTypeToDomain(
-      db_table.TransactionType dbType) {
+    db_table.TransactionType dbType,
+  ) {
     switch (dbType) {
       case db_table.TransactionType.income:
         return domain.TransactionType.income;

@@ -16,17 +16,27 @@
   "@addTransaction": {
     "description": "Button or title for adding a transaction"
   },
-  "income": "Income",
+  "income": "{count, plural, =1{Income} other{Incomes}}",
   "@income": {
-    "description": "Label for positive financial income"
+    "description": "Label for positive financial income",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
   "incomes": "Income",
   "@incomes": {
     "description": "Label for income transactions (income is uncountable in English)"
   },
-  "expense": "Expense",
+  "expense": "{count, plural, =1{Expense} other{Expenses}}",
   "@expense": {
-    "description": "Label for negative financial expense"
+    "description": "Label for negative financial expense",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
   "expenses": "Expenses",
   "@expenses": {
@@ -159,6 +169,10 @@
   "statisticsDeficit": "Deficit",
   "@statisticsDeficit": {
     "description": "Label for net balance deficit"
+  },
+  "presetLast30Days": "Last 30 Days",
+  "@presetLast30Days": {
+    "description": "Label for last 30 days date filter"
   },
   "presetThisMonth": "This Month",
   "@presetThisMonth": {

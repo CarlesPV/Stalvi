@@ -22,7 +22,19 @@ class RecycleBinNotifier extends StateNotifier<AsyncValue<List<TrashItem>>> {
     state = const AsyncValue.loading();
     try {
       final items = await _trashUsecases.getTrashItems();
-      state = AsyncValue.data(items);
+      final now = DateTime.now();
+      final updatedItems = items.map((item) {
+        final remaining = 30 - now.difference(item.deletedAt).inDays;
+        return TrashItem(
+          id: item.id,
+          name: item.name,
+          type: item.type,
+          daysRemaining: remaining,
+          deletedAt: item.deletedAt,
+          metadata: item.metadata,
+        );
+      }).toList();
+      state = AsyncValue.data(updatedItems);
     } catch (e, st) {
       state = AsyncValue.error(e, st);
     }

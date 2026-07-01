@@ -253,6 +253,10 @@ class ExportServiceImpl implements IExportService {
     Map<String, String> budgetCategoryNames = const {},
     List<SavingsGoal> savingsGoals = const [],
   }) async {
+    final incomeCount =
+        transactions.where((tx) => tx.type == TransactionType.income).length;
+    final expenseCount =
+        transactions.where((tx) => tx.type == TransactionType.expense).length;
     try {
       await initializeDateFormatting(l10n.localeName);
       final accountMap = {for (final a in accounts) a.id: a.name};
@@ -311,12 +315,12 @@ class ExportServiceImpl implements IExportService {
                 mainAxisAlignment: pw.MainAxisAlignment.spaceEvenly,
                 children: [
                   _pdfSummaryItem(
-                    l10n.income,
+                    l10n.income(incomeCount),
                     '$symbol ${_centsToDecimal(summary.totalIncome, l10n.localeName)} $defaultCurrency',
                     PdfColors.green800,
                   ),
                   _pdfSummaryItem(
-                    l10n.expenses,
+                    l10n.expense(expenseCount),
                     '$symbol ${_centsToDecimal(summary.totalExpense, l10n.localeName)} $defaultCurrency',
                     PdfColors.red800,
                   ),
@@ -381,9 +385,9 @@ class ExportServiceImpl implements IExportService {
                 return [
                   DateFormat(l10n.pdfDateFormat).format(tx.date),
                   tx.type == TransactionType.income
-                      ? l10n.income
+                      ? l10n.income(1)
                       : tx.type == TransactionType.expense
-                          ? l10n.expense
+                          ? l10n.expense(1)
                           : l10n.filterTransfer,
                   accountCell,
                   tx.categoryId != null
@@ -398,7 +402,14 @@ class ExportServiceImpl implements IExportService {
             pw.SizedBox(height: 20),
 
             // Income vs Expense Chart with 4 reference lines, labels on left
-            _buildIncomeExpenseChart(summary, l10n, symbol, defaultCurrency),
+            _buildIncomeExpenseChart(
+              summary,
+              l10n,
+              symbol,
+              defaultCurrency,
+              incomeCount: incomeCount,
+              expenseCount: expenseCount,
+            ),
 
             // Top Spending Categories Chart
             if (topExpenseCategories.isNotEmpty)
@@ -637,8 +648,10 @@ class ExportServiceImpl implements IExportService {
     PeriodSummary summary,
     AppLocalizations l10n,
     String currencySymbol,
-    String defaultCurrency,
-  ) {
+    String defaultCurrency, {
+    required int incomeCount,
+    required int expenseCount,
+  }) {
     // Chart drawing area constants
     const double chartLeft = 60.0; // left margin reserved for scale labels
     const double chartRight = 300.0;
@@ -773,7 +786,7 @@ class ExportServiceImpl implements IExportService {
                     width: chartWidth / 2,
                     alignment: pw.Alignment.center,
                     child: pw.Text(
-                      l10n.income,
+                      l10n.income(incomeCount),
                       style: pw.TextStyle(
                         fontSize: 8,
                         fontWeight: pw.FontWeight.bold,
@@ -784,7 +797,7 @@ class ExportServiceImpl implements IExportService {
                     width: chartWidth / 2,
                     alignment: pw.Alignment.center,
                     child: pw.Text(
-                      l10n.expenses,
+                      l10n.expense(expenseCount),
                       style: pw.TextStyle(
                         fontSize: 8,
                         fontWeight: pw.FontWeight.bold,

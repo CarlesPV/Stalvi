@@ -23,8 +23,14 @@ final deleteAutomaticTransactionUseCaseProvider = Provider((ref) {
   return DeleteAutomaticTransactionUseCase(repo);
 });
 
+final restoreAutomaticTransactionUseCaseProvider = Provider((ref) {
+  final repo = ref.watch(automaticTransactionRepositoryProvider);
+  return RestoreAutomaticTransactionUseCase(repo);
+});
+
 final automaticTransactionsListProvider =
     FutureProvider<List<AutomaticTransaction>>((ref) async {
   final readUseCase = ref.watch(readAutomaticTransactionUseCaseProvider);
-  return readUseCase.executeAll();
+  final all = await readUseCase.executeAll();
+  return all.where((txn) => !txn.isDeleted).toList();
 });

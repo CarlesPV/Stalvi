@@ -10,10 +10,11 @@ part 'automatic_transaction_dao.g.dart';
 @DriftAccessor(tables: [AutomaticTransactions, Accounts, Categories, Tags])
 class AutomaticTransactionDao extends DatabaseAccessor<AppDatabase>
     with _$AutomaticTransactionDaoMixin {
-  AutomaticTransactionDao(AppDatabase db) : super(db);
+  AutomaticTransactionDao(super.db);
 
   Future<int> insertAutomaticTransaction(
-      AutomaticTransactionsCompanion companion) {
+    AutomaticTransactionsCompanion companion,
+  ) {
     return into(automaticTransactions).insert(companion);
   }
 
@@ -27,7 +28,8 @@ class AutomaticTransactionDao extends DatabaseAccessor<AppDatabase>
   }
 
   Future<bool> updateAutomaticTransaction(
-      AutomaticTransactionsCompanion companion) {
+    AutomaticTransactionsCompanion companion,
+  ) {
     return update(automaticTransactions).replace(companion);
   }
 

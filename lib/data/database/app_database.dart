@@ -31,7 +31,6 @@ import 'daos/trash_dao.dart';
 import 'tables/exchange_rate_table.dart';
 import 'daos/exchange_rate_dao.dart';
 import 'daos/budget_dao.dart';
-import 'daos/budget_dao.dart';
 import 'daos/savings_goal_dao.dart';
 import 'tables/automatic_transaction_table.dart';
 import 'daos/automatic_transaction_dao.dart';
@@ -97,7 +96,7 @@ class AppDatabase extends _$AppDatabase {
 
   /// Bump this version whenever you add, modify, or remove tables.
   @override
-  int get schemaVersion => 9;
+  int get schemaVersion => 10;
 
   @override
   MigrationStrategy get migration {
@@ -160,22 +159,34 @@ class AppDatabase extends _$AppDatabase {
         );
       },
       onUpgrade: (Migrator m, int from, int to) async {
+        bool createdTransactions = false;
+        bool createdSavingsGoals = false;
+        bool createdAutomaticTransactions = false;
+
         if (from < 2) {
           await m.createTable(transactions);
+          createdTransactions = true;
         }
         if (from < 3) {
           await m.createTable(budgets);
           await m.createTable(savingsGoals);
+          createdSavingsGoals = true;
         }
         if (from < 4) {
-          await m.addColumn(transactions, transactions.isDeleted);
+          if (!createdTransactions) {
+            await m.addColumn(transactions, transactions.isDeleted);
+          }
         }
         if (from < 5) {
-          await m.addColumn(transactions, transactions.transferId);
+          if (!createdTransactions) {
+            await m.addColumn(transactions, transactions.transferId);
+          }
         }
         if (from < 6) {
           await m.createTable(exchangeRates);
-          await m.addColumn(transactions, transactions.exchangeRateSnapshot);
+          if (!createdTransactions) {
+            await m.addColumn(transactions, transactions.exchangeRateSnapshot);
+          }
         }
         if (from < 7) {
           final existingRates = await select(exchangeRates).get();
@@ -189,10 +200,23 @@ class AppDatabase extends _$AppDatabase {
           );
         }
         if (from < 8) {
-          await m.addColumn(savingsGoals, savingsGoals.currency);
+          if (!createdSavingsGoals) {
+            await m.addColumn(savingsGoals, savingsGoals.currency);
+          }
         }
         if (from < 9) {
           await m.createTable(automaticTransactions);
+          createdAutomaticTransactions = true;
+        }
+        if (from < 10) {
+          if (!createdAutomaticTransactions) {
+            await m.addColumn(
+                automaticTransactions, automaticTransactions.name);
+            await m.addColumn(
+              automaticTransactions,
+              automaticTransactions.currency,
+            );
+          }
         }
       },
     );

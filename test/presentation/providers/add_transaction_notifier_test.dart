@@ -420,8 +420,10 @@ void main() {
       notifier.updateAmount('12.50');
       state = container.read(addTransactionNotifierProvider);
       expect(state.errors.containsKey('amount'), isFalse);
-      expect(state.errors.containsKey('categoryId'),
-          isTrue); // category error still there
+      expect(
+        state.errors.containsKey('categoryId'),
+        isTrue,
+      ); // category error still there
 
       // Update category -> should clear category error
       notifier.updateCategory(testCategory.id);

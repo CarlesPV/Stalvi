@@ -42,7 +42,9 @@ void main() {
 
       final autoTxn = AutomaticTransaction(
         id: '1',
+        name: 'Test',
         amount: 1000,
+        currency: 'USD',
         type: TransactionType.expense,
         accountId: 'acc1',
         categoryId: null,
@@ -84,7 +86,9 @@ void main() {
 
       final autoTxn = AutomaticTransaction(
         id: '1',
+        name: 'Test',
         amount: 1000,
+        currency: 'USD',
         type: TransactionType.expense,
         accountId: 'acc1',
         categoryId: null,

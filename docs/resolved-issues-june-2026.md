@@ -323,3 +323,6 @@ SQL-based database aggregation is incapable of parsing dynamic JSON objects (spe
 - **Localization:** Removed unused translation keys (`setAsDefaultAccount`, `setAsDefaultAccountSuccess`, `setAsDefaultAccountError`, `editAccountDetails`, `markAccountAsDefault`, `alreadyDefaultAccount`) from `app_ca.arb`, `app_en.arb`, and `app_es.arb` to optimize file sizes.
 - **Validation:** Ensured all 396 tests and static analysis pass cleanly without any errors.
 
+## 2026-07-01 - Hotfix: Drift Migration and Splash Screen Icon
+- **Database Bug:** Fixed a critical bug in `AppDatabase` `onUpgrade` where Drift's `createTable` (which automatically includes all columns in the latest schema) was immediately followed by `addColumn` calls in the same migration run, resulting in a duplicate column `OperationalError` causing full app crash. Refactored migration to track newly created tables using boolean flags and bypass duplicate column additions.
+- **UI Tweaks:** Changed the splash screen icon rendering in `splash_screen.dart` from `BoxFit.contain` to `BoxFit.cover` inside a rounded `ClipRRect` to ensure it completely fills the space and properly renders as a square with rounded borders.

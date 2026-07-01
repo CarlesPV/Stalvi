@@ -111,16 +111,24 @@ class _TrashItemTile extends ConsumerWidget {
       return '$nameStr - $formattedAmt';
     }
 
+    final remainingDays = 30 - DateTime.now().difference(item.deletedAt).inDays;
+
     return ListTile(
       leading: CircleAvatar(
         backgroundColor: Colors.grey.shade300,
         child: Icon(getIconForType(), color: Colors.grey.shade700),
       ),
-      title: Text(getFormattedTitle()),
+      title: Text(
+        getFormattedTitle(),
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      ),
       subtitle: Text(
-        '${getTypeLabel()} • ${l10n.recycleBinDaysRemaining(item.daysRemaining)}',
+        '${getTypeLabel()} • ${l10n.recycleBinDaysRemaining(remainingDays)}',
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
         style: TextStyle(
-          color: item.daysRemaining <= 3 ? Colors.red : Colors.grey,
+          color: remainingDays <= 3 ? Colors.red : Colors.grey,
         ),
       ),
       trailing: Row(

@@ -1,5 +1,3 @@
-import 'package:drift/drift.dart';
-import 'package:stalvi/core/errors/app_exceptions.dart';
 import '../database/app_database.dart' as db;
 import '../mappers/automatic_transaction_mapper.dart';
 import '../../domain/entities/automatic_transaction.dart';
@@ -13,7 +11,8 @@ class AutomaticTransactionRepository
 
   @override
   Future<AutomaticTransaction> createAutomaticTransaction(
-      AutomaticTransaction transaction) async {
+    AutomaticTransaction transaction,
+  ) async {
     final companion = AutomaticTransactionMapper.toCompanion(transaction);
     await _db.automaticTransactionDao.insertAutomaticTransaction(companion);
     return transaction;
@@ -35,7 +34,8 @@ class AutomaticTransactionRepository
 
   @override
   Future<AutomaticTransaction> updateAutomaticTransaction(
-      AutomaticTransaction transaction) async {
+    AutomaticTransaction transaction,
+  ) async {
     final companion = AutomaticTransactionMapper.toCompanion(transaction);
     await _db.automaticTransactionDao.updateAutomaticTransaction(companion);
     return transaction;

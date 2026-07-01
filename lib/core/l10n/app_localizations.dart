@@ -127,8 +127,8 @@ abstract class AppLocalizations {
   /// Label for positive financial income
   ///
   /// In en, this message translates to:
-  /// **'Income'**
-  String get income;
+  /// **'{count, plural, =1{Income} other{Incomes}}'**
+  String income(int count);
 
   /// Label for income transactions (income is uncountable in English)
   ///
@@ -139,8 +139,8 @@ abstract class AppLocalizations {
   /// Label for negative financial expense
   ///
   /// In en, this message translates to:
-  /// **'Expense'**
-  String get expense;
+  /// **'{count, plural, =1{Expense} other{Expenses}}'**
+  String expense(int count);
 
   /// Label for plural negative financial expenses
   ///
@@ -339,6 +339,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Deficit'**
   String get statisticsDeficit;
+
+  /// Label for last 30 days date filter
+  ///
+  /// In en, this message translates to:
+  /// **'Last 30 Days'**
+  String get presetLast30Days;
 
   /// Label for this month date filter
   ///

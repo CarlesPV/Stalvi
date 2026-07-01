@@ -45,6 +45,7 @@ class TrashDao extends DatabaseAccessor<AppDatabase> with _$TrashDaoMixin {
           name: displayName,
           type: TrashItemType.transaction,
           daysRemaining: 30 - now.difference(t.modifiedAt).inDays,
+          deletedAt: t.modifiedAt,
           metadata: {
             'amount': t.amount,
             'txType': t.type.index,
@@ -65,6 +66,7 @@ class TrashDao extends DatabaseAccessor<AppDatabase> with _$TrashDaoMixin {
           name: c.name,
           type: TrashItemType.category,
           daysRemaining: 30 - now.difference(c.modifiedAt).inDays,
+          deletedAt: c.modifiedAt,
         ),
       );
     }
@@ -79,6 +81,7 @@ class TrashDao extends DatabaseAccessor<AppDatabase> with _$TrashDaoMixin {
           name: a.name,
           type: TrashItemType.account,
           daysRemaining: 30 - now.difference(a.modifiedAt).inDays,
+          deletedAt: a.modifiedAt,
         ),
       );
     }
@@ -92,7 +95,9 @@ class TrashDao extends DatabaseAccessor<AppDatabase> with _$TrashDaoMixin {
           id: b.id,
           name: 'Budget',
           type: TrashItemType.budget,
-          daysRemaining: 30 - now.difference(b.modifiedAt).inDays,
+          daysRemaining:
+              30 - now.difference(b.deletedAt ?? b.modifiedAt).inDays,
+          deletedAt: b.deletedAt ?? b.modifiedAt,
         ),
       );
     }
@@ -107,7 +112,9 @@ class TrashDao extends DatabaseAccessor<AppDatabase> with _$TrashDaoMixin {
           id: s.id,
           name: s.name,
           type: TrashItemType.savingsGoal,
-          daysRemaining: 30 - now.difference(s.modifiedAt).inDays,
+          daysRemaining:
+              30 - now.difference(s.deletedAt ?? s.modifiedAt).inDays,
+          deletedAt: s.deletedAt ?? s.modifiedAt,
         ),
       );
     }

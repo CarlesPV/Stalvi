@@ -1,5 +1,4 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:drift/drift.dart';
 import 'package:stalvi/data/mappers/automatic_transaction_mapper.dart';
 import 'package:stalvi/domain/entities/automatic_transaction.dart';
 import 'package:stalvi/domain/entities/transaction_type.dart';
@@ -11,7 +10,9 @@ void main() {
     final now = DateTime.now();
     final entity = AutomaticTransactionEntity(
       id: '1',
+      name: 'Test',
       amount: 1000,
+      currency: 'USD',
       type: db_table.TransactionType.expense,
       accountId: 'acc1',
       categoryId: 'cat1',
@@ -20,11 +21,15 @@ void main() {
       recurrenceDays: 30,
       nextExecutionDate: now,
       createdAt: now,
+      isActive: true,
+      isDeleted: false,
     );
 
     final model = AutomaticTransaction(
       id: '1',
+      name: 'Test',
       amount: 1000,
+      currency: 'USD',
       type: TransactionType.expense,
       accountId: 'acc1',
       categoryId: 'cat1',

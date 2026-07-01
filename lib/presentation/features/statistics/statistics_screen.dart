@@ -419,7 +419,7 @@ class _SummarySection extends ConsumerWidget {
             Expanded(
               child: _SummaryCardSkeleton(
                 shimmer: shimmer,
-                label: AppLocalizations.of(context)!.income,
+                label: AppLocalizations.of(context)!.income(1),
                 accentColor: financialColors.positive,
               ),
             ),
@@ -443,7 +443,7 @@ class _SummarySection extends ConsumerWidget {
               children: [
                 Expanded(
                   child: _SummaryCard(
-                    label: AppLocalizations.of(context)!.income,
+                    label: AppLocalizations.of(context)!.income(1),
                     amount: summary.totalIncome / 100.0,
                     icon: Icons.trending_up_rounded,
                     accentColor: financialColors.positive,
@@ -1221,7 +1221,7 @@ extension on StatisticsDatePreset {
     final l10n = AppLocalizations.of(context)!;
     switch (this) {
       case StatisticsDatePreset.last30Days:
-        return 'Last 30 Days';
+        return l10n.presetLast30Days;
       case StatisticsDatePreset.thisMonth:
         return l10n.presetThisMonth;
       case StatisticsDatePreset.last3Months:

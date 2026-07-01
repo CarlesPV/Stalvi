@@ -288,6 +288,18 @@ class _OverviewTab extends ConsumerWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final transactionsAsync = ref.watch(transactionsStreamProvider);
+    final transactions = transactionsAsync.valueOrNull ?? [];
+    final now = DateTime.now();
+    final thirtyDaysAgo = now.subtract(const Duration(days: 30));
+    final last30DaysTxns = transactions.where(
+      (tx) =>
+          tx.date.isAfter(thirtyDaysAgo) ||
+          tx.date.isAtSameMomentAs(thirtyDaysAgo),
+    );
+    final incomeCount =
+        last30DaysTxns.where((tx) => tx.type == TransactionType.income).length;
+    final expenseCount =
+        last30DaysTxns.where((tx) => tx.type == TransactionType.expense).length;
 
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
@@ -308,7 +320,7 @@ class _OverviewTab extends ConsumerWidget {
             children: [
               Expanded(
                 child: _StatCard(
-                  label: AppLocalizations.of(context)!.income,
+                  label: AppLocalizations.of(context)!.income(incomeCount),
                   icon: Icons.trending_up_rounded,
                   accentColor: financialColors.positive,
                   shimmer: shimmer,
@@ -320,7 +332,7 @@ class _OverviewTab extends ConsumerWidget {
               const SizedBox(width: 12),
               Expanded(
                 child: _StatCard(
-                  label: AppLocalizations.of(context)!.expenses,
+                  label: AppLocalizations.of(context)!.expense(expenseCount),
                   icon: Icons.trending_down_rounded,
                   accentColor: financialColors.negative,
                   shimmer: shimmer,
@@ -1534,7 +1546,6 @@ class _BalanceCard extends ConsumerWidget {
             },
           ),
           const SizedBox(height: 20),
-          // Mini month label
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
             decoration: BoxDecoration(
@@ -1542,8 +1553,7 @@ class _BalanceCard extends ConsumerWidget {
               borderRadius: BorderRadius.circular(50),
             ),
             child: Text(
-              DateFormat.yMMMM(Localizations.localeOf(context).toString())
-                  .format(DateTime(2026, 6)),
+              AppLocalizations.of(context)!.presetLast30Days,
               style: theme.textTheme.labelSmall?.copyWith(
                 color: colorScheme.onPrimary.withValues(alpha: 0.85),
                 fontWeight: FontWeight.w600,

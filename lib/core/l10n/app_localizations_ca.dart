@@ -21,13 +21,29 @@ class AppLocalizationsCa extends AppLocalizations {
   String get addTransaction => 'Afegir transacció';
 
   @override
-  String get income => 'Ingrés';
+  String income(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Ingressos',
+      one: 'Ingrés',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get incomes => 'Ingressos';
 
   @override
-  String get expense => 'Despesa';
+  String expense(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Despeses',
+      one: 'Despesa',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get expenses => 'Despeses';
@@ -134,6 +150,9 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get statisticsDeficit => 'Dèficit';
+
+  @override
+  String get presetLast30Days => 'Últims 30 dies';
 
   @override
   String get presetThisMonth => 'Aquest mes';

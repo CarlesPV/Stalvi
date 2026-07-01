@@ -4,9 +4,9 @@
   "budgets": "Presupuestos",
   "settings": "Ajustes",
   "addTransaction": "Añadir transacción",
-  "income": "Ingreso",
+  "income": "{count, plural, =1{Ingreso} other{Ingresos}}",
   "incomes": "Ingresos",
-  "expense": "Gasto",
+  "expense": "{count, plural, =1{Gasto} other{Gastos}}",
   "expenses": "Gastos",
   "appTitle": "Stalvi",
   "splashTagline": "Tus finanzas, a tu manera.",
@@ -40,6 +40,7 @@
   "statisticsNetBalance": "Balance neto",
   "statisticsSurplus": "Superávit",
   "statisticsDeficit": "Déficit",
+  "presetLast30Days": "Últimos 30 días",
   "presetThisMonth": "Este mes",
   "presetLast3Months": "Últimos 3 meses",
   "presetLast6Months": "Últimos 6 meses",
@@ -258,10 +259,20 @@
     "description": "Button or title for adding a transaction"
   },
   "@income": {
-    "description": "Label for positive financial income"
+    "description": "Label for positive financial income",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
   "@expense": {
-    "description": "Label for negative financial expense"
+    "description": "Label for negative financial expense",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
   "@expenses": {
     "description": "Label for plural negative financial expenses"
@@ -361,6 +372,9 @@
   },
   "@statisticsDeficit": {
     "description": "Label for net balance deficit"
+  },
+  "@presetLast30Days": {
+    "description": "Label for last 30 days date filter"
   },
   "@presetThisMonth": {
     "description": "Label for this month date filter"

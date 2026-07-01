@@ -154,7 +154,7 @@ class TransactionDetailsDialog extends ConsumerWidget {
             Text(
               isTransfer
                   ? l10n.filterTransfer
-                  : (isIncome ? l10n.income : l10n.expense),
+                  : (isIncome ? l10n.income(1) : l10n.expense(1)),
               style: theme.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.w800,
                 color: colorScheme.onSurfaceVariant,

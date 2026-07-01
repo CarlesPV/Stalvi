@@ -27,5 +27,31 @@ class UpdateAutomaticTransactionUseCase {
 class DeleteAutomaticTransactionUseCase {
   final IAutomaticTransactionRepository repository;
   DeleteAutomaticTransactionUseCase(this.repository);
-  Future<void> execute(String id) => repository.deleteAutomaticTransaction(id);
+  Future<void> execute(String id) async {
+    final txn = await repository.getAutomaticTransactionById(id);
+    if (txn != null) {
+      final deletedTxn = txn.copyWith(
+        isDeleted: true,
+        isActive: false,
+        deletedAt: DateTime.now(),
+      );
+      await repository.updateAutomaticTransaction(deletedTxn);
+    }
+  }
+}
+
+class RestoreAutomaticTransactionUseCase {
+  final IAutomaticTransactionRepository repository;
+  RestoreAutomaticTransactionUseCase(this.repository);
+  Future<void> execute(String id) async {
+    final txn = await repository.getAutomaticTransactionById(id);
+    if (txn != null) {
+      final restoredTxn = txn.copyWith(
+        isDeleted: false,
+        isActive: true,
+        clearDeletedAt: true,
+      );
+      await repository.updateAutomaticTransaction(restoredTxn);
+    }
+  }
 }

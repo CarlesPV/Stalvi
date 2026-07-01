@@ -7,7 +7,9 @@ import 'transaction_table.dart'; // For TransactionType
 @DataClassName('AutomaticTransactionEntity')
 class AutomaticTransactions extends Table {
   TextColumn get id => text()();
+  TextColumn get name => text()();
   IntColumn get amount => integer()();
+  TextColumn get currency => text().withDefault(const Constant('EUR'))();
   IntColumn get type => intEnum<TransactionType>()();
   TextColumn get accountId =>
       text().named('account_id').references(Accounts, #id)();
@@ -20,6 +22,11 @@ class AutomaticTransactions extends Table {
   DateTimeColumn get nextExecutionDate =>
       dateTime().named('next_execution_date')();
   DateTimeColumn get createdAt => dateTime().named('created_at')();
+  BoolColumn get isActive =>
+      boolean().named('is_active').withDefault(const Constant(true))();
+  BoolColumn get isDeleted =>
+      boolean().named('is_deleted').withDefault(const Constant(false))();
+  DateTimeColumn get deletedAt => dateTime().named('deleted_at').nullable()();
 
   @override
   Set<Column> get primaryKey => {id};

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:stalvi/domain/entities/transaction_type.dart';
-import 'package:stalvi/domain/entities/account.dart';
 import 'package:stalvi/domain/entities/category_statistic.dart';
 import 'package:stalvi/domain/entities/period_summary.dart';
 import 'package:stalvi/domain/use_cases/statistics/get_period_summary_use_case.dart';

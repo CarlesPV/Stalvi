@@ -61,11 +61,12 @@ void main() {
     group('getTrashItems', () {
       test('delegates to TrashDao', () async {
         final items = [
-          const TrashItem(
+          TrashItem(
             id: 'txn_1',
             name: 'Transaction (10.00)',
             type: TrashItemType.transaction,
             daysRemaining: 15,
+            deletedAt: DateTime.now().subtract(const Duration(days: 15)),
           ),
         ];
         when(() => mockTrashDao.getTrashItems()).thenAnswer((_) async => items);

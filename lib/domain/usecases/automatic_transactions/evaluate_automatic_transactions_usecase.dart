@@ -9,7 +9,9 @@ class EvaluateAutomaticTransactionsUseCase {
   final ITransactionRepository transactionRepo;
 
   EvaluateAutomaticTransactionsUseCase(
-      this.automaticRepo, this.transactionRepo);
+    this.automaticRepo,
+    this.transactionRepo,
+  );
 
   Future<void> execute() async {
     final now = DateTime.now();
@@ -39,7 +41,9 @@ class EvaluateAutomaticTransactionsUseCase {
             .add(Duration(days: autoTxn.recurrenceDays));
         final updatedAutoTxn = AutomaticTransaction(
           id: autoTxn.id,
+          name: autoTxn.name,
           amount: autoTxn.amount,
+          currency: autoTxn.currency,
           type: autoTxn.type,
           accountId: autoTxn.accountId,
           categoryId: autoTxn.categoryId,
