@@ -462,7 +462,54 @@ This document lists the completed phases of the Stalvi development roadmap, prov
   - 100% clean static analysis (`flutter analyze` with 0 issues).
   - Executed the full automated test suite containing 396 unit and widget tests, achieving a 100% success rate.
 
+### Phase 30: Safe Category Deletion & Launch Preparation
+* **Completion Date:** June 30, 2026
+* **Objective:** Implement safe category deletion logic to prevent dangling database references, enforce category type-based filtering during transaction reassignment, build UI prompts, and verify integration via unit tests.
+* **Accomplishments:**
+  - **Safe Category Deletion Domain Logic:** Updated the `DeleteAndReassignCategoryUseCase` logic to enforce type constraints: Expense categories can only be reassigned to other Expense or Custom categories; Income to Income or Custom; Custom categories can be reassigned to all other categories.
+  - **UI Prompts and Dialogs:** Configured settings category deletion checks to identify if a category is actively in use by transactions. If true, the app prompts the user with an `AlertDialog` containing a filtered list of eligible replacement categories to execute the transaction reassignment atomically before deleting.
+  - **Comprehensive Verification:** Wrote robust unit tests in `delete_and_reassign_category_usecase_test.dart` to cover the new filtering behaviors.
+
+### Phase 31: Automatic Transactions, Inline Validation, & Rolling 30-Day Stats
+* **Completion Date:** July 1, 2026
+* **Objective:** Implement recurring transaction evaluation engine and database tables for automatic transactions, develop interactive UI sheets, refactor transaction forms to support real-time inline validations, and calculate rolling 30-day dashboard summaries.
+* **Accomplishments:**
+  - **Automatic Transactions Engine:** Created new Drift database tables, models, and mappers. Developed a core evaluation use case scheduler evaluating next execution dates to generate transactions and auto-advance recurrence dates.
+  - **Inline Validation:** Refactored form inputs to trigger real-time inline validations, displaying distinct localized messages and dynamically clearing/resetting field errors as inputs change.
+  - **Rolling 30-Day Statistics:** Configured period summaries and balance trend statistics to evaluate over a rolling 30-day window for instant dashboard trends.
+* **Verification:**
+  - 100% clean static analysis (`flutter analyze` with 0 issues).
+  - Executed the full unit and widget test suite with all 414 tests passing successfully.
+
+### Phase 32: Stabilization & Auto-Transactions
+* **Completion Date:** July 1, 2026
+* **Objective:** Ensure maximum code quality, resolve all static analysis issues, validate tracking of sensitive data, and verify CI/CD pipelines.
+* **Accomplishments:**
+  - **Static Analysis & Testing:** Resolved all static analysis errors, dead code, unused imports, and `avoid_print` warnings. Verified absolutely no widget overflow errors and achieved 100% success on all automated tests.
+  - **Security & CI/CD Validation:** Validated `.gitignore` to prevent tracking of `.env`, keystores, and sensitive files. Verified `ci.yml` and `security.yml` GitHub actions for automated tests and builds.
+* **Verification:**
+  - 100% clean static analysis (`flutter analyze` with 0 issues).
+  - Executed the full automated test suite containing 427 unit and widget tests, achieving a 100% success rate.
+
+### Phase 33: UI Polish, Real-Time Reactivity, and Soft-Delete Refinement
+* **Completion Date:** July 1, 2026
+* **Objective:** Polish initial branding assets, implement real-time statistics query streams, enable complete localization for recurring transaction settings and form validations, fix keyboard occlusion layout issues, integrate soft-delete functionality for automatic transactions, and eliminate remaining widget overflows and static analysis warnings.
+* **Accomplishments:**
+  - **Branding Assets:** Updated the splash icon to display the Stalvi app logo within a rounded square.
+  - **Real-Time Statistics:** Replaced future-based analytics providers with reactive Drift query streams (`watchPeriodSummary`, `watchTopCategories`), allowing charts and summary cards to update instantly when underlying database transactions change.
+  - **Trilingual Localization:** Localized the entire automatic/recurring transactions configuration forms and all dynamic input validation states across Catalan, English, and Spanish.
+  - **Layout & Occlusion:** Addressed layout and viewport constraint issues to ensure error validation logs remain visible above the keyboard.
+  - **Soft-Delete for Auto-Transactions:** Built soft-deletion logic for automatic transactions. Trashed templates are moved to the Recycle Bin, disabled from generating new transactions, and purged after 30 days.
+  - **Overflow Resolutions:** Fixed remaining ChoiceChip clippings, text truncations, and dialog window layout overflows on small mobile devices.
+* **Verification:**
+  - 100% clean static analysis (`flutter analyze` with 0 issues).
+  - Executed the full automated test suite containing 446 unit and widget tests, achieving a 100% success rate (all tests passed!).
+
 ## Recent Updates
+- Completed final stabilization step, resolved all lints/compiler errors, and verified 100% pass rate on 446 automated tests (Phase 33).
+- Finalized Stabilization & Auto-Transactions with 100% test passing, static analysis fixed, and CI/CD/gitignore validated (Phase 32).
+- Implemented Automatic Transactions, Inline validations, and rolling 30-day stats (Phase 31).
+- Implemented Safe Category Deletion business logic, filtering rules, UI dialogs, and expanded test coverage (Phase 30).
 - Completed release preparation and UI optimization (Phase 29).
 - Populated legal documentation in English, Spanish, and Catalan inside `assets/legal/`.
 - Implemented user consent dialog on onboarding and "Delete Account" in settings.

@@ -19,11 +19,12 @@ class AutomaticTransactionsScreen extends ConsumerWidget {
     return Color(int.parse(buffer.toString(), radix: 16));
   }
 
-  String _formatRecurrence(int days) {
-    if (days == 7) return 'Weekly';
-    if (days == 30) return 'Monthly';
-    if (days == 365) return 'Yearly';
-    return 'Every $days days';
+  String _formatRecurrence(BuildContext context, int days) {
+    final l10n = AppLocalizations.of(context)!;
+    if (days == 7) return l10n.autoTxFormatWeekly;
+    if (days == 30) return l10n.autoTxFormatMonthly;
+    if (days == 365) return l10n.autoTxFormatYearly;
+    return l10n.autoTxFormatEveryDays(days);
   }
 
   @override
@@ -124,7 +125,8 @@ class AutomaticTransactionsScreen extends ConsumerWidget {
                                   ),
                                   const SizedBox(width: 4),
                                   Text(
-                                    _formatRecurrence(txn.recurrenceDays),
+                                    _formatRecurrence(
+                                        context, txn.recurrenceDays),
                                     style: theme.textTheme.bodySmall?.copyWith(
                                       color: colorScheme.onSurfaceVariant,
                                     ),
@@ -151,14 +153,39 @@ class AutomaticTransactionsScreen extends ConsumerWidget {
                               icon: const Icon(Icons.delete_outline, size: 20),
                               color: colorScheme.error,
                               onPressed: () async {
+                                final confirm = await showDialog<bool>(
+                                  context: context,
+                                  builder: (ctx) => AlertDialog(
+                                    title: Text(l10n.deleteTransactionTitle),
+                                    content: Text(
+                                        l10n.deleteTransactionConfirmation),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () =>
+                                            Navigator.pop(ctx, false),
+                                        child: Text(l10n.btnCancel),
+                                      ),
+                                      TextButton(
+                                        onPressed: () =>
+                                            Navigator.pop(ctx, true),
+                                        child: Text(
+                                          l10n.btnDelete,
+                                          style: TextStyle(
+                                              color: colorScheme.error),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                                if (confirm != true) return;
+
                                 await ref
                                     .read(
                                       deleteAutomaticTransactionUseCaseProvider,
                                     )
                                     .execute(txn.id);
-                                ref.invalidate(
-                                  automaticTransactionsListProvider,
-                                );
+                                // No manual invalidate needed — the
+                                // StreamProvider reacts automatically.
                               },
                             ),
                           ],
@@ -182,7 +209,7 @@ class AutomaticTransactionsScreen extends ConsumerWidget {
           );
         },
         icon: const Icon(Icons.add),
-        label: const Text('New Template'),
+        label: Text(l10n.autoTxNewTemplate),
       ),
     );
   }

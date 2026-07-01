@@ -249,3 +249,13 @@
   - [x] Guarantee CI/CD pipeline tests complete correctly.
   - [x] Resolve all overflow issues in UI and widgets.
   - [x] Create project documentation updates.
+
+- [x] **Phase 33: UI Polish, Real-Time Reactivity, and Soft-Delete Refinement**
+  - [x] Update the initial loading splash icon to display the app logo within a rounded square.
+  - [x] Refactor statistics calculations (dashboard summaries and top categories) to use reactive streams, updating instantly in real-time on data changes.
+  - [x] Complete localization (i18n) of the Automatic/Recurring Transactions section, including validation states, in English, Spanish, and Catalan.
+  - [x] Resolve keyboard occlusion and layout viewport constraints for form error messages.
+  - [x] Implement a soft-delete mechanism for recurring/automatic transactions, linking them to the Recycle Bin with dynamic metadata and a 30-day auto-purge cycle.
+  - [x] Conduct UI audit to fix text/widget overflows and unintended truncations across Settings and Data Management pop-ups.
+  - [x] Resolve all static analysis issues and ensure 100% automated test suite pass rate.
+

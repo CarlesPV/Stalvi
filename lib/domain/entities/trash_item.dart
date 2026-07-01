@@ -4,6 +4,7 @@ enum TrashItemType {
   account,
   budget,
   savingsGoal,
+  automaticTransaction,
 }
 
 class TrashItem {

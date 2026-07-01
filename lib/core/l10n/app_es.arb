@@ -1324,5 +1324,31 @@
   "createAutomaticTransaction": "Crear Transacción Automática",
   "deleteAccountHasAutomaticTransactions": "No se puede eliminar la cuenta porque tiene transacciones automáticas vinculadas. Por favor elimínelas primero.",
   "recurrenceDaysLabel": "Recurrencia (Días)",
-  "nextExecution": "Próxima Ejecución"
+  "nextExecution": "Próxima Ejecución",
+  "autoTxNewTemplate": "Nueva Plantilla",
+  "autoTxNewTitle": "Nueva Transacción Automática",
+  "autoTxEditTitle": "Editar Transacción Automática",
+  "autoTxSavedMessage": "Transacción Automática Guardada",
+  "autoTxTemplateNameLabel": "Nombre de Plantilla",
+  "autoTxNameRequired": "El nombre es obligatorio",
+  "autoTxLabelRecurrence": "Recurrencia",
+  "autoTxSelectRecurrence": "Seleccionar Recurrencia",
+  "autoTxRecurrenceWeekly": "Semanal (Cada 7 días)",
+  "autoTxRecurrenceMonthly": "Mensual (Cada 30 días)",
+  "autoTxRecurrenceYearly": "Anual (Cada 365 días)",
+  "autoTxRecurrenceCustomInterval": "Intervalo Personalizado (Días)",
+  "autoTxRecurrenceCustomHint": "p.ej. 14",
+  "autoTxRecurrenceApply": "Aplicar",
+  "autoTxRecurrenceInvalidRange": "Por favor, introduce un número de días válido (1-365).",
+  "autoTxFormatWeekly": "Semanal",
+  "autoTxFormatMonthly": "Mensual",
+  "autoTxFormatYearly": "Anual",
+  "autoTxFormatEveryDays": "Cada {days} días",
+  "@autoTxFormatEveryDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  }
 }

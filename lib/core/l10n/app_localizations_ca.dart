@@ -1042,4 +1042,64 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get nextExecution => 'Proper Execució';
+
+  @override
+  String get autoTxNewTemplate => 'Nova Plantilla';
+
+  @override
+  String get autoTxNewTitle => 'Nova Transacció Automàtica';
+
+  @override
+  String get autoTxEditTitle => 'Editar Transacció Automàtica';
+
+  @override
+  String get autoTxSavedMessage => 'Transacció Automàtica Desada';
+
+  @override
+  String get autoTxTemplateNameLabel => 'Nom de Plantilla';
+
+  @override
+  String get autoTxNameRequired => 'El nom és obligatori';
+
+  @override
+  String get autoTxLabelRecurrence => 'Recurrència';
+
+  @override
+  String get autoTxSelectRecurrence => 'Seleccionar Recurrència';
+
+  @override
+  String get autoTxRecurrenceWeekly => 'Setmanal (Cada 7 dies)';
+
+  @override
+  String get autoTxRecurrenceMonthly => 'Mensual (Cada 30 dies)';
+
+  @override
+  String get autoTxRecurrenceYearly => 'Anual (Cada 365 dies)';
+
+  @override
+  String get autoTxRecurrenceCustomInterval => 'Interval Personalitzat (Dies)';
+
+  @override
+  String get autoTxRecurrenceCustomHint => 'p.ex. 14';
+
+  @override
+  String get autoTxRecurrenceApply => 'Aplicar';
+
+  @override
+  String get autoTxRecurrenceInvalidRange =>
+      'Si us plau, introdueix un número de dies vàlid (1-365).';
+
+  @override
+  String get autoTxFormatWeekly => 'Setmanal';
+
+  @override
+  String get autoTxFormatMonthly => 'Mensual';
+
+  @override
+  String get autoTxFormatYearly => 'Anual';
+
+  @override
+  String autoTxFormatEveryDays(int days) {
+    return 'Cada $days dies';
+  }
 }

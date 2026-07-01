@@ -1342,5 +1342,86 @@
   "nextExecution": "Next Execution",
   "@nextExecution": {
     "description": "Auto-generated"
+  },
+  "autoTxNewTemplate": "New Template",
+  "@autoTxNewTemplate": {
+    "description": "FAB label on the Automatic Transactions list screen"
+  },
+  "autoTxNewTitle": "New Automatic Transaction",
+  "@autoTxNewTitle": {
+    "description": "AppBar title when creating a new automatic transaction template"
+  },
+  "autoTxEditTitle": "Edit Automatic Transaction",
+  "@autoTxEditTitle": {
+    "description": "AppBar title when editing an existing automatic transaction template"
+  },
+  "autoTxSavedMessage": "Automatic Transaction Saved",
+  "@autoTxSavedMessage": {
+    "description": "Snackbar message after successfully saving an automatic transaction"
+  },
+  "autoTxTemplateNameLabel": "Template Name",
+  "@autoTxTemplateNameLabel": {
+    "description": "Label for the name text field on the create/edit automatic transaction screen"
+  },
+  "autoTxNameRequired": "Name is required",
+  "@autoTxNameRequired": {
+    "description": "Validation error shown when the automatic transaction name field is empty"
+  },
+  "autoTxLabelRecurrence": "Recurrence",
+  "@autoTxLabelRecurrence": {
+    "description": "Label for the recurrence selector tile on the create/edit automatic transaction screen"
+  },
+  "autoTxSelectRecurrence": "Select Recurrence",
+  "@autoTxSelectRecurrence": {
+    "description": "Bottom sheet title for the recurrence picker"
+  },
+  "autoTxRecurrenceWeekly": "Weekly (Every 7 days)",
+  "@autoTxRecurrenceWeekly": {
+    "description": "Recurrence option for weekly (every 7 days)"
+  },
+  "autoTxRecurrenceMonthly": "Monthly (Every 30 days)",
+  "@autoTxRecurrenceMonthly": {
+    "description": "Recurrence option for monthly (every 30 days)"
+  },
+  "autoTxRecurrenceYearly": "Yearly (Every 365 days)",
+  "@autoTxRecurrenceYearly": {
+    "description": "Recurrence option for yearly (every 365 days)"
+  },
+  "autoTxRecurrenceCustomInterval": "Custom Interval (Days)",
+  "@autoTxRecurrenceCustomInterval": {
+    "description": "Label for the custom recurrence interval input"
+  },
+  "autoTxRecurrenceCustomHint": "e.g. 14",
+  "@autoTxRecurrenceCustomHint": {
+    "description": "Hint text for the custom recurrence days text field"
+  },
+  "autoTxRecurrenceApply": "Apply",
+  "@autoTxRecurrenceApply": {
+    "description": "Button label to apply the custom recurrence interval"
+  },
+  "autoTxRecurrenceInvalidRange": "Please enter a valid number of days (1-365).",
+  "@autoTxRecurrenceInvalidRange": {
+    "description": "Snackbar error when the custom recurrence value is outside the valid range"
+  },
+  "autoTxFormatWeekly": "Weekly",
+  "@autoTxFormatWeekly": {
+    "description": "Short label for weekly recurrence shown on the list tile"
+  },
+  "autoTxFormatMonthly": "Monthly",
+  "@autoTxFormatMonthly": {
+    "description": "Short label for monthly recurrence shown on the list tile"
+  },
+  "autoTxFormatYearly": "Yearly",
+  "@autoTxFormatYearly": {
+    "description": "Short label for yearly recurrence shown on the list tile"
+  },
+  "autoTxFormatEveryDays": "Every {days} days",
+  "@autoTxFormatEveryDays": {
+    "description": "Short label for custom recurrence shown on the list tile",
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
   }
 }

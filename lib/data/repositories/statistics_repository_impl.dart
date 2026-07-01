@@ -43,4 +43,36 @@ class StatisticsRepositoryImpl implements IStatisticsRepository {
       accountId: accountId,
     );
   }
+
+  @override
+  Stream<PeriodSummary> watchPeriodSummary({
+    DateTime? startDate,
+    DateTime? endDate,
+    required String targetCurrency,
+    String? accountId,
+  }) {
+    return _dao.watchPeriodSummaryAggregates(
+      startDate: startDate,
+      endDate: endDate,
+      targetCurrency: targetCurrency,
+      accountId: accountId,
+    );
+  }
+
+  @override
+  Stream<List<CategoryStatistic>> watchTopCategories({
+    required DateTime startDate,
+    required DateTime endDate,
+    required String targetCurrency,
+    TransactionType type = TransactionType.expense,
+    String? accountId,
+  }) {
+    return _dao.watchTopCategoriesAggregates(
+      startDate,
+      endDate,
+      targetCurrency,
+      type: type,
+      accountId: accountId,
+    );
+  }
 }

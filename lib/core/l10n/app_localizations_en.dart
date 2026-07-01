@@ -1027,4 +1027,64 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get nextExecution => 'Next Execution';
+
+  @override
+  String get autoTxNewTemplate => 'New Template';
+
+  @override
+  String get autoTxNewTitle => 'New Automatic Transaction';
+
+  @override
+  String get autoTxEditTitle => 'Edit Automatic Transaction';
+
+  @override
+  String get autoTxSavedMessage => 'Automatic Transaction Saved';
+
+  @override
+  String get autoTxTemplateNameLabel => 'Template Name';
+
+  @override
+  String get autoTxNameRequired => 'Name is required';
+
+  @override
+  String get autoTxLabelRecurrence => 'Recurrence';
+
+  @override
+  String get autoTxSelectRecurrence => 'Select Recurrence';
+
+  @override
+  String get autoTxRecurrenceWeekly => 'Weekly (Every 7 days)';
+
+  @override
+  String get autoTxRecurrenceMonthly => 'Monthly (Every 30 days)';
+
+  @override
+  String get autoTxRecurrenceYearly => 'Yearly (Every 365 days)';
+
+  @override
+  String get autoTxRecurrenceCustomInterval => 'Custom Interval (Days)';
+
+  @override
+  String get autoTxRecurrenceCustomHint => 'e.g. 14';
+
+  @override
+  String get autoTxRecurrenceApply => 'Apply';
+
+  @override
+  String get autoTxRecurrenceInvalidRange =>
+      'Please enter a valid number of days (1-365).';
+
+  @override
+  String get autoTxFormatWeekly => 'Weekly';
+
+  @override
+  String get autoTxFormatMonthly => 'Monthly';
+
+  @override
+  String get autoTxFormatYearly => 'Yearly';
+
+  @override
+  String autoTxFormatEveryDays(int days) {
+    return 'Every $days days';
+  }
 }

@@ -211,7 +211,9 @@ class AppDatabase extends _$AppDatabase {
         if (from < 10) {
           if (!createdAutomaticTransactions) {
             await m.addColumn(
-                automaticTransactions, automaticTransactions.name);
+              automaticTransactions,
+              automaticTransactions.name,
+            );
             await m.addColumn(
               automaticTransactions,
               automaticTransactions.currency,

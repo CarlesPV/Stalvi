@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:stalvi/data/database/tables/transaction_table.dart' as db
+    show TransactionType;
 import 'package:stalvi/domain/entities/transaction_type.dart';
+
 import 'package:stalvi/domain/entities/category_statistic.dart';
 import 'package:stalvi/domain/entities/period_summary.dart';
 import 'package:stalvi/domain/use_cases/statistics/get_period_summary_use_case.dart';
@@ -165,21 +168,14 @@ final statisticsFilterProvider =
 
 // ─── Data providers ───────────────────────────────────────────────────────────
 
-/// Watches the current filter and fetches a [PeriodSummary] for the active date range.
-///
-/// Uses [FutureProvider.autoDispose] so the provider cleans up when no widget
-/// is listening, but the first subscription (triggered eagerly from
-/// [_StatisticsScreenState.initState] via `ref.read`) guarantees data is
-/// fetched within milliseconds of screen mount.
-final periodSummaryProvider =
-    FutureProvider.autoDispose<PeriodSummary>((ref) async {
-  // keepAlive prevents disposal while the user is on the screen and has
-  // just switched filter tabs, avoiding unnecessary flickering.
-  ref.keepAlive();
+/// Watches the current filter and emits a real-time [PeriodSummary] for the
+/// active date range. Backed by a Drift stream so any transaction insert /
+/// update / delete inside the period triggers a fresh emission automatically.
+final periodSummaryProvider = StreamProvider.autoDispose<PeriodSummary>((ref) {
   final filter = ref.watch(statisticsFilterProvider);
   final targetCurrency = ref.watch(statisticsCurrencyProvider);
-  final useCase = ref.watch(getPeriodSummaryUseCaseProvider);
-  return useCase.execute(
+  final repo = ref.watch(statisticsRepositoryProvider);
+  return repo.watchPeriodSummary(
     startDate: filter.dateRange.start,
     endDate: filter.dateRange.end,
     targetCurrency: targetCurrency,
@@ -187,34 +183,32 @@ final periodSummaryProvider =
   );
 });
 
-/// Watches the current filter and fetches top-expense categories.
+/// Watches the current filter and emits a real-time top-expense category list.
 final topExpenseCategoriesProvider =
-    FutureProvider.autoDispose<List<CategoryStatistic>>((ref) async {
-  ref.keepAlive();
+    StreamProvider.autoDispose<List<CategoryStatistic>>((ref) {
   final filter = ref.watch(statisticsFilterProvider);
   final targetCurrency = ref.watch(statisticsCurrencyProvider);
-  final useCase = ref.watch(getTopCategoriesUseCaseProvider);
-  return useCase.execute(
+  final repo = ref.watch(statisticsRepositoryProvider);
+  return repo.watchTopCategories(
     startDate: filter.dateRange.start,
     endDate: filter.dateRange.end,
     targetCurrency: targetCurrency,
-    type: TransactionType.expense,
+    type: db.TransactionType.expense,
     accountId: filter.accountId,
   );
 });
 
-/// Watches the current filter and fetches top-income categories.
+/// Watches the current filter and emits a real-time top-income category list.
 final topIncomeCategoriesProvider =
-    FutureProvider.autoDispose<List<CategoryStatistic>>((ref) async {
-  ref.keepAlive();
+    StreamProvider.autoDispose<List<CategoryStatistic>>((ref) {
   final filter = ref.watch(statisticsFilterProvider);
   final targetCurrency = ref.watch(statisticsCurrencyProvider);
-  final useCase = ref.watch(getTopCategoriesUseCaseProvider);
-  return useCase.execute(
+  final repo = ref.watch(statisticsRepositoryProvider);
+  return repo.watchTopCategories(
     startDate: filter.dateRange.start,
     endDate: filter.dateRange.end,
     targetCurrency: targetCurrency,
-    type: TransactionType.income,
+    type: db.TransactionType.income,
     accountId: filter.accountId,
   );
 });

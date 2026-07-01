@@ -187,7 +187,8 @@ void main() {
         filteredTransactionsProvider.overrideWith((ref) => broadcastTxns),
         accountsListProvider.overrideWith((ref) => accountsStream),
         defaultProfileProvider.overrideWith((ref) => mockProfile),
-        periodSummaryProvider.overrideWith((ref) => mockPeriodSummary),
+        periodSummaryProvider
+            .overrideWith((ref) => Stream.value(mockPeriodSummary)),
         categoriesListProvider.overrideWith((ref) => Stream.value([])),
         tagsListProvider.overrideWith((ref) => Future.value([])),
         secureStorageProvider.overrideWithValue(mockSecureStorage),

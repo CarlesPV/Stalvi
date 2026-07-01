@@ -42,14 +42,16 @@ lib/
 - **Income, Expense, & Transfers:** Record and categorize financial movements.
 - **Atomic Transfers:** Double-entry transfers link origin and destination accounts securely. Deleting or restoring one leg of a transfer automatically mirrors the action on the other leg.
 - **Inline Input Validation:** Form inputs perform real-time validation checks, displaying errors inline and dynamically clearing or resetting errors as values change.
-- **30-Day Recycle Bin (Trash):** Soft-deleted transactions, budgets, and savings goals are moved to a temporary trash. Balances are recalculated in real time. Items older than 30 days are automatically purged on startup.
+- **30-Day Recycle Bin (Trash):** Soft-deleted transactions, budgets, savings goals, and recurring/automatic transactions are moved to a temporary trash. Balances are recalculated in real time. Items older than 30 days are automatically purged on startup.
 - **Immutability:** Saves currency exchange rate snapshots within each transaction at creation time to preserve historical balance integrity.
 - **Safe Category Deletion:** Prompts users to reassign transactions to a new target category when attempting to delete a category that is in active use. Reassignment targets are strictly filtered based on the category type (Expense to Expense/Custom, Income to Income/Custom, Custom to all).
-- **Unified Branding:** Consistent and dynamic usage of a single high-quality logo asset across Splash, Authentication, and Dashboard screens to reduce binary size and ensure a cohesive visual identity.
+- **Unified Branding:** Consistent and dynamic usage of a single high-quality logo asset (app logo within a rounded square) across Splash, Authentication, and Dashboard screens to reduce binary size and ensure a cohesive visual identity.
 
 ### ⏰ Automatic & Recurring Transactions
 - **Automated Engine:** Evaluates and automatically generates scheduled transactions based on customizable recurrence intervals (days) and next execution dates.
 - **Management UX:** Interactive sheets for adding, updating, and triggering automatic transactions from settings.
+- **Soft-Delete Support:** Easily soft-delete recurring templates, sending them to the Recycle Bin and disabling automated generation until restored or purged.
+- **Form Error Visibility:** Visual layout ensures input error feedback (e.g. custom recurrence values) is always fully visible above the keyboard.
 
 ### 📊 Advanced Budgets & Savings Goals
 - **Budgets:** Set category-specific monthly spending limits mapped to specific accounts, with automatic locks on currency and target amounts post-creation.
@@ -59,7 +61,7 @@ lib/
 
 ### 🔍 Concurrent Filters & Analytical Charts
 - **Multi-Dimensional Search:** Filter transactions simultaneously by transaction type, category, date range, amount range, tag, and currency using reactive Drift query builders.
-- **Eager Statistics Pre-Warming:** Analytics future providers pre-warm on screen initialization, eliminating loading latency when navigating to the Statistics screen.
+- **Real-Time Reactive Statistics:** Analytics, period summaries, and top-category distribution charts are calculated using real-time Drift reactive streams, updating instantly upon database changes.
 - **Visual Analytics:** Premium interactive charts (pie/donut and bar charts) with legends, category percentages, color swatches, and tap-interaction tooltips.
 
 ### 📥 Compliant Exports & JSON Backups
@@ -71,13 +73,14 @@ lib/
 
 ## Trilingual Support & Localization
 
-Stalvi is fully localized in three languages, ensuring that all user-facing strings, error states, and dynamically generated system entities adapt to the active language:
+Stalvi is fully localized in three languages, ensuring that all user-facing strings, form validations, error states, and dynamically generated system entities adapt to the active language:
 - 🇬🇧 **English**
 - 🇪🇸 **Spanish**
 - 🏴 **Catalan**
 
 ### Dynamic Database Translation
 - On application launch or language switch, default database entities (such as "My Wallet" / "Mi cartera" / "La meva cartera" and default categories/tags) are dynamically updated in the SQLite tables using stable UUID mapping. This prevents duplicate entries and ensures a consistent native language experience.
+- All automatic transaction schedules, form input warnings, and Recycle Bin details are fully localized with 100% parity across English, Spanish, and Catalan.
 
 ---
 

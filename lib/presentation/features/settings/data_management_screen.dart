@@ -68,6 +68,7 @@ class _DataManagementScreenState extends ConsumerState<DataManagementScreen> {
         return StatefulBuilder(
           builder: (ctx, setDialogState) {
             return AlertDialog(
+              scrollable: true,
               title: Text(l10n.exportPasswordDialogTitle),
               content: SingleChildScrollView(
                 child: Column(
@@ -173,6 +174,7 @@ class _DataManagementScreenState extends ConsumerState<DataManagementScreen> {
         return StatefulBuilder(
           builder: (ctx, setDialogState) {
             return AlertDialog(
+              scrollable: true,
               title: Text(l10n.importPasswordDialogTitle),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -293,6 +295,7 @@ class _DataManagementScreenState extends ConsumerState<DataManagementScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
+        scrollable: true,
         title: Row(
           children: [
             Icon(
@@ -300,7 +303,11 @@ class _DataManagementScreenState extends ConsumerState<DataManagementScreen> {
               color: Theme.of(context).colorScheme.error,
             ),
             const SizedBox(width: 8),
-            Text(l10n.importConfirmTitle),
+            Expanded(
+              child: Text(
+                l10n.importConfirmTitle,
+              ),
+            ),
           ],
         ),
         content: Text(l10n.importConfirmMessage),

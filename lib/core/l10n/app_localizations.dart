@@ -1965,6 +1965,120 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Next Execution'**
   String get nextExecution;
+
+  /// FAB label on the Automatic Transactions list screen
+  ///
+  /// In en, this message translates to:
+  /// **'New Template'**
+  String get autoTxNewTemplate;
+
+  /// AppBar title when creating a new automatic transaction template
+  ///
+  /// In en, this message translates to:
+  /// **'New Automatic Transaction'**
+  String get autoTxNewTitle;
+
+  /// AppBar title when editing an existing automatic transaction template
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Automatic Transaction'**
+  String get autoTxEditTitle;
+
+  /// Snackbar message after successfully saving an automatic transaction
+  ///
+  /// In en, this message translates to:
+  /// **'Automatic Transaction Saved'**
+  String get autoTxSavedMessage;
+
+  /// Label for the name text field on the create/edit automatic transaction screen
+  ///
+  /// In en, this message translates to:
+  /// **'Template Name'**
+  String get autoTxTemplateNameLabel;
+
+  /// Validation error shown when the automatic transaction name field is empty
+  ///
+  /// In en, this message translates to:
+  /// **'Name is required'**
+  String get autoTxNameRequired;
+
+  /// Label for the recurrence selector tile on the create/edit automatic transaction screen
+  ///
+  /// In en, this message translates to:
+  /// **'Recurrence'**
+  String get autoTxLabelRecurrence;
+
+  /// Bottom sheet title for the recurrence picker
+  ///
+  /// In en, this message translates to:
+  /// **'Select Recurrence'**
+  String get autoTxSelectRecurrence;
+
+  /// Recurrence option for weekly (every 7 days)
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly (Every 7 days)'**
+  String get autoTxRecurrenceWeekly;
+
+  /// Recurrence option for monthly (every 30 days)
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly (Every 30 days)'**
+  String get autoTxRecurrenceMonthly;
+
+  /// Recurrence option for yearly (every 365 days)
+  ///
+  /// In en, this message translates to:
+  /// **'Yearly (Every 365 days)'**
+  String get autoTxRecurrenceYearly;
+
+  /// Label for the custom recurrence interval input
+  ///
+  /// In en, this message translates to:
+  /// **'Custom Interval (Days)'**
+  String get autoTxRecurrenceCustomInterval;
+
+  /// Hint text for the custom recurrence days text field
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. 14'**
+  String get autoTxRecurrenceCustomHint;
+
+  /// Button label to apply the custom recurrence interval
+  ///
+  /// In en, this message translates to:
+  /// **'Apply'**
+  String get autoTxRecurrenceApply;
+
+  /// Snackbar error when the custom recurrence value is outside the valid range
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid number of days (1-365).'**
+  String get autoTxRecurrenceInvalidRange;
+
+  /// Short label for weekly recurrence shown on the list tile
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly'**
+  String get autoTxFormatWeekly;
+
+  /// Short label for monthly recurrence shown on the list tile
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly'**
+  String get autoTxFormatMonthly;
+
+  /// Short label for yearly recurrence shown on the list tile
+  ///
+  /// In en, this message translates to:
+  /// **'Yearly'**
+  String get autoTxFormatYearly;
+
+  /// Short label for custom recurrence shown on the list tile
+  ///
+  /// In en, this message translates to:
+  /// **'Every {days} days'**
+  String autoTxFormatEveryDays(int days);
 }
 
 class _AppLocalizationsDelegate

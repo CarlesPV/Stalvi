@@ -28,9 +28,14 @@ final restoreAutomaticTransactionUseCaseProvider = Provider((ref) {
   return RestoreAutomaticTransactionUseCase(repo);
 });
 
+/// Reactive stream of non-deleted automatic transactions.
+///
+/// Backed by a Drift stream so any create / update / delete on the table
+/// triggers an automatic re-emission without manual [ref.invalidate] calls.
 final automaticTransactionsListProvider =
-    FutureProvider<List<AutomaticTransaction>>((ref) async {
-  final readUseCase = ref.watch(readAutomaticTransactionUseCaseProvider);
-  final all = await readUseCase.executeAll();
-  return all.where((txn) => !txn.isDeleted).toList();
+    StreamProvider<List<AutomaticTransaction>>((ref) {
+  final repo = ref.watch(automaticTransactionRepositoryProvider);
+  return repo.watchAllAutomaticTransactions().map(
+        (all) => all.where((txn) => !txn.isDeleted).toList(),
+      );
 });

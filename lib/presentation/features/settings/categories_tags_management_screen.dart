@@ -102,6 +102,7 @@ class _CategoriesTab extends ConsumerWidget {
       final confirm = await showDialog<bool>(
         context: context,
         builder: (ctx) => AlertDialog(
+          scrollable: true,
           title: Text(l10n.deleteCategoryTitle),
           content: Text(l10n.deleteCategoryConfirm(category.name)),
           actions: [
@@ -152,6 +153,7 @@ class _CategoriesTab extends ConsumerWidget {
         return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
+              scrollable: true,
               title: Text(l10n.categoryInUseTitle),
               content: SingleChildScrollView(
                 child: Column(
@@ -162,6 +164,7 @@ class _CategoriesTab extends ConsumerWidget {
                     ),
                     const SizedBox(height: 16),
                     DropdownButtonFormField<String>(
+                      isExpanded: true,
                       initialValue: selectedNewCategoryId,
                       items: otherCategories
                           .map(
@@ -277,6 +280,7 @@ class _TagsTab extends ConsumerWidget {
       final confirm = await showDialog<bool>(
         context: context,
         builder: (ctx) => AlertDialog(
+          scrollable: true,
           title: Text(l10n.deleteTagTitle),
           content: Text(l10n.deleteTagConfirm(tag.name)),
           actions: [
@@ -328,6 +332,7 @@ class _TagsTab extends ConsumerWidget {
         return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
+              scrollable: true,
               title: Text(l10n.tagInUseTitle),
               content: SingleChildScrollView(
                 child: Column(
@@ -338,6 +343,7 @@ class _TagsTab extends ConsumerWidget {
                     ),
                     const SizedBox(height: 16),
                     DropdownButtonFormField<String>(
+                      isExpanded: true,
                       initialValue: selectedNewTagId,
                       items: otherTags
                           .map(

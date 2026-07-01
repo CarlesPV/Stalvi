@@ -5,6 +5,7 @@ import '../tables/budget_table.dart';
 import '../tables/category_table.dart';
 import '../tables/savings_goal_table.dart';
 import '../tables/transaction_table.dart';
+import '../tables/automatic_transaction_table.dart';
 import 'package:stalvi/domain/entities/trash_item.dart';
 
 part 'trash_dao.g.dart';
@@ -16,6 +17,7 @@ part 'trash_dao.g.dart';
     Accounts,
     Budgets,
     SavingsGoals,
+    AutomaticTransactions,
   ],
 )
 class TrashDao extends DatabaseAccessor<AppDatabase> with _$TrashDaoMixin {
@@ -119,6 +121,22 @@ class TrashDao extends DatabaseAccessor<AppDatabase> with _$TrashDaoMixin {
       );
     }
 
+    // Automatic Transactions
+    final autoTxnRows = await (select(automaticTransactions)
+          ..where((a) => a.isDeleted.equals(true)))
+        .get();
+    for (final a in autoTxnRows) {
+      items.add(
+        TrashItem(
+          id: a.id,
+          name: a.name,
+          type: TrashItemType.automaticTransaction,
+          daysRemaining: 30 - now.difference(a.deletedAt ?? a.createdAt).inDays,
+          deletedAt: a.deletedAt ?? a.createdAt,
+        ),
+      );
+    }
+
     // Sort items by days remaining (those expiring sooner first)
     items.sort((a, b) => a.daysRemaining.compareTo(b.daysRemaining));
 
@@ -196,6 +214,16 @@ class TrashDao extends DatabaseAccessor<AppDatabase> with _$TrashDaoMixin {
           ),
         );
         break;
+      case TrashItemType.automaticTransaction:
+        await (update(automaticTransactions)..where((a) => a.id.equals(id)))
+            .write(
+          const AutomaticTransactionsCompanion(
+            isDeleted: Value(false),
+            isActive: Value(true),
+            deletedAt: Value(null),
+          ),
+        );
+        break;
     }
   }
 
@@ -216,6 +244,10 @@ class TrashDao extends DatabaseAccessor<AppDatabase> with _$TrashDaoMixin {
         break;
       case TrashItemType.savingsGoal:
         await (delete(savingsGoals)..where((s) => s.id.equals(id))).go();
+        break;
+      case TrashItemType.automaticTransaction:
+        await (delete(automaticTransactions)..where((a) => a.id.equals(id)))
+            .go();
         break;
     }
   }
@@ -260,6 +292,14 @@ class TrashDao extends DatabaseAccessor<AppDatabase> with _$TrashDaoMixin {
               (s) =>
                   s.isDeleted.equals(true) &
                   s.modifiedAt.isSmallerThanValue(threshold),
+            ))
+          .go();
+
+      await (delete(automaticTransactions)
+            ..where(
+              (a) =>
+                  a.isDeleted.equals(true) &
+                  a.deletedAt.isSmallerThanValue(threshold),
             ))
           .go();
     });

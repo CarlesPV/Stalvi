@@ -64,6 +64,8 @@ class _TrashItemTile extends ConsumerWidget {
           return Icons.pie_chart;
         case TrashItemType.savingsGoal:
           return Icons.savings;
+        case TrashItemType.automaticTransaction:
+          return Icons.autorenew;
       }
     }
 
@@ -79,6 +81,8 @@ class _TrashItemTile extends ConsumerWidget {
           return l10n.budgets;
         case TrashItemType.savingsGoal:
           return l10n.savingsGoal;
+        case TrashItemType.automaticTransaction:
+          return l10n.settingsAutomaticTransactions;
       }
     }
 

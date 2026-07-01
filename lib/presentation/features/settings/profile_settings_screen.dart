@@ -27,6 +27,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
       context: context,
       builder: (context) {
         return AlertDialog(
+          scrollable: true,
           title: Text(l10n.usernameLabel),
           content: TextField(
             controller: controller,
@@ -77,10 +78,12 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
       context: context,
       builder: (context) {
         return AlertDialog(
+          scrollable: true,
           title: Text(l10n.labelSelectCurrency),
           content: StatefulBuilder(
             builder: (context, setState) {
               return DropdownButtonFormField<String>(
+                isExpanded: true,
                 initialValue: selected,
                 items: currencies.entries.map((e) {
                   return DropdownMenuItem(
@@ -455,6 +458,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
           final theme = Theme.of(context);
           final colorScheme = theme.colorScheme;
           return AlertDialog(
+            scrollable: true,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(24),
             ),

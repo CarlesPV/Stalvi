@@ -18,6 +18,9 @@ class EvaluateAutomaticTransactionsUseCase {
     final automaticTxns = await automaticRepo.getAllAutomaticTransactions();
 
     for (final autoTxn in automaticTxns) {
+      if (autoTxn.isDeleted || !autoTxn.isActive || autoTxn.deletedAt != null)
+        continue;
+
       if (autoTxn.nextExecutionDate.isBefore(now) ||
           autoTxn.nextExecutionDate.isAtSameMomentAs(now)) {
         // Generate actual transaction

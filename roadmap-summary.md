@@ -490,7 +490,22 @@ This document lists the completed phases of the Stalvi development roadmap, prov
   - 100% clean static analysis (`flutter analyze` with 0 issues).
   - Executed the full automated test suite containing 427 unit and widget tests, achieving a 100% success rate.
 
+### Phase 33: UI Polish, Real-Time Reactivity, and Soft-Delete Refinement
+* **Completion Date:** July 1, 2026
+* **Objective:** Polish initial branding assets, implement real-time statistics query streams, enable complete localization for recurring transaction settings and form validations, fix keyboard occlusion layout issues, integrate soft-delete functionality for automatic transactions, and eliminate remaining widget overflows and static analysis warnings.
+* **Accomplishments:**
+  - **Branding Assets:** Updated the splash icon to display the Stalvi app logo within a rounded square.
+  - **Real-Time Statistics:** Replaced future-based analytics providers with reactive Drift query streams (`watchPeriodSummary`, `watchTopCategories`), allowing charts and summary cards to update instantly when underlying database transactions change.
+  - **Trilingual Localization:** Localized the entire automatic/recurring transactions configuration forms and all dynamic input validation states across Catalan, English, and Spanish.
+  - **Layout & Occlusion:** Addressed layout and viewport constraint issues to ensure error validation logs remain visible above the keyboard.
+  - **Soft-Delete for Auto-Transactions:** Built soft-deletion logic for automatic transactions. Trashed templates are moved to the Recycle Bin, disabled from generating new transactions, and purged after 30 days.
+  - **Overflow Resolutions:** Fixed remaining ChoiceChip clippings, text truncations, and dialog window layout overflows on small mobile devices.
+* **Verification:**
+  - 100% clean static analysis (`flutter analyze` with 0 issues).
+  - Executed the full automated test suite containing 446 unit and widget tests, achieving a 100% success rate (all tests passed!).
+
 ## Recent Updates
+- Completed final stabilization step, resolved all lints/compiler errors, and verified 100% pass rate on 446 automated tests (Phase 33).
 - Finalized Stabilization & Auto-Transactions with 100% test passing, static analysis fixed, and CI/CD/gitignore validated (Phase 32).
 - Implemented Automatic Transactions, Inline validations, and rolling 30-day stats (Phase 31).
 - Implemented Safe Category Deletion business logic, filtering rules, UI dialogs, and expanded test coverage (Phase 30).

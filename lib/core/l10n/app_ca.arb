@@ -1324,5 +1324,31 @@
   "createAutomaticTransaction": "Crear Transacció Automàtica",
   "deleteAccountHasAutomaticTransactions": "No es pot suprimir el compte perquè té transaccions automàtiques vinculades. Si us plau, suprimiu-les primer.",
   "recurrenceDaysLabel": "Recurrència (Dies)",
-  "nextExecution": "Proper Execució"
+  "nextExecution": "Proper Execució",
+  "autoTxNewTemplate": "Nova Plantilla",
+  "autoTxNewTitle": "Nova Transacció Automàtica",
+  "autoTxEditTitle": "Editar Transacció Automàtica",
+  "autoTxSavedMessage": "Transacció Automàtica Desada",
+  "autoTxTemplateNameLabel": "Nom de Plantilla",
+  "autoTxNameRequired": "El nom és obligatori",
+  "autoTxLabelRecurrence": "Recurrència",
+  "autoTxSelectRecurrence": "Seleccionar Recurrència",
+  "autoTxRecurrenceWeekly": "Setmanal (Cada 7 dies)",
+  "autoTxRecurrenceMonthly": "Mensual (Cada 30 dies)",
+  "autoTxRecurrenceYearly": "Anual (Cada 365 dies)",
+  "autoTxRecurrenceCustomInterval": "Interval Personalitzat (Dies)",
+  "autoTxRecurrenceCustomHint": "p.ex. 14",
+  "autoTxRecurrenceApply": "Aplicar",
+  "autoTxRecurrenceInvalidRange": "Si us plau, introdueix un número de dies vàlid (1-365).",
+  "autoTxFormatWeekly": "Setmanal",
+  "autoTxFormatMonthly": "Mensual",
+  "autoTxFormatYearly": "Anual",
+  "autoTxFormatEveryDays": "Cada {days} dies",
+  "@autoTxFormatEveryDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  }
 }

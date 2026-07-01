@@ -199,4 +199,27 @@ void main() {
       findsOneWidget,
     );
   });
+
+  testWidgets(
+      'recurrence selector sheet renders without overflow on small screens',
+      (WidgetTester tester) async {
+    tester.view.physicalSize = const Size(320, 480);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await tester.pumpWidget(createTestableWidget());
+    await tester.pumpAndSettle();
+
+    final recurrenceTile = find.text('Recurrence');
+    await tester.scrollUntilVisible(
+      recurrenceTile,
+      50,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.tap(recurrenceTile);
+    await tester.pumpAndSettle();
+
+    expect(find.text('Select Recurrence'), findsOneWidget);
+  });
 }

@@ -6,6 +6,11 @@ abstract class IAutomaticTransactionRepository {
   );
   Future<AutomaticTransaction?> getAutomaticTransactionById(String id);
   Future<List<AutomaticTransaction>> getAllAutomaticTransactions();
+
+  /// Reactive stream: emits the full list whenever the table changes.
+  /// Consumers should filter [AutomaticTransaction.isDeleted] as needed.
+  Stream<List<AutomaticTransaction>> watchAllAutomaticTransactions();
+
   Future<AutomaticTransaction> updateAutomaticTransaction(
     AutomaticTransaction transaction,
   );

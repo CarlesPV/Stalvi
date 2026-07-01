@@ -93,7 +93,7 @@ class _CreateEditAutomaticTransactionScreenState
       final l10n = AppLocalizations.of(context)!;
       switch (error.code) {
         case 'NAME_REQUIRED':
-          return 'Name is required'; // l10n.errorNameRequired once added to arb
+          return l10n.autoTxNameRequired;
         case 'INVALID_AMOUNT':
           return l10n.errorInvalidAmount;
         case 'ACCOUNT_REQUIRED':
@@ -131,8 +131,8 @@ class _CreateEditAutomaticTransactionScreenState
           data: (_) {
             if (prev is AsyncLoading) {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Automatic Transaction Saved'), // Ensure i18n
+                SnackBar(
+                  content: Text(l10n.autoTxSavedMessage),
                   backgroundColor: Colors.green,
                   behavior: SnackBarBehavior.floating,
                 ),
@@ -170,9 +170,7 @@ class _CreateEditAutomaticTransactionScreenState
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          initialTxn == null
-              ? 'New Automatic Transaction'
-              : 'Edit Automatic Transaction',
+          initialTxn == null ? l10n.autoTxNewTitle : l10n.autoTxEditTitle,
           style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.w800,
             letterSpacing: -0.2,
@@ -272,7 +270,7 @@ class _CreateEditAutomaticTransactionScreenState
                 TextField(
                   controller: _nameController,
                   decoration: InputDecoration(
-                    labelText: 'Template Name', // e.g. "Rent", "Spotify"
+                    labelText: l10n.autoTxTemplateNameLabel,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16),
                       borderSide: BorderSide.none,
@@ -286,7 +284,7 @@ class _CreateEditAutomaticTransactionScreenState
                   Padding(
                     padding: const EdgeInsets.only(top: 8, left: 16),
                     child: Text(
-                      'Name is required',
+                      l10n.autoTxNameRequired,
                       style: theme.textTheme.bodySmall
                           ?.copyWith(color: colorScheme.error),
                     ),
@@ -474,8 +472,8 @@ class _CreateEditAutomaticTransactionScreenState
                         color: colorScheme.outline.withValues(alpha: 0.08),
                       ),
                       _FormSelectorTile(
-                        label: 'Recurrence',
-                        value: _formatRecurrence(state.recurrenceDays),
+                        label: l10n.autoTxLabelRecurrence,
+                        value: _formatRecurrence(context, state.recurrenceDays),
                         icon: Icons.repeat_rounded,
                         iconColor: colorScheme.tertiary,
                         onTap: () =>
@@ -609,11 +607,12 @@ class _CreateEditAutomaticTransactionScreenState
     );
   }
 
-  String _formatRecurrence(int days) {
-    if (days == 7) return 'Weekly';
-    if (days == 30) return 'Monthly';
-    if (days == 365) return 'Yearly';
-    return 'Every $days days';
+  String _formatRecurrence(BuildContext context, int days) {
+    final l10n = AppLocalizations.of(context)!;
+    if (days == 7) return l10n.autoTxFormatWeekly;
+    if (days == 30) return l10n.autoTxFormatMonthly;
+    if (days == 365) return l10n.autoTxFormatYearly;
+    return l10n.autoTxFormatEveryDays(days);
   }
 
   void _showAccountSelector(
@@ -672,34 +671,38 @@ class _CreateEditAutomaticTransactionScreenState
                               : Colors.transparent,
                         ),
                       ),
-                      child: ListTile(
-                        leading: CircleAvatar(
-                          backgroundColor: accColor.withValues(alpha: 0.12),
-                          child: Icon(
-                            _getIconData(account.icon),
-                            color: accColor,
-                            size: 20,
+                      child: Material(
+                        color: Colors.transparent,
+                        child: ListTile(
+                          leading: CircleAvatar(
+                            backgroundColor: accColor.withValues(alpha: 0.12),
+                            child: Icon(
+                              _getIconData(account.icon),
+                              color: accColor,
+                              size: 20,
+                            ),
                           ),
-                        ),
-                        title: Text(
-                          account.name,
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            fontWeight: FontWeight.w700,
+                          title: Text(
+                            account.name,
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.w700,
+                            ),
                           ),
+                          trailing: isSelected
+                              ? Icon(Icons.check_circle_rounded,
+                                  color: accColor)
+                              : null,
+                          onTap: () {
+                            ref
+                                .read(
+                                  createEditAutomaticTransactionNotifierProvider(
+                                    initialTxn,
+                                  ).notifier,
+                                )
+                                .updateAccount(account.id);
+                            Navigator.of(context).pop();
+                          },
                         ),
-                        trailing: isSelected
-                            ? Icon(Icons.check_circle_rounded, color: accColor)
-                            : null,
-                        onTap: () {
-                          ref
-                              .read(
-                                createEditAutomaticTransactionNotifierProvider(
-                                  initialTxn,
-                                ).notifier,
-                              )
-                              .updateAccount(account.id);
-                          Navigator.of(context).pop();
-                        },
                       ),
                     );
                   },
@@ -783,30 +786,34 @@ class _CreateEditAutomaticTransactionScreenState
                               : Colors.transparent,
                         ),
                       ),
-                      child: ListTile(
-                        leading: CircleAvatar(
-                          backgroundColor: catColor.withValues(alpha: 0.12),
-                          child: Icon(catIcon, color: catColor, size: 20),
-                        ),
-                        title: Text(
-                          category.name,
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            fontWeight: FontWeight.w700,
+                      child: Material(
+                        color: Colors.transparent,
+                        child: ListTile(
+                          leading: CircleAvatar(
+                            backgroundColor: catColor.withValues(alpha: 0.12),
+                            child: Icon(catIcon, color: catColor, size: 20),
                           ),
+                          title: Text(
+                            category.name,
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          trailing: isSelected
+                              ? Icon(Icons.check_circle_rounded,
+                                  color: catColor)
+                              : null,
+                          onTap: () {
+                            ref
+                                .read(
+                                  createEditAutomaticTransactionNotifierProvider(
+                                    initialTxn,
+                                  ).notifier,
+                                )
+                                .updateCategory(category.id);
+                            Navigator.of(context).pop();
+                          },
                         ),
-                        trailing: isSelected
-                            ? Icon(Icons.check_circle_rounded, color: catColor)
-                            : null,
-                        onTap: () {
-                          ref
-                              .read(
-                                createEditAutomaticTransactionNotifierProvider(
-                                  initialTxn,
-                                ).notifier,
-                              )
-                              .updateCategory(category.id);
-                          Navigator.of(context).pop();
-                        },
                       ),
                     );
                   },
@@ -884,35 +891,38 @@ class _CreateEditAutomaticTransactionScreenState
                               : Colors.transparent,
                         ),
                       ),
-                      child: ListTile(
-                        leading: CircleAvatar(
-                          backgroundColor:
-                              colorScheme.primary.withValues(alpha: 0.12),
-                          child: Text(
-                            CurrencyFormatter.getCurrencySymbol(code),
-                            style: TextStyle(
-                              color: colorScheme.primary,
-                              fontWeight: FontWeight.bold,
+                      child: Material(
+                        color: Colors.transparent,
+                        child: ListTile(
+                          leading: CircleAvatar(
+                            backgroundColor:
+                                colorScheme.primary.withValues(alpha: 0.12),
+                            child: Text(
+                              CurrencyFormatter.getCurrencySymbol(code),
+                              style: TextStyle(
+                                color: colorScheme.primary,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
+                          title: Text(name),
+                          trailing: isSelected
+                              ? Icon(
+                                  Icons.check_circle_rounded,
+                                  color: colorScheme.primary,
+                                )
+                              : null,
+                          onTap: () {
+                            ref
+                                .read(
+                                  createEditAutomaticTransactionNotifierProvider(
+                                    initialTxn,
+                                  ).notifier,
+                                )
+                                .updateCurrency(code);
+                            Navigator.of(context).pop();
+                          },
                         ),
-                        title: Text(name),
-                        trailing: isSelected
-                            ? Icon(
-                                Icons.check_circle_rounded,
-                                color: colorScheme.primary,
-                              )
-                            : null,
-                        onTap: () {
-                          ref
-                              .read(
-                                createEditAutomaticTransactionNotifierProvider(
-                                  initialTxn,
-                                ).notifier,
-                              )
-                              .updateCurrency(code);
-                          Navigator.of(context).pop();
-                        },
                       ),
                     );
                   },
@@ -941,116 +951,124 @@ class _CreateEditAutomaticTransactionScreenState
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       builder: (context) {
-        return Container(
+        final l10n = AppLocalizations.of(context)!;
+        return Padding(
           padding: EdgeInsets.only(
-            top: 24,
-            left: 20,
-            right: 20,
-            bottom: MediaQuery.of(context).viewInsets.bottom + 24,
+            bottom: MediaQuery.of(context).viewInsets.bottom,
           ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text(
-                'Select Recurrence',
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w800,
-                ),
-                textAlign: TextAlign.center,
+          child: SingleChildScrollView(
+            child: Container(
+              padding: const EdgeInsets.only(
+                top: 24,
+                left: 20,
+                right: 20,
+                bottom: 24,
               ),
-              const SizedBox(height: 16),
-              _RecurrenceOptionTile(
-                title: 'Weekly (Every 7 days)',
-                isSelected: state.recurrenceDays == 7,
-                onTap: () {
-                  ref
-                      .read(
-                        createEditAutomaticTransactionNotifierProvider(
-                          initialTxn,
-                        ).notifier,
-                      )
-                      .updateRecurrenceDays(7);
-                  Navigator.of(context).pop();
-                },
-              ),
-              _RecurrenceOptionTile(
-                title: 'Monthly (Every 30 days)',
-                isSelected: state.recurrenceDays == 30,
-                onTap: () {
-                  ref
-                      .read(
-                        createEditAutomaticTransactionNotifierProvider(
-                          initialTxn,
-                        ).notifier,
-                      )
-                      .updateRecurrenceDays(30);
-                  Navigator.of(context).pop();
-                },
-              ),
-              _RecurrenceOptionTile(
-                title: 'Yearly (Every 365 days)',
-                isSelected: state.recurrenceDays == 365,
-                onTap: () {
-                  ref
-                      .read(
-                        createEditAutomaticTransactionNotifierProvider(
-                          initialTxn,
-                        ).notifier,
-                      )
-                      .updateRecurrenceDays(365);
-                  Navigator.of(context).pop();
-                },
-              ),
-              const Divider(height: 32),
-              Text(
-                'Custom Interval (Days)',
-                style: theme.textTheme.labelMedium,
-              ),
-              const SizedBox(height: 8),
-              Row(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Expanded(
-                    child: TextField(
-                      controller: _customRecurrenceController,
-                      keyboardType: TextInputType.number,
-                      decoration: InputDecoration(
-                        hintText: 'e.g. 14',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
+                  Text(
+                    l10n.autoTxSelectRecurrence,
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w800,
                     ),
+                    textAlign: TextAlign.center,
                   ),
-                  const SizedBox(width: 12),
-                  FilledButton(
-                    onPressed: () {
-                      final parsed =
-                          int.tryParse(_customRecurrenceController.text);
-                      if (parsed != null && parsed > 0 && parsed <= 365) {
-                        ref
-                            .read(
-                              createEditAutomaticTransactionNotifierProvider(
-                                initialTxn,
-                              ).notifier,
-                            )
-                            .updateRecurrenceDays(parsed);
-                        Navigator.of(context).pop();
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text(
-                              'Please enter a valid number of days (1-365).',
+                  const SizedBox(height: 16),
+                  _RecurrenceOptionTile(
+                    title: l10n.autoTxRecurrenceWeekly,
+                    isSelected: state.recurrenceDays == 7,
+                    onTap: () {
+                      ref
+                          .read(
+                            createEditAutomaticTransactionNotifierProvider(
+                              initialTxn,
+                            ).notifier,
+                          )
+                          .updateRecurrenceDays(7);
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                  _RecurrenceOptionTile(
+                    title: l10n.autoTxRecurrenceMonthly,
+                    isSelected: state.recurrenceDays == 30,
+                    onTap: () {
+                      ref
+                          .read(
+                            createEditAutomaticTransactionNotifierProvider(
+                              initialTxn,
+                            ).notifier,
+                          )
+                          .updateRecurrenceDays(30);
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                  _RecurrenceOptionTile(
+                    title: l10n.autoTxRecurrenceYearly,
+                    isSelected: state.recurrenceDays == 365,
+                    onTap: () {
+                      ref
+                          .read(
+                            createEditAutomaticTransactionNotifierProvider(
+                              initialTxn,
+                            ).notifier,
+                          )
+                          .updateRecurrenceDays(365);
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                  const Divider(height: 32),
+                  Text(
+                    l10n.autoTxRecurrenceCustomInterval,
+                    style: theme.textTheme.labelMedium,
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: _customRecurrenceController,
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(
+                            hintText: l10n.autoTxRecurrenceCustomHint,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
                             ),
                           ),
-                        );
-                      }
-                    },
-                    child: const Text('Apply'),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      FilledButton(
+                        onPressed: () {
+                          final parsed =
+                              int.tryParse(_customRecurrenceController.text);
+                          if (parsed != null && parsed > 0 && parsed <= 365) {
+                            ref
+                                .read(
+                                  createEditAutomaticTransactionNotifierProvider(
+                                    initialTxn,
+                                  ).notifier,
+                                )
+                                .updateRecurrenceDays(parsed);
+                            Navigator.of(context).pop();
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  l10n.autoTxRecurrenceInvalidRange,
+                                ),
+                              ),
+                            );
+                          }
+                        },
+                        child: Text(l10n.autoTxRecurrenceApply),
+                      ),
+                    ],
                   ),
                 ],
               ),
-            ],
+            ),
           ),
         );
       },
@@ -1157,12 +1175,15 @@ class _RecurrenceOptionTile extends StatelessWidget {
               : Colors.transparent,
         ),
       ),
-      child: ListTile(
-        title: Text(title),
-        trailing: isSelected
-            ? Icon(Icons.check_circle_rounded, color: colorScheme.primary)
-            : null,
-        onTap: onTap,
+      child: Material(
+        color: Colors.transparent,
+        child: ListTile(
+          title: Text(title),
+          trailing: isSelected
+              ? Icon(Icons.check_circle_rounded, color: colorScheme.primary)
+              : null,
+          onTap: onTap,
+        ),
       ),
     );
   }
