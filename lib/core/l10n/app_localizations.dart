@@ -130,6 +130,13 @@ abstract class AppLocalizations {
   /// **'Income'**
   String get income;
 
+  ///// Label for plural positive financial incomes
+  ////
+  /// In en, this message translates to:
+  /// **'Incomes'**
+  String get incomes;
+
+
   /// Label for negative financial expense
   ///
   /// In en, this message translates to:

@@ -20,6 +20,10 @@
   "@income": {
     "description": "Label for positive financial income"
   },
+  "incomes": "Incomes",
+  "@incomes": {
+    "description": "Label for plural positive financial incomes"
+  },
   "expense": "Expense",
   "@expense": {
     "description": "Label for negative financial expense"

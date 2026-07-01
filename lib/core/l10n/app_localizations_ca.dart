@@ -21,7 +21,10 @@ class AppLocalizationsCa extends AppLocalizations {
   String get addTransaction => 'Afegir transacció';
 
   @override
-  String get income => 'Ingressos';
+  String get income => 'Ingrés';
+
+  @override
+  String get incomes => 'Ingressos';
 
   @override
   String get expense => 'Despesa';

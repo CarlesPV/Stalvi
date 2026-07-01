@@ -21,7 +21,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get addTransaction => 'Añadir transacción';
 
   @override
-  String get income => 'Ingresos';
+  String get income => 'Ingreso';
 
   @override
   String get expense => 'Gasto';
