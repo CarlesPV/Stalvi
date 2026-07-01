@@ -36,6 +36,8 @@ class TrashUsecases {
 
   Future<List<TrashItem>> getTrashItems() => _trashDao.getTrashItems();
 
+  Stream<List<TrashItem>> watchTrashItems() => _trashDao.watchTrashItems();
+
   /// Restores a soft-deleted item.
   ///
   /// For [TrashItemType.transaction]: restores the row (and its transfer

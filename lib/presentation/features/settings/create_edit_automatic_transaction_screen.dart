@@ -8,6 +8,7 @@ import 'package:stalvi/domain/entities/category.dart';
 import 'package:stalvi/domain/entities/category_type.dart';
 import 'package:stalvi/domain/entities/transaction_type.dart';
 import 'package:stalvi/domain/entities/automatic_transaction.dart';
+import 'package:stalvi/domain/entities/recurrence_type.dart';
 import '../../providers/create_edit_automatic_transaction_notifier.dart';
 import '../../providers/repository_providers.dart';
 import 'package:stalvi/core/utils/currency_formatter.dart';
@@ -473,7 +474,8 @@ class _CreateEditAutomaticTransactionScreenState
                       ),
                       _FormSelectorTile(
                         label: l10n.autoTxLabelRecurrence,
-                        value: _formatRecurrence(context, state.recurrenceDays),
+                        value: _formatRecurrence(context, state.recurrenceType,
+                            state.recurrenceDays),
                         icon: Icons.repeat_rounded,
                         iconColor: colorScheme.tertiary,
                         onTap: () =>
@@ -607,8 +609,12 @@ class _CreateEditAutomaticTransactionScreenState
     );
   }
 
-  String _formatRecurrence(BuildContext context, int days) {
+  String _formatRecurrence(
+      BuildContext context, RecurrenceType type, int days) {
     final l10n = AppLocalizations.of(context)!;
+    if (type == RecurrenceType.specificDayOfMonth) {
+      return l10n.autoTxFormatSpecificDay(days.toString());
+    }
     if (days == 7) return l10n.autoTxFormatWeekly;
     if (days == 30) return l10n.autoTxFormatMonthly;
     if (days == 365) return l10n.autoTxFormatYearly;
@@ -689,8 +695,10 @@ class _CreateEditAutomaticTransactionScreenState
                             ),
                           ),
                           trailing: isSelected
-                              ? Icon(Icons.check_circle_rounded,
-                                  color: accColor)
+                              ? Icon(
+                                  Icons.check_circle_rounded,
+                                  color: accColor,
+                                )
                               : null,
                           onTap: () {
                             ref
@@ -800,8 +808,10 @@ class _CreateEditAutomaticTransactionScreenState
                             ),
                           ),
                           trailing: isSelected
-                              ? Icon(Icons.check_circle_rounded,
-                                  color: catColor)
+                              ? Icon(
+                                  Icons.check_circle_rounded,
+                                  color: catColor,
+                                )
                               : null,
                           onTap: () {
                             ref
@@ -940,8 +950,13 @@ class _CreateEditAutomaticTransactionScreenState
     AutomaticTransaction? initialTxn,
   ) {
     final theme = Theme.of(context);
-    final state =
-        ref.read(createEditAutomaticTransactionNotifierProvider(initialTxn));
+
+    // Provide a stateful builder so the bottom sheet can update when segmented control or radio changes.
+    // However, riverpod state will automatically rebuild the caller, but the bottom sheet needs its own state
+    // for the custom type selection before applying.
+
+    RecurrenceType localCustomType = RecurrenceType.intervalDays;
+    String? localError;
 
     showModalBottomSheet(
       context: context,
@@ -951,125 +966,219 @@ class _CreateEditAutomaticTransactionScreenState
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       builder: (context) {
-        final l10n = AppLocalizations.of(context)!;
-        return Padding(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom,
-          ),
-          child: SingleChildScrollView(
-            child: Container(
-              padding: const EdgeInsets.only(
-                top: 24,
-                left: 20,
-                right: 20,
-                bottom: 24,
+        return Consumer(
+          builder: (context, ref, child) {
+            final state = ref.watch(
+                createEditAutomaticTransactionNotifierProvider(initialTxn));
+            final l10n = AppLocalizations.of(context)!;
+            return Padding(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom,
               ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Text(
-                    l10n.autoTxSelectRecurrence,
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w800,
-                    ),
-                    textAlign: TextAlign.center,
+              child: SingleChildScrollView(
+                child: Container(
+                  padding: const EdgeInsets.only(
+                    top: 24,
+                    left: 20,
+                    right: 20,
+                    bottom: 24,
                   ),
-                  const SizedBox(height: 16),
-                  _RecurrenceOptionTile(
-                    title: l10n.autoTxRecurrenceWeekly,
-                    isSelected: state.recurrenceDays == 7,
-                    onTap: () {
-                      ref
-                          .read(
-                            createEditAutomaticTransactionNotifierProvider(
-                              initialTxn,
-                            ).notifier,
-                          )
-                          .updateRecurrenceDays(7);
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                  _RecurrenceOptionTile(
-                    title: l10n.autoTxRecurrenceMonthly,
-                    isSelected: state.recurrenceDays == 30,
-                    onTap: () {
-                      ref
-                          .read(
-                            createEditAutomaticTransactionNotifierProvider(
-                              initialTxn,
-                            ).notifier,
-                          )
-                          .updateRecurrenceDays(30);
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                  _RecurrenceOptionTile(
-                    title: l10n.autoTxRecurrenceYearly,
-                    isSelected: state.recurrenceDays == 365,
-                    onTap: () {
-                      ref
-                          .read(
-                            createEditAutomaticTransactionNotifierProvider(
-                              initialTxn,
-                            ).notifier,
-                          )
-                          .updateRecurrenceDays(365);
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                  const Divider(height: 32),
-                  Text(
-                    l10n.autoTxRecurrenceCustomInterval,
-                    style: theme.textTheme.labelMedium,
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: TextField(
-                          controller: _customRecurrenceController,
-                          keyboardType: TextInputType.number,
-                          decoration: InputDecoration(
-                            hintText: l10n.autoTxRecurrenceCustomHint,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
+                  child: Form(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Text(
+                          l10n.autoTxSelectRecurrence,
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.w800,
                           ),
+                          textAlign: TextAlign.center,
                         ),
-                      ),
-                      const SizedBox(width: 12),
-                      FilledButton(
-                        onPressed: () {
-                          final parsed =
-                              int.tryParse(_customRecurrenceController.text);
-                          if (parsed != null && parsed > 0 && parsed <= 365) {
+                        const SizedBox(height: 16),
+                        _RecurrenceOptionTile(
+                          title: l10n.autoTxRecurrenceWeekly,
+                          isSelected: state.recurrenceType ==
+                                  RecurrenceType.intervalDays &&
+                              state.recurrenceDays == 7,
+                          onTap: () {
                             ref
                                 .read(
                                   createEditAutomaticTransactionNotifierProvider(
                                     initialTxn,
                                   ).notifier,
                                 )
-                                .updateRecurrenceDays(parsed);
+                                .updateRecurrence(
+                                    RecurrenceType.intervalDays, 7);
                             Navigator.of(context).pop();
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  l10n.autoTxRecurrenceInvalidRange,
+                          },
+                        ),
+                        _RecurrenceOptionTile(
+                          title: l10n.autoTxRecurrenceMonthly,
+                          isSelected: state.recurrenceType ==
+                                  RecurrenceType.intervalDays &&
+                              state.recurrenceDays == 30,
+                          onTap: () {
+                            ref
+                                .read(
+                                  createEditAutomaticTransactionNotifierProvider(
+                                    initialTxn,
+                                  ).notifier,
+                                )
+                                .updateRecurrence(
+                                    RecurrenceType.intervalDays, 30);
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                        _RecurrenceOptionTile(
+                          title: l10n.autoTxRecurrenceYearly,
+                          isSelected: state.recurrenceType ==
+                                  RecurrenceType.intervalDays &&
+                              state.recurrenceDays == 365,
+                          onTap: () {
+                            ref
+                                .read(
+                                  createEditAutomaticTransactionNotifierProvider(
+                                    initialTxn,
+                                  ).notifier,
+                                )
+                                .updateRecurrence(
+                                    RecurrenceType.intervalDays, 365);
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                        const Divider(height: 32),
+                        Text(
+                          l10n.autoTxRecurrenceCustomInterval,
+                          style: theme.textTheme.labelMedium,
+                        ),
+                        const SizedBox(height: 8),
+                        StatefulBuilder(
+                          builder: (context, setState) {
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: RadioListTile<RecurrenceType>(
+                                        title: Text(
+                                            l10n.autoTxRecurrenceEveryXDays),
+                                        value: RecurrenceType.intervalDays,
+                                        // ignore: deprecated_member_use
+                                        groupValue: localCustomType,
+                                        contentPadding: EdgeInsets.zero,
+                                        // ignore: deprecated_member_use
+                                        onChanged: (val) {
+                                          if (val != null) {
+                                            setState(() {
+                                              localCustomType = val;
+                                              localError = null;
+                                            });
+                                          }
+                                        },
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: RadioListTile<RecurrenceType>(
+                                        title: Text(
+                                            l10n.autoTxRecurrenceDayOfMonth),
+                                        value:
+                                            RecurrenceType.specificDayOfMonth,
+                                        // ignore: deprecated_member_use
+                                        groupValue: localCustomType,
+                                        contentPadding: EdgeInsets.zero,
+                                        // ignore: deprecated_member_use
+                                        onChanged: (val) {
+                                          if (val != null) {
+                                            setState(() {
+                                              localCustomType = val;
+                                              localError = null;
+                                            });
+                                          }
+                                        },
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: TextField(
+                                        controller: _customRecurrenceController,
+                                        keyboardType: TextInputType.number,
+                                        onChanged: (_) =>
+                                            setState(() => localError = null),
+                                        decoration: InputDecoration(
+                                          hintText:
+                                              l10n.autoTxRecurrenceCustomHint,
+                                          border: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(12),
+                                          ),
+                                          errorText: localError ??
+                                              (state.errors.containsKey(
+                                                      'recurrenceDays')
+                                                  ? (localCustomType ==
+                                                          RecurrenceType
+                                                              .specificDayOfMonth
+                                                      ? l10n
+                                                          .autoTxErrorInvalidDayOfMonth
+                                                      : l10n
+                                                          .autoTxErrorInvalidRecurrenceInterval)
+                                                  : null),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 12),
+                                    FilledButton(
+                                      onPressed: () {
+                                        final parsed = int.tryParse(
+                                            _customRecurrenceController.text);
+                                        final maxVal = localCustomType ==
+                                                RecurrenceType
+                                                    .specificDayOfMonth
+                                            ? 31
+                                            : 365;
+                                        if (parsed != null &&
+                                            parsed > 0 &&
+                                            parsed <= maxVal) {
+                                          ref
+                                              .read(
+                                                createEditAutomaticTransactionNotifierProvider(
+                                                  initialTxn,
+                                                ).notifier,
+                                              )
+                                              .updateRecurrence(
+                                                  localCustomType, parsed);
+                                          Navigator.of(context).pop();
+                                        } else {
+                                          setState(() {
+                                            localError = localCustomType ==
+                                                    RecurrenceType
+                                                        .specificDayOfMonth
+                                                ? l10n
+                                                    .autoTxErrorInvalidDayOfMonth
+                                                : l10n
+                                                    .autoTxErrorInvalidRecurrenceInterval;
+                                          });
+                                        }
+                                      },
+                                      child: Text(l10n.autoTxRecurrenceApply),
+                                    ),
+                                  ],
+                                ),
+                              ],
                             );
-                          }
-                        },
-                        child: Text(l10n.autoTxRecurrenceApply),
-                      ),
-                    ],
+                          },
+                        ),
+                      ],
+                    ),
                   ),
-                ],
+                ),
               ),
-            ),
-          ),
+            );
+          },
         );
       },
     );

@@ -1,19 +1,21 @@
-# Active Task: Phase 33 - UI Polish, Real-Time Reactivity, and Soft-Delete Refinement
+# Active Task: Phase 34 - Reactive State Consolidation, UI/UX Refinement, and Production Readiness
 
-**Date:** July 2026
-**Context:** The core application (Stalvi) is functional with Clean Architecture, Riverpod, and Drift. We are currently addressing critical UI/UX bugs, enforcing full i18n, and completing data management flows (soft-delete) before final release readiness.
+## Current Objective
+Finalize the application state management to ensure real-time statistic calculations across all modules, implement advanced recurrence logic for automatic transactions, polish UI elements (Splash screen, Recycle Bin), achieve 100% i18n coverage (EN, ES, CA), and optimize the codebase for zero CI/CD errors.
 
-## Objectives
-- [x] **Splash Screen:** Update the initial loading splash icon to display the app logo within a rounded square.
-- [x] **Real-Time Statistics:** Refactor statistics calculations (dashboard, account sections) to use reactive streams so they update instantly upon data changes.
-- [x] **Complete Localization (i18n):** Ensure the entire app, specifically the Automatic/Recurring Transactions section, is fully available in English, Spanish, and Catalan.
-- [x] **UI/Error Visibility:** Fix layout issues where error messages (e.g., custom recurrence in automatic transactions) are hidden behind pop-ups or blocked by the keyboard.
-- [x] **Automatic Transactions Soft-Delete:** Implement a soft-delete mechanism for recurring transactions with a confirmation pop-up. Soft-deleted items must go to the Recycle Bin, be disabled from generating new transactions, and be auto-purged after 30 days.
-- [x] **Overflow Resolution:** Audit and fix all text/widget overflow issues and unintended omissions ("...") across the app, especially in Settings and Data Management pop-ups.
-- [x] **Final QA & Cleanup:** Ensure all tests pass, CI/CD workflows succeed, `flutter analyze` is clean, logs/unnecessary files are removed, `.gitignore` is secure, and update all documentation (Roadmap, README, etc.).
+## Sub-Tasks
+- [ ] **UI Polish**: Update splash screen to use `splash_icon.png` (rounded edges). 
+- [ ] **UI Polish**: Reorder Recycle Bin item subtitles (Expiration date first, then item type).
+- [ ] **Business Logic**: Upgrade automatic/recurring transactions to support Weekly (7 days), Monthly (30 days), Yearly (365 days), and Custom (Specific day of the month OR every X days).
+- [ ] **UI Logic**: Position custom field error messages directly below the input field inside the recurring transaction popup to prevent keyboard overlap.
+- [ ] **Reactive State**: Ensure all statistics (total balance, wallet balances, account stats) react instantly to any CRUD operation (including recycle bin restores/deletes) while respecting currency conversions.
+- [ ] **Localization**: Verify and complete missing translations across `app_en.arb`, `app_es.arb`, and `app_ca.arb` for all texts, buttons, and errors.
+- [ ] **Quality Assurance**: Ensure 100% passing rate for all unit/integration tests, GitHub Actions CI workflows, and `flutter analyze` (0 errors, 0 warnings, 0 info).
+- [ ] **Documentation**: Update `roadmap.md`, `README.md`, and inline documentation to reflect the final production-ready state.
+- [ ] **Optimization**: Execute a deep code cleanup (remove unused files, dead code, redundant comments, and orphan localization keys) to minimize app footprint. Re-verify tests post-cleanup.
 
-## Current Status
-- **Completed:** Prompt 1 (Splash & Overflows)
-- **Completed:** Prompt 2 (Real-Time Stats & i18n)
-- **Completed:** Prompt 3 (Soft-Delete & Error UI)
-- **Completed:** Prompt 4 (QA, Tests & Docs)
+## Context
+- **Architecture**: Clean Architecture
+- **State Management**: Riverpod
+- **Database**: Drift + SQLCipher
+- **Current Status**: Pre-production polish. Code modifications must be written directly to the file system.

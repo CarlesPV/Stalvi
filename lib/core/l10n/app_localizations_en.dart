@@ -1087,4 +1087,32 @@ class AppLocalizationsEn extends AppLocalizations {
   String autoTxFormatEveryDays(int days) {
     return 'Every $days days';
   }
+
+  @override
+  String get languageEnglish => 'English';
+
+  @override
+  String get languageSpanish => 'Español';
+
+  @override
+  String get languageCatalan => 'Català';
+
+  @override
+  String autoTxFormatSpecificDay(String day) {
+    return 'Every month on the $day';
+  }
+
+  @override
+  String get autoTxRecurrenceEveryXDays => 'Every X days';
+
+  @override
+  String get autoTxRecurrenceDayOfMonth => 'Day of month';
+
+  @override
+  String get autoTxErrorInvalidDayOfMonth =>
+      'Invalid day of month (must be 1-31)';
+
+  @override
+  String get autoTxErrorInvalidRecurrenceInterval =>
+      'Invalid recurrence interval';
 }

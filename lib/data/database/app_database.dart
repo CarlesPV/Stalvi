@@ -34,6 +34,7 @@ import 'daos/budget_dao.dart';
 import 'daos/savings_goal_dao.dart';
 import 'tables/automatic_transaction_table.dart';
 import 'daos/automatic_transaction_dao.dart';
+import 'package:stalvi/domain/entities/recurrence_type.dart';
 
 part 'app_database.g.dart';
 

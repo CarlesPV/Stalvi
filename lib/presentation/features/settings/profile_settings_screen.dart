@@ -658,21 +658,21 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                                 .setLocale(Locale(newLang));
                           }
                         },
-                        items: const [
+                        items: [
                           DropdownMenuItem<String>(
                             value: 'en',
-                            child:
-                                Text('English', style: TextStyle(fontSize: 14)),
+                            child: Text(l10n.languageEnglish,
+                                style: const TextStyle(fontSize: 14)),
                           ),
                           DropdownMenuItem<String>(
                             value: 'es',
-                            child:
-                                Text('Español', style: TextStyle(fontSize: 14)),
+                            child: Text(l10n.languageSpanish,
+                                style: const TextStyle(fontSize: 14)),
                           ),
                           DropdownMenuItem<String>(
                             value: 'ca',
-                            child:
-                                Text('Català', style: TextStyle(fontSize: 14)),
+                            child: Text(l10n.languageCatalan,
+                                style: const TextStyle(fontSize: 14)),
                           ),
                         ],
                       ),

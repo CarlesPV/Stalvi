@@ -1,0 +1,4 @@
+enum RecurrenceType {
+  intervalDays,
+  specificDayOfMonth,
+}

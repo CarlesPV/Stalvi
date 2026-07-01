@@ -106,6 +106,7 @@ final _fakeIncomeCategories = [
 
 Stream<T> _makeShareable<T>(Stream<T> source) {
   late StreamController<T> controller;
+  // ignore: cancel_subscriptions
   StreamSubscription<T>? subscription;
   T? lastValue;
   bool hasValue = false;

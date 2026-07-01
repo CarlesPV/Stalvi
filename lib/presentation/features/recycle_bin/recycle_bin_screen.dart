@@ -128,7 +128,7 @@ class _TrashItemTile extends ConsumerWidget {
         overflow: TextOverflow.ellipsis,
       ),
       subtitle: Text(
-        '${getTypeLabel()} • ${l10n.recycleBinDaysRemaining(remainingDays)}',
+        '${l10n.recycleBinDaysRemaining(remainingDays)} • ${getTypeLabel()}',
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
         style: TextStyle(

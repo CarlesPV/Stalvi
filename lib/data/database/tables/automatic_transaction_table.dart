@@ -4,6 +4,8 @@ import 'category_table.dart';
 import 'tag_table.dart';
 import 'transaction_table.dart'; // For TransactionType
 
+import 'package:stalvi/domain/entities/recurrence_type.dart';
+
 @DataClassName('AutomaticTransactionEntity')
 class AutomaticTransactions extends Table {
   TextColumn get id => text()();
@@ -18,6 +20,9 @@ class AutomaticTransactions extends Table {
   TextColumn get tagId =>
       text().named('tag_id').nullable().references(Tags, #id)();
   TextColumn get notes => text().nullable()();
+  IntColumn get recurrenceType => intEnum<RecurrenceType>()
+      .named('recurrence_type')
+      .withDefault(const Constant(0))();
   IntColumn get recurrenceDays => integer().named('recurrence_days')();
   DateTimeColumn get nextExecutionDate =>
       dateTime().named('next_execution_date')();

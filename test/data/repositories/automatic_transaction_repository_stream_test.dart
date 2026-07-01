@@ -6,6 +6,7 @@ import 'package:stalvi/data/database/tables/transaction_table.dart'
     show TransactionType;
 import 'package:stalvi/data/mappers/automatic_transaction_mapper.dart';
 import 'package:stalvi/domain/entities/automatic_transaction.dart';
+import 'package:stalvi/domain/entities/recurrence_type.dart';
 
 class MockAutomaticTransactionDao extends Mock
     implements AutomaticTransactionDao {}
@@ -31,6 +32,7 @@ AutomaticTransactionEntity _entity({
   String currency = 'EUR',
   TransactionType type = TransactionType.expense,
   String accountId = 'acc1',
+  RecurrenceType recurrenceType = RecurrenceType.intervalDays,
   int recurrenceDays = 30,
   bool isActive = true,
   bool isDeleted = false,
@@ -47,6 +49,7 @@ AutomaticTransactionEntity _entity({
     categoryId: null,
     tagId: null,
     notes: null,
+    recurrenceType: recurrenceType,
     recurrenceDays: recurrenceDays,
     nextExecutionDate: now,
     createdAt: now,

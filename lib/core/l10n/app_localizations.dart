@@ -2079,6 +2079,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Every {days} days'**
   String autoTxFormatEveryDays(int days);
+
+  /// Language name for English
+  ///
+  /// In en, this message translates to:
+  /// **'English'**
+  String get languageEnglish;
+
+  /// Language name for Spanish
+  ///
+  /// In en, this message translates to:
+  /// **'Español'**
+  String get languageSpanish;
+
+  /// Language name for Catalan
+  ///
+  /// In en, this message translates to:
+  /// **'Català'**
+  String get languageCatalan;
+
+  /// Recurrence format for a specific day of the month
+  ///
+  /// In en, this message translates to:
+  /// **'Every month on the {day}'**
+  String autoTxFormatSpecificDay(String day);
+
+  /// Recurrence option for every X days
+  ///
+  /// In en, this message translates to:
+  /// **'Every X days'**
+  String get autoTxRecurrenceEveryXDays;
+
+  /// Recurrence option for a specific day of the month
+  ///
+  /// In en, this message translates to:
+  /// **'Day of month'**
+  String get autoTxRecurrenceDayOfMonth;
+
+  /// Error message for invalid day of month
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid day of month (must be 1-31)'**
+  String get autoTxErrorInvalidDayOfMonth;
+
+  /// Error message for invalid recurrence interval
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid recurrence interval'**
+  String get autoTxErrorInvalidRecurrenceInterval;
 }
 
 class _AppLocalizationsDelegate

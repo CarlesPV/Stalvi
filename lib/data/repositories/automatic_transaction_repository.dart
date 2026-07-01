@@ -35,8 +35,9 @@ class AutomaticTransactionRepository
   @override
   Stream<List<AutomaticTransaction>> watchAllAutomaticTransactions() {
     return _db.automaticTransactionDao.watchAllAutomaticTransactions().map(
-        (entities) =>
-            entities.map(AutomaticTransactionMapper.fromEntity).toList());
+          (entities) =>
+              entities.map(AutomaticTransactionMapper.fromEntity).toList(),
+        );
   }
 
   @override

@@ -1,4 +1,5 @@
 import 'transaction_type.dart';
+import 'recurrence_type.dart';
 
 class AutomaticTransaction {
   final String id;
@@ -10,6 +11,7 @@ class AutomaticTransaction {
   final String? categoryId;
   final String? tagId;
   final String? notes;
+  final RecurrenceType recurrenceType;
   final int recurrenceDays;
   final DateTime nextExecutionDate;
   final DateTime createdAt;
@@ -27,6 +29,7 @@ class AutomaticTransaction {
     this.categoryId,
     this.tagId,
     this.notes,
+    this.recurrenceType = RecurrenceType.intervalDays,
     required this.recurrenceDays,
     required this.nextExecutionDate,
     required this.createdAt,
@@ -45,6 +48,7 @@ class AutomaticTransaction {
     String? categoryId,
     String? tagId,
     String? notes,
+    RecurrenceType? recurrenceType,
     int? recurrenceDays,
     DateTime? nextExecutionDate,
     DateTime? createdAt,
@@ -63,6 +67,7 @@ class AutomaticTransaction {
       categoryId: categoryId ?? this.categoryId,
       tagId: tagId ?? this.tagId,
       notes: notes ?? this.notes,
+      recurrenceType: recurrenceType ?? this.recurrenceType,
       recurrenceDays: recurrenceDays ?? this.recurrenceDays,
       nextExecutionDate: nextExecutionDate ?? this.nextExecutionDate,
       createdAt: createdAt ?? this.createdAt,

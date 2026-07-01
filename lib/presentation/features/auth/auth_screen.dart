@@ -395,13 +395,13 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
                 ),
               ),
             ),
-            items: const [
+            items: [
               DropdownMenuItem(
                 value: 'en',
                 child: FittedBox(
                   fit: BoxFit.scaleDown,
                   alignment: Alignment.centerLeft,
-                  child: Text('English'),
+                  child: Text(l10n.languageEnglish),
                 ),
               ),
               DropdownMenuItem(
@@ -409,7 +409,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
                 child: FittedBox(
                   fit: BoxFit.scaleDown,
                   alignment: Alignment.centerLeft,
-                  child: Text('Español'),
+                  child: Text(l10n.languageSpanish),
                 ),
               ),
               DropdownMenuItem(
@@ -417,7 +417,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
                 child: FittedBox(
                   fit: BoxFit.scaleDown,
                   alignment: Alignment.centerLeft,
-                  child: Text('Català'),
+                  child: Text(l10n.languageCatalan),
                 ),
               ),
             ],

@@ -143,6 +143,23 @@ class TrashDao extends DatabaseAccessor<AppDatabase> with _$TrashDaoMixin {
     return items;
   }
 
+  /// Streams all soft-deleted items across major tables, reacting automatically to changes.
+  Stream<List<TrashItem>> watchTrashItems() {
+    return customSelect(
+      'SELECT 1',
+      readsFrom: {
+        transactions,
+        categories,
+        accounts,
+        budgets,
+        savingsGoals,
+        automaticTransactions,
+      },
+    ).watch().asyncMap(
+          (_) => getTrashItems(),
+        );
+  }
+
   /// Restores a soft-deleted item by setting its isDeleted to false and updating modifiedAt.
   Future<void> restoreItem(String id, TrashItemType type) async {
     final now = DateTime.now();

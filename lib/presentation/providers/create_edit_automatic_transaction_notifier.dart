@@ -4,6 +4,7 @@ import 'package:stalvi/core/errors/app_exceptions.dart';
 import 'package:stalvi/core/utils/currency_formatter.dart';
 import 'package:stalvi/domain/entities/transaction_type.dart';
 import 'package:stalvi/domain/entities/automatic_transaction.dart';
+import 'package:stalvi/domain/entities/recurrence_type.dart';
 import 'automatic_transactions_providers.dart';
 import 'repository_providers.dart';
 import 'locale_provider.dart';
@@ -18,6 +19,7 @@ class CreateEditAutomaticTransactionState {
   final String? categoryId;
   final String notes;
   final String? currency;
+  final RecurrenceType recurrenceType;
   final int recurrenceDays;
   final AsyncValue<void> submissionStatus;
   final Map<String, String> errors;
@@ -31,6 +33,7 @@ class CreateEditAutomaticTransactionState {
     required this.categoryId,
     required this.notes,
     this.currency,
+    required this.recurrenceType,
     required this.recurrenceDays,
     required this.submissionStatus,
     required this.errors,
@@ -46,6 +49,7 @@ class CreateEditAutomaticTransactionState {
       categoryId: null,
       notes: '',
       currency: null,
+      recurrenceType: RecurrenceType.intervalDays,
       recurrenceDays: 30, // Default to 30 days (1 month)
       submissionStatus: AsyncData<void>(null),
       errors: {},
@@ -64,6 +68,7 @@ class CreateEditAutomaticTransactionState {
       categoryId: transaction.categoryId,
       notes: transaction.notes ?? '',
       currency: transaction.currency,
+      recurrenceType: transaction.recurrenceType,
       recurrenceDays: transaction.recurrenceDays,
       submissionStatus: const AsyncData<void>(null),
       errors: const {},
@@ -79,6 +84,7 @@ class CreateEditAutomaticTransactionState {
     String? Function()? categoryId,
     String? notes,
     String? Function()? currency,
+    RecurrenceType? recurrenceType,
     int? recurrenceDays,
     AsyncValue<void>? submissionStatus,
     Map<String, String>? errors,
@@ -92,6 +98,7 @@ class CreateEditAutomaticTransactionState {
       categoryId: categoryId != null ? categoryId() : this.categoryId,
       notes: notes ?? this.notes,
       currency: currency != null ? currency() : this.currency,
+      recurrenceType: recurrenceType ?? this.recurrenceType,
       recurrenceDays: recurrenceDays ?? this.recurrenceDays,
       submissionStatus: submissionStatus ?? this.submissionStatus,
       errors: errors ?? this.errors,
@@ -201,10 +208,14 @@ class CreateEditAutomaticTransactionNotifier extends AutoDisposeFamilyNotifier<
     state = state.copyWith(currency: () => currency, errors: newErrors);
   }
 
-  void updateRecurrenceDays(int days) {
+  void updateRecurrence(RecurrenceType type, int value) {
     final newErrors = Map<String, String>.from(state.errors);
     newErrors.remove('recurrenceDays');
-    state = state.copyWith(recurrenceDays: days, errors: newErrors);
+    state = state.copyWith(
+      recurrenceType: type,
+      recurrenceDays: value,
+      errors: newErrors,
+    );
   }
 
   Future<bool> submit() async {
@@ -234,8 +245,14 @@ class CreateEditAutomaticTransactionNotifier extends AutoDisposeFamilyNotifier<
       validationErrors['currency'] = 'CURRENCY_REQUIRED';
     }
 
-    if (state.recurrenceDays <= 0 || state.recurrenceDays > 365) {
-      validationErrors['recurrenceDays'] = 'INVALID_RECURRENCE';
+    if (state.recurrenceType == RecurrenceType.specificDayOfMonth) {
+      if (state.recurrenceDays <= 0 || state.recurrenceDays > 31) {
+        validationErrors['recurrenceDays'] = 'INVALID_RECURRENCE_DAY';
+      }
+    } else {
+      if (state.recurrenceDays <= 0 || state.recurrenceDays > 365) {
+        validationErrors['recurrenceDays'] = 'INVALID_RECURRENCE_INTERVAL';
+      }
     }
 
     if (validationErrors.isNotEmpty) {
@@ -258,7 +275,10 @@ class CreateEditAutomaticTransactionNotifier extends AutoDisposeFamilyNotifier<
         case 'CURRENCY_REQUIRED':
           message = l10n.errorCurrencyRequired;
           break;
-        case 'INVALID_RECURRENCE':
+        case 'INVALID_RECURRENCE_DAY':
+          message = 'Invalid day of month (must be 1-31)';
+          break;
+        case 'INVALID_RECURRENCE_INTERVAL':
           message = 'Invalid recurrence interval'; // Or localized string
           break;
       }
@@ -285,6 +305,30 @@ class CreateEditAutomaticTransactionNotifier extends AutoDisposeFamilyNotifier<
       final id = state.id ?? const Uuid().v4();
       final trimmedNotes = state.notes.trim();
 
+      DateTime calcNextDate() {
+        if (arg != null && arg!.nextExecutionDate.isAfter(DateTime.now())) {
+          return arg!.nextExecutionDate;
+        }
+        final now = DateTime.now();
+        if (state.recurrenceType == RecurrenceType.intervalDays) {
+          return now.add(Duration(days: state.recurrenceDays));
+        } else {
+          int nextMonth = now.month + 1;
+          int nextYear = now.year;
+          if (nextMonth > 12) {
+            nextMonth = 1;
+            nextYear++;
+          }
+          int targetDay = state.recurrenceDays;
+          int lastDayOfNextMonth = DateTime(nextYear, nextMonth + 1, 0).day;
+          if (targetDay > lastDayOfNextMonth) {
+            targetDay = lastDayOfNextMonth;
+          }
+          return DateTime(
+              nextYear, nextMonth, targetDay, now.hour, now.minute, now.second);
+        }
+      }
+
       final txn = AutomaticTransaction(
         id: id,
         name: state.name.trim(),
@@ -294,9 +338,9 @@ class CreateEditAutomaticTransactionNotifier extends AutoDisposeFamilyNotifier<
         accountId: state.accountId!,
         categoryId: state.categoryId,
         notes: trimmedNotes.isEmpty ? null : trimmedNotes,
+        recurrenceType: state.recurrenceType,
         recurrenceDays: state.recurrenceDays,
-        nextExecutionDate: arg?.nextExecutionDate ??
-            DateTime.now().add(Duration(days: state.recurrenceDays)),
+        nextExecutionDate: calcNextDate(),
         createdAt: arg?.createdAt ?? DateTime.now(),
       );
 

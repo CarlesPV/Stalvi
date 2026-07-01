@@ -259,3 +259,7 @@
   - [x] Conduct UI audit to fix text/widget overflows and unintended truncations across Settings and Data Management pop-ups.
   - [x] Resolve all static analysis issues and ensure 100% automated test suite pass rate.
 
+- [x] **Phase 34: Final i18n Audit & Project Documentation Updates**
+  - [x] Complete 100% localization (i18n) coverage in `lib/presentation/` by replacing all remaining hardcoded strings.
+  - [x] Synchronize ARB files (`app_en.arb`, `app_es.arb`, `app_ca.arb`) with the newly added translation keys.
+  - [x] Update project documentation (`README.md` and `roadmap.md`) to reflect the current feature set.

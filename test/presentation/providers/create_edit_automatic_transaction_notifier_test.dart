@@ -8,6 +8,8 @@ import 'package:stalvi/domain/entities/category_type.dart';
 import 'package:stalvi/domain/entities/profile.dart';
 import 'package:stalvi/domain/entities/transaction_type.dart';
 import 'package:stalvi/domain/entities/automatic_transaction.dart';
+import 'package:stalvi/domain/entities/recurrence_type.dart';
+
 import 'package:stalvi/domain/usecases/automatic_transactions/crud_automatic_transactions_usecase.dart';
 import 'package:stalvi/presentation/providers/create_edit_automatic_transaction_notifier.dart';
 import 'package:stalvi/presentation/providers/automatic_transactions_providers.dart';
@@ -180,7 +182,7 @@ void main() {
       notifier.updateAccount(testAccount.id);
       notifier.updateCategory(testCategory.id);
       notifier.updateCurrency('EUR');
-      notifier.updateRecurrenceDays(30);
+      notifier.updateRecurrence(RecurrenceType.intervalDays, 30);
 
       when(() => mockCreateUseCase.execute(any()))
           .thenAnswer((_) async => FakeAutomaticTransaction());

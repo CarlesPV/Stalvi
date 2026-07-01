@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -34,7 +35,7 @@ void main() {
 
   group('RecycleBinNotifier Unit Tests', () {
     test(
-        'initializes and loads trash items dynamically calculating daysRemaining',
+        'initializes and loads trash items dynamically calculating daysRemaining from stream',
         () async {
       final now = DateTime.now();
       final items = [
@@ -47,16 +48,22 @@ void main() {
         ),
       ];
 
-      when(() => mockTrashUsecases.getTrashItems())
-          .thenAnswer((_) async => items);
+      final streamController = StreamController<List<TrashItem>>();
+      when(() => mockTrashUsecases.watchTrashItems())
+          .thenAnswer((_) => streamController.stream);
 
       final container = createContainer();
 
       // Listen to the provider to keep it alive since it is autoDispose
       final sub = container.listen(recycleBinProvider, (_, __) {});
 
-      // Let the async initialization complete
-      await Future.delayed(const Duration(milliseconds: 20));
+      // Wait for loading state
+      expect(container.read(recycleBinProvider),
+          const AsyncValue<List<TrashItem>>.loading());
+
+      // Emit items
+      streamController.add(items);
+      await Future.delayed(Duration.zero);
 
       final state = container.read(recycleBinProvider);
       expect(state, isA<AsyncData<List<TrashItem>>>());
@@ -66,20 +73,22 @@ void main() {
       expect(loadedItems[0].id, '1');
       // 30 - 5 = 25 days remaining
       expect(loadedItems[0].daysRemaining, 25);
-      verify(() => mockTrashUsecases.getTrashItems()).called(1);
+      verify(() => mockTrashUsecases.watchTrashItems()).called(1);
 
       sub.close();
+      streamController.close();
     });
 
-    test('restoreItem delegates to usecase and reloads items', () async {
-      when(() => mockTrashUsecases.getTrashItems()).thenAnswer((_) async => []);
+    test('restoreItem delegates to usecase', () async {
+      when(() => mockTrashUsecases.watchTrashItems())
+          .thenAnswer((_) => Stream.value([]));
       when(() => mockTrashUsecases.restoreItem(any(), any()))
           .thenAnswer((_) async {});
 
       final container = createContainer();
       final sub = container.listen(recycleBinProvider, (_, __) {});
 
-      await Future.delayed(const Duration(milliseconds: 20));
+      await Future.delayed(Duration.zero);
 
       await container
           .read(recycleBinProvider.notifier)
@@ -88,20 +97,19 @@ void main() {
       verify(
         () => mockTrashUsecases.restoreItem('1', TrashItemType.transaction),
       ).called(1);
-      verify(() => mockTrashUsecases.getTrashItems()).called(2);
       sub.close();
     });
 
-    test('deleteItemPermanently delegates to usecase and reloads items',
-        () async {
-      when(() => mockTrashUsecases.getTrashItems()).thenAnswer((_) async => []);
+    test('deleteItemPermanently delegates to usecase', () async {
+      when(() => mockTrashUsecases.watchTrashItems())
+          .thenAnswer((_) => Stream.value([]));
       when(() => mockTrashUsecases.deleteItemPermanently(any(), any()))
           .thenAnswer((_) async {});
 
       final container = createContainer();
       final sub = container.listen(recycleBinProvider, (_, __) {});
 
-      await Future.delayed(const Duration(milliseconds: 20));
+      await Future.delayed(Duration.zero);
 
       await container
           .read(recycleBinProvider.notifier)
@@ -113,23 +121,22 @@ void main() {
           TrashItemType.transaction,
         ),
       ).called(1);
-      verify(() => mockTrashUsecases.getTrashItems()).called(2);
       sub.close();
     });
 
-    test('emptyTrash delegates to usecase and reloads items', () async {
-      when(() => mockTrashUsecases.getTrashItems()).thenAnswer((_) async => []);
+    test('emptyTrash delegates to usecase', () async {
+      when(() => mockTrashUsecases.watchTrashItems())
+          .thenAnswer((_) => Stream.value([]));
       when(() => mockTrashUsecases.emptyTrash()).thenAnswer((_) async {});
 
       final container = createContainer();
       final sub = container.listen(recycleBinProvider, (_, __) {});
 
-      await Future.delayed(const Duration(milliseconds: 20));
+      await Future.delayed(Duration.zero);
 
       await container.read(recycleBinProvider.notifier).emptyTrash();
 
       verify(() => mockTrashUsecases.emptyTrash()).called(1);
-      verify(() => mockTrashUsecases.getTrashItems()).called(2);
       sub.close();
     });
   });

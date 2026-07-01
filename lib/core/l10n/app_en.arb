@@ -1423,5 +1423,42 @@
         "type": "int"
       }
     }
+  },
+  "languageEnglish": "English",
+  "@languageEnglish": {
+    "description": "Language name for English"
+  },
+  "languageSpanish": "Español",
+  "@languageSpanish": {
+    "description": "Language name for Spanish"
+  },
+  "languageCatalan": "Català",
+  "@languageCatalan": {
+    "description": "Language name for Catalan"
+  },
+  "autoTxFormatSpecificDay": "Every month on the {day}",
+  "@autoTxFormatSpecificDay": {
+    "description": "Recurrence format for a specific day of the month",
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "autoTxRecurrenceEveryXDays": "Every X days",
+  "@autoTxRecurrenceEveryXDays": {
+    "description": "Recurrence option for every X days"
+  },
+  "autoTxRecurrenceDayOfMonth": "Day of month",
+  "@autoTxRecurrenceDayOfMonth": {
+    "description": "Recurrence option for a specific day of the month"
+  },
+  "autoTxErrorInvalidDayOfMonth": "Invalid day of month (must be 1-31)",
+  "@autoTxErrorInvalidDayOfMonth": {
+    "description": "Error message for invalid day of month"
+  },
+  "autoTxErrorInvalidRecurrenceInterval": "Invalid recurrence interval",
+  "@autoTxErrorInvalidRecurrenceInterval": {
+    "description": "Error message for invalid recurrence interval"
   }
 }

@@ -1350,5 +1350,13 @@
         "type": "int"
       }
     }
-  }
+  },
+  "languageEnglish": "English",
+  "languageSpanish": "Español",
+  "languageCatalan": "Català",
+  "autoTxFormatSpecificDay": "Cada mes el día {day}",
+  "autoTxRecurrenceEveryXDays": "Cada X días",
+  "autoTxRecurrenceDayOfMonth": "Día del mes",
+  "autoTxErrorInvalidDayOfMonth": "Día del mes no válido (debe ser de 1 a 31)",
+  "autoTxErrorInvalidRecurrenceInterval": "Intervalo de recurrencia no válido"
 }

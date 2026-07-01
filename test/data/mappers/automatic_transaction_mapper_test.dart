@@ -4,6 +4,7 @@ import 'package:stalvi/domain/entities/automatic_transaction.dart';
 import 'package:stalvi/domain/entities/transaction_type.dart';
 import 'package:stalvi/data/database/app_database.dart';
 import 'package:stalvi/data/database/tables/transaction_table.dart' as db_table;
+import 'package:stalvi/domain/entities/recurrence_type.dart';
 
 void main() {
   group('AutomaticTransactionMapper', () {
@@ -18,6 +19,7 @@ void main() {
       categoryId: 'cat1',
       tagId: 'tag1',
       notes: 'Test note',
+      recurrenceType: RecurrenceType.intervalDays,
       recurrenceDays: 30,
       nextExecutionDate: now,
       createdAt: now,

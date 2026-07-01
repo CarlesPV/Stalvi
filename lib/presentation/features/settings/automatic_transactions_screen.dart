@@ -44,7 +44,7 @@ class AutomaticTransactionsScreen extends ConsumerWidget {
       ),
       body: transactionsAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, st) => Center(child: Text('Error: $e')),
+        error: (e, st) => Center(child: Text('${l10n.unexpectedError}: $e')),
         data: (transactions) {
           if (transactions.isEmpty) {
             return Center(
@@ -126,7 +126,9 @@ class AutomaticTransactionsScreen extends ConsumerWidget {
                                   const SizedBox(width: 4),
                                   Text(
                                     _formatRecurrence(
-                                        context, txn.recurrenceDays),
+                                      context,
+                                      txn.recurrenceDays,
+                                    ),
                                     style: theme.textTheme.bodySmall?.copyWith(
                                       color: colorScheme.onSurfaceVariant,
                                     ),
@@ -158,7 +160,8 @@ class AutomaticTransactionsScreen extends ConsumerWidget {
                                   builder: (ctx) => AlertDialog(
                                     title: Text(l10n.deleteTransactionTitle),
                                     content: Text(
-                                        l10n.deleteTransactionConfirmation),
+                                      l10n.deleteTransactionConfirmation,
+                                    ),
                                     actions: [
                                       TextButton(
                                         onPressed: () =>
@@ -171,7 +174,8 @@ class AutomaticTransactionsScreen extends ConsumerWidget {
                                         child: Text(
                                           l10n.btnDelete,
                                           style: TextStyle(
-                                              color: colorScheme.error),
+                                            color: colorScheme.error,
+                                          ),
                                         ),
                                       ),
                                     ],

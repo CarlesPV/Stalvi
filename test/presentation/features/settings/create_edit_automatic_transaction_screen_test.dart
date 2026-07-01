@@ -222,4 +222,44 @@ void main() {
 
     expect(find.text('Select Recurrence'), findsOneWidget);
   });
+
+  testWidgets(
+      'shows validation error for invalid custom recurrence day directly below field',
+      (WidgetTester tester) async {
+    tester.view.physicalSize = const Size(1080, 2400);
+    tester.view.devicePixelRatio = 3.0;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await tester.pumpWidget(createTestableWidget());
+    await tester.pumpAndSettle();
+
+    // Open recurrence selector
+    final recurrenceTile = find.text('Recurrence');
+    await tester.scrollUntilVisible(
+      recurrenceTile,
+      50,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.tap(recurrenceTile);
+    await tester.pumpAndSettle();
+
+    // Tap Day of month radio
+    final dayOfMonthRadio = find.text('Day of month');
+    await tester.tap(dayOfMonthRadio);
+    await tester.pumpAndSettle();
+
+    // Enter invalid day like 32
+    final customTextField = find.byType(TextField).last;
+    await tester.enterText(customTextField, '32');
+    await tester.pumpAndSettle();
+
+    // Tap apply
+    final applyButton = find.text('Apply');
+    await tester.tap(applyButton);
+    await tester.pumpAndSettle();
+
+    // The validation error should appear
+    expect(find.text('Invalid day of month (must be 1-31)'), findsOneWidget);
+  });
 }

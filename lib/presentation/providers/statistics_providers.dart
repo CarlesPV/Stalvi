@@ -2,14 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:stalvi/data/database/tables/transaction_table.dart' as db
     show TransactionType;
-import 'package:stalvi/domain/entities/transaction_type.dart';
 
 import 'package:stalvi/domain/entities/category_statistic.dart';
 import 'package:stalvi/domain/entities/period_summary.dart';
 import 'package:stalvi/domain/use_cases/statistics/get_period_summary_use_case.dart';
 import 'package:stalvi/domain/use_cases/statistics/get_top_categories_use_case.dart';
 import 'repository_providers.dart';
-import 'package:stalvi/core/utils/currency_converter.dart';
 
 // ─── Use-case providers ───────────────────────────────────────────────────────
 
@@ -227,31 +225,31 @@ final statisticsCurrencyProvider = Provider.autoDispose<String>((ref) {
   return profile?.defaultCurrency ?? 'EUR';
 });
 
-/// Calculates the global balance using dynamic currency conversion in Dart.
-final globalBalanceProvider = StreamProvider.autoDispose<double>((ref) async* {
+/// Calculates the global balance by summing the current balance of all accounts,
+/// converting each to the target currency using the real-time exchange rates.
+final globalBalanceProvider = FutureProvider.autoDispose<double>((ref) async {
   final profile = await ref.watch(defaultProfileProvider.future);
   final targetCurrency = profile.defaultCurrency;
 
-  final transactionsStream =
-      ref.watch(transactionRepositoryProvider).watchAllTransactions();
+  final accounts = await ref.watch(accountsListProvider.future);
   final exchangeRateRepo = ref.watch(exchangeRateRepositoryProvider);
 
-  await for (final transactions in transactionsStream) {
-    final rates =
-        await exchangeRateRepo.getLocalRates(baseCurrency: targetCurrency);
+  final rates =
+      await exchangeRateRepo.getLocalRates(baseCurrency: targetCurrency);
 
-    double balance = 0;
-    for (final tx in transactions) {
-      double amount =
-          CurrencyConverter.convertAmount(tx, targetCurrency, rates);
-
-      if (tx.type == TransactionType.income) {
-        balance += amount;
-      } else if (tx.type == TransactionType.expense) {
-        balance -= amount;
+  double balance = 0;
+  for (final account in accounts) {
+    if (account.currency == targetCurrency) {
+      balance += account.initialBalance;
+    } else {
+      final rate = rates?.rateFor(account.currency);
+      if (rate != null && rate != 0) {
+        balance += account.initialBalance / rate;
+      } else {
+        balance += account.initialBalance;
       }
     }
-
-    yield balance / 100.0;
   }
+
+  return balance;
 });

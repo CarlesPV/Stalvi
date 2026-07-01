@@ -81,6 +81,7 @@ Stalvi is fully localized in three languages, ensuring that all user-facing stri
 ### Dynamic Database Translation
 - On application launch or language switch, default database entities (such as "My Wallet" / "Mi cartera" / "La meva cartera" and default categories/tags) are dynamically updated in the SQLite tables using stable UUID mapping. This prevents duplicate entries and ensures a consistent native language experience.
 - All automatic transaction schedules, form input warnings, and Recycle Bin details are fully localized with 100% parity across English, Spanish, and Catalan.
+- Achieved 100% localization coverage across all presentation components, including text, buttons, dialogs, error messages, and empty states.
 
 ---
 
