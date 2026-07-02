@@ -280,6 +280,9 @@ void main() {
         categories: _emptyCategories,
         tags: _emptyTags,
         transactions: [tx],
+        budgets: const [],
+        savingsGoals: const [],
+        automaticTransactions: const [],
         password: password,
       );
 
@@ -302,6 +305,9 @@ void main() {
         categories: _emptyCategories,
         tags: _emptyTags,
         transactions: [tx],
+        budgets: const [],
+        savingsGoals: const [],
+        automaticTransactions: const [],
         password: password,
       );
 
@@ -320,6 +326,9 @@ void main() {
         categories: _emptyCategories,
         tags: _emptyTags,
         transactions: [tx],
+        budgets: const [],
+        savingsGoals: const [],
+        automaticTransactions: const [],
         password: password,
       );
       final result2 = await service.generateEncryptedJson(
@@ -327,6 +336,9 @@ void main() {
         categories: _emptyCategories,
         tags: _emptyTags,
         transactions: [tx],
+        budgets: const [],
+        savingsGoals: const [],
+        automaticTransactions: const [],
         password: password,
       );
 
@@ -343,6 +355,9 @@ void main() {
         categories: _emptyCategories,
         tags: _emptyTags,
         transactions: [tx],
+        budgets: const [],
+        savingsGoals: const [],
+        automaticTransactions: const [],
         password: password,
       );
 
@@ -365,7 +380,7 @@ void main() {
       final payload = jsonDecode(decrypted) as Map<String, dynamic>;
 
       // Assert
-      expect(payload['version'], equals(2));
+      expect(payload['version'], equals(3));
       expect(payload['transactions'], isA<List>());
       final firstTx =
           (payload['transactions'] as List).first as Map<String, dynamic>;
@@ -382,6 +397,9 @@ void main() {
         categories: _emptyCategories,
         tags: _emptyTags,
         transactions: [tx],
+        budgets: const [],
+        savingsGoals: const [],
+        automaticTransactions: const [],
         password: password,
       );
 
@@ -423,6 +441,9 @@ void main() {
           categories: _emptyCategories,
           tags: _emptyTags,
           transactions: [tx],
+          budgets: const [],
+          savingsGoals: const [],
+          automaticTransactions: const [],
           password: '',
         ),
         throwsA(isA<ExportException>()),
@@ -438,6 +459,9 @@ void main() {
         categories: _emptyCategories,
         tags: _emptyTags,
         transactions: [tx],
+        budgets: const [],
+        savingsGoals: const [],
+        automaticTransactions: const [],
         password: password,
       );
 

@@ -345,7 +345,13 @@ final deleteAndReassignCategoryUseCaseProvider =
     Provider<DeleteAndReassignCategoryUseCase>((ref) {
   final categoryRepo = ref.watch(categoryRepositoryProvider);
   final transactionRepo = ref.watch(transactionRepositoryProvider);
-  return DeleteAndReassignCategoryUseCase(categoryRepo, transactionRepo);
+  final automaticTransactionRepo =
+      ref.watch(automaticTransactionRepositoryProvider);
+  return DeleteAndReassignCategoryUseCase(
+    categoryRepo,
+    transactionRepo,
+    automaticTransactionRepo,
+  );
 });
 
 /// Provides the [DeleteAndReassignTagUseCase] instance.
@@ -411,6 +417,10 @@ final exportEncryptedJsonUseCaseProvider =
     categoryRepository: ref.watch(categoryRepositoryProvider),
     tagRepository: ref.watch(tagRepositoryProvider),
     transactionRepository: ref.watch(transactionRepositoryProvider),
+    budgetRepository: ref.watch(budgetRepositoryProvider),
+    savingsGoalRepository: ref.watch(savingsGoalRepositoryProvider),
+    automaticTransactionRepository:
+        ref.watch(automaticTransactionRepositoryProvider),
     exportService: ref.watch(exportServiceProvider),
   );
 });

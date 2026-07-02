@@ -130,9 +130,12 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen>
                 Navigator.of(context).pop();
                 await notifier.skipBiometricOptIn();
               },
-              child: Text(
-                l10n.authBiometricOptInSkip,
-                style: TextStyle(color: colorScheme.onSurfaceVariant),
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  l10n.authBiometricOptInSkip,
+                  style: TextStyle(color: colorScheme.onSurfaceVariant),
+                ),
               ),
             ),
             FilledButton(
@@ -140,7 +143,10 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen>
                 Navigator.of(context).pop();
                 await notifier.enableBiometricsOptIn();
               },
-              child: Text(l10n.authBiometricOptInEnable),
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(l10n.authBiometricOptInEnable),
+              ),
             ),
           ],
         );
@@ -838,11 +844,14 @@ class _AccountItem extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
-                    balanceStr,
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.w800,
-                      color: colorScheme.onSurface,
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      balanceStr,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.w800,
+                        color: colorScheme.onSurface,
+                      ),
                     ),
                   ),
                   if (account.isDefault) ...[
@@ -856,12 +865,15 @@ class _AccountItem extends ConsumerWidget {
                         color: colorScheme.primary.withValues(alpha: 0.12),
                         borderRadius: BorderRadius.circular(4),
                       ),
-                      child: Text(
-                        AppLocalizations.of(context)!.defaultAccountLabel,
-                        style: theme.textTheme.labelSmall?.copyWith(
-                          color: colorScheme.primary,
-                          fontSize: 9,
-                          fontWeight: FontWeight.bold,
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text(
+                          AppLocalizations.of(context)!.defaultAccountLabel,
+                          style: theme.textTheme.labelSmall?.copyWith(
+                            color: colorScheme.primary,
+                            fontSize: 9,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ),

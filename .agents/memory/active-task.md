@@ -1,17 +1,19 @@
-# Active Task: Phase 37 - Production Readiness, Background Tasks & UX Polish
+# Active Task: Phase 38 - Data Integrity, Serialization Expansion, and UI/UX Polish
 
 ## Objective
-Finalize system polishing by implementing background workers for automatic transactions, refining cross-currency aggregations, completing the final UI flows (PDF options, About Me), and performing a strict localization and CI/CD cleanup.
+Enforce strict business rules for data deletion across relational entities, expand full-data backup capabilities, and polish UI/i18n implementations to guarantee a production-ready user experience.
 
-## Current Sub-tasks
-- [x] 37.1: Implement multi-currency conversion for total balances on the dashboard and fix the splash screen icon border-radius.
-- [x] 37.2: Enhance Automatic Transactions UI to display localized recurrence strings and implement background execution (cron-like at 0:00 UTC+2) via `workmanager`.
-- [x] 37.3: Refactor PDF Export to prompt for 'Last 30 Days' or 'Current Month' and implement the 'About Me' localized Markdown screen with an external link.
-- [x] 37.4: Perform an exhaustive cleanup of `.arb` localization files (remove unused, ensure 3 languages complete), fix all CI/CD, analyzer warnings, and update documentation (`roadmap.md`, `README.md`).
+## Status: In Progress
 
-## Context & Rules
-- Strictly adhere to Clean Architecture (Domain, Data, Presentation).
-- All strings must be localized in `app_en.arb`, `app_es.arb`, and `app_ca.arb`.
-- Background execution must securely access the Drift database.
-- DO NOT hallucinate files. Modify existing files where possible.
-- All tasks must pass existing unit tests, and new business logic requires new tests.
+## Sub-tasks
+- [ ] **UI/UX:** Fix the splash screen dark mode configuration so the app icon renders with normal brightness, avoiding the darkened overlay.
+- [ ] **Business Logic (Categories):** Prevent category deletion if linked to active automatic/recurring transactions. Enforce reassignment or block deletion with a clear UI message.
+- [ ] **Business Logic (Accounts):** Prevent account/wallet deletion if linked to automatic/recurring transactions. Show a post-confirmation error pop-up (with a close button) blocking the action.
+- [ ] **Data Serialization:** Update the backup/restore mechanism (JSON export/import) to fully include Savings Goals, Budgets, and Automatic Transactions.
+- [ ] **Localization & UI Polish:** Ensure 100% synchronization across English, Spanish, and Catalan (`app_en.arb`, `app_es.arb`, `app_ca.arb`). Resolve all text overflows (buttons, dialogs, selectors) and avoid truncation ("...").
+
+## Context Notes
+- Follow Clean Architecture principles (Use Cases handle the constraint logic).
+- Update unit tests for all modified Use Cases and Repositories.
+- Use Riverpod for state updates reflecting the new constraints.
+- Modify files directly without outputting code to the chat interface.

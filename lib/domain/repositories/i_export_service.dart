@@ -6,6 +6,7 @@ import '../entities/tag.dart';
 import '../entities/transaction.dart';
 import '../entities/period_summary.dart';
 import '../entities/category_statistic.dart';
+import '../entities/automatic_transaction.dart';
 import 'package:stalvi/core/l10n/app_localizations.dart';
 
 /// Immutable result returned by every export method.
@@ -37,6 +38,9 @@ abstract class IExportService {
     required List<Category> categories,
     required List<Tag> tags,
     required List<Transaction> transactions,
+    required List<Budget> budgets,
+    required List<SavingsGoal> savingsGoals,
+    required List<AutomaticTransaction> automaticTransactions,
     required String password,
   });
 

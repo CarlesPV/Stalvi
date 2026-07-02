@@ -185,9 +185,12 @@ class _EditAccountDialogState extends ConsumerState<EditAccountDialog> {
                   onPressed: isDeleting
                       ? null
                       : () => Navigator.of(dialogContext).pop(false),
-                  child: Text(
-                    l10n.btnCancel,
-                    style: TextStyle(color: colorScheme.onSurfaceVariant),
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      l10n.btnCancel,
+                      style: TextStyle(color: colorScheme.onSurfaceVariant),
+                    ),
                   ),
                 ),
                 FilledButton(
@@ -204,6 +207,39 @@ class _EditAccountDialogState extends ConsumerState<EditAccountDialog> {
                                 .execute(widget.account.id);
                             if (dialogContext.mounted) {
                               Navigator.of(dialogContext).pop(true);
+                            }
+                          } on AccountInUseByAutomaticTransactionException {
+                            if (dialogContext.mounted) {
+                              Navigator.of(dialogContext).pop(false);
+                              showDialog(
+                                context: context,
+                                builder: (ctx) => AlertDialog(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(24),
+                                  ),
+                                  title: Row(
+                                    children: [
+                                      Icon(
+                                        Icons.warning_amber_rounded,
+                                        color: colorScheme.error,
+                                      ),
+                                      const SizedBox(width: 12),
+                                      Text(l10n.warning),
+                                    ],
+                                  ),
+                                  content:
+                                      Text(l10n.accountInUseByAutoTxMessage),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () => Navigator.of(ctx).pop(),
+                                      child: FittedBox(
+                                        fit: BoxFit.scaleDown,
+                                        child: Text(l10n.btnClose),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
                             }
                           } on ValidationException catch (e) {
                             if (dialogContext.mounted) {
@@ -239,7 +275,10 @@ class _EditAccountDialogState extends ConsumerState<EditAccountDialog> {
                             color: Colors.white,
                           ),
                         )
-                      : Text(l10n.btnDelete),
+                      : FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(l10n.btnDelete),
+                        ),
                 ),
               ],
             );
@@ -604,11 +643,17 @@ class _EditAccountDialogState extends ConsumerState<EditAccountDialog> {
                         actions: [
                           TextButton(
                             onPressed: () => Navigator.pop(ctx, false),
-                            child: Text(l10n.btnCancel),
+                            child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text(l10n.btnCancel),
+                            ),
                           ),
                           FilledButton(
                             onPressed: () => Navigator.pop(ctx, true),
-                            child: Text(l10n.btnContinue),
+                            child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text(l10n.btnContinue),
+                            ),
                           ),
                         ],
                       ),
@@ -639,11 +684,14 @@ class _EditAccountDialogState extends ConsumerState<EditAccountDialog> {
                           color: colorScheme.outline.withValues(alpha: 0.2),
                         ),
                       ),
-                      child: Text(
-                        l10n.btnCancel,
-                        style: TextStyle(
-                          color: colorScheme.onSurfaceVariant,
-                          fontWeight: FontWeight.bold,
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text(
+                          l10n.btnCancel,
+                          style: TextStyle(
+                            color: colorScheme.onSurfaceVariant,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ),
@@ -669,10 +717,14 @@ class _EditAccountDialogState extends ConsumerState<EditAccountDialog> {
                                 color: Colors.white,
                               ),
                             )
-                          : Text(
-                              l10n.btnSave,
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.bold),
+                          : FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text(
+                                l10n.btnSave,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                             ),
                     ),
                   ),

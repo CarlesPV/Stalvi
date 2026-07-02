@@ -918,7 +918,10 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
                       actions: [
                         TextButton(
                           onPressed: () => Navigator.of(context).pop(),
-                          child: Text(l10n.authBiometricOptInSkip),
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(l10n.authBiometricOptInSkip),
+                          ),
                         ),
                         FilledButton(
                           onPressed: () {
@@ -927,7 +930,10 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
                                 .read(authNotifierProvider.notifier)
                                 .enableBiometricsOptIn();
                           },
-                          child: Text(l10n.authBiometricOptInEnable),
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(l10n.authBiometricOptInEnable),
+                          ),
                         ),
                       ],
                     ),

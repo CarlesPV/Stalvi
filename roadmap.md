@@ -280,3 +280,9 @@
   - [x] Perform an exhaustive cleanup of `.arb` localization files (remove unused keys/comments).
   - [x] Fix all CI/CD, analyzer warnings, and update documentation (`roadmap.md`, `README.md`).
 
+- [x] **Phase 38: UI/UX Text Overflow Safeguards & i18n Verification**
+  - [x] Wrap dialog and bottom sheet button label widgets inside `FittedBox` to prevent horizontal text overflows under English, Spanish, and Catalan.
+  - [x] Resolve layout constraints on `_AccountItem` balance and default label text elements.
+  - [x] Audit and verify complete key synchronization across `app_en.arb`, `app_es.arb`, and `app_ca.arb` (all matching exactly with 339 translation keys).
+  - [x] Resolve all static analysis warnings, info messages, and ensure all unit/widget tests pass cleanly.
+

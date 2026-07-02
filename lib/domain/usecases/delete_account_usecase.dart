@@ -30,7 +30,7 @@ class DeleteAccountUseCase {
     final hasLinkedAutomaticTxns =
         automaticTransactions.any((t) => t.accountId == accountId);
     if (hasLinkedAutomaticTxns) {
-      throw const ValidationException(
+      throw const AccountInUseByAutomaticTransactionException(
         message:
             'Cannot delete account because it is linked to one or more Automatic Transactions.',
         code: 'ACCOUNT_HAS_AUTOMATIC_TRANSACTIONS',

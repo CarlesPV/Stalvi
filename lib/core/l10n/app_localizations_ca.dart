@@ -855,8 +855,7 @@ class AppLocalizationsCa extends AppLocalizations {
   String get exportMonthlyPdf => 'Exportar informe mensual (PDF)';
 
   @override
-  String get exportMonthlyPdfSubtitle =>
-      'Genera un resum en PDF';
+  String get exportMonthlyPdfSubtitle => 'Genera un resum en PDF';
 
   @override
   String get exportPasswordDialogTitle =>
@@ -1101,7 +1100,7 @@ class AppLocalizationsCa extends AppLocalizations {
   String get autoTxRecurrenceEveryXDays => 'Cada X dies';
 
   @override
-  String get autoTxRecurrenceDayOfMonth => 'Dia del mes';
+  String get autoTxRecurrenceDayOfMonth => 'Dia X del mes';
 
   @override
   String get autoTxErrorInvalidDayOfMonth =>
@@ -1118,5 +1117,14 @@ class AppLocalizationsCa extends AppLocalizations {
   String get exportPdfCurrentMonth => 'Mes actual';
 
   @override
-  String get exportPdfLast30Days => 'Últims 30 dies';
+  String get exportPdfLast30Days => 'Últims 30 Dies';
+
+  @override
+  String categoryInUseByAutoTxMessage(String name) {
+    return '$name està en ús per transaccions automàtiques i s\'ha de reassignar.';
+  }
+
+  @override
+  String get accountInUseByAutoTxMessage =>
+      'Aquest compte no es pot eliminar perquè està vinculat a transaccions automàtiques actives.';
 }

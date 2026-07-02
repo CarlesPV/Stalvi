@@ -245,7 +245,7 @@ void main() {
     await tester.pumpAndSettle();
 
     // Tap Day of month radio
-    final dayOfMonthRadio = find.text('Day of month');
+    final dayOfMonthRadio = find.text('Day X of month');
     await tester.tap(dayOfMonthRadio);
     await tester.pumpAndSettle();
 

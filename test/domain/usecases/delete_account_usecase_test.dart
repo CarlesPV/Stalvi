@@ -143,7 +143,7 @@ void main() {
     expect(
       () => usecase.execute('acc1'),
       throwsA(
-        isA<ValidationException>().having(
+        isA<AccountInUseByAutomaticTransactionException>().having(
           (e) => e.code,
           'code',
           'ACCOUNT_HAS_AUTOMATIC_TRANSACTIONS',

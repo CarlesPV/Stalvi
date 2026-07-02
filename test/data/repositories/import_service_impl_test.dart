@@ -86,7 +86,7 @@ void main() {
           any(),
           password: any(named: 'password'),
         ),
-      ).thenAnswer((_) async => '{"version": 3}');
+      ).thenAnswer((_) async => '{"version": 4}');
 
       expect(
         () => importService
@@ -103,7 +103,7 @@ void main() {
         () async {
       const validJson = '''
       {
-        "version": 2,
+        "version": 3,
         "accounts": [
           {
             "id": "acc-1",
@@ -154,7 +154,10 @@ void main() {
             "created_at": "2025-06-22T00:00:00.000",
             "modified_at": "2025-06-22T00:00:00.000"
           }
-        ]
+        ],
+        "budgets": [],
+        "savings_goals": [],
+        "automatic_transactions": []
       }
       ''';
 

@@ -25,6 +25,7 @@ import 'package:stalvi/domain/entities/period_summary.dart';
 import 'package:stalvi/domain/entities/savings_goal.dart';
 import 'package:stalvi/domain/entities/tag.dart';
 import 'package:stalvi/domain/entities/transaction.dart';
+import 'package:stalvi/domain/entities/automatic_transaction.dart';
 import 'package:stalvi/domain/entities/transaction_type.dart';
 import 'package:stalvi/domain/repositories/i_export_service.dart';
 
@@ -134,6 +135,9 @@ class ExportServiceImpl implements IExportService {
     required List<Category> categories,
     required List<Tag> tags,
     required List<Transaction> transactions,
+    required List<Budget> budgets,
+    required List<SavingsGoal> savingsGoals,
+    required List<AutomaticTransaction> automaticTransactions,
     required String password,
   }) async {
     if (password.isEmpty) {
@@ -146,11 +150,15 @@ class ExportServiceImpl implements IExportService {
     try {
       final payload = jsonEncode({
         'exportedAt': DateTime.now().toIso8601String(),
-        'version': 2,
+        'version': 3,
         'accounts': accounts.map(_accountToMap).toList(),
         'categories': categories.map(_categoryToMap).toList(),
         'tags': tags.map(_tagToMap).toList(),
         'transactions': transactions.map(_transactionToMap).toList(),
+        'budgets': budgets.map(_budgetToMap).toList(),
+        'savings_goals': savingsGoals.map(_savingsGoalToMap).toList(),
+        'automatic_transactions':
+            automaticTransactions.map(_automaticTransactionToMap).toList(),
       });
 
       final salt = _generateRandomBytes(16);
@@ -553,6 +561,58 @@ class ExportServiceImpl implements IExportService {
         'transfer_id': tx.transferId,
         'created_at': tx.createdAt.toIso8601String(),
         'modified_at': tx.modifiedAt.toIso8601String(),
+      };
+
+  static Map<String, dynamic> _budgetToMap(Budget b) => {
+        'id': b.id,
+        'account_id': b.accountId,
+        'category_id': b.categoryId,
+        'target_amount': b.targetAmount,
+        'current_amount': b.currentAmount,
+        'start_date': b.startDate.toIso8601String(),
+        'end_date': b.endDate.toIso8601String(),
+        'created_at': b.createdAt.toIso8601String(),
+        'modified_at': b.modifiedAt.toIso8601String(),
+        'deleted_at': b.deletedAt?.toIso8601String(),
+        'is_deleted': b.isDeleted,
+      };
+
+  static Map<String, dynamic> _savingsGoalToMap(SavingsGoal s) => {
+        'id': s.id,
+        'name': s.name,
+        'target_amount': s.targetAmount,
+        'current_amount': s.currentAmount,
+        'target_date': s.targetDate?.toIso8601String(),
+        'color': s.color,
+        'icon': s.icon,
+        'created_at': s.createdAt.toIso8601String(),
+        'modified_at': s.modifiedAt.toIso8601String(),
+        'deleted_at': s.deletedAt?.toIso8601String(),
+        'is_deleted': s.isDeleted,
+        'is_completed': s.isCompleted,
+        'currency': s.currency,
+      };
+
+  static Map<String, dynamic> _automaticTransactionToMap(
+    AutomaticTransaction a,
+  ) =>
+      {
+        'id': a.id,
+        'name': a.name,
+        'amount': a.amount,
+        'currency': a.currency,
+        'type': a.type.name,
+        'account_id': a.accountId,
+        'category_id': a.categoryId,
+        'tag_id': a.tagId,
+        'notes': a.notes,
+        'recurrence_type': a.recurrenceType.name,
+        'recurrence_days': a.recurrenceDays,
+        'next_execution_date': a.nextExecutionDate.toIso8601String(),
+        'created_at': a.createdAt.toIso8601String(),
+        'is_active': a.isActive,
+        'is_deleted': a.isDeleted,
+        'deleted_at': a.deletedAt?.toIso8601String(),
       };
 
   static Uint8List _deriveKey(String password, Uint8List salt) {

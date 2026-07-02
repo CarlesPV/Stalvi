@@ -1,15 +1,33 @@
+import '../../core/errors/app_exceptions.dart';
 import '../entities/category.dart';
+import '../repositories/i_automatic_transaction_repository.dart';
 import '../repositories/i_category_repository.dart';
 import '../repositories/i_transaction_repository.dart';
 
 class DeleteAndReassignCategoryUseCase {
   final ICategoryRepository _categoryRepo;
   final ITransactionRepository _transactionRepo;
+  final IAutomaticTransactionRepository _automaticTransactionRepo;
 
-  DeleteAndReassignCategoryUseCase(this._categoryRepo, this._transactionRepo);
+  DeleteAndReassignCategoryUseCase(
+    this._categoryRepo,
+    this._transactionRepo,
+    this._automaticTransactionRepo,
+  );
 
   /// Checks if a category is in use by any transaction.
+  /// Throws [CategoryInUseByAutomaticTransactionException] if it's assigned to an automatic transaction.
   Future<bool> isCategoryInUse(String categoryId) async {
+    final autoTransactions =
+        await _automaticTransactionRepo.watchAllAutomaticTransactions().first;
+    final inUseByAuto =
+        autoTransactions.any((tx) => tx.categoryId == categoryId);
+    if (inUseByAuto) {
+      throw const CategoryInUseByAutomaticTransactionException(
+        message: 'Category is in use by automatic transactions',
+      );
+    }
+
     final transactions = await _transactionRepo
         .watchFilteredTransactions(
           TransactionQueryFilter(categoryId: categoryId),
@@ -65,6 +83,17 @@ class DeleteAndReassignCategoryUseCase {
         modifiedAt: DateTime.now(),
       );
       await _transactionRepo.updateTransaction(updatedTx);
+    }
+
+    final autoTransactions =
+        await _automaticTransactionRepo.watchAllAutomaticTransactions().first;
+    final linkedAuto =
+        autoTransactions.where((tx) => tx.categoryId == oldCategoryId);
+    for (var tx in linkedAuto) {
+      final updatedTx = tx.copyWith(
+        categoryId: newCategoryId,
+      );
+      await _automaticTransactionRepo.updateAutomaticTransaction(updatedTx);
     }
 
     await _categoryRepo.deleteCategory(oldCategoryId);

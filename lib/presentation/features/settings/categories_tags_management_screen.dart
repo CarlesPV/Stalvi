@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:stalvi/core/l10n/app_localizations.dart';
+import 'package:stalvi/core/errors/app_exceptions.dart';
 import 'package:stalvi/domain/entities/category.dart';
 import 'package:stalvi/domain/entities/tag.dart';
 import '../../providers/repository_providers.dart';
@@ -87,9 +88,27 @@ class _CategoriesTab extends ConsumerWidget {
     List<Category> allCategories,
   ) async {
     final l10n = AppLocalizations.of(context)!;
-    final inUse = await ref
-        .read(deleteAndReassignCategoryUseCaseProvider)
-        .isCategoryInUse(category.id);
+    bool inUse = false;
+    try {
+      inUse = await ref
+          .read(deleteAndReassignCategoryUseCaseProvider)
+          .isCategoryInUse(category.id);
+    } on CategoryInUseByAutomaticTransactionException {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(l10n.categoryInUseByAutoTxMessage(category.name)),
+          duration: const Duration(seconds: 4),
+        ),
+      );
+      final replacements = await ref
+          .read(deleteAndReassignCategoryUseCaseProvider)
+          .getReplacementCategories(category);
+      if (!context.mounted) return;
+      _showReassignDialog(context, ref, category, replacements);
+      return;
+    }
+
     if (!context.mounted) return;
 
     if (inUse) {

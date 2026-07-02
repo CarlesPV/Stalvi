@@ -2077,7 +2077,7 @@ abstract class AppLocalizations {
   /// No description provided for @autoTxRecurrenceDayOfMonth.
   ///
   /// In en, this message translates to:
-  /// **'Day of month'**
+  /// **'Day X of month'**
   String get autoTxRecurrenceDayOfMonth;
 
   /// No description provided for @autoTxErrorInvalidDayOfMonth.
@@ -2109,6 +2109,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Last 30 Days'**
   String get exportPdfLast30Days;
+
+  /// No description provided for @categoryInUseByAutoTxMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} is in use by automatic transactions and must be reassigned.'**
+  String categoryInUseByAutoTxMessage(String name);
+
+  /// No description provided for @accountInUseByAutoTxMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This account cannot be deleted because it is linked to active automatic transactions.'**
+  String get accountInUseByAutoTxMessage;
 }
 
 class _AppLocalizationsDelegate

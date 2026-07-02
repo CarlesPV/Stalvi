@@ -80,3 +80,21 @@ class ImportException extends AppException {
     super.details,
   });
 }
+
+/// Exception thrown when trying to delete a category that is in use by an automatic transaction.
+class CategoryInUseByAutomaticTransactionException extends AppException {
+  const CategoryInUseByAutomaticTransactionException({
+    required super.message,
+    super.code,
+    super.details,
+  });
+}
+
+/// Exception thrown when trying to delete an account that is linked to an automatic transaction.
+class AccountInUseByAutomaticTransactionException extends AppException {
+  const AccountInUseByAutomaticTransactionException({
+    required super.message,
+    super.code,
+    super.details,
+  });
+}

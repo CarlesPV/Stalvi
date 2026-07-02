@@ -334,5 +334,14 @@
   "autoTxErrorInvalidRecurrenceInterval": "Interval de recurrència no vàlid",
   "aboutMe": "Sobre mi",
   "exportPdfCurrentMonth": "Mes actual",
-  "exportPdfLast30Days": "Últims 30 dies"
+  "exportPdfLast30Days": "Últims 30 Dies",
+  "categoryInUseByAutoTxMessage": "{name} està en ús per transaccions automàtiques i s'ha de reassignar.",
+  "@categoryInUseByAutoTxMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "accountInUseByAutoTxMessage": "Aquest compte no es pot eliminar perquè està vinculat a transaccions automàtiques actives."
 }

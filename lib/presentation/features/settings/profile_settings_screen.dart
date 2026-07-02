@@ -40,7 +40,10 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text(l10n.btnCancel),
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(l10n.btnCancel),
+              ),
             ),
             ElevatedButton(
               onPressed: () {
@@ -51,7 +54,10 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                 }
                 Navigator.of(context).pop();
               },
-              child: Text(l10n.btnSave),
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(l10n.btnSave),
+              ),
             ),
           ],
         );
@@ -107,7 +113,10 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text(l10n.btnCancel),
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(l10n.btnCancel),
+              ),
             ),
             ElevatedButton(
               onPressed: () {
@@ -116,7 +125,10 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                     .updateCurrency(selected);
                 Navigator.of(context).pop();
               },
-              child: Text(l10n.btnSave),
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(l10n.btnSave),
+              ),
             ),
           ],
         );
@@ -489,11 +501,14 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(dialogCtx).pop(),
-                child: Text(
-                  l10n.btnCancel,
-                  style: TextStyle(
-                    color: colorScheme.onSurfaceVariant,
-                    fontWeight: FontWeight.bold,
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    l10n.btnCancel,
+                    style: TextStyle(
+                      color: colorScheme.onSurfaceVariant,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),
@@ -525,9 +540,12 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                     );
                   }
                 },
-                child: Text(
-                  l10n.deleteAllDataButton,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    l10n.deleteAllDataButton,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
                 ),
               ),
             ],

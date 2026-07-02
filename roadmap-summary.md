@@ -527,13 +527,47 @@ This document lists the completed phases of the Stalvi development roadmap, prov
   - 100% clean static analysis (`flutter analyze`) with 0 issues.
   - Fully passing automated test suite (all 455 tests passed successfully!).
 
+### Phase 36: PDF Export and About Screen
+* **Completion Date:** July 2, 2026
+* **Objective:** Refactor PDF Export to prompt for 'Last 30 Days' or 'Current Month', and implement the 'About Me' localized Markdown screen with an external link.
+* **Accomplishments:**
+  - **PDF Export Refactoring**: Upgraded PDF export flow to support selecting custom date range presets ('Last 30 Days' or 'Current Month') before generation.
+  - **About Me Screen**: Developed a localized Markdown About Me screen displaying detailed developer info and including working links to external sources.
+* **Verification:**
+  - 100% clean static analysis (`flutter analyze`) with 0 issues.
+  - All automated tests pass successfully.
+
+### Phase 37: Production Readiness, Background Tasks & UX Polish
+* **Completion Date:** July 2, 2026
+* **Objective:** Implement multi-currency conversion for total balances on the dashboard, fix the splash screen icon border-radius, enhance Automatic Transactions UI to display localized recurrence strings, implement background execution via workmanager, perform an exhaustive cleanup of .arb files, and fix all CI/CD, analyzer warnings, and update documentation.
+* **Accomplishments:**
+  - **Multi-Currency Total Balances**: Upgraded the dashboard total balance card to dynamically convert and display the consolidated sum in the profile's default currency.
+  - **Splash Screen Polish**: Fixed the splash screen icon border-radius to align with branding guidelines.
+  - **Background Workmanager Sync**: Integrated background execution via `workmanager` to sync rates and evaluate recurring transactions periodically.
+  - **Localizations Cleanup**: Cleaned up unused translation keys and comments in the `.arb` files to minimize footprint.
+* **Verification:**
+  - 100% clean static analysis (`flutter analyze`) with 0 issues.
+  - Fully passing automated test suite.
+
+### Phase 38: UI/UX Text Overflow Safeguards & i18n Verification
+* **Completion Date:** July 2, 2026
+* **Objective:** Audit and fix all potential text overflow issues across UI screens (Auth, Budgets, Goals, Settings, Dashboard, Transactions), wrap button labels in responsive widgets, and verify complete key synchronization across all three ARB localizations.
+* **Accomplishments:**
+  - **UI Overflow Safeguards**: Wrapped dialog and bottom sheet button label widgets inside `FittedBox` (with scale down fit) to prevent horizontal layout overflows under long Catalan/Spanish translations.
+  - **Layout Constraints**: Resolved constraints on the `_AccountItem` balance and default label text elements, preventing clipping on tight viewports.
+  - **Localization Sync Audit**: Verified 100% key synchronization across `app_en.arb`, `app_es.arb`, and `app_ca.arb` (all containing exactly 339 translation keys with matching placeholders).
+  - **Warning-Free Environment**: Resolved all static analysis warnings, unused imports, and print statements, achieving a completely clean `flutter analyze` report with 0 issues, and fixed failing widget tests.
+* **Verification:**
+  - 100% clean static analysis (`flutter analyze`) with 0 issues.
+  - All 464 automated unit and widget tests pass cleanly with a 100% success rate.
+
 ## Recent Updates
+- Implemented UI/UX overflow safeguards, wrapping button text inside dialogs and bottom sheets in FittedBox to handle multi-language length differences (Phase 38).
+- Synchronized all translation keys perfectly across English, Spanish, and Catalan localizations (Phase 38).
+- Fixed pre-existing widget test issues and unused imports, achieving a completely warning-free/error-free static analysis (`flutter analyze`) and 100% pass rate on 464 tests (Phase 38).
+- Refactored PDF monthly report date configurations and developed the localized Markdown About Me screen (Phase 36).
+- Implemented multi-currency balance consolidation on dashboard and Workmanager-based background synchronization (Phase 37).
 - Resolved recurring transaction calendar edge cases (safe end-of-month clamping) and added thorough unit test coverage.
-- Updated compliance disclaimers regarding currency and conversion data in T&C and Privacy Policy across English, Spanish, and Catalan.
-- Updated the native splash configurations to use the rounded-edge `splash_icon.png` across all environments.
-- Completed final cleanup of unused localization strings, synchronized ARB bundles, and updated documentation for Phase 34.
-- Completed final stabilization step, resolved all lints/compiler errors, and verified 100% pass rate on 455 automated tests (Phases 33, 34, and 35).
-- Finalized Stabilization & Auto-Transactions with 100% test passing, static analysis fixed, and CI/CD/gitignore validated (Phase 32).
 - Implemented Automatic Transactions, Inline validations, and rolling 30-day stats (Phase 31).
 - Implemented Safe Category Deletion business logic, filtering rules, UI dialogs, and expanded test coverage (Phase 30).
 - Completed release preparation and UI optimization (Phase 29).

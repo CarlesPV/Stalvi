@@ -334,5 +334,14 @@
   "autoTxErrorInvalidRecurrenceInterval": "Invalid recurrence interval",
   "aboutMe": "About Me",
   "exportPdfCurrentMonth": "Current Month",
-  "exportPdfLast30Days": "Last 30 Days"
+  "exportPdfLast30Days": "Last 30 Days",
+  "categoryInUseByAutoTxMessage": "{name} is in use by automatic transactions and must be reassigned.",
+  "@categoryInUseByAutoTxMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "accountInUseByAutoTxMessage": "This account cannot be deleted because it is linked to active automatic transactions."
 }
