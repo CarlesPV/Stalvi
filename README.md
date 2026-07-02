@@ -46,9 +46,10 @@ lib/
 - **Immutability:** Saves currency exchange rate snapshots within each transaction at creation time to preserve historical balance integrity.
 - **Safe Category Deletion:** Prompts users to reassign transactions to a new target category when attempting to delete a category that is in active use. Reassignment targets are strictly filtered based on the category type (Expense to Expense/Custom, Income to Income/Custom, Custom to all).
 - **Unified Branding:** Consistent and dynamic usage of a single high-quality logo asset (app logo within a rounded square) across Splash, Authentication, and Dashboard screens to reduce binary size and ensure a cohesive visual identity.
+- **Compliance & Liability Disclaimers:** Includes updated compliance disclaimers regarding the approximate, informational nature of financial calculations, statistics, and currency conversions across Catalan, English, and Spanish to mitigate developer liability.
 
 ### ⏰ Automatic & Recurring Transactions
-- **Automated Engine:** Evaluates and automatically generates scheduled transactions based on customizable recurrence intervals (days) and next execution dates.
+- **Automated Engine:** Evaluates and automatically generates scheduled transactions based on customizable recurrence intervals (days) and next execution dates. Includes safe end-of-month clamping logic (e.g., executing transactions scheduled for the 30th or 31st on February 28th/29th or the last day of short months).
 - **Management UX:** Interactive sheets for adding, updating, and triggering automatic transactions from settings.
 - **Soft-Delete Support:** Easily soft-delete recurring templates, sending them to the Recycle Bin and disabling automated generation until restored or purged.
 - **Form Error Visibility:** Visual layout ensures input error feedback (e.g. custom recurrence values) is always fully visible above the keyboard.

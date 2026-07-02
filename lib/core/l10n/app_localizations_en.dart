@@ -1016,9 +1016,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get createAutomaticTransaction => 'Create Automatic Transaction';
 
   @override
-  String get autoTxNewTemplate => 'New Template';
-
-  @override
   String get autoTxNewTitle => 'New Automatic Transaction';
 
   @override
@@ -1028,7 +1025,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get autoTxSavedMessage => 'Automatic Transaction Saved';
 
   @override
-  String get autoTxTemplateNameLabel => 'Template Name';
+  String get autoTxTemplateNameLabel => 'Name';
 
   @override
   String get autoTxNameRequired => 'Name is required';

@@ -263,3 +263,10 @@
   - [x] Complete 100% localization (i18n) coverage in `lib/presentation/` by replacing all remaining hardcoded strings.
   - [x] Synchronize ARB files (`app_en.arb`, `app_es.arb`, `app_ca.arb`) with the newly added translation keys.
   - [x] Update project documentation (`README.md` and `roadmap.md`) to reflect the current feature set.
+
+- [x] **Phase 35: Domain Resilience, Compliance Warnings & Splash Polish**
+  - [x] Implement safe end-of-month recurrence clamping logic for automatic transactions (February/30th/31st edge cases).
+  - [x] Update Terms and Conditions & Privacy Policy across English, Spanish, and Catalan with currency disclaimer warnings to protect developer liability.
+  - [x] Reconfigure native splash screen to utilize the rounded-edge icon (`assets/icon/splash_icon.png`) for all themes and platforms.
+  - [x] Develop comprehensive unit tests verifying recurrence date calculations under various calendars, short months, and leap years.
+

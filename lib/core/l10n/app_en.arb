@@ -1327,10 +1327,6 @@
   "@createAutomaticTransaction": {
     "description": "Auto-generated"
   },
-  "autoTxNewTemplate": "New Template",
-  "@autoTxNewTemplate": {
-    "description": "FAB label on the Automatic Transactions list screen"
-  },
   "autoTxNewTitle": "New Automatic Transaction",
   "@autoTxNewTitle": {
     "description": "AppBar title when creating a new automatic transaction template"
@@ -1343,7 +1339,7 @@
   "@autoTxSavedMessage": {
     "description": "Snackbar message after successfully saving an automatic transaction"
   },
-  "autoTxTemplateNameLabel": "Template Name",
+  "autoTxTemplateNameLabel": "Name",
   "@autoTxTemplateNameLabel": {
     "description": "Label for the name text field on the create/edit automatic transaction screen"
   },

@@ -3,7 +3,7 @@
 Benvingut a Stalvi. Aquests Termes i Condicions regeixen l'ús de l'aplicació mòbil sense connexió Stalvi. Al crear un perfil i utilitzar aquesta aplicació, acceptes aquests termes.
 
 ## 1. Emmagatzematge Local First
-* **Dades Locals**: Stalvi emmagatzema totes les teves dades financeres, comptes, transaccions i categories localment al teu dispositiu.
+* **Dades Locals**: Stalvi emmagatzema totes les teves dades financeres, comptes, transaccions, transaccions recurrentes, pressupostos i categories localment al teu dispositiu.
 * **Seguretat i Xifratge**: Les teves dades estan protegides al dispositiu mitjançant el xifratge de base de dades SQLCipher i Flutter Secure Storage. La clau de xifratge de la base de dades s'emmagatzema a l'emmagatzematge segur a nivell de sistema operatiu (iOS Keychain / Android Keystore) i mai no es transmet ni és accessible per Stalvi ni per tercers.
 
 ## 2. Autenticació Biomètrica
@@ -24,5 +24,8 @@ Benvingut a Stalvi. Aquests Termes i Condicions regeixen l'ús de l'aplicació m
 ## 5. Privacitat
 No recopilem, transmetem ni venem les teves dades personals o financeres. Les teves dades et pertanyen per complet.
 
-## 6. Actualitzacions dels Termes
+## 6. Exempció de Responsabilitat
+Tots els càlculs financers, estadístiques i conversions de tipus de canvi proporcionats per l'aplicació tenen només finalitats informatives. Són aproximats i poden variar amb el temps a causa de les fluctuacions de les divises. El desenvolupador no assumeix cap responsabilitat per les decisions financeres preses basant-se en aquestes dades.
+
+## 7. Actualitzacions dels Termes
 Ens reservem el dret d'actualitzar aquests termes en qualsevol moment. L'ús continuat de l'aplicació constitueix l'acceptació dels termes actualitzats.

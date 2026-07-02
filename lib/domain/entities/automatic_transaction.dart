@@ -76,4 +76,33 @@ class AutomaticTransaction {
       deletedAt: clearDeletedAt ? null : (deletedAt ?? this.deletedAt),
     );
   }
+
+  DateTime calculateNextExecutionDate(DateTime fromDate) {
+    if (recurrenceType == RecurrenceType.intervalDays) {
+      return fromDate.add(Duration(days: recurrenceDays));
+    } else {
+      int nextMonth = fromDate.month + 1;
+      int nextYear = fromDate.year;
+      if (nextMonth > 12) {
+        nextMonth = 1;
+        nextYear++;
+      }
+
+      int targetDay = recurrenceDays;
+      int lastDayOfNextMonth = DateTime(nextYear, nextMonth + 1, 0).day;
+
+      if (targetDay > lastDayOfNextMonth) {
+        targetDay = lastDayOfNextMonth;
+      }
+
+      return DateTime(
+        nextYear,
+        nextMonth,
+        targetDay,
+        fromDate.hour,
+        fromDate.minute,
+        fromDate.second,
+      );
+    }
+  }
 }

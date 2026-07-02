@@ -177,10 +177,12 @@ final periodSummaryProvider =
   final transactionsAsync = ref.watch(transactionsStreamProvider);
   final ratesAsync = ref.watch(latestExchangeRatesProvider(targetCurrency));
 
-  if (transactionsAsync.isLoading || ratesAsync.isLoading)
+  if (transactionsAsync.isLoading || ratesAsync.isLoading) {
     return const AsyncLoading();
-  if (transactionsAsync.hasError)
+  }
+  if (transactionsAsync.hasError) {
     return AsyncError(transactionsAsync.error!, transactionsAsync.stackTrace!);
+  }
 
   final transactions = transactionsAsync.value!;
   final rates = ratesAsync.valueOrNull;
@@ -270,11 +272,15 @@ final topExpenseCategoriesProvider =
 
   if (transactionsAsync.isLoading ||
       categoriesAsync.isLoading ||
-      ratesAsync.isLoading) return const AsyncLoading();
-  if (transactionsAsync.hasError)
+      ratesAsync.isLoading) {
+    return const AsyncLoading();
+  }
+  if (transactionsAsync.hasError) {
     return AsyncError(transactionsAsync.error!, transactionsAsync.stackTrace!);
-  if (categoriesAsync.hasError)
+  }
+  if (categoriesAsync.hasError) {
     return AsyncError(categoriesAsync.error!, categoriesAsync.stackTrace!);
+  }
 
   return AsyncData(
     _calculateTopCategories(
@@ -300,11 +306,15 @@ final topIncomeCategoriesProvider =
 
   if (transactionsAsync.isLoading ||
       categoriesAsync.isLoading ||
-      ratesAsync.isLoading) return const AsyncLoading();
-  if (transactionsAsync.hasError)
+      ratesAsync.isLoading) {
+    return const AsyncLoading();
+  }
+  if (transactionsAsync.hasError) {
     return AsyncError(transactionsAsync.error!, transactionsAsync.stackTrace!);
-  if (categoriesAsync.hasError)
+  }
+  if (categoriesAsync.hasError) {
     return AsyncError(categoriesAsync.error!, categoriesAsync.stackTrace!);
+  }
 
   return AsyncData(
     _calculateTopCategories(
@@ -337,15 +347,17 @@ final statisticsCurrencyProvider = Provider.autoDispose<String>((ref) {
 final globalBalanceProvider = Provider.autoDispose<AsyncValue<double>>((ref) {
   final profileAsync = ref.watch(defaultProfileProvider);
   if (profileAsync.isLoading) return const AsyncLoading();
-  if (profileAsync.hasError)
+  if (profileAsync.hasError) {
     return AsyncError(profileAsync.error!, profileAsync.stackTrace!);
+  }
 
   final targetCurrency = profileAsync.value!.defaultCurrency;
 
   final accountsAsync = ref.watch(accountsListProvider);
   if (accountsAsync.isLoading) return const AsyncLoading();
-  if (accountsAsync.hasError)
+  if (accountsAsync.hasError) {
     return AsyncError(accountsAsync.error!, accountsAsync.stackTrace!);
+  }
 
   final accounts = accountsAsync.value!;
 
@@ -357,8 +369,9 @@ final globalBalanceProvider = Provider.autoDispose<AsyncValue<double>>((ref) {
   for (final account in accounts) {
     final balanceAsync = ref.watch(accountBalanceProvider(account.id));
     if (balanceAsync.isLoading) return const AsyncLoading();
-    if (balanceAsync.hasError)
+    if (balanceAsync.hasError) {
       return AsyncError(balanceAsync.error!, balanceAsync.stackTrace!);
+    }
 
     double balance = balanceAsync.value!;
 

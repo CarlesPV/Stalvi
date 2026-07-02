@@ -505,8 +505,35 @@ This document lists the completed phases of the Stalvi development roadmap, prov
   - 100% clean static analysis (`flutter analyze` with 0 issues).
   - Executed the full automated test suite containing 446 unit and widget tests, achieving a 100% success rate (all tests passed!).
 
+### Phase 34: Final i18n Audit & Project Documentation Updates
+* **Completion Date:** July 1, 2026
+* **Objective:** Audit translation catalog coverage in presentation components, clean up unused localization strings, sync English, Spanish, and Catalan ARB bundles, and update project documentation (`README.md`, `roadmap.md`, `roadmap-summary.md`) to reflect release-ready state.
+* **Accomplishments:**
+  - **Localization Audit**: Replaced all remaining hardcoded strings in presentation files with dynamic localizations.
+  - **Unused Translation Cleanup**: Removed redundant localization keys (`incomes`, `deleteAccountHasAutomaticTransactions`, `recurrenceDaysLabel`, `nextExecution`, `autoTxRecurrenceInvalidRange`) from translation files and rebuilt localizations cleanly.
+  - **Documentation Updates**: Updated `README.md` and roadmaps to reflect all completed features, architecture, and verification stats.
+* **Verification:**
+  - 100% clean static analysis (`flutter analyze`) with 0 issues.
+  - Fully passing automated test suite (all 455 tests passed successfully!).
+
+### Phase 35: Domain Resilience, Compliance Warnings & Splash Polish
+* **Completion Date:** July 1, 2026
+* **Objective:** Address recurring transaction calendar edge cases with safe end-of-month date clamping, append liability disclaimers regarding currency data for compliance across all translation assets, upgrade splash icon to a unified squircle branding, and expand unit test coverage.
+* **Accomplishments:**
+  - **Safe End-of-Month Recurrence**: Added recurrence clamping logic (`calculateNextExecutionDate`) in the automatic transaction entity to gracefully handle months with fewer days (e.g. Feb/30th/31st scenarios) and subsequently restore execution to target days on longer months.
+  - **Compliance & Disclaimer Updates**: Updated Terms & Conditions and Privacy Policy across Catalan, English, and Spanish with disclaimers highlighting the approximate nature of conversions, calculations, and statistics to protect developer liability.
+  - **Splash Screen Rebranding**: Updated splash configurations and code assets to display the high-quality rounded logo (`splash_icon.png`) uniformly across light, dark, and Android 12+ scopes.
+  - **Recurrence Validation Tests**: Developed comprehensive unit tests covering intervals, short months, leap years (February 29th vs 28th), and month-to-month clamping recovery.
+* **Verification:**
+  - 100% clean static analysis (`flutter analyze`) with 0 issues.
+  - Fully passing automated test suite (all 455 tests passed successfully!).
+
 ## Recent Updates
-- Completed final stabilization step, resolved all lints/compiler errors, and verified 100% pass rate on 446 automated tests (Phase 33).
+- Resolved recurring transaction calendar edge cases (safe end-of-month clamping) and added thorough unit test coverage.
+- Updated compliance disclaimers regarding currency and conversion data in T&C and Privacy Policy across English, Spanish, and Catalan.
+- Updated the native splash configurations to use the rounded-edge `splash_icon.png` across all environments.
+- Completed final cleanup of unused localization strings, synchronized ARB bundles, and updated documentation for Phase 34.
+- Completed final stabilization step, resolved all lints/compiler errors, and verified 100% pass rate on 455 automated tests (Phases 33, 34, and 35).
 - Finalized Stabilization & Auto-Transactions with 100% test passing, static analysis fixed, and CI/CD/gitignore validated (Phase 32).
 - Implemented Automatic Transactions, Inline validations, and rolling 30-day stats (Phase 31).
 - Implemented Safe Category Deletion business logic, filtering rules, UI dialogs, and expanded test coverage (Phase 30).
@@ -521,4 +548,5 @@ This document lists the completed phases of the Stalvi development roadmap, prov
 - Added full Unicode font support in PDF exports using Roboto font assets to fix currency symbol placeholders.
 - Updated Terms and Privacy policy legal markdown assets for Catalan, English, and Spanish.
 - Achieved a completely clean static analysis check with 0 issues on `flutter analyze` and 100% test pass rate.
+
 

@@ -3,7 +3,7 @@
 Welcome to Stalvi. These Terms and Conditions govern your use of the Stalvi offline mobile application. By creating a profile and using this application, you agree to these terms.
 
 ## 1. Local-First Storage
-* **Local Data**: Stalvi stores all your financial data, accounts, transactions, and categories locally on your device.
+* **Local Data**: Stalvi stores all your financial data, accounts, transactions, recurrent transactions, budgets, and categories locally on your device.
 * **Security & Encryption**: Your data is secured on-device using SQLCipher database encryption and Flutter Secure Storage. The database encryption key is stored in the device's OS-level secure storage (iOS Keychain / Android Keystore) and is never transmitted or accessible to Stalvi or third parties.
 
 ## 2. Biometric Authentication
@@ -24,5 +24,8 @@ Welcome to Stalvi. These Terms and Conditions govern your use of the Stalvi offl
 ## 5. Privacy
 We do not collect, transmit, or sell your personal or financial data. Your data belongs entirely to you.
 
-## 6. Updates to Terms
+## 6. Disclaimer of Liability
+All financial calculations, statistics, and exchange rate conversions provided by the application are for informational purposes only. They are approximate and may vary over time due to currency fluctuations. The developer assumes no responsibility for financial decisions made based on this data.
+
+## 7. Updates to Terms
 We reserve the right to update these terms at any time. Your continued use of the application constitutes acceptance of any updated terms.

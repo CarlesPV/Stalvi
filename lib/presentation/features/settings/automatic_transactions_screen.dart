@@ -213,7 +213,7 @@ class AutomaticTransactionsScreen extends ConsumerWidget {
           );
         },
         icon: const Icon(Icons.add),
-        label: Text(l10n.autoTxNewTemplate),
+        label: Text(l10n.autoTxNewTitle),
       ),
     );
   }

@@ -4,7 +4,7 @@ Tu privacidad es extremadamente importante para nosotros. Esta Política de Priv
 
 ## 1. Cero Recopilación de Datos
 * **Datos Personales**: No recopilamos ningún dato personal como nombre, nombre de usuario o información de contacto.
-* **Datos Financieros**: Todos los registros de transacciones, saldos de cuentas y presupuestos se guardan estrictamente en tu dispositivo. No tenemos un servidor central y no tenemos acceso a tus datos financieros.
+* **Datos Financieros**: Todos los registros de transacciones, transacciones recurrentes, saldos de cuentas y presupuestos se guardan estrictamente en tu dispositivo. No tenemos un servidor central y no tenemos acceso a tus datos financieros.
 
 ## 2. Seguridad
 * **Autenticación Biométrica**: Stalvi utiliza la autenticación biométrica del dispositivo (huella dactilar o FaceID) como método de acceso principal, junto con un PIN seguro. Las credenciales biométricas son gestionadas exclusivamente por el sistema operativo del dispositivo (Android Keystore / iOS Secure Enclave) y jamás son leídas ni transmitidas por la aplicación.
@@ -19,5 +19,8 @@ Tu privacidad es extremadamente importante para nosotros. Esta Política de Priv
 ## 4. Servicios de Terceros
 No utilizamos herramientas de seguimiento, análisis ni SDK de publicidad de terceros que recopilen o compartan tus datos.
 
-## 5. Contacto
+## 5. Exención de Responsabilidad
+Todos los cálculos financieros, estadísticas y conversiones de tipos de cambio proporcionados por la aplicación tienen fines únicamente informativos. Son aproximados y pueden variar con el tiempo debido a las fluctuaciones de las divisas. El desarrollador no asume ninguna responsabilidad por las decisiones financieras tomadas en base a estos datos.
+
+## 6. Contacto
 Si tienes alguna pregunta o comentario sobre nuestras prácticas de privacidad, puedes contactarnos en privacy@stalvi.app.

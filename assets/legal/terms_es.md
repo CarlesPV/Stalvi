@@ -3,7 +3,7 @@
 Bienvenido a Stalvi. Estos Términos y Condiciones rigen el uso de la aplicación móvil sin conexión Stalvi. Al crear un perfil y usar esta aplicación, aceptas estos términos.
 
 ## 1. Almacenamiento Local First
-* **Datos Locales**: Stalvi almacena todos tus datos financieros, cuentas, transacciones y categorías localmente en tu dispositivo.
+* **Datos Locales**: Stalvi almacena todos tus datos financieros, cuentas, transacciones, transacciones recurrentes, presupuestos y categorías localmente en tu dispositivo.
 * **Seguridad y Cifrado**: Tus datos están protegidos en el dispositivo mediante el cifrado de base de datos SQLCipher y Flutter Secure Storage. La clave de cifrado de la base de datos se almacena en el almacenamiento seguro a nivel de sistema operativo (iOS Keychain / Android Keystore) y nunca se transmite ni es accesible para Stalvi ni para terceros.
 
 ## 2. Autenticación Biométrica
@@ -24,5 +24,8 @@ Bienvenido a Stalvi. Estos Términos y Condiciones rigen el uso de la aplicació
 ## 5. Privacidad
 No recopilamos, transmitimos ni vendemos tus datos personales o financieros. Tus datos te pertenecen por completo.
 
-## 6. Actualizaciones de los Términos
+## 6. Exención de Responsabilidad
+Todos los cálculos financieros, estadísticas y conversiones de tipos de cambio proporcionados por la aplicación tienen fines únicamente informativos. Son aproximados y pueden variar con el tiempo debido a las fluctuaciones de las divisas. El desarrollador no asume ninguna responsabilidad por las decisiones financieras tomadas en base a estos datos.
+
+## 7. Actualizaciones de los Términos
 Nos reservamos el derecho de actualizar estos términos en cualquier momento. El uso continuado de la aplicación constituye la aceptación de los términos actualizados.

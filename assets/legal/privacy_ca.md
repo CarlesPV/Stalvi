@@ -4,7 +4,7 @@ La teva privacitat és extremadament important per a nosaltres. Aquesta Polític
 
 ## 1. Zero Recopilació de Dades
 * **Dades Personals**: No recopilem cap dada personal com el nom, nom d'usuari o informació de contacte.
-* **Dades Financeres**: Tots els registres de transaccions, saldos de comptes i pressupostos es guarden estrictament al teu dispositiu. No tenim cap servidor central i no tenim accés a les teves dades financeres.
+* **Dades Financeres**: Tots els registres de transaccions, transaccions recurrents, saldos de comptes i pressupostos es guarden estrictamente al teu dispositiu. No tenim cap servidor central i no tenim accés a les teves dades financeres.
 
 ## 2. Seguretat
 * **Autenticació Biomètrica**: Stalvi utilitza l'autenticació biomètrica del dispositiu (petjada digital o Face ID) com a mètode d'accés principal, juntament amb un PIN segur. Les credencials biomètriques són gestionades exclusivament pel sistema operatiu del dispositiu (Android Keystore / iOS Secure Enclave) i mai no són llegides ni transmeses per l'aplicació.
@@ -19,5 +19,8 @@ La teva privacitat és extremadament important per a nosaltres. Aquesta Polític
 ## 4. Serveis de Tercers
 No utilitzem eines de seguiment, anàlisi ni SDK de publicitat de tercers que recopilin o comparteixin les teves dades.
 
-## 5. Contacte
+## 5. Exempció de Responsabilitat
+Tots els càlculs financers, estadístiques i conversions de tipus de canvi proporcionats per l'aplicació tenen només finalitats informatives. Són aproximats i poden variar amb el temps a causa de les fluctuacions de les divises. El desenvolupador no assumeix cap responsabilitat per les decisions financeres preses basant-se en aquestes dades.
+
+## 6. Contacte
 Si tens algun dubte o comentari sobre les nostres pràctiques de privacitat, pots contactar amb nosaltres a privacy@stalvi.app.

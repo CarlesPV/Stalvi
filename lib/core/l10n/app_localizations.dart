@@ -1942,12 +1942,6 @@ abstract class AppLocalizations {
   /// **'Create Automatic Transaction'**
   String get createAutomaticTransaction;
 
-  /// FAB label on the Automatic Transactions list screen
-  ///
-  /// In en, this message translates to:
-  /// **'New Template'**
-  String get autoTxNewTemplate;
-
   /// AppBar title when creating a new automatic transaction template
   ///
   /// In en, this message translates to:
@@ -1969,7 +1963,7 @@ abstract class AppLocalizations {
   /// Label for the name text field on the create/edit automatic transaction screen
   ///
   /// In en, this message translates to:
-  /// **'Template Name'**
+  /// **'Name'**
   String get autoTxTemplateNameLabel;
 
   /// Validation error shown when the automatic transaction name field is empty

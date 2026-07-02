@@ -1,6 +1,5 @@
 import '../../entities/automatic_transaction.dart';
 import '../../entities/transaction.dart' as dtxn;
-import '../../entities/recurrence_type.dart';
 import '../../repositories/i_automatic_transaction_repository.dart';
 import '../../repositories/i_transaction_repository.dart';
 import 'package:uuid/uuid.dart';
@@ -42,31 +41,8 @@ class EvaluateAutomaticTransactionsUseCase {
         await transactionRepo.createTransaction(newTxn);
 
         // Update next_execution_date
-        DateTime nextDate;
-        if (autoTxn.recurrenceType == RecurrenceType.intervalDays) {
-          nextDate = autoTxn.nextExecutionDate
-              .add(Duration(days: autoTxn.recurrenceDays));
-        } else {
-          int nextMonth = autoTxn.nextExecutionDate.month + 1;
-          int nextYear = autoTxn.nextExecutionDate.year;
-          if (nextMonth > 12) {
-            nextMonth = 1;
-            nextYear++;
-          }
-          int targetDay = autoTxn.recurrenceDays;
-          int lastDayOfNextMonth = DateTime(nextYear, nextMonth + 1, 0).day;
-          if (targetDay > lastDayOfNextMonth) {
-            targetDay = lastDayOfNextMonth;
-          }
-          nextDate = DateTime(
-            nextYear,
-            nextMonth,
-            targetDay,
-            autoTxn.nextExecutionDate.hour,
-            autoTxn.nextExecutionDate.minute,
-            autoTxn.nextExecutionDate.second,
-          );
-        }
+        DateTime nextDate =
+            autoTxn.calculateNextExecutionDate(autoTxn.nextExecutionDate);
 
         final updatedAutoTxn = AutomaticTransaction(
           id: autoTxn.id,

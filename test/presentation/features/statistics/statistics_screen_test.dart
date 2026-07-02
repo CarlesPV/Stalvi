@@ -175,7 +175,9 @@ void main() {
         await tester.pumpWidget(
           _buildTestWidget(
             summaryState: AsyncError<PeriodSummary>(
-                Exception('DB error'), StackTrace.empty),
+              Exception('DB error'),
+              StackTrace.empty,
+            ),
             expenseCatState: AsyncData(_fakeExpenseCategories),
             incomeCatState: AsyncData(_fakeIncomeCategories),
           ),

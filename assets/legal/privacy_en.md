@@ -4,7 +4,7 @@ Your privacy is extremely important to us. This Privacy Policy explains how Stal
 
 ## 1. Zero Data Collection
 * **Personal Data**: We do not collect any personal data such as name, username, or contact information.
-* **Financial Data**: All transaction logs, account balances, and budgets are kept strictly on your device. We have no backend server and no access to your financial data.
+* **Financial Data**: All transaction logs, recurrent transactions, account balances, and budgets are kept strictly on your device. We have no backend server and no access to your financial data.
 
 ## 2. Security
 * **Biometric Authentication**: Stalvi uses device biometric authentication (Fingerprint or Face ID) as a primary login method, in conjunction with a secure PIN. Biometric credentials are managed exclusively by the device's operating system (Android Keystore / iOS Secure Enclave) and are never read or transmitted by the app.
@@ -19,5 +19,8 @@ Your privacy is extremely important to us. This Privacy Policy explains how Stal
 ## 4. Third-Party Services
 We do not use any tracking tools, analytics, or third-party advertising SDKs that collect or share your data.
 
-## 5. Contact Us
+## 5. Disclaimer of Liability
+All financial calculations, statistics, and exchange rate conversions provided by the application are for informational purposes only. They are approximate and may vary over time due to currency fluctuations. The developer assumes no responsibility for financial decisions made based on this data.
+
+## 6. Contact Us
 If you have any questions or feedback regarding our privacy practices, you can contact us at privacy@stalvi.app.
