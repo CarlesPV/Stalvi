@@ -1,20 +1,17 @@
-# Active Task: Phase 36 - Stabilization, Domain Resilience, and QA Cleanup
+# Active Task: Phase 37 - Production Readiness, Background Tasks & UX Polish
 
-## 🎯 Current Objective
-Execute a comprehensive polishing phase focused on domain logic correction, UI consistency, legal compliance, and extreme codebase optimization. Ensure 100% test passing and 0 static analysis warnings.
+## Objective
+Finalize system polishing by implementing background workers for automatic transactions, refining cross-currency aggregations, completing the final UI flows (PDF options, About Me), and performing a strict localization and CI/CD cleanup.
 
-## 📝 Context & Priorities
-- **Splash Screen**: Unify the visual identity using the existing rounded-corner icon (`splash_icon.png`).
-- **Domain Logic (Recurring Transactions)**: Fix the edge-case in recurrence dates. Specifically, handle end-of-month overflows (e.g., executing a transaction scheduled for the 30th on February 28th/29th).
-- **Legal & Compliance**: Update Terms & Conditions and Privacy Policy across all supported languages (EN, ES, CA). Add disclaimers regarding currency fluctuations and non-binding calculations.
-- **Documentation Sync**: Align `README.md`, `roadmap.md`, and architecture diagrams with the current stabilized state.
-- **Deep Cleanup**: Purge dead code, unused translations, unnecessary comments, and orphaned assets to minimize APK/IPA footprint.
-- **Strict QA**: Enforce a "zero tolerance" policy for analyzer warnings or test failures following the cleanup.
+## Current Sub-tasks
+- [x] 37.1: Implement multi-currency conversion for total balances on the dashboard and fix the splash screen icon border-radius.
+- [x] 37.2: Enhance Automatic Transactions UI to display localized recurrence strings and implement background execution (cron-like at 0:00 UTC+2) via `workmanager`.
+- [x] 37.3: Refactor PDF Export to prompt for 'Last 30 Days' or 'Current Month' and implement the 'About Me' localized Markdown screen with an external link.
+- [x] 37.4: Perform an exhaustive cleanup of `.arb` localization files (remove unused, ensure 3 languages complete), fix all CI/CD, analyzer warnings, and update documentation (`roadmap.md`, `README.md`).
 
-## 🛠️ Step-by-Step Execution Plan
-1. **[UI]** Reconfigure `flutter_native_splash.yaml` and regenerate native splash assets.
-2. **[Domain]** Refactor `RecurrenceType` logic and `EvaluateAutomaticTransactionsUseCase`. Add robust unit tests for leap years and short months.
-3. **[Compliance]** Overhaul `/assets/legal/` markdown files.
-4. **[Documentation]** Update root and `/docs/` repository files.
-5. **[Cleanup]** Run static analysis, remove unused resources, and format code.
-6. **[Validation]** Execute full test suite and CI workflows locally.
+## Context & Rules
+- Strictly adhere to Clean Architecture (Domain, Data, Presentation).
+- All strings must be localized in `app_en.arb`, `app_es.arb`, and `app_ca.arb`.
+- Background execution must securely access the Drift database.
+- DO NOT hallucinate files. Modify existing files where possible.
+- All tasks must pass existing unit tests, and new business logic requires new tests.

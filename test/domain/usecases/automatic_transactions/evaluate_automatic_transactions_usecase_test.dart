@@ -189,8 +189,10 @@ void main() {
       final updatedAutoTxn = captured.first as AutomaticTransaction;
 
       // Jan 1 + 45 days = Feb 15
-      expect(updatedAutoTxn.nextExecutionDate,
-          equals(DateTime(2026, 1, 1).add(const Duration(days: 45))));
+      expect(
+        updatedAutoTxn.nextExecutionDate,
+        equals(DateTime(2026, 1, 1).add(const Duration(days: 45))),
+      );
       expect(updatedAutoTxn.nextExecutionDate.month, equals(2));
       expect(updatedAutoTxn.nextExecutionDate.day, equals(15));
     });

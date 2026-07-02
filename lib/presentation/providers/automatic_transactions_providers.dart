@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:stalvi/domain/entities/automatic_transaction.dart';
 import 'package:stalvi/domain/usecases/automatic_transactions/crud_automatic_transactions_usecase.dart';
+import 'package:stalvi/domain/usecases/automatic_transactions/evaluate_automatic_transactions_usecase.dart';
 import 'package:stalvi/presentation/providers/repository_providers.dart';
 
 final createAutomaticTransactionUseCaseProvider = Provider((ref) {
@@ -38,4 +39,10 @@ final automaticTransactionsListProvider =
   return repo.watchAllAutomaticTransactions().map(
         (all) => all.where((txn) => !txn.isDeleted).toList(),
       );
+});
+
+final evaluateAutomaticTransactionsUseCaseProvider = Provider((ref) {
+  final automaticRepo = ref.watch(automaticTransactionRepositoryProvider);
+  final transactionRepo = ref.watch(transactionRepositoryProvider);
+  return EvaluateAutomaticTransactionsUseCase(automaticRepo, transactionRepo);
 });

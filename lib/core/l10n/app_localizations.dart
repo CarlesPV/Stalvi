@@ -100,1997 +100,2015 @@ abstract class AppLocalizations {
     Locale('es')
   ];
 
-  /// Title for the transactions screen or tab
+  /// No description provided for @transactions.
   ///
   /// In en, this message translates to:
   /// **'Transactions'**
   String get transactions;
 
-  /// Title for the budgets screen or tab
+  /// No description provided for @budgets.
   ///
   /// In en, this message translates to:
   /// **'Budgets'**
   String get budgets;
 
-  /// Title for the settings screen or tab
+  /// No description provided for @settings.
   ///
   /// In en, this message translates to:
   /// **'Settings'**
   String get settings;
 
-  /// Button or title for adding a transaction
+  /// No description provided for @addTransaction.
   ///
   /// In en, this message translates to:
   /// **'Add Transaction'**
   String get addTransaction;
 
-  /// Label for positive financial income
+  /// No description provided for @income.
   ///
   /// In en, this message translates to:
   /// **'{count, plural, =1{Income} other{Incomes}}'**
-  String income(int count);
+  String income(num count);
 
-  /// Label for negative financial expense
+  /// No description provided for @expense.
   ///
   /// In en, this message translates to:
   /// **'{count, plural, =1{Expense} other{Expenses}}'**
-  String expense(int count);
+  String expense(num count);
 
-  /// Label for plural negative financial expenses
+  /// No description provided for @expenses.
   ///
   /// In en, this message translates to:
   /// **'Expenses'**
   String get expenses;
 
-  /// App name branding
+  /// No description provided for @appTitle.
   ///
   /// In en, this message translates to:
   /// **'Stalvi'**
   String get appTitle;
 
-  /// Tagline displayed on the splash screen
+  /// No description provided for @splashTagline.
   ///
   /// In en, this message translates to:
   /// **'Your finances, your way.'**
   String get splashTagline;
 
-  /// Error title shown when app startup fails
+  /// No description provided for @splashStartupFailed.
   ///
   /// In en, this message translates to:
   /// **'Startup Failed'**
   String get splashStartupFailed;
 
-  /// Error message shown when secure storage fails to initialize
+  /// No description provided for @splashSecureStorageError.
   ///
   /// In en, this message translates to:
   /// **'Stalvi couldn\'t initialise its secure storage. Please check available device storage and try again.'**
   String get splashSecureStorageError;
 
-  /// General button label to retry an operation
+  /// No description provided for @tryAgain.
   ///
   /// In en, this message translates to:
   /// **'Try Again'**
   String get tryAgain;
 
-  /// Error title for biometric authentication failure
+  /// No description provided for @authError.
   ///
   /// In en, this message translates to:
   /// **'Authentication Error'**
   String get authError;
 
-  /// Title when biometric lockout occurs
+  /// No description provided for @authLockedTitle.
   ///
   /// In en, this message translates to:
   /// **'Biometrics Locked'**
   String get authLockedTitle;
 
-  /// Description when biometric lockout occurs
+  /// No description provided for @authLockedMessage.
   ///
   /// In en, this message translates to:
   /// **'Too many failed attempts. Please unlock your device from the lock screen and try again.'**
   String get authLockedMessage;
 
-  /// Warning chip label for active biometric lockout
+  /// No description provided for @authLockoutActive.
   ///
   /// In en, this message translates to:
   /// **'Security lockout active'**
   String get authLockoutActive;
 
-  /// Prompt description to verify identity
+  /// No description provided for @authVerifyMessage.
   ///
   /// In en, this message translates to:
   /// **'Use biometrics or your device PIN to continue'**
   String get authVerifyMessage;
 
-  /// Loading message when processing security authentication
+  /// No description provided for @authProcessing.
   ///
   /// In en, this message translates to:
   /// **'Processing security authentication…'**
   String get authProcessing;
 
-  /// Footer text describing security
+  /// No description provided for @authProtectedBy.
   ///
   /// In en, this message translates to:
   /// **'Protected by device biometrics'**
   String get authProtectedBy;
 
-  /// Generic fallback error message
+  /// No description provided for @unexpectedError.
   ///
   /// In en, this message translates to:
   /// **'An unexpected error occurred. Please try again.'**
   String get unexpectedError;
 
-  /// Title/label for the overview tab
+  /// No description provided for @overview.
   ///
   /// In en, this message translates to:
   /// **'Overview'**
   String get overview;
 
-  /// Title/label for the accounts tab or section
+  /// No description provided for @accounts.
   ///
   /// In en, this message translates to:
   /// **'Accounts'**
   String get accounts;
 
-  /// Section header for recent transactions list
+  /// No description provided for @recentTransactions.
   ///
   /// In en, this message translates to:
   /// **'Recent Transactions'**
   String get recentTransactions;
 
-  /// Title when transaction list is empty
+  /// No description provided for @noTransactionsTitle.
   ///
   /// In en, this message translates to:
   /// **'No transactions yet'**
   String get noTransactionsTitle;
 
-  /// Subtitle when transaction list is empty
+  /// No description provided for @noTransactionsSubtitle.
   ///
   /// In en, this message translates to:
   /// **'Add your first income or expense to see it here and start tracking.'**
   String get noTransactionsSubtitle;
 
-  /// Error message when transactions stream fails
+  /// No description provided for @failedLoadTransactions.
   ///
   /// In en, this message translates to:
   /// **'Failed to load transactions'**
   String get failedLoadTransactions;
 
-  /// Settings option for budgets and goals
+  /// No description provided for @settingsBudgetsGoals.
   ///
   /// In en, this message translates to:
   /// **'Budgets & Goals'**
   String get settingsBudgetsGoals;
 
-  /// Settings option for statistics
+  /// No description provided for @settingsStatistics.
   ///
   /// In en, this message translates to:
   /// **'Statistics'**
   String get settingsStatistics;
 
-  /// Label for the total balance card
+  /// No description provided for @balanceTotal.
   ///
   /// In en, this message translates to:
   /// **'Total Balance'**
   String get balanceTotal;
 
-  /// Tooltip for custom date range button
+  /// No description provided for @statisticsTooltipCustomRange.
   ///
   /// In en, this message translates to:
   /// **'Custom date range'**
   String get statisticsTooltipCustomRange;
 
-  /// Section title for top spending categories
+  /// No description provided for @statisticsTopSpending.
   ///
   /// In en, this message translates to:
   /// **'Top Spending Categories'**
   String get statisticsTopSpending;
 
-  /// Section subtitle for top spending categories
+  /// No description provided for @statisticsWhereMoneyGoes.
   ///
   /// In en, this message translates to:
   /// **'Where your money goes'**
   String get statisticsWhereMoneyGoes;
 
-  /// Label when no expenses exist for statistics
+  /// No description provided for @statisticsNoExpenses.
   ///
   /// In en, this message translates to:
   /// **'No expenses recorded in this period.'**
   String get statisticsNoExpenses;
 
-  /// Section title for top income categories
+  /// No description provided for @statisticsTopIncome.
   ///
   /// In en, this message translates to:
   /// **'Top Income Categories'**
   String get statisticsTopIncome;
 
-  /// Section subtitle for top income categories
+  /// No description provided for @statisticsWhatYouEarned.
   ///
   /// In en, this message translates to:
   /// **'What you earned'**
   String get statisticsWhatYouEarned;
 
-  /// Label when no income exists for statistics
+  /// No description provided for @statisticsNoIncome.
   ///
   /// In en, this message translates to:
   /// **'No income recorded in this period.'**
   String get statisticsNoIncome;
 
-  /// Label for the net balance section
+  /// No description provided for @statisticsNetBalance.
   ///
   /// In en, this message translates to:
   /// **'Net Balance'**
   String get statisticsNetBalance;
 
-  /// Label for net balance surplus
+  /// No description provided for @statisticsSurplus.
   ///
   /// In en, this message translates to:
   /// **'Surplus'**
   String get statisticsSurplus;
 
-  /// Label for net balance deficit
+  /// No description provided for @statisticsDeficit.
   ///
   /// In en, this message translates to:
   /// **'Deficit'**
   String get statisticsDeficit;
 
-  /// Label for last 30 days date filter
+  /// No description provided for @presetLast30Days.
   ///
   /// In en, this message translates to:
   /// **'Last 30 Days'**
   String get presetLast30Days;
 
-  /// Label for this month date filter
+  /// No description provided for @presetThisMonth.
   ///
   /// In en, this message translates to:
   /// **'This Month'**
   String get presetThisMonth;
 
-  /// Label for last 3 months date filter
+  /// No description provided for @presetLast3Months.
   ///
   /// In en, this message translates to:
   /// **'Last 3 Months'**
   String get presetLast3Months;
 
-  /// Label for last 6 months date filter
+  /// No description provided for @presetLast6Months.
   ///
   /// In en, this message translates to:
   /// **'Last 6 Months'**
   String get presetLast6Months;
 
-  /// Label for this year date filter
+  /// No description provided for @presetThisYear.
   ///
   /// In en, this message translates to:
   /// **'This Year'**
   String get presetThisYear;
 
-  /// Label for custom date filter
+  /// No description provided for @presetCustom.
   ///
   /// In en, this message translates to:
   /// **'Custom'**
   String get presetCustom;
 
-  /// Title for the budgets and goals screen
+  /// No description provided for @budgetsAndGoals.
   ///
   /// In en, this message translates to:
   /// **'Budgets & Goals'**
   String get budgetsAndGoals;
 
-  /// Title/label for savings goals tab or section
+  /// No description provided for @savingsGoals.
   ///
   /// In en, this message translates to:
   /// **'Savings Goals'**
   String get savingsGoals;
 
-  /// Error message when budgets stream fails
+  /// No description provided for @failedLoadBudgets.
   ///
   /// In en, this message translates to:
   /// **'Failed to load budgets.'**
   String get failedLoadBudgets;
 
-  /// Title when budgets list is empty
+  /// No description provided for @noBudgetsTitle.
   ///
   /// In en, this message translates to:
   /// **'No budgets set yet'**
   String get noBudgetsTitle;
 
-  /// Subtitle when budgets list is empty
+  /// No description provided for @noBudgetsSubtitle.
   ///
   /// In en, this message translates to:
   /// **'Set spending limits for categories to track your monthly expenses and stay within your limits.'**
   String get noBudgetsSubtitle;
 
-  /// Fallback name for categories without a name or value
+  /// No description provided for @uncategorized.
   ///
   /// In en, this message translates to:
   /// **'Uncategorized'**
   String get uncategorized;
 
-  /// Remaining budget spent description when limit is exceeded
+  /// No description provided for @budgetOverspent.
   ///
   /// In en, this message translates to:
   /// **'{amount} overspent'**
-  String budgetOverspent(String amount);
+  String budgetOverspent(Object amount);
 
-  /// Remaining budget spent description when within limit
+  /// No description provided for @budgetRemaining.
   ///
   /// In en, this message translates to:
   /// **'{amount} remaining'**
-  String budgetRemaining(String amount);
+  String budgetRemaining(Object amount);
 
-  /// Error message when savings goals stream fails
+  /// No description provided for @failedLoadSavingsGoals.
   ///
   /// In en, this message translates to:
   /// **'Failed to load savings goals.'**
   String get failedLoadSavingsGoals;
 
-  /// Title when savings goals list is empty
+  /// No description provided for @noSavingsGoalsTitle.
   ///
   /// In en, this message translates to:
   /// **'No savings goals yet'**
   String get noSavingsGoalsTitle;
 
-  /// Subtitle when savings goals list is empty
+  /// No description provided for @noSavingsGoalsSubtitle.
   ///
   /// In en, this message translates to:
   /// **'Create a savings goal to plan for your future dreams, trips, or big purchases.'**
   String get noSavingsGoalsSubtitle;
 
-  /// Savings goal target date description
+  /// No description provided for @savingsTargetDate.
   ///
   /// In en, this message translates to:
   /// **'Target date: {date}'**
-  String savingsTargetDate(String date);
+  String savingsTargetDate(Object date);
 
-  /// Description when savings goal has no target date
+  /// No description provided for @savingsNoTargetDate.
   ///
   /// In en, this message translates to:
   /// **'No target date'**
   String get savingsNoTargetDate;
 
-  /// Savings goal current progress vs target
+  /// No description provided for @savingsSavedOf.
   ///
   /// In en, this message translates to:
   /// **'{saved} saved of {target}'**
-  String savingsSavedOf(String saved, String target);
+  String savingsSavedOf(Object saved, Object target);
 
-  /// Text showing savings goal milestone completion
+  /// No description provided for @savingsGoalAchieved.
   ///
   /// In en, this message translates to:
   /// **'Goal achieved!'**
   String get savingsGoalAchieved;
 
-  /// Success message when transaction is saved
+  /// No description provided for @txnSuccessCreated.
   ///
   /// In en, this message translates to:
   /// **'Transaction created successfully!'**
   String get txnSuccessCreated;
 
-  /// Label for amount input field
+  /// No description provided for @labelAmount.
   ///
   /// In en, this message translates to:
   /// **'AMOUNT'**
   String get labelAmount;
 
-  /// Label for account field
+  /// No description provided for @labelAccount.
   ///
   /// In en, this message translates to:
   /// **'Account'**
   String get labelAccount;
 
-  /// Prompt or header to select an account
+  /// No description provided for @labelSelectAccount.
   ///
   /// In en, this message translates to:
   /// **'Select Account'**
   String get labelSelectAccount;
 
-  /// Label for category field
+  /// No description provided for @labelCategory.
   ///
   /// In en, this message translates to:
   /// **'Category'**
   String get labelCategory;
 
-  /// Prompt or header to select a category
+  /// No description provided for @labelSelectCategory.
   ///
   /// In en, this message translates to:
   /// **'Select Category'**
   String get labelSelectCategory;
 
-  /// Label for date field
+  /// No description provided for @labelDate.
   ///
   /// In en, this message translates to:
   /// **'Date'**
   String get labelDate;
 
-  /// Label for notes field
+  /// No description provided for @labelNotes.
   ///
   /// In en, this message translates to:
   /// **'Notes'**
   String get labelNotes;
 
-  /// Hint text for notes input field
+  /// No description provided for @labelNotesHint.
   ///
   /// In en, this message translates to:
   /// **'Add details about this transaction...'**
   String get labelNotesHint;
 
-  /// Button label to save transaction
+  /// No description provided for @btnSaveTransaction.
   ///
   /// In en, this message translates to:
   /// **'Save Transaction'**
   String get btnSaveTransaction;
 
-  /// Validation error for invalid transaction amount
+  /// No description provided for @errorInvalidAmount.
   ///
   /// In en, this message translates to:
   /// **'Please enter a valid amount greater than 0'**
   String get errorInvalidAmount;
 
-  /// Validation error when account is not selected
+  /// No description provided for @errorAccountRequired.
   ///
   /// In en, this message translates to:
   /// **'Please select an account'**
   String get errorAccountRequired;
 
-  /// Validation error when transaction date is in the future
+  /// No description provided for @errorFutureDate.
   ///
   /// In en, this message translates to:
   /// **'Transaction date cannot be in the future'**
   String get errorFutureDate;
 
-  /// Error when account doesn't exist
+  /// No description provided for @errorAccountNotFound.
   ///
   /// In en, this message translates to:
   /// **'Account not found'**
   String get errorAccountNotFound;
 
-  /// Error when user profile doesn't exist
+  /// No description provided for @errorProfileNotFound.
   ///
   /// In en, this message translates to:
   /// **'Profile not found'**
   String get errorProfileNotFound;
 
-  /// Error when exchange rate is missing
+  /// No description provided for @errorRateNotFound.
   ///
   /// In en, this message translates to:
   /// **'Exchange rate not available for the requested currency'**
   String get errorRateNotFound;
 
-  /// Error when currency conversion fails
+  /// No description provided for @errorConversionFailed.
   ///
   /// In en, this message translates to:
   /// **'Failed to convert currency'**
   String get errorConversionFailed;
 
-  /// Default label for empty state call-to-action button
+  /// No description provided for @getStarted.
   ///
   /// In en, this message translates to:
   /// **'Get Started'**
   String get getStarted;
 
-  /// Title for the profile setup screen
+  /// No description provided for @authSetupTitle.
   ///
   /// In en, this message translates to:
   /// **'Create Your Profile'**
   String get authSetupTitle;
 
-  /// Subtitle for the profile setup screen
+  /// No description provided for @authSetupSubtitle.
   ///
   /// In en, this message translates to:
   /// **'Set up your secure offline wallet to begin.'**
   String get authSetupSubtitle;
 
-  /// Label for name input
+  /// No description provided for @authSetupNameLabel.
   ///
   /// In en, this message translates to:
   /// **'Name'**
   String get authSetupNameLabel;
 
-  /// Label for username input
+  /// No description provided for @authSetupUsernameLabel.
   ///
   /// In en, this message translates to:
   /// **'Username'**
   String get authSetupUsernameLabel;
 
-  /// Label for PIN input
+  /// No description provided for @authSetupPinLabel.
   ///
   /// In en, this message translates to:
   /// **'Set a 4-8 digit PIN'**
   String get authSetupPinLabel;
 
-  /// Label for confirming PIN
+  /// No description provided for @authSetupConfirmPinLabel.
   ///
   /// In en, this message translates to:
   /// **'Confirm PIN'**
   String get authSetupConfirmPinLabel;
 
-  /// Label for language selection
+  /// No description provided for @authSetupLanguageLabel.
   ///
   /// In en, this message translates to:
   /// **'Default Language'**
   String get authSetupLanguageLabel;
 
-  /// Button label to submit setup form
+  /// No description provided for @authSetupCreateButton.
   ///
   /// In en, this message translates to:
   /// **'Create Profile'**
   String get authSetupCreateButton;
 
-  /// Validation error when PIN length is invalid
+  /// No description provided for @authSetupValidationErrorPinLength.
   ///
   /// In en, this message translates to:
   /// **'PIN must be between 4 and 8 digits.'**
   String get authSetupValidationErrorPinLength;
 
-  /// Validation error when PINs do not match
+  /// No description provided for @authSetupValidationErrorPinMatch.
   ///
   /// In en, this message translates to:
   /// **'PINs do not match.'**
   String get authSetupValidationErrorPinMatch;
 
-  /// Validation error when terms are not accepted
+  /// No description provided for @authSetupValidationErrorTerms.
   ///
   /// In en, this message translates to:
   /// **'You must accept the Terms & Conditions and Privacy Policy to proceed.'**
   String get authSetupValidationErrorTerms;
 
-  /// Validation error when name is empty
+  /// No description provided for @authSetupValidationErrorName.
   ///
   /// In en, this message translates to:
   /// **'Please enter a name.'**
   String get authSetupValidationErrorName;
 
-  /// Validation error when username is empty
+  /// No description provided for @authSetupValidationErrorUsername.
   ///
   /// In en, this message translates to:
   /// **'Please enter a username.'**
   String get authSetupValidationErrorUsername;
 
-  /// Prompt to enter PIN
+  /// No description provided for @authPinEnter.
   ///
   /// In en, this message translates to:
   /// **'Enter PIN'**
   String get authPinEnter;
 
-  /// Message indicating how many PIN attempts are remaining before lockout
+  /// No description provided for @authPinAttemptsRemaining.
   ///
   /// In en, this message translates to:
   /// **'{attempts} attempts remaining'**
-  String authPinAttemptsRemaining(int attempts);
+  String authPinAttemptsRemaining(Object attempts);
 
-  /// Error message when PIN is incorrect
+  /// No description provided for @authPinIncorrect.
   ///
   /// In en, this message translates to:
   /// **'Incorrect PIN. Please try again.'**
   String get authPinIncorrect;
 
-  /// Label indicating number of accounts
+  /// No description provided for @acrossAccountsCount.
   ///
   /// In en, this message translates to:
   /// **'{count, plural, =1{1 account} other{{count} accounts}}'**
-  String acrossAccountsCount(int count);
+  String acrossAccountsCount(num count);
 
-  /// Error message when accounts list fails to load
+  /// No description provided for @failedLoadAccounts.
   ///
   /// In en, this message translates to:
   /// **'Failed to load accounts.'**
   String get failedLoadAccounts;
 
-  /// Title when accounts list is empty
+  /// No description provided for @noAccountsTitle.
   ///
   /// In en, this message translates to:
   /// **'No accounts yet'**
   String get noAccountsTitle;
 
-  /// Subtitle when accounts list is empty
+  /// No description provided for @noAccountsSubtitle.
   ///
   /// In en, this message translates to:
   /// **'Create an account or wallet to start managing your assets and tracking transactions.'**
   String get noAccountsSubtitle;
 
-  /// Label indicating an account is the default account
+  /// No description provided for @defaultAccountLabel.
   ///
   /// In en, this message translates to:
   /// **'Default'**
   String get defaultAccountLabel;
 
-  /// Subtitle when there is no data to show in statistics charts
+  /// No description provided for @statisticsNoDataSubtitle.
   ///
   /// In en, this message translates to:
   /// **'Try adding transactions or changing the filter range to see your category breakdown.'**
   String get statisticsNoDataSubtitle;
 
-  /// Title for the biometric opt-in screen
+  /// No description provided for @authBiometricOptInTitle.
   ///
   /// In en, this message translates to:
   /// **'Enable Biometric Login'**
   String get authBiometricOptInTitle;
 
-  /// Subtitle for the biometric opt-in screen
+  /// No description provided for @authBiometricOptInSubtitle.
   ///
   /// In en, this message translates to:
   /// **'Use Fingerprint or FaceID to quickly and securely access your Stalvi account in the future.'**
   String get authBiometricOptInSubtitle;
 
-  /// Button label to enable biometric login
+  /// No description provided for @authBiometricOptInEnable.
   ///
   /// In en, this message translates to:
   /// **'Enable Biometrics'**
   String get authBiometricOptInEnable;
 
-  /// Button label to skip biometric login
+  /// No description provided for @authBiometricOptInSkip.
   ///
   /// In en, this message translates to:
   /// **'Skip for Now'**
   String get authBiometricOptInSkip;
 
-  /// Default label for empty state when no data is found
+  /// No description provided for @noDataAvailable.
   ///
   /// In en, this message translates to:
   /// **'No data available yet'**
   String get noDataAvailable;
 
-  /// Title for the Terms and Conditions screen
+  /// No description provided for @termsAndConditions.
   ///
   /// In en, this message translates to:
   /// **'Terms and Conditions'**
   String get termsAndConditions;
 
-  /// Title for the Privacy Policy screen
+  /// No description provided for @privacyPolicy.
   ///
   /// In en, this message translates to:
   /// **'Privacy Policy'**
   String get privacyPolicy;
 
-  /// Label for default currency selector during setup
+  /// No description provided for @authSetupCurrencyLabel.
   ///
   /// In en, this message translates to:
   /// **'Default Currency'**
   String get authSetupCurrencyLabel;
 
-  /// Prefix text for terms acceptance checkbox
+  /// No description provided for @authSetupAcceptPrefix.
   ///
   /// In en, this message translates to:
   /// **'I accept the '**
   String get authSetupAcceptPrefix;
 
-  /// Conjunction text for terms and privacy acceptance checkbox
+  /// No description provided for @authSetupAcceptAnd.
   ///
   /// In en, this message translates to:
   /// **' and the '**
   String get authSetupAcceptAnd;
 
-  /// Label for theme mode selection in settings
+  /// No description provided for @settingsThemeMode.
   ///
   /// In en, this message translates to:
   /// **'Theme Mode'**
   String get settingsThemeMode;
 
-  /// System theme option
+  /// No description provided for @themeModeSystem.
   ///
   /// In en, this message translates to:
   /// **'System'**
   String get themeModeSystem;
 
-  /// Light theme option
+  /// No description provided for @themeModeLight.
   ///
   /// In en, this message translates to:
   /// **'Light'**
   String get themeModeLight;
 
-  /// Dark theme option
+  /// No description provided for @themeModeDark.
   ///
   /// In en, this message translates to:
   /// **'Dark'**
   String get themeModeDark;
 
-  /// Title for the profile and security settings screen
+  /// No description provided for @profileSettingsTitle.
   ///
   /// In en, this message translates to:
   /// **'Profile & Security'**
   String get profileSettingsTitle;
 
-  /// Button to change PIN
+  /// No description provided for @changePinButton.
   ///
   /// In en, this message translates to:
   /// **'Change PIN'**
   String get changePinButton;
 
-  /// Button to delete all application data
+  /// No description provided for @deleteAllDataButton.
   ///
   /// In en, this message translates to:
   /// **'Delete All Data'**
   String get deleteAllDataButton;
 
-  /// Label for old PIN input
+  /// No description provided for @oldPinLabel.
   ///
   /// In en, this message translates to:
   /// **'Old PIN'**
   String get oldPinLabel;
 
-  /// Label for new PIN input
+  /// No description provided for @newPinLabel.
   ///
   /// In en, this message translates to:
   /// **'New PIN'**
   String get newPinLabel;
 
-  /// Label for confirm new PIN input
+  /// No description provided for @confirmPinLabel.
   ///
   /// In en, this message translates to:
   /// **'Confirm New PIN'**
   String get confirmPinLabel;
 
-  /// Error message for incorrect old PIN
+  /// No description provided for @incorrectOldPin.
   ///
   /// In en, this message translates to:
   /// **'Incorrect Old PIN.'**
   String get incorrectOldPin;
 
-  /// Error message when new PINs do not match
+  /// No description provided for @pinsDoNotMatch.
   ///
   /// In en, this message translates to:
   /// **'PINs do not match.'**
   String get pinsDoNotMatch;
 
-  /// Success message after updating PIN
+  /// No description provided for @pinUpdatedSuccessfully.
   ///
   /// In en, this message translates to:
   /// **'PIN updated successfully.'**
   String get pinUpdatedSuccessfully;
 
-  /// Warning message before deleting all data
+  /// No description provided for @deleteAllDataWarning.
   ///
   /// In en, this message translates to:
   /// **'Are you sure you want to delete all data? This cannot be undone.'**
   String get deleteAllDataWarning;
 
-  /// Label for language selection in settings
+  /// No description provided for @settingsLanguage.
   ///
   /// In en, this message translates to:
   /// **'Language'**
   String get settingsLanguage;
 
-  /// Label for username input
+  /// No description provided for @usernameLabel.
   ///
   /// In en, this message translates to:
   /// **'Username'**
   String get usernameLabel;
 
-  /// General cancel button label
+  /// No description provided for @btnCancel.
   ///
   /// In en, this message translates to:
   /// **'Cancel'**
   String get btnCancel;
 
-  /// General save button label
+  /// No description provided for @btnSave.
   ///
   /// In en, this message translates to:
   /// **'Save'**
   String get btnSave;
 
-  /// General delete button label
+  /// No description provided for @btnDelete.
   ///
   /// In en, this message translates to:
   /// **'Delete'**
   String get btnDelete;
 
-  /// General next button label
+  /// No description provided for @btnNext.
   ///
   /// In en, this message translates to:
   /// **'Next'**
   String get btnNext;
 
-  /// Title for the Recycle Bin screen
+  /// No description provided for @recycleBinTitle.
   ///
   /// In en, this message translates to:
   /// **'Recycle Bin'**
   String get recycleBinTitle;
 
-  /// Text shown when the recycle bin is empty
+  /// No description provided for @recycleBinEmpty.
   ///
   /// In en, this message translates to:
   /// **'Recycle bin is empty.'**
   String get recycleBinEmpty;
 
-  /// Tooltip text for restoring an item
+  /// No description provided for @recycleBinRestoreTooltip.
   ///
   /// In en, this message translates to:
   /// **'Restore'**
   String get recycleBinRestoreTooltip;
 
-  /// Tooltip text for permanently deleting an item
+  /// No description provided for @recycleBinDeleteTooltip.
   ///
   /// In en, this message translates to:
   /// **'Permanently Delete'**
   String get recycleBinDeleteTooltip;
 
-  /// Title for the permanent delete confirmation dialog
+  /// No description provided for @recycleBinDeleteConfirmTitle.
   ///
   /// In en, this message translates to:
   /// **'Permanent Delete'**
   String get recycleBinDeleteConfirmTitle;
 
-  /// Message for the permanent delete confirmation dialog
+  /// No description provided for @recycleBinDeleteConfirmMessage.
   ///
   /// In en, this message translates to:
   /// **'Are you sure you want to permanently delete this item? This action cannot be undone.'**
   String get recycleBinDeleteConfirmMessage;
 
-  /// Snackbar message shown when an item is successfully restored
+  /// No description provided for @recycleBinRestoredMessage.
   ///
   /// In en, this message translates to:
   /// **'Item restored'**
   String get recycleBinRestoredMessage;
 
-  /// Snackbar message shown when an item is permanently deleted
+  /// No description provided for @recycleBinDeletedMessage.
   ///
   /// In en, this message translates to:
   /// **'Item permanently deleted'**
   String get recycleBinDeletedMessage;
 
-  /// Days remaining until item in recycle bin is deleted
+  /// No description provided for @recycleBinDaysRemaining.
   ///
   /// In en, this message translates to:
   /// **'Expires in {days} days'**
-  String recycleBinDaysRemaining(int days);
+  String recycleBinDaysRemaining(Object days);
 
-  /// Validation error when category is not selected
+  /// No description provided for @errorCategoryRequired.
   ///
   /// In en, this message translates to:
   /// **'Please select a category'**
   String get errorCategoryRequired;
 
-  /// Validation error when currency is not selected
+  /// No description provided for @errorCurrencyRequired.
   ///
   /// In en, this message translates to:
   /// **'Please select a currency'**
   String get errorCurrencyRequired;
 
-  /// Label for currency selector field
+  /// No description provided for @labelCurrency.
   ///
   /// In en, this message translates to:
   /// **'Currency'**
   String get labelCurrency;
 
-  /// Header or prompt to select a currency
+  /// No description provided for @labelSelectCurrency.
   ///
   /// In en, this message translates to:
   /// **'Select Currency'**
   String get labelSelectCurrency;
 
-  /// Label for tag selector field
+  /// No description provided for @labelTag.
   ///
   /// In en, this message translates to:
   /// **'Tag'**
   String get labelTag;
 
-  /// Header or prompt to select a tag
+  /// No description provided for @labelSelectTag.
   ///
   /// In en, this message translates to:
   /// **'Select Tag'**
   String get labelSelectTag;
 
-  /// Label when no tag is selected
+  /// No description provided for @noTag.
   ///
   /// In en, this message translates to:
   /// **'None'**
   String get noTag;
 
-  /// Optional label formatted with parentheses
+  /// No description provided for @optionalPlaceholder.
   ///
   /// In en, this message translates to:
   /// **'(Optional)'**
   String get optionalPlaceholder;
 
-  /// Fallback name for empty income transaction notes
+  /// No description provided for @fallbackIncome.
   ///
   /// In en, this message translates to:
   /// **'Income'**
   String get fallbackIncome;
 
-  /// Fallback name for empty expense transaction notes
+  /// No description provided for @fallbackExpense.
   ///
   /// In en, this message translates to:
   /// **'Expense'**
   String get fallbackExpense;
 
-  /// Error message when PIN attempts exceed limit
+  /// No description provided for @errorMaxPinAttempts.
   ///
   /// In en, this message translates to:
   /// **'Maximum PIN attempts reached. Please try again later.'**
   String get errorMaxPinAttempts;
 
-  /// Error message when PIN contains non-numeric characters
+  /// No description provided for @errorPinNotNumeric.
   ///
   /// In en, this message translates to:
   /// **'PIN must contain only numeric digits.'**
   String get errorPinNotNumeric;
 
-  /// Error message when trying to verify a PIN but none is configured
+  /// No description provided for @errorNoPinSet.
   ///
   /// In en, this message translates to:
   /// **'No PIN is currently set.'**
   String get errorNoPinSet;
 
-  /// Title shown during the PIN brute-force lockout screen
+  /// No description provided for @authPinLockedTitle.
   ///
   /// In en, this message translates to:
   /// **'Too Many Failed Attempts'**
   String get authPinLockedTitle;
 
-  /// Description shown during the PIN brute-force lockout screen
+  /// No description provided for @authPinLockedMessage.
   ///
   /// In en, this message translates to:
   /// **'Access has been temporarily blocked after too many incorrect PIN entries.'**
   String get authPinLockedMessage;
 
-  /// Label shown below the countdown ring during PIN lockout
+  /// No description provided for @authPinLockedCountdown.
   ///
   /// In en, this message translates to:
   /// **'seconds remaining'**
   String get authPinLockedCountdown;
 
-  /// Label shown after PIN lockout expires, granting one more attempt
+  /// No description provided for @authPinLockedRetry.
   ///
   /// In en, this message translates to:
   /// **'You may now try again'**
   String get authPinLockedRetry;
 
-  /// Title for the biometric sign-in prompt
+  /// No description provided for @authSignInTitle.
   ///
   /// In en, this message translates to:
   /// **'Verify identity'**
   String get authSignInTitle;
 
-  /// Default name for the main cash account created during setup
+  /// No description provided for @defaultAccountName.
   ///
   /// In en, this message translates to:
   /// **'Main Account'**
   String get defaultAccountName;
 
-  /// Filter option to show all transactions
+  /// No description provided for @filterAll.
   ///
   /// In en, this message translates to:
   /// **'All'**
   String get filterAll;
 
-  /// Filter option to show only income transactions
+  /// No description provided for @filterIncome.
   ///
   /// In en, this message translates to:
   /// **'Income'**
   String get filterIncome;
 
-  /// Filter option to show only expense transactions
+  /// No description provided for @filterExpense.
   ///
   /// In en, this message translates to:
   /// **'Expense'**
   String get filterExpense;
 
-  /// Filter option to show only transfer transactions
+  /// No description provided for @filterTransfer.
   ///
   /// In en, this message translates to:
   /// **'Transfer'**
   String get filterTransfer;
 
-  /// Title for the create account dialog
+  /// No description provided for @createAccountTitle.
   ///
   /// In en, this message translates to:
   /// **'Create New Account'**
   String get createAccountTitle;
 
-  /// Label for account name input
+  /// No description provided for @createAccountNameLabel.
   ///
   /// In en, this message translates to:
   /// **'Account Name'**
   String get createAccountNameLabel;
 
-  /// Hint text for account name input
+  /// No description provided for @createAccountNameHint.
   ///
   /// In en, this message translates to:
   /// **'e.g. Personal Card, Cash, etc.'**
   String get createAccountNameHint;
 
-  /// Label for initial balance input
+  /// No description provided for @createAccountInitialBalanceLabel.
   ///
   /// In en, this message translates to:
   /// **'Balance'**
   String get createAccountInitialBalanceLabel;
 
-  /// Label for account type selection
+  /// No description provided for @createAccountTypeLabel.
   ///
   /// In en, this message translates to:
   /// **'Account Type'**
   String get createAccountTypeLabel;
 
-  /// Label for color theme selection
+  /// No description provided for @createAccountColorThemeLabel.
   ///
   /// In en, this message translates to:
   /// **'Color Theme'**
   String get createAccountColorThemeLabel;
 
-  /// Label for icon selection
+  /// No description provided for @createAccountIconLabel.
   ///
   /// In en, this message translates to:
   /// **'Icon'**
   String get createAccountIconLabel;
 
-  /// Error message when account name is empty
+  /// No description provided for @createAccountErrorName.
   ///
   /// In en, this message translates to:
   /// **'Please enter an account name'**
   String get createAccountErrorName;
 
-  /// Error message when account creation fails
+  /// No description provided for @createAccountErrorFailed.
   ///
   /// In en, this message translates to:
   /// **'Failed to create account'**
   String get createAccountErrorFailed;
 
-  /// Account type: Other
+  /// No description provided for @accountTypeOther.
   ///
   /// In en, this message translates to:
   /// **'Other'**
   String get accountTypeOther;
 
-  /// Account type: Cash
+  /// No description provided for @accountTypeCash.
   ///
   /// In en, this message translates to:
   /// **'Cash'**
   String get accountTypeCash;
 
-  /// Account type: Bank
+  /// No description provided for @accountTypeBank.
   ///
   /// In en, this message translates to:
   /// **'Bank'**
   String get accountTypeBank;
 
-  /// Account type: Savings
+  /// No description provided for @accountTypeSavings.
   ///
   /// In en, this message translates to:
   /// **'Savings'**
   String get accountTypeSavings;
 
-  /// Account type: Card
+  /// No description provided for @accountTypeCard.
   ///
   /// In en, this message translates to:
   /// **'Card'**
   String get accountTypeCard;
 
-  /// Title for the delete transaction dialog
+  /// No description provided for @deleteTransactionTitle.
   ///
   /// In en, this message translates to:
   /// **'Delete Transaction?'**
   String get deleteTransactionTitle;
 
-  /// Success message when transaction is deleted
+  /// No description provided for @transactionMovedToRecycleBin.
   ///
   /// In en, this message translates to:
   /// **'Transaction moved to recycle bin'**
   String get transactionMovedToRecycleBin;
 
-  /// Error message when transaction deletion fails
+  /// No description provided for @errorDeleteTransaction.
   ///
   /// In en, this message translates to:
   /// **'Failed to delete transaction'**
   String get errorDeleteTransaction;
 
-  /// Message confirming the deletion of a transaction
+  /// No description provided for @deleteTransactionConfirmation.
   ///
   /// In en, this message translates to:
   /// **'Are you sure you want to delete this transaction? This will move it to the recycle bin.'**
   String get deleteTransactionConfirmation;
 
-  /// Close button label
+  /// No description provided for @btnClose.
   ///
   /// In en, this message translates to:
   /// **'Close'**
   String get btnClose;
 
-  /// Title for the transaction filter bottom sheet
+  /// No description provided for @filterSheetTitle.
   ///
   /// In en, this message translates to:
   /// **'Filter Transactions'**
   String get filterSheetTitle;
 
-  /// Button label to apply filters in the filter sheet
+  /// No description provided for @filterSheetApply.
   ///
   /// In en, this message translates to:
   /// **'Apply Filters'**
   String get filterSheetApply;
 
-  /// Button label to clear all active filters
+  /// No description provided for @filterSheetClearAll.
   ///
   /// In en, this message translates to:
   /// **'Clear All'**
   String get filterSheetClearAll;
 
-  /// Label for transaction type filter section
+  /// No description provided for @filterSheetType.
   ///
   /// In en, this message translates to:
   /// **'Transaction Type'**
   String get filterSheetType;
 
-  /// Label for category filter section
+  /// No description provided for @filterSheetCategory.
   ///
   /// In en, this message translates to:
   /// **'Category'**
   String get filterSheetCategory;
 
-  /// Label for date range filter section
+  /// No description provided for @filterSheetDateRange.
   ///
   /// In en, this message translates to:
   /// **'Date Range'**
   String get filterSheetDateRange;
 
-  /// Label for amount range filter section
+  /// No description provided for @filterSheetAmountRange.
   ///
   /// In en, this message translates to:
   /// **'Amount Range'**
   String get filterSheetAmountRange;
 
-  /// Label for minimum amount input in filter sheet
+  /// No description provided for @filterSheetMinAmount.
   ///
   /// In en, this message translates to:
   /// **'Min Amount'**
   String get filterSheetMinAmount;
 
-  /// Label for maximum amount input in filter sheet
+  /// No description provided for @filterSheetMaxAmount.
   ///
   /// In en, this message translates to:
   /// **'Max Amount'**
   String get filterSheetMaxAmount;
 
-  /// Label for tag filter section
+  /// No description provided for @filterSheetTag.
   ///
   /// In en, this message translates to:
   /// **'Tag'**
   String get filterSheetTag;
 
-  /// Label for currency filter section
+  /// No description provided for @filterSheetCurrency.
   ///
   /// In en, this message translates to:
   /// **'Currency'**
   String get filterSheetCurrency;
 
-  /// Label for showing all transaction types in filter
+  /// No description provided for @filterSheetAllTypes.
   ///
   /// In en, this message translates to:
   /// **'All Types'**
   String get filterSheetAllTypes;
 
-  /// Label for showing all categories in filter
+  /// No description provided for @filterSheetAllCategories.
   ///
   /// In en, this message translates to:
   /// **'All Categories'**
   String get filterSheetAllCategories;
 
-  /// Label for showing all tags in filter
+  /// No description provided for @filterSheetAllTags.
   ///
   /// In en, this message translates to:
   /// **'All Tags'**
   String get filterSheetAllTags;
 
-  /// Label for showing all currencies in filter
+  /// No description provided for @filterSheetAllCurrencies.
   ///
   /// In en, this message translates to:
   /// **'All Currencies'**
   String get filterSheetAllCurrencies;
 
-  /// Placeholder text for date range picker in filter sheet
+  /// No description provided for @filterSheetSelectDateRange.
   ///
   /// In en, this message translates to:
   /// **'Select Date Range'**
   String get filterSheetSelectDateRange;
 
-  /// Badge label showing number of active filters
+  /// No description provided for @filterSheetActiveFilters.
   ///
   /// In en, this message translates to:
   /// **'{count} active filters'**
-  String filterSheetActiveFilters(int count);
+  String filterSheetActiveFilters(Object count);
 
-  /// Label for transfer type in filter sheet
+  /// No description provided for @filterSheetTransferType.
   ///
   /// In en, this message translates to:
   /// **'Transfer'**
   String get filterSheetTransferType;
 
-  /// Label for the origin account of a transfer
+  /// No description provided for @labelOriginAccount.
   ///
   /// In en, this message translates to:
   /// **'Origin Account'**
   String get labelOriginAccount;
 
-  /// Label for the destination account of a transfer
+  /// No description provided for @labelDestinationAccount.
   ///
   /// In en, this message translates to:
   /// **'Destination Account'**
   String get labelDestinationAccount;
 
-  /// Error message when attempting to delete the last remaining account
+  /// No description provided for @errorCannotDeleteLastAccount.
   ///
   /// In en, this message translates to:
   /// **'Cannot delete the last existing account.'**
   String get errorCannotDeleteLastAccount;
 
-  /// Title or label for Categories & Tags section
+  /// No description provided for @categoriesAndTags.
   ///
   /// In en, this message translates to:
   /// **'Categories & Tags'**
   String get categoriesAndTags;
 
-  /// Switch label to set an account as default
+  /// No description provided for @setAsDefault.
   ///
   /// In en, this message translates to:
   /// **'Set as Default'**
   String get setAsDefault;
 
-  /// Warning dialog title
+  /// No description provided for @warning.
   ///
   /// In en, this message translates to:
   /// **'Warning'**
   String get warning;
 
-  /// Confirmation message when replacing the default account
+  /// No description provided for @replaceDefaultAccountConfirm.
   ///
   /// In en, this message translates to:
   /// **'The previous default account will be replaced. Continue?'**
   String get replaceDefaultAccountConfirm;
 
-  /// Label for continue button
+  /// No description provided for @btnContinue.
   ///
   /// In en, this message translates to:
   /// **'Continue'**
   String get btnContinue;
 
-  /// Fallback label when account is not found
+  /// No description provided for @unknownAccount.
   ///
   /// In en, this message translates to:
   /// **'Unknown Account'**
   String get unknownAccount;
 
-  /// Label for categories tab or section
+  /// No description provided for @categories.
   ///
   /// In en, this message translates to:
   /// **'Categories'**
   String get categories;
 
-  /// Label for tags tab or section
+  /// No description provided for @tags.
   ///
   /// In en, this message translates to:
   /// **'Tags'**
   String get tags;
 
-  /// Title for delete category confirmation dialog
+  /// No description provided for @deleteCategoryTitle.
   ///
   /// In en, this message translates to:
   /// **'Delete Category?'**
   String get deleteCategoryTitle;
 
-  /// Message to confirm deleting a category
+  /// No description provided for @deleteCategoryConfirm.
   ///
   /// In en, this message translates to:
   /// **'Are you sure you want to delete {name}?'**
-  String deleteCategoryConfirm(String name);
+  String deleteCategoryConfirm(Object name);
 
-  /// Title for delete tag confirmation dialog
+  /// No description provided for @deleteTagTitle.
   ///
   /// In en, this message translates to:
   /// **'Delete Tag?'**
   String get deleteTagTitle;
 
-  /// Message to confirm deleting a tag
+  /// No description provided for @deleteTagConfirm.
   ///
   /// In en, this message translates to:
   /// **'Are you sure you want to delete {name}?'**
-  String deleteTagConfirm(String name);
+  String deleteTagConfirm(Object name);
 
-  /// Error message when no other categories are available for reassignment
+  /// No description provided for @errorNoOtherCategories.
   ///
   /// In en, this message translates to:
   /// **'No other categories to reassign transactions to.'**
   String get errorNoOtherCategories;
 
-  /// Error message when no other tags are available for reassignment
+  /// No description provided for @errorNoOtherTags.
   ///
   /// In en, this message translates to:
   /// **'No other tags to reassign transactions to.'**
   String get errorNoOtherTags;
 
-  /// Title for category in use warning dialog
+  /// No description provided for @categoryInUseTitle.
   ///
   /// In en, this message translates to:
   /// **'Category in Use'**
   String get categoryInUseTitle;
 
-  /// Title for tag in use warning dialog
+  /// No description provided for @tagInUseTitle.
   ///
   /// In en, this message translates to:
   /// **'Tag in Use'**
   String get tagInUseTitle;
 
-  /// Message explaining that a category is in use and prompting for reassignment
+  /// No description provided for @categoryInUseMessage.
   ///
   /// In en, this message translates to:
   /// **'{name} is used by existing transactions. Please select a category to reassign them to:'**
-  String categoryInUseMessage(String name);
+  String categoryInUseMessage(Object name);
 
-  /// Message explaining that a tag is in use and prompting for reassignment
+  /// No description provided for @tagInUseMessage.
   ///
   /// In en, this message translates to:
   /// **'{name} is used by existing transactions. Please select a tag to reassign them to:'**
-  String tagInUseMessage(String name);
+  String tagInUseMessage(Object name);
 
-  /// Button label to reassign items and delete the original
+  /// No description provided for @btnReassignAndDelete.
   ///
   /// In en, this message translates to:
   /// **'Reassign & Delete'**
   String get btnReassignAndDelete;
 
-  /// Message shown when categories list is empty
+  /// No description provided for @noCategories.
   ///
   /// In en, this message translates to:
   /// **'No categories yet'**
   String get noCategories;
 
-  /// Message shown when tags list is empty
+  /// No description provided for @noTags.
   ///
   /// In en, this message translates to:
   /// **'No tags yet'**
   String get noTags;
 
-  /// Title for adding a category
+  /// No description provided for @addCategoryTitle.
   ///
   /// In en, this message translates to:
   /// **'Add Category'**
   String get addCategoryTitle;
 
-  /// Title for editing a category
+  /// No description provided for @editCategoryTitle.
   ///
   /// In en, this message translates to:
   /// **'Edit Category'**
   String get editCategoryTitle;
 
-  /// Title for adding a tag
+  /// No description provided for @addTagTitle.
   ///
   /// In en, this message translates to:
   /// **'Add Tag'**
   String get addTagTitle;
 
-  /// Title for editing a tag
+  /// No description provided for @editTagTitle.
   ///
   /// In en, this message translates to:
   /// **'Edit Tag'**
   String get editTagTitle;
 
-  /// Label for category name input field
+  /// No description provided for @labelCategoryName.
   ///
   /// In en, this message translates to:
   /// **'Category Name'**
   String get labelCategoryName;
 
-  /// Label for tag name input field
+  /// No description provided for @labelTagName.
   ///
   /// In en, this message translates to:
   /// **'Tag Name'**
   String get labelTagName;
 
-  /// Label for icon picker or display
+  /// No description provided for @labelIcon.
   ///
   /// In en, this message translates to:
   /// **'Icon'**
   String get labelIcon;
 
-  /// Label for the origin account of a transfer in transaction creation
+  /// No description provided for @labelFromAccount.
   ///
   /// In en, this message translates to:
   /// **'From Account'**
   String get labelFromAccount;
 
-  /// Label for the destination account of a transfer in transaction creation
+  /// No description provided for @labelToAccount.
   ///
   /// In en, this message translates to:
   /// **'To Account'**
   String get labelToAccount;
 
-  /// Title for the source account picker modal
+  /// No description provided for @selectSourceAccount.
   ///
   /// In en, this message translates to:
   /// **'Select Source Account'**
   String get selectSourceAccount;
 
-  /// Title for the destination account picker modal
+  /// No description provided for @selectDestinationAccount.
   ///
   /// In en, this message translates to:
   /// **'Select Destination Account'**
   String get selectDestinationAccount;
 
-  /// Currency name for EUR
+  /// No description provided for @currencyEUR.
   ///
   /// In en, this message translates to:
   /// **'Euro (EUR)'**
   String get currencyEUR;
 
-  /// Currency name for USD
+  /// No description provided for @currencyUSD.
   ///
   /// In en, this message translates to:
   /// **'US Dollar (USD)'**
   String get currencyUSD;
 
-  /// Currency name for GBP
+  /// No description provided for @currencyGBP.
   ///
   /// In en, this message translates to:
   /// **'British Pound (GBP)'**
   String get currencyGBP;
 
-  /// Currency name for JPY
+  /// No description provided for @currencyJPY.
   ///
   /// In en, this message translates to:
   /// **'Japanese Yen (JPY)'**
   String get currencyJPY;
 
-  /// Currency name for CHF
+  /// No description provided for @currencyCHF.
   ///
   /// In en, this message translates to:
   /// **'Swiss Franc (CHF)'**
   String get currencyCHF;
 
-  /// Currency name for CAD
+  /// No description provided for @currencyCAD.
   ///
   /// In en, this message translates to:
   /// **'Canadian Dollar (CAD)'**
   String get currencyCAD;
 
-  /// Currency name for AUD
+  /// No description provided for @currencyAUD.
   ///
   /// In en, this message translates to:
   /// **'Australian Dollar (AUD)'**
   String get currencyAUD;
 
-  /// Currency name for CNY
+  /// No description provided for @currencyCNY.
   ///
   /// In en, this message translates to:
   /// **'Chinese Yuan (CNY)'**
   String get currencyCNY;
 
-  /// Validation error when destination account is required for transfer
+  /// No description provided for @errorDestinationAccountRequired.
   ///
   /// In en, this message translates to:
   /// **'Please select a destination account'**
   String get errorDestinationAccountRequired;
 
-  /// Validation error when source and destination accounts are the same
+  /// No description provided for @errorSameAccountTransfer.
   ///
   /// In en, this message translates to:
   /// **'Source and destination accounts cannot be the same'**
   String get errorSameAccountTransfer;
 
-  /// Singular name for savings goal trash item
+  /// No description provided for @savingsGoal.
   ///
   /// In en, this message translates to:
   /// **'Savings Goal'**
   String get savingsGoal;
 
-  /// Progress message showing spent amount out of budget target
+  /// No description provided for @budgetSpentOf.
   ///
   /// In en, this message translates to:
   /// **'{spent} of {target}'**
-  String budgetSpentOf(String spent, String target);
+  String budgetSpentOf(Object spent, Object target);
 
-  /// Settings option for data management
+  /// No description provided for @settingsDataManagement.
   ///
   /// In en, this message translates to:
   /// **'Data Management'**
   String get settingsDataManagement;
 
-  /// Button label to export an encrypted full backup
+  /// No description provided for @exportEncryptedBackup.
   ///
   /// In en, this message translates to:
   /// **'Export Encrypted Backup'**
   String get exportEncryptedBackup;
 
-  /// Subtitle for the encrypted backup export option
+  /// No description provided for @exportEncryptedBackupSubtitle.
   ///
   /// In en, this message translates to:
   /// **'Export all data as a password-protected backup file'**
   String get exportEncryptedBackupSubtitle;
 
-  /// Button label to import and restore from an encrypted backup
+  /// No description provided for @importRestoreBackup.
   ///
   /// In en, this message translates to:
   /// **'Import / Restore Backup'**
   String get importRestoreBackup;
 
-  /// Subtitle for the import/restore option
+  /// No description provided for @importRestoreBackupSubtitle.
   ///
   /// In en, this message translates to:
   /// **'Restore your data from a Stalvi backup file'**
   String get importRestoreBackupSubtitle;
 
-  /// Button label to export all transactions as a CSV file
+  /// No description provided for @exportTransactionsCsv.
   ///
   /// In en, this message translates to:
   /// **'Export Transactions (CSV)'**
   String get exportTransactionsCsv;
 
-  /// Subtitle for the CSV export option
+  /// No description provided for @exportTransactionsCsvSubtitle.
   ///
   /// In en, this message translates to:
   /// **'Export all transactions to a spreadsheet-compatible CSV file'**
   String get exportTransactionsCsvSubtitle;
 
-  /// Button label to export the current month's report as a PDF
+  /// No description provided for @exportMonthlyPdf.
   ///
   /// In en, this message translates to:
   /// **'Export Monthly Report (PDF)'**
   String get exportMonthlyPdf;
 
-  /// Subtitle for the PDF monthly report export option
+  /// No description provided for @exportMonthlyPdfSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Generate a PDF summary for the current month'**
+  /// **'Generate a PDF summary'**
   String get exportMonthlyPdfSubtitle;
 
-  /// Title for the dialog where user sets a backup password
+  /// No description provided for @exportPasswordDialogTitle.
   ///
   /// In en, this message translates to:
   /// **'Set Backup Password'**
   String get exportPasswordDialogTitle;
 
-  /// Subtitle in the export password dialog
+  /// No description provided for @exportPasswordDialogSubtitle.
   ///
   /// In en, this message translates to:
   /// **'This password will be required to restore your backup. Store it safely.'**
   String get exportPasswordDialogSubtitle;
 
-  /// Label for the backup password input field
+  /// No description provided for @exportPasswordLabel.
   ///
   /// In en, this message translates to:
   /// **'Backup Password'**
   String get exportPasswordLabel;
 
-  /// Label for the confirm password input field
+  /// No description provided for @exportPasswordConfirmLabel.
   ///
   /// In en, this message translates to:
   /// **'Confirm Password'**
   String get exportPasswordConfirmLabel;
 
-  /// Error when export passwords do not match
+  /// No description provided for @exportPasswordMismatch.
   ///
   /// In en, this message translates to:
   /// **'Passwords do not match.'**
   String get exportPasswordMismatch;
 
-  /// Error when export password is too short
+  /// No description provided for @exportPasswordTooShort.
   ///
   /// In en, this message translates to:
   /// **'Password must be at least 6 characters.'**
   String get exportPasswordTooShort;
 
-  /// Title for the dialog where user enters restore password
+  /// No description provided for @importPasswordDialogTitle.
   ///
   /// In en, this message translates to:
   /// **'Enter Backup Password'**
   String get importPasswordDialogTitle;
 
-  /// Subtitle in the import password dialog
+  /// No description provided for @importPasswordDialogSubtitle.
   ///
   /// In en, this message translates to:
   /// **'Enter the password used when the backup was created.'**
   String get importPasswordDialogSubtitle;
 
-  /// Title for the import confirmation dialog
+  /// No description provided for @importConfirmTitle.
   ///
   /// In en, this message translates to:
   /// **'Restore Backup?'**
   String get importConfirmTitle;
 
-  /// Warning message in the import confirmation dialog
+  /// No description provided for @importConfirmMessage.
   ///
   /// In en, this message translates to:
   /// **'Restoring a backup will overwrite all current data. This cannot be undone. Are you sure?'**
   String get importConfirmMessage;
 
-  /// Snackbar message when export succeeds
+  /// No description provided for @exportSuccess.
   ///
   /// In en, this message translates to:
   /// **'Export successful. File saved.'**
   String get exportSuccess;
 
-  /// Snackbar message when import/restore succeeds
+  /// No description provided for @importSuccess.
   ///
   /// In en, this message translates to:
   /// **'Backup restored successfully. Please restart the app.'**
   String get importSuccess;
 
-  /// Snackbar message when export fails
+  /// No description provided for @exportFailed.
   ///
   /// In en, this message translates to:
   /// **'Export failed. Please try again.'**
   String get exportFailed;
 
-  /// Snackbar message when import/restore fails
+  /// No description provided for @importFailed.
   ///
   /// In en, this message translates to:
   /// **'Restore failed. Check your password and file.'**
   String get importFailed;
 
-  /// Generic export button label
+  /// No description provided for @btnExport.
   ///
   /// In en, this message translates to:
   /// **'Export'**
   String get btnExport;
 
-  /// Generic restore button label
+  /// No description provided for @btnRestore.
   ///
   /// In en, this message translates to:
   /// **'Restore'**
   String get btnRestore;
 
-  /// Label for other categories slice in statistics charts when count exceeds display limit
+  /// No description provided for @statisticsOtherCategories.
   ///
   /// In en, this message translates to:
   /// **'Other ({count} categories)'**
-  String statisticsOtherCategories(int count);
+  String statisticsOtherCategories(Object count);
 
-  /// Text button label to view details of statistics
+  /// No description provided for @btnViewDetails.
   ///
   /// In en, this message translates to:
   /// **'View Details'**
   String get btnViewDetails;
 
-  /// Button label to open a file
+  /// No description provided for @btnOpen.
   ///
   /// In en, this message translates to:
   /// **'Open'**
   String get btnOpen;
 
-  /// Error message when opening a file fails
+  /// No description provided for @errorOpenFileFailed.
   ///
   /// In en, this message translates to:
   /// **'Could not open file'**
   String get errorOpenFileFailed;
 
-  /// Title for the income vs expenses chart section in PDF
+  /// No description provided for @expense_vs_income.
   ///
   /// In en, this message translates to:
   /// **'Expenses vs Income'**
   String get expense_vs_income;
 
-  /// Label for the destination account in transfers
+  /// No description provided for @destination_account.
   ///
   /// In en, this message translates to:
   /// **'Destination Account'**
   String get destination_account;
 
-  /// Label for the scale/axis of a chart in PDF
+  /// No description provided for @chart_scale.
   ///
   /// In en, this message translates to:
   /// **'Chart Scale'**
   String get chart_scale;
 
-  /// Date format for PDF reports
+  /// No description provided for @pdfDateFormat.
   ///
   /// In en, this message translates to:
   /// **'MM/dd/yyyy'**
   String get pdfDateFormat;
 
-  /// Date and time format for PDF reports
+  /// No description provided for @pdfDateTimeFormat.
   ///
   /// In en, this message translates to:
   /// **'MM/dd/yyyy HH:mm'**
   String get pdfDateTimeFormat;
 
-  /// Footer showing generation timestamp and app title
+  /// No description provided for @pdfGeneratedOn.
   ///
   /// In en, this message translates to:
   /// **'Generated by {appTitle} on {date}'**
-  String pdfGeneratedOn(String appTitle, String date);
+  String pdfGeneratedOn(Object appTitle, Object date);
 
-  /// Button or title for adding a budget
+  /// No description provided for @addBudget.
   ///
   /// In en, this message translates to:
   /// **'Add Budget'**
   String get addBudget;
 
-  /// Title for budget details
+  /// No description provided for @budgetDetails.
   ///
   /// In en, this message translates to:
   /// **'Budget Details'**
   String get budgetDetails;
 
-  /// Button or title for deleting a budget
+  /// No description provided for @deleteBudget.
   ///
   /// In en, this message translates to:
   /// **'Delete Budget'**
   String get deleteBudget;
 
-  /// Button or title for adding a savings goal
+  /// No description provided for @addSavingsGoal.
   ///
   /// In en, this message translates to:
   /// **'Add Savings Goal'**
   String get addSavingsGoal;
 
-  /// Title for savings goal details
+  /// No description provided for @savingsGoalDetails.
   ///
   /// In en, this message translates to:
   /// **'Savings Goal Details'**
   String get savingsGoalDetails;
 
-  /// Button or title for deleting a savings goal
+  /// No description provided for @deleteSavingsGoal.
   ///
   /// In en, this message translates to:
   /// **'Delete Savings Goal'**
   String get deleteSavingsGoal;
 
-  /// Label for target amount input
+  /// No description provided for @targetAmount.
   ///
   /// In en, this message translates to:
   /// **'Target Amount'**
   String get targetAmount;
 
-  /// Label for start date input
+  /// No description provided for @startDate.
   ///
   /// In en, this message translates to:
   /// **'Start Date'**
   String get startDate;
 
-  /// Label for end date input
+  /// No description provided for @endDate.
   ///
   /// In en, this message translates to:
   /// **'End Date'**
   String get endDate;
 
-  /// Label for goal name input
+  /// No description provided for @goalName.
   ///
   /// In en, this message translates to:
   /// **'Goal Name'**
   String get goalName;
 
-  /// Label for target date input
+  /// No description provided for @targetDate.
   ///
   /// In en, this message translates to:
   /// **'Target Date'**
   String get targetDate;
 
-  /// Validation error for budget dates
+  /// No description provided for @errorEndDateBeforeStart.
   ///
   /// In en, this message translates to:
   /// **'End date must be after start date'**
   String get errorEndDateBeforeStart;
 
-  /// Validation error for goal name
+  /// No description provided for @errorNameRequired.
   ///
   /// In en, this message translates to:
   /// **'Please enter a name'**
   String get errorNameRequired;
 
-  /// Section title for the Budgets table in PDF export
+  /// No description provided for @pdfBudgetsTitle.
   ///
   /// In en, this message translates to:
   /// **'Budgets'**
   String get pdfBudgetsTitle;
 
-  /// Column header for Category in PDF Budgets table
+  /// No description provided for @pdfBudgetsColCategory.
   ///
   /// In en, this message translates to:
   /// **'Category'**
   String get pdfBudgetsColCategory;
 
-  /// Column header for Date Range in PDF Budgets table
+  /// No description provided for @pdfBudgetsColDateRange.
   ///
   /// In en, this message translates to:
   /// **'Date Range'**
   String get pdfBudgetsColDateRange;
 
-  /// Column header for Percentage Spent in PDF Budgets table
+  /// No description provided for @pdfBudgetsColSpent.
   ///
   /// In en, this message translates to:
   /// **'% Spent'**
   String get pdfBudgetsColSpent;
 
-  /// Column header for Maximum Budget Value in PDF Budgets table
+  /// No description provided for @pdfBudgetsColMaxValue.
   ///
   /// In en, this message translates to:
   /// **'Max Value'**
   String get pdfBudgetsColMaxValue;
 
-  /// Section title for the Savings Goals table in PDF export
+  /// No description provided for @pdfSavingsGoalsTitle.
   ///
   /// In en, this message translates to:
   /// **'Savings Goals'**
   String get pdfSavingsGoalsTitle;
 
-  /// Column header for Name in PDF Savings Goals table
+  /// No description provided for @pdfSavingsColName.
   ///
   /// In en, this message translates to:
   /// **'Name'**
   String get pdfSavingsColName;
 
-  /// Column header for Percentage Completed in PDF Savings Goals table
+  /// No description provided for @pdfSavingsColCompleted.
   ///
   /// In en, this message translates to:
   /// **'% Completed'**
   String get pdfSavingsColCompleted;
 
-  /// Column header for Target Amount in PDF Savings Goals table
+  /// No description provided for @pdfSavingsColTarget.
   ///
   /// In en, this message translates to:
   /// **'Target Amount'**
   String get pdfSavingsColTarget;
 
-  /// Singular label for budget
+  /// No description provided for @labelBudget.
   ///
   /// In en, this message translates to:
   /// **'Budget'**
   String get labelBudget;
 
-  /// Snackbar message showing the path where exported backup or CSV file is saved
+  /// No description provided for @exportSavedTo.
   ///
   /// In en, this message translates to:
   /// **'Saved to {filePath}'**
-  String exportSavedTo(String filePath);
+  String exportSavedTo(Object filePath);
 
-  /// Auto-generated
+  /// No description provided for @settingsAutomaticTransactions.
   ///
   /// In en, this message translates to:
   /// **'Automatic Transactions'**
   String get settingsAutomaticTransactions;
 
-  /// Auto-generated
+  /// No description provided for @createAutomaticTransaction.
   ///
   /// In en, this message translates to:
   /// **'Create Automatic Transaction'**
   String get createAutomaticTransaction;
 
-  /// AppBar title when creating a new automatic transaction template
+  /// No description provided for @autoTxNewTitle.
   ///
   /// In en, this message translates to:
   /// **'New Automatic Transaction'**
   String get autoTxNewTitle;
 
-  /// AppBar title when editing an existing automatic transaction template
+  /// No description provided for @autoTxEditTitle.
   ///
   /// In en, this message translates to:
   /// **'Edit Automatic Transaction'**
   String get autoTxEditTitle;
 
-  /// Snackbar message after successfully saving an automatic transaction
+  /// No description provided for @autoTxSavedMessage.
   ///
   /// In en, this message translates to:
   /// **'Automatic Transaction Saved'**
   String get autoTxSavedMessage;
 
-  /// Label for the name text field on the create/edit automatic transaction screen
+  /// No description provided for @autoTxTemplateNameLabel.
   ///
   /// In en, this message translates to:
   /// **'Name'**
   String get autoTxTemplateNameLabel;
 
-  /// Validation error shown when the automatic transaction name field is empty
+  /// No description provided for @autoTxNameRequired.
   ///
   /// In en, this message translates to:
   /// **'Name is required'**
   String get autoTxNameRequired;
 
-  /// Label for the recurrence selector tile on the create/edit automatic transaction screen
+  /// No description provided for @autoTxLabelRecurrence.
   ///
   /// In en, this message translates to:
   /// **'Recurrence'**
   String get autoTxLabelRecurrence;
 
-  /// Bottom sheet title for the recurrence picker
+  /// No description provided for @autoTxSelectRecurrence.
   ///
   /// In en, this message translates to:
   /// **'Select Recurrence'**
   String get autoTxSelectRecurrence;
 
-  /// Recurrence option for weekly (every 7 days)
+  /// No description provided for @autoTxRecurrenceWeekly.
   ///
   /// In en, this message translates to:
   /// **'Weekly (Every 7 days)'**
   String get autoTxRecurrenceWeekly;
 
-  /// Recurrence option for monthly (every 30 days)
+  /// No description provided for @autoTxRecurrenceMonthly.
   ///
   /// In en, this message translates to:
   /// **'Monthly (Every 30 days)'**
   String get autoTxRecurrenceMonthly;
 
-  /// Recurrence option for yearly (every 365 days)
+  /// No description provided for @autoTxRecurrenceYearly.
   ///
   /// In en, this message translates to:
   /// **'Yearly (Every 365 days)'**
   String get autoTxRecurrenceYearly;
 
-  /// Label for the custom recurrence interval input
+  /// No description provided for @autoTxRecurrenceCustomInterval.
   ///
   /// In en, this message translates to:
   /// **'Custom Interval (Days)'**
   String get autoTxRecurrenceCustomInterval;
 
-  /// Hint text for the custom recurrence days text field
+  /// No description provided for @autoTxRecurrenceCustomHint.
   ///
   /// In en, this message translates to:
   /// **'e.g. 14'**
   String get autoTxRecurrenceCustomHint;
 
-  /// Button label to apply the custom recurrence interval
+  /// No description provided for @autoTxRecurrenceApply.
   ///
   /// In en, this message translates to:
   /// **'Apply'**
   String get autoTxRecurrenceApply;
 
-  /// Short label for weekly recurrence shown on the list tile
+  /// No description provided for @autoTxFormatWeekly.
   ///
   /// In en, this message translates to:
   /// **'Weekly'**
   String get autoTxFormatWeekly;
 
-  /// Short label for monthly recurrence shown on the list tile
+  /// No description provided for @autoTxFormatMonthly.
   ///
   /// In en, this message translates to:
   /// **'Monthly'**
   String get autoTxFormatMonthly;
 
-  /// Short label for yearly recurrence shown on the list tile
+  /// No description provided for @autoTxFormatYearly.
   ///
   /// In en, this message translates to:
   /// **'Yearly'**
   String get autoTxFormatYearly;
 
-  /// Short label for custom recurrence shown on the list tile
+  /// No description provided for @autoTxFormatEveryDays.
   ///
   /// In en, this message translates to:
   /// **'Every {days} days'**
-  String autoTxFormatEveryDays(int days);
+  String autoTxFormatEveryDays(Object days);
 
-  /// Language name for English
+  /// No description provided for @languageEnglish.
   ///
   /// In en, this message translates to:
   /// **'English'**
   String get languageEnglish;
 
-  /// Language name for Spanish
+  /// No description provided for @languageSpanish.
   ///
   /// In en, this message translates to:
   /// **'Español'**
   String get languageSpanish;
 
-  /// Language name for Catalan
+  /// No description provided for @languageCatalan.
   ///
   /// In en, this message translates to:
   /// **'Català'**
   String get languageCatalan;
 
-  /// Recurrence format for a specific day of the month
+  /// No description provided for @autoTxFormatSpecificDay.
   ///
   /// In en, this message translates to:
   /// **'Every month on the {day}'**
-  String autoTxFormatSpecificDay(String day);
+  String autoTxFormatSpecificDay(Object day);
 
-  /// Recurrence option for every X days
+  /// No description provided for @autoTxRecurrenceEveryXDays.
   ///
   /// In en, this message translates to:
   /// **'Every X days'**
   String get autoTxRecurrenceEveryXDays;
 
-  /// Recurrence option for a specific day of the month
+  /// No description provided for @autoTxRecurrenceDayOfMonth.
   ///
   /// In en, this message translates to:
   /// **'Day of month'**
   String get autoTxRecurrenceDayOfMonth;
 
-  /// Error message for invalid day of month
+  /// No description provided for @autoTxErrorInvalidDayOfMonth.
   ///
   /// In en, this message translates to:
   /// **'Invalid day of month (must be 1-31)'**
   String get autoTxErrorInvalidDayOfMonth;
 
-  /// Error message for invalid recurrence interval
+  /// No description provided for @autoTxErrorInvalidRecurrenceInterval.
   ///
   /// In en, this message translates to:
   /// **'Invalid recurrence interval'**
   String get autoTxErrorInvalidRecurrenceInterval;
+
+  /// No description provided for @aboutMe.
+  ///
+  /// In en, this message translates to:
+  /// **'About Me'**
+  String get aboutMe;
+
+  /// No description provided for @exportPdfCurrentMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Current Month'**
+  String get exportPdfCurrentMonth;
+
+  /// No description provided for @exportPdfLast30Days.
+  ///
+  /// In en, this message translates to:
+  /// **'Last 30 Days'**
+  String get exportPdfLast30Days;
 }
 
 class _AppLocalizationsDelegate

@@ -1591,7 +1591,7 @@ class _StatCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final summaryAsync = ref.watch(periodSummaryProvider);
+    final summaryAsync = ref.watch(dashboardPeriodSummaryProvider);
     final profile = ref.watch(defaultProfileProvider).valueOrNull;
     final currency = profile?.defaultCurrency ?? 'EUR';
     final formatter = ref.watch(currencyFormatterProvider);

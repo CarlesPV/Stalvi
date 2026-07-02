@@ -215,6 +215,67 @@ final periodSummaryProvider =
   );
 });
 
+/// Watches the default profile and transactions to emit the period summary
+/// strictly in the user's default/preferred currency for the last 30 days, across all accounts.
+final dashboardPeriodSummaryProvider =
+    Provider.autoDispose<AsyncValue<PeriodSummary>>((ref) {
+  final profileAsync = ref.watch(defaultProfileProvider);
+  if (profileAsync.isLoading) return const AsyncLoading();
+  if (profileAsync.hasError) {
+    return AsyncError(profileAsync.error!, profileAsync.stackTrace!);
+  }
+
+  final targetCurrency = profileAsync.value!.defaultCurrency;
+
+  final transactionsAsync = ref.watch(transactionsStreamProvider);
+  final ratesAsync = ref.watch(latestExchangeRatesProvider(targetCurrency));
+
+  if (transactionsAsync.isLoading || ratesAsync.isLoading) {
+    return const AsyncLoading();
+  }
+  if (transactionsAsync.hasError) {
+    return AsyncError(transactionsAsync.error!, transactionsAsync.stackTrace!);
+  }
+
+  final transactions = transactionsAsync.value!;
+  final rates = ratesAsync.valueOrNull;
+
+  double totalIncome = 0;
+  double totalExpense = 0;
+
+  final now = DateTime.now();
+  final thirtyDaysAgo = now.subtract(const Duration(days: 30));
+  // Standard daily boundaries: start of 30 days ago to end of today.
+  final start = DateTime(
+    thirtyDaysAgo.year,
+    thirtyDaysAgo.month,
+    thirtyDaysAgo.day,
+    0,
+    0,
+    0,
+  );
+  final end = DateTime(now.year, now.month, now.day, 23, 59, 59);
+
+  for (final tx in transactions) {
+    if (tx.date.isBefore(start) || tx.date.isAfter(end)) continue;
+
+    final convertedAmount =
+        CurrencyConverter.convertAmount(tx, targetCurrency, rates) / 100.0;
+    if (tx.type == TransactionType.income) {
+      totalIncome += convertedAmount;
+    } else if (tx.type == TransactionType.expense) {
+      totalExpense += convertedAmount;
+    }
+  }
+
+  return AsyncData(
+    PeriodSummary(
+      totalIncome: (totalIncome * 100).round(),
+      totalExpense: (totalExpense * 100).round(),
+    ),
+  );
+});
+
 List<CategoryStatistic> _calculateTopCategories(
   List<Transaction> transactions,
   StatisticsFilter filter,
@@ -375,16 +436,13 @@ final globalBalanceProvider = Provider.autoDispose<AsyncValue<double>>((ref) {
 
     double balance = balanceAsync.value!;
 
-    if (account.currency == targetCurrency) {
-      totalBalance += balance;
-    } else {
-      final rate = ratesAsync.valueOrNull?.rateFor(account.currency);
-      if (rate != null && rate != 0) {
-        totalBalance += balance / rate;
-      } else {
-        totalBalance += balance;
-      }
-    }
+    final convertedBalance = CurrencyConverter.convertRaw(
+      balance,
+      account.currency,
+      targetCurrency,
+      ratesAsync.valueOrNull,
+    );
+    totalBalance += convertedBalance;
   }
 
   return AsyncData(totalBalance);

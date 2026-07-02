@@ -7,6 +7,7 @@ import 'package:stalvi/core/utils/icon_helper.dart';
 import 'package:stalvi/domain/entities/transaction_type.dart';
 import 'package:stalvi/presentation/providers/automatic_transactions_providers.dart';
 import 'package:stalvi/presentation/providers/repository_providers.dart';
+import 'package:stalvi/core/utils/automatic_transaction_string_generator.dart';
 import 'create_edit_automatic_transaction_screen.dart';
 
 class AutomaticTransactionsScreen extends ConsumerWidget {
@@ -17,14 +18,6 @@ class AutomaticTransactionsScreen extends ConsumerWidget {
     if (hexString.length == 6 || hexString.length == 7) buffer.write('ff');
     buffer.write(hexString.replaceFirst('#', ''));
     return Color(int.parse(buffer.toString(), radix: 16));
-  }
-
-  String _formatRecurrence(BuildContext context, int days) {
-    final l10n = AppLocalizations.of(context)!;
-    if (days == 7) return l10n.autoTxFormatWeekly;
-    if (days == 30) return l10n.autoTxFormatMonthly;
-    if (days == 365) return l10n.autoTxFormatYearly;
-    return l10n.autoTxFormatEveryDays(days);
   }
 
   @override
@@ -125,10 +118,7 @@ class AutomaticTransactionsScreen extends ConsumerWidget {
                                   ),
                                   const SizedBox(width: 4),
                                   Text(
-                                    _formatRecurrence(
-                                      context,
-                                      txn.recurrenceDays,
-                                    ),
+                                    txn.formatRecurrence(context),
                                     style: theme.textTheme.bodySmall?.copyWith(
                                       color: colorScheme.onSurfaceVariant,
                                     ),

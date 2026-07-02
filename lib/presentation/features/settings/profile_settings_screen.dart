@@ -10,6 +10,7 @@ import '../../providers/auth_notifier.dart';
 import '../../providers/locale_provider.dart';
 import '../../providers/theme_provider.dart';
 import '../../widgets/terms_and_conditions_viewer.dart';
+import 'about_me_screen.dart' as stalvi_about_me;
 
 class ProfileSettingsScreen extends ConsumerStatefulWidget {
   const ProfileSettingsScreen({super.key});
@@ -710,6 +711,20 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                           builder: (context) => const TermsAndConditionsViewer(
                             showPrivacyPolicy: true,
                           ),
+                        ),
+                      );
+                    },
+                  ),
+                  const Divider(),
+                  ListTile(
+                    leading: const Icon(Icons.info_outline_rounded),
+                    title: Text(l10n.aboutMe),
+                    trailing: const Icon(Icons.chevron_right),
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              const stalvi_about_me.AboutMeScreen(),
                         ),
                       );
                     },

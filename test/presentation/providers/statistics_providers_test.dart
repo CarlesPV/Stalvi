@@ -4,6 +4,9 @@ import 'package:stalvi/domain/entities/account.dart';
 import 'package:stalvi/domain/entities/account_type.dart';
 import 'package:stalvi/domain/entities/profile.dart';
 import 'package:stalvi/domain/entities/exchange_rate.dart';
+import 'package:stalvi/domain/entities/transaction.dart';
+import 'package:stalvi/domain/entities/transaction_type.dart';
+import 'package:stalvi/domain/entities/period_summary.dart';
 import 'package:stalvi/domain/repositories/i_exchange_rate_repository.dart';
 import 'package:stalvi/presentation/providers/repository_providers.dart';
 import 'package:stalvi/presentation/providers/statistics_providers.dart';
@@ -149,6 +152,77 @@ void main() {
     final state = container.read(globalBalanceProvider);
     expect(state, isA<AsyncData<double>>());
     expect(state.value, closeTo(100 + (200 / 1.1), 0.01));
+
+    sub.close();
+  });
+
+  test(
+      'dashboardPeriodSummaryProvider calculates correct period summary in default currency across multiple accounts and currencies',
+      () async {
+    final profile = Profile(
+      id: 'p1',
+      name: 'Test',
+      username: 'test',
+      password: '',
+      defaultCurrency: 'EUR',
+      createdAt: DateTime.now(),
+      modifiedAt: DateTime.now(),
+    );
+
+    final transactions = [
+      Transaction(
+        id: 'tx1',
+        amount: 10000, // 100 USD Income
+        date: DateTime.now(),
+        type: TransactionType.income,
+        accountId: 'acc1',
+        originalCurrency: 'USD',
+        createdAt: DateTime.now(),
+        modifiedAt: DateTime.now(),
+      ),
+      Transaction(
+        id: 'tx2',
+        amount: 5000, // 50 EUR Expense
+        date: DateTime.now(),
+        type: TransactionType.expense,
+        accountId: 'acc2',
+        originalCurrency: 'EUR',
+        createdAt: DateTime.now(),
+        modifiedAt: DateTime.now(),
+      ),
+    ];
+
+    final mockExchangeRateRepo = MockExchangeRateRepository();
+    when(() => mockExchangeRateRepo.getLocalRates(baseCurrency: 'EUR'))
+        .thenAnswer(
+      (_) async => ExchangeRate(
+        baseCurrency: 'EUR',
+        date: DateTime.now(),
+        rates: {'USD': 1.1},
+      ),
+    );
+
+    final container = ProviderContainer(
+      overrides: [
+        defaultProfileProvider.overrideWith((ref) => Future.value(profile)),
+        transactionsStreamProvider
+            .overrideWith((ref) => Stream.value(transactions)),
+        exchangeRateRepositoryProvider.overrideWithValue(mockExchangeRateRepo),
+      ],
+    );
+
+    final sub = container.listen(dashboardPeriodSummaryProvider, (_, __) {});
+
+    // Wait for the streams to emit
+    await Future.delayed(const Duration(milliseconds: 50));
+
+    final state = container.read(dashboardPeriodSummaryProvider);
+    expect(state, isA<AsyncData<PeriodSummary>>());
+
+    // 100 USD = 100 / 1.1 = 90.909 EUR => (90.909 * 100).round() = 9091 cents
+    expect(state.value?.totalIncome, 9091);
+    // 50 EUR = 50 EUR => 5000 cents
+    expect(state.value?.totalExpense, 5000);
 
     sub.close();
   });

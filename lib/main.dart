@@ -10,6 +10,8 @@ import 'package:stalvi/presentation/providers/locale_provider.dart';
 import 'package:stalvi/presentation/providers/theme_provider.dart';
 import 'package:stalvi/presentation/widgets/lifecycle_blur_wrapper.dart';
 
+import 'package:stalvi/core/background_tasks/background_tasks.dart';
+
 /// Entry point for the Stalvi application.
 ///
 /// [WidgetsFlutterBinding.ensureInitialized] is called to guarantee that all
@@ -17,8 +19,10 @@ import 'package:stalvi/presentation/widgets/lifecycle_blur_wrapper.dart';
 /// [flutter_secure_storage]) are set up before any async work begins.
 ///
 /// The root [ProviderScope] enables Riverpod for the entire widget tree.
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await BackgroundTasks.initialize();
+  BackgroundTasks.registerPeriodicTasks();
   runApp(
     const ProviderScope(
       child: StalviApp(),

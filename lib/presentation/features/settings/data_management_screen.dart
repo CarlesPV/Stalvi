@@ -4,6 +4,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:stalvi/core/l10n/app_localizations.dart';
 import 'package:stalvi/infrastructure/services/biometric_auth_service.dart';
+import 'package:stalvi/domain/usecases/pdf_export_date_range.dart';
 import 'profile_settings_controller.dart';
 import 'pin_verification_sheet.dart';
 import '../splash/splash_screen.dart';
@@ -388,10 +389,35 @@ class _DataManagementScreenState extends ConsumerState<DataManagementScreen> {
 
   Future<void> _handleExportMonthlyPdf(BuildContext context) async {
     final l10n = AppLocalizations.of(context)!;
+
+    final selectedRange = await showModalBottomSheet<PdfExportDateRange>(
+      context: context,
+      builder: (ctx) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.calendar_today_rounded),
+              title: Text(l10n.exportPdfCurrentMonth),
+              onTap: () =>
+                  Navigator.of(ctx).pop(PdfExportDateRange.currentMonth),
+            ),
+            ListTile(
+              leading: const Icon(Icons.history_rounded),
+              title: Text(l10n.exportPdfLast30Days),
+              onTap: () => Navigator.of(ctx).pop(PdfExportDateRange.last30Days),
+            ),
+          ],
+        ),
+      ),
+    );
+
+    if (selectedRange == null || !context.mounted) return;
+
     try {
       final result = await ref
           .read(profileSettingsControllerProvider.notifier)
-          .exportMonthlyPdf();
+          .exportMonthlyPdf(dateRange: selectedRange);
       if (!context.mounted) return;
       _showExportSuccess(
         context,

@@ -21,7 +21,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get addTransaction => 'Añadir transacción';
 
   @override
-  String income(int count) {
+  String income(num count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
@@ -32,7 +32,7 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
-  String expense(int count) {
+  String expense(num count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
@@ -186,12 +186,12 @@ class AppLocalizationsEs extends AppLocalizations {
   String get uncategorized => 'Sin categoría';
 
   @override
-  String budgetOverspent(String amount) {
+  String budgetOverspent(Object amount) {
     return '$amount sobrepasado';
   }
 
   @override
-  String budgetRemaining(String amount) {
+  String budgetRemaining(Object amount) {
     return '$amount restante';
   }
 
@@ -207,7 +207,7 @@ class AppLocalizationsEs extends AppLocalizations {
       'Cree un objetivo de ahorro para planificar sus futuros sueños, viajes o grandes compras.';
 
   @override
-  String savingsTargetDate(String date) {
+  String savingsTargetDate(Object date) {
     return 'Fecha objetivo: $date';
   }
 
@@ -215,7 +215,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get savingsNoTargetDate => 'Sin fecha objetivo';
 
   @override
-  String savingsSavedOf(String saved, String target) {
+  String savingsSavedOf(Object saved, Object target) {
     return '$saved guardados de $target';
   }
 
@@ -326,7 +326,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get authPinEnter => 'Introducir PIN';
 
   @override
-  String authPinAttemptsRemaining(int attempts) {
+  String authPinAttemptsRemaining(Object attempts) {
     return 'Quedan $attempts intentos';
   }
 
@@ -334,7 +334,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get authPinIncorrect => 'PIN incorrecto. Inténtelo de nuevo.';
 
   @override
-  String acrossAccountsCount(int count) {
+  String acrossAccountsCount(num count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
@@ -479,7 +479,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get recycleBinDeletedMessage => 'Elemento eliminado permanentemente';
 
   @override
-  String recycleBinDaysRemaining(int days) {
+  String recycleBinDaysRemaining(Object days) {
     return 'Expira en $days días';
   }
 
@@ -663,7 +663,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get filterSheetSelectDateRange => 'Seleccionar rango de fechas';
 
   @override
-  String filterSheetActiveFilters(int count) {
+  String filterSheetActiveFilters(Object count) {
     return '$count filtros activos';
   }
 
@@ -709,7 +709,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get deleteCategoryTitle => '¿Eliminar categoría?';
 
   @override
-  String deleteCategoryConfirm(String name) {
+  String deleteCategoryConfirm(Object name) {
     return '¿Está seguro de que desea eliminar $name?';
   }
 
@@ -717,7 +717,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get deleteTagTitle => '¿Eliminar etiqueta?';
 
   @override
-  String deleteTagConfirm(String name) {
+  String deleteTagConfirm(Object name) {
     return '¿Está seguro de que desea eliminar $name?';
   }
 
@@ -736,12 +736,12 @@ class AppLocalizationsEs extends AppLocalizations {
   String get tagInUseTitle => 'Etiqueta en uso';
 
   @override
-  String categoryInUseMessage(String name) {
+  String categoryInUseMessage(Object name) {
     return '$name está en uso en transacciones existentes. Por favor, seleccione una categoría para reasignarlas:';
   }
 
   @override
-  String tagInUseMessage(String name) {
+  String tagInUseMessage(Object name) {
     return '$name está en uso en transacciones existentes. Por favor, seleccione una etiqueta para reasignarlas:';
   }
 
@@ -823,7 +823,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get savingsGoal => 'Objetivo de ahorro';
 
   @override
-  String budgetSpentOf(String spent, String target) {
+  String budgetSpentOf(Object spent, Object target) {
     return '$spent de $target';
   }
 
@@ -856,7 +856,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get exportMonthlyPdfSubtitle =>
-      'Genera un resumen en PDF para el mes actual';
+      'Genera un resumen en PDF';
 
   @override
   String get exportPasswordDialogTitle =>
@@ -916,7 +916,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get btnRestore => 'Restaurar';
 
   @override
-  String statisticsOtherCategories(int count) {
+  String statisticsOtherCategories(Object count) {
     return 'Otras ($count categorías)';
   }
 
@@ -945,7 +945,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get pdfDateTimeFormat => 'dd/MM/yyyy HH:mm';
 
   @override
-  String pdfGeneratedOn(String appTitle, String date) {
+  String pdfGeneratedOn(Object appTitle, Object date) {
     return 'Generado por $appTitle el $date';
   }
 
@@ -1020,7 +1020,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get labelBudget => 'Presupuesto';
 
   @override
-  String exportSavedTo(String filePath) {
+  String exportSavedTo(Object filePath) {
     return 'Guardado en $filePath';
   }
 
@@ -1079,7 +1079,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get autoTxFormatYearly => 'Anual';
 
   @override
-  String autoTxFormatEveryDays(int days) {
+  String autoTxFormatEveryDays(Object days) {
     return 'Cada $days días';
   }
 
@@ -1093,8 +1093,8 @@ class AppLocalizationsEs extends AppLocalizations {
   String get languageCatalan => 'Català';
 
   @override
-  String autoTxFormatSpecificDay(String day) {
-    return 'Cada mes el día $day';
+  String autoTxFormatSpecificDay(Object day) {
+    return 'El día $day de cada mes';
   }
 
   @override
@@ -1110,4 +1110,13 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get autoTxErrorInvalidRecurrenceInterval =>
       'Intervalo de recurrencia no válido';
+
+  @override
+  String get aboutMe => 'Sobre mí';
+
+  @override
+  String get exportPdfCurrentMonth => 'Mes actual';
+
+  @override
+  String get exportPdfLast30Days => 'Últimos 30 días';
 }

@@ -13,6 +13,7 @@ import '../entities/transaction_type.dart';
 import '../repositories/i_exchange_rate_repository.dart';
 import '../use_cases/statistics/get_period_summary_use_case.dart';
 import '../use_cases/statistics/get_top_categories_use_case.dart';
+import 'pdf_export_date_range.dart';
 
 /// Use case that generates a PDF summary report for the **current calendar month**.
 ///
@@ -63,20 +64,21 @@ class ExportMonthlyPdfUseCase {
   /// Optionally pass a custom [month] — defaults to the current month.
   Future<ExportResult> call({
     required String targetCurrency,
-    DateTime? month,
+    PdfExportDateRange dateRange = PdfExportDateRange.currentMonth,
+    DateTime? forceNow,
   }) async {
-    final now = DateTime.now();
-    final targetMonth = month ?? DateTime(now.year, now.month);
+    final now = forceNow ?? DateTime.now();
+    DateTime startDate;
+    DateTime endDate;
+    DateTime targetMonth = now;
 
-    final startDate = DateTime(targetMonth.year, targetMonth.month, 1);
-    final endDate = DateTime(
-      targetMonth.year,
-      targetMonth.month + 1,
-      0,
-      23,
-      59,
-      59,
-    );
+    if (dateRange == PdfExportDateRange.last30Days) {
+      startDate = now.subtract(const Duration(days: 30));
+      endDate = now;
+    } else {
+      startDate = DateTime(now.year, now.month, 1);
+      endDate = DateTime(now.year, now.month + 1, 0, 23, 59, 59);
+    }
 
     // Resolve profile for account lookup
     final profile = await _profileRepository.getFirstProfile();

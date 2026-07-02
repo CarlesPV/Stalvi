@@ -270,3 +270,13 @@
   - [x] Reconfigure native splash screen to utilize the rounded-edge icon (`assets/icon/splash_icon.png`) for all themes and platforms.
   - [x] Develop comprehensive unit tests verifying recurrence date calculations under various calendars, short months, and leap years.
 
+- [x] **Phase 36: PDF Export and About Screen**
+  - [x] Refactor PDF Export to prompt for 'Last 30 Days' or 'Current Month'.
+  - [x] Implement the 'About Me' localized Markdown screen with an external link.
+
+- [x] **Phase 37: Production Readiness, Background Tasks & UX Polish**
+  - [x] Implement multi-currency conversion for total balances on the dashboard and fix the splash screen icon border-radius.
+  - [x] Enhance Automatic Transactions UI to display localized recurrence strings and implement background execution via `workmanager`.
+  - [x] Perform an exhaustive cleanup of `.arb` localization files (remove unused keys/comments).
+  - [x] Fix all CI/CD, analyzer warnings, and update documentation (`roadmap.md`, `README.md`).
+

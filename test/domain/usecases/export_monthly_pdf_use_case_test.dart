@@ -19,6 +19,7 @@ import 'package:stalvi/domain/repositories/i_profile_repository.dart';
 import 'package:stalvi/domain/repositories/i_savings_goal_repository.dart';
 import 'package:stalvi/domain/repositories/i_transaction_repository.dart';
 import 'package:stalvi/domain/usecases/export_monthly_pdf_use_case.dart';
+import 'package:stalvi/domain/usecases/pdf_export_date_range.dart';
 import 'package:stalvi/domain/use_cases/statistics/get_period_summary_use_case.dart';
 import 'package:stalvi/domain/use_cases/statistics/get_top_categories_use_case.dart';
 
@@ -246,7 +247,7 @@ void main() {
       transactions: [tx1, tx2],
     );
 
-    await usecase(targetCurrency: 'EUR', month: now);
+    await usecase(targetCurrency: 'EUR', forceNow: now);
 
     final result = verify(
       () => exportService.generateMonthlyPdf(
@@ -363,7 +364,7 @@ void main() {
       transactions: [tx1, tx2],
     );
 
-    await esUsecase(targetCurrency: 'EUR', month: now);
+    await esUsecase(targetCurrency: 'EUR', forceNow: now);
 
     final result = verify(
       () => exportService.generateMonthlyPdf(
@@ -457,7 +458,7 @@ void main() {
         savingsGoals: [],
       );
 
-      await usecase(targetCurrency: 'EUR', month: now);
+      await usecase(targetCurrency: 'EUR', forceNow: now);
 
       final captured = verify(
         () => exportService.generateMonthlyPdf(
@@ -518,7 +519,7 @@ void main() {
         savingsGoals: [activeGoal, deletedGoal],
       );
 
-      await usecase(targetCurrency: 'EUR', month: now);
+      await usecase(targetCurrency: 'EUR', forceNow: now);
 
       final captured = verify(
         () => exportService.generateMonthlyPdf(
@@ -623,7 +624,7 @@ void main() {
         ),
       );
 
-      await usecase(targetCurrency: 'EUR', month: now);
+      await usecase(targetCurrency: 'EUR', forceNow: now);
 
       final captured = verify(
         () => exportService.generateMonthlyPdf(
@@ -660,7 +661,7 @@ void main() {
         savingsGoals: [],
       );
 
-      await usecase(targetCurrency: 'EUR', month: now);
+      await usecase(targetCurrency: 'EUR', forceNow: now);
 
       final captured = verify(
         () => exportService.generateMonthlyPdf(
@@ -682,6 +683,66 @@ void main() {
 
       expect(captured[0] as List<Budget>, isEmpty);
       expect(captured[1] as List<SavingsGoal>, isEmpty);
+    });
+  });
+
+  group('PdfExportDateRange logic', () {
+    test('last30Days correctly calculates startDate and endDate', () async {
+      final now = DateTime(2023, 10, 15);
+      final profile = Profile(
+        id: 'user1',
+        name: 'User',
+        username: 'user',
+        password: 'pwd',
+        defaultCurrency: 'EUR',
+        createdAt: now,
+        modifiedAt: now,
+      );
+
+      final account1 = Account(
+        id: 'acc1',
+        userId: 'user1',
+        name: 'Bank',
+        type: AccountType.bank,
+        initialBalance: 0,
+        currency: 'EUR',
+        color: '#000000',
+        icon: 'bank',
+        isDefault: true,
+        isDeleted: false,
+        createdAt: now,
+        modifiedAt: now,
+      );
+
+      stubCommonMocks(
+        profile: profile,
+        accounts: [account1],
+        transactions: [],
+      );
+
+      await usecase(
+        targetCurrency: 'EUR',
+        dateRange: PdfExportDateRange.last30Days,
+        forceNow: now,
+      );
+
+      verify(
+        () => exportService.generateMonthlyPdf(
+          any(),
+          summary: any(named: 'summary'),
+          month: any(named: 'month'),
+          l10n: any(named: 'l10n'),
+          accounts: any(named: 'accounts'),
+          categories: any(named: 'categories'),
+          topExpenseCategories: any(named: 'topExpenseCategories'),
+          topIncomeCategories: any(named: 'topIncomeCategories'),
+          defaultCurrency: any(named: 'defaultCurrency'),
+          transferDestinations: any(named: 'transferDestinations'),
+          budgets: any(named: 'budgets'),
+          budgetCategoryNames: any(named: 'budgetCategoryNames'),
+          savingsGoals: any(named: 'savingsGoals'),
+        ),
+      ).called(1);
     });
   });
 }
