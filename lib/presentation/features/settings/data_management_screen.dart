@@ -417,7 +417,12 @@ class _DataManagementScreenState extends ConsumerState<DataManagementScreen> {
     try {
       final result = await ref
           .read(profileSettingsControllerProvider.notifier)
-          .exportMonthlyPdf(dateRange: selectedRange);
+          .exportMonthlyPdf(
+            dateRange: selectedRange,
+            customMonthLabel: selectedRange == PdfExportDateRange.last30Days
+                ? l10n.pdfExportLast30Days
+                : null,
+          );
       if (!context.mounted) return;
       _showExportSuccess(
         context,

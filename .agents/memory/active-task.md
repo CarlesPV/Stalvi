@@ -1,19 +1,22 @@
-# Active Task: Phase 38 - Data Integrity, Serialization Expansion, and UI/UX Polish
+# Active Task: Phase 39 - Cross-State Stabilization, Localization, and UI Polish
 
 ## Objective
-Enforce strict business rules for data deletion across relational entities, expand full-data backup capabilities, and polish UI/i18n implementations to guarantee a production-ready user experience.
+Fix critical UI anomalies, implement robust state invalidation across independent Riverpod providers, and complete 100% localization support without UI overflows.
 
-## Status: In Progress
+## Context
+Stalvi is currently facing state synchronization issues (currency changes not reflecting in dashboard stats immediately) and incomplete localization strings in various screens (PDF exports, About Me, Recurrence settings). Additionally, the native splash screen uses the wrong asset.
 
-## Sub-tasks
-- [ ] **UI/UX:** Fix the splash screen dark mode configuration so the app icon renders with normal brightness, avoiding the darkened overlay.
-- [ ] **Business Logic (Categories):** Prevent category deletion if linked to active automatic/recurring transactions. Enforce reassignment or block deletion with a clear UI message.
-- [ ] **Business Logic (Accounts):** Prevent account/wallet deletion if linked to automatic/recurring transactions. Show a post-confirmation error pop-up (with a close button) blocking the action.
-- [ ] **Data Serialization:** Update the backup/restore mechanism (JSON export/import) to fully include Savings Goals, Budgets, and Automatic Transactions.
-- [ ] **Localization & UI Polish:** Ensure 100% synchronization across English, Spanish, and Catalan (`app_en.arb`, `app_es.arb`, `app_ca.arb`). Resolve all text overflows (buttons, dialogs, selectors) and avoid truncation ("...").
+## Tasks Checklist
+- [ ] **Splash Screen Fix:** Update `flutter_native_splash.yaml` to use `splash_icon.png` instead of `app_icon.png` and regenerate the native splash.
+- [ ] **Localization Expansion:** Add missing strings across `app_en.arb`, `app_es.arb`, and `app_ca.arb` (PDF date ranges, UTC+2 warning, About Me button).
+- [ ] **PDF Export Logic:** Refactor the PDF generation service/usecase to display either the current month name or "Last 30 days" dynamically based on the user's filter.
+- [ ] **Currency State Invalidation:** Update `ProfileSettingsController` so changing the default currency strictly recalculates/invalidates Dashboard statistics (total balance, expenses, income).
+- [ ] **Automatic Transactions UI:** Add a localized subtitle indicating "UTC+2 reference time" under the recurrence selector in the create/edit screen.
+- [ ] **About Me UI:** Localize the GitHub link button and ensure responsive layouts.
+- [ ] **Global Overflow & L10n Audit:** Apply `Flexible`, `Expanded`, `SingleChildScrollView`, and `FittedBox` globally where dynamic translated text might cause render overflows.
 
-## Context Notes
-- Follow Clean Architecture principles (Use Cases handle the constraint logic).
-- Update unit tests for all modified Use Cases and Repositories.
-- Use Riverpod for state updates reflecting the new constraints.
-- Modify files directly without outputting code to the chat interface.
+## Current Phase Restrictions
+- Follow Clean Architecture.
+- Do not bypass Riverpod state management rules.
+- Run `flutter gen-l10n` after ARB modifications.
+- Modify files directly. Do NOT output code in the chat.

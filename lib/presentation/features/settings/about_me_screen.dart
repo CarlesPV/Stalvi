@@ -87,7 +87,10 @@ class _AboutMeScreenState extends ConsumerState<AboutMeScreen> {
                     child: ElevatedButton.icon(
                       onPressed: _launchUrl,
                       icon: const Icon(Icons.open_in_new),
-                      label: const Text('Visit my GitHub'),
+                      label: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text(l10n.aboutMeGithubButton),
+                      ),
                       style: ElevatedButton.styleFrom(
                         minimumSize: const Size(double.infinity, 50),
                       ),

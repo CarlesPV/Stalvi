@@ -561,7 +561,21 @@ This document lists the completed phases of the Stalvi development roadmap, prov
   - 100% clean static analysis (`flutter analyze`) with 0 issues.
   - All 464 automated unit and widget tests pass cleanly with a 100% success rate.
 
+### Phase 39: UI Localization Polish, Test Stability, and Expanded Overflow Protection
+* **Completion Date:** July 2, 2026
+* **Objective:** Integrate missing localizations into the UI screens (settings, about me), expand layout safeguards against text overflows across tabs and action buttons, and ensure full test stability and static analysis compliance.
+* **Accomplishments:**
+  - **Integrated Localizations**: Added `AppLocalizations.of(context).recurrenceUtcWarning` to the automatic transaction recurrence selector sheet and replaced hardcoded GitHub button text with `AppLocalizations.of(context).aboutMeGithubButton` on the About Me screen.
+  - **Expanded Overflow Protections**: Secured Expense/Income toggle tabs, custom recurrence apply buttons, and global transaction save buttons by wrapping text in `FittedBox` (scaleDown) and wrapping key buttons in `Flexible` inside row layouts.
+  - **Static Analysis Compliance**: Fixed undefined references by declaring `colorScheme` inside recurrence selector functions, yielding a completely warning-free/error-free `flutter analyze` environment.
+  - **Test Suite Updates**: Refactored `about_me_screen_test.dart` to query localized button assertions dynamically, resolving failing cases and guaranteeing a 100% pass rate.
+* **Verification:**
+  - Standard static analysis pass (`flutter analyze` with 0 issues).
+  - All 465 automated unit and widget tests pass cleanly with a 100% success rate.
+
 ## Recent Updates
+- Added missing localizations (`recurrenceUtcWarning`, `aboutMeGithubButton`) to Settings and About Me screens, and expanded text overflow protection with FittedBox/Flexible layouts (Phase 39).
+- Resolved undefined identifier analyzer errors and stabilized dynamic test assertions inside the automated test suites (Phase 39).
 - Implemented UI/UX overflow safeguards, wrapping button text inside dialogs and bottom sheets in FittedBox to handle multi-language length differences (Phase 38).
 - Synchronized all translation keys perfectly across English, Spanish, and Catalan localizations (Phase 38).
 - Fixed pre-existing widget test issues and unused imports, achieving a completely warning-free/error-free static analysis (`flutter analyze`) and 100% pass rate on 464 tests (Phase 38).

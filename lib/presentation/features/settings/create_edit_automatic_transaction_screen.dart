@@ -220,13 +220,16 @@ class _CreateEditAutomaticTransactionScreenState
                                   : Colors.transparent,
                               borderRadius: BorderRadius.circular(12),
                             ),
-                            child: Text(
-                              l10n.expense(1),
-                              style: theme.textTheme.bodyMedium?.copyWith(
-                                fontWeight: FontWeight.w700,
-                                color: state.type == TransactionType.expense
-                                    ? colorScheme.onPrimary
-                                    : colorScheme.onSurfaceVariant,
+                            child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text(
+                                l10n.expense(1),
+                                style: theme.textTheme.bodyMedium?.copyWith(
+                                  fontWeight: FontWeight.w700,
+                                  color: state.type == TransactionType.expense
+                                      ? colorScheme.onPrimary
+                                      : colorScheme.onSurfaceVariant,
+                                ),
                               ),
                             ),
                           ),
@@ -252,13 +255,16 @@ class _CreateEditAutomaticTransactionScreenState
                                   : Colors.transparent,
                               borderRadius: BorderRadius.circular(12),
                             ),
-                            child: Text(
-                              l10n.income(1),
-                              style: theme.textTheme.bodyMedium?.copyWith(
-                                fontWeight: FontWeight.w700,
-                                color: state.type == TransactionType.income
-                                    ? colorScheme.onPrimary
-                                    : colorScheme.onSurfaceVariant,
+                            child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text(
+                                l10n.income(1),
+                                style: theme.textTheme.bodyMedium?.copyWith(
+                                  fontWeight: FontWeight.w700,
+                                  color: state.type == TransactionType.income
+                                      ? colorScheme.onPrimary
+                                      : colorScheme.onSurfaceVariant,
+                                ),
                               ),
                             ),
                           ),
@@ -596,11 +602,14 @@ class _CreateEditAutomaticTransactionScreenState
                                 AlwaysStoppedAnimation<Color>(Colors.white),
                           ),
                         )
-                      : Text(
-                          l10n.btnSaveTransaction,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
+                      : FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(
+                            l10n.btnSaveTransaction,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w700,
+                            ),
                           ),
                         ),
                 ),
@@ -956,6 +965,7 @@ class _CreateEditAutomaticTransactionScreenState
     AutomaticTransaction? initialTxn,
   ) {
     final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
     // Provide a stateful builder so the bottom sheet can update when segmented control or radio changes.
     // However, riverpod state will automatically rebuild the caller, but the bottom sheet needs its own state
@@ -1005,6 +1015,15 @@ class _CreateEditAutomaticTransactionScreenState
                               l10n.autoTxSelectRecurrence,
                               style: theme.textTheme.titleMedium?.copyWith(
                                 fontWeight: FontWeight.w800,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              l10n.recurrenceUtcWarning,
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: colorScheme.onSurfaceVariant
+                                    .withValues(alpha: 0.8),
                               ),
                               textAlign: TextAlign.center,
                             ),
@@ -1157,43 +1176,49 @@ class _CreateEditAutomaticTransactionScreenState
                                       ),
                                     ),
                                     const SizedBox(width: 12),
-                                    FilledButton(
-                                      onPressed: () {
-                                        final parsed = int.tryParse(
-                                          _customRecurrenceController.text,
-                                        );
-                                        final maxVal = localCustomType ==
-                                                RecurrenceType
-                                                    .specificDayOfMonth
-                                            ? 31
-                                            : 365;
-                                        if (parsed != null &&
-                                            parsed > 0 &&
-                                            parsed <= maxVal) {
-                                          ref
-                                              .read(
-                                                createEditAutomaticTransactionNotifierProvider(
-                                                  initialTxn,
-                                                ).notifier,
-                                              )
-                                              .updateRecurrence(
-                                                localCustomType,
-                                                parsed,
-                                              );
-                                          Navigator.of(context).pop();
-                                        } else {
-                                          setState(() {
-                                            localError = localCustomType ==
-                                                    RecurrenceType
-                                                        .specificDayOfMonth
-                                                ? l10n
-                                                    .autoTxErrorInvalidDayOfMonth
-                                                : l10n
-                                                    .autoTxErrorInvalidRecurrenceInterval;
-                                          });
-                                        }
-                                      },
-                                      child: Text(l10n.autoTxRecurrenceApply),
+                                    Flexible(
+                                      child: FilledButton(
+                                        onPressed: () {
+                                          final parsed = int.tryParse(
+                                            _customRecurrenceController.text,
+                                          );
+                                          final maxVal = localCustomType ==
+                                                  RecurrenceType
+                                                      .specificDayOfMonth
+                                              ? 31
+                                              : 365;
+                                          if (parsed != null &&
+                                              parsed > 0 &&
+                                              parsed <= maxVal) {
+                                            ref
+                                                .read(
+                                                  createEditAutomaticTransactionNotifierProvider(
+                                                    initialTxn,
+                                                  ).notifier,
+                                                )
+                                                .updateRecurrence(
+                                                  localCustomType,
+                                                  parsed,
+                                                );
+                                            Navigator.of(context).pop();
+                                          } else {
+                                            setState(() {
+                                              localError = localCustomType ==
+                                                      RecurrenceType
+                                                          .specificDayOfMonth
+                                                  ? l10n
+                                                      .autoTxErrorInvalidDayOfMonth
+                                                  : l10n
+                                                      .autoTxErrorInvalidRecurrenceInterval;
+                                            });
+                                          }
+                                        },
+                                        child: FittedBox(
+                                          fit: BoxFit.scaleDown,
+                                          child:
+                                              Text(l10n.autoTxRecurrenceApply),
+                                        ),
+                                      ),
                                     ),
                                   ],
                                 ),

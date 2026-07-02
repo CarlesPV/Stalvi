@@ -99,6 +99,7 @@ class ProfileSettingsController extends StateNotifier<ProfileSettingsState> {
       _ref.invalidate(defaultProfileProvider);
       _ref.invalidate(statisticsCurrencyProvider);
       _ref.invalidate(periodSummaryProvider);
+      _ref.invalidate(dashboardPeriodSummaryProvider);
       _ref.invalidate(topExpenseCategoriesProvider);
       _ref.invalidate(topIncomeCategoriesProvider);
       _ref.invalidate(globalBalanceProvider);
@@ -254,6 +255,7 @@ class ProfileSettingsController extends StateNotifier<ProfileSettingsState> {
   /// Exports the transactions as a PDF report.
   Future<ExportResult> exportMonthlyPdf({
     required PdfExportDateRange dateRange,
+    String? customMonthLabel,
   }) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
@@ -262,6 +264,7 @@ class ProfileSettingsController extends StateNotifier<ProfileSettingsState> {
       final result = await useCase.call(
         targetCurrency: currency,
         dateRange: dateRange,
+        customMonthLabel: customMonthLabel,
       );
       state = state.copyWith(isLoading: false);
       return result;

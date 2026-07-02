@@ -343,5 +343,9 @@
       }
     }
   },
-  "accountInUseByAutoTxMessage": "This account cannot be deleted because it is linked to active automatic transactions."
+  "accountInUseByAutoTxMessage": "This account cannot be deleted because it is linked to active automatic transactions.",
+  "pdfExportLast30Days": "Last 30 days",
+  "recurrenceUtcWarning": "Reference time is UTC+2",
+  "aboutMeGithubButton": "View my GitHub"
 }
+

@@ -66,6 +66,7 @@ class ExportMonthlyPdfUseCase {
     required String targetCurrency,
     PdfExportDateRange dateRange = PdfExportDateRange.currentMonth,
     DateTime? forceNow,
+    String? customMonthLabel,
   }) async {
     final now = forceNow ?? DateTime.now();
     DateTime startDate;
@@ -183,6 +184,7 @@ class ExportMonthlyPdfUseCase {
       budgets: activeBudgets,
       budgetCategoryNames: budgetCategoryNames,
       savingsGoals: activeSavingsGoals,
+      customMonthLabel: customMonthLabel,
     );
   }
 }

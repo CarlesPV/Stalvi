@@ -6,19 +6,29 @@ import 'package:stalvi/domain/repositories/i_profile_repository.dart';
 import 'package:stalvi/domain/usecases/update_credentials_usecase.dart';
 import 'package:stalvi/presentation/features/settings/profile_settings_controller.dart';
 import 'package:stalvi/presentation/providers/repository_providers.dart';
+import 'package:stalvi/presentation/providers/statistics_providers.dart';
+import 'package:stalvi/domain/entities/period_summary.dart';
 
 class FakeProfileRepository implements IProfileRepository {
+  Profile _profile = Profile(
+    id: '1',
+    name: 'Test User',
+    username: 'test_user',
+    password: '',
+    defaultCurrency: 'EUR',
+    createdAt: DateTime.now(),
+    modifiedAt: DateTime.now(),
+  );
+
   @override
   Future<Profile> getFirstProfile() async {
-    return Profile(
-      id: '1',
-      name: 'Test User',
-      username: 'test_user',
-      password: '',
-      defaultCurrency: 'EUR',
-      createdAt: DateTime.now(),
-      modifiedAt: DateTime.now(),
-    );
+    return _profile;
+  }
+
+  @override
+  Future<Profile> updateProfile(Profile profile) async {
+    _profile = profile;
+    return _profile;
   }
 
   @override
@@ -231,6 +241,62 @@ void main() {
         container.read(profileSettingsControllerProvider).failedDeleteAttempts,
         6,
       );
+    });
+  });
+
+  group('ProfileSettingsController currency update', () {
+    test('updateCurrency updates profile and invalidates dashboard providers',
+        () async {
+      int periodSummaryBuildCount = 0;
+      int dashboardPeriodSummaryBuildCount = 0;
+
+      final testContainer = ProviderContainer(
+        overrides: [
+          profileRepositoryProvider.overrideWithValue(fakeProfileRepository),
+          updateCredentialsUseCaseProvider
+              .overrideWithValue(fakeUpdateCredentialsUseCase),
+          periodSummaryProvider.overrideWith((ref) {
+            periodSummaryBuildCount++;
+            return const AsyncData(
+                PeriodSummary(totalIncome: 0, totalExpense: 0));
+          }),
+          dashboardPeriodSummaryProvider.overrideWith((ref) {
+            dashboardPeriodSummaryBuildCount++;
+            return const AsyncData(
+                PeriodSummary(totalIncome: 0, totalExpense: 0));
+          }),
+        ],
+      );
+
+      final controller =
+          testContainer.read(profileSettingsControllerProvider.notifier);
+
+      // Wait for initial profile load
+      await Future.delayed(Duration.zero);
+
+      // Initialize the providers so we can track if they get invalidated
+      testContainer.read(periodSummaryProvider);
+      testContainer.read(dashboardPeriodSummaryProvider);
+
+      expect(periodSummaryBuildCount, 1);
+      expect(dashboardPeriodSummaryBuildCount, 1);
+
+      // Update currency
+      await controller.updateCurrency('USD');
+
+      // The profile should be updated
+      final state = testContainer.read(profileSettingsControllerProvider);
+      expect(state.profile?.defaultCurrency, 'USD');
+
+      // Since they were invalidated and not listened to, they are disposed.
+      // Reading them again will trigger a new build.
+      testContainer.read(periodSummaryProvider);
+      testContainer.read(dashboardPeriodSummaryProvider);
+
+      expect(periodSummaryBuildCount, 2);
+      expect(dashboardPeriodSummaryBuildCount, 2);
+
+      testContainer.dispose();
     });
   });
 }

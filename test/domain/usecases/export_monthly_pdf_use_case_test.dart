@@ -163,6 +163,7 @@ void main() {
         budgets: any(named: 'budgets'),
         budgetCategoryNames: any(named: 'budgetCategoryNames'),
         savingsGoals: any(named: 'savingsGoals'),
+        customMonthLabel: any(named: 'customMonthLabel'),
       ),
     ).thenAnswer(
       (_) async => const ExportResult(
@@ -264,6 +265,7 @@ void main() {
         budgets: any(named: 'budgets'),
         budgetCategoryNames: any(named: 'budgetCategoryNames'),
         savingsGoals: any(named: 'savingsGoals'),
+        customMonthLabel: any(named: 'customMonthLabel'),
       ),
     );
 
@@ -381,6 +383,7 @@ void main() {
         budgets: any(named: 'budgets'),
         budgetCategoryNames: any(named: 'budgetCategoryNames'),
         savingsGoals: any(named: 'savingsGoals'),
+        customMonthLabel: any(named: 'customMonthLabel'),
       ),
     );
 
@@ -475,6 +478,7 @@ void main() {
           budgets: captureAny(named: 'budgets'),
           budgetCategoryNames: any(named: 'budgetCategoryNames'),
           savingsGoals: any(named: 'savingsGoals'),
+          customMonthLabel: any(named: 'customMonthLabel'),
         ),
       ).captured;
 
@@ -536,6 +540,7 @@ void main() {
           budgets: any(named: 'budgets'),
           budgetCategoryNames: any(named: 'budgetCategoryNames'),
           savingsGoals: captureAny(named: 'savingsGoals'),
+          customMonthLabel: any(named: 'customMonthLabel'),
         ),
       ).captured;
 
@@ -615,6 +620,7 @@ void main() {
           budgets: any(named: 'budgets'),
           budgetCategoryNames: any(named: 'budgetCategoryNames'),
           savingsGoals: any(named: 'savingsGoals'),
+          customMonthLabel: any(named: 'customMonthLabel'),
         ),
       ).thenAnswer(
         (_) async => const ExportResult(
@@ -641,6 +647,7 @@ void main() {
           budgets: any(named: 'budgets'),
           budgetCategoryNames: captureAny(named: 'budgetCategoryNames'),
           savingsGoals: any(named: 'savingsGoals'),
+          customMonthLabel: any(named: 'customMonthLabel'),
         ),
       ).captured;
 
@@ -678,6 +685,7 @@ void main() {
           budgets: captureAny(named: 'budgets'),
           budgetCategoryNames: any(named: 'budgetCategoryNames'),
           savingsGoals: captureAny(named: 'savingsGoals'),
+          customMonthLabel: any(named: 'customMonthLabel'),
         ),
       ).captured;
 
@@ -724,9 +732,10 @@ void main() {
         targetCurrency: 'EUR',
         dateRange: PdfExportDateRange.last30Days,
         forceNow: now,
+        customMonthLabel: 'Last 30 Days Translated',
       );
 
-      verify(
+      final result = verify(
         () => exportService.generateMonthlyPdf(
           any(),
           summary: any(named: 'summary'),
@@ -741,8 +750,11 @@ void main() {
           budgets: any(named: 'budgets'),
           budgetCategoryNames: any(named: 'budgetCategoryNames'),
           savingsGoals: any(named: 'savingsGoals'),
+          customMonthLabel: captureAny(named: 'customMonthLabel'),
         ),
-      ).called(1);
+      );
+      result.called(1);
+      expect(result.captured.first, 'Last 30 Days Translated');
     });
   });
 }

@@ -260,6 +260,7 @@ class ExportServiceImpl implements IExportService {
     List<Budget> budgets = const [],
     Map<String, String> budgetCategoryNames = const {},
     List<SavingsGoal> savingsGoals = const [],
+    String? customMonthLabel,
   }) async {
     final incomeCount =
         transactions.where((tx) => tx.type == TransactionType.income).length;
@@ -270,7 +271,8 @@ class ExportServiceImpl implements IExportService {
       final accountMap = {for (final a in accounts) a.id: a.name};
       final categoryMap = {for (final c in categories) c.id: c.name};
 
-      final monthLabel = DateFormat.yMMMM(l10n.localeName).format(month);
+      final monthLabel =
+          customMonthLabel ?? DateFormat.yMMMM(l10n.localeName).format(month);
 
       final fontData = await rootBundle.load('assets/fonts/Roboto-Regular.ttf');
       final fontDataBold =

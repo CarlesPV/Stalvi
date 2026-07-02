@@ -21,6 +21,8 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byType(Markdown), findsOneWidget);
-    expect(find.text('Visit my GitHub'), findsOneWidget);
+    final BuildContext context = tester.element(find.byType(AboutMeScreen));
+    final l10n = AppLocalizations.of(context)!;
+    expect(find.text(l10n.aboutMeGithubButton), findsOneWidget);
   });
 }

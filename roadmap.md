@@ -286,3 +286,11 @@
   - [x] Audit and verify complete key synchronization across `app_en.arb`, `app_es.arb`, and `app_ca.arb` (all matching exactly with 339 translation keys).
   - [x] Resolve all static analysis warnings, info messages, and ensure all unit/widget tests pass cleanly.
 
+- [x] **Phase 39: UI Localization Polish, Test Stability, and Expanded Overflow Protection**
+  - [x] Integrate missing localized strings (`recurrenceUtcWarning`) into the Automatic Transaction Recurrence selection sheet.
+  - [x] Localize the GitHub profile button (`aboutMeGithubButton`) on the About Me screen.
+  - [x] Implement horizontal scaling protection (`FittedBox` scaleDown) for Expense/Income tabs, Action Buttons, and Custom Recurrence Apply button.
+  - [x] Resolve dynamic layout constraints by wrapping custom recurrence apply actions in `Flexible`.
+  - [x] Update test assertions in `about_me_screen_test.dart` to verify localized button labels dynamically, maintaining a 100% test pass rate.
+  - [x] Fix static analysis errors by defining `colorScheme` inside recurrence selector widgets, guaranteeing 0 warnings and 0 errors on `flutter analyze`.
+

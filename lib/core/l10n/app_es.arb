@@ -343,5 +343,8 @@
       }
     }
   },
-  "accountInUseByAutoTxMessage": "Esta cuenta no se puede eliminar porque está vinculada a transacciones automáticas activas."
+  "accountInUseByAutoTxMessage": "Esta cuenta no se puede eliminar porque está vinculada a transacciones automáticas activas.",
+  "pdfExportLast30Days": "Últimos 30 días",
+  "recurrenceUtcWarning": "La hora de referencia es UTC+2",
+  "aboutMeGithubButton": "Ver mi GitHub"
 }

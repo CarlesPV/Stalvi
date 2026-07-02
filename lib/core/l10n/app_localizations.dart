@@ -2121,6 +2121,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'This account cannot be deleted because it is linked to active automatic transactions.'**
   String get accountInUseByAutoTxMessage;
+
+  /// No description provided for @pdfExportLast30Days.
+  ///
+  /// In en, this message translates to:
+  /// **'Last 30 days'**
+  String get pdfExportLast30Days;
+
+  /// No description provided for @recurrenceUtcWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Reference time is UTC+2'**
+  String get recurrenceUtcWarning;
+
+  /// No description provided for @aboutMeGithubButton.
+  ///
+  /// In en, this message translates to:
+  /// **'View my GitHub'**
+  String get aboutMeGithubButton;
 }
 
 class _AppLocalizationsDelegate

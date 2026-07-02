@@ -1127,4 +1127,13 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get accountInUseByAutoTxMessage =>
       'Esta cuenta no se puede eliminar porque está vinculada a transacciones automáticas activas.';
+
+  @override
+  String get pdfExportLast30Days => 'Últimos 30 días';
+
+  @override
+  String get recurrenceUtcWarning => 'La hora de referencia es UTC+2';
+
+  @override
+  String get aboutMeGithubButton => 'Ver mi GitHub';
 }
