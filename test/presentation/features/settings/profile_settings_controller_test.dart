@@ -258,12 +258,14 @@ void main() {
           periodSummaryProvider.overrideWith((ref) {
             periodSummaryBuildCount++;
             return const AsyncData(
-                PeriodSummary(totalIncome: 0, totalExpense: 0));
+              PeriodSummary(totalIncome: 0, totalExpense: 0),
+            );
           }),
           dashboardPeriodSummaryProvider.overrideWith((ref) {
             dashboardPeriodSummaryBuildCount++;
             return const AsyncData(
-                PeriodSummary(totalIncome: 0, totalExpense: 0));
+              PeriodSummary(totalIncome: 0, totalExpense: 0),
+            );
           }),
         ],
       );

@@ -294,3 +294,11 @@
   - [x] Update test assertions in `about_me_screen_test.dart` to verify localized button labels dynamically, maintaining a 100% test pass rate.
   - [x] Fix static analysis errors by defining `colorScheme` inside recurrence selector widgets, guaranteeing 0 warnings and 0 errors on `flutter analyze`.
 
+- [x] **Phase 40: Legal Compliance, Security Finalization & Quality Assurance**
+  - [x] Complete detailed rewrite of legal documents (Privacy Policy and Terms & Conditions) with strict GDPR and LOPDGDD compliance across English, Spanish, and Catalan.
+  - [x] Add explicit exemption of liability clauses and data immutability/calculation clarifications for currency exchange.
+  - [x] Update PDF Export service: respect the original currency of Budgets and Savings Goals instead of defaulting to the profile currency.
+  - [x] Update PDF Export service: format transfer transactions in the account column as "Source Account -> Destination Account".
+  - [x] Reorganize localization ARB files into logical blocks sorted alphabetically for maintainability.
+  - [x] Achieve 100% test pass rate on all unit and widget tests.
+  - [x] Run static analysis (`flutter analyze`) and ensure 0 warnings and 0 infos.

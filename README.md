@@ -90,6 +90,7 @@ Stalvi is fully localized in three languages, ensuring that all user-facing stri
 
 Stalvi places user privacy and data security above all else. Because the app is **local-first and zero-telemetry**, your financial information never leaves your device.
 
+- **GDPR & LOPDGDD Compliant:** Highly detailed Privacy Policy and Terms & Conditions mapped to European data protection standards, guaranteeing data rights such as total erasure and export, managed directly from your device.
 - **Database Encryption at Rest:** The SQLite database file is encrypted utilizing **SQLCipher (AES-256)**.
 - **Hardware-Backed Key Generation:** The database cipher key is generated using a secure CSPRNG and stored in the device's hardware-backed secure storage via `flutter_secure_storage` (Android Keystore / iOS Keychain).
 - **Secure Authentication:** Protection via a custom 4-to-8 digit PIN and **Biometric Lock** (Face ID / Touch ID) on startup. Includes brute-force lockout protection (lockout cooldown timer persisted in secure storage).

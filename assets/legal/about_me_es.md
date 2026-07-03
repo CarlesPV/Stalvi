@@ -1,7 +1,9 @@
 # Sobre mí
 
-Hola, soy Carles.
+¡Hola! Soy Carles Peiró.
 
-Soy un desarrollador Senior Flutter UX/UI. He creado Stalvi para proporcionar una aplicación financiera local con un rendimiento y diseño excelentes.
+Soy Ingeniero Informático.
 
-¡Gracias por usar Stalvi!
+Stalvi nació de mi deseo de crear una aplicación de finanzas personales premium, de alto rendimiento y de almacenamiento puramente local. Mi objetivo era construir una herramienta que diese a los usuarios un control total y seguro sobre sus datos financieros, con cero telemetría y cifrado avanzado, envuelto en un diseño elegante y minimalista.
+
+¡Muchas gracias por elegir y apoyar Stalvi!

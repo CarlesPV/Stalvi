@@ -162,6 +162,7 @@ void main() {
         transferDestinations: any(named: 'transferDestinations'),
         budgets: any(named: 'budgets'),
         budgetCategoryNames: any(named: 'budgetCategoryNames'),
+        budgetCurrencies: any(named: 'budgetCurrencies'),
         savingsGoals: any(named: 'savingsGoals'),
         customMonthLabel: any(named: 'customMonthLabel'),
       ),
@@ -264,6 +265,7 @@ void main() {
         transferDestinations: captureAny(named: 'transferDestinations'),
         budgets: any(named: 'budgets'),
         budgetCategoryNames: any(named: 'budgetCategoryNames'),
+        budgetCurrencies: any(named: 'budgetCurrencies'),
         savingsGoals: any(named: 'savingsGoals'),
         customMonthLabel: any(named: 'customMonthLabel'),
       ),
@@ -271,8 +273,8 @@ void main() {
 
     expect(result.captured[0], 'GBP');
     expect(result.captured[1], {
-      'tx1': 'Bank (Destination Account: Wallet)',
-      'tx2': 'Bank (Destination Account: Wallet)',
+      'tx1': 'Bank -> Wallet',
+      'tx2': 'Bank -> Wallet',
     });
   });
 
@@ -382,6 +384,7 @@ void main() {
         transferDestinations: captureAny(named: 'transferDestinations'),
         budgets: any(named: 'budgets'),
         budgetCategoryNames: any(named: 'budgetCategoryNames'),
+        budgetCurrencies: any(named: 'budgetCurrencies'),
         savingsGoals: any(named: 'savingsGoals'),
         customMonthLabel: any(named: 'customMonthLabel'),
       ),
@@ -389,8 +392,8 @@ void main() {
 
     expect(result.captured[0], esL10n);
     expect(result.captured[1], {
-      'tx1': 'Bank (Cuenta de destino: Wallet)',
-      'tx2': 'Bank (Cuenta de destino: Wallet)',
+      'tx1': 'Bank -> Wallet',
+      'tx2': 'Bank -> Wallet',
     });
   });
 
@@ -477,6 +480,7 @@ void main() {
           transferDestinations: any(named: 'transferDestinations'),
           budgets: captureAny(named: 'budgets'),
           budgetCategoryNames: any(named: 'budgetCategoryNames'),
+          budgetCurrencies: any(named: 'budgetCurrencies'),
           savingsGoals: any(named: 'savingsGoals'),
           customMonthLabel: any(named: 'customMonthLabel'),
         ),
@@ -539,6 +543,7 @@ void main() {
           transferDestinations: any(named: 'transferDestinations'),
           budgets: any(named: 'budgets'),
           budgetCategoryNames: any(named: 'budgetCategoryNames'),
+          budgetCurrencies: any(named: 'budgetCurrencies'),
           savingsGoals: captureAny(named: 'savingsGoals'),
           customMonthLabel: any(named: 'customMonthLabel'),
         ),
@@ -619,6 +624,7 @@ void main() {
           transferDestinations: any(named: 'transferDestinations'),
           budgets: any(named: 'budgets'),
           budgetCategoryNames: any(named: 'budgetCategoryNames'),
+          budgetCurrencies: any(named: 'budgetCurrencies'),
           savingsGoals: any(named: 'savingsGoals'),
           customMonthLabel: any(named: 'customMonthLabel'),
         ),
@@ -646,6 +652,7 @@ void main() {
           transferDestinations: any(named: 'transferDestinations'),
           budgets: any(named: 'budgets'),
           budgetCategoryNames: captureAny(named: 'budgetCategoryNames'),
+          budgetCurrencies: any(named: 'budgetCurrencies'),
           savingsGoals: any(named: 'savingsGoals'),
           customMonthLabel: any(named: 'customMonthLabel'),
         ),
@@ -684,6 +691,7 @@ void main() {
           transferDestinations: any(named: 'transferDestinations'),
           budgets: captureAny(named: 'budgets'),
           budgetCategoryNames: any(named: 'budgetCategoryNames'),
+          budgetCurrencies: any(named: 'budgetCurrencies'),
           savingsGoals: captureAny(named: 'savingsGoals'),
           customMonthLabel: any(named: 'customMonthLabel'),
         ),
@@ -749,6 +757,7 @@ void main() {
           transferDestinations: any(named: 'transferDestinations'),
           budgets: any(named: 'budgets'),
           budgetCategoryNames: any(named: 'budgetCategoryNames'),
+          budgetCurrencies: any(named: 'budgetCurrencies'),
           savingsGoals: any(named: 'savingsGoals'),
           customMonthLabel: captureAny(named: 'customMonthLabel'),
         ),

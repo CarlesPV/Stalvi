@@ -17,6 +17,7 @@ import 'package:pdf/widgets.dart' as pw;
 
 import 'package:stalvi/core/errors/app_exceptions.dart';
 import 'package:stalvi/core/l10n/app_localizations.dart';
+import 'package:stalvi/core/utils/currency_formatter.dart';
 import 'package:stalvi/domain/entities/account.dart';
 import 'package:stalvi/domain/entities/budget.dart';
 import 'package:stalvi/domain/entities/category.dart';
@@ -259,6 +260,7 @@ class ExportServiceImpl implements IExportService {
     Map<String, String> transferDestinations = const {},
     List<Budget> budgets = const [],
     Map<String, String> budgetCategoryNames = const {},
+    Map<String, String> budgetCurrencies = const {},
     List<SavingsGoal> savingsGoals = const [],
     String? customMonthLabel,
   }) async {
@@ -444,6 +446,7 @@ class ExportServiceImpl implements IExportService {
               _buildBudgetsTable(
                 activeBudgets,
                 budgetCategoryNames,
+                budgetCurrencies,
                 defaultCurrency,
                 symbol,
                 l10n,
@@ -1029,6 +1032,7 @@ class ExportServiceImpl implements IExportService {
   static pw.Widget _buildBudgetsTable(
     List<Budget> budgets,
     Map<String, String> categoryNames,
+    Map<String, String> budgetCurrencies,
     String defaultCurrency,
     String currencySymbol,
     AppLocalizations l10n,
@@ -1109,8 +1113,13 @@ class ExportServiceImpl implements IExportService {
               final spentPct = budget.targetAmount > 0
                   ? (budget.currentAmount / budget.targetAmount * 100)
                   : 0.0;
-              final maxValueLabel =
-                  '$currencySymbol ${_centsToDecimal(budget.targetAmount, l10n.localeName)} $defaultCurrency';
+              final budgetCurrency =
+                  budgetCurrencies[budget.id] ?? defaultCurrency;
+              final formatter = CurrencyFormatter(currencyCode: budgetCurrency);
+              final maxValueLabel = formatter.format(
+                budget.targetAmount / 100,
+                locale: l10n.localeName,
+              );
 
               // Color-code row background when overspent
               final pw.BoxDecoration? rowDecoration = spentPct > 100
@@ -1233,8 +1242,11 @@ class ExportServiceImpl implements IExportService {
               final completedPct = goal.targetAmount > 0
                   ? (goal.currentAmount / goal.targetAmount * 100)
                   : 0.0;
-              final targetLabel =
-                  '$currencySymbol ${_centsToDecimal(goal.targetAmount, l10n.localeName)} $defaultCurrency';
+              final formatter = CurrencyFormatter(currencyCode: goal.currency);
+              final targetLabel = formatter.format(
+                goal.targetAmount / 100,
+                locale: l10n.localeName,
+              );
 
               // Highlight completed goals
               final pw.BoxDecoration? rowDecoration =

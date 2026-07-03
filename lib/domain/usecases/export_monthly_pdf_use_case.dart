@@ -1,3 +1,4 @@
+import '../entities/account.dart';
 import '../repositories/i_account_repository.dart';
 import '../repositories/i_budget_repository.dart';
 import '../repositories/i_category_repository.dart';
@@ -149,11 +150,11 @@ class ExportMonthlyPdfUseCase {
           if (tx.amount < 0) {
             // Outgoing leg: "From: thisAccount → To: otherAccount"
             transferDestinations[tx.id] =
-                '$thisAccountName (${_l10n.destination_account}: $otherAccountName)';
+                '$thisAccountName -> $otherAccountName';
           } else {
             // Incoming leg: "From: otherAccount → To: thisAccount"
             transferDestinations[tx.id] =
-                '$otherAccountName (${_l10n.destination_account}: $thisAccountName)';
+                '$otherAccountName -> $thisAccountName';
           }
         }
       }
@@ -164,6 +165,15 @@ class ExportMonthlyPdfUseCase {
       for (final b in allBudgets)
         b.categoryId: categoryMap[b.categoryId] ?? b.categoryId,
     };
+
+    final Map<String, String> budgetCurrencies = {};
+    for (final b in allBudgets) {
+      final account = (accounts as List<Account>)
+          .where((a) => a.id == b.accountId)
+          .toList();
+      budgetCurrencies[b.id] =
+          account.isNotEmpty ? account.first.currency : defaultCurrency;
+    }
 
     // Filter active (non-deleted) budgets and savings goals
     final activeBudgets = allBudgets.where((b) => !b.isDeleted).toList();
@@ -183,6 +193,7 @@ class ExportMonthlyPdfUseCase {
       transferDestinations: transferDestinations,
       budgets: activeBudgets,
       budgetCategoryNames: budgetCategoryNames,
+      budgetCurrencies: budgetCurrencies,
       savingsGoals: activeSavingsGoals,
       customMonthLabel: customMonthLabel,
     );

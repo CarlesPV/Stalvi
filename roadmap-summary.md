@@ -570,10 +570,24 @@ This document lists the completed phases of the Stalvi development roadmap, prov
   - **Static Analysis Compliance**: Fixed undefined references by declaring `colorScheme` inside recurrence selector functions, yielding a completely warning-free/error-free `flutter analyze` environment.
   - **Test Suite Updates**: Refactored `about_me_screen_test.dart` to query localized button assertions dynamically, resolving failing cases and guaranteeing a 100% pass rate.
 * **Verification:**
-  - Standard static analysis pass (`flutter analyze` with 0 issues).
   - All 465 automated unit and widget tests pass cleanly with a 100% success rate.
 
+### Phase 40: Legal Compliance, Security Finalization & Quality Assurance
+* **Completion Date:** July 3, 2026
+* **Objective:** Ensure robust GDPR/LOPDGDD compliance in legal texts, reorganize and sort translation catalogs, enhance PDF export services with original currencies and transfer routing format, and verify complete quality assurance with zero static analysis warnings and 100% test pass rate.
+* **Accomplishments:**
+  - **GDPR & LOPDGDD Legal Compliance**: Wrote detailed legal agreements (Privacy Policy and Terms & Conditions) with explicit liability disclaimers, data erasure/export guidelines, and calculations disclosures across English, Spanish, and Catalan.
+  - **ARB Reorganization & Cleanup**: Reorganized ARB localization files into alphabetical blocks and removed legacy comment markers, ensuring valid JSON formatting.
+  - **PDF Export Updates**: Refactored the PDF export service to respect the original currency of Budgets and Savings Goals instead of forcing default profile currency, and formatted transfer operations visually as `Source Account -> Destination Account`.
+  - **Test Suite Stability**: Verified that the entire suite of 465 unit and widget tests passes successfully with a 100% success rate.
+* **Verification:**
+  - 100% clean static analysis (`flutter analyze` with 0 issues).
+  - All 465 automated unit and widget tests pass cleanly.
+
 ## Recent Updates
+- Completed detailed GDPR/LOPDGDD compliance legal documents rewrite across Catalan, English, and Spanish (Phase 40).
+- Reorganized ARB localization files to be valid, comment-free JSON sorted alphabetically (Phase 40).
+- Updated PDF exports to preserve original currencies for budgets and savings goals, and format transfer routes cleanly (Phase 40).
 - Added missing localizations (`recurrenceUtcWarning`, `aboutMeGithubButton`) to Settings and About Me screens, and expanded text overflow protection with FittedBox/Flexible layouts (Phase 39).
 - Resolved undefined identifier analyzer errors and stabilized dynamic test assertions inside the automated test suites (Phase 39).
 - Implemented UI/UX overflow safeguards, wrapping button text inside dialogs and bottom sheets in FittedBox to handle multi-language length differences (Phase 38).
