@@ -391,7 +391,7 @@ class AppLocalizationsCa extends AppLocalizations {
   String get createAccountIconLabel => 'Icona';
 
   @override
-  String get createAccountInitialBalanceLabel => 'Saldo';
+  String get createAccountInitialBalanceLabel => 'Saldo Inicial';
 
   @override
   String get createAccountNameHint => 'ex. Targeta Personal, Efectiu, etc.';

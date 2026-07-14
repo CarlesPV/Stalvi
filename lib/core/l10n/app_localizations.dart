@@ -817,7 +817,7 @@ abstract class AppLocalizations {
   /// No description provided for @createAccountInitialBalanceLabel.
   ///
   /// In en, this message translates to:
-  /// **'Balance'**
+  /// **'Initial Balance'**
   String get createAccountInitialBalanceLabel;
 
   /// No description provided for @createAccountNameHint.

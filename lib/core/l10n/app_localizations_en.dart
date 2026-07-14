@@ -390,7 +390,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get createAccountIconLabel => 'Icon';
 
   @override
-  String get createAccountInitialBalanceLabel => 'Balance';
+  String get createAccountInitialBalanceLabel => 'Initial Balance';
 
   @override
   String get createAccountNameHint => 'e.g. Personal Card, Cash, etc.';

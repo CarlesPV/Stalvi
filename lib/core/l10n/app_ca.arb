@@ -130,7 +130,7 @@
   "categoryInUseMessage": "{name} està en ús en transaccions existents. Si us plau, seleccioneu una categoria per reassignar-les:",
   "categoryInUseTitle": "Categoria en ús",
   "createAccountIconLabel": "Icona",
-  "createAccountInitialBalanceLabel": "Saldo",
+  "createAccountInitialBalanceLabel": "Saldo Inicial",
   "createAccountNameHint": "ex. Targeta Personal, Efectiu, etc.",
   "createAccountNameLabel": "Nom del compte",
   "createAccountTitle": "Crear nou compte",

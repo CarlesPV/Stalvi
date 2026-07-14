@@ -130,7 +130,7 @@
   "categoryInUseMessage": "{name} está en uso en transacciones existentes. Por favor, seleccione una categoría para reasignarlas:",
   "categoryInUseTitle": "Categoría en uso",
   "createAccountIconLabel": "Icono",
-  "createAccountInitialBalanceLabel": "Saldo",
+  "createAccountInitialBalanceLabel": "Saldo Inicial",
   "createAccountNameHint": "ej. Tarjeta Personal, Efectivo, etc.",
   "createAccountNameLabel": "Nombre de la cuenta",
   "createAccountTitle": "Crear nueva cuenta",
