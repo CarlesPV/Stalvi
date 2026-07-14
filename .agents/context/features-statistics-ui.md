@@ -10,6 +10,7 @@
 * **Anti-Blank Page Syndrome:** Always show default data or highly illustrative empty states (e.g., "Looks like you have no expenses yet! Tap '+' to log your morning coffee").
 * **Discreet Mode:** Include a prominent but subtle toggle (e.g., an eye icon) on the main dashboard to mask all global balances (`**** €`).
 * **Frictionless Entry:** The "Add Movement" FAB (Floating Action Button) must be accessible from almost anywhere. The input form should prioritize the numeric keypad.
+* **Read-Only Padlock Indicators:** Appends visual padlock icons trailing strictly read-only/non-editable fields (excluding date fields) on the Budgets, Savings Goals, and Accounts/Wallets detail/edit sheets to indicate immutability.
 
 ## 3. Screen Flows
 1. **Splash & Auth Screen:** * Logo display -> Biometric prompt or PIN pad.

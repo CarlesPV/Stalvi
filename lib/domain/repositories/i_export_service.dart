@@ -65,5 +65,6 @@ abstract class IExportService {
     Map<String, String> budgetCurrencies = const {},
     List<SavingsGoal> savingsGoals = const [],
     String? customMonthLabel,
+    String userName = '',
   });
 }

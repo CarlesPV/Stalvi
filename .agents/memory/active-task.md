@@ -1,21 +1,21 @@
-# Active Task: Phase 40 - UI/UX Polish, Data Reactivity, and Legal Compliance
+# Active Task: Phase 41 - Background Automation & Export/UI Polish
 
-## Objective
-Address critical UI/UX gaps (splash screen), ensure cross-provider reactivity for currency changes, refine PDF export logic, and standardize localization and legal documents.
+## Status
+- [ ] In Progress
 
-## Current Context
-The app features robust Clean Architecture with Riverpod and Drift. However, there are pending tasks regarding the native splash screen, real-time currency conversion across the app when the default currency changes, specific formatting rules for PDF exports (preserving original currencies for budgets/goals and showing transfer routes), and structural organization of ARB/legal files.
+## Objectives
+1. **Background Automation & Bug Fixes:** Implement a reliable background worker to process automatic transactions at 00:00 UTC+2, even when the app is terminated. Fix the bug preventing custom recurrence transactions from firing. Ensure currency conversions are applied.
+2. **PDF Export Enhancements:** Update the PDF generation service to format transfer transactions as "Origin -> Destination" (e.g., "Cuenta Principal -> Cartera Física"). Change the table header for Budgets/Savings Goals to "Valor máximo". Update the document title to include the User's name and ensure full localization (i18n) across all 3 supported languages.
+3. **UI Polish:** Add a padlock icon to read-only fields in the Budget and Savings Goal detail screens to match the UX of the accounts/wallets screens.
 
-## Tasks
-- [ ] Fix native splash screen to display `assets/icon/splash_icon.png` in both light and dark themes instead of a blank screen.
-- [ ] Implement reactive currency conversion calculations on the Dashboard/Statistics so that changing the default profile currency updates all displayed amounts instantly using cached exchange rates.
-- [ ] Update PDF Export service: respect the original currency of Budgets and Savings Goals instead of defaulting to the profile currency.
-- [ ] Update PDF Export service: format transfer transactions in the account column as "Source Account -> Destination Account".
-- [ ] Refactor `.arb` localization files: group by logical blocks and sort alphabetically within each block across en, es, and ca.
-- [ ] Overhaul Terms & Conditions and Privacy Policy markdown files in `assets/legal/` to be comprehensive and legally robust for a financial tracker app.
+## Technical Constraints
+- **Architecture:** Clean Architecture.
+- **State/DI:** Riverpod.
+- **Database:** Drift with SQLCipher.
+- **Testing:** All business rules and use cases must be covered by unit tests. CI workflows must pass with 0 warnings/errors.
+- **Background Execution:** Must use reliable native scheduling (e.g., `workmanager`) ensuring the Riverpod container and encrypted Drift DB are safely initialized in the background isolate.
 
-## Architecture Guidelines
-- Maintain strict separation of concerns.
-- Ensure PDF formatting logic is tested via unit tests in the domain/data layer.
-- Ensure Riverpod providers correctly use `ref.watch` to trigger UI updates upon profile currency changes.
-- **Agent Instruction:** Always modify files directly and silently; do not print generated code or content in the chat.
+## Pending Atomic Tasks
+- [ ] Task 41.1: Fix custom recurrence logic and implement UTC+2 background worker.
+- [ ] Task 41.2: Refactor PDF Export Use Cases for transfers, headers, and localized titles.
+- [ ] Task 41.3: Update UI for Budgets & Savings Goals detail views with read-only padlocks.

@@ -12,7 +12,15 @@ class AutomaticTransaction {
   final String? tagId;
   final String? notes;
   final RecurrenceType recurrenceType;
+
+  /// Meaning depends on [recurrenceType]:
+  /// - [RecurrenceType.intervalDays]       → number of days between firings.
+  /// - [RecurrenceType.specificDayOfMonth] → target calendar day (1–31).
+  /// - [RecurrenceType.weekly]             → unused (always 7 days).
+  /// - [RecurrenceType.monthly]            → unused (always 1 calendar month).
+  /// - [RecurrenceType.yearly]             → unused (always 1 calendar year).
   final int recurrenceDays;
+
   final DateTime nextExecutionDate;
   final DateTime createdAt;
   final bool isActive;
@@ -77,32 +85,84 @@ class AutomaticTransaction {
     );
   }
 
+  /// Computes the next execution date after [fromDate] based on [recurrenceType].
+  ///
+  /// - [RecurrenceType.intervalDays]       — adds [recurrenceDays] days.
+  /// - [RecurrenceType.weekly]             — adds exactly 7 days.
+  /// - [RecurrenceType.monthly]            — advances one calendar month on the
+  ///                                         same day, clamped to the last day
+  ///                                         of that month when needed.
+  /// - [RecurrenceType.yearly]             — advances one calendar year on the
+  ///                                         same date, clamped to the last day
+  ///                                         of that month (handles Feb 29 in
+  ///                                         non-leap years).
+  /// - [RecurrenceType.specificDayOfMonth] — advances one calendar month, then
+  ///                                         sets the day to [recurrenceDays],
+  ///                                         clamped to the last day of the
+  ///                                         resulting month.
   DateTime calculateNextExecutionDate(DateTime fromDate) {
-    if (recurrenceType == RecurrenceType.intervalDays) {
-      return fromDate.add(Duration(days: recurrenceDays));
-    } else {
-      int nextMonth = fromDate.month + 1;
-      int nextYear = fromDate.year;
-      if (nextMonth > 12) {
-        nextMonth = 1;
-        nextYear++;
-      }
+    switch (recurrenceType) {
+      case RecurrenceType.intervalDays:
+        return fromDate.add(Duration(days: recurrenceDays));
 
-      int targetDay = recurrenceDays;
-      int lastDayOfNextMonth = DateTime(nextYear, nextMonth + 1, 0).day;
+      case RecurrenceType.weekly:
+        return fromDate.add(const Duration(days: 7));
 
-      if (targetDay > lastDayOfNextMonth) {
-        targetDay = lastDayOfNextMonth;
-      }
+      case RecurrenceType.monthly:
+        return _advanceByMonths(fromDate, 1, fromDate.day);
 
-      return DateTime(
-        nextYear,
-        nextMonth,
-        targetDay,
-        fromDate.hour,
-        fromDate.minute,
-        fromDate.second,
-      );
+      case RecurrenceType.yearly:
+        return _advanceByYears(fromDate, 1, fromDate.month, fromDate.day);
+
+      case RecurrenceType.specificDayOfMonth:
+        return _advanceByMonths(fromDate, 1, recurrenceDays);
     }
+  }
+
+  // ── Helpers ────────────────────────────────────────────────────────────────
+
+  /// Returns a [DateTime] that is [months] calendar months after [from],
+  /// targeting [targetDay], clamped to the last day of the resulting month.
+  ///
+  /// The time-of-day component from [from] is preserved.
+  static DateTime _advanceByMonths(
+    DateTime from,
+    int months,
+    int targetDay,
+  ) {
+    int newMonth = from.month + months;
+    int newYear = from.year;
+    while (newMonth > 12) {
+      newMonth -= 12;
+      newYear++;
+    }
+    final lastDay = DateTime(newYear, newMonth + 1, 0).day;
+    final day = targetDay.clamp(1, lastDay);
+    return DateTime(
+        newYear, newMonth, day, from.hour, from.minute, from.second);
+  }
+
+  /// Returns a [DateTime] that is [years] calendar years after [from],
+  /// targeting [targetMonth]/[targetDay], clamped when the day does not exist
+  /// in the target year (e.g. Feb 29 → Feb 28 in non-leap years).
+  ///
+  /// The time-of-day component from [from] is preserved.
+  static DateTime _advanceByYears(
+    DateTime from,
+    int years,
+    int targetMonth,
+    int targetDay,
+  ) {
+    final newYear = from.year + years;
+    final lastDay = DateTime(newYear, targetMonth + 1, 0).day;
+    final day = targetDay.clamp(1, lastDay);
+    return DateTime(
+      newYear,
+      targetMonth,
+      day,
+      from.hour,
+      from.minute,
+      from.second,
+    );
   }
 }

@@ -41,8 +41,19 @@ final automaticTransactionsListProvider =
       );
 });
 
+/// Provides the [EvaluateAutomaticTransactionsUseCase] with all required
+/// repositories: automatic, transaction, account, profile, and exchange rate.
 final evaluateAutomaticTransactionsUseCaseProvider = Provider((ref) {
   final automaticRepo = ref.watch(automaticTransactionRepositoryProvider);
   final transactionRepo = ref.watch(transactionRepositoryProvider);
-  return EvaluateAutomaticTransactionsUseCase(automaticRepo, transactionRepo);
+  final accountRepo = ref.watch(accountRepositoryProvider);
+  final profileRepo = ref.watch(profileRepositoryProvider);
+  final exchangeRateRepo = ref.watch(exchangeRateRepositoryProvider);
+  return EvaluateAutomaticTransactionsUseCase(
+    automaticRepo,
+    transactionRepo,
+    accountRepo,
+    profileRepo,
+    exchangeRateRepo,
+  );
 });

@@ -165,6 +165,7 @@ void main() {
         budgetCurrencies: any(named: 'budgetCurrencies'),
         savingsGoals: any(named: 'savingsGoals'),
         customMonthLabel: any(named: 'customMonthLabel'),
+        userName: any(named: 'userName'),
       ),
     ).thenAnswer(
       (_) async => const ExportResult(
@@ -268,6 +269,7 @@ void main() {
         budgetCurrencies: any(named: 'budgetCurrencies'),
         savingsGoals: any(named: 'savingsGoals'),
         customMonthLabel: any(named: 'customMonthLabel'),
+        userName: any(named: 'userName'),
       ),
     );
 
@@ -387,6 +389,7 @@ void main() {
         budgetCurrencies: any(named: 'budgetCurrencies'),
         savingsGoals: any(named: 'savingsGoals'),
         customMonthLabel: any(named: 'customMonthLabel'),
+        userName: any(named: 'userName'),
       ),
     );
 
@@ -483,6 +486,7 @@ void main() {
           budgetCurrencies: any(named: 'budgetCurrencies'),
           savingsGoals: any(named: 'savingsGoals'),
           customMonthLabel: any(named: 'customMonthLabel'),
+          userName: any(named: 'userName'),
         ),
       ).captured;
 
@@ -546,6 +550,7 @@ void main() {
           budgetCurrencies: any(named: 'budgetCurrencies'),
           savingsGoals: captureAny(named: 'savingsGoals'),
           customMonthLabel: any(named: 'customMonthLabel'),
+          userName: any(named: 'userName'),
         ),
       ).captured;
 
@@ -627,6 +632,7 @@ void main() {
           budgetCurrencies: any(named: 'budgetCurrencies'),
           savingsGoals: any(named: 'savingsGoals'),
           customMonthLabel: any(named: 'customMonthLabel'),
+          userName: any(named: 'userName'),
         ),
       ).thenAnswer(
         (_) async => const ExportResult(
@@ -655,6 +661,7 @@ void main() {
           budgetCurrencies: any(named: 'budgetCurrencies'),
           savingsGoals: any(named: 'savingsGoals'),
           customMonthLabel: any(named: 'customMonthLabel'),
+          userName: any(named: 'userName'),
         ),
       ).captured;
 
@@ -694,6 +701,7 @@ void main() {
           budgetCurrencies: any(named: 'budgetCurrencies'),
           savingsGoals: captureAny(named: 'savingsGoals'),
           customMonthLabel: any(named: 'customMonthLabel'),
+          userName: any(named: 'userName'),
         ),
       ).captured;
 
@@ -760,6 +768,7 @@ void main() {
           budgetCurrencies: any(named: 'budgetCurrencies'),
           savingsGoals: any(named: 'savingsGoals'),
           customMonthLabel: captureAny(named: 'customMonthLabel'),
+          userName: any(named: 'userName'),
         ),
       );
       result.called(1);

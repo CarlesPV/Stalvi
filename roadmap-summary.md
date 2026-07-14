@@ -584,7 +584,19 @@ This document lists the completed phases of the Stalvi development roadmap, prov
   - 100% clean static analysis (`flutter analyze` with 0 issues).
   - All 465 automated unit and widget tests pass cleanly.
 
+### Phase 41: Read-Only Padlock Indicators
+* **Completion Date:** July 14, 2026
+* **Objective:** Improve detail screen UX by visually indicating read-only/non-editable fields using padlock icons, matching the design of the Accounts/Wallets detail views, and ensure 100% test and static analysis compliance.
+* **Accomplishments:**
+  - **Read-Only Padlock Icons**: Identified and appended a trailing padlock icon to all non-editable/read-only input fields (excluding date fields) on the Budgets (Target Amount, Currency, Account, Category) and Savings Goals (Goal Name, Target Amount, Currency) detail sheets.
+  - **Design Styling Matching**: Modeled the padlock and border design to perfectly match the existing layout implemented in the Accounts/Wallets detail dialog (using `Icons.lock_outline_rounded` of size 18, color `colorScheme.onSurfaceVariant.withValues(alpha: 0.5)`, and outline borders colored `colorScheme.outline.withValues(alpha: 0.3)`).
+  - **Static Analysis & Testing**: Validated that all 495 automated unit/widget tests and strict static analysis check (`flutter analyze --fatal-infos --fatal-warnings`) pass successfully with zero warnings/errors.
+* **Verification:**
+  - 100% clean static analysis (`flutter analyze` with 0 issues).
+  - All 495 automated unit and widget tests pass cleanly.
+
 ## Recent Updates
+- Added padlock icons trailing read-only input fields in Budgets and Savings Goals detail sheets (Phase 41).
 - Completed detailed GDPR/LOPDGDD compliance legal documents rewrite across Catalan, English, and Spanish (Phase 40).
 - Reorganized ARB localization files to be valid, comment-free JSON sorted alphabetically (Phase 40).
 - Updated PDF exports to preserve original currencies for budgets and savings goals, and format transfer routes cleanly (Phase 40).

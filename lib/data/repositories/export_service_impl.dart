@@ -263,6 +263,7 @@ class ExportServiceImpl implements IExportService {
     Map<String, String> budgetCurrencies = const {},
     List<SavingsGoal> savingsGoals = const [],
     String? customMonthLabel,
+    String userName = '',
   }) async {
     final incomeCount =
         transactions.where((tx) => tx.type == TransactionType.income).length;
@@ -306,7 +307,9 @@ class ExportServiceImpl implements IExportService {
                 mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                 children: [
                   pw.Text(
-                    '${l10n.appTitle} - ${l10n.overview}',
+                    userName.isNotEmpty
+                        ? '${l10n.appTitle} - ${l10n.overview} $userName'
+                        : '${l10n.appTitle} - ${l10n.overview}',
                     style: pw.TextStyle(
                       fontSize: 20,
                       fontWeight: pw.FontWeight.bold,
@@ -1094,7 +1097,7 @@ class ExportServiceImpl implements IExportService {
                 pw.Padding(
                   padding: const pw.EdgeInsets.all(4),
                   child: pw.Text(
-                    '${l10n.pdfBudgetsColMaxValue} ($defaultCurrency)',
+                    l10n.pdfBudgetsColMaxValue,
                     textAlign: pw.TextAlign.right,
                     style: pw.TextStyle(
                       fontWeight: pw.FontWeight.bold,
@@ -1227,7 +1230,7 @@ class ExportServiceImpl implements IExportService {
                 pw.Padding(
                   padding: const pw.EdgeInsets.all(4),
                   child: pw.Text(
-                    '${l10n.pdfSavingsColTarget} ($defaultCurrency)',
+                    l10n.pdfBudgetsColMaxValue,
                     textAlign: pw.TextAlign.right,
                     style: pw.TextStyle(
                       fontWeight: pw.FontWeight.bold,

@@ -180,6 +180,8 @@ class ExportMonthlyPdfUseCase {
     final activeSavingsGoals =
         allSavingsGoals.where((g) => !g.isDeleted).toList();
 
+    final userName = profile?.username ?? profile?.name ?? '';
+
     return _exportService.generateMonthlyPdf(
       monthTransactions,
       summary: summary,
@@ -196,6 +198,7 @@ class ExportMonthlyPdfUseCase {
       budgetCurrencies: budgetCurrencies,
       savingsGoals: activeSavingsGoals,
       customMonthLabel: customMonthLabel,
+      userName: userName,
     );
   }
 }

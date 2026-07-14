@@ -57,6 +57,7 @@ lib/
 ### 📊 Advanced Budgets & Savings Goals
 - **Budgets:** Set category-specific monthly spending limits mapped to specific accounts, with automatic locks on currency and target amounts post-creation.
 - **Savings Goals:** Track financial progress with dedicated targets. Savings goals can be selected directly as destinations in transfers.
+- **Read-Only Padlock Indicators:** Appends visual padlock icons trailing strictly read-only/non-editable fields (excluding date fields) on the Budgets and Savings Goals detail sheets, matching the design of the Accounts/Wallets detail views.
 - **Dynamic Recalculation:** Progress bars and spent percentages dynamically recalculate in real-time when transactions are added, edited, or deleted.
 - **Rolling 30-Day Statistics:** Dynamic balance, category distribution, and aggregation statistics are evaluated over a rolling 30-day window for instant dashboard trends.
 

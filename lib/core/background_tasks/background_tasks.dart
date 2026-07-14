@@ -7,15 +7,23 @@ import 'package:stalvi/presentation/providers/automatic_transactions_providers.d
 const String evaluateAutomaticTransactionsTask =
     "evaluateAutomaticTransactionsTask";
 
+/// Background entry-point registered with WorkManager.
+///
+/// **Isolation safety**: This function runs in a separate Dart isolate when
+/// the host app may be completely terminated. The sequence below ensures the
+/// encrypted Drift/SQLCipher database is fully open before any provider that
+/// calls `requireValue` on [appDatabaseProvider] is accessed.
 @pragma('vm:entry-point')
 void callbackDispatcher() {
   Workmanager().executeTask((task, inputData) async {
+    ProviderContainer? container;
     try {
       WidgetsFlutterBinding.ensureInitialized();
 
-      final container = ProviderContainer();
+      container = ProviderContainer();
 
-      // Initialize the database to ensure it's open before accessing repositories
+      // ── Critical: await full DB initialisation before reading any provider
+      // that synchronously calls `requireValue` on appDatabaseProvider.
       await container.read(appDatabaseProvider.future);
 
       if (task == evaluateAutomaticTransactionsTask) {
@@ -24,29 +32,31 @@ void callbackDispatcher() {
         await useCase.execute();
       }
 
-      container.dispose();
-      return Future.value(true);
-    } catch (e) {
-      debugPrint("Background task failed: $e");
-      return Future.value(false);
+      return true;
+    } catch (e, st) {
+      debugPrint('Background task "$task" failed: $e\n$st');
+      return false;
+    } finally {
+      container?.dispose();
     }
   });
 }
 
 class BackgroundTasks {
   static Future<void> initialize() async {
-    await Workmanager().initialize(
-      callbackDispatcher,
-    );
+    await Workmanager().initialize(callbackDispatcher);
   }
 
+  /// Registers a periodic task that targets 00:00 UTC+2 (22:00 UTC) daily.
+  ///
+  /// WorkManager does not guarantee exact timing, but by computing the
+  /// [initialDelay] to the next 22:00 UTC the first invocation is anchored
+  /// close to midnight local time (UTC+2). Subsequent 24-hour windows
+  /// naturally drift within OS tolerances; the use case guards against
+  /// double-firing by comparing [nextExecutionDate] against the current time.
   static void registerPeriodicTasks() {
-    // Schedule to run every 24 hours. The Workmanager minimum periodic interval is 15 minutes.
-    // To target 0:00 UTC+2 approximately, we would need to calculate initial delay,
-    // but the OS determines exact execution time anyway. Running it daily is sufficient
-    // since the use case checks if the execution date is due.
     final now = DateTime.now().toUtc();
-    // UTC+2 means midnight is at 22:00 UTC.
+    // UTC+2 midnight = 22:00 UTC.
     var target = DateTime.utc(now.year, now.month, now.day, 22, 0);
     if (now.isAfter(target)) {
       target = target.add(const Duration(days: 1));
@@ -54,7 +64,7 @@ class BackgroundTasks {
     final initialDelay = target.difference(now);
 
     Workmanager().registerPeriodicTask(
-      "1",
+      '1',
       evaluateAutomaticTransactionsTask,
       frequency: const Duration(hours: 24),
       initialDelay: initialDelay,

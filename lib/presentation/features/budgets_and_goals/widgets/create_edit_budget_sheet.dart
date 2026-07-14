@@ -243,6 +243,22 @@ class _CreateEditBudgetSheetState extends ConsumerState<CreateEditBudgetSheet> {
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(16),
                   ),
+                  disabledBorder: isEditing
+                      ? OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          borderSide: BorderSide(
+                            color: colorScheme.outline.withValues(alpha: 0.3),
+                          ),
+                        )
+                      : null,
+                  suffixIcon: isEditing
+                      ? Icon(
+                          Icons.lock_outline_rounded,
+                          size: 18,
+                          color: colorScheme.onSurfaceVariant
+                              .withValues(alpha: 0.5),
+                        )
+                      : null,
                 ),
               ),
               const SizedBox(height: 16),
@@ -253,6 +269,22 @@ class _CreateEditBudgetSheetState extends ConsumerState<CreateEditBudgetSheet> {
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(16),
                   ),
+                  disabledBorder: isEditing
+                      ? OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          borderSide: BorderSide(
+                            color: colorScheme.outline.withValues(alpha: 0.3),
+                          ),
+                        )
+                      : null,
+                  suffixIcon: isEditing
+                      ? Icon(
+                          Icons.lock_outline_rounded,
+                          size: 18,
+                          color: colorScheme.onSurfaceVariant
+                              .withValues(alpha: 0.5),
+                        )
+                      : null,
                 ),
                 items: isEditing
                     ? [
@@ -332,6 +364,23 @@ class _CreateEditBudgetSheetState extends ConsumerState<CreateEditBudgetSheet> {
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(16),
                       ),
+                      disabledBorder: isEditing
+                          ? OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(16),
+                              borderSide: BorderSide(
+                                color:
+                                    colorScheme.outline.withValues(alpha: 0.3),
+                              ),
+                            )
+                          : null,
+                      suffixIcon: isEditing
+                          ? Icon(
+                              Icons.lock_outline_rounded,
+                              size: 18,
+                              color: colorScheme.onSurfaceVariant
+                                  .withValues(alpha: 0.5),
+                            )
+                          : null,
                     ),
                     items: isEditing
                         ? (existingAccount != null
@@ -398,6 +447,23 @@ class _CreateEditBudgetSheetState extends ConsumerState<CreateEditBudgetSheet> {
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(16),
                       ),
+                      disabledBorder: isEditing
+                          ? OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(16),
+                              borderSide: BorderSide(
+                                color:
+                                    colorScheme.outline.withValues(alpha: 0.3),
+                              ),
+                            )
+                          : null,
+                      suffixIcon: isEditing
+                          ? Icon(
+                              Icons.lock_outline_rounded,
+                              size: 18,
+                              color: colorScheme.onSurfaceVariant
+                                  .withValues(alpha: 0.5),
+                            )
+                          : null,
                     ),
                     items: filteredCategories.map((c) {
                       return DropdownMenuItem(

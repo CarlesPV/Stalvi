@@ -249,11 +249,12 @@ class CreateEditAutomaticTransactionNotifier extends AutoDisposeFamilyNotifier<
       if (state.recurrenceDays <= 0 || state.recurrenceDays > 31) {
         validationErrors['recurrenceDays'] = 'INVALID_RECURRENCE_DAY';
       }
-    } else {
+    } else if (state.recurrenceType == RecurrenceType.intervalDays) {
       if (state.recurrenceDays <= 0 || state.recurrenceDays > 365) {
         validationErrors['recurrenceDays'] = 'INVALID_RECURRENCE_INTERVAL';
       }
     }
+    // weekly / monthly / yearly have no recurrenceDays constraint.
 
     if (validationErrors.isNotEmpty) {
       final firstKey = validationErrors.keys.first;
@@ -306,32 +307,67 @@ class CreateEditAutomaticTransactionNotifier extends AutoDisposeFamilyNotifier<
       final trimmedNotes = state.notes.trim();
 
       DateTime calcNextDate() {
+        // On edit: keep the existing future date unchanged.
         if (arg != null && arg!.nextExecutionDate.isAfter(DateTime.now())) {
           return arg!.nextExecutionDate;
         }
         final now = DateTime.now();
-        if (state.recurrenceType == RecurrenceType.intervalDays) {
-          return now.add(Duration(days: state.recurrenceDays));
-        } else {
-          int nextMonth = now.month + 1;
-          int nextYear = now.year;
-          if (nextMonth > 12) {
-            nextMonth = 1;
-            nextYear++;
-          }
-          int targetDay = state.recurrenceDays;
-          int lastDayOfNextMonth = DateTime(nextYear, nextMonth + 1, 0).day;
-          if (targetDay > lastDayOfNextMonth) {
-            targetDay = lastDayOfNextMonth;
-          }
-          return DateTime(
-            nextYear,
-            nextMonth,
-            targetDay,
-            now.hour,
-            now.minute,
-            now.second,
-          );
+        switch (state.recurrenceType) {
+          case RecurrenceType.intervalDays:
+            return now.add(Duration(days: state.recurrenceDays));
+
+          case RecurrenceType.weekly:
+            return now.add(const Duration(days: 7));
+
+          case RecurrenceType.monthly:
+            // Same calendar day next month, clamped.
+            final lastDay = DateTime(now.year, now.month + 2, 0).day;
+            final targetDay = now.day.clamp(1, lastDay);
+            int nextMonth = now.month + 1;
+            int nextYear = now.year;
+            if (nextMonth > 12) {
+              nextMonth = 1;
+              nextYear++;
+            }
+            return DateTime(
+              nextYear,
+              nextMonth,
+              targetDay,
+              now.hour,
+              now.minute,
+              now.second,
+            );
+
+          case RecurrenceType.yearly:
+            // Same calendar date next year, clamped.
+            final yLastDay = DateTime(now.year + 1, now.month + 1, 0).day;
+            final yTargetDay = now.day.clamp(1, yLastDay);
+            return DateTime(
+              now.year + 1,
+              now.month,
+              yTargetDay,
+              now.hour,
+              now.minute,
+              now.second,
+            );
+
+          case RecurrenceType.specificDayOfMonth:
+            int nextMonth = now.month + 1;
+            int nextYear = now.year;
+            if (nextMonth > 12) {
+              nextMonth = 1;
+              nextYear++;
+            }
+            final lastDayOfNextMonth = DateTime(nextYear, nextMonth + 1, 0).day;
+            final targetDay = state.recurrenceDays.clamp(1, lastDayOfNextMonth);
+            return DateTime(
+              nextYear,
+              nextMonth,
+              targetDay,
+              now.hour,
+              now.minute,
+              now.second,
+            );
         }
       }
 

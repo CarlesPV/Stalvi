@@ -302,3 +302,9 @@
   - [x] Reorganize localization ARB files into logical blocks sorted alphabetically for maintainability.
   - [x] Achieve 100% test pass rate on all unit and widget tests.
   - [x] Run static analysis (`flutter analyze`) and ensure 0 warnings and 0 infos.
+
+- [x] **Phase 41: Read-Only Padlock Indicators**
+  - [x] Identify and add padlock icons to read-only/non-editable fields (excluding date fields) on the Budgets and Savings Goals detail sheets.
+  - [x] Match padlock design and disabled border styling with the Accounts/Wallets detail views.
+  - [x] Run static analysis and tests to ensure 100% compliance.
+

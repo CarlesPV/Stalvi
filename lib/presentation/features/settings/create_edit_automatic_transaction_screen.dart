@@ -627,13 +627,18 @@ class _CreateEditAutomaticTransactionScreenState
     int days,
   ) {
     final l10n = AppLocalizations.of(context)!;
-    if (type == RecurrenceType.specificDayOfMonth) {
-      return l10n.autoTxFormatSpecificDay(days.toString());
+    switch (type) {
+      case RecurrenceType.specificDayOfMonth:
+        return l10n.autoTxFormatSpecificDay(days.toString());
+      case RecurrenceType.weekly:
+        return l10n.autoTxFormatWeekly;
+      case RecurrenceType.monthly:
+        return l10n.autoTxFormatMonthly;
+      case RecurrenceType.yearly:
+        return l10n.autoTxFormatYearly;
+      case RecurrenceType.intervalDays:
+        return l10n.autoTxFormatEveryDays(days);
     }
-    if (days == 7) return l10n.autoTxFormatWeekly;
-    if (days == 30) return l10n.autoTxFormatMonthly;
-    if (days == 365) return l10n.autoTxFormatYearly;
-    return l10n.autoTxFormatEveryDays(days);
   }
 
   void _showAccountSelector(
@@ -1031,9 +1036,7 @@ class _CreateEditAutomaticTransactionScreenState
                             _RecurrenceOptionTile(
                               title: l10n.autoTxRecurrenceWeekly,
                               isSelected: !isCustomActive &&
-                                  state.recurrenceType ==
-                                      RecurrenceType.intervalDays &&
-                                  state.recurrenceDays == 7,
+                                  state.recurrenceType == RecurrenceType.weekly,
                               onTap: () {
                                 ref
                                     .read(
@@ -1042,7 +1045,7 @@ class _CreateEditAutomaticTransactionScreenState
                                       ).notifier,
                                     )
                                     .updateRecurrence(
-                                      RecurrenceType.intervalDays,
+                                      RecurrenceType.weekly,
                                       7,
                                     );
                                 Navigator.of(context).pop();
@@ -1052,8 +1055,7 @@ class _CreateEditAutomaticTransactionScreenState
                               title: l10n.autoTxRecurrenceMonthly,
                               isSelected: !isCustomActive &&
                                   state.recurrenceType ==
-                                      RecurrenceType.intervalDays &&
-                                  state.recurrenceDays == 30,
+                                      RecurrenceType.monthly,
                               onTap: () {
                                 ref
                                     .read(
@@ -1062,7 +1064,7 @@ class _CreateEditAutomaticTransactionScreenState
                                       ).notifier,
                                     )
                                     .updateRecurrence(
-                                      RecurrenceType.intervalDays,
+                                      RecurrenceType.monthly,
                                       30,
                                     );
                                 Navigator.of(context).pop();
@@ -1071,9 +1073,7 @@ class _CreateEditAutomaticTransactionScreenState
                             _RecurrenceOptionTile(
                               title: l10n.autoTxRecurrenceYearly,
                               isSelected: !isCustomActive &&
-                                  state.recurrenceType ==
-                                      RecurrenceType.intervalDays &&
-                                  state.recurrenceDays == 365,
+                                  state.recurrenceType == RecurrenceType.yearly,
                               onTap: () {
                                 ref
                                     .read(
@@ -1082,7 +1082,7 @@ class _CreateEditAutomaticTransactionScreenState
                                       ).notifier,
                                     )
                                     .updateRecurrence(
-                                      RecurrenceType.intervalDays,
+                                      RecurrenceType.yearly,
                                       365,
                                     );
                                 Navigator.of(context).pop();
