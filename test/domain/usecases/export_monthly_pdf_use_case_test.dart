@@ -278,7 +278,7 @@ void main() {
     expect(result.captured[0], 'GBP');
     expect(result.captured[1], {
       'tx1': 'Bank -> Wallet',
-      'tx2': 'Bank -> Wallet',
+      'tx2': 'Wallet -> Bank',
     });
   });
 
@@ -398,7 +398,7 @@ void main() {
     expect(result.captured[0], esL10n);
     expect(result.captured[1], {
       'tx1': 'Bank -> Wallet',
-      'tx2': 'Bank -> Wallet',
+      'tx2': 'Wallet -> Bank',
     });
   });
 

@@ -35,7 +35,8 @@ void callbackDispatcher() {
     ProviderContainer? container;
     try {
       debugPrint(
-          '[BackgroundTask] "$task" started at ${DateTime.now().toUtc().toIso8601String()}');
+        '[BackgroundTask] "$task" started at ${DateTime.now().toUtc().toIso8601String()}',
+      );
 
       container = ProviderContainer();
 

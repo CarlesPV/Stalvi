@@ -77,7 +77,7 @@ void main() {
     await db.into(db.profiles).insert(
           ProfilesCompanion.insert(
             id: 'u1',
-            name: 'User 1',
+            name: 'Original User Name',
             username: 'user1',
             password: 'pwd',
             defaultCurrency: const Value('USD'),
@@ -179,6 +179,7 @@ void main() {
       savingsGoals: [savingsGoal],
       automaticTransactions: [autoTx],
       password: 'mypassword',
+      userName: 'Restored User Name',
     );
 
     // Wipe and Import
@@ -188,6 +189,10 @@ void main() {
     );
 
     // Verify
+    final profiles = await db.select(db.profiles).get();
+    expect(profiles.length, 1);
+    expect(profiles.first.name, 'Restored User Name');
+
     final accounts = await db.select(db.accounts).get();
     final categories = await db.select(db.categories).get();
     final tags = await db.select(db.tags).get();

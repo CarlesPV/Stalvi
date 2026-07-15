@@ -42,6 +42,7 @@ abstract class IExportService {
     required List<SavingsGoal> savingsGoals,
     required List<AutomaticTransaction> automaticTransactions,
     required String password,
+    required String userName,
   });
 
   Future<String> decryptJsonPayload(

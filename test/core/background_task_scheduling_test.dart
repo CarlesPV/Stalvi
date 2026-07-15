@@ -49,7 +49,9 @@ void main() {
       expect(result.target, equals(DateTime.utc(2026, 7, 16, 22, 0, 0)));
       // From 23:30 UTC today to 22:00 UTC tomorrow = 22.5 hours.
       expect(
-          result.initialDelay, equals(const Duration(hours: 22, minutes: 30)));
+        result.initialDelay,
+        equals(const Duration(hours: 22, minutes: 30)),
+      );
     });
 
     test('crosses year boundary correctly (31 Dec 23:00 UTC → 1 Jan 22:00 UTC)',

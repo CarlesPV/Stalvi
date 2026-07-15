@@ -56,22 +56,59 @@ class ImportServiceImpl implements IImportService {
         );
       }
 
-      final accountsJson = (data['accounts'] as List<dynamic>? ?? [])
-          .cast<Map<String, dynamic>>();
-      final categoriesJson = (data['categories'] as List<dynamic>? ?? [])
-          .cast<Map<String, dynamic>>();
-      final tagsJson =
-          (data['tags'] as List<dynamic>? ?? []).cast<Map<String, dynamic>>();
-      final transactionsJson = (data['transactions'] as List<dynamic>? ?? [])
-          .cast<Map<String, dynamic>>();
+      List<Map<String, dynamic>> accountsJson;
+      List<Map<String, dynamic>> categoriesJson;
+      List<Map<String, dynamic>> tagsJson;
+      List<Map<String, dynamic>> transactionsJson;
+      List<Map<String, dynamic>> budgetsJson;
+      List<Map<String, dynamic>> savingsGoalsJson;
+      List<Map<String, dynamic>> automaticTransactionsJson;
 
-      final budgetsJson = (data['budgets'] as List<dynamic>? ?? [])
-          .cast<Map<String, dynamic>>();
-      final savingsGoalsJson = (data['savings_goals'] as List<dynamic>? ?? [])
-          .cast<Map<String, dynamic>>();
-      final automaticTransactionsJson =
-          (data['automatic_transactions'] as List<dynamic>? ?? [])
-              .cast<Map<String, dynamic>>();
+      try {
+        accountsJson = (data['accounts'] as List<dynamic>? ?? [])
+            .map((e) => e as Map<String, dynamic>)
+            .toList();
+        categoriesJson = (data['categories'] as List<dynamic>? ?? [])
+            .map((e) => e as Map<String, dynamic>)
+            .toList();
+        tagsJson = (data['tags'] as List<dynamic>? ?? [])
+            .map((e) => e as Map<String, dynamic>)
+            .toList();
+        transactionsJson = (data['transactions'] as List<dynamic>? ?? [])
+            .map((e) => e as Map<String, dynamic>)
+            .toList();
+        budgetsJson = (data['budgets'] as List<dynamic>? ?? [])
+            .map((e) => e as Map<String, dynamic>)
+            .toList();
+        savingsGoalsJson = (data['savings_goals'] as List<dynamic>? ?? [])
+            .map((e) => e as Map<String, dynamic>)
+            .toList();
+        automaticTransactionsJson =
+            (data['automatic_transactions'] as List<dynamic>? ?? [])
+                .map((e) => e as Map<String, dynamic>)
+                .toList();
+
+        // Perform a quick sanity check to ensure essential fields exist
+        for (final a in accountsJson) {
+          if (a['id'] == null || a['name'] == null) {
+            throw const FormatException('Account missing id or name');
+          }
+        }
+        for (final t in transactionsJson) {
+          if (t['id'] == null ||
+              t['amount'] == null ||
+              t['account_id'] == null) {
+            throw const FormatException('Transaction missing required fields');
+          }
+        }
+      } catch (e) {
+        throw ImportException(
+          message:
+              'The backup file format is invalid or missing required fields.',
+          code: 'INVALID_FORMAT',
+          details: e,
+        );
+      }
 
       // Sort categories so parents are inserted before children to satisfy self-referencing FKs
       categoriesJson.sort((a, b) {
@@ -105,6 +142,13 @@ class ImportServiceImpl implements IImportService {
               ..limit(1))
             .getSingleOrNull();
         final currentUserId = currentProfile?.id;
+
+        if (currentProfile != null && data['user_name'] is String) {
+          final updatedName = data['user_name'] as String;
+          await (_database.update(_database.profiles)
+                ..where((t) => t.id.equals(currentProfile.id)))
+              .write(db.ProfilesCompanion(name: Value(updatedName)));
+        }
 
         // Insert Accounts
         for (final acc in accountsJson) {

@@ -98,3 +98,9 @@ Stalvi places user privacy and data security above all else. Because the app is 
 - **Background UI Blurring:** The application window is blurred dynamically using a native app lifecycle wrapper when placed in the background or app switcher to prevent unauthorized visual capture.
 - **Discreet Mode:** Toggle button in the app bar instantly masks all financial balances, amounts, and trends across the application under a custom secure obfuscation font.
 - **Delete Account (Right to Be Forgotten):** An explicit option in the settings menu drops all database tables, purges all secure storage keychain credentials, and performs a cold application restart to guarantee complete data deletion.
+
+### Recent Updates
+- Improved backup system format validation to ensure missing data/fields are handled correctly.
+- Backup now includes the username in the payload and correctly handles the destination account ID for transfer transactions.
+- During database restoration, the user's profile name is updated to the username stored in the backup.
+- Renamed exported file prefixes to correspond to their respective types: `Stalvi_Backup_` (kbak), `Stalvi_Table_` (csv), and `Stalvi_Overview_` (pdf).

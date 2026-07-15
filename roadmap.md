@@ -313,3 +313,9 @@
   - [x] Update unit tests to stub raw transaction queries and verify correct behavior.
   - [x] Maintain 100% build health, static analysis compliance, and test pass rate.
 
+- [x] **Phase 43: Backup Username Update & Filename Customization**
+  - [x] Update import service to overwrite the active user's profile name with the one saved in the backup payload.
+  - [x] Rename export filename prefixes based on document type: "Stalvi_Backup" for backups, "Stalvi_Table" for CSVs, and "Stalvi_Overview" for PDFs.
+  - [x] Ensure 100% build health, clean lint checks (0 issues on `flutter analyze`), and successfully execute all tests.
+
+

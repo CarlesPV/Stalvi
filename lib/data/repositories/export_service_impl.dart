@@ -112,7 +112,7 @@ class ExportServiceImpl implements IExportService {
 
       final bytes = utf8.encode(buffer.toString());
       final filename =
-          'Stalvi_Export_${DateFormat('yyyyMMdd_HHmmss').format(DateTime.now())}.csv';
+          'Stalvi_Table_${DateFormat('yyyyMMdd_HHmmss').format(DateTime.now())}.csv';
       final savedPath = await _saveFile(bytes, filename);
 
       return ExportResult(
@@ -140,6 +140,7 @@ class ExportServiceImpl implements IExportService {
     required List<SavingsGoal> savingsGoals,
     required List<AutomaticTransaction> automaticTransactions,
     required String password,
+    required String userName,
   }) async {
     if (password.isEmpty) {
       throw const ExportException(
@@ -152,6 +153,7 @@ class ExportServiceImpl implements IExportService {
       final payload = jsonEncode({
         'exportedAt': DateTime.now().toIso8601String(),
         'version': 3,
+        'user_name': userName,
         'accounts': accounts.map(_accountToMap).toList(),
         'categories': categories.map(_categoryToMap).toList(),
         'tags': tags.map(_tagToMap).toList(),
@@ -176,9 +178,9 @@ class ExportServiceImpl implements IExportService {
       envelope.setRange(16, 32, iv.bytes);
       envelope.setRange(32, envelope.length, encrypted.bytes);
 
-      // Ensures "Stalvi_Export" in filename per requirements
+      // Ensures "Stalvi_Backup" in filename per requirements
       final filename =
-          'Stalvi_Export_${DateFormat('yyyyMMdd_HHmmss').format(DateTime.now())}.kbak';
+          'Stalvi_Backup_${DateFormat('yyyyMMdd_HHmmss').format(DateTime.now())}.kbak';
       final savedPath = await _saveFile(envelope, filename);
 
       return ExportResult(
@@ -479,7 +481,7 @@ class ExportServiceImpl implements IExportService {
 
       final bytes = await pdf.save();
       final filename =
-          'Stalvi_Export_${DateFormat('yyyyMMdd_HHmmss').format(DateTime.now())}.pdf';
+          'Stalvi_Overview_${DateFormat('yyyyMMdd_HHmmss').format(DateTime.now())}.pdf';
       final savedPath = await _saveFile(bytes, filename);
 
       return ExportResult(

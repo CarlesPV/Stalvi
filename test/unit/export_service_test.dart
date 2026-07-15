@@ -112,7 +112,7 @@ void main() {
       expect(result.mimeType, equals('text/csv'));
       expect(
         result.filename,
-        matches(RegExp(r'^Stalvi_Export_\d{8}_\d{6}\.csv$')),
+        matches(RegExp(r'^Stalvi_Table_\d{8}_\d{6}\.csv$')),
       );
     });
 
@@ -284,13 +284,14 @@ void main() {
         savingsGoals: const [],
         automaticTransactions: const [],
         password: password,
+        userName: 'User 1',
       );
 
       // Assert
       expect(result.mimeType, equals('application/octet-stream'));
       expect(
         result.filename,
-        matches(RegExp(r'^Stalvi_Export_\d{8}_\d{6}\.kbak$')),
+        matches(RegExp(r'^Stalvi_Backup_\d{8}_\d{6}\.kbak$')),
       );
     });
 
@@ -309,6 +310,7 @@ void main() {
         savingsGoals: const [],
         automaticTransactions: const [],
         password: password,
+        userName: 'User 1',
       );
 
       // Assert
@@ -330,6 +332,7 @@ void main() {
         savingsGoals: const [],
         automaticTransactions: const [],
         password: password,
+        userName: 'User 1',
       );
       final result2 = await service.generateEncryptedJson(
         accounts: _emptyAccounts,
@@ -340,6 +343,7 @@ void main() {
         savingsGoals: const [],
         automaticTransactions: const [],
         password: password,
+        userName: 'User 1',
       );
 
       // Assert – random salt + IV ensure ciphertexts differ on every run
@@ -359,6 +363,7 @@ void main() {
         savingsGoals: const [],
         automaticTransactions: const [],
         password: password,
+        userName: 'User 1',
       );
 
       // Act – manually unpack envelope and decrypt
@@ -401,6 +406,7 @@ void main() {
         savingsGoals: const [],
         automaticTransactions: const [],
         password: password,
+        userName: 'User 1',
       );
 
       // Act – try to decrypt with a wrong password
@@ -445,6 +451,7 @@ void main() {
           savingsGoals: const [],
           automaticTransactions: const [],
           password: '',
+          userName: 'User 1',
         ),
         throwsA(isA<ExportException>()),
       );
@@ -463,6 +470,7 @@ void main() {
         savingsGoals: const [],
         automaticTransactions: const [],
         password: password,
+        userName: 'User 1',
       );
 
       // Act – decrypt and parse
@@ -513,7 +521,7 @@ void main() {
       expect(result.mimeType, equals('application/pdf'));
       expect(
         result.filename,
-        matches(RegExp(r'^Stalvi_Export_\d{8}_\d{6}\.pdf$')),
+        matches(RegExp(r'^Stalvi_Overview_\d{8}_\d{6}\.pdf$')),
       );
     });
 

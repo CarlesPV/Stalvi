@@ -633,3 +633,4 @@ This document lists the completed phases of the Stalvi development roadmap, prov
 - Added full Unicode font support in PDF exports using Roboto font assets to fix currency symbol placeholders.
 - Updated Terms and Privacy policy legal markdown assets for Catalan, English, and Spanish.
 - Achieved a completely clean static analysis check with 0 issues on `flutter analyze` and 100% test pass rate.
+\n- [x] Fixed backup system to save the username and include the destination account for transfers.\n- [x] Improved backup format validation on import.

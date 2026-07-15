@@ -80,7 +80,7 @@ class ExportEncryptedJsonUseCase {
         List<AutomaticTransaction>.from(results[5] as Iterable);
 
     final allTransactions =
-        await _transactionRepository.watchAllTransactions().first;
+        await _transactionRepository.watchRawTransactions().first;
 
     return _exportService.generateEncryptedJson(
       accounts: accounts,
@@ -91,6 +91,7 @@ class ExportEncryptedJsonUseCase {
       savingsGoals: savingsGoals,
       automaticTransactions: automaticTransactions,
       password: password,
+      userName: profile.name,
     );
   }
 }
