@@ -138,6 +138,8 @@ void main() {
     ).thenAnswer((_) async => []);
     when(() => transactionRepository.watchAllTransactions())
         .thenAnswer((_) => Stream.value(transactions));
+    when(() => transactionRepository.watchRawTransactions())
+        .thenAnswer((_) => Stream.value(transactions));
     when(
       () => exchangeRateRepository.getLatestRates(
         baseCurrency: any(named: 'baseCurrency'),
@@ -603,6 +605,8 @@ void main() {
         ),
       ).thenAnswer((_) async => []);
       when(() => transactionRepository.watchAllTransactions())
+          .thenAnswer((_) => Stream.value([]));
+      when(() => transactionRepository.watchRawTransactions())
           .thenAnswer((_) => Stream.value([]));
       when(
         () => exchangeRateRepository.getLatestRates(

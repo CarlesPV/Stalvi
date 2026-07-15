@@ -22,7 +22,7 @@ import 'package:stalvi/core/background_tasks/background_tasks.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await BackgroundTasks.initialize();
-  BackgroundTasks.registerPeriodicTasks();
+  await BackgroundTasks.registerPeriodicTasks();
   runApp(
     const ProviderScope(
       child: StalviApp(),

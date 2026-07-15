@@ -595,7 +595,19 @@ This document lists the completed phases of the Stalvi development roadmap, prov
   - 100% clean static analysis (`flutter analyze` with 0 issues).
   - All 495 automated unit and widget tests pass cleanly.
 
+### Phase 42: PDF Export Transfer Resolution Fix
+* **Completion Date:** July 15, 2026
+* **Objective:** Resolve the issue where transfer destinations in PDF exports were not correctly resolved as "Source Account -> Destination Account" due to transaction de-duplication in the default repository watch.
+* **Accomplishments:**
+  - **Raw Transaction Resolution**: Modified `ExportMonthlyPdfUseCase` to load raw transactions (using `watchRawTransactions()`) for transfer destination lookups, which preserves both legs of transfer pairs, enabling correct resolution of source and destination accounts.
+  - **Test Suite Integration**: Stubbed `watchRawTransactions` in `export_monthly_pdf_use_case_test.dart` to match, correcting the test mock structure and ensuring both common mocks and manual setups are completely stubbed.
+  - **Static Analysis & Testing**: Ensured 100% test pass rate (all 508 tests passing) and a clean static analysis report (0 errors, 0 warnings, 0 infos).
+* **Verification:**
+  - 100% clean static analysis (`flutter analyze --fatal-infos --fatal-warnings` with 0 issues).
+  - All 508 automated unit and widget tests pass cleanly with a 100% success rate.
+
 ## Recent Updates
+- Resolved transfer transaction resolution bugs in PDF export by querying raw transactions for destination matching (Phase 42).
 - Added padlock icons trailing read-only input fields in Budgets and Savings Goals detail sheets (Phase 41).
 - Completed detailed GDPR/LOPDGDD compliance legal documents rewrite across Catalan, English, and Spanish (Phase 40).
 - Reorganized ARB localization files to be valid, comment-free JSON sorted alphabetically (Phase 40).
@@ -621,5 +633,3 @@ This document lists the completed phases of the Stalvi development roadmap, prov
 - Added full Unicode font support in PDF exports using Roboto font assets to fix currency symbol placeholders.
 - Updated Terms and Privacy policy legal markdown assets for Catalan, English, and Spanish.
 - Achieved a completely clean static analysis check with 0 issues on `flutter analyze` and 100% test pass rate.
-
-

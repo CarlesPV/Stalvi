@@ -139,7 +139,13 @@ class AutomaticTransaction {
     final lastDay = DateTime(newYear, newMonth + 1, 0).day;
     final day = targetDay.clamp(1, lastDay);
     return DateTime(
-        newYear, newMonth, day, from.hour, from.minute, from.second);
+      newYear,
+      newMonth,
+      day,
+      from.hour,
+      from.minute,
+      from.second,
+    );
   }
 
   /// Returns a [DateTime] that is [years] calendar years after [from],

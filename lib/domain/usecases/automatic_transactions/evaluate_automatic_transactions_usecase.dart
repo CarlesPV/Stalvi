@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
+
 import '../../entities/automatic_transaction.dart';
 import '../../entities/transaction.dart' as dtxn;
 import '../../repositories/i_account_repository.dart';
@@ -14,6 +16,10 @@ import 'package:uuid/uuid.dart';
 ///
 /// **Execution contract**:
 /// - Runs daily at 00:00 UTC+2 (22:00 UTC) via WorkManager.
+/// - All datetime comparisons are performed in **UTC** to avoid any
+///   timezone-dependent drift between the host process and the background
+///   isolate.  [AutomaticTransaction.nextExecutionDate] must be stored as a
+///   UTC [DateTime] for this contract to hold.
 /// - Uses the automatic transaction's stored [AutomaticTransaction.currency]
 ///   as the `originalCurrency`, mirroring manual transaction behaviour.
 /// - Fetches local exchange rates first; falls back to remote only when a
@@ -37,24 +43,59 @@ class EvaluateAutomaticTransactionsUseCase {
   );
 
   Future<void> execute() async {
-    final now = DateTime.now();
+    // Use UTC throughout so the comparison is timezone-agnostic.
+    final nowUtc = DateTime.now().toUtc();
+
+    debugPrint(
+      '[EvaluateAutoTxns] Starting evaluation at ${nowUtc.toIso8601String()} UTC',
+    );
+
     final automaticTxns = await automaticRepo.getAllAutomaticTransactions();
+
+    int fired = 0;
+    int skipped = 0;
 
     for (final autoTxn in automaticTxns) {
       if (autoTxn.isDeleted || !autoTxn.isActive || autoTxn.deletedAt != null) {
+        skipped++;
         continue;
       }
 
-      if (autoTxn.nextExecutionDate.isBefore(now) ||
-          autoTxn.nextExecutionDate.isAtSameMomentAs(now)) {
-        await _fireTransaction(autoTxn, now);
+      // Normalise the stored nextExecutionDate to UTC for comparison.
+      // If the stored value is already UTC, toUtc() is a no-op.
+      final nextUtc = autoTxn.nextExecutionDate.toUtc();
+
+      if (nextUtc.isBefore(nowUtc) || nextUtc.isAtSameMomentAs(nowUtc)) {
+        try {
+          await _fireTransaction(autoTxn, nowUtc);
+          fired++;
+          debugPrint(
+            '[EvaluateAutoTxns] Fired "${autoTxn.name}" (id=${autoTxn.id})',
+          );
+        } catch (e, st) {
+          // Log and continue — one failed transaction must not abort the rest.
+          debugPrint(
+            '[EvaluateAutoTxns] ERROR firing "${autoTxn.name}" '
+            '(id=${autoTxn.id}): $e\n$st',
+          );
+        }
+      } else {
+        skipped++;
+        debugPrint(
+          '[EvaluateAutoTxns] Skipping "${autoTxn.name}" — '
+          'next due ${nextUtc.toIso8601String()} UTC',
+        );
       }
     }
+
+    debugPrint(
+      '[EvaluateAutoTxns] Done. fired=$fired skipped=$skipped',
+    );
   }
 
   Future<void> _fireTransaction(
     AutomaticTransaction autoTxn,
-    DateTime now,
+    DateTime nowUtc,
   ) async {
     // ── Currency resolution ──────────────────────────────────────────────────
     final account = await accountRepo.getAccountById(autoTxn.accountId);
@@ -102,11 +143,15 @@ class EvaluateAutomaticTransactionsUseCase {
       convertedAmount = (autoTxn.amount / exchangeRate).round();
     }
 
+    // Use the UTC instant for the transaction date so it aligns with the
+    // actual firing time regardless of the device's local timezone.
+    final txnDate = nowUtc;
+
     // ── Create the real transaction ──────────────────────────────────────────
     final newTxn = dtxn.Transaction(
       id: const Uuid().v4(),
       amount: autoTxn.amount,
-      date: now,
+      date: txnDate,
       type: autoTxn.type,
       accountId: autoTxn.accountId,
       categoryId: autoTxn.categoryId,
@@ -115,18 +160,19 @@ class EvaluateAutomaticTransactionsUseCase {
       convertedAmount: convertedAmount,
       exchangeRate: exchangeRate,
       exchangeRateSnapshot: exchangeRateSnapshot,
-      createdAt: now,
-      modifiedAt: now,
+      createdAt: txnDate,
+      modifiedAt: txnDate,
     );
 
     await transactionRepo.createTransaction(newTxn);
 
     // ── Advance next execution date ──────────────────────────────────────────
-    // Always advance from the stored nextExecutionDate (not `now`) so that
+    // Always advance from the stored nextExecutionDate (not `nowUtc`) so that
     // calendar-based recurrences (monthly, yearly, specificDayOfMonth) land
     // on the correct date even when the task fires slightly late.
+    // The input is the stored UTC value; the output is also UTC.
     final nextDate =
-        autoTxn.calculateNextExecutionDate(autoTxn.nextExecutionDate);
+        autoTxn.calculateNextExecutionDate(autoTxn.nextExecutionDate.toUtc());
 
     final updatedAutoTxn = autoTxn.copyWith(nextExecutionDate: nextDate);
     await automaticRepo.updateAutomaticTransaction(updatedAutoTxn);

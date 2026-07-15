@@ -307,67 +307,73 @@ class CreateEditAutomaticTransactionNotifier extends AutoDisposeFamilyNotifier<
       final trimmedNotes = state.notes.trim();
 
       DateTime calcNextDate() {
-        // On edit: keep the existing future date unchanged.
-        if (arg != null && arg!.nextExecutionDate.isAfter(DateTime.now())) {
+        // On edit: keep an existing *future* next-execution date unchanged so
+        // the user does not lose their already-scheduled firing window.
+        if (arg != null &&
+            arg!.nextExecutionDate.toUtc().isAfter(DateTime.now().toUtc())) {
           return arg!.nextExecutionDate;
         }
-        final now = DateTime.now();
+
+        // Anchor all "next date" calculations to 22:00 UTC, which equals
+        // 00:00 UTC+2 (both CET and CEST).  This is the same anchor used by
+        // [BackgroundTasks.registerPeriodicTasks] so the first background
+        // execution and the stored nextExecutionDate will be in sync.
+        final nowUtc = DateTime.now().toUtc();
+
+        // Start from today's 22:00 UTC; advance to tomorrow if already past.
+        var targetUtc =
+            DateTime.utc(nowUtc.year, nowUtc.month, nowUtc.day, 22, 0, 0);
+        if (!nowUtc.isBefore(targetUtc)) {
+          targetUtc = targetUtc.add(const Duration(days: 1));
+        }
+
         switch (state.recurrenceType) {
           case RecurrenceType.intervalDays:
-            return now.add(Duration(days: state.recurrenceDays));
+            // Add the interval on top of the next midnight anchor.
+            return targetUtc.add(Duration(days: state.recurrenceDays - 1));
 
           case RecurrenceType.weekly:
-            return now.add(const Duration(days: 7));
+            return targetUtc.add(const Duration(days: 6));
 
           case RecurrenceType.monthly:
-            // Same calendar day next month, clamped.
-            final lastDay = DateTime(now.year, now.month + 2, 0).day;
-            final targetDay = now.day.clamp(1, lastDay);
-            int nextMonth = now.month + 1;
-            int nextYear = now.year;
+            // Same calendar day next month (UTC), clamped.
+            int nextMonth = targetUtc.month + 1;
+            int nextYear = targetUtc.year;
             if (nextMonth > 12) {
               nextMonth = 1;
               nextYear++;
             }
-            return DateTime(
-              nextYear,
-              nextMonth,
-              targetDay,
-              now.hour,
-              now.minute,
-              now.second,
-            );
+            final lastDay = DateTime.utc(nextYear, nextMonth + 1, 0).day;
+            final targetDay = targetUtc.day.clamp(1, lastDay);
+            return DateTime.utc(nextYear, nextMonth, targetDay, 22, 0, 0);
 
           case RecurrenceType.yearly:
-            // Same calendar date next year, clamped.
-            final yLastDay = DateTime(now.year + 1, now.month + 1, 0).day;
-            final yTargetDay = now.day.clamp(1, yLastDay);
-            return DateTime(
-              now.year + 1,
-              now.month,
+            // Same calendar date next year (UTC), clamped.
+            final yNextYear = targetUtc.year + 1;
+            final yLastDay =
+                DateTime.utc(yNextYear, targetUtc.month + 1, 0).day;
+            final yTargetDay = targetUtc.day.clamp(1, yLastDay);
+            return DateTime.utc(
+              yNextYear,
+              targetUtc.month,
               yTargetDay,
-              now.hour,
-              now.minute,
-              now.second,
+              22,
+              0,
+              0,
             );
 
           case RecurrenceType.specificDayOfMonth:
-            int nextMonth = now.month + 1;
-            int nextYear = now.year;
+            int nextMonth = targetUtc.month + 1;
+            int nextYear = targetUtc.year;
             if (nextMonth > 12) {
               nextMonth = 1;
               nextYear++;
             }
-            final lastDayOfNextMonth = DateTime(nextYear, nextMonth + 1, 0).day;
-            final targetDay = state.recurrenceDays.clamp(1, lastDayOfNextMonth);
-            return DateTime(
-              nextYear,
-              nextMonth,
-              targetDay,
-              now.hour,
-              now.minute,
-              now.second,
-            );
+            final lastDayOfNextMonth =
+                DateTime.utc(nextYear, nextMonth + 1, 0).day;
+            final specificDay =
+                state.recurrenceDays.clamp(1, lastDayOfNextMonth);
+            return DateTime.utc(nextYear, nextMonth, specificDay, 22, 0, 0);
         }
       }
 

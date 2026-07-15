@@ -41,7 +41,8 @@ class FakeAutomaticTransaction extends Fake implements AutomaticTransaction {}
 // Builders
 // ---------------------------------------------------------------------------
 
-final _now = DateTime.now();
+// All reference timestamps are in UTC to mirror the fixed use case contract.
+final _nowUtc = DateTime.now().toUtc();
 
 AutomaticTransaction _buildAutoTxn({
   String id = '1',
@@ -50,7 +51,8 @@ AutomaticTransaction _buildAutoTxn({
   int recurrenceDays = 30,
   DateTime? nextExecutionDate,
 }) {
-  final past = _now.subtract(const Duration(hours: 1));
+  // Default: 1 hour in the past (UTC) — guarantees the task is due.
+  final pastUtc = _nowUtc.subtract(const Duration(hours: 1));
   return AutomaticTransaction(
     id: id,
     name: 'Test',
@@ -63,8 +65,8 @@ AutomaticTransaction _buildAutoTxn({
     notes: null,
     recurrenceType: recurrenceType,
     recurrenceDays: recurrenceDays,
-    nextExecutionDate: nextExecutionDate ?? past,
-    createdAt: past,
+    nextExecutionDate: nextExecutionDate ?? pastUtc,
+    createdAt: pastUtc,
   );
 }
 
@@ -80,8 +82,8 @@ Account _buildAccount({String currency = 'EUR'}) {
     icon: 'wallet',
     isDefault: true,
     isDeleted: false,
-    createdAt: _now,
-    modifiedAt: _now,
+    createdAt: _nowUtc,
+    modifiedAt: _nowUtc,
   );
 }
 
@@ -92,15 +94,15 @@ Profile _buildProfile({String defaultCurrency = 'EUR'}) {
     username: 'test',
     password: '',
     defaultCurrency: defaultCurrency,
-    createdAt: _now,
-    modifiedAt: _now,
+    createdAt: _nowUtc,
+    modifiedAt: _nowUtc,
   );
 }
 
 ExchangeRate _buildRates({String base = 'EUR'}) {
   return ExchangeRate(
     baseCurrency: base,
-    date: _now,
+    date: _nowUtc,
     rates: {'USD': 1.08, 'GBP': 0.85},
   );
 }
@@ -108,12 +110,12 @@ ExchangeRate _buildRates({String base = 'EUR'}) {
 Transaction _dummyTxn() => Transaction(
       id: 'dummy',
       amount: 1000,
-      date: _now,
+      date: _nowUtc,
       type: TransactionType.expense,
       accountId: 'acc1',
       originalCurrency: 'EUR',
-      createdAt: _now,
-      modifiedAt: _now,
+      createdAt: _nowUtc,
+      modifiedAt: _nowUtc,
     );
 
 // ---------------------------------------------------------------------------
@@ -161,7 +163,7 @@ void main() {
     test('skips deleted automatic transactions', () async {
       final deletedTxn = _buildAutoTxn().copyWith(
         isDeleted: true,
-        deletedAt: _now,
+        deletedAt: _nowUtc,
       );
       when(() => automaticRepo.getAllAutomaticTransactions())
           .thenAnswer((_) async => [deletedTxn]);
@@ -181,9 +183,10 @@ void main() {
       verifyNever(() => transactionRepo.createTransaction(any()));
     });
 
-    test('skips transactions not yet due', () async {
+    test('skips transactions not yet due (nextExecutionDate is future UTC)',
+        () async {
       final futureTxn = _buildAutoTxn(
-        nextExecutionDate: _now.add(const Duration(days: 1)),
+        nextExecutionDate: _nowUtc.add(const Duration(days: 1)),
       );
       when(() => automaticRepo.getAllAutomaticTransactions())
           .thenAnswer((_) async => [futureTxn]);
@@ -193,14 +196,103 @@ void main() {
       verifyNever(() => transactionRepo.createTransaction(any()));
     });
 
+    // ── UTC timezone contract ────────────────────────────────────────────────
+    test(
+        'fires transaction whose nextExecutionDate is 22:00 UTC yesterday '
+        '(simulates midnight UTC+2 trigger)', () async {
+      // 22:00 UTC yesterday = 00:00 UTC+2 today (DST-safe).
+      final midnight = _nowUtc.subtract(const Duration(hours: 2));
+      final autoTxn = _buildAutoTxn(
+        nextExecutionDate: DateTime.utc(
+          midnight.year,
+          midnight.month,
+          midnight.day,
+          22,
+          0,
+          0,
+        ).subtract(const Duration(days: 1)),
+      );
+      final account = _buildAccount();
+      final profile = _buildProfile();
+
+      when(() => automaticRepo.getAllAutomaticTransactions())
+          .thenAnswer((_) async => [autoTxn]);
+      when(() => accountRepo.getAccountById('acc1'))
+          .thenAnswer((_) async => account);
+      when(() => profileRepo.getProfileById('user1'))
+          .thenAnswer((_) async => profile);
+      when(() => transactionRepo.createTransaction(any()))
+          .thenAnswer((_) async => _dummyTxn());
+      when(() => automaticRepo.updateAutomaticTransaction(any()))
+          .thenAnswer((_) async => autoTxn);
+
+      await useCase.execute();
+
+      verify(() => transactionRepo.createTransaction(any())).called(1);
+    });
+
+    test(
+        'does NOT fire transaction whose nextExecutionDate is 22:00 UTC today '
+        '(= tonight midnight UTC+2, still in the future)', () async {
+      final nowUtc = DateTime.now().toUtc();
+      // Put the target at 22:00 UTC today if we're currently before 22:00;
+      // otherwise at 22:00 tomorrow — either way it's in the future.
+      var nextUtc =
+          DateTime.utc(nowUtc.year, nowUtc.month, nowUtc.day, 22, 0, 0);
+      if (!nowUtc.isBefore(nextUtc)) {
+        nextUtc = nextUtc.add(const Duration(days: 1));
+      }
+
+      final futureTxn = _buildAutoTxn(nextExecutionDate: nextUtc);
+      when(() => automaticRepo.getAllAutomaticTransactions())
+          .thenAnswer((_) async => [futureTxn]);
+
+      await useCase.execute();
+
+      verifyNever(() => transactionRepo.createTransaction(any()));
+    });
+
+    // ── Per-transaction isolation ────────────────────────────────────────────
+    test('continues processing remaining transactions when one throws an error',
+        () async {
+      final pastUtc = _nowUtc.subtract(const Duration(hours: 1));
+      final goodTxn = _buildAutoTxn(id: 'good', nextExecutionDate: pastUtc);
+      final badTxn = _buildAutoTxn(id: 'bad', nextExecutionDate: pastUtc);
+      final account = _buildAccount();
+      final profile = _buildProfile();
+
+      when(() => automaticRepo.getAllAutomaticTransactions())
+          .thenAnswer((_) async => [badTxn, goodTxn]);
+
+      // First call (badTxn) will throw when fetching account.
+      var callCount = 0;
+      when(() => accountRepo.getAccountById('acc1')).thenAnswer((_) async {
+        callCount++;
+        if (callCount == 1) throw Exception('DB error for badTxn');
+        return account;
+      });
+      when(() => profileRepo.getProfileById('user1'))
+          .thenAnswer((_) async => profile);
+      when(() => transactionRepo.createTransaction(any()))
+          .thenAnswer((_) async => _dummyTxn());
+      when(() => automaticRepo.updateAutomaticTransaction(any()))
+          .thenAnswer((_) async => goodTxn);
+
+      // Should not throw despite badTxn failing.
+      await expectLater(useCase.execute(), completes);
+
+      // goodTxn must still have been processed.
+      verify(() => transactionRepo.createTransaction(any())).called(1);
+    });
+
     // ── intervalDays — creates transaction and advances date ─────────────────
     test('creates transaction and advances nextExecutionDate for intervalDays',
         () async {
-      final past = _now.subtract(const Duration(days: 1));
+      final pastUtc = _nowUtc.subtract(const Duration(days: 1));
       final autoTxn = _buildAutoTxn(
         recurrenceType: RecurrenceType.intervalDays,
         recurrenceDays: 30,
-        nextExecutionDate: past,
+        nextExecutionDate: pastUtc,
       );
       final account = _buildAccount();
       final profile = _buildProfile();
@@ -226,7 +318,7 @@ void main() {
       final updated = captured.first as AutomaticTransaction;
       expect(
         updated.nextExecutionDate,
-        equals(past.add(const Duration(days: 30))),
+        equals(pastUtc.toUtc().add(const Duration(days: 30))),
       );
     });
 
@@ -234,11 +326,11 @@ void main() {
     test(
         'advances nextExecutionDate correctly for specificDayOfMonth '
         '(Jan 31 → Feb 28 in non-leap year)', () async {
-      final jan31 = DateTime(2026, 1, 31);
+      final jan31Utc = DateTime.utc(2026, 1, 31, 22, 0, 0);
       final autoTxn = _buildAutoTxn(
         recurrenceType: RecurrenceType.specificDayOfMonth,
         recurrenceDays: 31,
-        nextExecutionDate: jan31,
+        nextExecutionDate: jan31Utc,
       );
       final account = _buildAccount();
       final profile = _buildProfile();
@@ -260,17 +352,18 @@ void main() {
           verify(() => automaticRepo.updateAutomaticTransaction(captureAny()))
               .captured;
       final updated = captured.first as AutomaticTransaction;
-      expect(updated.nextExecutionDate.month, 2);
-      expect(updated.nextExecutionDate.day, 28);
-      expect(updated.nextExecutionDate.year, 2026);
+      final nextUtc = updated.nextExecutionDate.toUtc();
+      expect(nextUtc.month, 2);
+      expect(nextUtc.day, 28);
+      expect(nextUtc.year, 2026);
     });
 
     // ── weekly ────────────────────────────────────────────────────────────────
     test('advances nextExecutionDate by exactly 7 days for weekly', () async {
-      final past = _now.subtract(const Duration(hours: 2));
+      final pastUtc = _nowUtc.subtract(const Duration(hours: 2));
       final autoTxn = _buildAutoTxn(
         recurrenceType: RecurrenceType.weekly,
-        nextExecutionDate: past,
+        nextExecutionDate: pastUtc,
       );
       final account = _buildAccount();
       final profile = _buildProfile();
@@ -294,17 +387,17 @@ void main() {
       final updated = captured.first as AutomaticTransaction;
       expect(
         updated.nextExecutionDate,
-        equals(past.add(const Duration(days: 7))),
+        equals(pastUtc.toUtc().add(const Duration(days: 7))),
       );
     });
 
     // ── monthly ───────────────────────────────────────────────────────────────
     test('advances nextExecutionDate by one calendar month for monthly',
         () async {
-      final mar15 = DateTime(2026, 3, 15, 9, 0, 0);
+      final mar15Utc = DateTime.utc(2026, 3, 15, 22, 0, 0);
       final autoTxn = _buildAutoTxn(
         recurrenceType: RecurrenceType.monthly,
-        nextExecutionDate: mar15,
+        nextExecutionDate: mar15Utc,
       );
       final account = _buildAccount();
       final profile = _buildProfile();
@@ -326,18 +419,19 @@ void main() {
           verify(() => automaticRepo.updateAutomaticTransaction(captureAny()))
               .captured;
       final updated = captured.first as AutomaticTransaction;
-      expect(updated.nextExecutionDate.year, 2026);
-      expect(updated.nextExecutionDate.month, 4);
-      expect(updated.nextExecutionDate.day, 15);
+      final nextUtc = updated.nextExecutionDate.toUtc();
+      expect(nextUtc.year, 2026);
+      expect(nextUtc.month, 4);
+      expect(nextUtc.day, 15);
     });
 
     // ── yearly ────────────────────────────────────────────────────────────────
     test('advances nextExecutionDate by one calendar year for yearly',
         () async {
-      final jun15 = DateTime(2026, 6, 15, 9, 0, 0);
+      final jun15Utc = DateTime.utc(2026, 6, 15, 22, 0, 0);
       final autoTxn = _buildAutoTxn(
         recurrenceType: RecurrenceType.yearly,
-        nextExecutionDate: jun15,
+        nextExecutionDate: jun15Utc,
       );
       final account = _buildAccount();
       final profile = _buildProfile();
@@ -359,9 +453,10 @@ void main() {
           verify(() => automaticRepo.updateAutomaticTransaction(captureAny()))
               .captured;
       final updated = captured.first as AutomaticTransaction;
-      expect(updated.nextExecutionDate.year, 2027);
-      expect(updated.nextExecutionDate.month, 6);
-      expect(updated.nextExecutionDate.day, 15);
+      final nextUtc = updated.nextExecutionDate.toUtc();
+      expect(nextUtc.year, 2027);
+      expect(nextUtc.month, 6);
+      expect(nextUtc.day, 15);
     });
 
     // ── Currency: same currency — no conversion ──────────────────────────────
@@ -486,15 +581,14 @@ void main() {
 
     // ── nextExecutionDate advances from stored date, not from `now` ──────────
     test(
-        'nextExecutionDate is computed from the stored nextExecutionDate, '
+        'nextExecutionDate is computed from the stored nextExecutionDate (UTC), '
         'not from the current time (calendar alignment)', () async {
-      // The stored date is Mar 15. Even though `now` is different, the next
-      // date for a `monthly` transaction should be Apr 15, not "one month
-      // from now".
-      final mar15 = DateTime(2026, 3, 15, 9, 0, 0);
+      // The stored date is Mar 15 22:00 UTC.  The next monthly firing must be
+      // Apr 15 (same calendar day), not "one month from now".
+      final mar15Utc = DateTime.utc(2026, 3, 15, 22, 0, 0);
       final autoTxn = _buildAutoTxn(
         recurrenceType: RecurrenceType.monthly,
-        nextExecutionDate: mar15,
+        nextExecutionDate: mar15Utc,
       );
       final account = _buildAccount();
       final profile = _buildProfile();
@@ -516,11 +610,12 @@ void main() {
           verify(() => automaticRepo.updateAutomaticTransaction(captureAny()))
               .captured;
       final updated = captured.first as AutomaticTransaction;
+      final nextUtc = updated.nextExecutionDate.toUtc();
 
       // Must be Apr 15, not "today + 1 month".
-      expect(updated.nextExecutionDate.year, 2026);
-      expect(updated.nextExecutionDate.month, 4);
-      expect(updated.nextExecutionDate.day, 15);
+      expect(nextUtc.year, 2026);
+      expect(nextUtc.month, 4);
+      expect(nextUtc.day, 15);
     });
 
     // ── Graceful degradation when account/profile not found ──────────────────
@@ -583,6 +678,38 @@ void main() {
       await useCase.execute();
 
       expect(createdTxn!.exchangeRateSnapshot, isNotNull);
+    });
+
+    // ── Transaction date is stored in UTC ────────────────────────────────────
+    test('created transaction date is in UTC', () async {
+      final autoTxn = _buildAutoTxn(currency: 'EUR');
+      final account = _buildAccount(currency: 'EUR');
+      final profile = _buildProfile(defaultCurrency: 'EUR');
+
+      when(() => automaticRepo.getAllAutomaticTransactions())
+          .thenAnswer((_) async => [autoTxn]);
+      when(() => accountRepo.getAccountById('acc1'))
+          .thenAnswer((_) async => account);
+      when(() => profileRepo.getProfileById('user1'))
+          .thenAnswer((_) async => profile);
+      when(() => automaticRepo.updateAutomaticTransaction(any()))
+          .thenAnswer((_) async => autoTxn);
+
+      Transaction? createdTxn;
+      when(() => transactionRepo.createTransaction(any()))
+          .thenAnswer((inv) async {
+        createdTxn = inv.positionalArguments[0] as Transaction;
+        return createdTxn!;
+      });
+
+      await useCase.execute();
+
+      expect(createdTxn, isNotNull);
+      expect(
+        createdTxn!.date.isUtc,
+        isTrue,
+        reason: 'Transaction date should be stored as UTC',
+      );
     });
   });
 }

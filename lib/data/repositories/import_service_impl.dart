@@ -255,6 +255,7 @@ class ImportServiceImpl implements IImportService {
                   type: _parseTransactionType(tx['type'] as String),
                   accountId: tx['account_id'] as String,
                   categoryId: Value(tx['category_id'] as String?),
+                  savingsGoalId: Value(tx['savings_goal_id'] as String?),
                   notes: Value(tx['notes'] as String?),
                   originalCurrency: tx['original_currency'] as String,
                   convertedAmount: Value(tx['converted_amount'] as int?),
@@ -263,7 +264,7 @@ class ImportServiceImpl implements IImportService {
                   exchangeRateSnapshot:
                       Value(tx['exchange_rate_snapshot'] as String?),
                   transferId: Value(tx['transfer_id'] as String?),
-                  isDeleted: const Value(false),
+                  isDeleted: Value((tx['is_deleted'] as bool?) ?? false),
                   createdAt: DateTime.parse(tx['created_at'] as String),
                   modifiedAt: DateTime.parse(tx['modified_at'] as String),
                 ),

@@ -1,21 +1,16 @@
-# Active Task: Phase 41 - Background Automation & Export/UI Polish
+# Active Task: Phase 42 - Core Stabilization & Refinement
+
+## Current Objectives
+- [ ] **Data Layer**: Fix backup system (Import/Export) to properly serialize and deserialize the destination account (`destinationAccountId`) for Transfer transactions.
+- [ ] **Domain Layer**: Refactor Budget calculations to filter transactions by both `categoryId` and the assigned `accountId` (Wallet).
+- [ ] **Presentation/Export**: Update the PDF generation service to include an "Account" column in the Budgets table, placed between the Category and Date Range columns.
+- [ ] **Infrastructure Layer**: Debug and fix background services for automatic/recurring transactions. Ensure triggers execute reliably at 0:00 UTC+2 and respect custom recurrence times.
+
+## Architectural Constraints
+- Maintain Clean Architecture separation of concerns.
+- Ensure all Drift queries are optimized and SQLCipher encryption is intact.
+- Background tasks must initialize their own dependency container (Riverpod ProviderContainer/Drift instance) safely.
+- Maintain 100% unit test coverage for new business rules.
 
 ## Status
-- [ ] In Progress
-
-## Objectives
-1. **Background Automation & Bug Fixes:** Implement a reliable background worker to process automatic transactions at 00:00 UTC+2, even when the app is terminated. Fix the bug preventing custom recurrence transactions from firing. Ensure currency conversions are applied.
-2. **PDF Export Enhancements:** Update the PDF generation service to format transfer transactions as "Origin -> Destination" (e.g., "Cuenta Principal -> Cartera Física"). Change the table header for Budgets/Savings Goals to "Valor máximo". Update the document title to include the User's name and ensure full localization (i18n) across all 3 supported languages.
-3. **UI Polish:** Add a padlock icon to read-only fields in the Budget and Savings Goal detail screens to match the UX of the accounts/wallets screens.
-
-## Technical Constraints
-- **Architecture:** Clean Architecture.
-- **State/DI:** Riverpod.
-- **Database:** Drift with SQLCipher.
-- **Testing:** All business rules and use cases must be covered by unit tests. CI workflows must pass with 0 warnings/errors.
-- **Background Execution:** Must use reliable native scheduling (e.g., `workmanager`) ensuring the Riverpod container and encrypted Drift DB are safely initialized in the background isolate.
-
-## Pending Atomic Tasks
-- [ ] Task 41.1: Fix custom recurrence logic and implement UTC+2 background worker.
-- [ ] Task 41.2: Refactor PDF Export Use Cases for transfers, headers, and localized titles.
-- [ ] Task 41.3: Update UI for Budgets & Savings Goals detail views with read-only padlocks.
+In Progress

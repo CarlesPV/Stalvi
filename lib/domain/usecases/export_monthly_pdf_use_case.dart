@@ -122,6 +122,8 @@ class ExportMonthlyPdfUseCase {
     // Fetch and filter transactions to target month
     final allTransactions =
         await _transactionRepository.watchAllTransactions().first;
+    final allRawTransactions =
+        await _transactionRepository.watchRawTransactions().first;
 
     await _exchangeRateRepository.getLatestRates(
       baseCurrency: targetCurrency,
@@ -135,11 +137,13 @@ class ExportMonthlyPdfUseCase {
     final accountMap = {for (final a in accounts) a.id: a.name};
     final categoryMap = {for (final c in categories) c.id: c.name};
 
-    // Build transfer destination labels for each transfer transaction
+    // Build transfer destination labels for each transfer transaction.
+    // Querying raw transactions (which include both legs of a transfer) is necessary
+    // because watchAllTransactions() filters out mirror legs to avoid duplicates in listings.
     final Map<String, String> transferDestinations = {};
     for (final tx in monthTransactions) {
       if (tx.type == TransactionType.transfer && tx.transferId != null) {
-        final otherLeg = allTransactions.firstWhere(
+        final otherLeg = allRawTransactions.firstWhere(
           (t) => t.transferId == tx.transferId && t.id != tx.id,
           orElse: () => tx,
         );
@@ -147,15 +151,8 @@ class ExportMonthlyPdfUseCase {
           final thisAccountName = accountMap[tx.accountId] ?? tx.accountId;
           final otherAccountName =
               accountMap[otherLeg.accountId] ?? otherLeg.accountId;
-          if (tx.amount < 0) {
-            // Outgoing leg: "From: thisAccount → To: otherAccount"
-            transferDestinations[tx.id] =
-                '$thisAccountName -> $otherAccountName';
-          } else {
-            // Incoming leg: "From: otherAccount → To: thisAccount"
-            transferDestinations[tx.id] =
-                '$otherAccountName -> $thisAccountName';
-          }
+
+          transferDestinations[tx.id] = '$thisAccountName -> $otherAccountName';
         }
       }
     }

@@ -308,3 +308,8 @@
   - [x] Match padlock design and disabled border styling with the Accounts/Wallets detail views.
   - [x] Run static analysis and tests to ensure 100% compliance.
 
+- [x] **Phase 42: PDF Export Transfer Resolution Fix**
+  - [x] Fix transfer destination account resolution in PDF export by querying raw transactions instead of de-duplicated transactions, ensuring mirror legs are correctly resolved and formatted as "Source Account -> Destination Account".
+  - [x] Update unit tests to stub raw transaction queries and verify correct behavior.
+  - [x] Maintain 100% build health, static analysis compliance, and test pass rate.
+

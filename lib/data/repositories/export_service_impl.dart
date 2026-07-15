@@ -449,6 +449,7 @@ class ExportServiceImpl implements IExportService {
               _buildBudgetsTable(
                 activeBudgets,
                 budgetCategoryNames,
+                accountMap,
                 budgetCurrencies,
                 defaultCurrency,
                 symbol,
@@ -561,12 +562,14 @@ class ExportServiceImpl implements IExportService {
         'type': tx.type.name,
         'account_id': tx.accountId,
         'category_id': tx.categoryId,
+        'savings_goal_id': tx.savingsGoalId,
         'notes': tx.notes,
         'original_currency': tx.originalCurrency,
         'converted_amount': tx.convertedAmount,
         'exchange_rate': tx.exchangeRate,
         'exchange_rate_snapshot': tx.exchangeRateSnapshot,
         'transfer_id': tx.transferId,
+        'is_deleted': false,
         'created_at': tx.createdAt.toIso8601String(),
         'modified_at': tx.modifiedAt.toIso8601String(),
       };
@@ -1030,11 +1033,12 @@ class ExportServiceImpl implements IExportService {
 
   /// Builds the Budgets table section.
   ///
-  /// Columns: Category | Date Range | % Spent | Max Value (with currency)
+  /// Columns: Category | Account | Date Range | % Spent | Max Value (with currency)
   /// Only active (non-deleted) budgets are included.
   static pw.Widget _buildBudgetsTable(
     List<Budget> budgets,
     Map<String, String> categoryNames,
+    Map<String, String> accountNames,
     Map<String, String> budgetCurrencies,
     String defaultCurrency,
     String currencySymbol,
@@ -1055,8 +1059,9 @@ class ExportServiceImpl implements IExportService {
           columnWidths: {
             0: const pw.FlexColumnWidth(2),
             1: const pw.FlexColumnWidth(2),
-            2: const pw.FixedColumnWidth(55),
-            3: const pw.FlexColumnWidth(2),
+            2: const pw.FlexColumnWidth(2),
+            3: const pw.FixedColumnWidth(55),
+            4: const pw.FlexColumnWidth(2),
           },
           children: [
             // Header row
@@ -1067,6 +1072,16 @@ class ExportServiceImpl implements IExportService {
                   padding: const pw.EdgeInsets.all(4),
                   child: pw.Text(
                     l10n.pdfBudgetsColCategory,
+                    style: pw.TextStyle(
+                      fontWeight: pw.FontWeight.bold,
+                      fontSize: 9,
+                    ),
+                  ),
+                ),
+                pw.Padding(
+                  padding: const pw.EdgeInsets.all(4),
+                  child: pw.Text(
+                    l10n.labelAccount,
                     style: pw.TextStyle(
                       fontWeight: pw.FontWeight.bold,
                       fontSize: 9,
@@ -1111,6 +1126,8 @@ class ExportServiceImpl implements IExportService {
             ...budgets.map((budget) {
               final categoryName =
                   categoryNames[budget.categoryId] ?? budget.categoryId;
+              final accountName =
+                  accountNames[budget.accountId] ?? budget.accountId;
               final dateRange =
                   '${dateFormat.format(budget.startDate)} – ${dateFormat.format(budget.endDate)}';
               final spentPct = budget.targetAmount > 0
@@ -1136,6 +1153,13 @@ class ExportServiceImpl implements IExportService {
                     padding: const pw.EdgeInsets.all(4),
                     child: pw.Text(
                       categoryName,
+                      style: const pw.TextStyle(fontSize: 8),
+                    ),
+                  ),
+                  pw.Padding(
+                    padding: const pw.EdgeInsets.all(4),
+                    child: pw.Text(
+                      accountName,
                       style: const pw.TextStyle(fontSize: 8),
                     ),
                   ),
