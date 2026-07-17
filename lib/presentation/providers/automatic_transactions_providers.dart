@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:stalvi/domain/entities/automatic_transaction.dart';
 import 'package:stalvi/domain/usecases/automatic_transactions/crud_automatic_transactions_usecase.dart';
-import 'package:stalvi/domain/usecases/automatic_transactions/evaluate_automatic_transactions_usecase.dart';
+import 'package:stalvi/domain/usecases/execute_recurring_transactions_usecase.dart';
 import 'package:stalvi/presentation/providers/repository_providers.dart';
 
 final createAutomaticTransactionUseCaseProvider = Provider((ref) {
@@ -41,15 +41,15 @@ final automaticTransactionsListProvider =
       );
 });
 
-/// Provides the [EvaluateAutomaticTransactionsUseCase] with all required
+/// Provides the [ExecuteRecurringTransactionsUseCase] with all required
 /// repositories: automatic, transaction, account, profile, and exchange rate.
-final evaluateAutomaticTransactionsUseCaseProvider = Provider((ref) {
+final executeRecurringTransactionsUseCaseProvider = Provider((ref) {
   final automaticRepo = ref.watch(automaticTransactionRepositoryProvider);
   final transactionRepo = ref.watch(transactionRepositoryProvider);
   final accountRepo = ref.watch(accountRepositoryProvider);
   final profileRepo = ref.watch(profileRepositoryProvider);
   final exchangeRateRepo = ref.watch(exchangeRateRepositoryProvider);
-  return EvaluateAutomaticTransactionsUseCase(
+  return ExecuteRecurringTransactionsUseCase(
     automaticRepo,
     transactionRepo,
     accountRepo,

@@ -1,6 +1,6 @@
 # Termes i Condicions
 
-**Data d'entrada en vigor:** 3 de juliol de 2026
+**Data d'entrada en vigor:** 17 de juliol de 2026
 
 ## 1. Introducció i Acceptació
 Benvingut a Stalvi. Aquests Termes i Condicions ("Termes") regeixen el teu accés i ús de l'aplicació mòbil Stalvi (l'"Aplicació"). En descarregar, instal·lar o utilitzar l'Aplicació, reconeixes explícitament que has llegit, entès i acceptes complir aquests Termes. Si no estàs d'acord amb alguna part d'aquests Termes, has de cessar immediatament tot ús de l'Aplicació i eliminar-la del teu dispositiu.
@@ -34,3 +34,6 @@ Aquests Termes i Condicions es regiran i interpretaran d'acord amb les lleis d'E
 
 ## 9. Modificacions dels Termes
 Ens reservem el dret, a la nostra sencera discreció, de modificar o reemplaçar aquests Termes en qualsevol moment. Si una revisió és material, proporcionarem un avís raonable abans que els nous termes entrin en vigència. En continuar accedint o utilitzant la nostra Aplicació després que aquestes revisions entrin en vigència, acceptes estar subjecte als Termes revisats.
+
+## 10. Informació de Contacte
+Si tens cap pregunta, inquietud o consulta respecte a aquests Termes i Condicions, posa't en contacte amb el desenvolupador a través de GitHub a https://github.com/CarlesPV o per correu electrònic a carles.peiro.v@gmail.com.

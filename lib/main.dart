@@ -10,7 +10,7 @@ import 'package:stalvi/presentation/providers/locale_provider.dart';
 import 'package:stalvi/presentation/providers/theme_provider.dart';
 import 'package:stalvi/presentation/widgets/lifecycle_blur_wrapper.dart';
 
-import 'package:stalvi/core/background_tasks/background_tasks.dart';
+import 'package:stalvi/infrastructure/background_execution_service.dart';
 
 /// Entry point for the Stalvi application.
 ///
@@ -21,8 +21,8 @@ import 'package:stalvi/core/background_tasks/background_tasks.dart';
 /// The root [ProviderScope] enables Riverpod for the entire widget tree.
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await BackgroundTasks.initialize();
-  await BackgroundTasks.registerPeriodicTasks();
+  await BackgroundExecutionService.initialize();
+  await BackgroundExecutionService.registerPeriodicTasks();
   runApp(
     const ProviderScope(
       child: StalviApp(),

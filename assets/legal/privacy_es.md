@@ -1,6 +1,6 @@
 # Política de Privacidad
 
-**Fecha de vigencia:** 3 de julio de 2026
+**Fecha de vigencia:** 17 de julio de 2026
 
 ## 1. Introducción
 Bienvenido a Stalvi. Respetamos su privacidad y estamos firmemente comprometidos a mantener segura su información personal y financiera. Esta Política de Privacidad exhaustiva explica nuestro enfoque sobre la recopilación, el procesamiento y la protección de datos cuando utiliza la aplicación móvil Stalvi (la "Aplicación").
@@ -34,7 +34,7 @@ Como usuario que reside en la Unión Europea o en España, se le garantizan dere
 Stalvi no está destinado a ser utilizado por personas menores de 14 años sin el consentimiento explícito de un padre o tutor legal. No recopilamos a sabiendas datos personales de menores, ya que toda la recopilación de datos se limita estrictamente al dispositivo local del usuario.
 
 ## 7. Cambios en esta Política de Privacidad
-Nos reservamos el derecho de actualizar o modificar esta Política de Privacidad en cualquier momento para reflejar cambios en los requisitos legales o en las características de la Aplicación. Cualquier cambio sustancial se le comunicará a través de una actualización de la Aplicación. Su uso continuado de la Aplicación después de cualquier actualización constituye su aceptación de la Política de Privacidad revisada.
+Nos reservamos el derecho de actualizar o modificar esta Política de Privacidad en cualquier momento para reflejar cambios en los requisitos legales o en las características de la Aplicación. Cualquier cambio sugerido o sustancial se le comunicará a través de una actualización de la Aplicación. Su uso continuado de la Aplicación después de cualquier actualización constituye su aceptación de la Política de Privacidad revisada.
 
 ## 8. Información de Contacto
-Si tiene alguna pregunta, inquietud o consulta con respecto a esta Política de Privacidad o nuestras prácticas de protección de datos, comuníquese con el desarrollador a través del repositorio oficial o los canales de soporte designados.
+Si tiene alguna pregunta, inquietud o consulta con respecto a esta Política de Privacidad o nuestras prácticas de protección de datos, comuníquese con el desarrollador a través de GitHub en https://github.com/CarlesPV o por correo electrónico en carles.peiro.v@gmail.com.

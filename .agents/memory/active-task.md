@@ -1,16 +1,21 @@
-# Active Task: Phase 42 - Core Stabilization & Refinement
+# Active Task: Phase 43 - Pre-Launch Stabilization & Background Processes
 
-## Current Objectives
-- [ ] **Data Layer**: Fix backup system (Import/Export) to properly serialize and deserialize the destination account (`destinationAccountId`) for Transfer transactions.
-- [ ] **Domain Layer**: Refactor Budget calculations to filter transactions by both `categoryId` and the assigned `accountId` (Wallet).
-- [ ] **Presentation/Export**: Update the PDF generation service to include an "Account" column in the Budgets table, placed between the Category and Date Range columns.
-- [ ] **Infrastructure Layer**: Debug and fix background services for automatic/recurring transactions. Ensure triggers execute reliably at 0:00 UTC+2 and respect custom recurrence times.
+## 🎯 Objective
+Finalize the project for public release by fixing background transaction scheduling, updating legal compliance, performing comprehensive codebase cleanup, and rewriting project documentation.
 
-## Architectural Constraints
-- Maintain Clean Architecture separation of concerns.
-- Ensure all Drift queries are optimized and SQLCipher encryption is intact.
-- Background tasks must initialize their own dependency container (Riverpod ProviderContainer/Drift instance) safely.
-- Maintain 100% unit test coverage for new business rules.
+## 🏗️ Architecture & Core Components
+*   **Clean Architecture:** Strict separation between background execution (Infrastructure) and business rules (Domain).
+*   **State/DI:** Riverpod for standard DI; ensure isolated DI container for background processes (Isolates).
+*   **Local DB:** Drift with SQLCipher.
+*   **Timezone Logic:** Enforce local timezone (UTC+2) for all midnight-triggered background tasks.
 
-## Status
-In Progress
+## ✅ Task Checklist
+- [ ] **Fix Recurring Transactions:** Implement robust background execution (e.g., using `workmanager`) to trigger at 0:00 UTC+2, regardless of app state. Fix timezone/date calculation bug causing the 1-day delay for weekly, monthly, yearly, and custom intervals.
+- [x] **Legal Documents Update:** Finalize Terms & Conditions and Privacy Policy for public launch (in all 3 supported languages).
+- [ ] **Codebase Cleanup:** Remove dead code, unused files, and redundant comments. Optimize imports and file sizes.
+- [ ] **Documentation Sync:** Update code comments, roadmap, and internal architecture documentation to reflect the current state.
+- [ ] **README.md Rewrite:** Rewrite README.md from scratch, detailing the tech stack, features, architecture, and setup instructions.
+
+## 🧪 Testing & CI/CD
+- Ensure all business logic for recurring tasks is covered by unit tests.
+- CI/CD workflows must pass with 0 warnings, 0 errors, and 0 failures.

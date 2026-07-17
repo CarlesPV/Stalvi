@@ -112,7 +112,7 @@ class TermsAndConditionsViewer extends StatelessWidget {
           '## 3. Servicios de Terceros\n'
           'No utilizamos herramientas de seguimiento, análisis ni SDK de publicidad de terceros que recopilen o compartan tus datos.\n\n'
           '## 4. Contacto\n'
-          'Si tienes alguna pregunta o comentario sobre nuestras prácticas de privacidad, puedes contactarnos en privacy@stalvi.app.';
+          'Si tienes alguna pregunta o comentario sobre nuestras prácticas de privacidad, puedes contactar con el desarrollador a través de GitHub en https://github.com/CarlesPV o por correo electrónico en carles.peiro.v@gmail.com.';
     } else if (lang == 'ca') {
       return '# Política de Privacitat\n\n'
           'La teva privacitat és extremadament important per a nosaltres. Aquesta Política de Privacitat explica com Stalvi gestiona la teva informació.\n\n'
@@ -125,7 +125,7 @@ class TermsAndConditionsViewer extends StatelessWidget {
           '## 3. Serveis de Tercers\n'
           'No utilitzem eines de seguiment, anàlisi ni SDK de publicitat de tercers que recopilin o comparteixin les teves dades.\n\n'
           '## 4. Contacte\n'
-          'Si tens algun dubte o comentari sobre les nostres pràctiques de privacitat, pots contactar amb nosaltres a privacy@stalvi.app.';
+          'Si tens algun dubte o comentari sobre les nostres pràctiques de privacitat, pots contactar amb el desenvolupador a través de GitHub a https://github.com/CarlesPV o per correu electrònic a carles.peiro.v@gmail.com.';
     }
     return '# Privacy Policy\n\n'
         'Your privacy is extremely important to us. This Privacy Policy explains how Stalvi handles your information.\n\n'
@@ -138,7 +138,7 @@ class TermsAndConditionsViewer extends StatelessWidget {
         '## 3. Third-Party Services\n'
         'We do not use any tracking tools, analytics, or third-party advertising SDKs that collect or share your data.\n\n'
         '## 4. Contact Us\n'
-        'If you have any questions or feedback regarding our privacy practices, you can contact us at privacy@stalvi.app.';
+        'If you have any questions or feedback regarding our privacy practices, you can contact the developer via GitHub at https://github.com/CarlesPV or via email at carles.peiro.v@gmail.com.';
   }
 }
 
