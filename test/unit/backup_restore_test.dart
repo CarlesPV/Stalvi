@@ -16,6 +16,9 @@ import 'package:stalvi/domain/entities/category.dart' as ent_cat;
 import 'package:stalvi/domain/entities/tag.dart' as ent_tag;
 import 'package:stalvi/domain/entities/transaction.dart' as t;
 import 'package:stalvi/domain/entities/transaction_type.dart' as t_type;
+import 'package:stalvi/domain/entities/budget.dart' as ent_budget;
+import 'package:stalvi/domain/entities/savings_goal.dart' as ent_sg;
+import 'package:stalvi/domain/entities/automatic_transaction.dart' as ent_at;
 
 class FakePathProviderPlatform extends Fake
     with MockPlatformInterfaceMixin
@@ -74,7 +77,7 @@ void main() {
     await db.into(db.profiles).insert(
           ProfilesCompanion.insert(
             id: 'u1',
-            name: 'User 1',
+            name: 'Original User Name',
             username: 'user1',
             password: 'pwd',
             defaultCurrency: const Value('USD'),
@@ -131,13 +134,52 @@ void main() {
       modifiedAt: now,
     );
 
+    final budget = ent_budget.Budget(
+      id: 'b1',
+      accountId: 'a1',
+      categoryId: 'c1',
+      targetAmount: 10000,
+      startDate: now,
+      endDate: now.add(const Duration(days: 30)),
+      createdAt: now,
+      modifiedAt: now,
+    );
+
+    final savingsGoal = ent_sg.SavingsGoal(
+      id: 'sg1',
+      name: 'Car',
+      targetAmount: 500000,
+      color: 'red',
+      icon: 'car',
+      createdAt: now,
+      modifiedAt: now,
+      currency: 'USD',
+    );
+
+    final autoTx = ent_at.AutomaticTransaction(
+      id: 'at1',
+      name: 'Rent',
+      amount: 100000,
+      currency: 'USD',
+      type: t_type.TransactionType.expense,
+      accountId: 'a1',
+      categoryId: 'c1',
+      recurrenceDays: 30,
+      nextExecutionDate: now.add(const Duration(days: 30)),
+      createdAt: now,
+    );
+
     // Generate the backup file
     final exported = await exportService.generateEncryptedJson(
       accounts: [acc],
       categories: [cat],
       tags: [tag],
       transactions: [tx],
+      budgets: [budget],
+      savingsGoals: [savingsGoal],
+      automaticTransactions: [autoTx],
       password: 'mypassword',
+      userName: 'Restored User Name',
     );
 
     // Wipe and Import
@@ -147,6 +189,10 @@ void main() {
     );
 
     // Verify
+    final profiles = await db.select(db.profiles).get();
+    expect(profiles.length, 1);
+    expect(profiles.first.name, 'Restored User Name');
+
     final accounts = await db.select(db.accounts).get();
     final categories = await db.select(db.categories).get();
     final tags = await db.select(db.tags).get();
@@ -170,6 +216,20 @@ void main() {
     expect(transactions.first.amount, 5000);
     expect(transactions.first.categoryId, 'c1');
     expect(transactions.first.accountId, 'a1');
+
+    final budgets = await db.select(db.budgets).get();
+    final savingsGoals = await db.select(db.savingsGoals).get();
+    final automaticTransactions =
+        await db.select(db.automaticTransactions).get();
+
+    expect(budgets.length, 1);
+    expect(budgets.first.id, 'b1');
+
+    expect(savingsGoals.length, 1);
+    expect(savingsGoals.first.name, 'Car');
+
+    expect(automaticTransactions.length, 1);
+    expect(automaticTransactions.first.name, 'Rent');
 
     await db.close();
   });

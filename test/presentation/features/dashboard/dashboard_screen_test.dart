@@ -173,12 +173,6 @@ void main() {
           modifiedAt: DateTime(2026, 6, 1),
         );
 
-    final mockPeriodSummary = periodSummary ??
-        const PeriodSummary(
-          totalIncome: 10000, // €100.00
-          totalExpense: 5000, // €50.00
-        );
-
     final broadcastTxns = transactionsStream.asBroadcastStream();
 
     return ProviderScope(
@@ -187,20 +181,21 @@ void main() {
         filteredTransactionsProvider.overrideWith((ref) => broadcastTxns),
         accountsListProvider.overrideWith((ref) => accountsStream),
         defaultProfileProvider.overrideWith((ref) => mockProfile),
-        periodSummaryProvider.overrideWith((ref) => mockPeriodSummary),
+        periodSummaryProvider.overrideWith(
+          (ref) => const AsyncData(
+            PeriodSummary(
+              totalIncome: 500000,
+              totalExpense: 200000,
+            ),
+          ),
+        ),
         categoriesListProvider.overrideWith((ref) => Stream.value([])),
         tagsListProvider.overrideWith((ref) => Future.value([])),
         secureStorageProvider.overrideWithValue(mockSecureStorage),
         biometricAuthServiceProvider.overrideWithValue(mockBiometricAuth),
         addTransactionNotifierProvider
             .overrideWith(FakeAddTransactionNotifier.new),
-        globalBalanceProvider.overrideWith((ref) async* {
-          final accounts = await ref.watch(accountsListProvider.future);
-          yield accounts.fold<double>(
-            0.0,
-            (sum, acc) => sum + acc.initialBalance,
-          );
-        }),
+        globalBalanceProvider.overrideWith((ref) => const AsyncData(1500.0)),
         if (transactionRepo != null)
           transactionRepositoryProvider.overrideWithValue(transactionRepo),
         if (createAccountUseCase != null)

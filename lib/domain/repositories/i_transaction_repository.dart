@@ -46,6 +46,9 @@ class TransferPair {
 }
 
 // ─── Repository interface ──────────────────────────────────────────────────────
+// Domain Layer: Abstract definition of data operations for Transactions.
+// Implementation is provided in the Data layer (e.g. TransactionRepositoryImpl)
+// to enforce Clean Architecture boundaries.
 
 abstract class ITransactionRepository {
   Future<Transaction> createTransaction(Transaction transaction);

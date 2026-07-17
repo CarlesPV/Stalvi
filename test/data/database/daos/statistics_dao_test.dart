@@ -501,9 +501,9 @@ void main() {
 
     // Act - fetch period summary in EUR
     final summaryEur = await dao.getPeriodSummaryAggregates(
-      DateTime(2023, 1, 1),
-      DateTime(2023, 1, 31),
-      'EUR',
+      startDate: DateTime(2023, 1, 1),
+      endDate: DateTime(2023, 1, 31),
+      targetCurrency: 'EUR',
     );
 
     // Assert EUR
@@ -512,9 +512,9 @@ void main() {
 
     // Act - fetch period summary in USD
     final summaryUsd = await dao.getPeriodSummaryAggregates(
-      DateTime(2023, 1, 1),
-      DateTime(2023, 1, 31),
-      'USD',
+      startDate: DateTime(2023, 1, 1),
+      endDate: DateTime(2023, 1, 31),
+      targetCurrency: 'USD',
     );
 
     // Assert USD

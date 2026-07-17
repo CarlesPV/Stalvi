@@ -152,11 +152,9 @@ class TransactionDetailsDialog extends ConsumerWidget {
 
             // Header title
             Text(
-              transaction.notes?.isNotEmpty == true
-                  ? transaction.notes!
-                  : (isTransfer
-                      ? l10n.filterSheetTransferType
-                      : (isIncome ? l10n.filterIncome : l10n.filterExpense)),
+              isTransfer
+                  ? l10n.filterTransfer
+                  : (isIncome ? l10n.income(1) : l10n.expense(1)),
               style: theme.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.w800,
                 color: colorScheme.onSurfaceVariant,

@@ -8,6 +8,7 @@ import 'package:stalvi/domain/entities/account.dart';
 import 'package:stalvi/domain/entities/account_type.dart';
 import 'package:stalvi/domain/entities/transaction.dart';
 import 'package:stalvi/domain/entities/transaction_type.dart';
+import 'package:stalvi/domain/entities/category.dart';
 import '../transactions/add_transaction_screen.dart';
 import '../transactions/transaction_filter_sheet.dart';
 import '../budgets_and_goals/budgets_and_goals_screen.dart';
@@ -19,6 +20,7 @@ import '../settings/profile_settings_screen.dart';
 import '../settings/categories_tags_management_screen.dart';
 import '../settings/data_management_screen.dart';
 import '../recycle_bin/recycle_bin_screen.dart';
+import '../settings/automatic_transactions_screen.dart' as stalvi_auto;
 import '../../widgets/empty_state_widget.dart';
 import '../../providers/discreet_mode_provider.dart';
 import '../../widgets/obfuscated_text.dart';
@@ -128,9 +130,12 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen>
                 Navigator.of(context).pop();
                 await notifier.skipBiometricOptIn();
               },
-              child: Text(
-                l10n.authBiometricOptInSkip,
-                style: TextStyle(color: colorScheme.onSurfaceVariant),
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  l10n.authBiometricOptInSkip,
+                  style: TextStyle(color: colorScheme.onSurfaceVariant),
+                ),
               ),
             ),
             FilledButton(
@@ -138,7 +143,10 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen>
                 Navigator.of(context).pop();
                 await notifier.enableBiometricsOptIn();
               },
-              child: Text(l10n.authBiometricOptInEnable),
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(l10n.authBiometricOptInEnable),
+              ),
             ),
           ],
         );
@@ -183,11 +191,19 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen>
             // Mini logo for context
             ClipRRect(
               borderRadius: BorderRadius.circular(10),
-              child: Image.asset(
-                'assets/icon/app_icon.png',
+              child: SizedBox(
                 width: 34,
                 height: 34,
-                fit: BoxFit.contain,
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    return Image.asset(
+                      'assets/icon/app_icon.png',
+                      fit: BoxFit.contain,
+                      width: constraints.maxWidth,
+                      height: constraints.maxHeight,
+                    );
+                  },
+                ),
               ),
             ),
             const SizedBox(width: 10),
@@ -278,6 +294,18 @@ class _OverviewTab extends ConsumerWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final transactionsAsync = ref.watch(transactionsStreamProvider);
+    final transactions = transactionsAsync.valueOrNull ?? [];
+    final now = DateTime.now();
+    final thirtyDaysAgo = now.subtract(const Duration(days: 30));
+    final last30DaysTxns = transactions.where(
+      (tx) =>
+          tx.date.isAfter(thirtyDaysAgo) ||
+          tx.date.isAtSameMomentAs(thirtyDaysAgo),
+    );
+    final incomeCount =
+        last30DaysTxns.where((tx) => tx.type == TransactionType.income).length;
+    final expenseCount =
+        last30DaysTxns.where((tx) => tx.type == TransactionType.expense).length;
 
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
@@ -298,7 +326,7 @@ class _OverviewTab extends ConsumerWidget {
             children: [
               Expanded(
                 child: _StatCard(
-                  label: AppLocalizations.of(context)!.income,
+                  label: AppLocalizations.of(context)!.income(incomeCount),
                   icon: Icons.trending_up_rounded,
                   accentColor: financialColors.positive,
                   shimmer: shimmer,
@@ -310,7 +338,7 @@ class _OverviewTab extends ConsumerWidget {
               const SizedBox(width: 12),
               Expanded(
                 child: _StatCard(
-                  label: AppLocalizations.of(context)!.expenses,
+                  label: AppLocalizations.of(context)!.expense(expenseCount),
                   icon: Icons.trending_down_rounded,
                   accentColor: financialColors.negative,
                   shimmer: shimmer,
@@ -749,9 +777,12 @@ class _AccountItem extends ConsumerWidget {
     final accIcon = _getIconData(account.icon);
 
     final formatter = ref.watch(currencyFormatterProvider);
-    final balanceStr = formatter.format(
-      account.initialBalance,
-      currencyCode: account.currency,
+    final balanceAsync = ref.watch(accountBalanceProvider(account.id));
+    final balanceStr = balanceAsync.when(
+      data: (balance) =>
+          formatter.format(balance, currencyCode: account.currency),
+      loading: () => '...',
+      error: (_, __) => 'Error',
     );
 
     return GestureDetector(
@@ -813,11 +844,14 @@ class _AccountItem extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
-                    balanceStr,
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.w800,
-                      color: colorScheme.onSurface,
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      balanceStr,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.w800,
+                        color: colorScheme.onSurface,
+                      ),
                     ),
                   ),
                   if (account.isDefault) ...[
@@ -831,12 +865,15 @@ class _AccountItem extends ConsumerWidget {
                         color: colorScheme.primary.withValues(alpha: 0.12),
                         borderRadius: BorderRadius.circular(4),
                       ),
-                      child: Text(
-                        AppLocalizations.of(context)!.defaultAccountLabel,
-                        style: theme.textTheme.labelSmall?.copyWith(
-                          color: colorScheme.primary,
-                          fontSize: 9,
-                          fontWeight: FontWeight.bold,
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text(
+                          AppLocalizations.of(context)!.defaultAccountLabel,
+                          style: theme.textTheme.labelSmall?.copyWith(
+                            color: colorScheme.primary,
+                            fontSize: 9,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ),
@@ -858,6 +895,13 @@ class _TransactionItem extends ConsumerWidget {
     super.key,
     required this.transaction,
   });
+
+  Color _parseHexColor(String hexString) {
+    final buffer = StringBuffer();
+    if (hexString.length == 6 || hexString.length == 7) buffer.write('ff');
+    buffer.write(hexString.replaceFirst('#', ''));
+    return Color(int.parse(buffer.toString(), radix: 16));
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -882,9 +926,31 @@ class _TransactionItem extends ConsumerWidget {
     final color =
         isIncome ? financialColors.positive : financialColors.negative;
 
-    final icon = transaction.type == TransactionType.transfer
-        ? Icons.swap_horiz_rounded
-        : (isIncome ? Icons.trending_up_rounded : Icons.trending_down_rounded);
+    final categories = ref.watch(categoriesListProvider).valueOrNull ?? [];
+    Category? category;
+    if (transaction.categoryId != null) {
+      for (final c in categories) {
+        if (c.id == transaction.categoryId) {
+          category = c;
+          break;
+        }
+      }
+    }
+
+    final Color iconColor;
+    final IconData icon;
+
+    if (isTransfer) {
+      icon = Icons.swap_horiz_rounded;
+      iconColor = Colors.blue;
+    } else if (category != null) {
+      icon = getIconData(category.icon);
+      iconColor = _parseHexColor(category.color);
+    } else {
+      icon = isIncome ? Icons.trending_up_rounded : Icons.trending_down_rounded;
+      iconColor =
+          isIncome ? financialColors.positive : financialColors.negative;
+    }
 
     final dateStr = DateFormat.yMMMd(Localizations.localeOf(context).toString())
         .format(transaction.date);
@@ -906,12 +972,12 @@ class _TransactionItem extends ConsumerWidget {
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.12),
+                color: iconColor.withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(
                 icon,
-                color: color,
+                color: iconColor,
                 size: 20,
               ),
             ),
@@ -998,7 +1064,7 @@ class _SettingsSkeletonTab extends ConsumerWidget {
 
     return ListView.separated(
       padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
-      itemCount: 5,
+      itemCount: 6,
       separatorBuilder: (_, __) => const SizedBox(height: 12),
       itemBuilder: (context, i) {
         if (i == 0) {
@@ -1108,6 +1174,55 @@ class _SettingsSkeletonTab extends ConsumerWidget {
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
+                    builder: (context) =>
+                        const stalvi_auto.AutomaticTransactionsScreen(),
+                  ),
+                );
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.autorenew_rounded,
+                      color: colorScheme.primary,
+                      size: 22,
+                    ),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Text(
+                        AppLocalizations.of(context)!
+                            .settingsAutomaticTransactions,
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.w700,
+                              color: colorScheme.onSurface,
+                            ),
+                      ),
+                    ),
+                    Icon(
+                      Icons.chevron_right_rounded,
+                      color:
+                          colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        }
+
+        if (i == 3) {
+          return Container(
+            height: 60,
+            decoration: BoxDecoration(
+              color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: InkWell(
+              borderRadius: BorderRadius.circular(14),
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
                     builder: (context) => const ProfileSettingsScreen(),
                   ),
                 );
@@ -1143,7 +1258,7 @@ class _SettingsSkeletonTab extends ConsumerWidget {
           );
         }
 
-        if (i == 3) {
+        if (i == 4) {
           return Container(
             height: 60,
             decoration: BoxDecoration(
@@ -1190,7 +1305,7 @@ class _SettingsSkeletonTab extends ConsumerWidget {
           );
         }
 
-        if (i == 4) {
+        if (i == 5) {
           return Container(
             height: 60,
             decoration: BoxDecoration(
@@ -1333,18 +1448,22 @@ class _BalanceCard extends ConsumerWidget {
                 ),
               ),
               const SizedBox(width: 8),
-              IconButton(
-                key: const ValueKey('discreetModeIconButton'),
-                padding: EdgeInsets.zero,
-                constraints: const BoxConstraints(),
-                icon: Icon(
-                  isDiscreet ? Icons.visibility_off : Icons.visibility,
-                  color: colorScheme.onPrimary.withValues(alpha: 0.85),
-                  size: 20,
+              Padding(
+                padding: const EdgeInsets.only(left: 8.0),
+                child: IconButton(
+                  key: const ValueKey('discreetModeIconButton'),
+                  iconSize: 32.0,
+                  padding: const EdgeInsets.all(8.0),
+                  constraints: const BoxConstraints(),
+                  icon: Icon(
+                    isDiscreet ? Icons.visibility_off : Icons.visibility,
+                    color: colorScheme.onPrimary.withValues(alpha: 0.85),
+                    size: 32.0,
+                  ),
+                  onPressed: () {
+                    ref.read(discreetModeProvider.notifier).toggle();
+                  },
                 ),
-                onPressed: () {
-                  ref.read(discreetModeProvider.notifier).toggle();
-                },
               ),
             ],
           ),
@@ -1399,12 +1518,16 @@ class _BalanceCard extends ConsumerWidget {
                     totalBalance,
                     currencyCode: currency,
                   );
-                  return ObfuscatedText(
-                    balanceStr,
-                    style: theme.textTheme.headlineMedium?.copyWith(
-                      color: colorScheme.onPrimary,
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: -0.5,
+                  return FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerLeft,
+                    child: ObfuscatedText(
+                      balanceStr,
+                      style: theme.textTheme.headlineMedium?.copyWith(
+                        color: colorScheme.onPrimary,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: -0.5,
+                      ),
                     ),
                   );
                 },
@@ -1438,7 +1561,6 @@ class _BalanceCard extends ConsumerWidget {
             },
           ),
           const SizedBox(height: 20),
-          // Mini month label
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
             decoration: BoxDecoration(
@@ -1446,8 +1568,7 @@ class _BalanceCard extends ConsumerWidget {
               borderRadius: BorderRadius.circular(50),
             ),
             child: Text(
-              DateFormat.yMMMM(Localizations.localeOf(context).toString())
-                  .format(DateTime(2026, 6)),
+              AppLocalizations.of(context)!.presetLast30Days,
               style: theme.textTheme.labelSmall?.copyWith(
                 color: colorScheme.onPrimary.withValues(alpha: 0.85),
                 fontWeight: FontWeight.w600,
@@ -1482,7 +1603,7 @@ class _StatCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final summaryAsync = ref.watch(periodSummaryProvider);
+    final summaryAsync = ref.watch(dashboardPeriodSummaryProvider);
     final profile = ref.watch(defaultProfileProvider).valueOrNull;
     final currency = profile?.defaultCurrency ?? 'EUR';
     final formatter = ref.watch(currencyFormatterProvider);
@@ -1545,11 +1666,15 @@ class _StatCard extends ConsumerWidget {
                       100.0;
               final amountStr =
                   formatter.format(amount, currencyCode: currency);
-              return ObfuscatedText(
-                amountStr,
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w800,
-                  color: accentColor,
+              return FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerLeft,
+                child: ObfuscatedText(
+                  amountStr,
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w800,
+                    color: accentColor,
+                  ),
                 ),
               );
             },

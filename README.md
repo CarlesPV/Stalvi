@@ -1,12 +1,103 @@
-# Stalvi - Financial Management App
+# <img src="assets/icon/app_icon.png" width="48" height="48" align="center" alt="Stalvi Logo"/> Stalvi
 
-Stalvi is a premium, local-first personal finance application built with Flutter. It is designed to empower users with full control over their financial data through comprehensive tracking, advanced statistics, and zero-telemetry local-first storage. It features state-of-the-art security, multi-currency support with dynamic conversion, and full localization in three languages.
+[![Flutter](https://img.shields.io/badge/Flutter-%2302569B.svg?style=for-the-badge&logo=Flutter&logoColor=white)](https://flutter.dev)
+[![Dart](https://img.shields.io/badge/Dart-%230175C2.svg?style=for-the-badge&logo=Dart&logoColor=white)](https://dart.dev)
+[![SQLite](https://img.shields.io/badge/SQLite-%2307405e.svg?style=for-the-badge&logo=sqlite&logoColor=white)](https://sqlite.org)
+[![SQLCipher](https://img.shields.io/badge/Encryption-AES--256-green?style=for-the-badge)](https://www.zetetic.net/sqlcipher/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
+
+Stalvi is a premium, local-first personal finance control mobile application built with Flutter. It is designed to empower users with full control over their financial data through comprehensive tracking, advanced statistics, and zero-telemetry, offline-first local storage. It features state-of-the-art security, multi-currency support with dynamic conversion, and full localization in English, Spanish, and Catalan.
 
 ---
 
-## Architecture Design
+## 📱 Project Overview
 
-Stalvi is designed and developed following strict **Clean Architecture** principles and a modular directory structure to ensure isolation of concerns, high testability, and robust scalability.
+Stalvi bridges the gap between premium design aesthetics and absolute privacy. By adopting a **zero-telemetry, offline-first** approach, your sensitive financial information never leaves your device. Database entries are encrypted at rest using SQLCipher, and access keys are generated via cryptographically secure pseudo-random number generators (CSPRNG) stored directly in your device's hardware-backed keystore.
+
+Designed with strict **Clean Architecture** principles, the project ensures isolated testing, maintainable modular layers, and high-performance queries directly at the SQLite level using robust database aggregation.
+
+---
+
+## ✨ Core Features
+
+### 💰 Movement & Transaction Engine
+* **Income, Expense, & Transfers:** Record and categorize financial movements.
+* **Atomic Transfers:** Dual-movement linked transactions with automatic sync. Restoring or soft-deleting one leg of a transfer automatically mirrors the operation on the other.
+* **Category Deletion Safety:** Prompts users to reassign existing transactions when deleting a category in use. Reassignment targets are strictly filtered based on the category type.
+* **Historical Exchange Rates:** Saves a currency exchange rate snapshot within each transaction at creation time to preserve historical balance integrity, regardless of future rate fluctuations.
+* **Inline Input Validation:** Form inputs perform real-time validations, dynamically resetting and clearing validation errors as values are updated.
+
+### ⏰ Automatic & Recurring Transactions
+* **Automated Engine:** Evaluates and automatically generates scheduled transactions based on custom day intervals.
+* **End-of-Month Clamping:** Implements safe calendar clamping logic (e.g., executing transactions scheduled for the 30th or 31st on February 28th/29th or the last day of short months).
+* **Background Tasks:** Operates in the background via `workmanager` to verify and execute pending automatic transactions periodically.
+* **Soft-Delete Support:** Easily soft-delete recurring templates, moving them to the Recycle Bin and disabling automated generation until restored or permanently purged.
+
+### 📊 Budgets & Savings Goals
+* **Budgets:** Set category-specific monthly spending limits mapped to specific accounts, with automatic locks on currency and target amounts post-creation.
+* **Savings Goals:** Track financial progress with dedicated targets. Savings goals can be selected directly as destinations in transfers.
+* **Read-Only Padlock Indicators:** Visual padlock icons trail strictly read-only/non-editable fields (excluding date fields) on the Budgets and Savings Goals sheets, aligning with the design of the Accounts detail views.
+* **Dynamic Recalculations:** Progress bars and spent percentages recalculate in real-time when transactions are added, edited, or deleted.
+
+### 🔍 Concurrent Filters & Analytical Charts
+* **Multi-Dimensional Search:** Filter transactions simultaneously by transaction type, category, date range, amount range, tag, and currency using reactive Drift query builders.
+* **Real-Time Reactive Statistics:** Period summaries, rolling 30-day analytics, and top-category distribution charts are calculated using real-time Drift reactive streams, updating instantly upon database changes.
+* **Visual Analytics:** Premium interactive donut and bar charts with legends, category percentages, color swatches, and tap-interaction tooltips.
+
+### 📥 Compliant Exports & JSON Backups
+* **Enhanced CSV/Excel:** Export detailed spreadsheets containing all movement details and historical snapshots.
+* **Premium PDF Reports:** Generates clean tabular monthly statements, summary boxes, and category distribution pie charts. Formats transfers as `Source Account -> Destination Account` and embeds custom TTF fonts for perfect multi-currency unicode character rendering.
+* **Encrypted JSON Backups:** Export full database backups encrypted with AES-256-CBC using PBKDF2-HMAC-SHA256 key derivation from a user-specified password. Restoring a backup overwrites the active profile username with the one saved in the backup.
+* **Filename Standardization:** Exports are named based on document type: `Stalvi_Backup_`, `Stalvi_Table_`, and `Stalvi_Overview_` followed by a timestamp. Uses `open_filex` to let users immediately open files after exporting.
+
+### 🛡️ Robust Security Measures
+* **Database Encryption:** SQLite database file is encrypted utilizing **SQLCipher (AES-256)**.
+* **Hardware-Backed Key Generation:** The cipher key is generated using a secure CSPRNG and stored in the device's hardware-backed secure storage via `flutter_secure_storage` (Android Keystore / iOS Keychain).
+* **Secure Authentication:** Protection via a custom 4-to-8 digit PIN and **Biometric Lock** (Face ID / Touch ID) on startup. Includes brute-force lockout protection (lockout cooldown timer persisted in secure storage).
+* **Background UI Blurring:** The application window is blurred dynamically using a native app lifecycle wrapper when placed in the background or app switcher to prevent unauthorized visual capture.
+* **Discreet Mode:** Toggle button in the app bar instantly masks all financial balances, amounts, and trends across the application under a custom secure obfuscation font.
+* **Delete Account (Right to Be Forgotten):** An explicit option in the settings menu drops all database tables, purges all secure storage keychain credentials, and performs a cold application restart to guarantee complete data deletion.
+
+### 🌐 Trilingual Support & Localization
+Stalvi is fully localized in three languages, ensuring that all user-facing strings, form validations, error states, and dynamically generated system entities adapt to the active language:
+* 🇬🇧 **English**
+* 🇪🇸 **Spanish**
+* 🏴 **Catalan**
+
+On application launch or language switch, default database entities (such as "My Wallet" / "Mi cartera" / "La meva cartera" and default categories/tags) are dynamically updated in the SQLite tables using stable UUID mapping to prevent duplicates.
+
+---
+
+## 🛠️ Tech Stack & Key Libraries
+
+* **Core SDK:** Flutter (Dart)
+* **State Management:** Riverpod (`flutter_riverpod`, `riverpod_generator`)
+* **Database / ORM:** Drift (`drift`, `drift_dev`) + `sqlite3`
+* **Database Encryption:** SQLCipher (`sqlcipher_flutter_libs`)
+* **Security & Storage:** `flutter_secure_storage`, `local_auth`, `encrypt`, `crypto`
+* **Charts & Analytics:** `fl_chart`
+* **Background Tasks:** `workmanager`
+* **Exporting & Utilities:** `pdf`, `share_plus`, `file_picker`, `open_filex`, `uuid`, `shared_preferences`
+
+---
+
+## 📐 Architecture Overview
+
+Stalvi strictly adheres to **Clean Architecture** and a modular layer structure, separating concerns, facilitating automated testing, and isolating components.
+
+```mermaid
+graph TD
+    UI[Presentation Layer: Widgets & Pages] -->|Invokes| UC[Domain Layer: Use Cases]
+    Prov[Presentation Layer: Riverpod Providers] -->|Manages| UI
+    UC -->|Interacts with| RepoInterface[Domain Layer: Repository Interfaces]
+    RepoImpl[Data Layer: Repository Implementations] -.->|Implements| RepoInterface
+    RepoImpl -->|Queries| DriftDAO[Data Layer: Drift DAOs & Tables]
+    DriftDAO -->|Reads/Writes| SQLite[Data Layer: Encrypted SQLite via SQLCipher]
+    RepoImpl -->|Fetches| RemoteAPI[Data Layer: Currency Exchange API]
+    DriftDAO -.->|Emits Streams| Prov
+```
+
+### Directory Structure
 
 ```
 lib/
@@ -30,56 +121,71 @@ lib/
     └── widgets/        # Reusable custom UI components (ObfuscatedText, EmptyStateWidget)
 ```
 
-- **Presentation Layer:** Built with **Riverpod** for reactive state management, asynchronous data loading, and real-time dependency injection.
-- **Domain Layer:** Contains the core business rules, entities, and use cases, remaining fully independent of external frameworks, libraries, and databases.
-- **Data Layer:** Handles all database transactions, networking, data caching, serialization, and encrypted storage.
+* **Presentation Layer:** Contains UI widgets and Riverpod state management providers. It responds to changes in the database and updates the UI asynchronously.
+* **Domain Layer:** Contains core enterprise business rules, pure entities, use cases, and repository contracts. It contains no reference to external libraries, databases, or frameworks.
+* **Data Layer:** Handles data retrieval, caching, serialization, encryption, and storage, implementing the repository interfaces defined in the Domain layer.
 
 ---
 
-## Core Features
+## 🚀 Getting Started & Installation
 
-### 💰 Movement & Transaction Engine
-- **Income, Expense, & Transfers:** Record and categorize financial movements.
-- **Atomic Transfers:** Double-entry transfers link origin and destination accounts securely. Deleting or restoring one leg of a transfer automatically mirrors the action on the other leg.
-- **30-Day Recycle Bin (Trash):** Soft-deleted transactions, budgets, and savings goals are moved to a temporary trash. Balances are recalculated in real time. Items older than 30 days are automatically purged on startup.
-- **Immutability:** Saves currency exchange rate snapshots within each transaction at creation time to preserve historical balance integrity.
+### Prerequisites
+* [Flutter SDK](https://docs.flutter.dev/get-started/install) (version `>=3.2.0 <4.0.0`)
+* Android Studio / SDK (for Android builds)
+* Xcode (for iOS builds, macOS required)
+* CocoaPods (for iOS dependency resolution)
 
-### 📊 Advanced Budgets & Savings Goals
-- **Budgets:** Set category-specific monthly spending limits mapped to specific accounts, with automatic locks on currency and target amounts post-creation.
-- **Savings Goals:** Track financial progress with dedicated targets. Savings goals can be selected directly as destinations in transfers.
-- **Dynamic Recalculation:** Progress bars and spent percentages dynamically recalculate in real-time when transactions are added, edited, or deleted.
+### Configuration
 
-### 🔍 Concurrent Filters & Analytical Charts
-- **Multi-Dimensional Search:** Filter transactions simultaneously by transaction type, category, date range, amount range, tag, and currency using reactive Drift query builders.
-- **Eager Statistics Pre-Warming:** Analytics future providers pre-warm on screen initialization, eliminating loading latency when navigating to the Statistics screen.
-- **Visual Analytics:** Premium interactive charts (pie/donut and bar charts) with legends, category percentages, color swatches, and tap-interaction tooltips.
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/CarlesPV/Konta.git stalvi
+   cd stalvi
+   ```
 
-### 📥 Compliant Exports & JSON Backups
-- **Enhanced CSV/Excel:** Export detailed spreadsheets containing all movement details and historical snapshots.
-- **Premium PDF Reports:** Generates clean tabular monthly statements, summary boxes, and category distribution pie charts.
-- **Encrypted JSON Backups:** Export full database backups encrypted with AES-256-CBC using PBKDF2-HMAC-SHA256 key derivation from a user-specified password.
+2. **Configure environment variables:**
+   Duplicate the `.env.example` file and rename it to `.env`:
+   ```bash
+   cp .env.example .env
+   ```
+   Open the `.env` file and set your secure local encryption key and remote API values:
+   ```env
+   DB_ENCRYPTION_KEY=your_secure_development_key_here
+   EXCHANGE_RATE_API_KEY=your_api_key_here
+   ```
 
----
+3. **Get dependencies:**
+   ```bash
+   flutter pub get
+   ```
 
-## Trilingual Support & Localization
+4. **Generate Code (Drift/Riverpod):**
+   Stalvi uses `build_runner` to generate code for the Drift database and Riverpod providers. Run the following command before compiling:
+   ```bash
+   flutter pub run build_runner build --delete-conflicting-outputs
+   ```
+   *(Alternatively, use `flutter pub run build_runner watch` during development to regenerate files on changes).*
 
-Stalvi is fully localized in three languages, ensuring that all user-facing strings, error states, and dynamically generated system entities adapt to the active language:
-- 🇬🇧 **English**
-- 🇪🇸 **Spanish**
-- 🏴 **Catalan**
+5. **Run the Application:**
+   * Run the app in development mode:
+     ```bash
+     flutter run
+     ```
+   * Or run using the helper script:
+     ```bash
+     ./run_Stalvi.sh
+     ```
 
-### Dynamic Database Translation
-- On application launch or language switch, default database entities (such as "My Wallet" / "Mi cartera" / "La meva cartera" and default categories/tags) are dynamically updated in the SQLite tables using stable UUID mapping. This prevents duplicate entries and ensures a consistent native language experience.
-
----
-
-## Robust Security Measures
-
-Stalvi places user privacy and data security above all else. Because the app is **local-first and zero-telemetry**, your financial information never leaves your device.
-
-- **Database Encryption at Rest:** The SQLite database file is encrypted utilizing **SQLCipher (AES-256)**.
-- **Hardware-Backed Key Generation:** The database cipher key is generated using a secure CSPRNG and stored in the device's hardware-backed secure storage via `flutter_secure_storage` (Android Keystore / iOS Keychain).
-- **Secure Authentication:** Protection via a custom 4-to-8 digit PIN and **Biometric Lock** (Face ID / Touch ID) on startup. Includes brute-force lockout protection (lockout cooldown timer persisted in secure storage).
-- **Background UI Blurring:** The application window is blurred dynamically using a native app lifecycle wrapper when placed in the background or app switcher to prevent unauthorized visual capture.
-- **Discreet Mode:** Toggle button in the app bar instantly masks all financial balances, amounts, and trends across the application under a custom secure obfuscation font.
-- **Delete Account (Right to Be Forgotten):** An explicit option in the settings menu drops all database tables, purges all secure storage keychain credentials, and performs a cold application restart to guarantee complete data deletion.
+### Testing
+To run the automated test suite (including unit, widget, and architecture tests):
+```bash
+flutter test
+```
+Or execute the automated test shell script:
+```bash
+./generate_tests.sh
+```
+To run static analysis check for lints and formatting:
+```bash
+flutter analyze
+```

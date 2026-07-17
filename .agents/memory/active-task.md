@@ -1,17 +1,23 @@
-# Active Task: Phase 29 - Pre-Release Polish, Security, and Compliance
+# Active Task: Phase 43 - Future Analysis & Next Steps
 
-## Objective
-Finalize the Stalvi application for production deployment on the Google Play Store. This phase focuses on achieving UI resilience, absolute code cleanliness, stringent security validation, full trilingual support, and comprehensive documentation synchronization.
+## 🎯 Objective
+Prepare the ground for future analysis, monitoring, and post-launch feature considerations.
 
-## Sub-tasks
-- [ ] **UI/UX Resilience:** Identify and fix all `RenderFlex` overflow issues across the app. Ensure proper padding, dynamic text scaling, and keyboard inset handling on all forms and pop-ups.
-- [ ] **L10n Synchronization:** Audit `lib/core/l10n/` files to ensure 100% parity across English, Spanish, and Catalan. Remove unused keys.
-- [ ] **Codebase Cleanup:** Remove dead code, unused imports, leftover test strings, and unreferenced assets. Ensure `flutter analyze` returns zero issues.
-- [ ] **Security & Secrets Audit:** Verify `.gitignore` completeness, ensure no hardcoded secrets or API keys exist, and confirm ProGuard/R8 obfuscation is configured for Android release.
-- [ ] **Store Compliance:** Verify the integration of legal terms, privacy policies, and necessary Play Store metadata within the app.
-- [ ] **Documentation Update:** Synchronize `roadmap.md`, `README.md`, and inline architectural comments to accurately reflect the 100% updated state of the project.
+## 🏗️ Architecture & Core Components
+*   **Clean Architecture:** Strict separation between background execution (Infrastructure) and business rules (Domain).
+*   **State/DI:** Riverpod for standard DI; ensure isolated DI container for background processes (Isolates).
+*   **Local DB:** Drift with SQLCipher.
+*   **Timezone Logic:** Enforce local timezone (UTC+2) for all midnight-triggered background tasks.
 
-## Context & Rules
-- Do not hallucinate or create non-existent files.
-- Everything MUST remain functionally intact; run tests after modifications.
-- Modify files directly without printing output in the chat.
+## ✅ Task Checklist
+- [x] **Phase 42 Core Items:** Marked complete across previous stabilization phases.
+- [x] **Fix Recurring Transactions:** Implement robust background execution (e.g., using `workmanager`) to trigger at 0:00 UTC+2, regardless of app state. Fix timezone/date calculation bug causing the 1-day delay for weekly, monthly, yearly, and custom intervals.
+- [x] **Legal Documents Update:** Finalize Terms & Conditions and Privacy Policy for public launch (in all 3 supported languages).
+- [x] **Codebase Cleanup:** Remove dead code, unused files, and redundant comments. Optimize imports and file sizes.
+- [x] **Documentation Sync:** Update code comments, roadmap, and internal architecture documentation to reflect the current state.
+- [x] **README.md Rewrite:** Rewrite README.md from scratch, detailing the tech stack, features, architecture, and setup instructions.
+- [ ] **Future Analysis:** Gather analytics and identify areas for the next major iteration.
+
+## 🧪 Testing & CI/CD
+- Ensure all business logic for recurring tasks is covered by unit tests.
+- CI/CD workflows must pass with 0 warnings, 0 errors, and 0 failures.

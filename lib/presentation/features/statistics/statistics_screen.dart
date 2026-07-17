@@ -59,11 +59,11 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
       ref.invalidate(topIncomeCategoriesProvider);
 
       // Reading (not watching) subscribes to the provider and triggers the
-      // Future without rebuilding – the watch() calls in build() will pick up
+      // evaluation without rebuilding – the watch() calls in build() will pick up
       // the already-running future and show data as soon as it resolves.
-      ref.read(periodSummaryProvider.future).ignore();
-      ref.read(topExpenseCategoriesProvider.future).ignore();
-      ref.read(topIncomeCategoriesProvider.future).ignore();
+      ref.read(periodSummaryProvider);
+      ref.read(topExpenseCategoriesProvider);
+      ref.read(topIncomeCategoriesProvider);
     });
   }
 
@@ -419,7 +419,7 @@ class _SummarySection extends ConsumerWidget {
             Expanded(
               child: _SummaryCardSkeleton(
                 shimmer: shimmer,
-                label: AppLocalizations.of(context)!.income,
+                label: AppLocalizations.of(context)!.income(1),
                 accentColor: financialColors.positive,
               ),
             ),
@@ -443,7 +443,7 @@ class _SummarySection extends ConsumerWidget {
               children: [
                 Expanded(
                   child: _SummaryCard(
-                    label: AppLocalizations.of(context)!.income,
+                    label: AppLocalizations.of(context)!.income(1),
                     amount: summary.totalIncome / 100.0,
                     icon: Icons.trending_up_rounded,
                     accentColor: financialColors.positive,
@@ -1220,6 +1220,8 @@ extension on StatisticsDatePreset {
   String getLocalizedLabel(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     switch (this) {
+      case StatisticsDatePreset.last30Days:
+        return l10n.presetLast30Days;
       case StatisticsDatePreset.thisMonth:
         return l10n.presetThisMonth;
       case StatisticsDatePreset.last3Months:

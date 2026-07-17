@@ -40,6 +40,7 @@ class _CreateEditBudgetSheetState extends ConsumerState<CreateEditBudgetSheet> {
   String _selectedCurrency = 'EUR';
   DateTime _startDate = DateTime.now();
   DateTime _endDate = DateTime.now().add(const Duration(days: 30));
+  String? _validationError;
 
   @override
   void initState() {
@@ -82,25 +83,23 @@ class _CreateEditBudgetSheetState extends ConsumerState<CreateEditBudgetSheet> {
     final targetAmountCents = (amountDouble * 100).round();
 
     if (widget.existingBudget == null && _selectedAccountId == null) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(l10n.errorAccountRequired)));
+      setState(() => _validationError = l10n.errorAccountRequired);
       return;
     }
     if (widget.existingBudget == null && targetAmountCents <= 0) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(l10n.errorInvalidAmount)));
+      setState(() => _validationError = l10n.errorInvalidAmount);
       return;
     }
     if (_selectedCategoryId == null) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(l10n.errorCategoryRequired)));
+      setState(() => _validationError = l10n.errorCategoryRequired);
       return;
     }
     if (!_endDate.isAfter(_startDate)) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(l10n.errorEndDateBeforeStart)));
+      setState(() => _validationError = l10n.errorEndDateBeforeStart);
       return;
     }
+
+    setState(() => _validationError = null);
 
     if (widget.existingBudget == null) {
       final params = CreateBudgetParams(
@@ -244,6 +243,22 @@ class _CreateEditBudgetSheetState extends ConsumerState<CreateEditBudgetSheet> {
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(16),
                   ),
+                  disabledBorder: isEditing
+                      ? OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          borderSide: BorderSide(
+                            color: colorScheme.outline.withValues(alpha: 0.3),
+                          ),
+                        )
+                      : null,
+                  suffixIcon: isEditing
+                      ? Icon(
+                          Icons.lock_outline_rounded,
+                          size: 18,
+                          color: colorScheme.onSurfaceVariant
+                              .withValues(alpha: 0.5),
+                        )
+                      : null,
                 ),
               ),
               const SizedBox(height: 16),
@@ -254,6 +269,22 @@ class _CreateEditBudgetSheetState extends ConsumerState<CreateEditBudgetSheet> {
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(16),
                   ),
+                  disabledBorder: isEditing
+                      ? OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          borderSide: BorderSide(
+                            color: colorScheme.outline.withValues(alpha: 0.3),
+                          ),
+                        )
+                      : null,
+                  suffixIcon: isEditing
+                      ? Icon(
+                          Icons.lock_outline_rounded,
+                          size: 18,
+                          color: colorScheme.onSurfaceVariant
+                              .withValues(alpha: 0.5),
+                        )
+                      : null,
                 ),
                 items: isEditing
                     ? [
@@ -333,6 +364,23 @@ class _CreateEditBudgetSheetState extends ConsumerState<CreateEditBudgetSheet> {
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(16),
                       ),
+                      disabledBorder: isEditing
+                          ? OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(16),
+                              borderSide: BorderSide(
+                                color:
+                                    colorScheme.outline.withValues(alpha: 0.3),
+                              ),
+                            )
+                          : null,
+                      suffixIcon: isEditing
+                          ? Icon(
+                              Icons.lock_outline_rounded,
+                              size: 18,
+                              color: colorScheme.onSurfaceVariant
+                                  .withValues(alpha: 0.5),
+                            )
+                          : null,
                     ),
                     items: isEditing
                         ? (existingAccount != null
@@ -399,6 +447,23 @@ class _CreateEditBudgetSheetState extends ConsumerState<CreateEditBudgetSheet> {
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(16),
                       ),
+                      disabledBorder: isEditing
+                          ? OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(16),
+                              borderSide: BorderSide(
+                                color:
+                                    colorScheme.outline.withValues(alpha: 0.3),
+                              ),
+                            )
+                          : null,
+                      suffixIcon: isEditing
+                          ? Icon(
+                              Icons.lock_outline_rounded,
+                              size: 18,
+                              color: colorScheme.onSurfaceVariant
+                                  .withValues(alpha: 0.5),
+                            )
+                          : null,
                     ),
                     items: filteredCategories.map((c) {
                       return DropdownMenuItem(
@@ -461,6 +526,47 @@ class _CreateEditBudgetSheetState extends ConsumerState<CreateEditBudgetSheet> {
                 ],
               ),
               const SizedBox(height: 36),
+              if (_validationError != null) ...[
+                Builder(
+                  builder: (context) {
+                    final theme = Theme.of(context);
+                    final colorScheme = theme.colorScheme;
+                    return Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 10,
+                      ),
+                      decoration: BoxDecoration(
+                        color:
+                            colorScheme.errorContainer.withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: colorScheme.error.withValues(alpha: 0.35),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.error_outline_rounded,
+                            color: colorScheme.error,
+                            size: 18,
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              _validationError!,
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: colorScheme.error,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+                const SizedBox(height: 16),
+              ],
               Row(
                 children: [
                   Expanded(

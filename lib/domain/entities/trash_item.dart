@@ -4,6 +4,7 @@ enum TrashItemType {
   account,
   budget,
   savingsGoal,
+  automaticTransaction,
 }
 
 class TrashItem {
@@ -11,6 +12,7 @@ class TrashItem {
   final String name;
   final TrashItemType type;
   final int daysRemaining;
+  final DateTime deletedAt;
 
   final Map<String, dynamic>? metadata;
 
@@ -19,6 +21,7 @@ class TrashItem {
     required this.name,
     required this.type,
     required this.daysRemaining,
+    required this.deletedAt,
     this.metadata,
   });
 }

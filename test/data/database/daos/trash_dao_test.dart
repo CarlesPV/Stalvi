@@ -30,7 +30,9 @@ void main() {
   test('getTrashItems returns only soft-deleted items sorted by daysRemaining',
       () async {
     const uuid = Uuid();
-    final now = DateTime.now();
+    final now = DateTime.fromMillisecondsSinceEpoch(
+      (DateTime.now().millisecondsSinceEpoch ~/ 1000) * 1000,
+    );
     final userId = uuid.v4();
 
     await db.into(db.profiles).insert(
@@ -103,8 +105,10 @@ void main() {
     // T2 should be first since it has fewer days remaining (10 < 20)
     expect(items[0].id, t2Id);
     expect(items[0].daysRemaining, 10);
+    expect(items[0].deletedAt, now.subtract(const Duration(days: 20)));
     expect(items[1].id, t1Id);
     expect(items[1].daysRemaining, 20);
+    expect(items[1].deletedAt, now.subtract(const Duration(days: 10)));
   });
 
   test('restoreItem sets isDeleted to false', () async {

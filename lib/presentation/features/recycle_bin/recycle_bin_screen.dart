@@ -64,6 +64,8 @@ class _TrashItemTile extends ConsumerWidget {
           return Icons.pie_chart;
         case TrashItemType.savingsGoal:
           return Icons.savings;
+        case TrashItemType.automaticTransaction:
+          return Icons.autorenew;
       }
     }
 
@@ -79,6 +81,8 @@ class _TrashItemTile extends ConsumerWidget {
           return l10n.budgets;
         case TrashItemType.savingsGoal:
           return l10n.savingsGoal;
+        case TrashItemType.automaticTransaction:
+          return l10n.settingsAutomaticTransactions;
       }
     }
 
@@ -111,16 +115,24 @@ class _TrashItemTile extends ConsumerWidget {
       return '$nameStr - $formattedAmt';
     }
 
+    final remainingDays = 30 - DateTime.now().difference(item.deletedAt).inDays;
+
     return ListTile(
       leading: CircleAvatar(
         backgroundColor: Colors.grey.shade300,
         child: Icon(getIconForType(), color: Colors.grey.shade700),
       ),
-      title: Text(getFormattedTitle()),
+      title: Text(
+        getFormattedTitle(),
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      ),
       subtitle: Text(
-        '${getTypeLabel()} • ${l10n.recycleBinDaysRemaining(item.daysRemaining)}',
+        '${l10n.recycleBinDaysRemaining(remainingDays)} • ${getTypeLabel()}',
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
         style: TextStyle(
-          color: item.daysRemaining <= 3 ? Colors.red : Colors.grey,
+          color: remainingDays <= 3 ? Colors.red : Colors.grey,
         ),
       ),
       trailing: Row(

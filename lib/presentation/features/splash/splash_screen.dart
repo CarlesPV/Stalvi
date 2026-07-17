@@ -323,7 +323,7 @@ class _LogoBadge extends StatelessWidget {
       width: 104,
       height: 104,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(30),
+        borderRadius: BorderRadius.circular(24),
         color: colorScheme.primary,
         boxShadow: [
           BoxShadow(
@@ -341,10 +341,16 @@ class _LogoBadge extends StatelessWidget {
         ],
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(30),
-        child: Image.asset(
-          'assets/icon/app_icon.png',
-          fit: BoxFit.cover,
+        borderRadius: BorderRadius.circular(24),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return Image.asset(
+              'assets/icon/splash_icon.png',
+              fit: BoxFit.cover,
+              width: constraints.maxWidth,
+              height: constraints.maxHeight,
+            );
+          },
         ),
       ),
     );

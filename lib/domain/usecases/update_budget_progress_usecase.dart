@@ -33,6 +33,7 @@ class UpdateBudgetProgressUseCase {
     for (final budget in budgets) {
       final filter = TransactionQueryFilter(
         categoryId: catId,
+        accountId: budget.accountId,
         type: TransactionType.expense,
         dateRange: DateTimeRange(start: budget.startDate, end: budget.endDate),
       );

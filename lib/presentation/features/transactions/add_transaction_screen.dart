@@ -99,14 +99,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
             }
           },
           error: (err, _) {
-            final message = _getLocalizedError(context, err);
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(message),
-                backgroundColor: colorScheme.error,
-                behavior: SnackBarBehavior.floating,
-              ),
-            );
+            // Errors are displayed inline — no SnackBar needed here.
           },
           loading: () {},
         );
@@ -217,7 +210,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Text(
-                              AppLocalizations.of(context)!.expense,
+                              AppLocalizations.of(context)!.expense(1),
                               style: theme.textTheme.bodyMedium?.copyWith(
                                 fontWeight: FontWeight.w700,
                                 color: state.type == TransactionType.expense
@@ -245,7 +238,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Text(
-                              AppLocalizations.of(context)!.income,
+                              AppLocalizations.of(context)!.income(1),
                               style: theme.textTheme.bodyMedium?.copyWith(
                                 fontWeight: FontWeight.w700,
                                 color: state.type == TransactionType.income
@@ -351,6 +344,24 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                     );
                   },
                 ),
+                if (state.errors.containsKey('amount'))
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8),
+                    child: Text(
+                      _getLocalizedError(
+                        context,
+                        ValidationException(
+                          message: '',
+                          code: state.errors['amount']!,
+                        ),
+                      ),
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: colorScheme.error,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
 
                 const SizedBox(height: 40),
 
@@ -365,6 +376,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                     ),
                   ),
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       if (state.type == TransactionType.transfer) ...[
                         // From Account Selector
@@ -384,6 +396,26 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                             isSource: true,
                           ),
                         ),
+                        if (state.errors.containsKey('accountId'))
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              left: 64,
+                              right: 16,
+                              bottom: 8,
+                            ),
+                            child: Text(
+                              _getLocalizedError(
+                                context,
+                                ValidationException(
+                                  message: '',
+                                  code: state.errors['accountId']!,
+                                ),
+                              ),
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: colorScheme.error,
+                              ),
+                            ),
+                          ),
                         Divider(
                           height: 1,
                           color: colorScheme.outline.withValues(alpha: 0.08),
@@ -411,6 +443,26 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                             isSource: false,
                           ),
                         ),
+                        if (state.errors.containsKey('toAccountId'))
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              left: 64,
+                              right: 16,
+                              bottom: 8,
+                            ),
+                            child: Text(
+                              _getLocalizedError(
+                                context,
+                                ValidationException(
+                                  message: '',
+                                  code: state.errors['toAccountId']!,
+                                ),
+                              ),
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: colorScheme.error,
+                              ),
+                            ),
+                          ),
                       ] else ...[
                         // Account Selector
                         _FormSelectorTile(
@@ -429,6 +481,26 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                             isSource: true,
                           ),
                         ),
+                        if (state.errors.containsKey('accountId'))
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              left: 64,
+                              right: 16,
+                              bottom: 8,
+                            ),
+                            child: Text(
+                              _getLocalizedError(
+                                context,
+                                ValidationException(
+                                  message: '',
+                                  code: state.errors['accountId']!,
+                                ),
+                              ),
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: colorScheme.error,
+                              ),
+                            ),
+                          ),
                         Divider(
                           height: 1,
                           color: colorScheme.outline.withValues(alpha: 0.08),
@@ -450,6 +522,26 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                             state.type,
                           ),
                         ),
+                        if (state.errors.containsKey('categoryId'))
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              left: 64,
+                              right: 16,
+                              bottom: 8,
+                            ),
+                            child: Text(
+                              _getLocalizedError(
+                                context,
+                                ValidationException(
+                                  message: '',
+                                  code: state.errors['categoryId']!,
+                                ),
+                              ),
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: colorScheme.error,
+                              ),
+                            ),
+                          ),
                       ],
                       Divider(
                         height: 1,
@@ -465,6 +557,26 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                         iconColor: colorScheme.primary,
                         onTap: () => _selectDate(context, state.date),
                       ),
+                      if (state.errors.containsKey('date'))
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            left: 64,
+                            right: 16,
+                            bottom: 8,
+                          ),
+                          child: Text(
+                            _getLocalizedError(
+                              context,
+                              ValidationException(
+                                message: '',
+                                code: state.errors['date']!,
+                              ),
+                            ),
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: colorScheme.error,
+                            ),
+                          ),
+                        ),
                       Divider(
                         height: 1,
                         color: colorScheme.outline.withValues(alpha: 0.08),
@@ -478,6 +590,26 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                         iconColor: colorScheme.secondary,
                         onTap: () => _showCurrencySelector(context),
                       ),
+                      if (state.errors.containsKey('currency'))
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            left: 64,
+                            right: 16,
+                            bottom: 8,
+                          ),
+                          child: Text(
+                            _getLocalizedError(
+                              context,
+                              ValidationException(
+                                message: '',
+                                code: state.errors['currency']!,
+                              ),
+                            ),
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: colorScheme.error,
+                            ),
+                          ),
+                        ),
                       Divider(
                         height: 1,
                         color: colorScheme.outline.withValues(alpha: 0.08),
@@ -531,7 +663,58 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                   ),
                 ),
 
-                const SizedBox(height: 48),
+                const SizedBox(height: 24),
+
+                // ── Inline Validation / Submission Error ──────────────────────
+                (() {
+                  final error = state.submissionStatus.error;
+                  if (error == null) return const SizedBox.shrink();
+
+                  final isValidationError = error is ValidationException;
+
+                  if (isValidationError) return const SizedBox.shrink();
+
+                  return Column(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
+                        decoration: BoxDecoration(
+                          color:
+                              colorScheme.errorContainer.withValues(alpha: 0.2),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: colorScheme.error.withValues(alpha: 0.35),
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.error_outline_rounded,
+                              color: colorScheme.error,
+                              size: 20,
+                            ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: Text(
+                                _getLocalizedError(
+                                  context,
+                                  error,
+                                ),
+                                style: theme.textTheme.bodySmall?.copyWith(
+                                  color: colorScheme.error,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                    ],
+                  );
+                })(),
 
                 // ── Submit Button ─────────────────────────────────────────────
                 FilledButton(

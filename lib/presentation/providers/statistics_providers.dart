@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:stalvi/domain/entities/transaction_type.dart';
-import 'package:stalvi/domain/entities/account.dart';
 import 'package:stalvi/domain/entities/category_statistic.dart';
 import 'package:stalvi/domain/entities/period_summary.dart';
+import 'package:stalvi/domain/entities/transaction.dart';
+import 'package:stalvi/domain/entities/transaction_type.dart';
+import 'package:stalvi/core/utils/currency_converter.dart';
 import 'package:stalvi/domain/use_cases/statistics/get_period_summary_use_case.dart';
 import 'package:stalvi/domain/use_cases/statistics/get_top_categories_use_case.dart';
 import 'repository_providers.dart';
-import 'package:stalvi/core/utils/currency_converter.dart';
 
 // ─── Use-case providers ───────────────────────────────────────────────────────
 
@@ -59,6 +59,7 @@ class StatisticsFilter {
 
 /// Preset date ranges for the statistics filter chips.
 enum StatisticsDatePreset {
+  last30Days,
   thisMonth,
   last3Months,
   last6Months,
@@ -67,6 +68,8 @@ enum StatisticsDatePreset {
 
   String get label {
     switch (this) {
+      case last30Days:
+        return 'Last 30 Days';
       case thisMonth:
         return 'This Month';
       case last3Months:
@@ -83,6 +86,11 @@ enum StatisticsDatePreset {
   DateTimeRange toDateTimeRange() {
     final now = DateTime.now();
     switch (this) {
+      case last30Days:
+        return DateTimeRange(
+          start: now.subtract(const Duration(days: 30)),
+          end: now,
+        );
       case thisMonth:
         return DateTimeRange(
           start: DateTime(now.year, now.month, 1),
@@ -117,49 +125,14 @@ enum StatisticsDatePreset {
 
 /// Holds and mutates the active statistics filter state.
 class StatisticsFilterNotifier extends Notifier<StatisticsFilter> {
-  bool _hasInitializedDefaultAccount = false;
-
   @override
   StatisticsFilter build() {
-    const initialPreset = StatisticsDatePreset.thisMonth;
-
-    ref.listen<AsyncValue<List<Account>>>(accountsListProvider,
-        (previous, next) {
-      if (!_hasInitializedDefaultAccount) {
-        next.whenData((accounts) {
-          try {
-            final defaultAccount = accounts.firstWhere((a) => a.isDefault);
-            state = state.copyWith(accountIdFn: () => defaultAccount.id);
-            _hasInitializedDefaultAccount = true;
-          } catch (_) {
-            if (accounts.isNotEmpty) {
-              state = state.copyWith(accountIdFn: () => accounts.first.id);
-              _hasInitializedDefaultAccount = true;
-            }
-          }
-        });
-      }
-    });
-
-    final accountsAsync = ref.read(accountsListProvider);
-    String? initialAccountId;
-    accountsAsync.whenData((accounts) {
-      try {
-        final defaultAccount = accounts.firstWhere((a) => a.isDefault);
-        initialAccountId = defaultAccount.id;
-        _hasInitializedDefaultAccount = true;
-      } catch (_) {
-        if (accounts.isNotEmpty) {
-          initialAccountId = accounts.first.id;
-          _hasInitializedDefaultAccount = true;
-        }
-      }
-    });
+    const initialPreset = StatisticsDatePreset.last30Days;
 
     return StatisticsFilter(
       dateRange: initialPreset.toDateTimeRange(),
       preset: initialPreset,
-      accountId: initialAccountId,
+      accountId: null,
     );
   }
 
@@ -193,57 +166,226 @@ final statisticsFilterProvider =
 
 // ─── Data providers ───────────────────────────────────────────────────────────
 
-/// Watches the current filter and fetches a [PeriodSummary] for the active date range.
-///
-/// Uses [FutureProvider.autoDispose] so the provider cleans up when no widget
-/// is listening, but the first subscription (triggered eagerly from
-/// [_StatisticsScreenState.initState] via `ref.read`) guarantees data is
-/// fetched within milliseconds of screen mount.
+/// Watches the current filter and emits a real-time [PeriodSummary] for the
+/// active date range. Backed by a Drift stream so any transaction insert /
+/// update / delete inside the period triggers a fresh emission automatically.
 final periodSummaryProvider =
-    FutureProvider.autoDispose<PeriodSummary>((ref) async {
-  // keepAlive prevents disposal while the user is on the screen and has
-  // just switched filter tabs, avoiding unnecessary flickering.
-  ref.keepAlive();
+    Provider.autoDispose<AsyncValue<PeriodSummary>>((ref) {
   final filter = ref.watch(statisticsFilterProvider);
   final targetCurrency = ref.watch(statisticsCurrencyProvider);
-  final useCase = ref.watch(getPeriodSummaryUseCaseProvider);
-  return useCase.execute(
-    startDate: filter.dateRange.start,
-    endDate: filter.dateRange.end,
-    targetCurrency: targetCurrency,
-    accountId: filter.accountId,
+
+  final transactionsAsync = ref.watch(transactionsStreamProvider);
+  final ratesAsync = ref.watch(latestExchangeRatesProvider(targetCurrency));
+
+  if (transactionsAsync.isLoading || ratesAsync.isLoading) {
+    return const AsyncLoading();
+  }
+  if (transactionsAsync.hasError) {
+    return AsyncError(transactionsAsync.error!, transactionsAsync.stackTrace!);
+  }
+
+  final transactions = transactionsAsync.value!;
+  final rates = ratesAsync.valueOrNull;
+
+  double totalIncome = 0;
+  double totalExpense = 0;
+
+  final start = filter.dateRange.start;
+  final end = filter.dateRange.end;
+  final effectiveEnd = DateTime(end.year, end.month, end.day, 23, 59, 59);
+
+  for (final tx in transactions) {
+    if (filter.accountId != null && tx.accountId != filter.accountId) continue;
+    if (tx.date.isBefore(start) || tx.date.isAfter(effectiveEnd)) continue;
+
+    final convertedAmount =
+        CurrencyConverter.convertAmount(tx, targetCurrency, rates) / 100.0;
+    if (tx.type == TransactionType.income) {
+      totalIncome += convertedAmount;
+    } else if (tx.type == TransactionType.expense) {
+      totalExpense += convertedAmount;
+    }
+  }
+
+  return AsyncData(
+    PeriodSummary(
+      totalIncome: (totalIncome * 100).round(),
+      totalExpense: (totalExpense * 100).round(),
+    ),
   );
 });
 
-/// Watches the current filter and fetches top-expense categories.
+/// Watches the default profile and transactions to emit the period summary
+/// strictly in the user's default/preferred currency for the last 30 days, across all accounts.
+final dashboardPeriodSummaryProvider =
+    Provider.autoDispose<AsyncValue<PeriodSummary>>((ref) {
+  final profileAsync = ref.watch(defaultProfileProvider);
+  if (profileAsync.isLoading) return const AsyncLoading();
+  if (profileAsync.hasError) {
+    return AsyncError(profileAsync.error!, profileAsync.stackTrace!);
+  }
+
+  final targetCurrency = profileAsync.value!.defaultCurrency;
+
+  final transactionsAsync = ref.watch(transactionsStreamProvider);
+  final ratesAsync = ref.watch(latestExchangeRatesProvider(targetCurrency));
+
+  if (transactionsAsync.isLoading || ratesAsync.isLoading) {
+    return const AsyncLoading();
+  }
+  if (transactionsAsync.hasError) {
+    return AsyncError(transactionsAsync.error!, transactionsAsync.stackTrace!);
+  }
+
+  final transactions = transactionsAsync.value!;
+  final rates = ratesAsync.valueOrNull;
+
+  double totalIncome = 0;
+  double totalExpense = 0;
+
+  final now = DateTime.now();
+  final thirtyDaysAgo = now.subtract(const Duration(days: 30));
+  // Standard daily boundaries: start of 30 days ago to end of today.
+  final start = DateTime(
+    thirtyDaysAgo.year,
+    thirtyDaysAgo.month,
+    thirtyDaysAgo.day,
+    0,
+    0,
+    0,
+  );
+  final end = DateTime(now.year, now.month, now.day, 23, 59, 59);
+
+  for (final tx in transactions) {
+    if (tx.date.isBefore(start) || tx.date.isAfter(end)) continue;
+
+    final convertedAmount =
+        CurrencyConverter.convertAmount(tx, targetCurrency, rates) / 100.0;
+    if (tx.type == TransactionType.income) {
+      totalIncome += convertedAmount;
+    } else if (tx.type == TransactionType.expense) {
+      totalExpense += convertedAmount;
+    }
+  }
+
+  return AsyncData(
+    PeriodSummary(
+      totalIncome: (totalIncome * 100).round(),
+      totalExpense: (totalExpense * 100).round(),
+    ),
+  );
+});
+
+List<CategoryStatistic> _calculateTopCategories(
+  List<Transaction> transactions,
+  StatisticsFilter filter,
+  String targetCurrency,
+  dynamic rates,
+  List<dynamic> categories,
+  TransactionType targetType,
+) {
+  final Map<String, double> categorySums = {};
+  final start = filter.dateRange.start;
+  final end = filter.dateRange.end;
+  final effectiveEnd = DateTime(end.year, end.month, end.day, 23, 59, 59);
+
+  for (final tx in transactions) {
+    if (tx.type != targetType) continue;
+    if (filter.accountId != null && tx.accountId != filter.accountId) continue;
+    if (tx.date.isBefore(start) || tx.date.isAfter(effectiveEnd)) continue;
+    if (tx.categoryId == null) continue;
+
+    final convertedAmount =
+        CurrencyConverter.convertAmount(tx, targetCurrency, rates) / 100.0;
+    categorySums[tx.categoryId!] =
+        (categorySums[tx.categoryId!] ?? 0) + convertedAmount;
+  }
+
+  final result = <CategoryStatistic>[];
+  for (final entry in categorySums.entries) {
+    final cat = categories
+        .cast<dynamic>()
+        .firstWhere((c) => c.id == entry.key, orElse: () => null);
+    if (cat == null) continue;
+    result.add(
+      CategoryStatistic(
+        categoryId: cat.id,
+        categoryName: cat.name,
+        categoryIcon: cat.icon,
+        categoryColor: cat.color,
+        totalAmount: (entry.value * 100).round(),
+      ),
+    );
+  }
+  result.sort((a, b) => b.totalAmount.compareTo(a.totalAmount));
+  return result;
+}
+
+/// Watches the current filter and emits a real-time top-expense category list.
 final topExpenseCategoriesProvider =
-    FutureProvider.autoDispose<List<CategoryStatistic>>((ref) async {
-  ref.keepAlive();
+    Provider.autoDispose<AsyncValue<List<CategoryStatistic>>>((ref) {
   final filter = ref.watch(statisticsFilterProvider);
   final targetCurrency = ref.watch(statisticsCurrencyProvider);
-  final useCase = ref.watch(getTopCategoriesUseCaseProvider);
-  return useCase.execute(
-    startDate: filter.dateRange.start,
-    endDate: filter.dateRange.end,
-    targetCurrency: targetCurrency,
-    type: TransactionType.expense,
-    accountId: filter.accountId,
+
+  final transactionsAsync = ref.watch(transactionsStreamProvider);
+  final categoriesAsync = ref.watch(categoriesListProvider);
+  final ratesAsync = ref.watch(latestExchangeRatesProvider(targetCurrency));
+
+  if (transactionsAsync.isLoading ||
+      categoriesAsync.isLoading ||
+      ratesAsync.isLoading) {
+    return const AsyncLoading();
+  }
+  if (transactionsAsync.hasError) {
+    return AsyncError(transactionsAsync.error!, transactionsAsync.stackTrace!);
+  }
+  if (categoriesAsync.hasError) {
+    return AsyncError(categoriesAsync.error!, categoriesAsync.stackTrace!);
+  }
+
+  return AsyncData(
+    _calculateTopCategories(
+      transactionsAsync.value!,
+      filter,
+      targetCurrency,
+      ratesAsync.valueOrNull,
+      categoriesAsync.value!,
+      TransactionType.expense,
+    ),
   );
 });
 
-/// Watches the current filter and fetches top-income categories.
+/// Watches the current filter and emits a real-time top-income category list.
 final topIncomeCategoriesProvider =
-    FutureProvider.autoDispose<List<CategoryStatistic>>((ref) async {
-  ref.keepAlive();
+    Provider.autoDispose<AsyncValue<List<CategoryStatistic>>>((ref) {
   final filter = ref.watch(statisticsFilterProvider);
   final targetCurrency = ref.watch(statisticsCurrencyProvider);
-  final useCase = ref.watch(getTopCategoriesUseCaseProvider);
-  return useCase.execute(
-    startDate: filter.dateRange.start,
-    endDate: filter.dateRange.end,
-    targetCurrency: targetCurrency,
-    type: TransactionType.income,
-    accountId: filter.accountId,
+
+  final transactionsAsync = ref.watch(transactionsStreamProvider);
+  final categoriesAsync = ref.watch(categoriesListProvider);
+  final ratesAsync = ref.watch(latestExchangeRatesProvider(targetCurrency));
+
+  if (transactionsAsync.isLoading ||
+      categoriesAsync.isLoading ||
+      ratesAsync.isLoading) {
+    return const AsyncLoading();
+  }
+  if (transactionsAsync.hasError) {
+    return AsyncError(transactionsAsync.error!, transactionsAsync.stackTrace!);
+  }
+  if (categoriesAsync.hasError) {
+    return AsyncError(categoriesAsync.error!, categoriesAsync.stackTrace!);
+  }
+
+  return AsyncData(
+    _calculateTopCategories(
+      transactionsAsync.value!,
+      filter,
+      targetCurrency,
+      ratesAsync.valueOrNull,
+      categoriesAsync.value!,
+      TransactionType.income,
+    ),
   );
 });
 
@@ -261,31 +403,47 @@ final statisticsCurrencyProvider = Provider.autoDispose<String>((ref) {
   return profile?.defaultCurrency ?? 'EUR';
 });
 
-/// Calculates the global balance using dynamic currency conversion in Dart.
-final globalBalanceProvider = StreamProvider.autoDispose<double>((ref) async* {
-  final profile = await ref.watch(defaultProfileProvider.future);
-  final targetCurrency = profile.defaultCurrency;
+/// Calculates the global balance by summing the current balance of all accounts,
+/// converting each to the target currency using the real-time exchange rates.
+final globalBalanceProvider = Provider.autoDispose<AsyncValue<double>>((ref) {
+  final profileAsync = ref.watch(defaultProfileProvider);
+  if (profileAsync.isLoading) return const AsyncLoading();
+  if (profileAsync.hasError) {
+    return AsyncError(profileAsync.error!, profileAsync.stackTrace!);
+  }
 
-  final transactionsStream =
-      ref.watch(transactionRepositoryProvider).watchAllTransactions();
-  final exchangeRateRepo = ref.watch(exchangeRateRepositoryProvider);
+  final targetCurrency = profileAsync.value!.defaultCurrency;
 
-  await for (final transactions in transactionsStream) {
-    final rates =
-        await exchangeRateRepo.getLocalRates(baseCurrency: targetCurrency);
+  final accountsAsync = ref.watch(accountsListProvider);
+  if (accountsAsync.isLoading) return const AsyncLoading();
+  if (accountsAsync.hasError) {
+    return AsyncError(accountsAsync.error!, accountsAsync.stackTrace!);
+  }
 
-    double balance = 0;
-    for (final tx in transactions) {
-      double amount =
-          CurrencyConverter.convertAmount(tx, targetCurrency, rates);
+  final accounts = accountsAsync.value!;
 
-      if (tx.type == TransactionType.income) {
-        balance += amount;
-      } else if (tx.type == TransactionType.expense) {
-        balance -= amount;
-      }
+  final ratesAsync = ref.watch(latestExchangeRatesProvider(targetCurrency));
+  if (ratesAsync.isLoading) return const AsyncLoading();
+
+  double totalBalance = 0;
+
+  for (final account in accounts) {
+    final balanceAsync = ref.watch(accountBalanceProvider(account.id));
+    if (balanceAsync.isLoading) return const AsyncLoading();
+    if (balanceAsync.hasError) {
+      return AsyncError(balanceAsync.error!, balanceAsync.stackTrace!);
     }
 
-    yield balance / 100.0;
+    double balance = balanceAsync.value!;
+
+    final convertedBalance = CurrencyConverter.convertRaw(
+      balance,
+      account.currency,
+      targetCurrency,
+      ratesAsync.valueOrNull,
+    );
+    totalBalance += convertedBalance;
   }
+
+  return AsyncData(totalBalance);
 });

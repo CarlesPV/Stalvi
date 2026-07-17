@@ -406,35 +406,82 @@ class MockStatisticsDao extends _i1.Mock implements _i9.StatisticsDao {
       ) as _i6.Stream<double>);
 
   @override
-  _i6.Future<_i5.PeriodSummary> getPeriodSummaryAggregates(
+  _i6.Stream<_i5.PeriodSummary> watchPeriodSummaryAggregates({
     DateTime? startDate,
     DateTime? endDate,
-    String? targetCurrency, {
+    required String? targetCurrency,
+    String? accountId,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #watchPeriodSummaryAggregates,
+          [],
+          {
+            #startDate: startDate,
+            #endDate: endDate,
+            #targetCurrency: targetCurrency,
+            #accountId: accountId,
+          },
+        ),
+        returnValue: _i6.Stream<_i5.PeriodSummary>.empty(),
+      ) as _i6.Stream<_i5.PeriodSummary>);
+
+  @override
+  _i6.Future<_i5.PeriodSummary> getPeriodSummaryAggregates({
+    DateTime? startDate,
+    DateTime? endDate,
+    required String? targetCurrency,
     String? accountId,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
           #getPeriodSummaryAggregates,
-          [
-            startDate,
-            endDate,
-            targetCurrency,
-          ],
-          {#accountId: accountId},
+          [],
+          {
+            #startDate: startDate,
+            #endDate: endDate,
+            #targetCurrency: targetCurrency,
+            #accountId: accountId,
+          },
         ),
         returnValue: _i6.Future<_i5.PeriodSummary>.value(_FakePeriodSummary_11(
           this,
           Invocation.method(
             #getPeriodSummaryAggregates,
-            [
-              startDate,
-              endDate,
-              targetCurrency,
-            ],
-            {#accountId: accountId},
+            [],
+            {
+              #startDate: startDate,
+              #endDate: endDate,
+              #targetCurrency: targetCurrency,
+              #accountId: accountId,
+            },
           ),
         )),
       ) as _i6.Future<_i5.PeriodSummary>);
+
+  @override
+  _i6.Stream<List<_i11.CategoryStatistic>> watchTopCategoriesAggregates(
+    DateTime? startDate,
+    DateTime? endDate,
+    String? targetCurrency, {
+    _i12.TransactionType? type = _i12.TransactionType.expense,
+    String? accountId,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #watchTopCategoriesAggregates,
+          [
+            startDate,
+            endDate,
+            targetCurrency,
+          ],
+          {
+            #type: type,
+            #accountId: accountId,
+          },
+        ),
+        returnValue: _i6.Stream<List<_i11.CategoryStatistic>>.empty(),
+      ) as _i6.Stream<List<_i11.CategoryStatistic>>);
 
   @override
   _i6.Future<List<_i11.CategoryStatistic>> getTopCategoriesAggregates(

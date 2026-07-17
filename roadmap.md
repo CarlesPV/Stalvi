@@ -224,11 +224,102 @@
   - [x] Conduct pre-release test flight and internal Google Play tracks tests.
   - [x] Final production compliance check.
 
-## Current Phase
+- [x] **Phase 30: UI Polish, Translations, and Launch Readiness**
+  - [x] Implement safe category deletion business logic (reassigning transactions when deleting active categories).
+  - [x] Define reassignment target filtering rules (Expense to Expense/Custom, Income to Income/Custom, Custom to all).
+  - [x] Build category deletion reassignment popup dialog/ModalBottomSheet.
+  - [x] Write and run unit test suites for deletion reassignment.
+  - [x] Consolidate app branding by exclusively using `assets/icon/app_icon.png` across all screens (Splash, Auth, Dashboard), scaling dynamically.
+  - [x] Audit and review translations across English, Spanish, and Catalan to ensure 100% accuracy.
+  - [x] Publish apps to production tracks.
+  - [x] Monitor crash rates and performance metrics.
+  - [x] Establish feedback loop for post-launch adjustments.
 
-## Phase 30: Launch and Monitoring
-**Objective:** Publish the application to Google Play Store and Apple App Store, monitor performance, collect crash reports via Firebase Crashlytics, and gather initial user feedback.
+- [x] **Phase 31: Automatic Transactions, Inline Validation, & Rolling 30-Day Stats**
+  - [x] Implement recurring transaction evaluation engine and database tables for automatic transactions.
+  - [x] Develop interactive UI sheets for adding, editing, and evaluating automatic transactions.
+  - [x] Refactor transaction creation form notifier to execute inline validations, clearing and resetting field errors dynamically as inputs change.
+  - [x] Implement rolling 30-day stats in statistics calculations for dashboard summaries.
+  - [x] Fully localize validation errors and automatic transactions elements in English, Spanish, and Catalan.
+  - [x] Fix compilation issues and test mocks, ensuring all unit and integration tests pass successfully.
+  
+- [x] **Phase 32: Stabilization & Auto-Transactions**
+  - [x] Ensure maximum code quality and resolve all static analysis issues.
+  - [x] Validate `.gitignore` contents and prevent tracking of sensitive data.
+  - [x] Guarantee CI/CD pipeline tests complete correctly.
+  - [x] Resolve all overflow issues in UI and widgets.
+  - [x] Create project documentation updates.
 
-- [ ] Publish apps to production tracks.
-- [ ] Monitor crash rates and performance metrics.
-- [ ] Establish feedback loop for post-launch adjustments.
+- [x] **Phase 33: UI Polish, Real-Time Reactivity, and Soft-Delete Refinement**
+  - [x] Update the initial loading splash icon to display the app logo within a rounded square.
+  - [x] Refactor statistics calculations (dashboard summaries and top categories) to use reactive streams, updating instantly in real-time on data changes.
+  - [x] Complete localization (i18n) of the Automatic/Recurring Transactions section, including validation states, in English, Spanish, and Catalan.
+  - [x] Resolve keyboard occlusion and layout viewport constraints for form error messages.
+  - [x] Implement a soft-delete mechanism for recurring/automatic transactions, linking them to the Recycle Bin with dynamic metadata and a 30-day auto-purge cycle.
+  - [x] Conduct UI audit to fix text/widget overflows and unintended truncations across Settings and Data Management pop-ups.
+  - [x] Resolve all static analysis issues and ensure 100% automated test suite pass rate.
+
+- [x] **Phase 34: Final i18n Audit & Project Documentation Updates**
+  - [x] Complete 100% localization (i18n) coverage in `lib/presentation/` by replacing all remaining hardcoded strings.
+  - [x] Synchronize ARB files (`app_en.arb`, `app_es.arb`, `app_ca.arb`) with the newly added translation keys.
+  - [x] Update project documentation (`README.md` and `roadmap.md`) to reflect the current feature set.
+
+- [x] **Phase 35: Domain Resilience, Compliance Warnings & Splash Polish**
+  - [x] Implement safe end-of-month recurrence clamping logic for automatic transactions (February/30th/31st edge cases).
+  - [x] Update Terms and Conditions & Privacy Policy across English, Spanish, and Catalan with currency disclaimer warnings to protect developer liability.
+  - [x] Reconfigure native splash screen to utilize the rounded-edge icon (`assets/icon/splash_icon.png`) for all themes and platforms.
+  - [x] Develop comprehensive unit tests verifying recurrence date calculations under various calendars, short months, and leap years.
+
+- [x] **Phase 36: PDF Export and About Screen**
+  - [x] Refactor PDF Export to prompt for 'Last 30 Days' or 'Current Month'.
+  - [x] Implement the 'About Me' localized Markdown screen with an external link.
+
+- [x] **Phase 37: Production Readiness, Background Tasks & UX Polish**
+  - [x] Implement multi-currency conversion for total balances on the dashboard and fix the splash screen icon border-radius.
+  - [x] Enhance Automatic Transactions UI to display localized recurrence strings and implement background execution via `workmanager`.
+  - [x] Perform an exhaustive cleanup of `.arb` localization files (remove unused keys/comments).
+  - [x] Fix all CI/CD, analyzer warnings, and update documentation (`roadmap.md`, `README.md`).
+
+- [x] **Phase 38: UI/UX Text Overflow Safeguards & i18n Verification**
+  - [x] Wrap dialog and bottom sheet button label widgets inside `FittedBox` to prevent horizontal text overflows under English, Spanish, and Catalan.
+  - [x] Resolve layout constraints on `_AccountItem` balance and default label text elements.
+  - [x] Audit and verify complete key synchronization across `app_en.arb`, `app_es.arb`, and `app_ca.arb` (all matching exactly with 339 translation keys).
+  - [x] Resolve all static analysis warnings, info messages, and ensure all unit/widget tests pass cleanly.
+
+- [x] **Phase 39: UI Localization Polish, Test Stability, and Expanded Overflow Protection**
+  - [x] Integrate missing localized strings (`recurrenceUtcWarning`) into the Automatic Transaction Recurrence selection sheet.
+  - [x] Localize the GitHub profile button (`aboutMeGithubButton`) on the About Me screen.
+  - [x] Implement horizontal scaling protection (`FittedBox` scaleDown) for Expense/Income tabs, Action Buttons, and Custom Recurrence Apply button.
+  - [x] Resolve dynamic layout constraints by wrapping custom recurrence apply actions in `Flexible`.
+  - [x] Update test assertions in `about_me_screen_test.dart` to verify localized button labels dynamically, maintaining a 100% test pass rate.
+  - [x] Fix static analysis errors by defining `colorScheme` inside recurrence selector widgets, guaranteeing 0 warnings and 0 errors on `flutter analyze`.
+
+- [x] **Phase 40: Legal Compliance, Security Finalization & Quality Assurance**
+  - [x] Complete detailed rewrite of legal documents (Privacy Policy and Terms & Conditions) with strict GDPR and LOPDGDD compliance across English, Spanish, and Catalan.
+  - [x] Add explicit exemption of liability clauses and data immutability/calculation clarifications for currency exchange.
+  - [x] Update PDF Export service: respect the original currency of Budgets and Savings Goals instead of defaulting to the profile currency.
+  - [x] Update PDF Export service: format transfer transactions in the account column as "Source Account -> Destination Account".
+  - [x] Reorganize localization ARB files into logical blocks sorted alphabetically for maintainability.
+  - [x] Achieve 100% test pass rate on all unit and widget tests.
+  - [x] Run static analysis (`flutter analyze`) and ensure 0 warnings and 0 infos.
+
+- [x] **Phase 41: Read-Only Padlock Indicators**
+  - [x] Identify and add padlock icons to read-only/non-editable fields (excluding date fields) on the Budgets and Savings Goals detail sheets.
+  - [x] Match padlock design and disabled border styling with the Accounts/Wallets detail views.
+  - [x] Run static analysis and tests to ensure 100% compliance.
+
+- [x] **Phase 42: PDF Export Transfer Resolution Fix**
+  - [x] Fix transfer destination account resolution in PDF export by querying raw transactions instead of de-duplicated transactions, ensuring mirror legs are correctly resolved and formatted as "Source Account -> Destination Account".
+  - [x] Update unit tests to stub raw transaction queries and verify correct behavior.
+  - [x] Maintain 100% build health, static analysis compliance, and test pass rate.
+
+- [x] **Phase 43: Backup Username Update & Filename Customization**
+  - [x] Update import service to overwrite the active user's profile name with the one saved in the backup payload.
+  - [x] Rename export filename prefixes based on document type: "Stalvi_Backup" for backups, "Stalvi_Table" for CSVs, and "Stalvi_Overview" for PDFs.
+  - [x] Ensure 100% build health, clean lint checks (0 issues on `flutter analyze`), and successfully execute all tests.
+
+- [ ] **Phase 44: Future Analysis & Next Steps**
+  - [ ] Analyze app usage and user feedback to inform future development.
+  - [ ] Identify and resolve potential bottlenecks in database queries and UI rendering.
+  - [ ] Outline the requirements for the next major feature release.
+  - [ ] Plan for updating Flutter and community packages to their latest stable versions.

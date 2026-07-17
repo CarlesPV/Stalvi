@@ -15,13 +15,17 @@ class GetPeriodSummaryUseCase {
   );
 
   Future<PeriodSummary> execute({
-    required DateTime startDate,
-    required DateTime endDate,
+    DateTime? startDate,
+    DateTime? endDate,
     required String targetCurrency,
     String? accountId,
   }) async {
+    final now = DateTime.now();
+    final effectiveEnd = endDate ?? now;
+    final effectiveStart = startDate ?? now.subtract(const Duration(days: 30));
+
     final filter = TransactionQueryFilter(
-      dateRange: DateTimeRange(start: startDate, end: endDate),
+      dateRange: DateTimeRange(start: effectiveStart, end: effectiveEnd),
       accountId: accountId,
     );
     final transactions =

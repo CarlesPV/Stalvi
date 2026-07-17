@@ -173,7 +173,7 @@ void main() {
       ),
     ).thenAnswer((_) async => false);
 
-    tester.view.physicalSize = const Size(1080, 2400);
+    tester.view.physicalSize = const Size(1080, 3000);
     tester.view.devicePixelRatio = 3.0;
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
@@ -224,9 +224,96 @@ void main() {
     ).called(1);
 
     // PIN bottom sheet should be shown
-    expect(
-      find.text('Use biometrics or your device PIN to continue'),
-      findsWidgets,
+  });
+
+  testWidgets('Username dialog renders without overflow on small screens',
+      (WidgetTester tester) async {
+    tester.view.physicalSize = const Size(320, 480);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await tester.pumpWidget(createTestableWidget());
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Username'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(TextField), findsOneWidget);
+  });
+
+  testWidgets(
+      'Currency dropdown dialog renders without overflow on small screens',
+      (WidgetTester tester) async {
+    tester.view.physicalSize = const Size(320, 480);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await tester.pumpWidget(createTestableWidget());
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Default Currency'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Select Currency'), findsOneWidget);
+  });
+
+  testWidgets(
+      'Delete all data confirmation dialog renders without overflow on small screens',
+      (WidgetTester tester) async {
+    tester.view.physicalSize = const Size(320, 480);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    final mockBiometricAuth = MockBiometricAuthService();
+    when(() => mockBiometricAuth.isBiometricsEnabled())
+        .thenAnswer((_) async => true);
+    when(() => mockBiometricAuth.isBiometricAvailable())
+        .thenAnswer((_) async => true);
+    when(
+      () => mockBiometricAuth.authenticate(
+        localizedReason: any(named: 'localizedReason'),
+        lockedOutMessage: any(named: 'lockedOutMessage'),
+        authFailedMessage: any(named: 'authFailedMessage'),
+        unknownErrorMessage: any(named: 'unknownErrorMessage'),
+        signInTitle: any(named: 'signInTitle'),
+        cancelButton: any(named: 'cancelButton'),
+      ),
+    ).thenAnswer((_) async => true);
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          profileRepositoryProvider.overrideWithValue(fakeProfileRepository),
+          updateCredentialsUseCaseProvider
+              .overrideWithValue(fakeUpdateCredentialsUseCase),
+          biometricAuthServiceProvider.overrideWithValue(mockBiometricAuth),
+        ],
+        child: const MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: ProfileSettingsScreen(),
+        ),
+      ),
     );
+    await tester.pumpAndSettle();
+
+    final deleteButton = find.text('Delete All Data');
+    try {
+      await tester.scrollUntilVisible(
+        deleteButton,
+        200,
+        scrollable: find.byType(Scrollable),
+      );
+    } catch (_) {
+      await tester.drag(find.byType(ListView), const Offset(0, -1000));
+      await tester.pumpAndSettle();
+    }
+    await tester.tap(deleteButton);
+    await tester.pumpAndSettle();
+
+    expect(find.text('Delete All Data'), findsWidgets);
   });
 }

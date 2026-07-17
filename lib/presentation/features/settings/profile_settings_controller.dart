@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:stalvi/domain/entities/profile.dart';
 import 'package:stalvi/domain/repositories/i_export_service.dart';
 import 'package:stalvi/domain/usecases/update_credentials_usecase.dart';
+import 'package:stalvi/domain/usecases/pdf_export_date_range.dart';
 import '../../providers/repository_providers.dart';
 import '../../providers/statistics_providers.dart';
 
@@ -98,6 +99,7 @@ class ProfileSettingsController extends StateNotifier<ProfileSettingsState> {
       _ref.invalidate(defaultProfileProvider);
       _ref.invalidate(statisticsCurrencyProvider);
       _ref.invalidate(periodSummaryProvider);
+      _ref.invalidate(dashboardPeriodSummaryProvider);
       _ref.invalidate(topExpenseCategoriesProvider);
       _ref.invalidate(topIncomeCategoriesProvider);
       _ref.invalidate(globalBalanceProvider);
@@ -250,14 +252,19 @@ class ProfileSettingsController extends StateNotifier<ProfileSettingsState> {
     }
   }
 
-  /// Exports the current month's transactions as a PDF report.
-  Future<ExportResult> exportMonthlyPdf() async {
+  /// Exports the transactions as a PDF report.
+  Future<ExportResult> exportMonthlyPdf({
+    required PdfExportDateRange dateRange,
+    String? customMonthLabel,
+  }) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
       final useCase = _ref.read(exportMonthlyPdfUseCaseProvider);
       final currency = state.profile?.defaultCurrency ?? 'EUR';
       final result = await useCase.call(
         targetCurrency: currency,
+        dateRange: dateRange,
+        customMonthLabel: customMonthLabel,
       );
       state = state.copyWith(isLoading: false);
       return result;

@@ -14,6 +14,15 @@
     <!-- Required by local_auth for haptic feedback during biometric prompt -->
     <uses-permission android:name="android.permission.VIBRATE" />
 
+    <!-- Required by WorkManager to reschedule tasks after a device reboot.
+         Without this, all enqueued periodic tasks are lost when the device
+         is restarted and transactions would never fire automatically. -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
+    <!-- Required for WorkManager's foreground execution on Android 9+ (API 28+).
+         Ensures the OS does not kill the background isolate mid-execution. -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+
     <application
         android:label="Stalvi"
         android:name="${applicationName}"

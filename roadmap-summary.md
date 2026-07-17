@@ -462,7 +462,166 @@ This document lists the completed phases of the Stalvi development roadmap, prov
   - 100% clean static analysis (`flutter analyze` with 0 issues).
   - Executed the full automated test suite containing 396 unit and widget tests, achieving a 100% success rate.
 
+### Phase 30: Safe Category Deletion & Launch Preparation
+* **Completion Date:** June 30, 2026
+* **Objective:** Implement safe category deletion logic to prevent dangling database references, enforce category type-based filtering during transaction reassignment, build UI prompts, and verify integration via unit tests.
+* **Accomplishments:**
+  - **Safe Category Deletion Domain Logic:** Updated the `DeleteAndReassignCategoryUseCase` logic to enforce type constraints: Expense categories can only be reassigned to other Expense or Custom categories; Income to Income or Custom; Custom categories can be reassigned to all other categories.
+  - **UI Prompts and Dialogs:** Configured settings category deletion checks to identify if a category is actively in use by transactions. If true, the app prompts the user with an `AlertDialog` containing a filtered list of eligible replacement categories to execute the transaction reassignment atomically before deleting.
+  - **Comprehensive Verification:** Wrote robust unit tests in `delete_and_reassign_category_usecase_test.dart` to cover the new filtering behaviors.
+### Phase 31: Automatic Transactions, Inline Validation, & Rolling 30-Day Stats
+* **Completion Date:** July 1, 2026
+* **Objective:** Implement recurring transaction evaluation engine and database tables for automatic transactions, develop interactive UI sheets, refactor transaction forms to support real-time inline validations, and calculate rolling 30-day dashboard summaries.
+* **Accomplishments:**
+  - **Automatic Transactions Engine:** Created new Drift database tables, models, and mappers. Developed a core evaluation use case scheduler evaluating next execution dates to generate transactions and auto-advance recurrence dates.
+  - **Inline Validation:** Refactored form inputs to trigger real-time inline validations, displaying distinct localized messages and dynamically clearing/resetting field errors as inputs change.
+  - **Rolling 30-Day Statistics:** Configured period summaries and balance trend statistics to evaluate over a rolling 30-day window for instant dashboard trends.
+* **Verification:**
+  - 100% clean static analysis (`flutter analyze` with 0 issues).
+  - Executed the full unit and widget test suite with all 414 tests passing successfully.
+
+### Phase 32: Stabilization & Auto-Transactions
+* **Completion Date:** July 1, 2026
+* **Objective:** Ensure maximum code quality, resolve all static analysis issues, validate tracking of sensitive data, and verify CI/CD pipelines.
+* **Accomplishments:**
+  - **Static Analysis & Testing:** Resolved all static analysis errors, dead code, unused imports, and `avoid_print` warnings. Verified absolutely no widget overflow errors and achieved 100% success on all automated tests.
+  - **Security & CI/CD Validation:** Validated `.gitignore` to prevent tracking of `.env`, keystores, and sensitive files. Verified `ci.yml` and `security.yml` GitHub actions for automated tests and builds.
+* **Verification:**
+  - 100% clean static analysis (`flutter analyze` with 0 issues).
+  - Executed the full automated test suite containing 427 unit and widget tests, achieving a 100% success rate.
+
+### Phase 33: UI Polish, Real-Time Reactivity, and Soft-Delete Refinement
+* **Completion Date:** July 1, 2026
+* **Objective:** Polish initial branding assets, implement real-time statistics query streams, enable complete localization for recurring transaction settings and form validations, fix keyboard occlusion layout issues, integrate soft-delete functionality for automatic transactions, and eliminate remaining widget overflows and static analysis warnings.
+* **Accomplishments:**
+  - **Branding Assets:** Updated the splash icon to display the Stalvi app logo within a rounded square.
+  - **Real-Time Statistics:** Replaced future-based analytics providers with reactive Drift query streams (`watchPeriodSummary`, `watchTopCategories`), allowing charts and summary cards to update instantly when underlying database transactions change.
+  - **Trilingual Localization:** Localized the entire automatic/recurring transactions configuration forms and all dynamic input validation states across Catalan, English, and Spanish.
+  - **Layout & Occlusion:** Addressed layout and viewport constraint issues to ensure error validation logs remain visible above the keyboard.
+  - **Soft-Delete for Auto-Transactions:** Built soft-deletion logic for automatic transactions. Trashed templates are moved to the Recycle Bin, disabled from generating new transactions, and purged after 30 days.
+  - **Overflow Resolutions:** Fixed remaining ChoiceChip clippings, text truncations, and dialog window layout overflows on small mobile devices.
+* **Verification:**
+  - 100% clean static analysis (`flutter analyze`) with 0 issues.
+  - Executed the full automated test suite containing 446 unit and widget tests, achieving a 100% success rate (all tests passed!).
+
+### Phase 34: Final i18n Audit & Project Documentation Updates
+* **Completion Date:** July 1, 2026
+* **Objective:** Audit translation catalog coverage in presentation components, clean up unused localization strings, sync English, Spanish, and Catalan ARB bundles, and update project documentation (`README.md`, `roadmap.md`, `roadmap-summary.md`) to reflect release-ready state.
+* **Accomplishments:**
+  - **Localization Audit**: Replaced all remaining hardcoded strings in presentation files with dynamic localizations.
+  - **Unused Translation Cleanup**: Removed redundant localization keys (`incomes`, `deleteAccountHasAutomaticTransactions`, `recurrenceDaysLabel`, `nextExecution`, `autoTxRecurrenceInvalidRange`) from translation files and rebuilt localizations cleanly.
+  - **Documentation Updates**: Updated `README.md` and roadmaps to reflect all completed features, architecture, and verification stats.
+* **Verification:**
+  - 100% clean static analysis (`flutter analyze`) with 0 issues.
+  - Fully passing automated test suite (all 455 tests passed successfully!).
+
+### Phase 35: Domain Resilience, Compliance Warnings & Splash Polish
+* **Completion Date:** July 1, 2026
+* **Objective:** Address recurring transaction calendar edge cases with safe end-of-month date clamping, append liability disclaimers regarding currency data for compliance across all translation assets, upgrade splash icon to a unified squircle branding, and expand unit test coverage.
+* **Accomplishments:**
+  - **Safe End-of-Month Recurrence**: Added recurrence clamping logic (`calculateNextExecutionDate`) in the automatic transaction entity to gracefully handle months with fewer days (e.g. Feb/30th/31st scenarios) and subsequently restore execution to target days on longer months.
+  - **Compliance & Disclaimer Updates**: Updated Terms & Conditions and Privacy Policy across Catalan, English, and Spanish with disclaimers highlighting the approximate nature of conversions, calculations, and statistics to protect developer liability.
+  - **Splash Screen Rebranding**: Updated splash configurations and code assets to display the high-quality rounded logo (`splash_icon.png`) uniformly across light, dark, and Android 12+ scopes.
+  - **Recurrence Validation Tests**: Developed comprehensive unit tests covering intervals, short months, leap years (February 29th vs 28th), and month-to-month clamping recovery.
+* **Verification:**
+  - 100% clean static analysis (`flutter analyze`) with 0 issues.
+  - Fully passing automated test suite (all 455 tests passed successfully!).
+
+### Phase 36: PDF Export and About Screen
+* **Completion Date:** July 2, 2026
+* **Objective:** Refactor PDF Export to prompt for 'Last 30 Days' or 'Current Month', and implement the 'About Me' localized Markdown screen with an external link.
+* **Accomplishments:**
+  - **PDF Export Refactoring**: Upgraded PDF export flow to support selecting custom date range presets ('Last 30 Days' or 'Current Month') before generation.
+  - **About Me Screen**: Developed a localized Markdown About Me screen displaying detailed developer info and including working links to external sources.
+* **Verification:**
+  - 100% clean static analysis (`flutter analyze`) with 0 issues.
+  - All automated tests pass successfully.
+
+### Phase 37: Production Readiness, Background Tasks & UX Polish
+* **Completion Date:** July 2, 2026
+* **Objective:** Implement multi-currency conversion for total balances on the dashboard, fix the splash screen icon border-radius, enhance Automatic Transactions UI to display localized recurrence strings, implement background execution via workmanager, perform an exhaustive cleanup of .arb files, and fix all CI/CD, analyzer warnings, and update documentation.
+* **Accomplishments:**
+  - **Multi-Currency Total Balances**: Upgraded the dashboard total balance card to dynamically convert and display the consolidated sum in the profile's default currency.
+  - **Splash Screen Polish**: Fixed the splash screen icon border-radius to align with branding guidelines.
+  - **Background Workmanager Sync**: Integrated background execution via `workmanager` to sync rates and evaluate recurring transactions periodically.
+  - **Localizations Cleanup**: Cleaned up unused translation keys and comments in the `.arb` files to minimize footprint.
+* **Verification:**
+  - 100% clean static analysis (`flutter analyze`) with 0 issues.
+  - Fully passing automated test suite.
+
+### Phase 38: UI/UX Text Overflow Safeguards & i18n Verification
+* **Completion Date:** July 2, 2026
+* **Objective:** Audit and fix all potential text overflow issues across UI screens (Auth, Budgets, Goals, Settings, Dashboard, Transactions), wrap button labels in responsive widgets, and verify complete key synchronization across all three ARB localizations.
+* **Accomplishments:**
+  - **UI Overflow Safeguards**: Wrapped dialog and bottom sheet button label widgets inside `FittedBox` (with scale down fit) to prevent horizontal layout overflows under long Catalan/Spanish translations.
+  - **Layout Constraints**: Resolved constraints on the `_AccountItem` balance and default label text elements, preventing clipping on tight viewports.
+  - **Localization Sync Audit**: Verified 100% key synchronization across `app_en.arb`, `app_es.arb`, and `app_ca.arb` (all containing exactly 339 translation keys with matching placeholders).
+  - **Warning-Free Environment**: Resolved all static analysis warnings, unused imports, and print statements, achieving a completely clean `flutter analyze` report with 0 issues, and fixed failing widget tests.
+* **Verification:**
+  - 100% clean static analysis (`flutter analyze`) with 0 issues.
+  - All 464 automated unit and widget tests pass cleanly with a 100% success rate.
+
+### Phase 39: UI Localization Polish, Test Stability, and Expanded Overflow Protection
+* **Completion Date:** July 2, 2026
+* **Objective:** Integrate missing localizations into the UI screens (settings, about me), expand layout safeguards against text overflows across tabs and action buttons, and ensure full test stability and static analysis compliance.
+* **Accomplishments:**
+  - **Integrated Localizations**: Added `AppLocalizations.of(context).recurrenceUtcWarning` to the automatic transaction recurrence selector sheet and replaced hardcoded GitHub button text with `AppLocalizations.of(context).aboutMeGithubButton` on the About Me screen.
+  - **Expanded Overflow Protections**: Secured Expense/Income toggle tabs, custom recurrence apply buttons, and global transaction save buttons by wrapping text in `FittedBox` (scaleDown) and wrapping key buttons in `Flexible` inside row layouts.
+  - **Static Analysis Compliance**: Fixed undefined references by declaring `colorScheme` inside recurrence selector functions, yielding a completely warning-free/error-free `flutter analyze` environment.
+  - **Test Suite Updates**: Refactored `about_me_screen_test.dart` to query localized button assertions dynamically, resolving failing cases and guaranteeing a 100% pass rate.
+* **Verification:**
+  - All 465 automated unit and widget tests pass cleanly with a 100% success rate.
+
+### Phase 40: Legal Compliance, Security Finalization & Quality Assurance
+* **Completion Date:** July 3, 2026
+* **Objective:** Ensure robust GDPR/LOPDGDD compliance in legal texts, reorganize and sort translation catalogs, enhance PDF export services with original currencies and transfer routing format, and verify complete quality assurance with zero static analysis warnings and 100% test pass rate.
+* **Accomplishments:**
+  - **GDPR & LOPDGDD Legal Compliance**: Wrote detailed legal agreements (Privacy Policy and Terms & Conditions) with explicit liability disclaimers, data erasure/export guidelines, and calculations disclosures across English, Spanish, and Catalan.
+  - **ARB Reorganization & Cleanup**: Reorganized ARB localization files into alphabetical blocks and removed legacy comment markers, ensuring valid JSON formatting.
+  - **PDF Export Updates**: Refactored the PDF export service to respect the original currency of Budgets and Savings Goals instead of forcing default profile currency, and formatted transfer operations visually as `Source Account -> Destination Account`.
+  - **Test Suite Stability**: Verified that the entire suite of 465 unit and widget tests passes successfully with a 100% success rate.
+* **Verification:**
+  - 100% clean static analysis (`flutter analyze` with 0 issues).
+  - All 465 automated unit and widget tests pass cleanly.
+
+### Phase 41: Read-Only Padlock Indicators
+* **Completion Date:** July 14, 2026
+* **Objective:** Improve detail screen UX by visually indicating read-only/non-editable fields using padlock icons, matching the design of the Accounts/Wallets detail views, and ensure 100% test and static analysis compliance.
+* **Accomplishments:**
+  - **Read-Only Padlock Icons**: Identified and appended a trailing padlock icon to all non-editable/read-only input fields (excluding date fields) on the Budgets (Target Amount, Currency, Account, Category) and Savings Goals (Goal Name, Target Amount, Currency) detail sheets.
+  - **Design Styling Matching**: Modeled the padlock and border design to perfectly match the existing layout implemented in the Accounts/Wallets detail dialog (using `Icons.lock_outline_rounded` of size 18, color `colorScheme.onSurfaceVariant.withValues(alpha: 0.5)`, and outline borders colored `colorScheme.outline.withValues(alpha: 0.3)`).
+  - **Static Analysis & Testing**: Validated that all 495 automated unit/widget tests and strict static analysis check (`flutter analyze --fatal-infos --fatal-warnings`) pass successfully with zero warnings/errors.
+* **Verification:**
+  - 100% clean static analysis (`flutter analyze` with 0 issues).
+  - All 495 automated unit and widget tests pass cleanly.
+
+### Phase 42: PDF Export Transfer Resolution Fix
+* **Completion Date:** July 15, 2026
+* **Objective:** Resolve the issue where transfer destinations in PDF exports were not correctly resolved as "Source Account -> Destination Account" due to transaction de-duplication in the default repository watch.
+* **Accomplishments:**
+  - **Raw Transaction Resolution**: Modified `ExportMonthlyPdfUseCase` to load raw transactions (using `watchRawTransactions()`) for transfer destination lookups, which preserves both legs of transfer pairs, enabling correct resolution of source and destination accounts.
+  - **Test Suite Integration**: Stubbed `watchRawTransactions` in `export_monthly_pdf_use_case_test.dart` to match, correcting the test mock structure and ensuring both common mocks and manual setups are completely stubbed.
+  - **Static Analysis & Testing**: Ensured 100% test pass rate (all 508 tests passing) and a clean static analysis report (0 errors, 0 warnings, 0 infos).
+* **Verification:**
+  - 100% clean static analysis (`flutter analyze --fatal-infos --fatal-warnings` with 0 issues).
+  - All 508 automated unit and widget tests pass cleanly with a 100% success rate.
+
 ## Recent Updates
+- Resolved transfer transaction resolution bugs in PDF export by querying raw transactions for destination matching (Phase 42).
+- Added padlock icons trailing read-only input fields in Budgets and Savings Goals detail sheets (Phase 41).
+- Completed detailed GDPR/LOPDGDD compliance legal documents rewrite across Catalan, English, and Spanish (Phase 40).
+- Reorganized ARB localization files to be valid, comment-free JSON sorted alphabetically (Phase 40).
+- Updated PDF exports to preserve original currencies for budgets and savings goals, and format transfer routes cleanly (Phase 40).
+- Added missing localizations (`recurrenceUtcWarning`, `aboutMeGithubButton`) to Settings and About Me screens, and expanded text overflow protection with FittedBox/Flexible layouts (Phase 39).
+- Resolved undefined identifier analyzer errors and stabilized dynamic test assertions inside the automated test suites (Phase 39).
+- Implemented UI/UX overflow safeguards, wrapping button text inside dialogs and bottom sheets in FittedBox to handle multi-language length differences (Phase 38).
+- Synchronized all translation keys perfectly across English, Spanish, and Catalan localizations (Phase 38).
+- Fixed pre-existing widget test issues and unused imports, achieving a completely warning-free/error-free static analysis (`flutter analyze`) and 100% pass rate on 464 tests (Phase 38).
+- Refactored PDF monthly report date configurations and developed the localized Markdown About Me screen (Phase 36).
+- Implemented multi-currency balance consolidation on dashboard and Workmanager-based background synchronization (Phase 37).
+- Resolved recurring transaction calendar edge cases (safe end-of-month clamping) and added thorough unit test coverage.
+- Implemented Automatic Transactions, Inline validations, and rolling 30-day stats (Phase 31).
+- Implemented Safe Category Deletion business logic, filtering rules, UI dialogs, and expanded test coverage (Phase 30).
 - Completed release preparation and UI optimization (Phase 29).
 - Populated legal documentation in English, Spanish, and Catalan inside `assets/legal/`.
 - Implemented user consent dialog on onboarding and "Delete Account" in settings.
@@ -474,4 +633,4 @@ This document lists the completed phases of the Stalvi development roadmap, prov
 - Added full Unicode font support in PDF exports using Roboto font assets to fix currency symbol placeholders.
 - Updated Terms and Privacy policy legal markdown assets for Catalan, English, and Spanish.
 - Achieved a completely clean static analysis check with 0 issues on `flutter analyze` and 100% test pass rate.
-
+\n- [x] Fixed backup system to save the username and include the destination account for transfers.\n- [x] Improved backup format validation on import.

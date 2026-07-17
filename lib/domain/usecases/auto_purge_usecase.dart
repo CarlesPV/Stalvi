@@ -1,13 +1,13 @@
-import 'package:stalvi/data/database/daos/trash_dao.dart';
+import '../repositories/i_trash_repository.dart';
 
+/// Automatically purges items that have been in the trash for more than 30 days.
 class AutoPurgeUseCase {
-  final TrashDao _trashDao;
+  final ITrashRepository _trashRepository;
 
-  AutoPurgeUseCase(this._trashDao);
+  AutoPurgeUseCase(this._trashRepository);
 
-  /// Automatically purges items that have been in the trash for more than 30 days.
   Future<void> execute() async {
     final threshold = DateTime.now().subtract(const Duration(days: 30));
-    await _trashDao.purgeOldItems(threshold);
+    await _trashRepository.purgeOldItems(threshold);
   }
 }

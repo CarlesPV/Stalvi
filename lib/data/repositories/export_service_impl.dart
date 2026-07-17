@@ -17,6 +17,7 @@ import 'package:pdf/widgets.dart' as pw;
 
 import 'package:stalvi/core/errors/app_exceptions.dart';
 import 'package:stalvi/core/l10n/app_localizations.dart';
+import 'package:stalvi/core/utils/currency_formatter.dart';
 import 'package:stalvi/domain/entities/account.dart';
 import 'package:stalvi/domain/entities/budget.dart';
 import 'package:stalvi/domain/entities/category.dart';
@@ -25,6 +26,7 @@ import 'package:stalvi/domain/entities/period_summary.dart';
 import 'package:stalvi/domain/entities/savings_goal.dart';
 import 'package:stalvi/domain/entities/tag.dart';
 import 'package:stalvi/domain/entities/transaction.dart';
+import 'package:stalvi/domain/entities/automatic_transaction.dart';
 import 'package:stalvi/domain/entities/transaction_type.dart';
 import 'package:stalvi/domain/repositories/i_export_service.dart';
 
@@ -110,7 +112,7 @@ class ExportServiceImpl implements IExportService {
 
       final bytes = utf8.encode(buffer.toString());
       final filename =
-          'Stalvi_Export_${DateFormat('yyyyMMdd_HHmmss').format(DateTime.now())}.csv';
+          'Stalvi_Table_${DateFormat('yyyyMMdd_HHmmss').format(DateTime.now())}.csv';
       final savedPath = await _saveFile(bytes, filename);
 
       return ExportResult(
@@ -134,7 +136,11 @@ class ExportServiceImpl implements IExportService {
     required List<Category> categories,
     required List<Tag> tags,
     required List<Transaction> transactions,
+    required List<Budget> budgets,
+    required List<SavingsGoal> savingsGoals,
+    required List<AutomaticTransaction> automaticTransactions,
     required String password,
+    required String userName,
   }) async {
     if (password.isEmpty) {
       throw const ExportException(
@@ -146,11 +152,16 @@ class ExportServiceImpl implements IExportService {
     try {
       final payload = jsonEncode({
         'exportedAt': DateTime.now().toIso8601String(),
-        'version': 2,
+        'version': 3,
+        'user_name': userName,
         'accounts': accounts.map(_accountToMap).toList(),
         'categories': categories.map(_categoryToMap).toList(),
         'tags': tags.map(_tagToMap).toList(),
         'transactions': transactions.map(_transactionToMap).toList(),
+        'budgets': budgets.map(_budgetToMap).toList(),
+        'savings_goals': savingsGoals.map(_savingsGoalToMap).toList(),
+        'automatic_transactions':
+            automaticTransactions.map(_automaticTransactionToMap).toList(),
       });
 
       final salt = _generateRandomBytes(16);
@@ -167,9 +178,9 @@ class ExportServiceImpl implements IExportService {
       envelope.setRange(16, 32, iv.bytes);
       envelope.setRange(32, envelope.length, encrypted.bytes);
 
-      // Ensures "Stalvi_Export" in filename per requirements
+      // Ensures "Stalvi_Backup" in filename per requirements
       final filename =
-          'Stalvi_Export_${DateFormat('yyyyMMdd_HHmmss').format(DateTime.now())}.kbak';
+          'Stalvi_Backup_${DateFormat('yyyyMMdd_HHmmss').format(DateTime.now())}.kbak';
       final savedPath = await _saveFile(envelope, filename);
 
       return ExportResult(
@@ -251,14 +262,22 @@ class ExportServiceImpl implements IExportService {
     Map<String, String> transferDestinations = const {},
     List<Budget> budgets = const [],
     Map<String, String> budgetCategoryNames = const {},
+    Map<String, String> budgetCurrencies = const {},
     List<SavingsGoal> savingsGoals = const [],
+    String? customMonthLabel,
+    String userName = '',
   }) async {
+    final incomeCount =
+        transactions.where((tx) => tx.type == TransactionType.income).length;
+    final expenseCount =
+        transactions.where((tx) => tx.type == TransactionType.expense).length;
     try {
       await initializeDateFormatting(l10n.localeName);
       final accountMap = {for (final a in accounts) a.id: a.name};
       final categoryMap = {for (final c in categories) c.id: c.name};
 
-      final monthLabel = DateFormat.yMMMM(l10n.localeName).format(month);
+      final monthLabel =
+          customMonthLabel ?? DateFormat.yMMMM(l10n.localeName).format(month);
 
       final fontData = await rootBundle.load('assets/fonts/Roboto-Regular.ttf');
       final fontDataBold =
@@ -290,7 +309,9 @@ class ExportServiceImpl implements IExportService {
                 mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                 children: [
                   pw.Text(
-                    '${l10n.appTitle} - ${l10n.overview}',
+                    userName.isNotEmpty
+                        ? '${l10n.appTitle} - ${l10n.overview} $userName'
+                        : '${l10n.appTitle} - ${l10n.overview}',
                     style: pw.TextStyle(
                       fontSize: 20,
                       fontWeight: pw.FontWeight.bold,
@@ -311,12 +332,12 @@ class ExportServiceImpl implements IExportService {
                 mainAxisAlignment: pw.MainAxisAlignment.spaceEvenly,
                 children: [
                   _pdfSummaryItem(
-                    l10n.income,
+                    l10n.income(incomeCount),
                     '$symbol ${_centsToDecimal(summary.totalIncome, l10n.localeName)} $defaultCurrency',
                     PdfColors.green800,
                   ),
                   _pdfSummaryItem(
-                    l10n.expenses,
+                    l10n.expense(expenseCount),
                     '$symbol ${_centsToDecimal(summary.totalExpense, l10n.localeName)} $defaultCurrency',
                     PdfColors.red800,
                   ),
@@ -381,9 +402,9 @@ class ExportServiceImpl implements IExportService {
                 return [
                   DateFormat(l10n.pdfDateFormat).format(tx.date),
                   tx.type == TransactionType.income
-                      ? l10n.income
+                      ? l10n.income(1)
                       : tx.type == TransactionType.expense
-                          ? l10n.expense
+                          ? l10n.expense(1)
                           : l10n.filterTransfer,
                   accountCell,
                   tx.categoryId != null
@@ -398,7 +419,14 @@ class ExportServiceImpl implements IExportService {
             pw.SizedBox(height: 20),
 
             // Income vs Expense Chart with 4 reference lines, labels on left
-            _buildIncomeExpenseChart(summary, l10n, symbol, defaultCurrency),
+            _buildIncomeExpenseChart(
+              summary,
+              l10n,
+              symbol,
+              defaultCurrency,
+              incomeCount: incomeCount,
+              expenseCount: expenseCount,
+            ),
 
             // Top Spending Categories Chart
             if (topExpenseCategories.isNotEmpty)
@@ -423,6 +451,8 @@ class ExportServiceImpl implements IExportService {
               _buildBudgetsTable(
                 activeBudgets,
                 budgetCategoryNames,
+                accountMap,
+                budgetCurrencies,
                 defaultCurrency,
                 symbol,
                 l10n,
@@ -451,7 +481,7 @@ class ExportServiceImpl implements IExportService {
 
       final bytes = await pdf.save();
       final filename =
-          'Stalvi_Export_${DateFormat('yyyyMMdd_HHmmss').format(DateTime.now())}.pdf';
+          'Stalvi_Overview_${DateFormat('yyyyMMdd_HHmmss').format(DateTime.now())}.pdf';
       final savedPath = await _saveFile(bytes, filename);
 
       return ExportResult(
@@ -534,14 +564,68 @@ class ExportServiceImpl implements IExportService {
         'type': tx.type.name,
         'account_id': tx.accountId,
         'category_id': tx.categoryId,
+        'savings_goal_id': tx.savingsGoalId,
         'notes': tx.notes,
         'original_currency': tx.originalCurrency,
         'converted_amount': tx.convertedAmount,
         'exchange_rate': tx.exchangeRate,
         'exchange_rate_snapshot': tx.exchangeRateSnapshot,
         'transfer_id': tx.transferId,
+        'is_deleted': false,
         'created_at': tx.createdAt.toIso8601String(),
         'modified_at': tx.modifiedAt.toIso8601String(),
+      };
+
+  static Map<String, dynamic> _budgetToMap(Budget b) => {
+        'id': b.id,
+        'account_id': b.accountId,
+        'category_id': b.categoryId,
+        'target_amount': b.targetAmount,
+        'current_amount': b.currentAmount,
+        'start_date': b.startDate.toIso8601String(),
+        'end_date': b.endDate.toIso8601String(),
+        'created_at': b.createdAt.toIso8601String(),
+        'modified_at': b.modifiedAt.toIso8601String(),
+        'deleted_at': b.deletedAt?.toIso8601String(),
+        'is_deleted': b.isDeleted,
+      };
+
+  static Map<String, dynamic> _savingsGoalToMap(SavingsGoal s) => {
+        'id': s.id,
+        'name': s.name,
+        'target_amount': s.targetAmount,
+        'current_amount': s.currentAmount,
+        'target_date': s.targetDate?.toIso8601String(),
+        'color': s.color,
+        'icon': s.icon,
+        'created_at': s.createdAt.toIso8601String(),
+        'modified_at': s.modifiedAt.toIso8601String(),
+        'deleted_at': s.deletedAt?.toIso8601String(),
+        'is_deleted': s.isDeleted,
+        'is_completed': s.isCompleted,
+        'currency': s.currency,
+      };
+
+  static Map<String, dynamic> _automaticTransactionToMap(
+    AutomaticTransaction a,
+  ) =>
+      {
+        'id': a.id,
+        'name': a.name,
+        'amount': a.amount,
+        'currency': a.currency,
+        'type': a.type.name,
+        'account_id': a.accountId,
+        'category_id': a.categoryId,
+        'tag_id': a.tagId,
+        'notes': a.notes,
+        'recurrence_type': a.recurrenceType.name,
+        'recurrence_days': a.recurrenceDays,
+        'next_execution_date': a.nextExecutionDate.toIso8601String(),
+        'created_at': a.createdAt.toIso8601String(),
+        'is_active': a.isActive,
+        'is_deleted': a.isDeleted,
+        'deleted_at': a.deletedAt?.toIso8601String(),
       };
 
   static Uint8List _deriveKey(String password, Uint8List salt) {
@@ -637,8 +721,10 @@ class ExportServiceImpl implements IExportService {
     PeriodSummary summary,
     AppLocalizations l10n,
     String currencySymbol,
-    String defaultCurrency,
-  ) {
+    String defaultCurrency, {
+    required int incomeCount,
+    required int expenseCount,
+  }) {
     // Chart drawing area constants
     const double chartLeft = 60.0; // left margin reserved for scale labels
     const double chartRight = 300.0;
@@ -773,7 +859,7 @@ class ExportServiceImpl implements IExportService {
                     width: chartWidth / 2,
                     alignment: pw.Alignment.center,
                     child: pw.Text(
-                      l10n.income,
+                      l10n.income(incomeCount),
                       style: pw.TextStyle(
                         fontSize: 8,
                         fontWeight: pw.FontWeight.bold,
@@ -784,7 +870,7 @@ class ExportServiceImpl implements IExportService {
                     width: chartWidth / 2,
                     alignment: pw.Alignment.center,
                     child: pw.Text(
-                      l10n.expenses,
+                      l10n.expense(expenseCount),
                       style: pw.TextStyle(
                         fontSize: 8,
                         fontWeight: pw.FontWeight.bold,
@@ -949,11 +1035,13 @@ class ExportServiceImpl implements IExportService {
 
   /// Builds the Budgets table section.
   ///
-  /// Columns: Category | Date Range | % Spent | Max Value (with currency)
+  /// Columns: Category | Account | Date Range | % Spent | Max Value (with currency)
   /// Only active (non-deleted) budgets are included.
   static pw.Widget _buildBudgetsTable(
     List<Budget> budgets,
     Map<String, String> categoryNames,
+    Map<String, String> accountNames,
+    Map<String, String> budgetCurrencies,
     String defaultCurrency,
     String currencySymbol,
     AppLocalizations l10n,
@@ -973,8 +1061,9 @@ class ExportServiceImpl implements IExportService {
           columnWidths: {
             0: const pw.FlexColumnWidth(2),
             1: const pw.FlexColumnWidth(2),
-            2: const pw.FixedColumnWidth(55),
-            3: const pw.FlexColumnWidth(2),
+            2: const pw.FlexColumnWidth(2),
+            3: const pw.FixedColumnWidth(55),
+            4: const pw.FlexColumnWidth(2),
           },
           children: [
             // Header row
@@ -985,6 +1074,16 @@ class ExportServiceImpl implements IExportService {
                   padding: const pw.EdgeInsets.all(4),
                   child: pw.Text(
                     l10n.pdfBudgetsColCategory,
+                    style: pw.TextStyle(
+                      fontWeight: pw.FontWeight.bold,
+                      fontSize: 9,
+                    ),
+                  ),
+                ),
+                pw.Padding(
+                  padding: const pw.EdgeInsets.all(4),
+                  child: pw.Text(
+                    l10n.labelAccount,
                     style: pw.TextStyle(
                       fontWeight: pw.FontWeight.bold,
                       fontSize: 9,
@@ -1015,7 +1114,7 @@ class ExportServiceImpl implements IExportService {
                 pw.Padding(
                   padding: const pw.EdgeInsets.all(4),
                   child: pw.Text(
-                    '${l10n.pdfBudgetsColMaxValue} ($defaultCurrency)',
+                    l10n.pdfBudgetsColMaxValue,
                     textAlign: pw.TextAlign.right,
                     style: pw.TextStyle(
                       fontWeight: pw.FontWeight.bold,
@@ -1029,13 +1128,20 @@ class ExportServiceImpl implements IExportService {
             ...budgets.map((budget) {
               final categoryName =
                   categoryNames[budget.categoryId] ?? budget.categoryId;
+              final accountName =
+                  accountNames[budget.accountId] ?? budget.accountId;
               final dateRange =
                   '${dateFormat.format(budget.startDate)} – ${dateFormat.format(budget.endDate)}';
               final spentPct = budget.targetAmount > 0
                   ? (budget.currentAmount / budget.targetAmount * 100)
                   : 0.0;
-              final maxValueLabel =
-                  '$currencySymbol ${_centsToDecimal(budget.targetAmount, l10n.localeName)} $defaultCurrency';
+              final budgetCurrency =
+                  budgetCurrencies[budget.id] ?? defaultCurrency;
+              final formatter = CurrencyFormatter(currencyCode: budgetCurrency);
+              final maxValueLabel = formatter.format(
+                budget.targetAmount / 100,
+                locale: l10n.localeName,
+              );
 
               // Color-code row background when overspent
               final pw.BoxDecoration? rowDecoration = spentPct > 100
@@ -1049,6 +1155,13 @@ class ExportServiceImpl implements IExportService {
                     padding: const pw.EdgeInsets.all(4),
                     child: pw.Text(
                       categoryName,
+                      style: const pw.TextStyle(fontSize: 8),
+                    ),
+                  ),
+                  pw.Padding(
+                    padding: const pw.EdgeInsets.all(4),
+                    child: pw.Text(
+                      accountName,
                       style: const pw.TextStyle(fontSize: 8),
                     ),
                   ),
@@ -1143,7 +1256,7 @@ class ExportServiceImpl implements IExportService {
                 pw.Padding(
                   padding: const pw.EdgeInsets.all(4),
                   child: pw.Text(
-                    '${l10n.pdfSavingsColTarget} ($defaultCurrency)',
+                    l10n.pdfBudgetsColMaxValue,
                     textAlign: pw.TextAlign.right,
                     style: pw.TextStyle(
                       fontWeight: pw.FontWeight.bold,
@@ -1158,8 +1271,11 @@ class ExportServiceImpl implements IExportService {
               final completedPct = goal.targetAmount > 0
                   ? (goal.currentAmount / goal.targetAmount * 100)
                   : 0.0;
-              final targetLabel =
-                  '$currencySymbol ${_centsToDecimal(goal.targetAmount, l10n.localeName)} $defaultCurrency';
+              final formatter = CurrencyFormatter(currencyCode: goal.currency);
+              final targetLabel = formatter.format(
+                goal.targetAmount / 100,
+                locale: l10n.localeName,
+              );
 
               // Highlight completed goals
               final pw.BoxDecoration? rowDecoration =

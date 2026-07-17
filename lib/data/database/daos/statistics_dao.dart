@@ -29,6 +29,12 @@ class StatisticsDao extends DatabaseAccessor<AppDatabase>
     with _$StatisticsDaoMixin {
   StatisticsDao(super.db);
 
+  /// Generates a dynamic SQLite expression that calculates the converted transaction amount.
+  ///
+  /// Uses the following logic:
+  /// 1. If the transaction currency is already the target currency, use its original amount.
+  /// 2. If an exchange rate snapshot exists as a JSON string, extract the rates and convert.
+  /// 3. Otherwise, fall back to the pre-computed converted amount or the original amount.
   CustomExpression<double> _convertedAmountExpr(String targetCurrency) {
     return CustomExpression<double>('''
       CASE 
@@ -42,6 +48,9 @@ class StatisticsDao extends DatabaseAccessor<AppDatabase>
     ''');
   }
 
+  /// Watches the total net balance across all active (non-soft-deleted) accounts.
+  /// Conversions to the [targetCurrency] are done dynamically on the database side
+  /// using the exchange rate snapshots.
   Stream<double> watchGlobalBalance(String targetCurrency) {
     final convertedExpr = _convertedAmountExpr(targetCurrency);
     final balanceExpr = CustomExpression<double>('''
@@ -70,14 +79,76 @@ class StatisticsDao extends DatabaseAccessor<AppDatabase>
     });
   }
 
-  Future<PeriodSummary> getPeriodSummaryAggregates(
-    DateTime startDate,
-    DateTime endDate,
-    String targetCurrency, {
+  /// Watches Period Summary totals (Incomes vs Expenses) for a given date range.
+  /// Can be optionally filtered to a single account.
+  Stream<PeriodSummary> watchPeriodSummaryAggregates({
+    DateTime? startDate,
+    DateTime? endDate,
+    required String targetCurrency,
+    String? accountId,
+  }) {
+    final now = DateTime.now();
+    final effectiveEnd = endDate ?? now;
+    final effectiveStart = startDate ?? now.subtract(const Duration(days: 30));
+
+    // Ensure we exclude soft-deleted transactions and transactions belonging to deleted accounts
+    var queryConditions =
+        transactions.date.isBetweenValues(effectiveStart, effectiveEnd) &
+            transactions.isDeleted.equals(false) &
+            accounts.isDeleted.equals(false);
+
+    if (accountId != null) {
+      queryConditions =
+          queryConditions & transactions.accountId.equals(accountId);
+    }
+
+    final convertedExpr = _convertedAmountExpr(targetCurrency);
+
+    final incomeSumExpr = CustomExpression<double>('''
+      SUM(
+        CASE WHEN transactions.type = ${TransactionType.income.index} THEN 
+          (${convertedExpr.content})
+        ELSE 0 END
+      )
+    ''');
+
+    final expenseSumExpr = CustomExpression<double>('''
+      SUM(
+        CASE WHEN transactions.type = ${TransactionType.expense.index} THEN 
+          (${convertedExpr.content})
+        ELSE 0 END
+      )
+    ''');
+
+    final query = selectOnly(transactions).join([
+      innerJoin(
+        accounts,
+        accounts.id.equalsExp(transactions.accountId),
+      ),
+    ])
+      ..where(queryConditions)
+      ..addColumns([incomeSumExpr, expenseSumExpr]);
+
+    return query.watchSingle().map((row) {
+      return PeriodSummary(
+        totalIncome: (row.read(incomeSumExpr) ?? 0.0).round(),
+        totalExpense: (row.read(expenseSumExpr) ?? 0.0).round(),
+      );
+    });
+  }
+
+  Future<PeriodSummary> getPeriodSummaryAggregates({
+    DateTime? startDate,
+    DateTime? endDate,
+    required String targetCurrency,
     String? accountId,
   }) async {
+    final now = DateTime.now();
+    final effectiveEnd = endDate ?? now;
+    final effectiveStart = startDate ?? now.subtract(const Duration(days: 30));
+
     var queryConditions =
-        transactions.date.isBetweenValues(startDate, endDate) &
+        transactions.date.isBetweenValues(effectiveStart, effectiveEnd) &
             transactions.isDeleted.equals(false) &
             accounts.isDeleted.equals(false);
 
@@ -118,6 +189,62 @@ class StatisticsDao extends DatabaseAccessor<AppDatabase>
       totalIncome: (result.read(incomeSumExpr) ?? 0.0).round(),
       totalExpense: (result.read(expenseSumExpr) ?? 0.0).round(),
     );
+  }
+
+  Stream<List<CategoryStatistic>> watchTopCategoriesAggregates(
+    DateTime startDate,
+    DateTime endDate,
+    String targetCurrency, {
+    TransactionType type = TransactionType.expense,
+    String? accountId,
+  }) {
+    var queryConditions =
+        transactions.date.isBetweenValues(startDate, endDate) &
+            transactions.type.equalsValue(type) &
+            transactions.isDeleted.equals(false) &
+            categories.isDeleted.equals(false) &
+            accounts.isDeleted.equals(false);
+
+    if (accountId != null) {
+      queryConditions =
+          queryConditions & transactions.accountId.equals(accountId);
+    }
+
+    final convertedExpr = _convertedAmountExpr(targetCurrency);
+    final sumExpr = CustomExpression<double>('SUM(${convertedExpr.content})');
+
+    final query = selectOnly(transactions).join([
+      innerJoin(
+        categories,
+        categories.id.equalsExp(transactions.categoryId),
+      ),
+      innerJoin(
+        accounts,
+        accounts.id.equalsExp(transactions.accountId),
+      ),
+    ])
+      ..where(queryConditions)
+      ..addColumns([
+        categories.id,
+        categories.name,
+        categories.icon,
+        categories.color,
+        sumExpr,
+      ])
+      ..groupBy([categories.id])
+      ..orderBy([OrderingTerm(expression: sumExpr, mode: OrderingMode.desc)]);
+
+    return query.watch().map((results) {
+      return results.map((row) {
+        return CategoryStatistic(
+          categoryId: row.read(categories.id)!,
+          categoryName: row.read(categories.name)!,
+          categoryIcon: row.read(categories.icon)!,
+          categoryColor: row.read(categories.color)!,
+          totalAmount: (row.read(sumExpr) ?? 0.0).round(),
+        );
+      }).toList();
+    });
   }
 
   Future<List<CategoryStatistic>> getTopCategoriesAggregates(

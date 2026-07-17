@@ -4,19 +4,26 @@ import 'package:stalvi/core/errors/app_exceptions.dart';
 import 'package:stalvi/domain/entities/account.dart';
 import 'package:stalvi/domain/entities/account_type.dart';
 import 'package:stalvi/domain/entities/budget.dart';
+import 'package:stalvi/domain/entities/automatic_transaction.dart';
+import 'package:stalvi/domain/entities/transaction_type.dart';
 import 'package:stalvi/domain/repositories/i_account_repository.dart';
 import 'package:stalvi/domain/repositories/i_budget_repository.dart';
+import 'package:stalvi/domain/repositories/i_automatic_transaction_repository.dart';
 import 'package:stalvi/domain/usecases/delete_account_usecase.dart';
 
 class MockAccountRepository extends Mock implements IAccountRepository {}
 
 class MockBudgetRepository extends Mock implements IBudgetRepository {}
 
+class MockAutomaticTransactionRepository extends Mock
+    implements IAutomaticTransactionRepository {}
+
 class FakeBudget extends Fake implements Budget {}
 
 void main() {
   late MockAccountRepository mockAccountRepo;
   late MockBudgetRepository mockBudgetRepo;
+  late MockAutomaticTransactionRepository mockAutomaticRepo;
   late DeleteAccountUseCase usecase;
 
   setUpAll(() {
@@ -26,7 +33,12 @@ void main() {
   setUp(() {
     mockAccountRepo = MockAccountRepository();
     mockBudgetRepo = MockBudgetRepository();
-    usecase = DeleteAccountUseCase(mockAccountRepo, mockBudgetRepo);
+    mockAutomaticRepo = MockAutomaticTransactionRepository();
+    usecase = DeleteAccountUseCase(
+      mockAccountRepo,
+      mockBudgetRepo,
+      mockAutomaticRepo,
+    );
   });
 
   final testAccount = Account(
@@ -64,6 +76,8 @@ void main() {
         .thenAnswer((_) async => testAccount);
     when(() => mockAccountRepo.getDefaultAccount('user1'))
         .thenAnswer((_) async => defaultAccount);
+    when(() => mockAutomaticRepo.getAllAutomaticTransactions())
+        .thenAnswer((_) async => []);
 
     final budget = Budget(
       id: 'b1',
@@ -96,10 +110,45 @@ void main() {
         .thenAnswer((_) async => defaultAccount);
     when(() => mockAccountRepo.getDefaultAccount('user1'))
         .thenAnswer((_) async => defaultAccount);
+    when(() => mockAutomaticRepo.getAllAutomaticTransactions())
+        .thenAnswer((_) async => []);
 
     expect(
       () => usecase.execute('acc2'),
       throwsA(isA<ValidationException>()),
+    );
+  });
+
+  test('throws if account has linked automatic transactions', () async {
+    final autoTxn = AutomaticTransaction(
+      id: '1',
+      name: 'Test',
+      amount: 1000,
+      currency: 'USD',
+      type: TransactionType.expense,
+      accountId: 'acc1',
+      categoryId: null,
+      tagId: null,
+      notes: null,
+      recurrenceDays: 30,
+      nextExecutionDate: DateTime.now(),
+      createdAt: DateTime.now(),
+    );
+
+    when(() => mockAccountRepo.getAccountById('acc1'))
+        .thenAnswer((_) async => testAccount);
+    when(() => mockAutomaticRepo.getAllAutomaticTransactions())
+        .thenAnswer((_) async => [autoTxn]);
+
+    expect(
+      () => usecase.execute('acc1'),
+      throwsA(
+        isA<AccountInUseByAutomaticTransactionException>().having(
+          (e) => e.code,
+          'code',
+          'ACCOUNT_HAS_AUTOMATIC_TRANSACTIONS',
+        ),
+      ),
     );
   });
 }

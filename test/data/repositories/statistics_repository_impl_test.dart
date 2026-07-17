@@ -3,8 +3,7 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:stalvi/data/database/daos/statistics_dao.dart';
 
-import 'package:stalvi/data/database/tables/transaction_table.dart'
-    show TransactionType;
+import 'package:stalvi/data/database/tables/transaction_table.dart' as db_table;
 import 'package:stalvi/data/repositories/statistics_repository_impl.dart';
 import 'package:stalvi/domain/entities/period_summary.dart';
 import 'package:stalvi/domain/entities/category_statistic.dart';
@@ -36,9 +35,9 @@ void main() {
 
       when(
         mockDao.getPeriodSummaryAggregates(
-          startDate,
-          endDate,
-          targetCurrency,
+          startDate: startDate,
+          endDate: endDate,
+          targetCurrency: targetCurrency,
           accountId: null,
         ),
       ).thenAnswer(
@@ -65,9 +64,9 @@ void main() {
 
       when(
         mockDao.getPeriodSummaryAggregates(
-          startDate,
-          endDate,
-          targetCurrency,
+          startDate: startDate,
+          endDate: endDate,
+          targetCurrency: targetCurrency,
           accountId: 'a1',
         ),
       ).thenAnswer(
@@ -102,7 +101,7 @@ void main() {
           startDate,
           endDate,
           targetCurrency,
-          type: TransactionType.expense,
+          type: db_table.TransactionType.expense,
           accountId: null,
         ),
       ).thenAnswer(

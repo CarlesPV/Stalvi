@@ -109,15 +109,15 @@ final _fakeIncomeCategories = [
 /// Wraps [StatisticsScreen] inside a [ProviderScope] with overridden providers
 /// so no real database or use-cases are needed.
 Widget _buildTestWidget({
-  required Future<PeriodSummary> summaryFuture,
-  required Future<List<CategoryStatistic>> expenseCatFuture,
-  required Future<List<CategoryStatistic>> incomeCatFuture,
+  required AsyncValue<PeriodSummary> summaryState,
+  required AsyncValue<List<CategoryStatistic>> expenseCatState,
+  required AsyncValue<List<CategoryStatistic>> incomeCatState,
 }) {
   return ProviderScope(
     overrides: [
-      periodSummaryProvider.overrideWith((_) => summaryFuture),
-      topExpenseCategoriesProvider.overrideWith((_) => expenseCatFuture),
-      topIncomeCategoriesProvider.overrideWith((_) => incomeCatFuture),
+      periodSummaryProvider.overrideWith((ref) => summaryState),
+      topExpenseCategoriesProvider.overrideWith((ref) => expenseCatState),
+      topIncomeCategoriesProvider.overrideWith((ref) => incomeCatState),
     ],
     child: MaterialApp(
       theme: AppTheme.lightTheme,
@@ -147,9 +147,9 @@ void main() {
         // Arrange: futures that never resolve → AsyncValue.loading
         await tester.pumpWidget(
           _buildTestWidget(
-            summaryFuture: Completer<PeriodSummary>().future,
-            expenseCatFuture: Completer<List<CategoryStatistic>>().future,
-            incomeCatFuture: Completer<List<CategoryStatistic>>().future,
+            summaryState: const AsyncLoading<PeriodSummary>(),
+            expenseCatState: const AsyncLoading<List<CategoryStatistic>>(),
+            incomeCatState: const AsyncLoading<List<CategoryStatistic>>(),
           ),
         );
 
@@ -172,25 +172,19 @@ void main() {
     testWidgets(
       'shows inline error widget when periodSummaryProvider fails',
       (WidgetTester tester) async {
-        // Use a Completer so the error is delivered AFTER the widget tree is
-        // built, ensuring Riverpod catches it inside its own error zone.
-        // Directly passing Future.error() causes an unhandled async exception
-        // that the test runner intercepts before Riverpod can handle it.
-        final completer = Completer<PeriodSummary>();
-
         await tester.pumpWidget(
           _buildTestWidget(
-            summaryFuture: completer.future,
-            expenseCatFuture: Future.value(_fakeExpenseCategories),
-            incomeCatFuture: Future.value(_fakeIncomeCategories),
+            summaryState: AsyncError<PeriodSummary>(
+              Exception('DB error'),
+              StackTrace.empty,
+            ),
+            expenseCatState: AsyncData(_fakeExpenseCategories),
+            incomeCatState: AsyncData(_fakeIncomeCategories),
           ),
         );
 
-        // Complete with error while widget is mounted — Riverpod catches it.
-        completer.completeError(Exception('DB error'), StackTrace.empty);
-
         // Pump to let Riverpod rebuild the widget with the AsyncError state.
-        await tester.pump(const Duration(milliseconds: 200));
+        await tester.pump();
 
         // The _InlineError widget shows err.toString()
         expect(find.textContaining('DB error'), findsAtLeastNWidgets(1));
@@ -203,9 +197,9 @@ void main() {
         // Arrange
         await tester.pumpWidget(
           _buildTestWidget(
-            summaryFuture: Future.value(_fakeSummary),
-            expenseCatFuture: Future.value(<CategoryStatistic>[]),
-            incomeCatFuture: Future.value(_fakeIncomeCategories),
+            summaryState: const AsyncData(_fakeSummary),
+            expenseCatState: const AsyncData(<CategoryStatistic>[]),
+            incomeCatState: AsyncData(_fakeIncomeCategories),
           ),
         );
 
@@ -224,9 +218,9 @@ void main() {
       (WidgetTester tester) async {
         await tester.pumpWidget(
           _buildTestWidget(
-            summaryFuture: Future.value(_fakeSummary),
-            expenseCatFuture: Future.value(_fakeExpenseCategories),
-            incomeCatFuture: Future.value(<CategoryStatistic>[]),
+            summaryState: const AsyncData(_fakeSummary),
+            expenseCatState: AsyncData(_fakeExpenseCategories),
+            incomeCatState: const AsyncData(<CategoryStatistic>[]),
           ),
         );
 
@@ -255,9 +249,9 @@ void main() {
         // Arrange
         await tester.pumpWidget(
           _buildTestWidget(
-            summaryFuture: Future.value(_fakeSummary),
-            expenseCatFuture: Future.value(_fakeExpenseCategories),
-            incomeCatFuture: Future.value(_fakeIncomeCategories),
+            summaryState: const AsyncData(_fakeSummary),
+            expenseCatState: AsyncData(_fakeExpenseCategories),
+            incomeCatState: AsyncData(_fakeIncomeCategories),
           ),
         );
 
@@ -296,9 +290,9 @@ void main() {
         // Income €5,000 > Expense €3,100 → Surplus
         await tester.pumpWidget(
           _buildTestWidget(
-            summaryFuture: Future.value(_fakeSummary),
-            expenseCatFuture: Future.value(_fakeExpenseCategories),
-            incomeCatFuture: Future.value(_fakeIncomeCategories),
+            summaryState: const AsyncData(_fakeSummary),
+            expenseCatState: AsyncData(_fakeExpenseCategories),
+            incomeCatState: AsyncData(_fakeIncomeCategories),
           ),
         );
 
@@ -318,9 +312,9 @@ void main() {
 
         await tester.pumpWidget(
           _buildTestWidget(
-            summaryFuture: Future.value(deficitSummary),
-            expenseCatFuture: Future.value(_fakeExpenseCategories),
-            incomeCatFuture: Future.value(_fakeIncomeCategories),
+            summaryState: const AsyncData(deficitSummary),
+            expenseCatState: AsyncData(_fakeExpenseCategories),
+            incomeCatState: AsyncData(_fakeIncomeCategories),
           ),
         );
 
@@ -337,15 +331,23 @@ void main() {
       (WidgetTester tester) async {
         await tester.pumpWidget(
           _buildTestWidget(
-            summaryFuture: Future.value(_fakeSummary),
-            expenseCatFuture: Future.value(_fakeExpenseCategories),
-            incomeCatFuture: Future.value(_fakeIncomeCategories),
+            summaryState: const AsyncData(_fakeSummary),
+            expenseCatState: AsyncData(_fakeExpenseCategories),
+            incomeCatState: AsyncData(_fakeIncomeCategories),
           ),
         );
 
         await tester.pump();
 
         for (final preset in StatisticsDatePreset.values) {
+          final chip = find.text(preset.label);
+          if (tester.any(chip) == false) {
+            await tester.drag(
+              find.byType(ListView).first,
+              const Offset(-300, 0),
+            );
+            await tester.pump(const Duration(milliseconds: 200));
+          }
           expect(find.text(preset.label), findsOneWidget);
         }
       },
@@ -356,9 +358,9 @@ void main() {
       (WidgetTester tester) async {
         await tester.pumpWidget(
           _buildTestWidget(
-            summaryFuture: Future.value(_fakeSummary),
-            expenseCatFuture: Future.value(_fakeExpenseCategories),
-            incomeCatFuture: Future.value(_fakeIncomeCategories),
+            summaryState: const AsyncData(_fakeSummary),
+            expenseCatState: AsyncData(_fakeExpenseCategories),
+            incomeCatState: AsyncData(_fakeIncomeCategories),
           ),
         );
 
@@ -380,9 +382,9 @@ void main() {
       (WidgetTester tester) async {
         await tester.pumpWidget(
           _buildTestWidget(
-            summaryFuture: Future.value(_fakeSummary),
-            expenseCatFuture: Future.value(_fakeExpenseCategories),
-            incomeCatFuture: Future.value(_fakeIncomeCategories),
+            summaryState: const AsyncData(_fakeSummary),
+            expenseCatState: AsyncData(_fakeExpenseCategories),
+            incomeCatState: AsyncData(_fakeIncomeCategories),
           ),
         );
 

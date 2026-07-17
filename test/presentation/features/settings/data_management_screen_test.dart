@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:stalvi/core/l10n/app_localizations.dart';
 import 'package:stalvi/domain/entities/profile.dart';
@@ -10,6 +12,33 @@ import 'package:mocktail/mocktail.dart';
 import 'package:stalvi/infrastructure/services/biometric_auth_service.dart';
 
 class MockBiometricAuthService extends Mock implements BiometricAuthService {}
+
+class FakeFilePicker extends FilePicker {
+  @override
+  Future<FilePickerResult?> pickFiles({
+    String? dialogTitle,
+    String? initialDirectory,
+    FileType type = FileType.any,
+    List<String>? allowedExtensions,
+    Function(FilePickerStatus)? onFileLoading,
+    bool allowCompression = true,
+    bool allowMultiple = false,
+    bool withData = false,
+    bool withReadStream = false,
+    int compressionQuality = 30,
+    bool lockParentWindow = false,
+    bool readSequential = false,
+  }) async {
+    return FilePickerResult([
+      PlatformFile(
+        path: '/mock/path/backup.json',
+        name: 'backup.json',
+        size: 100,
+        bytes: Uint8List.fromList([1, 2, 3]),
+      ),
+    ]);
+  }
+}
 
 class FakeProfileRepository implements IProfileRepository {
   @override
@@ -76,5 +105,75 @@ void main() {
     expect(find.byIcon(Icons.restore_rounded), findsOneWidget);
     expect(find.byIcon(Icons.table_chart_rounded), findsOneWidget);
     expect(find.byIcon(Icons.picture_as_pdf_rounded), findsOneWidget);
+  });
+
+  testWidgets(
+      'Export password dialog renders without overflow on small screens',
+      (WidgetTester tester) async {
+    tester.view.physicalSize = const Size(320, 480);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    when(() => mockBiometricAuth.isBiometricsEnabled())
+        .thenAnswer((_) async => true);
+    when(() => mockBiometricAuth.isBiometricAvailable())
+        .thenAnswer((_) async => true);
+    when(
+      () => mockBiometricAuth.authenticate(
+        localizedReason: any(named: 'localizedReason'),
+        lockedOutMessage: any(named: 'lockedOutMessage'),
+        authFailedMessage: any(named: 'authFailedMessage'),
+        unknownErrorMessage: any(named: 'unknownErrorMessage'),
+        signInTitle: any(named: 'signInTitle'),
+        cancelButton: any(named: 'cancelButton'),
+      ),
+    ).thenAnswer((_) async => true);
+
+    await tester.pumpWidget(createTestableWidget());
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Export Encrypted Backup'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Set Backup Password'), findsOneWidget);
+  });
+
+  testWidgets(
+      'Import confirmation and password dialogs render without overflow on small screens',
+      (WidgetTester tester) async {
+    FilePicker.platform = FakeFilePicker();
+    tester.view.physicalSize = const Size(320, 480);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    when(() => mockBiometricAuth.isBiometricsEnabled())
+        .thenAnswer((_) async => true);
+    when(() => mockBiometricAuth.isBiometricAvailable())
+        .thenAnswer((_) async => true);
+    when(
+      () => mockBiometricAuth.authenticate(
+        localizedReason: any(named: 'localizedReason'),
+        lockedOutMessage: any(named: 'lockedOutMessage'),
+        authFailedMessage: any(named: 'authFailedMessage'),
+        unknownErrorMessage: any(named: 'unknownErrorMessage'),
+        signInTitle: any(named: 'signInTitle'),
+        cancelButton: any(named: 'cancelButton'),
+      ),
+    ).thenAnswer((_) async => true);
+
+    await tester.pumpWidget(createTestableWidget());
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Import / Restore Backup'));
+    await tester.pumpAndSettle();
+    // Verify confirmation dialog is shown
+    expect(find.text('Restore Backup?'), findsOneWidget);
+
+    await tester.tap(find.text('Restore'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Enter Backup Password'), findsOneWidget);
   });
 }

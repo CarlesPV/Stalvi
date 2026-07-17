@@ -1,1308 +1,358 @@
 {
   "@@locale": "en",
-  "transactions": "Transactions",
-  "@transactions": {
-    "description": "Title for the transactions screen or tab"
-  },
-  "budgets": "Budgets",
-  "@budgets": {
-    "description": "Title for the budgets screen or tab"
-  },
-  "settings": "Settings",
-  "@settings": {
-    "description": "Title for the settings screen or tab"
-  },
-  "addTransaction": "Add Transaction",
-  "@addTransaction": {
-    "description": "Button or title for adding a transaction"
-  },
-  "income": "Income",
-  "@income": {
-    "description": "Label for positive financial income"
-  },
-  "expense": "Expense",
-  "@expense": {
-    "description": "Label for negative financial expense"
-  },
-  "expenses": "Expenses",
-  "@expenses": {
-    "description": "Label for plural negative financial expenses"
-  },
+
   "appTitle": "Stalvi",
-  "@appTitle": {
-    "description": "App name branding"
-  },
-  "splashTagline": "Your finances, your way.",
-  "@splashTagline": {
-    "description": "Tagline displayed on the splash screen"
-  },
-  "splashStartupFailed": "Startup Failed",
-  "@splashStartupFailed": {
-    "description": "Error title shown when app startup fails"
-  },
-  "splashSecureStorageError": "Stalvi couldn't initialise its secure storage. Please check available device storage and try again.",
-  "@splashSecureStorageError": {
-    "description": "Error message shown when secure storage fails to initialize"
-  },
-  "tryAgain": "Try Again",
-  "@tryAgain": {
-    "description": "General button label to retry an operation"
-  },
-  "authError": "Authentication Error",
-  "@authError": {
-    "description": "Error title for biometric authentication failure"
-  },
-  "authLockedTitle": "Biometrics Locked",
-  "@authLockedTitle": {
-    "description": "Title when biometric lockout occurs"
-  },
-  "authLockedMessage": "Too many failed attempts. Please unlock your device from the lock screen and try again.",
-  "@authLockedMessage": {
-    "description": "Description when biometric lockout occurs"
-  },
-  "authLockoutActive": "Security lockout active",
-  "@authLockoutActive": {
-    "description": "Warning chip label for active biometric lockout"
-  },
-  "authVerifyMessage": "Use biometrics or your device PIN to continue",
-  "@authVerifyMessage": {
-    "description": "Prompt description to verify identity"
-  },
-  "authProcessing": "Processing security authentication…",
-  "@authProcessing": {
-    "description": "Loading message when processing security authentication"
-  },
-  "authProtectedBy": "Protected by device biometrics",
-  "@authProtectedBy": {
-    "description": "Footer text describing security"
-  },
-  "unexpectedError": "An unexpected error occurred. Please try again.",
-  "@unexpectedError": {
-    "description": "Generic fallback error message"
-  },
-  "overview": "Overview",
-  "@overview": {
-    "description": "Title/label for the overview tab"
-  },
-  "accounts": "Accounts",
-  "@accounts": {
-    "description": "Title/label for the accounts tab or section"
-  },
-  "recentTransactions": "Recent Transactions",
-  "@recentTransactions": {
-    "description": "Section header for recent transactions list"
-  },
-  "noTransactionsTitle": "No transactions yet",
-  "@noTransactionsTitle": {
-    "description": "Title when transaction list is empty"
-  },
-  "noTransactionsSubtitle": "Add your first income or expense to see it here and start tracking.",
-  "@noTransactionsSubtitle": {
-    "description": "Subtitle when transaction list is empty"
-  },
-  "failedLoadTransactions": "Failed to load transactions",
-  "@failedLoadTransactions": {
-    "description": "Error message when transactions stream fails"
-  },
-  "settingsBudgetsGoals": "Budgets & Goals",
-  "@settingsBudgetsGoals": {
-    "description": "Settings option for budgets and goals"
-  },
-  "settingsStatistics": "Statistics",
-  "@settingsStatistics": {
-    "description": "Settings option for statistics"
-  },
-  "balanceTotal": "Total Balance",
-  "@balanceTotal": {
-    "description": "Label for the total balance card"
-  },
-  "statisticsTooltipCustomRange": "Custom date range",
-  "@statisticsTooltipCustomRange": {
-    "description": "Tooltip for custom date range button"
-  },
-  "statisticsTopSpending": "Top Spending Categories",
-  "@statisticsTopSpending": {
-    "description": "Section title for top spending categories"
-  },
-  "statisticsWhereMoneyGoes": "Where your money goes",
-  "@statisticsWhereMoneyGoes": {
-    "description": "Section subtitle for top spending categories"
-  },
-  "statisticsNoExpenses": "No expenses recorded in this period.",
-  "@statisticsNoExpenses": {
-    "description": "Label when no expenses exist for statistics"
-  },
-  "statisticsTopIncome": "Top Income Categories",
-  "@statisticsTopIncome": {
-    "description": "Section title for top income categories"
-  },
-  "statisticsWhatYouEarned": "What you earned",
-  "@statisticsWhatYouEarned": {
-    "description": "Section subtitle for top income categories"
-  },
-  "statisticsNoIncome": "No income recorded in this period.",
-  "@statisticsNoIncome": {
-    "description": "Label when no income exists for statistics"
-  },
-  "statisticsNetBalance": "Net Balance",
-  "@statisticsNetBalance": {
-    "description": "Label for the net balance section"
-  },
-  "statisticsSurplus": "Surplus",
-  "@statisticsSurplus": {
-    "description": "Label for net balance surplus"
-  },
-  "statisticsDeficit": "Deficit",
-  "@statisticsDeficit": {
-    "description": "Label for net balance deficit"
-  },
-  "presetThisMonth": "This Month",
-  "@presetThisMonth": {
-    "description": "Label for this month date filter"
-  },
-  "presetLast3Months": "Last 3 Months",
-  "@presetLast3Months": {
-    "description": "Label for last 3 months date filter"
-  },
-  "presetLast6Months": "Last 6 Months",
-  "@presetLast6Months": {
-    "description": "Label for last 6 months date filter"
-  },
-  "presetThisYear": "This Year",
-  "@presetThisYear": {
-    "description": "Label for this year date filter"
-  },
-  "presetCustom": "Custom",
-  "@presetCustom": {
-    "description": "Label for custom date filter"
-  },
-  "budgetsAndGoals": "Budgets & Goals",
-  "@budgetsAndGoals": {
-    "description": "Title for the budgets and goals screen"
-  },
-  "savingsGoals": "Savings Goals",
-  "@savingsGoals": {
-    "description": "Title/label for savings goals tab or section"
-  },
-  "failedLoadBudgets": "Failed to load budgets.",
-  "@failedLoadBudgets": {
-    "description": "Error message when budgets stream fails"
-  },
-  "noBudgetsTitle": "No budgets set yet",
-  "@noBudgetsTitle": {
-    "description": "Title when budgets list is empty"
-  },
-  "noBudgetsSubtitle": "Set spending limits for categories to track your monthly expenses and stay within your limits.",
-  "@noBudgetsSubtitle": {
-    "description": "Subtitle when budgets list is empty"
-  },
-  "uncategorized": "Uncategorized",
-  "@uncategorized": {
-    "description": "Fallback name for categories without a name or value"
-  },
-  "budgetOverspent": "{amount} overspent",
-  "@budgetOverspent": {
-    "description": "Remaining budget spent description when limit is exceeded",
-    "placeholders": {
-      "amount": {
-        "type": "String"
-      }
-    }
-  },
-  "budgetRemaining": "{amount} remaining",
-  "@budgetRemaining": {
-    "description": "Remaining budget spent description when within limit",
-    "placeholders": {
-      "amount": {
-        "type": "String"
-      }
-    }
-  },
-  "failedLoadSavingsGoals": "Failed to load savings goals.",
-  "@failedLoadSavingsGoals": {
-    "description": "Error message when savings goals stream fails"
-  },
-  "noSavingsGoalsTitle": "No savings goals yet",
-  "@noSavingsGoalsTitle": {
-    "description": "Title when savings goals list is empty"
-  },
-  "noSavingsGoalsSubtitle": "Create a savings goal to plan for your future dreams, trips, or big purchases.",
-  "@noSavingsGoalsSubtitle": {
-    "description": "Subtitle when savings goals list is empty"
-  },
-  "savingsTargetDate": "Target date: {date}",
-  "@savingsTargetDate": {
-    "description": "Savings goal target date description",
-    "placeholders": {
-      "date": {
-        "type": "String"
-      }
-    }
-  },
-  "savingsNoTargetDate": "No target date",
-  "@savingsNoTargetDate": {
-    "description": "Description when savings goal has no target date"
-  },
-  "savingsSavedOf": "{saved} saved of {target}",
-  "@savingsSavedOf": {
-    "description": "Savings goal current progress vs target",
-    "placeholders": {
-      "saved": {
-        "type": "String"
-      },
-      "target": {
-        "type": "String"
-      }
-    }
-  },
-  "savingsGoalAchieved": "Goal achieved!",
-  "@savingsGoalAchieved": {
-    "description": "Text showing savings goal milestone completion"
-  },
-  "txnSuccessCreated": "Transaction created successfully!",
-  "@txnSuccessCreated": {
-    "description": "Success message when transaction is saved"
-  },
-  "labelAmount": "AMOUNT",
-  "@labelAmount": {
-    "description": "Label for amount input field"
-  },
-  "labelAccount": "Account",
-  "@labelAccount": {
-    "description": "Label for account field"
-  },
-  "labelSelectAccount": "Select Account",
-  "@labelSelectAccount": {
-    "description": "Prompt or header to select an account"
-  },
-  "labelCategory": "Category",
-  "@labelCategory": {
-    "description": "Label for category field"
-  },
-  "labelSelectCategory": "Select Category",
-  "@labelSelectCategory": {
-    "description": "Prompt or header to select a category"
-  },
-  "labelDate": "Date",
-  "@labelDate": {
-    "description": "Label for date field"
-  },
-  "labelNotes": "Notes",
-  "@labelNotes": {
-    "description": "Label for notes field"
-  },
-  "labelNotesHint": "Add details about this transaction...",
-  "@labelNotesHint": {
-    "description": "Hint text for notes input field"
-  },
-  "btnSaveTransaction": "Save Transaction",
-  "@btnSaveTransaction": {
-    "description": "Button label to save transaction"
-  },
-  "errorInvalidAmount": "Please enter a valid amount greater than 0",
-  "@errorInvalidAmount": {
-    "description": "Validation error for invalid transaction amount"
-  },
-  "errorAccountRequired": "Please select an account",
-  "@errorAccountRequired": {
-    "description": "Validation error when account is not selected"
-  },
-  "errorFutureDate": "Transaction date cannot be in the future",
-  "@errorFutureDate": {
-    "description": "Validation error when transaction date is in the future"
-  },
-  "errorAccountNotFound": "Account not found",
-  "@errorAccountNotFound": {
-    "description": "Error when account doesn't exist"
-  },
-  "errorProfileNotFound": "Profile not found",
-  "@errorProfileNotFound": {
-    "description": "Error when user profile doesn't exist"
-  },
-  "errorRateNotFound": "Exchange rate not available for the requested currency",
-  "@errorRateNotFound": {
-    "description": "Error when exchange rate is missing"
-  },
-  "errorConversionFailed": "Failed to convert currency",
-  "@errorConversionFailed": {
-    "description": "Error when currency conversion fails"
-  },
-  "getStarted": "Get Started",
-  "@getStarted": {
-    "description": "Default label for empty state call-to-action button"
-  },
-  "authSetupTitle": "Create Your Profile",
-  "@authSetupTitle": {
-    "description": "Title for the profile setup screen"
-  },
-  "authSetupSubtitle": "Set up your secure offline wallet to begin.",
-  "@authSetupSubtitle": {
-    "description": "Subtitle for the profile setup screen"
-  },
-  "authSetupNameLabel": "Name",
-  "@authSetupNameLabel": {
-    "description": "Label for name input"
-  },
-  "authSetupUsernameLabel": "Username",
-  "@authSetupUsernameLabel": {
-    "description": "Label for username input"
-  },
-  "authSetupPinLabel": "Set a 4-8 digit PIN",
-  "@authSetupPinLabel": {
-    "description": "Label for PIN input"
-  },
-  "authSetupConfirmPinLabel": "Confirm PIN",
-  "@authSetupConfirmPinLabel": {
-    "description": "Label for confirming PIN"
-  },
-  "authSetupLanguageLabel": "Default Language",
-  "@authSetupLanguageLabel": {
-    "description": "Label for language selection"
-  },
-  "authSetupCreateButton": "Create Profile",
-  "@authSetupCreateButton": {
-    "description": "Button label to submit setup form"
-  },
-  "authSetupValidationErrorPinLength": "PIN must be between 4 and 8 digits.",
-  "@authSetupValidationErrorPinLength": {
-    "description": "Validation error when PIN length is invalid"
-  },
-  "authSetupValidationErrorPinMatch": "PINs do not match.",
-  "@authSetupValidationErrorPinMatch": {
-    "description": "Validation error when PINs do not match"
-  },
-  "authSetupValidationErrorTerms": "You must accept the Terms & Conditions and Privacy Policy to proceed.",
-  "@authSetupValidationErrorTerms": {
-    "description": "Validation error when terms are not accepted"
-  },
-  "authSetupValidationErrorName": "Please enter a name.",
-  "@authSetupValidationErrorName": {
-    "description": "Validation error when name is empty"
-  },
-  "authSetupValidationErrorUsername": "Please enter a username.",
-  "@authSetupValidationErrorUsername": {
-    "description": "Validation error when username is empty"
-  },
-  "authPinEnter": "Enter PIN",
-  "@authPinEnter": {
-    "description": "Prompt to enter PIN"
-  },
-  "authPinAttemptsRemaining": "{attempts} attempts remaining",
-  "@authPinAttemptsRemaining": {
-    "description": "Message indicating how many PIN attempts are remaining before lockout",
-    "placeholders": {
-      "attempts": {
-        "type": "int"
-      }
-    }
-  },
-  "authPinIncorrect": "Incorrect PIN. Please try again.",
-  "@authPinIncorrect": {
-    "description": "Error message when PIN is incorrect"
-  },
-  "acrossAccountsCount": "{count, plural, =1{1 account} other{{count} accounts}}",
-  "@acrossAccountsCount": {
-    "description": "Label indicating number of accounts",
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
-  "failedLoadAccounts": "Failed to load accounts.",
-  "@failedLoadAccounts": {
-    "description": "Error message when accounts list fails to load"
-  },
-  "noAccountsTitle": "No accounts yet",
-  "@noAccountsTitle": {
-    "description": "Title when accounts list is empty"
-  },
-  "noAccountsSubtitle": "Create an account or wallet to start managing your assets and tracking transactions.",
-  "@noAccountsSubtitle": {
-    "description": "Subtitle when accounts list is empty"
-  },
-  "defaultAccountLabel": "Default",
-  "@defaultAccountLabel": {
-    "description": "Label indicating an account is the default account"
-  },
-  "statisticsNoDataSubtitle": "Try adding transactions or changing the filter range to see your category breakdown.",
-  "@statisticsNoDataSubtitle": {
-    "description": "Subtitle when there is no data to show in statistics charts"
-  },
-  "authBiometricOptInTitle": "Enable Biometric Login",
-  "@authBiometricOptInTitle": {
-    "description": "Title for the biometric opt-in screen"
-  },
-  "authBiometricOptInSubtitle": "Use Fingerprint or FaceID to quickly and securely access your Stalvi account in the future.",
-  "@authBiometricOptInSubtitle": {
-    "description": "Subtitle for the biometric opt-in screen"
-  },
-  "authBiometricOptInEnable": "Enable Biometrics",
-  "@authBiometricOptInEnable": {
-    "description": "Button label to enable biometric login"
-  },
-  "authBiometricOptInSkip": "Skip for Now",
-  "@authBiometricOptInSkip": {
-    "description": "Button label to skip biometric login"
-  },
-  "noDataAvailable": "No data available yet",
-  "@noDataAvailable": {
-    "description": "Default label for empty state when no data is found"
-  },
-  "termsAndConditions": "Terms and Conditions",
-  "@termsAndConditions": {
-    "description": "Title for the Terms and Conditions screen"
-  },
-  "privacyPolicy": "Privacy Policy",
-  "@privacyPolicy": {
-    "description": "Title for the Privacy Policy screen"
-  },
-  "authSetupCurrencyLabel": "Default Currency",
-  "@authSetupCurrencyLabel": {
-    "description": "Label for default currency selector during setup"
-  },
-  "authSetupAcceptPrefix": "I accept the ",
-  "@authSetupAcceptPrefix": {
-    "description": "Prefix text for terms acceptance checkbox"
-  },
-  "authSetupAcceptAnd": " and the ",
-  "@authSetupAcceptAnd": {
-    "description": "Conjunction text for terms and privacy acceptance checkbox"
-  },
-  "settingsThemeMode": "Theme Mode",
-  "@settingsThemeMode": {
-    "description": "Label for theme mode selection in settings"
-  },
-  "themeModeSystem": "System",
-  "@themeModeSystem": {
-    "description": "System theme option"
-  },
-  "themeModeLight": "Light",
-  "@themeModeLight": {
-    "description": "Light theme option"
-  },
-  "themeModeDark": "Dark",
-  "@themeModeDark": {
-    "description": "Dark theme option"
-  },
-  "profileSettingsTitle": "Profile & Security",
-  "@profileSettingsTitle": {
-    "description": "Title for the profile and security settings screen"
-  },
-  "changePinButton": "Change PIN",
-  "@changePinButton": {
-    "description": "Button to change PIN"
-  },
-  "deleteAllDataButton": "Delete All Data",
-  "@deleteAllDataButton": {
-    "description": "Button to delete all application data"
-  },
-  "oldPinLabel": "Old PIN",
-  "@oldPinLabel": {
-    "description": "Label for old PIN input"
-  },
-  "newPinLabel": "New PIN",
-  "@newPinLabel": {
-    "description": "Label for new PIN input"
-  },
-  "confirmPinLabel": "Confirm New PIN",
-  "@confirmPinLabel": {
-    "description": "Label for confirm new PIN input"
-  },
-  "incorrectOldPin": "Incorrect Old PIN.",
-  "@incorrectOldPin": {
-    "description": "Error message for incorrect old PIN"
-  },
-  "pinsDoNotMatch": "PINs do not match.",
-  "@pinsDoNotMatch": {
-    "description": "Error message when new PINs do not match"
-  },
-  "pinUpdatedSuccessfully": "PIN updated successfully.",
-  "@pinUpdatedSuccessfully": {
-    "description": "Success message after updating PIN"
-  },
-  "deleteAllDataWarning": "Are you sure you want to delete all data? This cannot be undone.",
-  "@deleteAllDataWarning": {
-    "description": "Warning message before deleting all data"
-  },
-  "settingsLanguage": "Language",
-  "@settingsLanguage": {
-    "description": "Label for language selection in settings"
-  },
-  "usernameLabel": "Username",
-  "@usernameLabel": {
-    "description": "Label for username input"
-  },
   "btnCancel": "Cancel",
-  "@btnCancel": {
-    "description": "General cancel button label"
-  },
-  "btnSave": "Save",
-  "@btnSave": {
-    "description": "General save button label"
-  },
-  "btnDelete": "Delete",
-  "@btnDelete": {
-    "description": "General delete button label"
-  },
-  "btnNext": "Next",
-  "@btnNext": {
-    "description": "General next button label"
-  },
-  "recycleBinTitle": "Recycle Bin",
-  "@recycleBinTitle": {
-    "description": "Title for the Recycle Bin screen"
-  },
-  "recycleBinEmpty": "Recycle bin is empty.",
-  "@recycleBinEmpty": {
-    "description": "Text shown when the recycle bin is empty"
-  },
-  "recycleBinRestoreTooltip": "Restore",
-  "@recycleBinRestoreTooltip": {
-    "description": "Tooltip text for restoring an item"
-  },
-  "recycleBinDeleteTooltip": "Permanently Delete",
-  "@recycleBinDeleteTooltip": {
-    "description": "Tooltip text for permanently deleting an item"
-  },
-  "recycleBinDeleteConfirmTitle": "Permanent Delete",
-  "@recycleBinDeleteConfirmTitle": {
-    "description": "Title for the permanent delete confirmation dialog"
-  },
-  "recycleBinDeleteConfirmMessage": "Are you sure you want to permanently delete this item? This action cannot be undone.",
-  "@recycleBinDeleteConfirmMessage": {
-    "description": "Message for the permanent delete confirmation dialog"
-  },
-  "recycleBinRestoredMessage": "Item restored",
-  "@recycleBinRestoredMessage": {
-    "description": "Snackbar message shown when an item is successfully restored"
-  },
-  "recycleBinDeletedMessage": "Item permanently deleted",
-  "@recycleBinDeletedMessage": {
-    "description": "Snackbar message shown when an item is permanently deleted"
-  },
-  "recycleBinDaysRemaining": "Expires in {days} days",
-  "@recycleBinDaysRemaining": {
-    "description": "Days remaining until item in recycle bin is deleted",
-    "placeholders": {
-      "days": {
-        "type": "int"
-      }
-    }
-  },
-  "errorCategoryRequired": "Please select a category",
-  "@errorCategoryRequired": {
-    "description": "Validation error when category is not selected"
-  },
-  "errorCurrencyRequired": "Please select a currency",
-  "@errorCurrencyRequired": {
-    "description": "Validation error when currency is not selected"
-  },
-  "labelCurrency": "Currency",
-  "@labelCurrency": {
-    "description": "Label for currency selector field"
-  },
-  "labelSelectCurrency": "Select Currency",
-  "@labelSelectCurrency": {
-    "description": "Header or prompt to select a currency"
-  },
-  "labelTag": "Tag",
-  "@labelTag": {
-    "description": "Label for tag selector field"
-  },
-  "labelSelectTag": "Select Tag",
-  "@labelSelectTag": {
-    "description": "Header or prompt to select a tag"
-  },
-  "noTag": "None",
-  "@noTag": {
-    "description": "Label when no tag is selected"
-  },
-  "optionalPlaceholder": "(Optional)",
-  "@optionalPlaceholder": {
-    "description": "Optional label formatted with parentheses"
-  },
-  "fallbackIncome": "Income",
-  "@fallbackIncome": {
-    "description": "Fallback name for empty income transaction notes"
-  },
-  "fallbackExpense": "Expense",
-  "@fallbackExpense": {
-    "description": "Fallback name for empty expense transaction notes"
-  },
-  "errorMaxPinAttempts": "Maximum PIN attempts reached. Please try again later.",
-  "@errorMaxPinAttempts": {
-    "description": "Error message when PIN attempts exceed limit"
-  },
-  "errorPinNotNumeric": "PIN must contain only numeric digits.",
-  "@errorPinNotNumeric": {
-    "description": "Error message when PIN contains non-numeric characters"
-  },
-  "errorNoPinSet": "No PIN is currently set.",
-  "@errorNoPinSet": {
-    "description": "Error message when trying to verify a PIN but none is configured"
-  },
-  "authPinLockedTitle": "Too Many Failed Attempts",
-  "@authPinLockedTitle": {
-    "description": "Title shown during the PIN brute-force lockout screen"
-  },
-  "authPinLockedMessage": "Access has been temporarily blocked after too many incorrect PIN entries.",
-  "@authPinLockedMessage": {
-    "description": "Description shown during the PIN brute-force lockout screen"
-  },
-  "authPinLockedCountdown": "seconds remaining",
-  "@authPinLockedCountdown": {
-    "description": "Label shown below the countdown ring during PIN lockout"
-  },
-  "authPinLockedRetry": "You may now try again",
-  "@authPinLockedRetry": {
-    "description": "Label shown after PIN lockout expires, granting one more attempt"
-  },
-  "authSignInTitle": "Verify identity",
-  "@authSignInTitle": {
-    "description": "Title for the biometric sign-in prompt"
-  },
-  "defaultAccountName": "Main Account",
-  "@defaultAccountName": {
-    "description": "Default name for the main cash account created during setup"
-  },
-  "filterAll": "All",
-  "@filterAll": {
-    "description": "Filter option to show all transactions"
-  },
-  "filterIncome": "Income",
-  "@filterIncome": {
-    "description": "Filter option to show only income transactions"
-  },
-  "filterExpense": "Expense",
-  "@filterExpense": {
-    "description": "Filter option to show only expense transactions"
-  },
-  "filterTransfer": "Transfer",
-  "@filterTransfer": {
-    "description": "Filter option to show only transfer transactions"
-  },
-  "createAccountTitle": "Create New Account",
-  "@createAccountTitle": {
-    "description": "Title for the create account dialog"
-  },
-  "createAccountNameLabel": "Account Name",
-  "@createAccountNameLabel": {
-    "description": "Label for account name input"
-  },
-  "createAccountNameHint": "e.g. Personal Card, Cash, etc.",
-  "@createAccountNameHint": {
-    "description": "Hint text for account name input"
-  },
-  "createAccountInitialBalanceLabel": "Balance",
-  "@createAccountInitialBalanceLabel": {
-    "description": "Label for initial balance input"
-  },
-  "createAccountTypeLabel": "Account Type",
-  "@createAccountTypeLabel": {
-    "description": "Label for account type selection"
-  },
-  "createAccountColorThemeLabel": "Color Theme",
-  "@createAccountColorThemeLabel": {
-    "description": "Label for color theme selection"
-  },
-  "createAccountIconLabel": "Icon",
-  "@createAccountIconLabel": {
-    "description": "Label for icon selection"
-  },
-  "createAccountErrorName": "Please enter an account name",
-  "@createAccountErrorName": {
-    "description": "Error message when account name is empty"
-  },
-  "createAccountErrorFailed": "Failed to create account",
-  "@createAccountErrorFailed": {
-    "description": "Error message when account creation fails"
-  },
-  "accountTypeOther": "Other",
-  "@accountTypeOther": {
-    "description": "Account type: Other"
-  },
-  "accountTypeCash": "Cash",
-  "@accountTypeCash": {
-    "description": "Account type: Cash"
-  },
-  "accountTypeBank": "Bank",
-  "@accountTypeBank": {
-    "description": "Account type: Bank"
-  },
-  "accountTypeSavings": "Savings",
-  "@accountTypeSavings": {
-    "description": "Account type: Savings"
-  },
-  "accountTypeCard": "Card",
-  "@accountTypeCard": {
-    "description": "Account type: Card"
-  },
-  "deleteTransactionTitle": "Delete Transaction?",
-  "@deleteTransactionTitle": {
-    "description": "Title for the delete transaction dialog"
-  },
-  "transactionMovedToRecycleBin": "Transaction moved to recycle bin",
-  "@transactionMovedToRecycleBin": {
-    "description": "Success message when transaction is deleted"
-  },
-  "errorDeleteTransaction": "Failed to delete transaction",
-  "@errorDeleteTransaction": {
-    "description": "Error message when transaction deletion fails"
-  },
-  "deleteTransactionConfirmation": "Are you sure you want to delete this transaction? This will move it to the recycle bin.",
-  "@deleteTransactionConfirmation": {
-    "description": "Message confirming the deletion of a transaction"
-  },
   "btnClose": "Close",
-  "@btnClose": {
-    "description": "Close button label"
-  },
-  "filterSheetTitle": "Filter Transactions",
-  "@filterSheetTitle": {
-    "description": "Title for the transaction filter bottom sheet"
-  },
-  "filterSheetApply": "Apply Filters",
-  "@filterSheetApply": {
-    "description": "Button label to apply filters in the filter sheet"
-  },
-  "filterSheetClearAll": "Clear All",
-  "@filterSheetClearAll": {
-    "description": "Button label to clear all active filters"
-  },
-  "filterSheetType": "Transaction Type",
-  "@filterSheetType": {
-    "description": "Label for transaction type filter section"
-  },
-  "filterSheetCategory": "Category",
-  "@filterSheetCategory": {
-    "description": "Label for category filter section"
-  },
-  "filterSheetDateRange": "Date Range",
-  "@filterSheetDateRange": {
-    "description": "Label for date range filter section"
-  },
-  "filterSheetAmountRange": "Amount Range",
-  "@filterSheetAmountRange": {
-    "description": "Label for amount range filter section"
-  },
-  "filterSheetMinAmount": "Min Amount",
-  "@filterSheetMinAmount": {
-    "description": "Label for minimum amount input in filter sheet"
-  },
-  "filterSheetMaxAmount": "Max Amount",
-  "@filterSheetMaxAmount": {
-    "description": "Label for maximum amount input in filter sheet"
-  },
-  "filterSheetTag": "Tag",
-  "@filterSheetTag": {
-    "description": "Label for tag filter section"
-  },
-  "filterSheetCurrency": "Currency",
-  "@filterSheetCurrency": {
-    "description": "Label for currency filter section"
-  },
-  "filterSheetAllTypes": "All Types",
-  "@filterSheetAllTypes": {
-    "description": "Label for showing all transaction types in filter"
-  },
-  "filterSheetAllCategories": "All Categories",
-  "@filterSheetAllCategories": {
-    "description": "Label for showing all categories in filter"
-  },
-  "filterSheetAllTags": "All Tags",
-  "@filterSheetAllTags": {
-    "description": "Label for showing all tags in filter"
-  },
-  "filterSheetAllCurrencies": "All Currencies",
-  "@filterSheetAllCurrencies": {
-    "description": "Label for showing all currencies in filter"
-  },
-  "filterSheetSelectDateRange": "Select Date Range",
-  "@filterSheetSelectDateRange": {
-    "description": "Placeholder text for date range picker in filter sheet"
-  },
-  "filterSheetActiveFilters": "{count} active filters",
-  "@filterSheetActiveFilters": {
-    "description": "Badge label showing number of active filters",
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
-  "filterSheetTransferType": "Transfer",
-  "@filterSheetTransferType": {
-    "description": "Label for transfer type in filter sheet"
-  },
-  "labelOriginAccount": "Origin Account",
-  "@labelOriginAccount": {
-    "description": "Label for the origin account of a transfer"
-  },
-  "labelDestinationAccount": "Destination Account",
-  "@labelDestinationAccount": {
-    "description": "Label for the destination account of a transfer"
-  },
-  "errorCannotDeleteLastAccount": "Cannot delete the last existing account.",
-  "@errorCannotDeleteLastAccount": {
-    "description": "Error message when attempting to delete the last remaining account"
-  },
-  "categoriesAndTags": "Categories & Tags",
-  "@categoriesAndTags": {
-    "description": "Title or label for Categories & Tags section"
-  },
-  "setAsDefault": "Set as Default",
-  "@setAsDefault": {
-    "description": "Switch label to set an account as default"
-  },
-  "warning": "Warning",
-  "@warning": {
-    "description": "Warning dialog title"
-  },
-  "replaceDefaultAccountConfirm": "The previous default account will be replaced. Continue?",
-  "@replaceDefaultAccountConfirm": {
-    "description": "Confirmation message when replacing the default account"
-  },
   "btnContinue": "Continue",
-  "@btnContinue": {
-    "description": "Label for continue button"
-  },
-  "unknownAccount": "Unknown Account",
-  "@unknownAccount": {
-    "description": "Fallback label when account is not found"
-  },
+  "btnDelete": "Delete",
+  "btnNext": "Next",
+  "btnOpen": "Open",
+  "btnReassignAndDelete": "Reassign & Delete",
+  "btnRestore": "Restore",
+  "btnSave": "Save",
+  "btnViewDetails": "View Details",
   "categories": "Categories",
-  "@categories": {
-    "description": "Label for categories tab or section"
-  },
-  "tags": "Tags",
-  "@tags": {
-    "description": "Label for tags tab or section"
-  },
-  "deleteCategoryTitle": "Delete Category?",
-  "@deleteCategoryTitle": {
-    "description": "Title for delete category confirmation dialog"
-  },
-  "deleteCategoryConfirm": "Are you sure you want to delete {name}?",
-  "@deleteCategoryConfirm": {
-    "description": "Message to confirm deleting a category",
-    "placeholders": {
-      "name": {
-        "type": "String"
+  "currencyAUD": "Australian Dollar (AUD)",
+  "currencyCAD": "Canadian Dollar (CAD)",
+  "currencyCHF": "Swiss Franc (CHF)",
+  "currencyCNY": "Chinese Yuan (CNY)",
+  "currencyEUR": "Euro (EUR)",
+  "currencyGBP": "British Pound (GBP)",
+  "currencyJPY": "Japanese Yen (JPY)",
+  "currencyUSD": "US Dollar (USD)",
+  "deleteAllDataButton": "Delete All Data",
+  "deleteAllDataWarning": "Are you sure you want to delete all data? This cannot be undone.",
+  "endDate": "End Date",
+  "getStarted": "Get Started",
+  "labelAmount": "AMOUNT",
+  "labelCurrency": "Currency",
+  "labelDate": "Date",
+  "labelIcon": "Icon",
+  "labelNotes": "Notes",
+  "labelNotesHint": "Add details about this transaction...",
+  "labelSelectCurrency": "Select Currency",
+  "noCategories": "No categories yet",
+  "noDataAvailable": "No data available yet",
+  "optionalPlaceholder": "(Optional)",
+  "privacyPolicy": "Privacy Policy",
+  "recurrenceUtcWarning": "Reference time is UTC+2",
+  "setAsDefault": "Set as Default",
+  "startDate": "Start Date",
+  "targetAmount": "Target Amount",
+  "targetDate": "Target Date",
+  "termsAndConditions": "Terms and Conditions",
+  "tryAgain": "Try Again",
+  "txnSuccessCreated": "Transaction created successfully!",
+  "uncategorized": "Uncategorized",
+  "usernameLabel": "Username",
+  "warning": "Warning",
+
+  "authBiometricOptInEnable": "Enable Biometrics",
+  "authBiometricOptInSkip": "Skip for Now",
+  "authBiometricOptInSubtitle": "Use Fingerprint or FaceID to quickly and securely access your Stalvi account in the future.",
+  "authBiometricOptInTitle": "Enable Biometric Login",
+  "authLockedMessage": "Too many failed attempts. Please unlock your device from the lock screen and try again.",
+  "authLockedTitle": "Biometrics Locked",
+  "authLockoutActive": "Security lockout active",
+  "authPinAttemptsRemaining": "{attempts} attempts remaining",
+  "authPinEnter": "Enter PIN",
+  "authPinLockedCountdown": "seconds remaining",
+  "authPinLockedMessage": "Access has been temporarily blocked after too many incorrect PIN entries.",
+  "authPinLockedRetry": "You may now try again",
+  "authPinLockedTitle": "Too Many Failed Attempts",
+  "authProcessing": "Processing security authentication…",
+  "authProtectedBy": "Protected by device biometrics",
+  "authSetupAcceptAnd": " and the ",
+  "authSetupAcceptPrefix": "I accept the ",
+  "authSetupConfirmPinLabel": "Confirm PIN",
+  "authSetupCreateButton": "Create Profile",
+  "authSetupCurrencyLabel": "Default Currency",
+  "authSetupLanguageLabel": "Default Language",
+  "authSetupNameLabel": "Name",
+  "authSetupPinLabel": "Set a 4-8 digit PIN",
+  "authSetupSubtitle": "Set up your secure offline wallet to begin.",
+  "authSetupTitle": "Create Your Profile",
+  "authSetupUsernameLabel": "Username",
+  "authSignInTitle": "Verify identity",
+  "authVerifyMessage": "Use biometrics or your device PIN to continue",
+  "changePinButton": "Change PIN",
+  "confirmPinLabel": "Confirm New PIN",
+  "newPinLabel": "New PIN",
+  "oldPinLabel": "Old PIN",
+  "pinUpdatedSuccessfully": "PIN updated successfully.",
+  "pinsDoNotMatch": "PINs do not match.",
+  "statisticsTopIncome": "Top Income Categories",
+
+  "balanceTotal": "Total Balance",
+  "overview": "Overview",
+
+  "accountInUseByAutoTxMessage": "This account cannot be deleted because it is linked to active automatic transactions.",
+  "accountTypeBank": "Bank",
+  "accountTypeCard": "Card",
+  "accountTypeCash": "Cash",
+  "accountTypeOther": "Other",
+  "accounts": "Accounts",
+  "acrossAccountsCount": "{count, plural, =1{1 account} other{{count} accounts}}",
+  "addCategoryTitle": "Add Category",
+  "addTagTitle": "Add Tag",
+  "addTransaction": "Add Transaction",
+  "autoTxEditTitle": "Edit Automatic Transaction",
+  "autoTxFormatEveryDays": "Every {days} days",
+  "autoTxFormatMonthly": "Monthly",
+  "autoTxFormatSpecificDay": "Every month on the {day}",
+  "autoTxFormatWeekly": "Weekly",
+  "autoTxFormatYearly": "Yearly",
+  "autoTxLabelRecurrence": "Recurrence",
+  "autoTxNameRequired": "Name is required",
+  "autoTxNewTitle": "New Automatic Transaction",
+  "autoTxRecurrenceApply": "Apply",
+  "autoTxRecurrenceCustomHint": "e.g. 14",
+  "autoTxRecurrenceCustomInterval": "Custom Interval (Days)",
+  "autoTxRecurrenceDayOfMonth": "Day X of month",
+  "autoTxRecurrenceEveryXDays": "Every X days",
+  "autoTxRecurrenceMonthly": "Monthly (Every 30 days)",
+  "autoTxRecurrenceWeekly": "Weekly (Every 7 days)",
+  "autoTxRecurrenceYearly": "Yearly (Every 365 days)",
+  "autoTxSavedMessage": "Automatic Transaction Saved",
+  "autoTxSelectRecurrence": "Select Recurrence",
+  "autoTxTemplateNameLabel": "Name",
+  "btnSaveTransaction": "Save Transaction",
+  "categoriesAndTags": "Categories & Tags",
+  "categoryInUseByAutoTxMessage": "{name} is in use by automatic transactions and must be reassigned.",
+  "@categoryInUseByAutoTxMessage": {
+      "placeholders": {
+          "name": {
+              "type": "String"
+          }
       }
-    }
-  },
-  "deleteTagTitle": "Delete Tag?",
-  "@deleteTagTitle": {
-    "description": "Title for delete tag confirmation dialog"
-  },
-  "deleteTagConfirm": "Are you sure you want to delete {name}?",
-  "@deleteTagConfirm": {
-    "description": "Message to confirm deleting a tag",
-    "placeholders": {
-      "name": {
-        "type": "String"
-      }
-    }
-  },
-  "errorNoOtherCategories": "No other categories to reassign transactions to.",
-  "@errorNoOtherCategories": {
-    "description": "Error message when no other categories are available for reassignment"
-  },
-  "errorNoOtherTags": "No other tags to reassign transactions to.",
-  "@errorNoOtherTags": {
-    "description": "Error message when no other tags are available for reassignment"
-  },
-  "categoryInUseTitle": "Category in Use",
-  "@categoryInUseTitle": {
-    "description": "Title for category in use warning dialog"
-  },
-  "tagInUseTitle": "Tag in Use",
-  "@tagInUseTitle": {
-    "description": "Title for tag in use warning dialog"
   },
   "categoryInUseMessage": "{name} is used by existing transactions. Please select a category to reassign them to:",
-  "@categoryInUseMessage": {
-    "description": "Message explaining that a category is in use and prompting for reassignment",
-    "placeholders": {
-      "name": {
-        "type": "String"
-      }
-    }
-  },
-  "tagInUseMessage": "{name} is used by existing transactions. Please select a tag to reassign them to:",
-  "@tagInUseMessage": {
-    "description": "Message explaining that a tag is in use and prompting for reassignment",
-    "placeholders": {
-      "name": {
-        "type": "String"
-      }
-    }
-  },
-  "btnReassignAndDelete": "Reassign & Delete",
-  "@btnReassignAndDelete": {
-    "description": "Button label to reassign items and delete the original"
-  },
-  "noCategories": "No categories yet",
-  "@noCategories": {
-    "description": "Message shown when categories list is empty"
-  },
-  "noTags": "No tags yet",
-  "@noTags": {
-    "description": "Message shown when tags list is empty"
-  },
-  "addCategoryTitle": "Add Category",
-  "@addCategoryTitle": {
-    "description": "Title for adding a category"
-  },
-  "editCategoryTitle": "Edit Category",
-  "@editCategoryTitle": {
-    "description": "Title for editing a category"
-  },
-  "addTagTitle": "Add Tag",
-  "@addTagTitle": {
-    "description": "Title for adding a tag"
-  },
-  "editTagTitle": "Edit Tag",
-  "@editTagTitle": {
-    "description": "Title for editing a tag"
-  },
-  "labelCategoryName": "Category Name",
-  "@labelCategoryName": {
-    "description": "Label for category name input field"
-  },
-  "labelTagName": "Tag Name",
-  "@labelTagName": {
-    "description": "Label for tag name input field"
-  },
-  "labelIcon": "Icon",
-  "@labelIcon": {
-    "description": "Label for icon picker or display"
-  },
-  "labelFromAccount": "From Account",
-  "@labelFromAccount": {
-    "description": "Label for the origin account of a transfer in transaction creation"
-  },
-  "labelToAccount": "To Account",
-  "@labelToAccount": {
-    "description": "Label for the destination account of a transfer in transaction creation"
-  },
-  "selectSourceAccount": "Select Source Account",
-  "@selectSourceAccount": {
-    "description": "Title for the source account picker modal"
-  },
-  "selectDestinationAccount": "Select Destination Account",
-  "@selectDestinationAccount": {
-    "description": "Title for the destination account picker modal"
-  },
-  "currencyEUR": "Euro (EUR)",
-  "@currencyEUR": {
-    "description": "Currency name for EUR"
-  },
-  "currencyUSD": "US Dollar (USD)",
-  "@currencyUSD": {
-    "description": "Currency name for USD"
-  },
-  "currencyGBP": "British Pound (GBP)",
-  "@currencyGBP": {
-    "description": "Currency name for GBP"
-  },
-  "currencyJPY": "Japanese Yen (JPY)",
-  "@currencyJPY": {
-    "description": "Currency name for JPY"
-  },
-  "currencyCHF": "Swiss Franc (CHF)",
-  "@currencyCHF": {
-    "description": "Currency name for CHF"
-  },
-  "currencyCAD": "Canadian Dollar (CAD)",
-  "@currencyCAD": {
-    "description": "Currency name for CAD"
-  },
-  "currencyAUD": "Australian Dollar (AUD)",
-  "@currencyAUD": {
-    "description": "Currency name for AUD"
-  },
-  "currencyCNY": "Chinese Yuan (CNY)",
-  "@currencyCNY": {
-    "description": "Currency name for CNY"
-  },
-  "errorDestinationAccountRequired": "Please select a destination account",
-  "@errorDestinationAccountRequired": {
-    "description": "Validation error when destination account is required for transfer"
-  },
-  "errorSameAccountTransfer": "Source and destination accounts cannot be the same",
-  "@errorSameAccountTransfer": {
-    "description": "Validation error when source and destination accounts are the same"
-  },
-  "savingsGoal": "Savings Goal",
-  "@savingsGoal": {
-    "description": "Singular name for savings goal trash item"
-  },
-  "budgetSpentOf": "{spent} of {target}",
-  "@budgetSpentOf": {
-    "description": "Progress message showing spent amount out of budget target",
-    "placeholders": {
-      "spent": {
-        "type": "String"
-      },
-      "target": {
-        "type": "String"
-      }
-    }
-  },
-  "settingsDataManagement": "Data Management",
-  "@settingsDataManagement": {
-    "description": "Settings option for data management"
-  },
-  "exportEncryptedBackup": "Export Encrypted Backup",
-  "@exportEncryptedBackup": {
-    "description": "Button label to export an encrypted full backup"
-  },
-  "exportEncryptedBackupSubtitle": "Export all data as a password-protected backup file",
-  "@exportEncryptedBackupSubtitle": {
-    "description": "Subtitle for the encrypted backup export option"
-  },
-  "importRestoreBackup": "Import / Restore Backup",
-  "@importRestoreBackup": {
-    "description": "Button label to import and restore from an encrypted backup"
-  },
-  "importRestoreBackupSubtitle": "Restore your data from a Stalvi backup file",
-  "@importRestoreBackupSubtitle": {
-    "description": "Subtitle for the import/restore option"
-  },
-  "exportTransactionsCsv": "Export Transactions (CSV)",
-  "@exportTransactionsCsv": {
-    "description": "Button label to export all transactions as a CSV file"
-  },
-  "exportTransactionsCsvSubtitle": "Export all transactions to a spreadsheet-compatible CSV file",
-  "@exportTransactionsCsvSubtitle": {
-    "description": "Subtitle for the CSV export option"
-  },
-  "exportMonthlyPdf": "Export Monthly Report (PDF)",
-  "@exportMonthlyPdf": {
-    "description": "Button label to export the current month's report as a PDF"
-  },
-  "exportMonthlyPdfSubtitle": "Generate a PDF summary for the current month",
-  "@exportMonthlyPdfSubtitle": {
-    "description": "Subtitle for the PDF monthly report export option"
-  },
-  "exportPasswordDialogTitle": "Set Backup Password",
-  "@exportPasswordDialogTitle": {
-    "description": "Title for the dialog where user sets a backup password"
-  },
-  "exportPasswordDialogSubtitle": "This password will be required to restore your backup. Store it safely.",
-  "@exportPasswordDialogSubtitle": {
-    "description": "Subtitle in the export password dialog"
-  },
-  "exportPasswordLabel": "Backup Password",
-  "@exportPasswordLabel": {
-    "description": "Label for the backup password input field"
-  },
-  "exportPasswordConfirmLabel": "Confirm Password",
-  "@exportPasswordConfirmLabel": {
-    "description": "Label for the confirm password input field"
-  },
-  "exportPasswordMismatch": "Passwords do not match.",
-  "@exportPasswordMismatch": {
-    "description": "Error when export passwords do not match"
-  },
-  "exportPasswordTooShort": "Password must be at least 6 characters.",
-  "@exportPasswordTooShort": {
-    "description": "Error when export password is too short"
-  },
-  "importPasswordDialogTitle": "Enter Backup Password",
-  "@importPasswordDialogTitle": {
-    "description": "Title for the dialog where user enters restore password"
-  },
-  "importPasswordDialogSubtitle": "Enter the password used when the backup was created.",
-  "@importPasswordDialogSubtitle": {
-    "description": "Subtitle in the import password dialog"
-  },
-  "importConfirmTitle": "Restore Backup?",
-  "@importConfirmTitle": {
-    "description": "Title for the import confirmation dialog"
-  },
-  "importConfirmMessage": "Restoring a backup will overwrite all current data. This cannot be undone. Are you sure?",
-  "@importConfirmMessage": {
-    "description": "Warning message in the import confirmation dialog"
-  },
-  "exportSuccess": "Export successful. File saved.",
-  "@exportSuccess": {
-    "description": "Snackbar message when export succeeds"
-  },
-  "importSuccess": "Backup restored successfully. Please restart the app.",
-  "@importSuccess": {
-    "description": "Snackbar message when import/restore succeeds"
-  },
-  "exportFailed": "Export failed. Please try again.",
-  "@exportFailed": {
-    "description": "Snackbar message when export fails"
-  },
-  "importFailed": "Restore failed. Check your password and file.",
-  "@importFailed": {
-    "description": "Snackbar message when import/restore fails"
-  },
-  "btnExport": "Export",
-  "@btnExport": {
-    "description": "Generic export button label"
-  },
-  "btnRestore": "Restore",
-  "@btnRestore": {
-    "description": "Generic restore button label"
-  },
-  "statisticsOtherCategories": "Other ({count} categories)",
-  "@statisticsOtherCategories": {
-    "description": "Label for other categories slice in statistics charts when count exceeds display limit",
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
-  "btnViewDetails": "View Details",
-  "@btnViewDetails": {
-    "description": "Text button label to view details of statistics"
-  },
-  "btnOpen": "Open",
-  "@btnOpen": {
-    "description": "Button label to open a file"
-  },
-  "errorOpenFileFailed": "Could not open file",
-  "@errorOpenFileFailed": {
-    "description": "Error message when opening a file fails"
-  },
-  "expense_vs_income": "Expenses vs Income",
-  "@expense_vs_income": {
-    "description": "Title for the income vs expenses chart section in PDF"
-  },
+  "categoryInUseTitle": "Category in Use",
+  "createAccountIconLabel": "Icon",
+  "createAccountInitialBalanceLabel": "Initial Balance",
+  "createAccountNameHint": "e.g. Personal Card, Cash, etc.",
+  "createAccountNameLabel": "Account Name",
+  "createAccountTitle": "Create New Account",
+  "createAccountTypeLabel": "Account Type",
+  "createAutomaticTransaction": "Create Automatic Transaction",
+  "defaultAccountLabel": "Default",
+  "defaultAccountName": "Main Account",
+  "deleteCategoryConfirm": "Are you sure you want to delete {name}?",
+  "deleteCategoryTitle": "Delete Category?",
+  "deleteTagConfirm": "Are you sure you want to delete {name}?",
+  "deleteTagTitle": "Delete Tag?",
+  "deleteTransactionConfirmation": "Are you sure you want to delete this transaction? This will move it to the recycle bin.",
+  "deleteTransactionTitle": "Delete Transaction?",
   "destination_account": "Destination Account",
-  "@destination_account": {
-    "description": "Label for the destination account in transfers"
-  },
-  "chart_scale": "Chart Scale",
-  "@chart_scale": {
-    "description": "Label for the scale/axis of a chart in PDF"
-  },
-  "pdfDateFormat": "MM/dd/yyyy",
-  "@pdfDateFormat": {
-    "description": "Date format for PDF reports"
-  },
-  "pdfDateTimeFormat": "MM/dd/yyyy HH:mm",
-  "@pdfDateTimeFormat": {
-    "description": "Date and time format for PDF reports"
-  },
-  "pdfGeneratedOn": "Generated by {appTitle} on {date}",
-  "@pdfGeneratedOn": {
-    "description": "Footer showing generation timestamp and app title",
-    "placeholders": {
-      "appTitle": {
-        "type": "String"
-      },
-      "date": {
-        "type": "String"
-      }
-    }
-  },
+  "editCategoryTitle": "Edit Category",
+  "editTagTitle": "Edit Tag",
+  "expense": "{count, plural, =1{Expense} other{Expenses}}",
+  "expense_vs_income": "Expenses vs Income",
+  "expenses": "Expenses",
+  "fallbackExpense": "Expense",
+  "fallbackIncome": "Income",
+  "filterAll": "All",
+  "filterExpense": "Expense",
+  "filterIncome": "Income",
+  "filterSheetActiveFilters": "{count} active filters",
+  "filterSheetAllCategories": "All Categories",
+  "filterSheetAllCurrencies": "All Currencies",
+  "filterSheetAllTags": "All Tags",
+  "filterSheetAllTypes": "All Types",
+  "filterSheetAmountRange": "Amount Range",
+  "filterSheetApply": "Apply Filters",
+  "filterSheetCategory": "Category",
+  "filterSheetClearAll": "Clear All",
+  "filterSheetCurrency": "Currency",
+  "filterSheetDateRange": "Date Range",
+  "filterSheetMaxAmount": "Max Amount",
+  "filterSheetMinAmount": "Min Amount",
+  "filterSheetSelectDateRange": "Select Date Range",
+  "filterSheetTag": "Tag",
+  "filterSheetTitle": "Filter Transactions",
+  "filterSheetTransferType": "Transfer",
+  "filterSheetType": "Transaction Type",
+  "filterTransfer": "Transfer",
+  "income": "{count, plural, =1{Income} other{Incomes}}",
+  "labelAccount": "Account",
+  "labelCategory": "Category",
+  "labelCategoryName": "Category Name",
+  "labelDestinationAccount": "Destination Account",
+  "labelFromAccount": "From Account",
+  "labelOriginAccount": "Origin Account",
+  "labelSelectAccount": "Select Account",
+  "labelSelectCategory": "Select Category",
+  "labelSelectTag": "Select Tag",
+  "labelTag": "Tag",
+  "labelTagName": "Tag Name",
+  "labelToAccount": "To Account",
+  "noAccountsSubtitle": "Create an account or wallet to start managing your assets and tracking transactions.",
+  "noAccountsTitle": "No accounts yet",
+  "noTag": "None",
+  "noTags": "No tags yet",
+  "noTransactionsSubtitle": "Add your first income or expense to see it here and start tracking.",
+  "noTransactionsTitle": "No transactions yet",
+  "recentTransactions": "Recent Transactions",
+  "replaceDefaultAccountConfirm": "The previous default account will be replaced. Continue?",
+  "selectDestinationAccount": "Select Destination Account",
+  "selectSourceAccount": "Select Source Account",
+  "splashTagline": "Your finances, your way.",
+  "tagInUseMessage": "{name} is used by existing transactions. Please select a tag to reassign them to:",
+  "tagInUseTitle": "Tag in Use",
+  "tags": "Tags",
+  "transactions": "Transactions",
+  "unknownAccount": "Unknown Account",
+
+  "accountTypeSavings": "Savings",
   "addBudget": "Add Budget",
-  "@addBudget": {
-    "description": "Button or title for adding a budget"
-  },
-  "budgetDetails": "Budget Details",
-  "@budgetDetails": {
-    "description": "Title for budget details"
-  },
-  "deleteBudget": "Delete Budget",
-  "@deleteBudget": {
-    "description": "Button or title for deleting a budget"
-  },
   "addSavingsGoal": "Add Savings Goal",
-  "@addSavingsGoal": {
-    "description": "Button or title for adding a savings goal"
-  },
-  "savingsGoalDetails": "Savings Goal Details",
-  "@savingsGoalDetails": {
-    "description": "Title for savings goal details"
-  },
+  "budgetDetails": "Budget Details",
+  "budgetOverspent": "{amount} overspent",
+  "budgetRemaining": "{amount} remaining",
+  "budgetSpentOf": "{spent} of {target}",
+  "budgets": "Budgets",
+  "budgetsAndGoals": "Budgets & Goals",
+  "deleteBudget": "Delete Budget",
   "deleteSavingsGoal": "Delete Savings Goal",
-  "@deleteSavingsGoal": {
-    "description": "Button or title for deleting a savings goal"
-  },
-  "targetAmount": "Target Amount",
-  "@targetAmount": {
-    "description": "Label for target amount input"
-  },
-  "startDate": "Start Date",
-  "@startDate": {
-    "description": "Label for start date input"
-  },
-  "endDate": "End Date",
-  "@endDate": {
-    "description": "Label for end date input"
-  },
   "goalName": "Goal Name",
-  "@goalName": {
-    "description": "Label for goal name input"
-  },
-  "targetDate": "Target Date",
-  "@targetDate": {
-    "description": "Label for target date input"
-  },
-  "errorEndDateBeforeStart": "End date must be after start date",
-  "@errorEndDateBeforeStart": {
-    "description": "Validation error for budget dates"
-  },
-  "errorNameRequired": "Please enter a name",
-  "@errorNameRequired": {
-    "description": "Validation error for goal name"
-  },
-  "pdfBudgetsTitle": "Budgets",
-  "@pdfBudgetsTitle": {
-    "description": "Section title for the Budgets table in PDF export"
-  },
-  "pdfBudgetsColCategory": "Category",
-  "@pdfBudgetsColCategory": {
-    "description": "Column header for Category in PDF Budgets table"
-  },
-  "pdfBudgetsColDateRange": "Date Range",
-  "@pdfBudgetsColDateRange": {
-    "description": "Column header for Date Range in PDF Budgets table"
-  },
-  "pdfBudgetsColSpent": "% Spent",
-  "@pdfBudgetsColSpent": {
-    "description": "Column header for Percentage Spent in PDF Budgets table"
-  },
-  "pdfBudgetsColMaxValue": "Max Value",
-  "@pdfBudgetsColMaxValue": {
-    "description": "Column header for Maximum Budget Value in PDF Budgets table"
-  },
-  "pdfSavingsGoalsTitle": "Savings Goals",
-  "@pdfSavingsGoalsTitle": {
-    "description": "Section title for the Savings Goals table in PDF export"
-  },
-  "pdfSavingsColName": "Name",
-  "@pdfSavingsColName": {
-    "description": "Column header for Name in PDF Savings Goals table"
-  },
-  "pdfSavingsColCompleted": "% Completed",
-  "@pdfSavingsColCompleted": {
-    "description": "Column header for Percentage Completed in PDF Savings Goals table"
-  },
-  "pdfSavingsColTarget": "Target Amount",
-  "@pdfSavingsColTarget": {
-    "description": "Column header for Target Amount in PDF Savings Goals table"
-  },
   "labelBudget": "Budget",
-  "@labelBudget": {
-    "description": "Singular label for budget"
-  },
+  "noBudgetsSubtitle": "Set spending limits for categories to track your monthly expenses and stay within your limits.",
+  "noBudgetsTitle": "No budgets set yet",
+  "noSavingsGoalsSubtitle": "Create a savings goal to plan for your future dreams, trips, or big purchases.",
+  "noSavingsGoalsTitle": "No savings goals yet",
+  "pdfBudgetsColCategory": "Category",
+  "pdfBudgetsColDateRange": "Date Range",
+  "pdfBudgetsColMaxValue": "Max Value",
+  "pdfBudgetsColSpent": "% Spent",
+  "pdfBudgetsTitle": "Budgets",
+  "pdfSavingsColCompleted": "% Completed",
+  "pdfSavingsColName": "Name",
+  "pdfSavingsColTarget": "Target Amount",
+  "pdfSavingsGoalsTitle": "Savings Goals",
+  "savingsGoal": "Savings Goal",
+  "savingsGoalAchieved": "Goal achieved!",
+  "savingsGoalDetails": "Savings Goal Details",
+  "savingsGoals": "Savings Goals",
+  "savingsNoTargetDate": "No target date",
+  "savingsSavedOf": "{saved} saved of {target}",
+  "savingsTargetDate": "Target date: {date}",
+  "settingsBudgetsGoals": "Budgets & Goals",
+
+  "chart_scale": "Chart Scale",
+  "presetCustom": "Custom",
+  "presetLast30Days": "Last 30 Days",
+  "presetLast3Months": "Last 3 Months",
+  "presetLast6Months": "Last 6 Months",
+  "presetThisMonth": "This Month",
+  "presetThisYear": "This Year",
+  "settingsStatistics": "Statistics",
+  "statisticsDeficit": "Deficit",
+  "statisticsNetBalance": "Net Balance",
+  "statisticsNoDataSubtitle": "Try adding transactions or changing the filter range to see your category breakdown.",
+  "statisticsNoExpenses": "No expenses recorded in this period.",
+  "statisticsNoIncome": "No income recorded in this period.",
+  "statisticsOtherCategories": "Other ({count} categories)",
+  "statisticsSurplus": "Surplus",
+  "statisticsTooltipCustomRange": "Custom date range",
+  "statisticsTopSpending": "Top Spending Categories",
+  "statisticsWhatYouEarned": "What you earned",
+  "statisticsWhereMoneyGoes": "Where your money goes",
+
+  "aboutMe": "About Me",
+  "aboutMeGithubButton": "View my GitHub",
+  "btnExport": "Export",
+  "createAccountColorThemeLabel": "Color Theme",
+  "exportEncryptedBackup": "Export Encrypted Backup",
+  "exportEncryptedBackupSubtitle": "Export all data as a password-protected backup file",
+  "exportMonthlyPdf": "Export Monthly Report (PDF)",
+  "exportMonthlyPdfSubtitle": "Generate a PDF summary",
+  "exportPasswordConfirmLabel": "Confirm Password",
+  "exportPasswordDialogSubtitle": "This password will be required to restore your backup. Store it safely.",
+  "exportPasswordDialogTitle": "Set Backup Password",
+  "exportPasswordLabel": "Backup Password",
+  "exportPasswordTooShort": "Password must be at least 6 characters.",
+  "exportPdfCurrentMonth": "Current Month",
+  "exportPdfLast30Days": "Last 30 Days",
   "exportSavedTo": "Saved to {filePath}",
-  "@exportSavedTo": {
-    "description": "Snackbar message showing the path where exported backup or CSV file is saved",
-    "placeholders": {
-      "filePath": {
-        "type": "String"
-      }
-    }
-  }
+  "exportSuccess": "Export successful. File saved.",
+  "exportTransactionsCsv": "Export Transactions (CSV)",
+  "exportTransactionsCsvSubtitle": "Export all transactions to a spreadsheet-compatible CSV file",
+  "importConfirmMessage": "Restoring a backup will overwrite all current data. This cannot be undone. Are you sure?",
+  "importConfirmTitle": "Restore Backup?",
+  "importPasswordDialogSubtitle": "Enter the password used when the backup was created.",
+  "importPasswordDialogTitle": "Enter Backup Password",
+  "importRestoreBackup": "Import / Restore Backup",
+  "importRestoreBackupSubtitle": "Restore your data from a Stalvi backup file",
+  "importSuccess": "Backup restored successfully. Please restart the app.",
+  "languageCatalan": "Català",
+  "languageEnglish": "English",
+  "languageSpanish": "Español",
+  "pdfDateFormat": "MM/dd/yyyy",
+  "pdfDateTimeFormat": "MM/dd/yyyy HH:mm",
+  "pdfExportLast30Days": "Last 30 days",
+  "pdfGeneratedOn": "Generated by {appTitle} on {date}",
+  "profileSettingsTitle": "Profile & Security",
+  "recycleBinDaysRemaining": "Expires in {days} days",
+  "recycleBinDeleteConfirmMessage": "Are you sure you want to permanently delete this item? This action cannot be undone.",
+  "recycleBinDeleteConfirmTitle": "Permanent Delete",
+  "recycleBinDeleteTooltip": "Permanently Delete",
+  "recycleBinDeletedMessage": "Item permanently deleted",
+  "recycleBinEmpty": "Recycle bin is empty.",
+  "recycleBinRestoreTooltip": "Restore",
+  "recycleBinRestoredMessage": "Item restored",
+  "recycleBinTitle": "Recycle Bin",
+  "settings": "Settings",
+  "settingsAutomaticTransactions": "Automatic Transactions",
+  "settingsDataManagement": "Data Management",
+  "settingsLanguage": "Language",
+  "settingsThemeMode": "Theme Mode",
+  "themeModeDark": "Dark",
+  "themeModeLight": "Light",
+  "themeModeSystem": "System",
+  "transactionMovedToRecycleBin": "Transaction moved to recycle bin",
+
+  "authError": "Authentication Error",
+  "authPinIncorrect": "Incorrect PIN. Please try again.",
+  "authSetupValidationErrorName": "Please enter a name.",
+  "authSetupValidationErrorPinLength": "PIN must be between 4 and 8 digits.",
+  "authSetupValidationErrorPinMatch": "PINs do not match.",
+  "authSetupValidationErrorTerms": "You must accept the Terms & Conditions and Privacy Policy to proceed.",
+  "authSetupValidationErrorUsername": "Please enter a username.",
+  "autoTxErrorInvalidDayOfMonth": "Invalid day of month (must be 1-31)",
+  "autoTxErrorInvalidRecurrenceInterval": "Invalid recurrence interval",
+  "createAccountErrorFailed": "Failed to create account",
+  "createAccountErrorName": "Please enter an account name",
+  "errorAccountNotFound": "Account not found",
+  "errorAccountRequired": "Please select an account",
+  "errorCannotDeleteLastAccount": "Cannot delete the last existing account.",
+  "errorCategoryRequired": "Please select a category",
+  "errorConversionFailed": "Failed to convert currency",
+  "errorCurrencyRequired": "Please select a currency",
+  "errorDeleteTransaction": "Failed to delete transaction",
+  "errorDestinationAccountRequired": "Please select a destination account",
+  "errorEndDateBeforeStart": "End date must be after start date",
+  "errorFutureDate": "Transaction date cannot be in the future",
+  "errorInvalidAmount": "Please enter a valid amount greater than 0",
+  "errorMaxPinAttempts": "Maximum PIN attempts reached. Please try again later.",
+  "errorNameRequired": "Please enter a name",
+  "errorNoOtherCategories": "No other categories to reassign transactions to.",
+  "errorNoOtherTags": "No other tags to reassign transactions to.",
+  "errorNoPinSet": "No PIN is currently set.",
+  "errorOpenFileFailed": "Could not open file",
+  "errorPinNotNumeric": "PIN must contain only numeric digits.",
+  "errorProfileNotFound": "Profile not found",
+  "errorRateNotFound": "Exchange rate not available for the requested currency",
+  "errorSameAccountTransfer": "Source and destination accounts cannot be the same",
+  "exportFailed": "Export failed. Please try again.",
+  "exportPasswordMismatch": "Passwords do not match.",
+  "failedLoadAccounts": "Failed to load accounts.",
+  "failedLoadBudgets": "Failed to load budgets.",
+  "failedLoadSavingsGoals": "Failed to load savings goals.",
+  "failedLoadTransactions": "Failed to load transactions",
+  "importFailed": "Restore failed. Check your password and file.",
+  "incorrectOldPin": "Incorrect Old PIN.",
+  "splashSecureStorageError": "Stalvi couldn't initialise its secure storage. Please check available device storage and try again.",
+  "splashStartupFailed": "Startup Failed",
+  "unexpectedError": "An unexpected error occurred. Please try again."
 }

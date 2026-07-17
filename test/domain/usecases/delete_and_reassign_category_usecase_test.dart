@@ -4,6 +4,9 @@ import 'package:stalvi/domain/entities/transaction.dart';
 import 'package:stalvi/domain/entities/transaction_type.dart';
 import 'package:stalvi/domain/entities/category.dart';
 import 'package:stalvi/domain/entities/category_type.dart';
+import 'package:stalvi/domain/entities/automatic_transaction.dart';
+import 'package:stalvi/domain/repositories/i_automatic_transaction_repository.dart';
+import 'package:stalvi/core/errors/app_exceptions.dart';
 import 'package:stalvi/domain/repositories/i_category_repository.dart';
 import 'package:stalvi/domain/repositories/i_transaction_repository.dart';
 import 'package:stalvi/domain/usecases/delete_and_reassign_category_usecase.dart';
@@ -12,6 +15,9 @@ class MockCategoryRepository extends Mock implements ICategoryRepository {}
 
 class MockTransactionRepository extends Mock
     implements ITransactionRepository {}
+
+class MockAutomaticTransactionRepository extends Mock
+    implements IAutomaticTransactionRepository {}
 
 class FakeTransaction extends Fake implements Transaction {
   @override
@@ -53,6 +59,7 @@ class FakeTransactionQueryFilter extends Fake
 void main() {
   late MockCategoryRepository mockCategoryRepo;
   late MockTransactionRepository mockTransactionRepo;
+  late MockAutomaticTransactionRepository mockAutomaticTransactionRepo;
   late DeleteAndReassignCategoryUseCase useCase;
 
   setUpAll(() {
@@ -63,12 +70,42 @@ void main() {
   setUp(() {
     mockCategoryRepo = MockCategoryRepository();
     mockTransactionRepo = MockTransactionRepository();
-    useCase =
-        DeleteAndReassignCategoryUseCase(mockCategoryRepo, mockTransactionRepo);
+    mockAutomaticTransactionRepo = MockAutomaticTransactionRepository();
+    useCase = DeleteAndReassignCategoryUseCase(
+      mockCategoryRepo,
+      mockTransactionRepo,
+      mockAutomaticTransactionRepo,
+    );
   });
 
   group('DeleteAndReassignCategoryUseCase', () {
+    test(
+        'isCategoryInUse throws CategoryInUseByAutomaticTransactionException if in use by auto tx',
+        () async {
+      final autoTx = AutomaticTransaction(
+        id: '1',
+        name: 'Auto',
+        amount: 100,
+        currency: 'USD',
+        type: TransactionType.expense,
+        accountId: 'acc1',
+        categoryId: 'cat1',
+        recurrenceDays: 30,
+        nextExecutionDate: DateTime.now(),
+        createdAt: DateTime.now(),
+      );
+      when(() => mockAutomaticTransactionRepo.watchAllAutomaticTransactions())
+          .thenAnswer((_) => Stream.value([autoTx]));
+
+      expect(
+        () => useCase.isCategoryInUse('cat1'),
+        throwsA(isA<CategoryInUseByAutomaticTransactionException>()),
+      );
+    });
+
     test('isCategoryInUse returns true when transactions exist', () async {
+      when(() => mockAutomaticTransactionRepo.watchAllAutomaticTransactions())
+          .thenAnswer((_) => Stream.value([]));
       when(() => mockTransactionRepo.watchFilteredTransactions(any()))
           .thenAnswer(
         (_) => Stream.value([
@@ -81,6 +118,8 @@ void main() {
     });
 
     test('isCategoryInUse returns false when no transactions exist', () async {
+      when(() => mockAutomaticTransactionRepo.watchAllAutomaticTransactions())
+          .thenAnswer((_) => Stream.value([]));
       when(() => mockTransactionRepo.watchFilteredTransactions(any()))
           .thenAnswer((_) => Stream.value([]));
 
@@ -105,6 +144,9 @@ void main() {
 
       when(() => mockTransactionRepo.updateTransaction(any()))
           .thenAnswer((_) async => tx1);
+
+      when(() => mockAutomaticTransactionRepo.watchAllAutomaticTransactions())
+          .thenAnswer((_) => Stream.value([]));
 
       when(() => mockCategoryRepo.deleteCategory('oldCat'))
           .thenAnswer((_) async {});
@@ -169,10 +211,13 @@ void main() {
           await useCase.getReplacementCategories(catIncome);
       expect(replacementsIncome.map((c) => c.id).toList(), ['cus1', 'cus2']);
 
-      // Deleting custom category should return other custom cats
+      // Deleting custom category should return ALL other categories
       final replacementsCustom =
           await useCase.getReplacementCategories(catCustom);
-      expect(replacementsCustom.map((c) => c.id).toList(), ['cus2']);
+      expect(
+        replacementsCustom.map((c) => c.id).toList(),
+        ['inc1', 'exp1', 'cus2'],
+      );
     });
   });
 }

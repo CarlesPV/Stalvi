@@ -6,8 +6,9 @@ import 'package:stalvi/data/repositories/account_repository.dart';
 import 'package:stalvi/data/repositories/category_repository.dart';
 import 'package:stalvi/data/repositories/tag_repository.dart';
 import 'package:stalvi/data/repositories/profile_repository.dart';
-import 'package:stalvi/data/repositories/statistics_repository_impl.dart';
+import 'package:stalvi/data/repositories/trash_repository.dart';
 import 'package:stalvi/data/repositories/transaction_repository.dart';
+import 'package:stalvi/data/repositories/automatic_transaction_repository.dart';
 import 'package:stalvi/data/repositories/exchange_rate_repository.dart';
 import 'package:stalvi/data/repositories/budget_repository.dart';
 import 'package:stalvi/data/repositories/savings_goal_repository.dart';
@@ -23,15 +24,18 @@ import 'package:stalvi/domain/entities/profile.dart';
 import 'package:stalvi/domain/entities/budget.dart';
 import 'package:stalvi/domain/entities/savings_goal.dart';
 import 'package:stalvi/domain/entities/transaction.dart';
+import 'package:stalvi/domain/entities/transaction_type.dart';
+import 'package:stalvi/domain/entities/exchange_rate.dart';
 import 'package:stalvi/domain/repositories/i_account_repository.dart';
 import 'package:stalvi/domain/repositories/i_category_repository.dart';
 import 'package:stalvi/domain/repositories/i_tag_repository.dart';
 import 'package:stalvi/domain/repositories/i_profile_repository.dart';
 import 'package:stalvi/domain/repositories/i_transaction_repository.dart';
+import 'package:stalvi/domain/repositories/i_automatic_transaction_repository.dart';
 import 'package:stalvi/domain/repositories/i_exchange_rate_repository.dart';
 import 'package:stalvi/domain/repositories/i_budget_repository.dart';
 import 'package:stalvi/domain/repositories/i_savings_goal_repository.dart';
-import 'package:stalvi/domain/repositories/i_statistics_repository.dart';
+import 'package:stalvi/domain/repositories/i_trash_repository.dart';
 import 'package:stalvi/domain/repositories/i_export_service.dart';
 import 'package:stalvi/domain/repositories/i_import_service.dart';
 import 'package:stalvi/domain/usecases/add_transaction_usecase.dart';
@@ -87,6 +91,13 @@ final transactionRepositoryProvider = Provider<ITransactionRepository>((ref) {
   return TransactionRepository(db);
 });
 
+/// Provides the [IAutomaticTransactionRepository] implementation.
+final automaticTransactionRepositoryProvider =
+    Provider<IAutomaticTransactionRepository>((ref) {
+  final db = ref.watch(appDatabaseProvider).requireValue;
+  return AutomaticTransactionRepository(db);
+});
+
 /// Provides the [IBudgetRepository] implementation.
 final budgetRepositoryProvider = Provider<IBudgetRepository>((ref) {
   final db = ref.watch(appDatabaseProvider).requireValue;
@@ -99,10 +110,13 @@ final savingsGoalRepositoryProvider = Provider<ISavingsGoalRepository>((ref) {
   return SavingsGoalRepository(db);
 });
 
-/// Provides the [IStatisticsRepository] implementation.
-final statisticsRepositoryProvider = Provider<IStatisticsRepository>((ref) {
+/// Provides the [ITrashRepository] implementation.
+final trashRepositoryProvider = Provider<ITrashRepository>((ref) {
   final db = ref.watch(appDatabaseProvider).requireValue;
-  return StatisticsRepositoryImpl(db.statisticsDao);
+  return TrashRepository(
+    trashDao: db.trashDao,
+    savingsGoalDao: db.savingsGoalDao,
+  );
 });
 
 /// Provides the [IExchangeRateRepository] implementation.
@@ -183,7 +197,8 @@ final createAccountUseCaseProvider = Provider<CreateAccountUseCase>((ref) {
 final deleteAccountUseCaseProvider = Provider<DeleteAccountUseCase>((ref) {
   final accountRepo = ref.watch(accountRepositoryProvider);
   final budgetRepo = ref.watch(budgetRepositoryProvider);
-  return DeleteAccountUseCase(accountRepo, budgetRepo);
+  final autoTxRepo = ref.watch(automaticTransactionRepositoryProvider);
+  return DeleteAccountUseCase(accountRepo, budgetRepo, autoTxRepo);
 });
 
 /// Provides the [UpdateAccountUseCase] instance.
@@ -212,17 +227,16 @@ final wipeAllDataUseCaseProvider = Provider<WipeAllDataUseCase>((ref) {
 
 /// Provides the [TrashUsecases] instance.
 final trashUsecasesProvider = Provider<TrashUsecases>((ref) {
-  final db = ref.watch(appDatabaseProvider).requireValue;
+  final trashRepo = ref.watch(trashRepositoryProvider);
   final transactionRepo = ref.watch(transactionRepositoryProvider);
   final accountRepo = ref.watch(accountRepositoryProvider);
   final updateBudgetProgressUseCase =
       ref.watch(updateBudgetProgressUseCaseProvider);
   return TrashUsecases(
-    db.trashDao,
+    trashRepo,
     transactionRepo,
     accountRepo,
     updateBudgetProgressUseCase,
-    db.savingsGoalDao,
   );
 });
 
@@ -236,6 +250,13 @@ final defaultProfileProvider = FutureProvider<Profile>((ref) async {
     );
   }
   return rows.first.toDomain();
+});
+
+/// Fetches the latest exchange rates for the given base currency.
+final latestExchangeRatesProvider = FutureProvider.family
+    .autoDispose<ExchangeRate?, String>((ref, baseCurrency) async {
+  final repo = ref.watch(exchangeRateRepositoryProvider);
+  return repo.getLocalRates(baseCurrency: baseCurrency);
 });
 
 /// Fetches the list of accounts associated with the default profile.
@@ -275,6 +296,46 @@ final rawTransactionsStreamProvider = StreamProvider<List<Transaction>>((ref) {
   return repo.watchRawTransactions();
 });
 
+/// Computes the real-time balance for a given account.
+final accountBalanceProvider =
+    Provider.family.autoDispose<AsyncValue<double>, String>((ref, accountId) {
+  final accountAsync = ref.watch(accountsListProvider);
+  final transactionsAsync = ref.watch(rawTransactionsStreamProvider);
+
+  if (accountAsync.isLoading || transactionsAsync.isLoading) {
+    return const AsyncLoading();
+  }
+  if (accountAsync.hasError) {
+    return AsyncError(accountAsync.error!, accountAsync.stackTrace!);
+  }
+  if (transactionsAsync.hasError) {
+    return AsyncError(transactionsAsync.error!, transactionsAsync.stackTrace!);
+  }
+
+  final account = accountAsync.value!.firstWhere((a) => a.id == accountId);
+  final transactions = transactionsAsync.value!;
+
+  double balance = account.initialBalance;
+  for (final tx in transactions) {
+    if (tx.accountId == accountId) {
+      if (tx.type == TransactionType.income) {
+        balance += tx.amount / 100.0;
+      } else if (tx.type == TransactionType.expense) {
+        balance -= tx.amount / 100.0;
+      } else if (tx.type == TransactionType.transfer) {
+        bool isOrigin = !tx.id.endsWith('_dst');
+        if (isOrigin) {
+          balance -= tx.amount / 100.0;
+        } else {
+          balance += tx.amount / 100.0;
+        }
+      }
+    }
+  }
+
+  return AsyncData(balance);
+});
+
 /// Fetches the list of all tags.
 final tagsListProvider = FutureProvider<List<Tag>>((ref) {
   final repo = ref.watch(tagRepositoryProvider);
@@ -286,7 +347,13 @@ final deleteAndReassignCategoryUseCaseProvider =
     Provider<DeleteAndReassignCategoryUseCase>((ref) {
   final categoryRepo = ref.watch(categoryRepositoryProvider);
   final transactionRepo = ref.watch(transactionRepositoryProvider);
-  return DeleteAndReassignCategoryUseCase(categoryRepo, transactionRepo);
+  final automaticTransactionRepo =
+      ref.watch(automaticTransactionRepositoryProvider);
+  return DeleteAndReassignCategoryUseCase(
+    categoryRepo,
+    transactionRepo,
+    automaticTransactionRepo,
+  );
 });
 
 /// Provides the [DeleteAndReassignTagUseCase] instance.
@@ -352,6 +419,10 @@ final exportEncryptedJsonUseCaseProvider =
     categoryRepository: ref.watch(categoryRepositoryProvider),
     tagRepository: ref.watch(tagRepositoryProvider),
     transactionRepository: ref.watch(transactionRepositoryProvider),
+    budgetRepository: ref.watch(budgetRepositoryProvider),
+    savingsGoalRepository: ref.watch(savingsGoalRepositoryProvider),
+    automaticTransactionRepository:
+        ref.watch(automaticTransactionRepositoryProvider),
     exportService: ref.watch(exportServiceProvider),
   );
 });

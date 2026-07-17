@@ -10,15 +10,22 @@ import 'package:stalvi/presentation/providers/locale_provider.dart';
 import 'package:stalvi/presentation/providers/theme_provider.dart';
 import 'package:stalvi/presentation/widgets/lifecycle_blur_wrapper.dart';
 
+import 'package:stalvi/infrastructure/background_execution_service.dart';
+
 /// Entry point for the Stalvi application.
+///
+/// **Presentation Layer**: Responsible for rendering UI and managing state.
+/// We use GoRouter for navigation and Riverpod (`@riverpod`) for State Management.
 ///
 /// [WidgetsFlutterBinding.ensureInitialized] is called to guarantee that all
 /// Flutter engine bindings (required by plugins such as [local_auth] and
 /// [flutter_secure_storage]) are set up before any async work begins.
 ///
 /// The root [ProviderScope] enables Riverpod for the entire widget tree.
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await BackgroundExecutionService.initialize();
+  await BackgroundExecutionService.registerPeriodicTasks();
   runApp(
     const ProviderScope(
       child: StalviApp(),

@@ -1,3 +1,4 @@
+import '../entities/account.dart';
 import '../repositories/i_account_repository.dart';
 import '../repositories/i_budget_repository.dart';
 import '../repositories/i_category_repository.dart';
@@ -13,6 +14,7 @@ import '../entities/transaction_type.dart';
 import '../repositories/i_exchange_rate_repository.dart';
 import '../use_cases/statistics/get_period_summary_use_case.dart';
 import '../use_cases/statistics/get_top_categories_use_case.dart';
+import 'pdf_export_date_range.dart';
 
 /// Use case that generates a PDF summary report for the **current calendar month**.
 ///
@@ -63,20 +65,22 @@ class ExportMonthlyPdfUseCase {
   /// Optionally pass a custom [month] — defaults to the current month.
   Future<ExportResult> call({
     required String targetCurrency,
-    DateTime? month,
+    PdfExportDateRange dateRange = PdfExportDateRange.currentMonth,
+    DateTime? forceNow,
+    String? customMonthLabel,
   }) async {
-    final now = DateTime.now();
-    final targetMonth = month ?? DateTime(now.year, now.month);
+    final now = forceNow ?? DateTime.now();
+    DateTime startDate;
+    DateTime endDate;
+    DateTime targetMonth = now;
 
-    final startDate = DateTime(targetMonth.year, targetMonth.month, 1);
-    final endDate = DateTime(
-      targetMonth.year,
-      targetMonth.month + 1,
-      0,
-      23,
-      59,
-      59,
-    );
+    if (dateRange == PdfExportDateRange.last30Days) {
+      startDate = now.subtract(const Duration(days: 30));
+      endDate = now;
+    } else {
+      startDate = DateTime(now.year, now.month, 1);
+      endDate = DateTime(now.year, now.month + 1, 0, 23, 59, 59);
+    }
 
     // Resolve profile for account lookup
     final profile = await _profileRepository.getFirstProfile();
@@ -118,6 +122,8 @@ class ExportMonthlyPdfUseCase {
     // Fetch and filter transactions to target month
     final allTransactions =
         await _transactionRepository.watchAllTransactions().first;
+    final allRawTransactions =
+        await _transactionRepository.watchRawTransactions().first;
 
     await _exchangeRateRepository.getLatestRates(
       baseCurrency: targetCurrency,
@@ -131,11 +137,13 @@ class ExportMonthlyPdfUseCase {
     final accountMap = {for (final a in accounts) a.id: a.name};
     final categoryMap = {for (final c in categories) c.id: c.name};
 
-    // Build transfer destination labels for each transfer transaction
+    // Build transfer destination labels for each transfer transaction.
+    // Querying raw transactions (which include both legs of a transfer) is necessary
+    // because watchAllTransactions() filters out mirror legs to avoid duplicates in listings.
     final Map<String, String> transferDestinations = {};
     for (final tx in monthTransactions) {
       if (tx.type == TransactionType.transfer && tx.transferId != null) {
-        final otherLeg = allTransactions.firstWhere(
+        final otherLeg = allRawTransactions.firstWhere(
           (t) => t.transferId == tx.transferId && t.id != tx.id,
           orElse: () => tx,
         );
@@ -143,15 +151,8 @@ class ExportMonthlyPdfUseCase {
           final thisAccountName = accountMap[tx.accountId] ?? tx.accountId;
           final otherAccountName =
               accountMap[otherLeg.accountId] ?? otherLeg.accountId;
-          if (tx.amount < 0) {
-            // Outgoing leg: "From: thisAccount → To: otherAccount"
-            transferDestinations[tx.id] =
-                '$thisAccountName (${_l10n.destination_account}: $otherAccountName)';
-          } else {
-            // Incoming leg: "From: otherAccount → To: thisAccount"
-            transferDestinations[tx.id] =
-                '$otherAccountName (${_l10n.destination_account}: $thisAccountName)';
-          }
+
+          transferDestinations[tx.id] = '$thisAccountName -> $otherAccountName';
         }
       }
     }
@@ -162,10 +163,21 @@ class ExportMonthlyPdfUseCase {
         b.categoryId: categoryMap[b.categoryId] ?? b.categoryId,
     };
 
+    final Map<String, String> budgetCurrencies = {};
+    for (final b in allBudgets) {
+      final account = (accounts as List<Account>)
+          .where((a) => a.id == b.accountId)
+          .toList();
+      budgetCurrencies[b.id] =
+          account.isNotEmpty ? account.first.currency : defaultCurrency;
+    }
+
     // Filter active (non-deleted) budgets and savings goals
     final activeBudgets = allBudgets.where((b) => !b.isDeleted).toList();
     final activeSavingsGoals =
         allSavingsGoals.where((g) => !g.isDeleted).toList();
+
+    final userName = profile?.username ?? profile?.name ?? '';
 
     return _exportService.generateMonthlyPdf(
       monthTransactions,
@@ -180,7 +192,10 @@ class ExportMonthlyPdfUseCase {
       transferDestinations: transferDestinations,
       budgets: activeBudgets,
       budgetCategoryNames: budgetCategoryNames,
+      budgetCurrencies: budgetCurrencies,
       savingsGoals: activeSavingsGoals,
+      customMonthLabel: customMonthLabel,
+      userName: userName,
     );
   }
 }

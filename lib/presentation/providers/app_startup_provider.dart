@@ -1,6 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/widgets.dart';
 import 'package:stalvi/data/database/app_database.dart';
 import 'package:stalvi/domain/usecases/auto_purge_usecase.dart';
 import 'package:stalvi/domain/usecases/sync_exchange_rates_usecase.dart';
@@ -21,8 +20,8 @@ final appDatabaseProvider = FutureProvider<AppDatabase>((ref) async {
 
 /// Provides the [AutoPurgeUseCase] instance.
 final autoPurgeUseCaseProvider = Provider<AutoPurgeUseCase>((ref) {
-  final db = ref.watch(appDatabaseProvider).requireValue;
-  return AutoPurgeUseCase(db.trashDao);
+  final trashRepo = ref.watch(trashRepositoryProvider);
+  return AutoPurgeUseCase(trashRepo);
 });
 
 /// App-wide startup gate.

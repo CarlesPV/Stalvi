@@ -19,6 +19,7 @@ import 'package:stalvi/domain/repositories/i_profile_repository.dart';
 import 'package:stalvi/domain/repositories/i_savings_goal_repository.dart';
 import 'package:stalvi/domain/repositories/i_transaction_repository.dart';
 import 'package:stalvi/domain/usecases/export_monthly_pdf_use_case.dart';
+import 'package:stalvi/domain/usecases/pdf_export_date_range.dart';
 import 'package:stalvi/domain/use_cases/statistics/get_period_summary_use_case.dart';
 import 'package:stalvi/domain/use_cases/statistics/get_top_categories_use_case.dart';
 
@@ -137,6 +138,8 @@ void main() {
     ).thenAnswer((_) async => []);
     when(() => transactionRepository.watchAllTransactions())
         .thenAnswer((_) => Stream.value(transactions));
+    when(() => transactionRepository.watchRawTransactions())
+        .thenAnswer((_) => Stream.value(transactions));
     when(
       () => exchangeRateRepository.getLatestRates(
         baseCurrency: any(named: 'baseCurrency'),
@@ -161,7 +164,10 @@ void main() {
         transferDestinations: any(named: 'transferDestinations'),
         budgets: any(named: 'budgets'),
         budgetCategoryNames: any(named: 'budgetCategoryNames'),
+        budgetCurrencies: any(named: 'budgetCurrencies'),
         savingsGoals: any(named: 'savingsGoals'),
+        customMonthLabel: any(named: 'customMonthLabel'),
+        userName: any(named: 'userName'),
       ),
     ).thenAnswer(
       (_) async => const ExportResult(
@@ -246,7 +252,7 @@ void main() {
       transactions: [tx1, tx2],
     );
 
-    await usecase(targetCurrency: 'EUR', month: now);
+    await usecase(targetCurrency: 'EUR', forceNow: now);
 
     final result = verify(
       () => exportService.generateMonthlyPdf(
@@ -262,14 +268,17 @@ void main() {
         transferDestinations: captureAny(named: 'transferDestinations'),
         budgets: any(named: 'budgets'),
         budgetCategoryNames: any(named: 'budgetCategoryNames'),
+        budgetCurrencies: any(named: 'budgetCurrencies'),
         savingsGoals: any(named: 'savingsGoals'),
+        customMonthLabel: any(named: 'customMonthLabel'),
+        userName: any(named: 'userName'),
       ),
     );
 
     expect(result.captured[0], 'GBP');
     expect(result.captured[1], {
-      'tx1': 'Bank (Destination Account: Wallet)',
-      'tx2': 'Bank (Destination Account: Wallet)',
+      'tx1': 'Bank -> Wallet',
+      'tx2': 'Wallet -> Bank',
     });
   });
 
@@ -363,7 +372,7 @@ void main() {
       transactions: [tx1, tx2],
     );
 
-    await esUsecase(targetCurrency: 'EUR', month: now);
+    await esUsecase(targetCurrency: 'EUR', forceNow: now);
 
     final result = verify(
       () => exportService.generateMonthlyPdf(
@@ -379,14 +388,17 @@ void main() {
         transferDestinations: captureAny(named: 'transferDestinations'),
         budgets: any(named: 'budgets'),
         budgetCategoryNames: any(named: 'budgetCategoryNames'),
+        budgetCurrencies: any(named: 'budgetCurrencies'),
         savingsGoals: any(named: 'savingsGoals'),
+        customMonthLabel: any(named: 'customMonthLabel'),
+        userName: any(named: 'userName'),
       ),
     );
 
     expect(result.captured[0], esL10n);
     expect(result.captured[1], {
-      'tx1': 'Bank (Cuenta de destino: Wallet)',
-      'tx2': 'Bank (Cuenta de destino: Wallet)',
+      'tx1': 'Bank -> Wallet',
+      'tx2': 'Wallet -> Bank',
     });
   });
 
@@ -457,7 +469,7 @@ void main() {
         savingsGoals: [],
       );
 
-      await usecase(targetCurrency: 'EUR', month: now);
+      await usecase(targetCurrency: 'EUR', forceNow: now);
 
       final captured = verify(
         () => exportService.generateMonthlyPdf(
@@ -473,7 +485,10 @@ void main() {
           transferDestinations: any(named: 'transferDestinations'),
           budgets: captureAny(named: 'budgets'),
           budgetCategoryNames: any(named: 'budgetCategoryNames'),
+          budgetCurrencies: any(named: 'budgetCurrencies'),
           savingsGoals: any(named: 'savingsGoals'),
+          customMonthLabel: any(named: 'customMonthLabel'),
+          userName: any(named: 'userName'),
         ),
       ).captured;
 
@@ -518,7 +533,7 @@ void main() {
         savingsGoals: [activeGoal, deletedGoal],
       );
 
-      await usecase(targetCurrency: 'EUR', month: now);
+      await usecase(targetCurrency: 'EUR', forceNow: now);
 
       final captured = verify(
         () => exportService.generateMonthlyPdf(
@@ -534,7 +549,10 @@ void main() {
           transferDestinations: any(named: 'transferDestinations'),
           budgets: any(named: 'budgets'),
           budgetCategoryNames: any(named: 'budgetCategoryNames'),
+          budgetCurrencies: any(named: 'budgetCurrencies'),
           savingsGoals: captureAny(named: 'savingsGoals'),
+          customMonthLabel: any(named: 'customMonthLabel'),
+          userName: any(named: 'userName'),
         ),
       ).captured;
 
@@ -588,6 +606,8 @@ void main() {
       ).thenAnswer((_) async => []);
       when(() => transactionRepository.watchAllTransactions())
           .thenAnswer((_) => Stream.value([]));
+      when(() => transactionRepository.watchRawTransactions())
+          .thenAnswer((_) => Stream.value([]));
       when(
         () => exchangeRateRepository.getLatestRates(
           baseCurrency: any(named: 'baseCurrency'),
@@ -613,7 +633,10 @@ void main() {
           transferDestinations: any(named: 'transferDestinations'),
           budgets: any(named: 'budgets'),
           budgetCategoryNames: any(named: 'budgetCategoryNames'),
+          budgetCurrencies: any(named: 'budgetCurrencies'),
           savingsGoals: any(named: 'savingsGoals'),
+          customMonthLabel: any(named: 'customMonthLabel'),
+          userName: any(named: 'userName'),
         ),
       ).thenAnswer(
         (_) async => const ExportResult(
@@ -623,7 +646,7 @@ void main() {
         ),
       );
 
-      await usecase(targetCurrency: 'EUR', month: now);
+      await usecase(targetCurrency: 'EUR', forceNow: now);
 
       final captured = verify(
         () => exportService.generateMonthlyPdf(
@@ -639,7 +662,10 @@ void main() {
           transferDestinations: any(named: 'transferDestinations'),
           budgets: any(named: 'budgets'),
           budgetCategoryNames: captureAny(named: 'budgetCategoryNames'),
+          budgetCurrencies: any(named: 'budgetCurrencies'),
           savingsGoals: any(named: 'savingsGoals'),
+          customMonthLabel: any(named: 'customMonthLabel'),
+          userName: any(named: 'userName'),
         ),
       ).captured;
 
@@ -660,7 +686,7 @@ void main() {
         savingsGoals: [],
       );
 
-      await usecase(targetCurrency: 'EUR', month: now);
+      await usecase(targetCurrency: 'EUR', forceNow: now);
 
       final captured = verify(
         () => exportService.generateMonthlyPdf(
@@ -676,12 +702,81 @@ void main() {
           transferDestinations: any(named: 'transferDestinations'),
           budgets: captureAny(named: 'budgets'),
           budgetCategoryNames: any(named: 'budgetCategoryNames'),
+          budgetCurrencies: any(named: 'budgetCurrencies'),
           savingsGoals: captureAny(named: 'savingsGoals'),
+          customMonthLabel: any(named: 'customMonthLabel'),
+          userName: any(named: 'userName'),
         ),
       ).captured;
 
       expect(captured[0] as List<Budget>, isEmpty);
       expect(captured[1] as List<SavingsGoal>, isEmpty);
+    });
+  });
+
+  group('PdfExportDateRange logic', () {
+    test('last30Days correctly calculates startDate and endDate', () async {
+      final now = DateTime(2023, 10, 15);
+      final profile = Profile(
+        id: 'user1',
+        name: 'User',
+        username: 'user',
+        password: 'pwd',
+        defaultCurrency: 'EUR',
+        createdAt: now,
+        modifiedAt: now,
+      );
+
+      final account1 = Account(
+        id: 'acc1',
+        userId: 'user1',
+        name: 'Bank',
+        type: AccountType.bank,
+        initialBalance: 0,
+        currency: 'EUR',
+        color: '#000000',
+        icon: 'bank',
+        isDefault: true,
+        isDeleted: false,
+        createdAt: now,
+        modifiedAt: now,
+      );
+
+      stubCommonMocks(
+        profile: profile,
+        accounts: [account1],
+        transactions: [],
+      );
+
+      await usecase(
+        targetCurrency: 'EUR',
+        dateRange: PdfExportDateRange.last30Days,
+        forceNow: now,
+        customMonthLabel: 'Last 30 Days Translated',
+      );
+
+      final result = verify(
+        () => exportService.generateMonthlyPdf(
+          any(),
+          summary: any(named: 'summary'),
+          month: any(named: 'month'),
+          l10n: any(named: 'l10n'),
+          accounts: any(named: 'accounts'),
+          categories: any(named: 'categories'),
+          topExpenseCategories: any(named: 'topExpenseCategories'),
+          topIncomeCategories: any(named: 'topIncomeCategories'),
+          defaultCurrency: any(named: 'defaultCurrency'),
+          transferDestinations: any(named: 'transferDestinations'),
+          budgets: any(named: 'budgets'),
+          budgetCategoryNames: any(named: 'budgetCategoryNames'),
+          budgetCurrencies: any(named: 'budgetCurrencies'),
+          savingsGoals: any(named: 'savingsGoals'),
+          customMonthLabel: captureAny(named: 'customMonthLabel'),
+          userName: any(named: 'userName'),
+        ),
+      );
+      result.called(1);
+      expect(result.captured.first, 'Last 30 Days Translated');
     });
   });
 }

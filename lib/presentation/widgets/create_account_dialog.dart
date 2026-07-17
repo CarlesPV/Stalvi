@@ -439,11 +439,17 @@ class _CreateAccountDialogState extends ConsumerState<CreateAccountDialog> {
                         actions: [
                           TextButton(
                             onPressed: () => Navigator.pop(ctx, false),
-                            child: Text(l10n.btnCancel),
+                            child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text(l10n.btnCancel),
+                            ),
                           ),
                           FilledButton(
                             onPressed: () => Navigator.pop(ctx, true),
-                            child: Text(l10n.btnContinue),
+                            child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text(l10n.btnContinue),
+                            ),
                           ),
                         ],
                       ),
@@ -474,11 +480,14 @@ class _CreateAccountDialogState extends ConsumerState<CreateAccountDialog> {
                           color: colorScheme.outline.withValues(alpha: 0.2),
                         ),
                       ),
-                      child: Text(
-                        l10n.btnCancel,
-                        style: TextStyle(
-                          color: colorScheme.onSurfaceVariant,
-                          fontWeight: FontWeight.bold,
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text(
+                          l10n.btnCancel,
+                          style: TextStyle(
+                            color: colorScheme.onSurfaceVariant,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ),
@@ -505,10 +514,14 @@ class _CreateAccountDialogState extends ConsumerState<CreateAccountDialog> {
                                 color: Colors.white,
                               ),
                             )
-                          : Text(
-                              l10n.btnSave,
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.bold),
+                          : FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text(
+                                l10n.btnSave,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                             ),
                     ),
                   ),

@@ -10,6 +10,7 @@ import '../../providers/auth_notifier.dart';
 import '../../providers/locale_provider.dart';
 import '../../providers/theme_provider.dart';
 import '../../widgets/terms_and_conditions_viewer.dart';
+import 'about_me_screen.dart' as stalvi_about_me;
 
 class ProfileSettingsScreen extends ConsumerStatefulWidget {
   const ProfileSettingsScreen({super.key});
@@ -27,6 +28,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
       context: context,
       builder: (context) {
         return AlertDialog(
+          scrollable: true,
           title: Text(l10n.usernameLabel),
           content: TextField(
             controller: controller,
@@ -38,7 +40,10 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text(l10n.btnCancel),
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(l10n.btnCancel),
+              ),
             ),
             ElevatedButton(
               onPressed: () {
@@ -49,7 +54,10 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                 }
                 Navigator.of(context).pop();
               },
-              child: Text(l10n.btnSave),
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(l10n.btnSave),
+              ),
             ),
           ],
         );
@@ -77,10 +85,12 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
       context: context,
       builder: (context) {
         return AlertDialog(
+          scrollable: true,
           title: Text(l10n.labelSelectCurrency),
           content: StatefulBuilder(
             builder: (context, setState) {
               return DropdownButtonFormField<String>(
+                isExpanded: true,
                 initialValue: selected,
                 items: currencies.entries.map((e) {
                   return DropdownMenuItem(
@@ -103,7 +113,10 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text(l10n.btnCancel),
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(l10n.btnCancel),
+              ),
             ),
             ElevatedButton(
               onPressed: () {
@@ -112,7 +125,10 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                     .updateCurrency(selected);
                 Navigator.of(context).pop();
               },
-              child: Text(l10n.btnSave),
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(l10n.btnSave),
+              ),
             ),
           ],
         );
@@ -455,6 +471,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
           final theme = Theme.of(context);
           final colorScheme = theme.colorScheme;
           return AlertDialog(
+            scrollable: true,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(24),
             ),
@@ -484,11 +501,14 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(dialogCtx).pop(),
-                child: Text(
-                  l10n.btnCancel,
-                  style: TextStyle(
-                    color: colorScheme.onSurfaceVariant,
-                    fontWeight: FontWeight.bold,
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    l10n.btnCancel,
+                    style: TextStyle(
+                      color: colorScheme.onSurfaceVariant,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),
@@ -520,9 +540,12 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                     );
                   }
                 },
-                child: Text(
-                  l10n.deleteAllDataButton,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    l10n.deleteAllDataButton,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
                 ),
               ),
             ],
@@ -654,21 +677,27 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                                 .setLocale(Locale(newLang));
                           }
                         },
-                        items: const [
+                        items: [
                           DropdownMenuItem<String>(
                             value: 'en',
-                            child:
-                                Text('English', style: TextStyle(fontSize: 14)),
+                            child: Text(
+                              l10n.languageEnglish,
+                              style: const TextStyle(fontSize: 14),
+                            ),
                           ),
                           DropdownMenuItem<String>(
                             value: 'es',
-                            child:
-                                Text('Español', style: TextStyle(fontSize: 14)),
+                            child: Text(
+                              l10n.languageSpanish,
+                              style: const TextStyle(fontSize: 14),
+                            ),
                           ),
                           DropdownMenuItem<String>(
                             value: 'ca',
-                            child:
-                                Text('Català', style: TextStyle(fontSize: 14)),
+                            child: Text(
+                              l10n.languageCatalan,
+                              style: const TextStyle(fontSize: 14),
+                            ),
                           ),
                         ],
                       ),
@@ -700,6 +729,20 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                           builder: (context) => const TermsAndConditionsViewer(
                             showPrivacyPolicy: true,
                           ),
+                        ),
+                      );
+                    },
+                  ),
+                  const Divider(),
+                  ListTile(
+                    leading: const Icon(Icons.info_outline_rounded),
+                    title: Text(l10n.aboutMe),
+                    trailing: const Icon(Icons.chevron_right),
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              const stalvi_about_me.AboutMeScreen(),
                         ),
                       );
                     },

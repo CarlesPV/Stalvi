@@ -104,6 +104,18 @@ The application strictly follows **Clean Architecture** to separate concerns and
 * `modified_at` (DateTime)
 * `is_deleted` (Boolean - For soft deletes)
 
+#### Automatic Transaction
+* `id` (String)
+* `amount` (Int - in cents)
+* `type` (Enum: Income, Expense, Transfer)
+* `account_id` (String - References Account)
+* `category_id` (String/Optional - References Category)
+* `tag_id` (String/Optional - References Tag)
+* `notes` (String/Optional)
+* `recurrence_days` (Int - Interval in days)
+* `next_execution_date` (DateTime)
+* `created_at` (DateTime)
+
 #### Budget & Savings Goals
 * `id` (String/Int)
 * `associated_id` (String/Int - Budget = Category ID; Goal = Account ID)
@@ -121,8 +133,9 @@ The application strictly follows **Clean Architecture** to separate concerns and
 #### 5.1. Movements & Transactions
 * **Registrations:** Log income, expenses, lost money, and transfers.
 * **Transfers:** Moving money between accounts does *not* count as an expense or income in global statistics.
-* **Recurring Movements:** Create rules (e.g., salary on the 1st, subscription on day X). The app must generate these automatically.
-* **Soft Deletion:** Implementing a Trash system using `is_deleted`. Movements are hidden from the UI and statistics but kept for 30 days before permanent deletion to prevent accidental data loss and maintain referential integrity.
+* **Recurring Movements:** Automatic Transactions table, entities, and scheduler evaluating recurrence days to generate transactions and auto-advance next execution dates.
+* **Inline Validation:** Transaction form inputs have real-time inline validations displaying specific errors and dynamically clearing/resetting states.
+* **Soft Deletion:** Implementing a Trash system using `is_deleted`. Movements are hidden from the UI and statistics but kept for 30 days before permanent deletion to prevent accidental data loss and maintain referential integrity. Also cascades account deletion to linked transactions, block account deletion when linked to automatic transactions, and safely reassigns active categories during deletion.
 * **Extras:** Duplicate existing movements, filter by amount, order by categories.
 
 #### 5.2. Budgets & Savings Goals

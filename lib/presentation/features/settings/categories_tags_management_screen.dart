@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:stalvi/core/l10n/app_localizations.dart';
+import 'package:stalvi/core/errors/app_exceptions.dart';
 import 'package:stalvi/domain/entities/category.dart';
 import 'package:stalvi/domain/entities/tag.dart';
 import '../../providers/repository_providers.dart';
@@ -87,9 +88,27 @@ class _CategoriesTab extends ConsumerWidget {
     List<Category> allCategories,
   ) async {
     final l10n = AppLocalizations.of(context)!;
-    final inUse = await ref
-        .read(deleteAndReassignCategoryUseCaseProvider)
-        .isCategoryInUse(category.id);
+    bool inUse = false;
+    try {
+      inUse = await ref
+          .read(deleteAndReassignCategoryUseCaseProvider)
+          .isCategoryInUse(category.id);
+    } on CategoryInUseByAutomaticTransactionException {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(l10n.categoryInUseByAutoTxMessage(category.name)),
+          duration: const Duration(seconds: 4),
+        ),
+      );
+      final replacements = await ref
+          .read(deleteAndReassignCategoryUseCaseProvider)
+          .getReplacementCategories(category);
+      if (!context.mounted) return;
+      _showReassignDialog(context, ref, category, replacements);
+      return;
+    }
+
     if (!context.mounted) return;
 
     if (inUse) {
@@ -102,6 +121,7 @@ class _CategoriesTab extends ConsumerWidget {
       final confirm = await showDialog<bool>(
         context: context,
         builder: (ctx) => AlertDialog(
+          scrollable: true,
           title: Text(l10n.deleteCategoryTitle),
           content: Text(l10n.deleteCategoryConfirm(category.name)),
           actions: [
@@ -152,6 +172,7 @@ class _CategoriesTab extends ConsumerWidget {
         return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
+              scrollable: true,
               title: Text(l10n.categoryInUseTitle),
               content: SingleChildScrollView(
                 child: Column(
@@ -162,6 +183,7 @@ class _CategoriesTab extends ConsumerWidget {
                     ),
                     const SizedBox(height: 16),
                     DropdownButtonFormField<String>(
+                      isExpanded: true,
                       initialValue: selectedNewCategoryId,
                       items: otherCategories
                           .map(
@@ -277,6 +299,7 @@ class _TagsTab extends ConsumerWidget {
       final confirm = await showDialog<bool>(
         context: context,
         builder: (ctx) => AlertDialog(
+          scrollable: true,
           title: Text(l10n.deleteTagTitle),
           content: Text(l10n.deleteTagConfirm(tag.name)),
           actions: [
@@ -328,6 +351,7 @@ class _TagsTab extends ConsumerWidget {
         return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
+              scrollable: true,
               title: Text(l10n.tagInUseTitle),
               content: SingleChildScrollView(
                 child: Column(
@@ -338,6 +362,7 @@ class _TagsTab extends ConsumerWidget {
                     ),
                     const SizedBox(height: 16),
                     DropdownButtonFormField<String>(
+                      isExpanded: true,
                       initialValue: selectedNewTagId,
                       items: otherTags
                           .map(

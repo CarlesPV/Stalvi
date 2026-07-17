@@ -9,6 +9,7 @@ import 'package:stalvi/data/database/tables/account_table.dart'
 import 'package:stalvi/data/database/tables/category_table.dart'
     as category_table;
 import '../database/tables/transaction_table.dart' as tx_table;
+import 'package:stalvi/domain/entities/recurrence_type.dart';
 import 'package:stalvi/domain/repositories/i_export_service.dart';
 import 'package:stalvi/domain/repositories/i_import_service.dart';
 
@@ -48,21 +49,66 @@ class ImportServiceImpl implements IImportService {
       }
 
       final version = data['version'] as int? ?? 1;
-      if (version < 1 || version > 2) {
+      if (version < 1 || version > 3) {
         throw ImportException(
           message: 'Unsupported backup version: $version.',
           code: 'UNSUPPORTED_VERSION',
         );
       }
 
-      final accountsJson = (data['accounts'] as List<dynamic>? ?? [])
-          .cast<Map<String, dynamic>>();
-      final categoriesJson = (data['categories'] as List<dynamic>? ?? [])
-          .cast<Map<String, dynamic>>();
-      final tagsJson =
-          (data['tags'] as List<dynamic>? ?? []).cast<Map<String, dynamic>>();
-      final transactionsJson = (data['transactions'] as List<dynamic>? ?? [])
-          .cast<Map<String, dynamic>>();
+      List<Map<String, dynamic>> accountsJson;
+      List<Map<String, dynamic>> categoriesJson;
+      List<Map<String, dynamic>> tagsJson;
+      List<Map<String, dynamic>> transactionsJson;
+      List<Map<String, dynamic>> budgetsJson;
+      List<Map<String, dynamic>> savingsGoalsJson;
+      List<Map<String, dynamic>> automaticTransactionsJson;
+
+      try {
+        accountsJson = (data['accounts'] as List<dynamic>? ?? [])
+            .map((e) => e as Map<String, dynamic>)
+            .toList();
+        categoriesJson = (data['categories'] as List<dynamic>? ?? [])
+            .map((e) => e as Map<String, dynamic>)
+            .toList();
+        tagsJson = (data['tags'] as List<dynamic>? ?? [])
+            .map((e) => e as Map<String, dynamic>)
+            .toList();
+        transactionsJson = (data['transactions'] as List<dynamic>? ?? [])
+            .map((e) => e as Map<String, dynamic>)
+            .toList();
+        budgetsJson = (data['budgets'] as List<dynamic>? ?? [])
+            .map((e) => e as Map<String, dynamic>)
+            .toList();
+        savingsGoalsJson = (data['savings_goals'] as List<dynamic>? ?? [])
+            .map((e) => e as Map<String, dynamic>)
+            .toList();
+        automaticTransactionsJson =
+            (data['automatic_transactions'] as List<dynamic>? ?? [])
+                .map((e) => e as Map<String, dynamic>)
+                .toList();
+
+        // Perform a quick sanity check to ensure essential fields exist
+        for (final a in accountsJson) {
+          if (a['id'] == null || a['name'] == null) {
+            throw const FormatException('Account missing id or name');
+          }
+        }
+        for (final t in transactionsJson) {
+          if (t['id'] == null ||
+              t['amount'] == null ||
+              t['account_id'] == null) {
+            throw const FormatException('Transaction missing required fields');
+          }
+        }
+      } catch (e) {
+        throw ImportException(
+          message:
+              'The backup file format is invalid or missing required fields.',
+          code: 'INVALID_FORMAT',
+          details: e,
+        );
+      }
 
       // Sort categories so parents are inserted before children to satisfy self-referencing FKs
       categoriesJson.sort((a, b) {
@@ -75,7 +121,10 @@ class ImportServiceImpl implements IImportService {
 
       await _database.transaction(() async {
         // Safely wipe data
-        // Transactions depend on accounts, categories, tags. Delete them first.
+        // AutomaticTransactions, Budgets, Transactions depend on accounts, categories, tags. Delete them first.
+        await _database.delete(_database.automaticTransactions).go();
+        await _database.delete(_database.budgets).go();
+        await _database.delete(_database.savingsGoals).go();
         await _database.delete(_database.transactions).go();
 
         // Wipe Accounts and Tags
@@ -93,6 +142,13 @@ class ImportServiceImpl implements IImportService {
               ..limit(1))
             .getSingleOrNull();
         final currentUserId = currentProfile?.id;
+
+        if (currentProfile != null && data['user_name'] is String) {
+          final updatedName = data['user_name'] as String;
+          await (_database.update(_database.profiles)
+                ..where((t) => t.id.equals(currentProfile.id)))
+              .write(db.ProfilesCompanion(name: Value(updatedName)));
+        }
 
         // Insert Accounts
         for (final acc in accountsJson) {
@@ -148,6 +204,91 @@ class ImportServiceImpl implements IImportService {
               );
         }
 
+        // Insert Savings Goals
+        for (final sg in savingsGoalsJson) {
+          await _database.into(_database.savingsGoals).insertOnConflictUpdate(
+                db.SavingsGoalsCompanion.insert(
+                  id: sg['id'] as String,
+                  name: sg['name'] as String,
+                  targetAmount: sg['target_amount'] as int,
+                  currentAmount: Value(sg['current_amount'] as int? ?? 0),
+                  targetDate: Value(
+                    sg['target_date'] != null
+                        ? DateTime.parse(sg['target_date'] as String)
+                        : null,
+                  ),
+                  color: sg['color'] as String,
+                  icon: sg['icon'] as String,
+                  createdAt: DateTime.parse(sg['created_at'] as String),
+                  modifiedAt: DateTime.parse(sg['modified_at'] as String),
+                  deletedAt: Value(
+                    sg['deleted_at'] != null
+                        ? DateTime.parse(sg['deleted_at'] as String)
+                        : null,
+                  ),
+                  isDeleted: Value((sg['is_deleted'] as bool?) ?? false),
+                  isCompleted: Value((sg['is_completed'] as bool?) ?? false),
+                  currency: Value(sg['currency'] as String),
+                ),
+              );
+        }
+
+        // Insert Budgets
+        for (final b in budgetsJson) {
+          await _database.into(_database.budgets).insertOnConflictUpdate(
+                db.BudgetsCompanion.insert(
+                  id: b['id'] as String,
+                  accountId: b['account_id'] as String,
+                  categoryId: b['category_id'] as String,
+                  targetAmount: b['target_amount'] as int,
+                  currentAmount: Value(b['current_amount'] as int? ?? 0),
+                  startDate: DateTime.parse(b['start_date'] as String),
+                  endDate: DateTime.parse(b['end_date'] as String),
+                  createdAt: DateTime.parse(b['created_at'] as String),
+                  modifiedAt: DateTime.parse(b['modified_at'] as String),
+                  deletedAt: Value(
+                    b['deleted_at'] != null
+                        ? DateTime.parse(b['deleted_at'] as String)
+                        : null,
+                  ),
+                  isDeleted: Value((b['is_deleted'] as bool?) ?? false),
+                ),
+              );
+        }
+
+        // Insert Automatic Transactions
+        for (final at in automaticTransactionsJson) {
+          await _database
+              .into(_database.automaticTransactions)
+              .insertOnConflictUpdate(
+                db.AutomaticTransactionsCompanion.insert(
+                  id: at['id'] as String,
+                  name: at['name'] as String,
+                  amount: at['amount'] as int,
+                  currency: Value(at['currency'] as String),
+                  type: _parseTransactionType(at['type'] as String),
+                  accountId: at['account_id'] as String,
+                  categoryId: Value(at['category_id'] as String?),
+                  tagId: Value(at['tag_id'] as String?),
+                  notes: Value(at['notes'] as String?),
+                  recurrenceType: Value(
+                    _parseRecurrenceType(at['recurrence_type'] as String?),
+                  ),
+                  recurrenceDays: at['recurrence_days'] as int,
+                  nextExecutionDate:
+                      DateTime.parse(at['next_execution_date'] as String),
+                  createdAt: DateTime.parse(at['created_at'] as String),
+                  isActive: Value((at['is_active'] as bool?) ?? true),
+                  isDeleted: Value((at['is_deleted'] as bool?) ?? false),
+                  deletedAt: Value(
+                    at['deleted_at'] != null
+                        ? DateTime.parse(at['deleted_at'] as String)
+                        : null,
+                  ),
+                ),
+              );
+        }
+
         // Finally, insert Transactions
         for (final tx in transactionsJson) {
           await _database.into(_database.transactions).insertOnConflictUpdate(
@@ -158,6 +299,7 @@ class ImportServiceImpl implements IImportService {
                   type: _parseTransactionType(tx['type'] as String),
                   accountId: tx['account_id'] as String,
                   categoryId: Value(tx['category_id'] as String?),
+                  savingsGoalId: Value(tx['savings_goal_id'] as String?),
                   notes: Value(tx['notes'] as String?),
                   originalCurrency: tx['original_currency'] as String,
                   convertedAmount: Value(tx['converted_amount'] as int?),
@@ -166,7 +308,7 @@ class ImportServiceImpl implements IImportService {
                   exchangeRateSnapshot:
                       Value(tx['exchange_rate_snapshot'] as String?),
                   transferId: Value(tx['transfer_id'] as String?),
-                  isDeleted: const Value(false),
+                  isDeleted: Value((tx['is_deleted'] as bool?) ?? false),
                   createdAt: DateTime.parse(tx['created_at'] as String),
                   modifiedAt: DateTime.parse(tx['modified_at'] as String),
                 ),
@@ -230,6 +372,17 @@ class ImportServiceImpl implements IImportService {
       case 'expense':
       default:
         return tx_table.TransactionType.expense;
+    }
+  }
+
+  static RecurrenceType _parseRecurrenceType(String? raw) {
+    if (raw == null) return RecurrenceType.intervalDays;
+    switch (raw) {
+      case 'specificDayOfMonth':
+        return RecurrenceType.specificDayOfMonth;
+      case 'intervalDays':
+      default:
+        return RecurrenceType.intervalDays;
     }
   }
 }

@@ -53,4 +53,40 @@ class CurrencyConverter {
 
     return tx.amount.toDouble();
   }
+
+  /// Converts a raw amount from one currency to another using the provided rates.
+  static double convertRaw(
+    double amount,
+    String fromCurrency,
+    String targetCurrency,
+    ExchangeRate? currentRates,
+  ) {
+    if (fromCurrency == targetCurrency) {
+      return amount;
+    }
+
+    if (currentRates != null) {
+      if (currentRates.baseCurrency == targetCurrency) {
+        final rate = currentRates.rateFor(fromCurrency);
+        if (rate != null && rate != 0) {
+          return amount / rate;
+        }
+      } else if (currentRates.baseCurrency == fromCurrency) {
+        final rate = currentRates.rateFor(targetCurrency);
+        if (rate != null && rate != 0) {
+          return amount * rate;
+        }
+      } else {
+        // Cross currency conversion using targetCurrency and fromCurrency rates relative to the baseCurrency
+        final rateFrom = currentRates.rateFor(fromCurrency);
+        final rateTarget = currentRates.rateFor(targetCurrency);
+        if (rateFrom != null && rateTarget != null && rateFrom != 0) {
+          final crossRate = rateFrom / rateTarget;
+          return amount / crossRate;
+        }
+      }
+    }
+
+    return amount;
+  }
 }
