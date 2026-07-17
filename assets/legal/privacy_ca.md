@@ -37,4 +37,4 @@ Stalvi no està destinat a ser utilitzat per persones menors de 14 anys sense el
 Ens reservem el dret d'actualitzar o modificar aquesta Política de Privadesa en qualsevol moment per reflectir canvis en els requisits legals o en les característiques de l'Aplicació. Qualsevol canvi substancial se't comunicarà a través d'una actualització de l'Aplicació. El teu ús continuat de l'Aplicació després de qualsevol actualització constitueix la teva acceptació de la Política de Privadesa revisada.
 
 ## 8. Informació de Contacte
-Si tens cap pregunta, inquietud o consulta respecte a aquesta Política de Privadesa o les nostres pràctiques de protecció de dades, posa't en contacte amb el desenvolupador a través de GitHub a https://github.com/CarlesPV o per correu electrònic a carles.peiro.v@gmail.com.
+Si tens cap pregunta, inquietud o consulta respecte a aquesta Política de Privadesa o les nostres pràctiques de protecció de dades, posa't en contacte amb el desenvolupador a través de GitHub a https://github.com/CarlesPV.

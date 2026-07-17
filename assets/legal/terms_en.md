@@ -36,4 +36,4 @@ These Terms and Conditions shall be governed by and construed in accordance with
 We reserve the right, at our sole discretion, to modify or replace these Terms at any time. If a revision is material, we will provide reasonable notice prior to the new terms taking effect. By continuing to access or use our Application after those revisions become effective, you agree to be bound by the revised Terms.
 
 ## 10. Contact Information
-If you have any questions, concerns, or inquiries regarding these Terms and Conditions, please contact the developer via GitHub at https://github.com/CarlesPV or via email at carles.peiro.v@gmail.com.
+If you have any questions, concerns, or inquiries regarding these Terms and Conditions, please contact the developer via GitHub at https://github.com/CarlesPV.

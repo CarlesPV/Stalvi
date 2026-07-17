@@ -36,4 +36,4 @@ Aquests Termes i Condicions es regiran i interpretaran d'acord amb les lleis d'E
 Ens reservem el dret, a la nostra sencera discreció, de modificar o reemplaçar aquests Termes en qualsevol moment. Si una revisió és material, proporcionarem un avís raonable abans que els nous termes entrin en vigència. En continuar accedint o utilitzant la nostra Aplicació després que aquestes revisions entrin en vigència, acceptes estar subjecte als Termes revisats.
 
 ## 10. Informació de Contacte
-Si tens cap pregunta, inquietud o consulta respecte a aquests Termes i Condicions, posa't en contacte amb el desenvolupador a través de GitHub a https://github.com/CarlesPV o per correu electrònic a carles.peiro.v@gmail.com.
+Si tens cap pregunta, inquietud o consulta respecte a aquests Termes i Condicions, posa't en contacte amb el desenvolupador a través de GitHub a https://github.com/CarlesPV.

@@ -4,7 +4,8 @@ import 'package:workmanager/workmanager.dart';
 import 'package:stalvi/presentation/providers/app_startup_provider.dart';
 import 'package:stalvi/presentation/providers/automatic_transactions_providers.dart';
 
-const String executeRecurringTransactionsTask = "executeRecurringTransactionsTask";
+const String executeRecurringTransactionsTask =
+    "executeRecurringTransactionsTask";
 const String _periodicTaskUniqueName = 'stalvi.executeRecurringTransactions';
 
 @pragma('vm:entry-point')
@@ -14,7 +15,9 @@ void callbackDispatcher() {
   Workmanager().executeTask((task, inputData) async {
     ProviderContainer? container;
     try {
-      debugPrint('[BackgroundExecutionService] "$task" started at ${DateTime.now().toUtc().toIso8601String()}');
+      debugPrint(
+        '[BackgroundExecutionService] "$task" started at ${DateTime.now().toUtc().toIso8601String()}',
+      );
 
       container = ProviderContainer();
 
@@ -22,11 +25,16 @@ void callbackDispatcher() {
       await container.read(appDatabaseProvider.future);
 
       if (task == executeRecurringTransactionsTask) {
-        final useCase = container.read(executeRecurringTransactionsUseCaseProvider);
+        final useCase =
+            container.read(executeRecurringTransactionsUseCaseProvider);
         await useCase.execute();
-        debugPrint('[BackgroundExecutionService] "$task" completed successfully.');
+        debugPrint(
+          '[BackgroundExecutionService] "$task" completed successfully.',
+        );
       } else {
-        debugPrint('[BackgroundExecutionService] Unknown task "$task" — skipping.');
+        debugPrint(
+          '[BackgroundExecutionService] Unknown task "$task" — skipping.',
+        );
       }
 
       return true;

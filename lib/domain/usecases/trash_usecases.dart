@@ -1,10 +1,9 @@
-import 'package:stalvi/data/database/daos/trash_dao.dart';
 import '../entities/trash_item.dart';
 import '../entities/transaction_type.dart';
 import '../repositories/i_account_repository.dart';
 import '../repositories/i_transaction_repository.dart';
+import '../repositories/i_trash_repository.dart';
 import 'update_budget_progress_usecase.dart';
-import 'package:stalvi/data/database/daos/savings_goal_dao.dart';
 
 /// Use cases for the Trash (soft-delete recovery) screen.
 ///
@@ -20,23 +19,22 @@ import 'package:stalvi/data/database/daos/savings_goal_dao.dart';
 /// [IAccountRepository.hardDeleteAccount] removes the account row **and** all
 /// its associated transaction rows atomically.
 class TrashUsecases {
-  final TrashDao _trashDao;
+  final ITrashRepository _trashRepository;
   final ITransactionRepository _transactionRepository;
   final IAccountRepository _accountRepository;
   final UpdateBudgetProgressUseCase _updateBudgetProgressUseCase;
-  final SavingsGoalDao _savingsGoalDao;
 
   TrashUsecases(
-    this._trashDao,
+    this._trashRepository,
     this._transactionRepository,
     this._accountRepository,
     this._updateBudgetProgressUseCase,
-    this._savingsGoalDao,
   );
 
-  Future<List<TrashItem>> getTrashItems() => _trashDao.getTrashItems();
+  Future<List<TrashItem>> getTrashItems() => _trashRepository.getTrashItems();
 
-  Stream<List<TrashItem>> watchTrashItems() => _trashDao.watchTrashItems();
+  Stream<List<TrashItem>> watchTrashItems() =>
+      _trashRepository.watchTrashItems();
 
   /// Restores a soft-deleted item.
   ///
@@ -47,7 +45,7 @@ class TrashUsecases {
   /// For [TrashItemType.account]: restores only the account row; associated
   /// transactions remain soft-deleted (user can restore them individually).
   ///
-  /// For all other types: delegates directly to [TrashDao.restoreItem].
+  /// For all other types: delegates directly to [ITrashRepository.restoreItem].
   Future<void> restoreItem(String id, TrashItemType type) async {
     if (type == TrashItemType.transaction) {
       await _transactionRepository.restoreTransaction(id);
@@ -56,16 +54,16 @@ class TrashUsecases {
         await _updateBudgetProgressUseCase.execute(transaction: txn);
       }
     } else if (type == TrashItemType.savingsGoal) {
-      await _savingsGoalDao.cascadeRestore(id);
+      await _trashRepository.cascadeRestoreSavingsGoal(id);
     } else {
-      await _trashDao.restoreItem(id, type);
+      await _trashRepository.restoreItem(id, type);
     }
   }
 
   /// Soft deletes a savings goal along with its related transfer transactions
   /// and automatically reverts the balances to the origin accounts.
   Future<void> softDeleteSavingsGoal(String id) async {
-    await _savingsGoalDao.cascadeSoftDelete(id);
+    await _trashRepository.cascadeSoftDeleteSavingsGoal(id);
   }
 
   /// Permanently deletes an item from the database.
@@ -76,14 +74,14 @@ class TrashUsecases {
   /// For [TrashItemType.account]: hard-deletes the account **and** all its
   /// transaction rows through [IAccountRepository.hardDeleteAccount].
   ///
-  /// For all other types: delegates directly to [TrashDao.deleteItemPermanently].
+  /// For all other types: delegates directly to [ITrashRepository.deleteItemPermanently].
   Future<void> deleteItemPermanently(String id, TrashItemType type) async {
     if (type == TrashItemType.transaction) {
       await _transactionRepository.hardDeleteTransaction(id);
     } else if (type == TrashItemType.account) {
       await _accountRepository.hardDeleteAccount(id);
     } else {
-      await _trashDao.deleteItemPermanently(id, type);
+      await _trashRepository.deleteItemPermanently(id, type);
     }
   }
 

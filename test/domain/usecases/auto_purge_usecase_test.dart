@@ -3,6 +3,7 @@ import 'package:drift/drift.dart' hide isNull, isNotNull;
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:stalvi/data/database/app_database.dart';
+import 'package:stalvi/data/repositories/trash_repository.dart';
 import 'package:stalvi/domain/usecases/auto_purge_usecase.dart';
 // ignore: depend_on_referenced_packages
 import 'package:stalvi/data/database/tables/transaction_table.dart';
@@ -22,7 +23,11 @@ void main() {
 
   setUp(() {
     db = AppDatabase.forTesting(NativeDatabase.memory());
-    useCase = AutoPurgeUseCase(db.trashDao);
+    final trashRepo = TrashRepository(
+      trashDao: db.trashDao,
+      savingsGoalDao: db.savingsGoalDao,
+    );
+    useCase = AutoPurgeUseCase(trashRepo);
   });
 
   tearDown(() async {

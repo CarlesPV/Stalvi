@@ -1,11 +1,11 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:stalvi/data/database/daos/statistics_dao.dart';
+import 'package:stalvi/data/database/tables/transaction_table.dart' as db_table;
 import 'package:stalvi/data/repositories/statistics_repository_impl.dart';
 import 'package:stalvi/domain/entities/category_statistic.dart';
 import 'package:stalvi/domain/entities/period_summary.dart';
-import 'package:stalvi/data/database/tables/transaction_table.dart'
-    show TransactionType;
+import 'package:stalvi/domain/entities/transaction_type.dart' as domain;
 
 class MockStatisticsDao extends Mock implements StatisticsDao {}
 
@@ -103,7 +103,7 @@ void main() {
           start,
           end,
           'EUR',
-          type: TransactionType.expense,
+          type: db_table.TransactionType.expense,
           accountId: any(named: 'accountId'),
         ),
       ).thenAnswer((_) => Stream.value(categories));
@@ -127,7 +127,7 @@ void main() {
           start,
           end,
           'EUR',
-          type: TransactionType.income,
+          type: db_table.TransactionType.income,
           accountId: any(named: 'accountId'),
         ),
       ).thenAnswer((_) => Stream.value([]));
@@ -137,7 +137,7 @@ void main() {
             startDate: start,
             endDate: end,
             targetCurrency: 'EUR',
-            type: TransactionType.income,
+            type: domain.TransactionType.income,
           )
           .first;
 
@@ -146,7 +146,7 @@ void main() {
           start,
           end,
           'EUR',
-          type: TransactionType.income,
+          type: db_table.TransactionType.income,
           accountId: any(named: 'accountId'),
         ),
       ).called(1);
@@ -158,7 +158,7 @@ void main() {
           start,
           end,
           'EUR',
-          type: TransactionType.expense,
+          type: db_table.TransactionType.expense,
           accountId: any(named: 'accountId'),
         ),
       ).thenAnswer((_) => Stream.value([]));

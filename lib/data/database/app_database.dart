@@ -44,8 +44,8 @@ part 'app_database.g.dart';
 /// at rest. The cipher key is sourced from [SecureStorageManager], which keeps
 /// it in the platform's secure keystore.
 ///
-/// **No tables are defined yet** – they will be added incrementally as domain
-/// entities are modelled.
+/// The database currently models the full financial schema: Accounts, Transactions,
+/// Categories, Tags, Budgets, Savings Goals, Exchange Rates, and Automatic Transactions.
 ///
 /// Usage:
 /// ```dart

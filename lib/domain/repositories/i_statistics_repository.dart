@@ -1,6 +1,6 @@
-import 'package:stalvi/data/database/tables/transaction_table.dart';
 import '../entities/period_summary.dart';
 import '../entities/category_statistic.dart';
+import '../entities/transaction_type.dart';
 
 abstract class IStatisticsRepository {
   /// One-shot fetch (used by PDF export use case).

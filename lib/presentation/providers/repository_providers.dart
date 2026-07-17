@@ -6,7 +6,7 @@ import 'package:stalvi/data/repositories/account_repository.dart';
 import 'package:stalvi/data/repositories/category_repository.dart';
 import 'package:stalvi/data/repositories/tag_repository.dart';
 import 'package:stalvi/data/repositories/profile_repository.dart';
-import 'package:stalvi/data/repositories/statistics_repository_impl.dart';
+import 'package:stalvi/data/repositories/trash_repository.dart';
 import 'package:stalvi/data/repositories/transaction_repository.dart';
 import 'package:stalvi/data/repositories/automatic_transaction_repository.dart';
 import 'package:stalvi/data/repositories/exchange_rate_repository.dart';
@@ -35,7 +35,7 @@ import 'package:stalvi/domain/repositories/i_automatic_transaction_repository.da
 import 'package:stalvi/domain/repositories/i_exchange_rate_repository.dart';
 import 'package:stalvi/domain/repositories/i_budget_repository.dart';
 import 'package:stalvi/domain/repositories/i_savings_goal_repository.dart';
-import 'package:stalvi/domain/repositories/i_statistics_repository.dart';
+import 'package:stalvi/domain/repositories/i_trash_repository.dart';
 import 'package:stalvi/domain/repositories/i_export_service.dart';
 import 'package:stalvi/domain/repositories/i_import_service.dart';
 import 'package:stalvi/domain/usecases/add_transaction_usecase.dart';
@@ -110,10 +110,13 @@ final savingsGoalRepositoryProvider = Provider<ISavingsGoalRepository>((ref) {
   return SavingsGoalRepository(db);
 });
 
-/// Provides the [IStatisticsRepository] implementation.
-final statisticsRepositoryProvider = Provider<IStatisticsRepository>((ref) {
+/// Provides the [ITrashRepository] implementation.
+final trashRepositoryProvider = Provider<ITrashRepository>((ref) {
   final db = ref.watch(appDatabaseProvider).requireValue;
-  return StatisticsRepositoryImpl(db.statisticsDao);
+  return TrashRepository(
+    trashDao: db.trashDao,
+    savingsGoalDao: db.savingsGoalDao,
+  );
 });
 
 /// Provides the [IExchangeRateRepository] implementation.
@@ -224,17 +227,16 @@ final wipeAllDataUseCaseProvider = Provider<WipeAllDataUseCase>((ref) {
 
 /// Provides the [TrashUsecases] instance.
 final trashUsecasesProvider = Provider<TrashUsecases>((ref) {
-  final db = ref.watch(appDatabaseProvider).requireValue;
+  final trashRepo = ref.watch(trashRepositoryProvider);
   final transactionRepo = ref.watch(transactionRepositoryProvider);
   final accountRepo = ref.watch(accountRepositoryProvider);
   final updateBudgetProgressUseCase =
       ref.watch(updateBudgetProgressUseCaseProvider);
   return TrashUsecases(
-    db.trashDao,
+    trashRepo,
     transactionRepo,
     accountRepo,
     updateBudgetProgressUseCase,
-    db.savingsGoalDao,
   );
 });
 

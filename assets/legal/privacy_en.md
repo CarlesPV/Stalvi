@@ -17,7 +17,16 @@ Protecting your sensitive financial information is our highest priority. We empl
 - **Database Encryption:** All locally stored data is heavily encrypted using SQLCipher. Your data is encrypted at rest on your device's storage.
 - **Biometric and PIN Authentication:** Access to the Application is safeguarded by your device's native biometric authentication mechanisms (such as Fingerprint or FaceID) and a secure Personal Identification Number (PIN).
 - **Data Isolation:** Because the Application operates offline without server synchronization, your data is inherently protected from remote server breaches, network interceptions, and third-party data mining.
+feat: Implement Trash Repository and Use Cases
 
+- Added TrashRepository to handle soft-delete recovery and purge operations.
+- Created ITrashRepository interface for trash-related data operations.
+- Updated TrashUsecases to utilize ITrashRepository for managing trash items.
+- Refactored AutoPurgeUseCase to use ITrashRepository instead of TrashDao.
+- Enhanced StatisticsRepositoryImpl to use domain-specific TransactionType.
+- Updated app_database.dart documentation to reflect current database schema.
+- Improved code readability with consistent formatting and comments.
+- Added tests for TrashUsecases and updated existing tests for StatisticsRepository.
 ## 4. Data Sharing and Third Parties
 We guarantee that your personal and financial data is completely private.
 - We do not sell, rent, or share your data with any third parties, advertisers, or data brokers.
@@ -37,4 +46,4 @@ Stalvi is not intended for use by individuals under the age of 14 without the ex
 We reserve the right to update or modify this Privacy Policy at any time to reflect changes in legal requirements or Application features. Any substantial changes will be communicated to you through an update to the Application. Your continued use of the Application following any updates constitutes your acceptance of the revised Privacy Policy.
 
 ## 8. Contact Information
-If you have any questions, concerns, or inquiries regarding this Privacy Policy or our data protection practices, please contact the developer via GitHub at https://github.com/CarlesPV or via email at carles.peiro.v@gmail.com.
+If you have any questions, concerns, or inquiries regarding this Privacy Policy or our data protection practices, please contact the developer via GitHub at https://github.com/CarlesPV.

@@ -36,4 +36,4 @@ Estos Términos y Condiciones se regirán e interpretarán de acuerdo con las le
 Nos reservamos el derecho, a nuestra entera discreción, de modificar o reemplazar estos Términos en cualquier momento. Si una revisión es material, proporcionaremos un aviso razonable antes de que los nuevos términos entren en vigencia. Al continuar accediendo o utilizando nuestra Aplicación después de que esas revisiones entren en vigencia, usted acepta estar sujeto a los Términos revisados.
 
 ## 10. Información de Contacto
-Si tiene alguna pregunta, inquietud o consulta con respecto a estos Términos y Condiciones, comuníquese con el desarrollador a través de GitHub en https://github.com/CarlesPV o por correo electrónico en carles.peiro.v@gmail.com.
+Si tiene alguna pregunta, inquietud o consulta con respecto a estos Términos y Condiciones, comuníquese con el desarrollador a través de GitHub en https://github.com/CarlesPV.

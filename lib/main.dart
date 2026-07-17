@@ -14,6 +14,9 @@ import 'package:stalvi/infrastructure/background_execution_service.dart';
 
 /// Entry point for the Stalvi application.
 ///
+/// **Presentation Layer**: Responsible for rendering UI and managing state.
+/// We use GoRouter for navigation and Riverpod (`@riverpod`) for State Management.
+///
 /// [WidgetsFlutterBinding.ensureInitialized] is called to guarantee that all
 /// Flutter engine bindings (required by plugins such as [local_auth] and
 /// [flutter_secure_storage]) are set up before any async work begins.
