@@ -10,22 +10,6 @@ void main() {
       expect(getIconData('shopping_cart'), Icons.shopping_cart_rounded);
     });
 
-    test('parses hex code points to dynamic IconData', () {
-      final icon = getIconData('0xe3af');
-      expect(icon.codePoint, 0xe3af);
-      expect(icon.fontFamily, 'MaterialIcons');
-
-      final iconNo0x = getIconData('E3AF');
-      expect(iconNo0x.codePoint, 0xe3af);
-      expect(iconNo0x.fontFamily, 'MaterialIcons');
-    });
-
-    test('parses decimal code points to dynamic IconData', () {
-      final icon = getIconData('58287');
-      expect(icon.codePoint, 58287);
-      expect(icon.fontFamily, 'MaterialIcons');
-    });
-
     test('falls back to Icons.category_rounded for unknown names', () {
       expect(getIconData('__unknown__'), Icons.category_rounded);
     });

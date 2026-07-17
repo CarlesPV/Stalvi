@@ -231,27 +231,7 @@ class CategoryIconPicker extends StatelessWidget {
       if (entry.key == key) return entry.value;
     }
 
-    // Decimal representation: e.g. "58287" (pure digits)
-    final decRegex = RegExp(r'^\d+$');
-    if (decRegex.hasMatch(key)) {
-      final codePoint = int.tryParse(key);
-      if (codePoint != null) {
-        return IconData(codePoint, fontFamily: 'MaterialIcons');
-      }
-    }
-
-    // Hexadecimal representation: e.g. "0xe3af" or "E3AF" or "0XE3AF"
-    final hexRegex = RegExp(r'^(?:0[xX])?([a-fA-F0-9]{4,6})$');
-    final hexMatch = hexRegex.firstMatch(key);
-    if (hexMatch != null) {
-      final hexString = hexMatch.group(1);
-      if (hexString != null) {
-        final codePoint = int.tryParse(hexString, radix: 16);
-        if (codePoint != null) {
-          return IconData(codePoint, fontFamily: 'MaterialIcons');
-        }
-      }
-    }
+    // Fallback
 
     return Icons.category;
   }
