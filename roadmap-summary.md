@@ -606,7 +606,33 @@ This document lists the completed phases of the Stalvi development roadmap, prov
   - 100% clean static analysis (`flutter analyze --fatal-infos --fatal-warnings` with 0 issues).
   - All 508 automated unit and widget tests pass cleanly with a 100% success rate.
 
+#### Phase 43: Backup Username Update & Filename Customization
+* **Completion Date:** July 18, 2026
+* **Objective:** Ensure restoration updates the active user's profile name, standardize filename prefixes based on document type (Stalvi_Backup, Stalvi_Table, Stalvi_Overview), and confirm 100% build health.
+* **Accomplishments:**
+  - **Profile Restoration Sync**: Updated `ImportServiceImpl` to overwrite the active user's profile name in the database with the one preserved in the backup JSON.
+  - **Filename Customization**: Standardized export filenames to append `yyyyMMdd_HHmmss` timestamps prefixed with `Stalvi_Backup_`, `Stalvi_Table_`, and `Stalvi_Overview_`.
+  - **CI & Build Validation**: Executed all tests (508) and verified 0 warnings/infos on static analysis.
+* **Verification:**
+  - 100% clean static analysis (`flutter analyze --fatal-infos --fatal-warnings` with 0 issues).
+  - All 508 automated unit and widget tests pass cleanly with a 100% success rate.
+
+### Phase 44: Exact UTC+2 Calculations & Dual-Execution Background Strategy with Idempotency
+* **Completion Date:** July 19, 2026
+* **Objective:** Prevent timezone discrepancies in recurring transactions by forcing exact UTC+2 calculations, implement a robust dual-execution background strategy (at 00:00 and 01:00 UTC+2), and prevent duplicate creations with UUID v5 URL-based idempotency keys.
+* **Accomplishments:**
+  - **Exact UTC+2 Boundaries**: Reconfigured date calculations for automatic transactions to operate strictly within the UTC+2 timezone, truncating time to exact date boundaries.
+  - **Dual Background Strategy**: Implemented dual Daily execution triggers (00:00 and 01:00 UTC+2) to verify and execute pending transactions, preventing Doze mode or task interruption drops.
+  - **UUID v5 Idempotency**: Employed Uuid v5 URL-based deterministic keys generated from transaction cycle and ID, checking if a transaction exists before creating it, enforcing strict idempotency.
+  - **Robust Testing**: Expanded `execute_recurring_transactions_usecase_test.dart` to cover both calculations under leap years and short months, and strict idempotency checks simulating multiple firings.
+* **Verification:**
+  - 100% clean static analysis (`flutter analyze --fatal-infos --fatal-warnings` with 0 issues).
+  - Clean build generation and `build_runner` code generation.
+  - Executed tests showing 100% success rate for all unit and widget tests.
+
 ## Recent Updates
+- Implemented exact UTC+2 calculations and a dual-execution background strategy (00:00 and 01:00 UTC+2) with UUID v5 URL-based idempotency checks for recurring transactions (Phase 44).
+- Fixed backup import username update and standardized export filename prefixes (Phase 43).
 - Resolved transfer transaction resolution bugs in PDF export by querying raw transactions for destination matching (Phase 42).
 - Added padlock icons trailing read-only input fields in Budgets and Savings Goals detail sheets (Phase 41).
 - Completed detailed GDPR/LOPDGDD compliance legal documents rewrite across Catalan, English, and Spanish (Phase 40).

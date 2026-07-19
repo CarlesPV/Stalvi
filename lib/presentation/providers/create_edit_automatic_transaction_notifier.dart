@@ -314,57 +314,51 @@ class CreateEditAutomaticTransactionNotifier extends AutoDisposeFamilyNotifier<
           return arg!.nextExecutionDate;
         }
 
-        // Anchor all "next date" calculations to 22:00 UTC, which equals
-        // 00:00 UTC+2 (both CET and CEST).  This is the same anchor used by
-        // [BackgroundTasks.registerPeriodicTasks] so the first background
-        // execution and the stored nextExecutionDate will be in sync.
         final nowUtc = DateTime.now().toUtc();
+        final nowUtcPlus2 = nowUtc.add(const Duration(hours: 2));
 
-        // Start from today's 22:00 UTC; advance to tomorrow if already past.
-        var targetUtc =
-            DateTime.utc(nowUtc.year, nowUtc.month, nowUtc.day, 22, 0, 0);
-        if (!nowUtc.isBefore(targetUtc)) {
-          targetUtc = targetUtc.add(const Duration(days: 1));
-        }
+        // Start from tomorrow's 00:00:00 UTC+2
+        var targetUtcPlus2 = DateTime.utc(
+          nowUtcPlus2.year,
+          nowUtcPlus2.month,
+          nowUtcPlus2.day,
+        ).add(const Duration(days: 1));
 
         switch (state.recurrenceType) {
           case RecurrenceType.intervalDays:
-            // Add the interval on top of the next midnight anchor.
-            return targetUtc.add(Duration(days: state.recurrenceDays - 1));
+            // Add the interval (recurrenceDays - 1) on top of tomorrow
+            targetUtcPlus2 =
+                targetUtcPlus2.add(Duration(days: state.recurrenceDays - 1));
+            break;
 
           case RecurrenceType.weekly:
-            return targetUtc.add(const Duration(days: 6));
+            targetUtcPlus2 = targetUtcPlus2.add(const Duration(days: 6));
+            break;
 
           case RecurrenceType.monthly:
-            // Same calendar day next month (UTC), clamped.
-            int nextMonth = targetUtc.month + 1;
-            int nextYear = targetUtc.year;
+            int nextMonth = targetUtcPlus2.month + 1;
+            int nextYear = targetUtcPlus2.year;
             if (nextMonth > 12) {
               nextMonth = 1;
               nextYear++;
             }
             final lastDay = DateTime.utc(nextYear, nextMonth + 1, 0).day;
-            final targetDay = targetUtc.day.clamp(1, lastDay);
-            return DateTime.utc(nextYear, nextMonth, targetDay, 22, 0, 0);
+            final targetDay = targetUtcPlus2.day.clamp(1, lastDay);
+            targetUtcPlus2 = DateTime.utc(nextYear, nextMonth, targetDay);
+            break;
 
           case RecurrenceType.yearly:
-            // Same calendar date next year (UTC), clamped.
-            final yNextYear = targetUtc.year + 1;
+            final yNextYear = targetUtcPlus2.year + 1;
             final yLastDay =
-                DateTime.utc(yNextYear, targetUtc.month + 1, 0).day;
-            final yTargetDay = targetUtc.day.clamp(1, yLastDay);
-            return DateTime.utc(
-              yNextYear,
-              targetUtc.month,
-              yTargetDay,
-              22,
-              0,
-              0,
-            );
+                DateTime.utc(yNextYear, targetUtcPlus2.month + 1, 0).day;
+            final yTargetDay = targetUtcPlus2.day.clamp(1, yLastDay);
+            targetUtcPlus2 =
+                DateTime.utc(yNextYear, targetUtcPlus2.month, yTargetDay);
+            break;
 
           case RecurrenceType.specificDayOfMonth:
-            int nextMonth = targetUtc.month + 1;
-            int nextYear = targetUtc.year;
+            int nextMonth = targetUtcPlus2.month + 1;
+            int nextYear = targetUtcPlus2.year;
             if (nextMonth > 12) {
               nextMonth = 1;
               nextYear++;
@@ -373,8 +367,12 @@ class CreateEditAutomaticTransactionNotifier extends AutoDisposeFamilyNotifier<
                 DateTime.utc(nextYear, nextMonth + 1, 0).day;
             final specificDay =
                 state.recurrenceDays.clamp(1, lastDayOfNextMonth);
-            return DateTime.utc(nextYear, nextMonth, specificDay, 22, 0, 0);
+            targetUtcPlus2 = DateTime.utc(nextYear, nextMonth, specificDay);
+            break;
         }
+
+        // Return the exact instant of 00:00 UTC+2, which is 22:00:00 UTC of the previous day
+        return targetUtcPlus2.subtract(const Duration(hours: 2));
       }
 
       final txn = AutomaticTransaction(

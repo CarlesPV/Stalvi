@@ -313,12 +313,13 @@
   - [x] Update unit tests to stub raw transaction queries and verify correct behavior.
   - [x] Maintain 100% build health, static analysis compliance, and test pass rate.
 
-- [x] **Phase 43: Backup Username Update & Filename Customization**
-  - [x] Update import service to overwrite the active user's profile name with the one saved in the backup payload.
-  - [x] Rename export filename prefixes based on document type: "Stalvi_Backup" for backups, "Stalvi_Table" for CSVs, and "Stalvi_Overview" for PDFs.
-  - [x] Ensure 100% build health, clean lint checks (0 issues on `flutter analyze`), and successfully execute all tests.
+- [x] **Phase 44: Exact UTC+2 Calculations & Dual-Execution Background Strategy with Idempotency**
+  - [x] Implement exact UTC+2 calculations for recurring transaction trigger dates to avoid timezone discrepancies.
+  - [x] Set up dual-execution background strategy executing at 00:00 and 01:00 UTC+2 daily.
+  - [x] Introduce UUID v5 URL-based keys for robust idempotency checks, preventing duplicate transaction creation on multiple runs.
+  - [x] Write comprehensive unit tests verifying calculation logic across leap years, short months, and idempotency.
 
-- [ ] **Phase 44: Future Analysis & Next Steps**
+- [ ] **Phase 45: Future Analysis & Next Steps**
   - [ ] Analyze app usage and user feedback to inform future development.
   - [ ] Identify and resolve potential bottlenecks in database queries and UI rendering.
   - [ ] Outline the requirements for the next major feature release.

@@ -30,7 +30,8 @@ Designed with strict **Clean Architecture** principles, the project ensures isol
 ### ⏰ Automatic & Recurring Transactions
 * **Automated Engine:** Evaluates and automatically generates scheduled transactions based on custom day intervals.
 * **End-of-Month Clamping:** Implements safe calendar clamping logic (e.g., executing transactions scheduled for the 30th or 31st on February 28th/29th or the last day of short months).
-* **Background Tasks:** Operates in the background via `workmanager` to verify and execute pending automatic transactions periodically.
+* **Background Tasks:** Operates in the background via `workmanager` using a dual-execution strategy (primary task at 00:00 UTC+2 and a reconciliation task at 01:00 UTC+2) to verify and execute pending automatic transactions.
+* **Idempotency & UTC+2 Precision:** Employs deterministic UUID v5 URL-based keys to ensure idempotency across multiple runs, strictly validating that only one transaction is generated per execution cycle, calculated precisely using the UTC+2 timezone offset.
 * **Soft-Delete Support:** Easily soft-delete recurring templates, moving them to the Recycle Bin and disabling automated generation until restored or permanently purged.
 
 ### 📊 Budgets & Savings Goals

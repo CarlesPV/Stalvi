@@ -26,12 +26,8 @@ class ExecuteRecurringTransactionsUseCase {
   );
 
   Future<void> execute() async {
-    // We execute the check using the current time
     final nowUtc = DateTime.now().toUtc();
     final nowUtcPlus2 = nowUtc.add(const Duration(hours: 2));
-
-    // Truncate to 00:00:00 UTC+2, represented as a UTC DateTime
-    // to avoid device-local timezone issues during calculation.
     final todayUtcPlus2 =
         DateTime.utc(nowUtcPlus2.year, nowUtcPlus2.month, nowUtcPlus2.day);
 
@@ -49,27 +45,49 @@ class ExecuteRecurringTransactionsUseCase {
         continue;
       }
 
-      // We ensure the nextExecutionDate is also treated as a UTC DateTime
-      // representing the date in UTC+2.
-      final nextDateUtcPlus2 = DateTime.utc(
-        autoTxn.nextExecutionDate.year,
-        autoTxn.nextExecutionDate.month,
-        autoTxn.nextExecutionDate.day,
-      );
+      var currentAutoTxn = autoTxn;
 
-      // Trigger if today is exactly the scheduled day, or we are past it
-      if (nextDateUtcPlus2.isBefore(todayUtcPlus2) ||
-          nextDateUtcPlus2.isAtSameMomentAs(todayUtcPlus2)) {
-        try {
-          await _fireTransaction(autoTxn, nowUtc, todayUtcPlus2);
-          fired++;
-        } catch (e, st) {
-          debugPrint(
-            '[ExecuteRecurringTxns] ERROR firing "${autoTxn.name}": $e\n$st',
-          );
+      while (true) {
+        final nextDateUtc = currentAutoTxn.nextExecutionDate.toUtc();
+        final nextDateUtcPlus2Instant =
+            nextDateUtc.add(const Duration(hours: 2));
+        final nextDateUtcPlus2 = DateTime.utc(
+          nextDateUtcPlus2Instant.year,
+          nextDateUtcPlus2Instant.month,
+          nextDateUtcPlus2Instant.day,
+        );
+
+        if (nextDateUtcPlus2.isBefore(todayUtcPlus2) ||
+            nextDateUtcPlus2.isAtSameMomentAs(todayUtcPlus2)) {
+          try {
+            await _fireTransaction(currentAutoTxn, nowUtc, nextDateUtcPlus2);
+            fired++;
+
+            final nextDate = calculateNextTriggerDateUtcPlus2(
+              currentAutoTxn.nextExecutionDate,
+              currentAutoTxn.recurrenceType,
+              currentAutoTxn.recurrenceDays,
+            );
+
+            if (!nextDate.isAfter(currentAutoTxn.nextExecutionDate)) {
+              debugPrint(
+                '[ExecuteRecurringTxns] ERROR: nextDate is not after current nextExecutionDate! Breaking loop to prevent infinite loop.',
+              );
+              break;
+            }
+
+            currentAutoTxn =
+                currentAutoTxn.copyWith(nextExecutionDate: nextDate);
+          } catch (e, st) {
+            debugPrint(
+              '[ExecuteRecurringTxns] ERROR firing "${currentAutoTxn.name}": $e\n$st',
+            );
+            break;
+          }
+        } else {
+          skipped++;
+          break;
         }
-      } else {
-        skipped++;
       }
     }
     debugPrint('[ExecuteRecurringTxns] Done. fired=$fired skipped=$skipped');
@@ -78,69 +96,82 @@ class ExecuteRecurringTransactionsUseCase {
   Future<void> _fireTransaction(
     AutomaticTransaction autoTxn,
     DateTime nowUtc,
-    DateTime executionDateUtcPlus2,
+    DateTime executionCycleDateUtcPlus2,
   ) async {
-    final account = await accountRepo.getAccountById(autoTxn.accountId);
-    final profile = account != null
-        ? await profileRepo.getProfileById(account.userId)
-        : null;
+    final idempotencyKey =
+        'stalvi://autotxn/${autoTxn.id}/${executionCycleDateUtcPlus2.year}-${executionCycleDateUtcPlus2.month.toString().padLeft(2, '0')}-${executionCycleDateUtcPlus2.day.toString().padLeft(2, '0')}';
+    final deterministicId =
+        const Uuid().v5(Namespace.url.value, idempotencyKey);
 
-    final String originalCurrency = autoTxn.currency;
-    final String defaultCurrency = profile?.defaultCurrency ?? originalCurrency;
+    final existingTxn =
+        await transactionRepo.getTransactionById(deterministicId);
 
-    int? convertedAmount;
-    double? exchangeRate;
-    String? exchangeRateSnapshot;
+    if (existingTxn != null) {
+      debugPrint(
+        '[ExecuteRecurringTxns] Transaction already generated for cycle $executionCycleDateUtcPlus2 (id: $deterministicId). Skipping creation.',
+      );
+    } else {
+      final account = await accountRepo.getAccountById(autoTxn.accountId);
+      final profile = account != null
+          ? await profileRepo.getProfileById(account.userId)
+          : null;
 
-    try {
-      final localRates =
-          await exchangeRateRepo.getLocalRates(baseCurrency: defaultCurrency);
-      if (localRates != null) {
-        final ratesMap = Map<String, double>.from(localRates.rates);
-        ratesMap[localRates.baseCurrency] = 1.0;
-        exchangeRateSnapshot = jsonEncode(ratesMap);
-        if (originalCurrency != defaultCurrency) {
-          exchangeRate = localRates.rateFor(originalCurrency);
-        }
-      }
-    } catch (_) {}
+      final String originalCurrency = autoTxn.currency;
+      final String defaultCurrency =
+          profile?.defaultCurrency ?? originalCurrency;
 
-    if (originalCurrency != defaultCurrency && exchangeRate == null) {
+      int? convertedAmount;
+      double? exchangeRate;
+      String? exchangeRateSnapshot;
+
       try {
-        final remoteRates = await exchangeRateRepo.getLatestRates(
-          baseCurrency: defaultCurrency,
-        );
-        final ratesMap = Map<String, double>.from(remoteRates.rates);
-        ratesMap[remoteRates.baseCurrency] = 1.0;
-        exchangeRateSnapshot ??= jsonEncode(ratesMap);
-        exchangeRate = remoteRates.rateFor(originalCurrency);
+        final localRates =
+            await exchangeRateRepo.getLocalRates(baseCurrency: defaultCurrency);
+        if (localRates != null) {
+          final ratesMap = Map<String, double>.from(localRates.rates);
+          ratesMap[localRates.baseCurrency] = 1.0;
+          exchangeRateSnapshot = jsonEncode(ratesMap);
+          if (originalCurrency != defaultCurrency) {
+            exchangeRate = localRates.rateFor(originalCurrency);
+          }
+        }
       } catch (_) {}
+
+      if (originalCurrency != defaultCurrency && exchangeRate == null) {
+        try {
+          final remoteRates = await exchangeRateRepo.getLatestRates(
+            baseCurrency: defaultCurrency,
+          );
+          final ratesMap = Map<String, double>.from(remoteRates.rates);
+          ratesMap[remoteRates.baseCurrency] = 1.0;
+          exchangeRateSnapshot ??= jsonEncode(ratesMap);
+          exchangeRate = remoteRates.rateFor(originalCurrency);
+        } catch (_) {}
+      }
+
+      if (originalCurrency != defaultCurrency && exchangeRate != null) {
+        convertedAmount = (autoTxn.amount / exchangeRate).round();
+      }
+
+      final newTxn = dtxn.Transaction(
+        id: deterministicId,
+        amount: autoTxn.amount,
+        date: nowUtc,
+        type: autoTxn.type,
+        accountId: autoTxn.accountId,
+        categoryId: autoTxn.categoryId,
+        notes: autoTxn.notes,
+        originalCurrency: originalCurrency,
+        convertedAmount: convertedAmount,
+        exchangeRate: exchangeRate,
+        exchangeRateSnapshot: exchangeRateSnapshot,
+        createdAt: nowUtc,
+        modifiedAt: nowUtc,
+      );
+
+      await transactionRepo.createTransaction(newTxn);
     }
 
-    if (originalCurrency != defaultCurrency && exchangeRate != null) {
-      convertedAmount = (autoTxn.amount / exchangeRate).round();
-    }
-
-    final newTxn = dtxn.Transaction(
-      id: const Uuid().v4(),
-      amount: autoTxn.amount,
-      date: nowUtc,
-      type: autoTxn.type,
-      accountId: autoTxn.accountId,
-      categoryId: autoTxn.categoryId,
-      notes: autoTxn.notes,
-      originalCurrency: originalCurrency,
-      convertedAmount: convertedAmount,
-      exchangeRate: exchangeRate,
-      exchangeRateSnapshot: exchangeRateSnapshot,
-      createdAt: nowUtc,
-      modifiedAt: nowUtc,
-    );
-
-    await transactionRepo.createTransaction(newTxn);
-
-    // Ensure we calculate the next execution date based on the *scheduled* date,
-    // not today's date, to avoid drift if a task fires late.
     final nextDate = calculateNextTriggerDateUtcPlus2(
       autoTxn.nextExecutionDate,
       autoTxn.recurrenceType,
@@ -151,13 +182,17 @@ class ExecuteRecurringTransactionsUseCase {
   }
 
   /// Pure function that calculates the exact next trigger date in UTC+2 (truncating time to 00:00:00).
+  /// Returns the corresponding instant (which is 22:00:00 UTC of the previous day).
   static DateTime calculateNextTriggerDateUtcPlus2(
     DateTime fromDate,
     RecurrenceType type,
     int recurrenceDays,
   ) {
-    // Ensure fromDate is treated as a pure Date (00:00:00) in UTC for calculation
-    final fromUtc2 = DateTime.utc(fromDate.year, fromDate.month, fromDate.day);
+    final fromUtc = fromDate.toUtc();
+    final fromUtcPlus2 = fromUtc.add(const Duration(hours: 2));
+    final fromUtc2 =
+        DateTime.utc(fromUtcPlus2.year, fromUtcPlus2.month, fromUtcPlus2.day);
+
     DateTime nextDate = fromUtc2;
 
     switch (type) {
@@ -177,7 +212,8 @@ class ExecuteRecurringTransactionsUseCase {
         nextDate = _advanceByMonths(fromUtc2, 1, recurrenceDays);
         break;
     }
-    return nextDate;
+
+    return nextDate.subtract(const Duration(hours: 2));
   }
 
   static DateTime _advanceByMonths(DateTime from, int months, int targetDay) {
