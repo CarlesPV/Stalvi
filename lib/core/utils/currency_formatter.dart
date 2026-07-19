@@ -5,7 +5,7 @@ import 'package:stalvi/presentation/providers/repository_providers.dart';
 /// Provider for CurrencyFormatter that uses the user's preferred currency.
 final currencyFormatterProvider = Provider<CurrencyFormatter>((ref) {
   final profileAsync = ref.watch(defaultProfileProvider);
-  final currencyCode = profileAsync.valueOrNull?.defaultCurrency ?? 'EUR';
+  final currencyCode = profileAsync.value?.defaultCurrency ?? 'EUR';
   return CurrencyFormatter(currencyCode: currencyCode);
 });
 

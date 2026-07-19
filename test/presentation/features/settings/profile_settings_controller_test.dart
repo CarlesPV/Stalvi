@@ -270,6 +270,8 @@ void main() {
         ],
       );
 
+      final _ =
+          testContainer.listen(profileSettingsControllerProvider, (_, __) {});
       final controller =
           testContainer.read(profileSettingsControllerProvider.notifier);
 

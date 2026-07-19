@@ -1,4 +1,3 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 import 'package:stalvi/core/errors/app_exceptions.dart';
 import 'package:stalvi/core/utils/currency_formatter.dart';
@@ -8,6 +7,9 @@ import 'repository_providers.dart';
 import 'statistics_providers.dart';
 import 'locale_provider.dart';
 import 'package:stalvi/core/l10n/app_localizations.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+part 'add_transaction_notifier.g.dart';
 
 /// State representation for the Add Transaction form.
 /// State representation for the Add Transaction form.
@@ -85,7 +87,8 @@ class AddTransactionState {
 
 /// Form state controller that manages form input fields, performs validation,
 /// and executes [AddTransactionUseCase] using the clean architecture boundaries.
-class AddTransactionNotifier extends AutoDisposeNotifier<AddTransactionState> {
+@riverpod
+class AddTransactionNotifier extends _$AddTransactionNotifier {
   @override
   AddTransactionState build() {
     // Listens to accounts list. When loaded, defaults the selected account to
@@ -305,8 +308,7 @@ class AddTransactionNotifier extends AutoDisposeNotifier<AddTransactionState> {
       final id = const Uuid().v4();
       final trimmedNotes = state.notes.trim();
 
-      final savingsGoals =
-          ref.read(savingsGoalsStreamProvider).valueOrNull ?? [];
+      final savingsGoals = ref.read(savingsGoalsStreamProvider).value ?? [];
       final isSavingsGoal = savingsGoals.any((g) => g.id == state.toAccountId);
 
       await useCase.execute(
@@ -347,7 +349,3 @@ class AddTransactionNotifier extends AutoDisposeNotifier<AddTransactionState> {
 }
 
 /// Global provider for the auto-disposing state notifier.
-final addTransactionNotifierProvider =
-    AutoDisposeNotifierProvider<AddTransactionNotifier, AddTransactionState>(
-  AddTransactionNotifier.new,
-);

@@ -185,7 +185,7 @@ final periodSummaryProvider =
   }
 
   final transactions = transactionsAsync.value!;
-  final rates = ratesAsync.valueOrNull;
+  final rates = ratesAsync.value;
 
   double totalIncome = 0;
   double totalExpense = 0;
@@ -238,7 +238,7 @@ final dashboardPeriodSummaryProvider =
   }
 
   final transactions = transactionsAsync.value!;
-  final rates = ratesAsync.valueOrNull;
+  final rates = ratesAsync.value;
 
   double totalIncome = 0;
   double totalExpense = 0;
@@ -348,7 +348,7 @@ final topExpenseCategoriesProvider =
       transactionsAsync.value!,
       filter,
       targetCurrency,
-      ratesAsync.valueOrNull,
+      ratesAsync.value,
       categoriesAsync.value!,
       TransactionType.expense,
     ),
@@ -382,7 +382,7 @@ final topIncomeCategoriesProvider =
       transactionsAsync.value!,
       filter,
       targetCurrency,
-      ratesAsync.valueOrNull,
+      ratesAsync.value,
       categoriesAsync.value!,
       TransactionType.income,
     ),
@@ -394,12 +394,12 @@ final topIncomeCategoriesProvider =
 final statisticsCurrencyProvider = Provider.autoDispose<String>((ref) {
   final filter = ref.watch(statisticsFilterProvider);
   if (filter.accountId != null) {
-    final accounts = ref.watch(accountsListProvider).valueOrNull ?? [];
+    final accounts = ref.watch(accountsListProvider).value ?? [];
     try {
       return accounts.firstWhere((a) => a.id == filter.accountId).currency;
     } catch (_) {}
   }
-  final profile = ref.watch(defaultProfileProvider).valueOrNull;
+  final profile = ref.watch(defaultProfileProvider).value;
   return profile?.defaultCurrency ?? 'EUR';
 });
 
@@ -440,7 +440,7 @@ final globalBalanceProvider = Provider.autoDispose<AsyncValue<double>>((ref) {
       balance,
       account.currency,
       targetCurrency,
-      ratesAsync.valueOrNull,
+      ratesAsync.value,
     );
     totalBalance += convertedBalance;
   }

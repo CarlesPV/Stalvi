@@ -152,7 +152,7 @@ void main() {
 
       expect(ok, isTrue);
       expect(
-        container.read(authNotifierProvider).valueOrNull,
+        container.read(authNotifierProvider).value,
         AuthStatus.authenticated,
       );
     });
@@ -223,7 +223,7 @@ void main() {
 
       expect(notifier.remainingPinAttempts, 0);
       expect(
-        container.read(authNotifierProvider).valueOrNull,
+        container.read(authNotifierProvider).value,
         AuthStatus.pinLockedOut,
       );
       verify(mockStorage.saveLockoutTimestamp(any)).called(1);
@@ -259,7 +259,7 @@ void main() {
         await notifier.verifyPin('wrong');
       }
       expect(
-        container.read(authNotifierProvider).valueOrNull,
+        container.read(authNotifierProvider).value,
         AuthStatus.pinLockedOut,
       );
 
@@ -267,7 +267,7 @@ void main() {
       final result = await notifier.verifyPin('1234');
       expect(result, isFalse);
       expect(
-        container.read(authNotifierProvider).valueOrNull,
+        container.read(authNotifierProvider).value,
         AuthStatus.pinLockedOut,
       );
     });
@@ -299,7 +299,7 @@ void main() {
 
       expect(notifier.remainingPinAttempts, 1);
       expect(
-        container.read(authNotifierProvider).valueOrNull,
+        container.read(authNotifierProvider).value,
         AuthStatus.unauthenticated,
       );
       verify(mockStorage.deleteLockoutTimestamp()).called(greaterThan(0));
@@ -320,7 +320,7 @@ void main() {
         await notifier.verifyPin('wrong');
       }
       expect(
-        container.read(authNotifierProvider).valueOrNull,
+        container.read(authNotifierProvider).value,
         AuthStatus.pinLockedOut,
       );
 
@@ -331,7 +331,7 @@ void main() {
       // Grace attempt granted.
       expect(notifier.remainingPinAttempts, 1);
       expect(
-        container.read(authNotifierProvider).valueOrNull,
+        container.read(authNotifierProvider).value,
         AuthStatus.unauthenticated,
       );
 
@@ -339,7 +339,7 @@ void main() {
       await notifier.verifyPin('wrong');
 
       expect(
-        container.read(authNotifierProvider).valueOrNull,
+        container.read(authNotifierProvider).value,
         AuthStatus.pinLockedOut,
         reason: 'A second 30 s lockout cycle should begin, not permanent lock.',
       );
@@ -364,7 +364,7 @@ void main() {
       container.read(authNotifierProvider.notifier).resetStatus();
 
       expect(
-        container.read(authNotifierProvider).valueOrNull,
+        container.read(authNotifierProvider).value,
         AuthStatus.unauthenticated,
       );
     });

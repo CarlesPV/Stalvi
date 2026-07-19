@@ -1,10 +1,12 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:stalvi/domain/entities/profile.dart';
 import 'package:stalvi/domain/repositories/i_export_service.dart';
 import 'package:stalvi/domain/usecases/update_credentials_usecase.dart';
 import 'package:stalvi/domain/usecases/pdf_export_date_range.dart';
 import '../../providers/repository_providers.dart';
 import '../../providers/statistics_providers.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+part 'profile_settings_controller.g.dart';
 
 enum PinChangeStep { verifyOld, enterNew }
 
@@ -44,19 +46,19 @@ class ProfileSettingsState {
   }
 }
 
-class ProfileSettingsController extends StateNotifier<ProfileSettingsState> {
-  final Ref _ref;
-
-  ProfileSettingsController(this._ref) : super(const ProfileSettingsState()) {
-    _loadProfile();
+@riverpod
+class ProfileSettingsController extends _$ProfileSettingsController {
+  @override
+  ProfileSettingsState build() {
+    Future.microtask(_loadProfile);
+    return const ProfileSettingsState(isLoading: true);
   }
 
   Future<void> _loadProfile() async {
-    state = state.copyWith(isLoading: true, error: null);
     try {
-      final repo = _ref.read(profileRepositoryProvider);
+      final repo = ref.read(profileRepositoryProvider);
       final profile = await repo.getFirstProfile();
-      state = state.copyWith(profile: profile, isLoading: false);
+      state = state.copyWith(profile: profile, isLoading: false, error: null);
     } catch (e) {
       state = state.copyWith(isLoading: false, error: e.toString());
     }
@@ -69,7 +71,7 @@ class ProfileSettingsController extends StateNotifier<ProfileSettingsState> {
 
     state = state.copyWith(isLoading: true, error: null);
     try {
-      final repo = _ref.read(profileRepositoryProvider);
+      final repo = ref.read(profileRepositoryProvider);
       final updatedProfile = currentProfile.copyWith(
         username: username,
         modifiedAt: DateTime.now(),
@@ -90,19 +92,19 @@ class ProfileSettingsController extends StateNotifier<ProfileSettingsState> {
 
     state = state.copyWith(isLoading: true, error: null);
     try {
-      final repo = _ref.read(profileRepositoryProvider);
+      final repo = ref.read(profileRepositoryProvider);
       final updatedProfile = currentProfile.copyWith(
         defaultCurrency: newCurrency,
         modifiedAt: DateTime.now(),
       );
       await repo.updateProfile(updatedProfile);
-      _ref.invalidate(defaultProfileProvider);
-      _ref.invalidate(statisticsCurrencyProvider);
-      _ref.invalidate(periodSummaryProvider);
-      _ref.invalidate(dashboardPeriodSummaryProvider);
-      _ref.invalidate(topExpenseCategoriesProvider);
-      _ref.invalidate(topIncomeCategoriesProvider);
-      _ref.invalidate(globalBalanceProvider);
+      ref.invalidate(defaultProfileProvider);
+      ref.invalidate(statisticsCurrencyProvider);
+      ref.invalidate(periodSummaryProvider);
+      ref.invalidate(dashboardPeriodSummaryProvider);
+      ref.invalidate(topExpenseCategoriesProvider);
+      ref.invalidate(topIncomeCategoriesProvider);
+      ref.invalidate(globalBalanceProvider);
       state = state.copyWith(profile: updatedProfile, isLoading: false);
     } catch (e) {
       state = state.copyWith(isLoading: false, error: e.toString());
@@ -117,7 +119,7 @@ class ProfileSettingsController extends StateNotifier<ProfileSettingsState> {
 
     state = state.copyWith(isLoading: true, error: null);
     try {
-      final useCase = _ref.read(updateCredentialsUseCaseProvider);
+      final useCase = ref.read(updateCredentialsUseCaseProvider);
       await useCase.verifyOldPin(oldPin);
       state = state.copyWith(
         isLoading: false,
@@ -138,7 +140,7 @@ class ProfileSettingsController extends StateNotifier<ProfileSettingsState> {
   Future<void> changePin(String oldPin, String newPin) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
-      final useCase = _ref.read(updateCredentialsUseCaseProvider);
+      final useCase = ref.read(updateCredentialsUseCaseProvider);
       await useCase
           .execute(UpdateCredentialsParams(oldPin: oldPin, newPin: newPin));
       state = state.copyWith(
@@ -174,7 +176,7 @@ class ProfileSettingsController extends StateNotifier<ProfileSettingsState> {
 
     state = state.copyWith(isLoading: true, error: null);
     try {
-      final useCase = _ref.read(updateCredentialsUseCaseProvider);
+      final useCase = ref.read(updateCredentialsUseCaseProvider);
       await useCase.verifyOldPin(pin);
       state = state.copyWith(
         isLoading: false,
@@ -195,7 +197,7 @@ class ProfileSettingsController extends StateNotifier<ProfileSettingsState> {
   Future<void> wipeAllData() async {
     state = state.copyWith(isLoading: true, error: null);
     try {
-      final useCase = _ref.read(wipeAllDataUseCaseProvider);
+      final useCase = ref.read(wipeAllDataUseCaseProvider);
       await useCase.execute();
       state = state.copyWith(isLoading: false);
     } catch (e) {
@@ -210,7 +212,7 @@ class ProfileSettingsController extends StateNotifier<ProfileSettingsState> {
   Future<ExportResult> exportEncryptedBackup({required String password}) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
-      final useCase = _ref.read(exportEncryptedJsonUseCaseProvider);
+      final useCase = ref.read(exportEncryptedJsonUseCaseProvider);
       final result = await useCase.call(password: password);
       state = state.copyWith(isLoading: false);
       return result;
@@ -229,7 +231,7 @@ class ProfileSettingsController extends StateNotifier<ProfileSettingsState> {
   }) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
-      final useCase = _ref.read(importEncryptedJsonUseCaseProvider);
+      final useCase = ref.read(importEncryptedJsonUseCaseProvider);
       await useCase.call(fileBytes, password: password);
       state = state.copyWith(isLoading: false);
     } catch (e) {
@@ -242,7 +244,7 @@ class ProfileSettingsController extends StateNotifier<ProfileSettingsState> {
   Future<ExportResult> exportTransactionsCsv() async {
     state = state.copyWith(isLoading: true, error: null);
     try {
-      final useCase = _ref.read(exportTransactionsCsvUseCaseProvider);
+      final useCase = ref.read(exportTransactionsCsvUseCaseProvider);
       final result = await useCase.call();
       state = state.copyWith(isLoading: false);
       return result;
@@ -259,7 +261,7 @@ class ProfileSettingsController extends StateNotifier<ProfileSettingsState> {
   }) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
-      final useCase = _ref.read(exportMonthlyPdfUseCaseProvider);
+      final useCase = ref.read(exportMonthlyPdfUseCaseProvider);
       final currency = state.profile?.defaultCurrency ?? 'EUR';
       final result = await useCase.call(
         targetCurrency: currency,
@@ -274,9 +276,3 @@ class ProfileSettingsController extends StateNotifier<ProfileSettingsState> {
     }
   }
 }
-
-final profileSettingsControllerProvider =
-    StateNotifierProvider<ProfileSettingsController, ProfileSettingsState>(
-        (ref) {
-  return ProfileSettingsController(ref);
-});

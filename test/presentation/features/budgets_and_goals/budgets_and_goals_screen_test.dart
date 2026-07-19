@@ -187,7 +187,7 @@ void main() {
         ),
       );
 
-      await tester.pump();
+      await tester.pumpAndSettle();
 
       // Verify that the error message shows up on the budgets tab
       expect(find.text('Failed to load budgets.'), findsOneWidget);

@@ -128,8 +128,8 @@ class _PinVerificationSheetState extends ConsumerState<PinVerificationSheet> {
 
     // Watch for lockout triggered by verifyPin
     final authState = ref.watch(authNotifierProvider);
-    final isPinLockedOut = authState.valueOrNull == AuthStatus.pinLockedOut;
-    final isBiometricLockedOut = authState.valueOrNull == AuthStatus.lockedOut;
+    final isPinLockedOut = authState.value == AuthStatus.pinLockedOut;
+    final isBiometricLockedOut = authState.value == AuthStatus.lockedOut;
 
     final settingsState = ref.watch(profileSettingsControllerProvider);
     final isDeleteLockedOut = settingsState.failedDeleteAttempts >= 6;

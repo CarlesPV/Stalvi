@@ -89,7 +89,7 @@ class _CreateAccountDialogState extends ConsumerState<CreateAccountDialog> {
     setState(() => _isLoading = true);
 
     try {
-      final profile = ref.read(defaultProfileProvider).valueOrNull;
+      final profile = ref.read(defaultProfileProvider).value;
       if (profile == null) {
         throw Exception('Default user profile not loaded');
       }

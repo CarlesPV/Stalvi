@@ -77,7 +77,7 @@ class TransactionDetailsDialog extends ConsumerWidget {
             .add_jm()
             .format(transaction.date);
 
-    final accounts = ref.watch(accountsListProvider).valueOrNull ?? [];
+    final accounts = ref.watch(accountsListProvider).value ?? [];
     Account? account;
     Account? originAccount;
     Account? destinationAccount;
@@ -96,7 +96,7 @@ class TransactionDetailsDialog extends ConsumerWidget {
       }
 
       final allTransactions =
-          ref.watch(rawTransactionsStreamProvider).valueOrNull ?? [];
+          ref.watch(rawTransactionsStreamProvider).value ?? [];
       for (final tx in allTransactions) {
         if (tx.id != transaction.id &&
             tx.transferId == transaction.transferId) {
@@ -115,7 +115,7 @@ class TransactionDetailsDialog extends ConsumerWidget {
       }
     }
 
-    final categories = ref.watch(categoriesListProvider).valueOrNull ?? [];
+    final categories = ref.watch(categoriesListProvider).value ?? [];
     Category? category;
     if (transaction.categoryId != null) {
       for (final c in categories) {

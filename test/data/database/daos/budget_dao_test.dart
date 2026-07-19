@@ -1,8 +1,6 @@
-import 'dart:ffi';
 import 'package:drift/drift.dart' as drift;
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:sqlite3/open.dart';
 
 import 'package:stalvi/data/database/app_database.dart';
 import 'package:stalvi/data/database/daos/budget_dao.dart';
@@ -49,12 +47,6 @@ Future<void> _seedForeignKeys(AppDatabase db) async {
 }
 
 void main() {
-  setUpAll(() {
-    open.overrideFor(OperatingSystem.linux, () {
-      return DynamicLibrary.open('libsqlite3.so.0');
-    });
-  });
-
   late AppDatabase database;
   late BudgetDao dao;
 

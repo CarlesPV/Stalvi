@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:file_picker/file_picker.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:stalvi/core/l10n/app_localizations.dart';
 import 'package:stalvi/domain/entities/profile.dart';
@@ -10,35 +10,14 @@ import 'package:stalvi/presentation/features/settings/data_management_screen.dar
 import 'package:stalvi/presentation/providers/repository_providers.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:stalvi/infrastructure/services/biometric_auth_service.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:plugin_platform_interface/plugin_platform_interface.dart';
+
+class MockFilePicker extends Mock
+    with MockPlatformInterfaceMixin
+    implements FilePickerPlatform {}
 
 class MockBiometricAuthService extends Mock implements BiometricAuthService {}
-
-class FakeFilePicker extends FilePicker {
-  @override
-  Future<FilePickerResult?> pickFiles({
-    String? dialogTitle,
-    String? initialDirectory,
-    FileType type = FileType.any,
-    List<String>? allowedExtensions,
-    Function(FilePickerStatus)? onFileLoading,
-    bool allowCompression = true,
-    bool allowMultiple = false,
-    bool withData = false,
-    bool withReadStream = false,
-    int compressionQuality = 30,
-    bool lockParentWindow = false,
-    bool readSequential = false,
-  }) async {
-    return FilePickerResult([
-      PlatformFile(
-        path: '/mock/path/backup.json',
-        name: 'backup.json',
-        size: 100,
-        bytes: Uint8List.fromList([1, 2, 3]),
-      ),
-    ]);
-  }
-}
 
 class FakeProfileRepository implements IProfileRepository {
   @override
@@ -61,10 +40,33 @@ class FakeProfileRepository implements IProfileRepository {
 void main() {
   late FakeProfileRepository fakeProfileRepository;
   late MockBiometricAuthService mockBiometricAuth;
+  late MockFilePicker mockFilePicker;
+
+  setUpAll(() {
+    registerFallbackValue(FileType.any);
+  });
 
   setUp(() {
     fakeProfileRepository = FakeProfileRepository();
     mockBiometricAuth = MockBiometricAuthService();
+    mockFilePicker = MockFilePicker();
+    FilePickerPlatform.instance = mockFilePicker;
+
+    when(
+      () => mockFilePicker.pickFiles(
+        type: any(named: 'type'),
+        allowMultiple: any(named: 'allowMultiple'),
+        withData: any(named: 'withData'),
+      ),
+    ).thenAnswer(
+      (_) async => FilePickerResult([
+        PlatformFile(
+          name: 'backup.aes',
+          size: 1024,
+          bytes: Uint8List.fromList([1, 2, 3]),
+        ),
+      ]),
+    );
 
     when(() => mockBiometricAuth.isBiometricsEnabled())
         .thenAnswer((_) async => false);
@@ -142,7 +144,22 @@ void main() {
   testWidgets(
       'Import confirmation and password dialogs render without overflow on small screens',
       (WidgetTester tester) async {
-    FilePicker.platform = FakeFilePicker();
+    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+      const MethodChannel('miguelruivo.flutter.plugins.filepicker'),
+      (MethodCall methodCall) async {
+        if (methodCall.method == 'pickFiles') {
+          return [
+            {
+              'path': '/mock/path/backup.json',
+              'name': 'backup.json',
+              'size': 100,
+              'bytes': Uint8List.fromList([1, 2, 3]),
+            }
+          ];
+        }
+        return null;
+      },
+    );
     tester.view.physicalSize = const Size(320, 480);
     tester.view.devicePixelRatio = 1.0;
     addTearDown(tester.view.resetPhysicalSize);

@@ -1,5 +1,3 @@
-import 'dart:ffi';
-import 'package:sqlite3/open.dart';
 import 'package:drift/drift.dart' hide isNull;
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -10,12 +8,6 @@ import 'package:stalvi/data/database/tables/transaction_table.dart'
 import 'package:stalvi/domain/entities/recurrence_type.dart';
 
 void main() {
-  setUpAll(() {
-    open.overrideFor(OperatingSystem.linux, () {
-      return DynamicLibrary.open('libsqlite3.so.0');
-    });
-  });
-
   late AppDatabase database;
   late AutomaticTransactionDao dao;
 

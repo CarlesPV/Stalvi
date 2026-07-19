@@ -147,7 +147,7 @@ class AuthNotifier extends AsyncNotifier<AuthStatus> {
 
   /// Presents the native biometric prompt to authenticate the user.
   Future<void> authenticate() async {
-    final currentStatus = state.valueOrNull;
+    final currentStatus = state.value;
 
     if (currentStatus == AuthStatus.authenticated ||
         currentStatus == AuthStatus.lockedOut ||
@@ -306,7 +306,7 @@ class AuthNotifier extends AsyncNotifier<AuthStatus> {
   ///  4. If that attempt is wrong → trigger another 30 s lockout (step 2 again).
   ///  The cycle repeats indefinitely and survives app restarts.
   Future<bool> verifyPin(String pin) async {
-    final currentStatus = state.valueOrNull;
+    final currentStatus = state.value;
     if (currentStatus == AuthStatus.authenticated ||
         currentStatus == AuthStatus.lockedOut ||
         currentStatus == AuthStatus.pinLockedOut ||

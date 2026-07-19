@@ -38,12 +38,12 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
     // Synchronize initial values from controllers to notifier
     _amountController.addListener(() {
       ref
-          .read(addTransactionNotifierProvider.notifier)
+          .read(addTransactionProvider.notifier)
           .updateAmount(_amountController.text);
     });
     _notesController.addListener(() {
       ref
-          .read(addTransactionNotifierProvider.notifier)
+          .read(addTransactionProvider.notifier)
           .updateNotes(_notesController.text);
     });
   }
@@ -73,7 +73,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
     final colorScheme = theme.colorScheme;
     final financialColors = context.financialColors;
 
-    final state = ref.watch(addTransactionNotifierProvider);
+    final state = ref.watch(addTransactionProvider);
     final isExpense = state.type == TransactionType.expense;
     final isIncome = state.type == TransactionType.income;
     final activeColor = isExpense
@@ -82,7 +82,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
 
     // Listen to form submission status to show SnackBars and pop screen
     ref.listen<AsyncValue<void>>(
-      addTransactionNotifierProvider.select((s) => s.submissionStatus),
+      addTransactionProvider.select((s) => s.submissionStatus),
       (prev, next) {
         next.when(
           data: (_) {
@@ -111,7 +111,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
     final categoriesAsync = ref.watch(categoriesListProvider);
     final tagsAsync = ref.watch(tagsListProvider);
 
-    final accounts = accountsAsync.valueOrNull ?? [];
+    final accounts = accountsAsync.value ?? [];
     final selectedAccount = accounts.isEmpty
         ? null
         : accounts.firstWhere(
@@ -120,7 +120,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
           );
 
     final savingsGoalsAsync = ref.watch(savingsGoalsStreamProvider);
-    final savingsGoals = savingsGoalsAsync.valueOrNull ?? [];
+    final savingsGoals = savingsGoalsAsync.value ?? [];
 
     Account? selectedToAccount;
     SavingsGoal? selectedToSavingsGoal;
@@ -142,7 +142,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
       }
     }
 
-    final categories = categoriesAsync.valueOrNull ?? [];
+    final categories = categoriesAsync.value ?? [];
     final selectedCategory = state.categoryId == null
         ? null
         : categories.firstWhere(
@@ -150,7 +150,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
             orElse: () => categories.first,
           );
 
-    final tags = tagsAsync.valueOrNull ?? [];
+    final tags = tagsAsync.value ?? [];
     final selectedTag = state.tagId == null
         ? null
         : tags.firstWhere(
@@ -197,7 +197,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                         child: GestureDetector(
                           onTap: () {
                             ref
-                                .read(addTransactionNotifierProvider.notifier)
+                                .read(addTransactionProvider.notifier)
                                 .updateType(TransactionType.expense);
                           },
                           child: AnimatedContainer(
@@ -225,7 +225,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                         child: GestureDetector(
                           onTap: () {
                             ref
-                                .read(addTransactionNotifierProvider.notifier)
+                                .read(addTransactionProvider.notifier)
                                 .updateType(TransactionType.income);
                           },
                           child: AnimatedContainer(
@@ -253,7 +253,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                         child: GestureDetector(
                           onTap: () {
                             ref
-                                .read(addTransactionNotifierProvider.notifier)
+                                .read(addTransactionProvider.notifier)
                                 .updateType(TransactionType.transfer);
                           },
                           child: AnimatedContainer(
@@ -392,7 +392,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                               : colorScheme.onSurfaceVariant,
                           onTap: () => _showAccountSelector(
                             context,
-                            accountsAsync.valueOrNull ?? [],
+                            accountsAsync.value ?? [],
                             isSource: true,
                           ),
                         ),
@@ -477,7 +477,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                               : colorScheme.onSurfaceVariant,
                           onTap: () => _showAccountSelector(
                             context,
-                            accountsAsync.valueOrNull ?? [],
+                            accountsAsync.value ?? [],
                             isSource: true,
                           ),
                         ),
@@ -518,7 +518,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                               : colorScheme.onSurfaceVariant,
                           onTap: () => _showCategorySelector(
                             context,
-                            categoriesAsync.valueOrNull ?? [],
+                            categoriesAsync.value ?? [],
                             state.type,
                           ),
                         ),
@@ -721,9 +721,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                   onPressed: isLoading
                       ? null
                       : () {
-                          ref
-                              .read(addTransactionNotifierProvider.notifier)
-                              .submit();
+                          ref.read(addTransactionProvider.notifier).submit();
                         },
                   style: FilledButton.styleFrom(
                     backgroundColor: activeColor,
@@ -771,7 +769,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
   }) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final state = ref.read(addTransactionNotifierProvider);
+    final state = ref.read(addTransactionProvider);
 
     final titleText = isSource
         ? AppLocalizations.of(context)!.selectSourceAccount
@@ -857,11 +855,11 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                           onTap: () {
                             if (isSource) {
                               ref
-                                  .read(addTransactionNotifierProvider.notifier)
+                                  .read(addTransactionProvider.notifier)
                                   .updateAccount(account.id);
                             } else {
                               ref
-                                  .read(addTransactionNotifierProvider.notifier)
+                                  .read(addTransactionProvider.notifier)
                                   .updateToAccount(account.id);
                             }
                             Navigator.of(context).pop();
@@ -917,7 +915,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                               : null,
                           onTap: () {
                             ref
-                                .read(addTransactionNotifierProvider.notifier)
+                                .read(addTransactionProvider.notifier)
                                 .updateToAccount(goal.id);
                             Navigator.of(context).pop();
                           },
@@ -941,7 +939,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
   ) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final state = ref.read(addTransactionNotifierProvider);
+    final state = ref.read(addTransactionProvider);
 
     // Filter categories: match transaction type (income vs expense)
     final filteredCategories = categories.where((c) {
@@ -1032,7 +1030,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                             : null,
                         onTap: () {
                           ref
-                              .read(addTransactionNotifierProvider.notifier)
+                              .read(addTransactionProvider.notifier)
                               .updateCategory(category?.id);
                           Navigator.of(context).pop();
                         },
@@ -1068,14 +1066,14 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
     );
 
     if (pickedDate != null && pickedDate != currentDate) {
-      ref.read(addTransactionNotifierProvider.notifier).updateDate(pickedDate);
+      ref.read(addTransactionProvider.notifier).updateDate(pickedDate);
     }
   }
 
   void _showCurrencySelector(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final state = ref.read(addTransactionNotifierProvider);
+    final state = ref.read(addTransactionProvider);
 
     final l10n = AppLocalizations.of(context)!;
     final currencies = {
@@ -1160,7 +1158,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                             : null,
                         onTap: () {
                           ref
-                              .read(addTransactionNotifierProvider.notifier)
+                              .read(addTransactionProvider.notifier)
                               .updateCurrency(code);
                           Navigator.of(context).pop();
                         },
@@ -1179,7 +1177,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
   void _showTagSelector(BuildContext context, List<Tag> tags) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final state = ref.read(addTransactionNotifierProvider);
+    final state = ref.read(addTransactionProvider);
 
     showModalBottomSheet(
       context: context,
@@ -1258,7 +1256,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                             : null,
                         onTap: () {
                           ref
-                              .read(addTransactionNotifierProvider.notifier)
+                              .read(addTransactionProvider.notifier)
                               .updateTag(tag?.id);
                           Navigator.of(context).pop();
                         },

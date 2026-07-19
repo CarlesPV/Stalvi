@@ -166,7 +166,7 @@ class _CreateEditBudgetSheetState extends ConsumerState<CreateEditBudgetSheet> {
     final locale = Localizations.localeOf(context).toString();
     final df = DateFormat.yMMMd(locale);
 
-    final accounts = accountsAsync.valueOrNull ?? [];
+    final accounts = accountsAsync.value ?? [];
     final existingAccount = isEditing
         ? accounts.firstWhere(
             (a) => a.id == widget.existingBudget!.accountId,

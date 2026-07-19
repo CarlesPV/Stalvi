@@ -313,13 +313,25 @@
   - [x] Update unit tests to stub raw transaction queries and verify correct behavior.
   - [x] Maintain 100% build health, static analysis compliance, and test pass rate.
 
+- [x] **Phase 43: Backup Username Update & Filename Customization**
+  - [x] Ensure restoration updates the active user's profile name in the database with the one preserved in the backup.
+  - [x] Standardize export filenames to append `yyyyMMdd_HHmmss` timestamps prefixed with `Stalvi_Backup_`, `Stalvi_Table_`, and `Stalvi_Overview_`.
+  - [x] Maintain 100% build health, static analysis compliance, and test pass rate.
+
 - [x] **Phase 44: Exact UTC+2 Calculations & Dual-Execution Background Strategy with Idempotency**
   - [x] Implement exact UTC+2 calculations for recurring transaction trigger dates to avoid timezone discrepancies.
   - [x] Set up dual-execution background strategy executing at 00:00 and 01:00 UTC+2 daily.
   - [x] Introduce UUID v5 URL-based keys for robust idempotency checks, preventing duplicate transaction creation on multiple runs.
   - [x] Write comprehensive unit tests verifying calculation logic across leap years, short months, and idempotency.
 
-- [ ] **Phase 45: Future Analysis & Next Steps**
+- [x] **Phase 45: Package Upgrades, Riverpod 3.0 Migration & QA Pass**
+  - [x] Upgrade dependencies including `share_plus`, `workmanager`, and replace `flutter_markdown` with `flutter_markdown_plus`.
+  - [x] Upgrade Android build environment to Java 17 compile compatibility.
+  - [x] Migrate state providers to Riverpod 3.0 generator annotation syntax.
+  - [x] Resolve deprecation warnings (`encryptedSharedPreferences`, `PlatformFile.bytes` usage) and code static analysis warnings.
+  - [x] Fix and stabilize unit and widget test suite (timer leaks, platform interface mocks, view bounds, snackbar overflows).
+
+- [ ] **Phase 46: Future Analysis & Next Steps**
   - [ ] Analyze app usage and user feedback to inform future development.
   - [ ] Identify and resolve potential bottlenecks in database queries and UI rendering.
   - [ ] Outline the requirements for the next major feature release.

@@ -70,7 +70,7 @@ Tag _makeTag({
 /// app's localizations and optional provider overrides.
 Widget _wrap(
   Widget child, {
-  List<Override> overrides = const [],
+  List overrides = const [],
   TransactionFilter initialFilter = const TransactionFilter(),
 }) {
   return ProviderScope(

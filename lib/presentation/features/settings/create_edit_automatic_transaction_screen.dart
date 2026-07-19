@@ -49,21 +49,21 @@ class _CreateEditAutomaticTransactionScreenState
     _nameController.addListener(() {
       ref
           .read(
-            createEditAutomaticTransactionNotifierProvider(initialTxn).notifier,
+            createEditAutomaticTransactionProvider(initialTxn).notifier,
           )
           .updateName(_nameController.text);
     });
     _amountController.addListener(() {
       ref
           .read(
-            createEditAutomaticTransactionNotifierProvider(initialTxn).notifier,
+            createEditAutomaticTransactionProvider(initialTxn).notifier,
           )
           .updateAmount(_amountController.text);
     });
     _notesController.addListener(() {
       ref
           .read(
-            createEditAutomaticTransactionNotifierProvider(initialTxn).notifier,
+            createEditAutomaticTransactionProvider(initialTxn).notifier,
           )
           .updateNotes(_notesController.text);
     });
@@ -118,14 +118,13 @@ class _CreateEditAutomaticTransactionScreenState
     final l10n = AppLocalizations.of(context)!;
     final initialTxn = widget.transactionToEdit;
 
-    final state =
-        ref.watch(createEditAutomaticTransactionNotifierProvider(initialTxn));
+    final state = ref.watch(createEditAutomaticTransactionProvider(initialTxn));
     final isExpense = state.type == TransactionType.expense;
     final activeColor =
         isExpense ? financialColors.negative : financialColors.positive;
 
     ref.listen<AsyncValue<void>>(
-      createEditAutomaticTransactionNotifierProvider(initialTxn)
+      createEditAutomaticTransactionProvider(initialTxn)
           .select((s) => s.submissionStatus),
       (prev, next) {
         next.when(
@@ -150,7 +149,7 @@ class _CreateEditAutomaticTransactionScreenState
     final accountsAsync = ref.watch(accountsListProvider);
     final categoriesAsync = ref.watch(categoriesListProvider);
 
-    final accounts = accountsAsync.valueOrNull ?? [];
+    final accounts = accountsAsync.value ?? [];
     final selectedAccount = accounts.isEmpty
         ? null
         : accounts.firstWhere(
@@ -158,7 +157,7 @@ class _CreateEditAutomaticTransactionScreenState
             orElse: () => accounts.first,
           );
 
-    final categories = categoriesAsync.valueOrNull ?? [];
+    final categories = categoriesAsync.value ?? [];
     final selectedCategory = state.categoryId == null
         ? null
         : categories.firstWhere(
@@ -205,7 +204,7 @@ class _CreateEditAutomaticTransactionScreenState
                           onTap: () {
                             ref
                                 .read(
-                                  createEditAutomaticTransactionNotifierProvider(
+                                  createEditAutomaticTransactionProvider(
                                     initialTxn,
                                   ).notifier,
                                 )
@@ -240,7 +239,7 @@ class _CreateEditAutomaticTransactionScreenState
                           onTap: () {
                             ref
                                 .read(
-                                  createEditAutomaticTransactionNotifierProvider(
+                                  createEditAutomaticTransactionProvider(
                                     initialTxn,
                                   ).notifier,
                                 )
@@ -399,7 +398,7 @@ class _CreateEditAutomaticTransactionScreenState
                             : colorScheme.onSurfaceVariant,
                         onTap: () => _showAccountSelector(
                           context,
-                          accountsAsync.valueOrNull ?? [],
+                          accountsAsync.value ?? [],
                           initialTxn,
                         ),
                       ),
@@ -438,7 +437,7 @@ class _CreateEditAutomaticTransactionScreenState
                             : colorScheme.onSurfaceVariant,
                         onTap: () => _showCategorySelector(
                           context,
-                          categoriesAsync.valueOrNull ?? [],
+                          categoriesAsync.value ?? [],
                           state.type,
                           initialTxn,
                         ),
@@ -576,7 +575,7 @@ class _CreateEditAutomaticTransactionScreenState
                       : () {
                           ref
                               .read(
-                                createEditAutomaticTransactionNotifierProvider(
+                                createEditAutomaticTransactionProvider(
                                   initialTxn,
                                 ).notifier,
                               )
@@ -648,8 +647,7 @@ class _CreateEditAutomaticTransactionScreenState
   ) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final state =
-        ref.read(createEditAutomaticTransactionNotifierProvider(initialTxn));
+    final state = ref.read(createEditAutomaticTransactionProvider(initialTxn));
     final l10n = AppLocalizations.of(context)!;
 
     showModalBottomSheet(
@@ -723,7 +721,7 @@ class _CreateEditAutomaticTransactionScreenState
                           onTap: () {
                             ref
                                 .read(
-                                  createEditAutomaticTransactionNotifierProvider(
+                                  createEditAutomaticTransactionProvider(
                                     initialTxn,
                                   ).notifier,
                                 )
@@ -751,8 +749,7 @@ class _CreateEditAutomaticTransactionScreenState
   ) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final state =
-        ref.read(createEditAutomaticTransactionNotifierProvider(initialTxn));
+    final state = ref.read(createEditAutomaticTransactionProvider(initialTxn));
     final l10n = AppLocalizations.of(context)!;
 
     final filteredCategories = categories.where((c) {
@@ -836,7 +833,7 @@ class _CreateEditAutomaticTransactionScreenState
                           onTap: () {
                             ref
                                 .read(
-                                  createEditAutomaticTransactionNotifierProvider(
+                                  createEditAutomaticTransactionProvider(
                                     initialTxn,
                                   ).notifier,
                                 )
@@ -862,8 +859,7 @@ class _CreateEditAutomaticTransactionScreenState
   ) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final state =
-        ref.read(createEditAutomaticTransactionNotifierProvider(initialTxn));
+    final state = ref.read(createEditAutomaticTransactionProvider(initialTxn));
     final l10n = AppLocalizations.of(context)!;
     final currencies = {
       'EUR': l10n.currencyEUR,
@@ -945,7 +941,7 @@ class _CreateEditAutomaticTransactionScreenState
                           onTap: () {
                             ref
                                 .read(
-                                  createEditAutomaticTransactionNotifierProvider(
+                                  createEditAutomaticTransactionProvider(
                                     initialTxn,
                                   ).notifier,
                                 )
@@ -977,7 +973,7 @@ class _CreateEditAutomaticTransactionScreenState
     // for the custom type selection before applying.
 
     final initialState =
-        ref.read(createEditAutomaticTransactionNotifierProvider(initialTxn));
+        ref.read(createEditAutomaticTransactionProvider(initialTxn));
 
     RecurrenceType localCustomType = initialState.recurrenceType;
     bool isCustomActive = false;
@@ -994,7 +990,7 @@ class _CreateEditAutomaticTransactionScreenState
         return Consumer(
           builder: (context, ref, child) {
             final state = ref.watch(
-              createEditAutomaticTransactionNotifierProvider(initialTxn),
+              createEditAutomaticTransactionProvider(initialTxn),
             );
             final l10n = AppLocalizations.of(context)!;
             return StatefulBuilder(
@@ -1040,7 +1036,7 @@ class _CreateEditAutomaticTransactionScreenState
                               onTap: () {
                                 ref
                                     .read(
-                                      createEditAutomaticTransactionNotifierProvider(
+                                      createEditAutomaticTransactionProvider(
                                         initialTxn,
                                       ).notifier,
                                     )
@@ -1059,7 +1055,7 @@ class _CreateEditAutomaticTransactionScreenState
                               onTap: () {
                                 ref
                                     .read(
-                                      createEditAutomaticTransactionNotifierProvider(
+                                      createEditAutomaticTransactionProvider(
                                         initialTxn,
                                       ).notifier,
                                     )
@@ -1077,7 +1073,7 @@ class _CreateEditAutomaticTransactionScreenState
                               onTap: () {
                                 ref
                                     .read(
-                                      createEditAutomaticTransactionNotifierProvider(
+                                      createEditAutomaticTransactionProvider(
                                         initialTxn,
                                       ).notifier,
                                     )
@@ -1192,7 +1188,7 @@ class _CreateEditAutomaticTransactionScreenState
                                               parsed <= maxVal) {
                                             ref
                                                 .read(
-                                                  createEditAutomaticTransactionNotifierProvider(
+                                                  createEditAutomaticTransactionProvider(
                                                     initialTxn,
                                                   ).notifier,
                                                 )

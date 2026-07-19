@@ -1,4 +1,3 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 import 'package:stalvi/core/errors/app_exceptions.dart';
 import 'package:stalvi/core/utils/currency_formatter.dart';
@@ -9,6 +8,9 @@ import 'automatic_transactions_providers.dart';
 import 'repository_providers.dart';
 import 'locale_provider.dart';
 import 'package:stalvi/core/l10n/app_localizations.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+part 'create_edit_automatic_transaction_notifier.g.dart';
 
 class CreateEditAutomaticTransactionState {
   final String? id;
@@ -106,8 +108,9 @@ class CreateEditAutomaticTransactionState {
   }
 }
 
-class CreateEditAutomaticTransactionNotifier extends AutoDisposeFamilyNotifier<
-    CreateEditAutomaticTransactionState, AutomaticTransaction?> {
+@riverpod
+class CreateEditAutomaticTransactionNotifier
+    extends _$CreateEditAutomaticTransactionNotifier {
   @override
   CreateEditAutomaticTransactionState build(AutomaticTransaction? arg) {
     if (arg != null) {
@@ -406,9 +409,3 @@ class CreateEditAutomaticTransactionNotifier extends AutoDisposeFamilyNotifier<
     }
   }
 }
-
-final createEditAutomaticTransactionNotifierProvider =
-    NotifierProvider.autoDispose.family<CreateEditAutomaticTransactionNotifier,
-        CreateEditAutomaticTransactionState, AutomaticTransaction?>(
-  CreateEditAutomaticTransactionNotifier.new,
-);

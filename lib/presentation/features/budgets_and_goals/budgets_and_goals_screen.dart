@@ -110,7 +110,7 @@ class _BudgetsTabBody extends ConsumerWidget {
           );
         }
 
-        final categories = categoriesAsync.valueOrNull ?? [];
+        final categories = categoriesAsync.value ?? [];
 
         return ListView.builder(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
@@ -174,7 +174,7 @@ class _BudgetCard extends ConsumerWidget {
         : 0.0;
 
     final formatter = ref.watch(currencyFormatterProvider);
-    final accounts = ref.watch(accountsListProvider).valueOrNull ?? [];
+    final accounts = ref.watch(accountsListProvider).value ?? [];
     Account? budgetAccount;
     for (final a in accounts) {
       if (a.id == budget.accountId) {

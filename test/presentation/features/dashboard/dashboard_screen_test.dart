@@ -193,8 +193,7 @@ void main() {
         tagsListProvider.overrideWith((ref) => Future.value([])),
         secureStorageProvider.overrideWithValue(mockSecureStorage),
         biometricAuthServiceProvider.overrideWithValue(mockBiometricAuth),
-        addTransactionNotifierProvider
-            .overrideWith(FakeAddTransactionNotifier.new),
+        addTransactionProvider.overrideWith(FakeAddTransactionNotifier.new),
         globalBalanceProvider.overrideWith((ref) => const AsyncData(1500.0)),
         if (transactionRepo != null)
           transactionRepositoryProvider.overrideWithValue(transactionRepo),
@@ -415,7 +414,7 @@ void main() {
 
     testWidgets('Tapping FAB on Overview tab opens AddTransactionScreen',
         (WidgetTester tester) async {
-      await tester.binding.setSurfaceSize(const Size(800, 1200));
+      await tester.binding.setSurfaceSize(const Size(1080, 2400));
       addTearDown(() => tester.binding.setSurfaceSize(null));
 
       await tester.pumpWidget(
@@ -442,7 +441,7 @@ void main() {
 
     testWidgets('Tapping FAB on Accounts tab opens CreateAccountDialog',
         (WidgetTester tester) async {
-      await tester.binding.setSurfaceSize(const Size(800, 1200));
+      await tester.binding.setSurfaceSize(const Size(1080, 2400));
       addTearDown(() => tester.binding.setSurfaceSize(null));
 
       final mockCreateAccountUseCase = MockCreateAccountUseCase();
@@ -479,7 +478,7 @@ void main() {
     testWidgets(
         'Tapping transaction item opens TransactionDetailsDialog and tapping Delete button triggers soft delete',
         (WidgetTester tester) async {
-      await tester.binding.setSurfaceSize(const Size(800, 1200));
+      await tester.binding.setSurfaceSize(const Size(1080, 2400));
       addTearDown(() => tester.binding.setSurfaceSize(null));
 
       final mockTxnRepo = MockTransactionRepository();
@@ -542,7 +541,7 @@ void main() {
     testWidgets(
         'renders Statistics summary on Accounts tab and clicking View Details navigates to StatisticsScreen',
         (WidgetTester tester) async {
-      await tester.binding.setSurfaceSize(const Size(800, 1200));
+      await tester.binding.setSurfaceSize(const Size(1080, 2400));
       addTearDown(() => tester.binding.setSurfaceSize(null));
 
       await tester.pumpWidget(

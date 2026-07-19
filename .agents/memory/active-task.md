@@ -1,4 +1,4 @@
-# Active Task: Phase 43 - Future Analysis & Next Steps
+# Active Task: Phase 46 - Future Analysis & Next Steps
 
 ## 🎯 Objective
 Prepare the ground for future analysis, monitoring, and post-launch feature considerations.
@@ -16,6 +16,8 @@ Prepare the ground for future analysis, monitoring, and post-launch feature cons
 - [x] **Codebase Cleanup:** Remove dead code, unused files, and redundant comments. Optimize imports and file sizes.
 - [x] **Documentation Sync:** Update code comments, roadmap, and internal architecture documentation to reflect the current state.
 - [x] **README.md Rewrite:** Rewrite README.md from scratch, detailing the tech stack, features, architecture, and setup instructions.
+- [x] **Phase 43/44 Core Items:** Backup username restoration, standardized export timestamps, and exact UTC+2 daily background execution with UUID v5 idempotency checks.
+- [x] **Phase 45 Core Items:** Upgrade packages (`share_plus`, `workmanager`, `flutter_markdown_plus`), Java 17 compatibility, Riverpod 3.0 annotations migration, clean static analysis (0 warnings/infos), and fully stabilized test suite (498/498 passing).
 - [ ] **Future Analysis:** Gather analytics and identify areas for the next major iteration.
 
 ## 🧪 Testing & CI/CD

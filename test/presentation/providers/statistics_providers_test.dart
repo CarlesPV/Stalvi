@@ -70,11 +70,13 @@ void main() {
     // Set the accountId in the filter
     container.read(statisticsFilterProvider.notifier).setAccountId('acc1');
 
+    final sub = container.listen(accountsListProvider, (_, __) {});
     // Wait for the accounts provider to resolve
     await container.read(accountsListProvider.future);
 
     final currency = container.read(statisticsCurrencyProvider);
     expect(currency, 'USD');
+    sub.close();
   });
 
   test(

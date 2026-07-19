@@ -294,7 +294,7 @@ class _OverviewTab extends ConsumerWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final transactionsAsync = ref.watch(transactionsStreamProvider);
-    final transactions = transactionsAsync.valueOrNull ?? [];
+    final transactions = transactionsAsync.value ?? [];
     final now = DateTime.now();
     final thirtyDaysAgo = now.subtract(const Duration(days: 30));
     final last30DaysTxns = transactions.where(
@@ -926,7 +926,7 @@ class _TransactionItem extends ConsumerWidget {
     final color =
         isIncome ? financialColors.positive : financialColors.negative;
 
-    final categories = ref.watch(categoriesListProvider).valueOrNull ?? [];
+    final categories = ref.watch(categoriesListProvider).value ?? [];
     Category? category;
     if (transaction.categoryId != null) {
       for (final c in categories) {
@@ -1511,7 +1511,7 @@ class _BalanceCard extends ConsumerWidget {
                   ),
                 ),
                 data: (totalBalance) {
-                  final profile = ref.watch(defaultProfileProvider).valueOrNull;
+                  final profile = ref.watch(defaultProfileProvider).value;
                   final currency = profile?.defaultCurrency ?? 'EUR';
                   final formatter = ref.watch(currencyFormatterProvider);
                   final balanceStr = formatter.format(
@@ -1604,7 +1604,7 @@ class _StatCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final summaryAsync = ref.watch(dashboardPeriodSummaryProvider);
-    final profile = ref.watch(defaultProfileProvider).valueOrNull;
+    final profile = ref.watch(defaultProfileProvider).value;
     final currency = profile?.defaultCurrency ?? 'EUR';
     final formatter = ref.watch(currencyFormatterProvider);
 

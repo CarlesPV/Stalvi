@@ -1,7 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:local_auth/local_auth.dart';
-import 'package:local_auth/error_codes.dart' as auth_error;
 import 'package:local_auth_android/local_auth_android.dart';
 import 'package:local_auth_darwin/local_auth_darwin.dart';
 import 'package:stalvi/core/security/secure_storage_manager.dart';
@@ -48,14 +47,11 @@ class BiometricAuthService {
             cancelButton: cancelButton,
           ),
         ],
-        options: const AuthenticationOptions(
-          biometricOnly: true,
-          stickyAuth: true,
-        ),
+        biometricOnly: true,
+        persistAcrossBackgrounding: true,
       );
     } on PlatformException catch (e) {
-      if (e.code == auth_error.lockedOut ||
-          e.code == auth_error.permanentlyLockedOut) {
+      if (e.code == 'LockedOut' || e.code == 'PermanentlyLockedOut') {
         throw BiometricLockedOutException(lockedOutMessage);
       }
       throw BiometricException(authFailedMessage, e);

@@ -330,11 +330,11 @@ class _DataManagementScreenState extends ConsumerState<DataManagementScreen> {
 
     if (confirmed != true || !context.mounted) return;
 
-    final pickerResult = await FilePicker.platform
+    final pickerResult = await FilePickerPlatform.instance
         .pickFiles(type: FileType.any, allowMultiple: false, withData: true);
     if (pickerResult == null || pickerResult.files.isEmpty) return;
-    final fileBytes = pickerResult.files.first.bytes;
-    if (fileBytes == null || !context.mounted) return;
+    final fileBytes = await pickerResult.files.first.readAsBytes();
+    if (!context.mounted) return;
 
     final password = await _askImportPassword(context);
     if (password == null || password.isEmpty || !context.mounted) return;

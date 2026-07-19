@@ -184,7 +184,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
                       error: (err, _) {
                         final errorText = _getLocalizedAuthError(context, err);
                         // Determine where the error came from
-                        final status = authState.valueOrNull;
+                        final status = authState.value;
                         if (status == AuthStatus.setupRequired ||
                             status == AuthStatus.setupSubmitting) {
                           // Error in setup

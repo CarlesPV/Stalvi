@@ -625,12 +625,21 @@ This document lists the completed phases of the Stalvi development roadmap, prov
   - **Dual Background Strategy**: Implemented dual Daily execution triggers (00:00 and 01:00 UTC+2) to verify and execute pending transactions, preventing Doze mode or task interruption drops.
   - **UUID v5 Idempotency**: Employed Uuid v5 URL-based deterministic keys generated from transaction cycle and ID, checking if a transaction exists before creating it, enforcing strict idempotency.
   - **Robust Testing**: Expanded `execute_recurring_transactions_usecase_test.dart` to cover both calculations under leap years and short months, and strict idempotency checks simulating multiple firings.
+### Phase 45: Package Upgrades, Riverpod 3.0 Migration & QA Pass
+* **Completion Date:** July 19, 2026
+* **Objective:** Upgrade outdated dependencies (including `share_plus`, `workmanager`, and replacing `flutter_markdown` with `flutter_markdown_plus`), configure compilation for Java 17 compatibility, migrate providers to Riverpod 3.x generator annotations, clear deprecations/warnings, and achieve 100% test pass rate.
+* **Accomplishments:**
+  - **Dependency & Gradle Upgrades**: Upgraded dependencies (`share_plus`, `workmanager`, replacing `flutter_markdown` with `flutter_markdown_plus`) and set Android targets/Kotlin JVM compile options to Java 17.
+  - **Riverpod 3.x Migration**: Migrated the state management controllers and providers to Riverpod 3.x `@riverpod` annotations generator syntax.
+  - **Deprecation Cleanup**: Replaced deprecated `bytes` with `readAsBytes()` on `PlatformFile`, and removed deprecated `encryptedSharedPreferences` configuration.
+  - **Static Analysis**: Resolved 37 code analyzer warnings, warnings on unnecessary const keywords, formatting issues in theme API doc comments, and unused variables.
+  - **Test Suite Optimization**: Solved test timer leaks, mock interface issues, layout constraints, and auto-dispose timing bugs, achieving 100% pass rate.
 * **Verification:**
   - 100% clean static analysis (`flutter analyze --fatal-infos --fatal-warnings` with 0 issues).
-  - Clean build generation and `build_runner` code generation.
-  - Executed tests showing 100% success rate for all unit and widget tests.
+  - All 498 automated unit and widget tests pass cleanly with a 100% success rate.
 
 ## Recent Updates
+- Upgraded dependencies, migrated providers to Riverpod 3.x annotations, cleared static analysis warnings, and resolved all test suite timer leaks and mock interface crashes (Phase 45).
 - Implemented exact UTC+2 calculations and a dual-execution background strategy (00:00 and 01:00 UTC+2) with UUID v5 URL-based idempotency checks for recurring transactions (Phase 44).
 - Fixed backup import username update and standardized export filename prefixes (Phase 43).
 - Resolved transfer transaction resolution bugs in PDF export by querying raw transactions for destination matching (Phase 42).
@@ -659,4 +668,3 @@ This document lists the completed phases of the Stalvi development roadmap, prov
 - Added full Unicode font support in PDF exports using Roboto font assets to fix currency symbol placeholders.
 - Updated Terms and Privacy policy legal markdown assets for Catalan, English, and Spanish.
 - Achieved a completely clean static analysis check with 0 issues on `flutter analyze` and 100% test pass rate.
-\n- [x] Fixed backup system to save the username and include the destination account for transfers.\n- [x] Improved backup format validation on import.

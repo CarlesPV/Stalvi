@@ -1,4 +1,3 @@
-import 'dart:ffi';
 import 'package:drift/drift.dart' hide isNull, isNotNull;
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -6,17 +5,10 @@ import 'package:stalvi/data/database/app_database.dart';
 import 'package:stalvi/data/database/tables/account_table.dart';
 import 'package:stalvi/domain/entities/trash_item.dart';
 import 'package:stalvi/data/database/tables/transaction_table.dart';
-// ignore: depend_on_referenced_packages
-import 'package:sqlite3/open.dart';
+// ignore: depend_onreferenced_packages
 import 'package:uuid/uuid.dart';
 
 void main() {
-  setUpAll(() {
-    open.overrideFor(OperatingSystem.linux, () {
-      return DynamicLibrary.open('libsqlite3.so.0');
-    });
-  });
-
   late AppDatabase db;
 
   setUp(() {

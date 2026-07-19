@@ -60,6 +60,7 @@ void main() {
           biometricAuthServiceProvider.overrideWithValue(mockBiometricAuth),
         ],
       );
+      addTearDown(container.dispose);
 
       await tester.pumpWidget(buildTestApp(container: container));
       await tester.pump();
@@ -75,6 +76,7 @@ void main() {
       expect(find.text('Enable Biometrics'), findsOneWidget);
       expect(find.text('Skip for Now'), findsOneWidget);
       expect(find.byIcon(Icons.fingerprint_rounded), findsOneWidget);
+      container.dispose();
     });
 
     testWidgets(
@@ -99,6 +101,7 @@ void main() {
           biometricAuthServiceProvider.overrideWithValue(mockBiometricAuth),
         ],
       );
+      addTearDown(container.dispose);
 
       await tester.pumpWidget(buildTestApp(container: container));
       await tester.pump();
@@ -117,6 +120,7 @@ void main() {
         ),
       ).called(1);
       verify(() => mockBiometricAuth.enableBiometrics()).called(1);
+      container.dispose();
     });
 
     testWidgets('clicking Skip for Now disables biometrics and completes flow',
@@ -130,6 +134,7 @@ void main() {
           biometricAuthServiceProvider.overrideWithValue(mockBiometricAuth),
         ],
       );
+      addTearDown(container.dispose);
 
       await tester.pumpWidget(buildTestApp(container: container));
       await tester.pump();
@@ -138,6 +143,7 @@ void main() {
       await tester.pump();
 
       verify(() => mockBiometricAuth.disableBiometrics()).called(1);
+      container.dispose();
     });
   });
 }

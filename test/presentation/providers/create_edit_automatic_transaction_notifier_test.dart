@@ -108,7 +108,7 @@ void main() {
     test('initializes with default state values', () {
       buildContainer(accounts: []);
       final state =
-          container.read(createEditAutomaticTransactionNotifierProvider(null));
+          container.read(createEditAutomaticTransactionProvider(null));
 
       expect(state.name, '');
       expect(state.amountText, '');
@@ -137,8 +137,7 @@ void main() {
         createdAt: DateTime.now(),
       );
 
-      final state =
-          container.read(createEditAutomaticTransactionNotifierProvider(txn));
+      final state = container.read(createEditAutomaticTransactionProvider(txn));
 
       expect(state.id, 'txn_1');
       expect(state.name, 'Rent');
@@ -154,8 +153,8 @@ void main() {
   group('CreateEditAutomaticTransactionNotifier Validation', () {
     test('submit returns false when name is missing', () async {
       buildContainer();
-      final notifier = container
-          .read(createEditAutomaticTransactionNotifierProvider(null).notifier);
+      final notifier =
+          container.read(createEditAutomaticTransactionProvider(null).notifier);
 
       notifier.updateName('');
       notifier.updateAmount('10.0');
@@ -166,7 +165,7 @@ void main() {
       expect(success, isFalse);
 
       final state =
-          container.read(createEditAutomaticTransactionNotifierProvider(null));
+          container.read(createEditAutomaticTransactionProvider(null));
       expect(state.errors.containsKey('name'), isTrue);
       expect(state.errors['name'], 'NAME_REQUIRED');
     });
@@ -174,8 +173,8 @@ void main() {
     test('submit succeeds and calls create use case for new transaction',
         () async {
       buildContainer();
-      final notifier = container
-          .read(createEditAutomaticTransactionNotifierProvider(null).notifier);
+      final notifier =
+          container.read(createEditAutomaticTransactionProvider(null).notifier);
 
       notifier.updateName('Spotify');
       notifier.updateAmount('9.99');
@@ -218,8 +217,8 @@ void main() {
         createdAt: DateTime.now(),
       );
 
-      final notifier = container
-          .read(createEditAutomaticTransactionNotifierProvider(txn).notifier);
+      final notifier =
+          container.read(createEditAutomaticTransactionProvider(txn).notifier);
 
       notifier.updateAmount('550.0'); // changed amount
 

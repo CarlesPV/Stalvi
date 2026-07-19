@@ -1,23 +1,15 @@
-import 'dart:ffi';
 import 'package:drift/drift.dart' hide isNull, isNotNull;
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:stalvi/data/database/app_database.dart';
 import 'package:stalvi/data/repositories/trash_repository.dart';
 import 'package:stalvi/domain/usecases/auto_purge_usecase.dart';
-// ignore: depend_on_referenced_packages
+// ignore: depend_onreferenced_packages
 import 'package:stalvi/data/database/tables/transaction_table.dart';
 import 'package:stalvi/data/database/tables/account_table.dart';
-import 'package:sqlite3/open.dart';
 import 'package:uuid/uuid.dart';
 
 void main() {
-  setUpAll(() {
-    open.overrideFor(OperatingSystem.linux, () {
-      return DynamicLibrary.open('libsqlite3.so.0');
-    });
-  });
-
   late AppDatabase db;
   late AutoPurgeUseCase useCase;
 

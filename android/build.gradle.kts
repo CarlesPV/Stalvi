@@ -20,17 +20,10 @@ subprojects {
 }
 
 subprojects {
-    val configureAndroid = {
-        extensions.findByName("android")?.let { android ->
-            if (android is com.android.build.gradle.BaseExtension) {
-                android.compileSdkVersion(36)
-            }
+    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+        compilerOptions {
+            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
         }
-    }
-    if (state.executed) {
-        configureAndroid()
-    } else {
-        afterEvaluate { configureAndroid() }
     }
 }
 

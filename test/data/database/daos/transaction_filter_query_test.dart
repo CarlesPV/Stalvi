@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:drift/drift.dart' as drift;
 import 'package:drift/native.dart';
 import 'package:flutter/material.dart' show DateTimeRange;
@@ -10,8 +8,7 @@ import 'package:stalvi/data/database/tables/transaction_table.dart';
 import 'package:stalvi/data/repositories/transaction_repository.dart';
 import 'package:stalvi/domain/entities/transaction_type.dart' as domain;
 import 'package:stalvi/domain/repositories/i_transaction_repository.dart';
-// ignore: depend_on_referenced_packages
-import 'package:sqlite3/open.dart';
+// ignore: depend_onreferenced_packages
 
 /// Inserts a Tag row and returns its id.
 Future<String> _seedTag(
@@ -108,12 +105,6 @@ Future<void> _insertTransaction(
 // ──────────────────────────────────────────────────────────────────────────────
 
 void main() {
-  setUpAll(() {
-    open.overrideFor(OperatingSystem.linux, () {
-      return DynamicLibrary.open('libsqlite3.so.0');
-    });
-  });
-
   late AppDatabase database;
   late TransactionRepository repo;
   late String accountId;

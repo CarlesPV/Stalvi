@@ -1,8 +1,6 @@
-import 'dart:ffi';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:drift/native.dart';
-// ignore: depend_on_referenced_packages
-import 'package:sqlite3/open.dart';
+// ignore: depend_onreferenced_packages
 import 'package:uuid/uuid.dart';
 import 'package:stalvi/data/database/app_database.dart' as db_data;
 import 'package:stalvi/data/repositories/account_repository.dart';
@@ -10,12 +8,6 @@ import 'package:stalvi/domain/entities/account.dart';
 import 'package:stalvi/domain/entities/account_type.dart';
 
 void main() {
-  setUpAll(() {
-    open.overrideFor(OperatingSystem.linux, () {
-      return DynamicLibrary.open('libsqlite3.so.0');
-    });
-  });
-
   late db_data.AppDatabase db;
   late AccountRepository repository;
   const uuid = Uuid();
