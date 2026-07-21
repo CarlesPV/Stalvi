@@ -275,6 +275,8 @@ class _DataManagementScreenState extends ConsumerState<DataManagementScreen> {
           .read(profileSettingsControllerProvider.notifier)
           .exportEncryptedBackup(password: password);
       if (!context.mounted) return;
+
+      if (!context.mounted) return;
       _showExportSuccess(context, result.filePath, l10n.exportSuccess);
     } catch (e) {
       if (context.mounted) {
@@ -369,6 +371,8 @@ class _DataManagementScreenState extends ConsumerState<DataManagementScreen> {
           .read(profileSettingsControllerProvider.notifier)
           .exportTransactionsCsv();
       if (!context.mounted) return;
+
+      if (!context.mounted) return;
       _showExportSuccess(
         context,
         result.filePath,
@@ -423,6 +427,8 @@ class _DataManagementScreenState extends ConsumerState<DataManagementScreen> {
                 ? l10n.pdfExportLast30Days
                 : null,
           );
+      if (!context.mounted) return;
+
       if (!context.mounted) return;
       _showExportSuccess(
         context,

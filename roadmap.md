@@ -331,8 +331,15 @@
   - [x] Resolve deprecation warnings (`encryptedSharedPreferences`, `PlatformFile.bytes` usage) and code static analysis warnings.
   - [x] Fix and stabilize unit and widget test suite (timer leaks, platform interface mocks, view bounds, snackbar overflows).
 
-- [ ] **Phase 46: Future Analysis & Next Steps**
-  - [ ] Analyze app usage and user feedback to inform future development.
-  - [ ] Identify and resolve potential bottlenecks in database queries and UI rendering.
-  - [ ] Outline the requirements for the next major feature release.
-  - [ ] Plan for updating Flutter and community packages to their latest stable versions.
+- [x] **Phase 46: Core Bug Fixes & Launch Readiness**
+  - [x] **Export Integrity:** Resolve file export issues (PDF, CSV, Backups) on all devices by using proper Scoped Storage (Downloads folder) or robust FileProvider implementations.
+  - [x] **Currency Conversion Accuracy:** Enforce correct cross-currency conversions when updating Wallet/Account balances on Incomes, Expenses, and Transfers.
+  - [x] **Background Execution Reliability:** Implement a dual strategy (2h Workmanager periodic check + App startup fallback) to ensure Automatic Transactions never fail to create.
+  - [x] **Notifications:** Integrate `flutter_local_notifications` to push a localized success message when an automatic transaction fires.
+  - [x] **QA & Final Polish:** Guarantee 100% test coverage, 0 lint warnings, and full CI/CD success for app store readiness.
+
+- [x] **Phase 47: Export UX & Directory Optimization**
+  - [x] Refactor export services to target public mobile locations (system Recents / Documents directory first, followed by Downloads directory) avoiding app-private `Android/data` paths.
+  - [x] Add iOS file sharing keys (`UIFileSharingEnabled` & `LSSupportsOpeningDocumentsInPlace`) to `Info.plist` to expose exports in iOS Files app Recents.
+  - [x] Remove `share_plus` dependencies from the project to eliminate third-party share pop-ups.
+  - [x] Clean up code architecture, passing all CI/CD, security workflows, tests, and static analysis without warnings.

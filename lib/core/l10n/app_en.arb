@@ -354,5 +354,14 @@
   "incorrectOldPin": "Incorrect Old PIN.",
   "splashSecureStorageError": "Stalvi couldn't initialise its secure storage. Please check available device storage and try again.",
   "splashStartupFailed": "Startup Failed",
-  "unexpectedError": "An unexpected error occurred. Please try again."
+  "unexpectedError": "An unexpected error occurred. Please try again.",
+  "notificationAutoTxTitle": "Automatic Transaction Created",
+  "notificationAutoTxBody": "Transaction {name} has been completed successfully.",
+  "@notificationAutoTxBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  }
 }

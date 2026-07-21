@@ -12,6 +12,8 @@ import 'package:stalvi/domain/repositories/i_profile_repository.dart';
 import 'package:stalvi/domain/repositories/i_transaction_repository.dart';
 import 'package:stalvi/domain/usecases/execute_recurring_transactions_usecase.dart';
 
+import 'package:stalvi/infrastructure/services/notification_service.dart';
+
 import 'execute_recurring_transactions_usecase_test.mocks.dart';
 
 @GenerateMocks([
@@ -20,6 +22,7 @@ import 'execute_recurring_transactions_usecase_test.mocks.dart';
   IAccountRepository,
   IProfileRepository,
   IExchangeRateRepository,
+  NotificationService,
 ])
 void main() {
   group(
@@ -253,6 +256,72 @@ void main() {
       verify(mockTransactionRepo.getTransactionById(any)).called(1);
       verifyNever(mockTransactionRepo.createTransaction(any));
       verify(mockAutomaticRepo.updateAutomaticTransaction(any)).called(1);
+    });
+
+    test('Dispatches local push notification when transaction is created',
+        () async {
+      final mockNotificationService = MockNotificationService();
+      final usecaseWithNotification = ExecuteRecurringTransactionsUseCase(
+        mockAutomaticRepo,
+        mockTransactionRepo,
+        mockAccountRepo,
+        mockProfileRepo,
+        mockExchangeRateRepo,
+        mockNotificationService,
+      );
+
+      final autoTxn = AutomaticTransaction(
+        id: 'auto-notify-1',
+        name: 'Gym Subscription',
+        amount: 3000,
+        currency: 'EUR',
+        type: TransactionType.expense,
+        accountId: 'acc-1',
+        categoryId: 'cat-1',
+        recurrenceType: RecurrenceType.monthly,
+        recurrenceDays: 1,
+        nextExecutionDate:
+            DateTime.now().toUtc().subtract(const Duration(days: 1)),
+        isActive: true,
+        createdAt: DateTime.now().toUtc(),
+      );
+
+      when(mockAutomaticRepo.getAllAutomaticTransactions())
+          .thenAnswer((_) async => [autoTxn]);
+      when(mockTransactionRepo.getTransactionById(any))
+          .thenAnswer((_) async => null);
+      when(mockAccountRepo.getAccountById(any)).thenAnswer((_) async => null);
+      when(mockTransactionRepo.createTransaction(any)).thenAnswer(
+        (_) async => dtxn.Transaction(
+          id: 'mock-notify-id',
+          amount: 3000,
+          date: DateTime.now().toUtc(),
+          type: TransactionType.expense,
+          accountId: 'acc-1',
+          categoryId: 'cat-1',
+          originalCurrency: 'EUR',
+          createdAt: DateTime.now().toUtc(),
+          modifiedAt: DateTime.now().toUtc(),
+        ),
+      );
+      when(mockAutomaticRepo.updateAutomaticTransaction(any))
+          .thenAnswer((_) async => autoTxn);
+      when(
+        mockNotificationService.showAutomaticTransactionNotification(
+          transactionName: anyNamed('transactionName'),
+          languageCode: anyNamed('languageCode'),
+          notificationId: anyNamed('notificationId'),
+        ),
+      ).thenAnswer((_) async {});
+
+      await usecaseWithNotification.execute();
+
+      verify(
+        mockNotificationService.showAutomaticTransactionNotification(
+          transactionName: 'Gym Subscription',
+          languageCode: anyNamed('languageCode'),
+        ),
+      ).called(1);
     });
   });
 }

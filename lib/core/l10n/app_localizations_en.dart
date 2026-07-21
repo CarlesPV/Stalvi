@@ -1121,4 +1121,12 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get unexpectedError =>
       'An unexpected error occurred. Please try again.';
+
+  @override
+  String get notificationAutoTxTitle => 'Automatic Transaction Created';
+
+  @override
+  String notificationAutoTxBody(String name) {
+    return 'Transaction $name has been completed successfully.';
+  }
 }

@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
+import 'package:stalvi/core/security/secure_storage_manager.dart';
+import 'package:uuid/uuid.dart';
 import '../entities/automatic_transaction.dart';
 import '../entities/recurrence_type.dart';
 import '../entities/transaction.dart' as dtxn;
@@ -8,7 +10,7 @@ import '../repositories/i_automatic_transaction_repository.dart';
 import '../repositories/i_exchange_rate_repository.dart';
 import '../repositories/i_profile_repository.dart';
 import '../repositories/i_transaction_repository.dart';
-import 'package:uuid/uuid.dart';
+import '../../infrastructure/services/notification_service.dart';
 
 class ExecuteRecurringTransactionsUseCase {
   final IAutomaticTransactionRepository automaticRepo;
@@ -16,14 +18,16 @@ class ExecuteRecurringTransactionsUseCase {
   final IAccountRepository accountRepo;
   final IProfileRepository profileRepo;
   final IExchangeRateRepository exchangeRateRepo;
+  final NotificationService? notificationService;
 
   ExecuteRecurringTransactionsUseCase(
     this.automaticRepo,
     this.transactionRepo,
     this.accountRepo,
     this.profileRepo,
-    this.exchangeRateRepo,
-  );
+    this.exchangeRateRepo, [
+    this.notificationService,
+  ]);
 
   Future<void> execute() async {
     final nowUtc = DateTime.now().toUtc();
@@ -170,6 +174,25 @@ class ExecuteRecurringTransactionsUseCase {
       );
 
       await transactionRepo.createTransaction(newTxn);
+
+      if (notificationService != null) {
+        try {
+          String? languageCode;
+          try {
+            languageCode = await SecureStorageManager().getUserLocale();
+          } catch (_) {}
+          languageCode ??= PlatformDispatcher.instance.locale.languageCode;
+
+          await notificationService!.showAutomaticTransactionNotification(
+            transactionName: autoTxn.name,
+            languageCode: languageCode,
+          );
+        } catch (e, st) {
+          debugPrint(
+            '[ExecuteRecurringTxns] Failed to send notification for ${autoTxn.name}: $e\n$st',
+          );
+        }
+      }
     }
 
     final nextDate = calculateNextTriggerDateUtcPlus2(

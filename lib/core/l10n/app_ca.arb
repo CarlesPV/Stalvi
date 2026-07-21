@@ -354,5 +354,14 @@
   "incorrectOldPin": "PIN antic incorrecte.",
   "splashSecureStorageError": "Stalvi no ha pogut inicialitzar el seu emmagatzematge segur. Si us plau, comproveu l'espai disponible al dispositiu i torneu-ho a provar.",
   "splashStartupFailed": "Error d'Inici",
-  "unexpectedError": "S'ha produït un error inesperat. Si us plau, torneu-ho a provar."
+  "unexpectedError": "S'ha produït un error inesperat. Si us plau, torneu-ho a provar.",
+  "notificationAutoTxTitle": "Transacció automàtica creada",
+  "notificationAutoTxBody": "La transacció {name} s'ha completat amb èxit.",
+  "@notificationAutoTxBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  }
 }

@@ -38,6 +38,11 @@ class FakePathProviderPlatform extends Fake
   Future<String?> getExternalStoragePath() async {
     return tempDir;
   }
+
+  @override
+  Future<String?> getTemporaryPath() async {
+    return tempDir;
+  }
 }
 
 void main() {

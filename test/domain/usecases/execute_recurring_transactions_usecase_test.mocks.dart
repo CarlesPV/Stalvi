@@ -19,6 +19,8 @@ import 'package:stalvi/domain/repositories/i_exchange_rate_repository.dart'
 import 'package:stalvi/domain/repositories/i_profile_repository.dart' as _i11;
 import 'package:stalvi/domain/repositories/i_transaction_repository.dart'
     as _i4;
+import 'package:stalvi/infrastructure/services/notification_service.dart'
+    as _i13;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -587,6 +589,55 @@ class MockIExchangeRateRepository extends _i1.Mock
           #syncRates,
           [],
           {#baseCurrency: baseCurrency},
+        ),
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
+}
+
+/// A class which mocks [NotificationService].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockNotificationService extends _i1.Mock
+    implements _i13.NotificationService {
+  MockNotificationService() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i9.Future<void> initialize() => (super.noSuchMethod(
+        Invocation.method(
+          #initialize,
+          [],
+        ),
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
+
+  @override
+  _i9.Future<bool> requestPermissions() => (super.noSuchMethod(
+        Invocation.method(
+          #requestPermissions,
+          [],
+        ),
+        returnValue: _i9.Future<bool>.value(false),
+      ) as _i9.Future<bool>);
+
+  @override
+  _i9.Future<void> showAutomaticTransactionNotification({
+    required String? transactionName,
+    String? languageCode,
+    int? notificationId,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #showAutomaticTransactionNotification,
+          [],
+          {
+            #transactionName: transactionName,
+            #languageCode: languageCode,
+            #notificationId: notificationId,
+          },
         ),
         returnValue: _i9.Future<void>.value(),
         returnValueForMissingStub: _i9.Future<void>.value(),

@@ -632,7 +632,22 @@ This document lists the completed phases of the Stalvi development roadmap, prov
   - 100% clean static analysis (`flutter analyze --fatal-infos --fatal-warnings` with 0 issues).
   - All 498 automated unit and widget tests pass cleanly with a 100% success rate.
 
+### Phase 46: Core Bug Fixes & Launch Readiness
+* **Completion Date:** July 21, 2026
+* **Objective:** Perform final quality assurance, resolve file export issues across all devices, fix cross-currency balance conversion accuracy, stabilize background automatic transactions with periodic checks and startup fallbacks, add local notifications, and verify 100% test pass rate and static analysis.
+* **Accomplishments:**
+  - **Export Integrity:** Fixed file exporting issues across device storage systems (Downloads folder and Scoped Storage) for PDF, CSV, and encrypted JSON backups.
+  - **Currency Conversion Accuracy:** Enforced accurate multi-currency conversions during balance recalculations on Income, Expense, and Transfer transactions.
+  - **Background Execution Reliability:** Transitioned Workmanager to a reliable 2-hour periodic background service paired with an asynchronous app startup fallback to guarantee automatic transaction triggers.
+  - **Local Push Notifications:** Integrated `flutter_local_notifications` to dispatch localized push notifications ("Transaction [name] completed successfully") when automatic transactions execute.
+  - **QA & Final Polish:** Achieved 100% test suite pass rate, clean static analysis (`flutter analyze` with 0 warnings/infos), and automated code formatting with `dart format`.
+* **Verification:**
+  - 100% clean static analysis (`flutter analyze` with 0 issues).
+  - Clean code formatting pass across all files (`dart format .`).
+  - All unit and widget tests in the test suite pass with a 100% success rate.
+
 ## Recent Updates
+- Performed final QA and launch readiness pass for Phase 46, ensuring 100% test pass rate, clean static analysis, local push notification triggers, 2-hour periodic background processing, and accurate cross-currency balance calculations.
 - Upgraded dependencies, migrated providers to Riverpod 3.x annotations, cleared static analysis warnings, and resolved all test suite timer leaks and mock interface crashes (Phase 45).
 - Implemented exact UTC+2 calculations and a dual-execution background strategy (00:00 and 01:00 UTC+2) with UUID v5 URL-based idempotency checks for recurring transactions (Phase 44).
 - Fixed backup import username update and standardized export filename prefixes (Phase 43).

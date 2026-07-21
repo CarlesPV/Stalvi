@@ -4,11 +4,11 @@ import 'package:workmanager/workmanager.dart';
 import 'package:stalvi/presentation/providers/app_startup_provider.dart';
 import 'package:stalvi/presentation/providers/automatic_transactions_providers.dart';
 
+import 'package:stalvi/infrastructure/services/notification_service.dart';
+
 const String executeRecurringTransactionsTask =
     "executeRecurringTransactionsTask";
 const String _periodicTaskUniqueName = 'stalvi.executeRecurringTransactions';
-const String _reconciliationTaskUniqueName =
-    'stalvi.executeRecurringTransactionsReconciliation';
 
 @pragma('vm:entry-point')
 void callbackDispatcher() {
@@ -23,7 +23,8 @@ void callbackDispatcher() {
 
       container = ProviderContainer();
 
-      // Ensure Drift DB is fully initialized before accessing repositories
+      // Ensure NotificationService and Drift DB are initialized in background isolate
+      await container.read(notificationServiceProvider).initialize();
       await container.read(appDatabaseProvider.future);
 
       if (task == executeRecurringTransactionsTask ||
@@ -56,23 +57,6 @@ class BackgroundExecutionService {
   }
 
   static Future<void> registerPeriodicTasks() async {
-    final now = DateTime.now().toUtc();
-
-    // Target 00:00 UTC+2, which is 22:00 UTC on the previous day.
-    var targetPrimary = DateTime.utc(now.year, now.month, now.day, 22, 0, 0);
-    if (!now.isBefore(targetPrimary)) {
-      targetPrimary = targetPrimary.add(const Duration(days: 1));
-    }
-    final delayPrimary = targetPrimary.difference(now);
-
-    // Target 01:00 UTC+2, which is 23:00 UTC on the previous day.
-    var targetReconciliation =
-        DateTime.utc(now.year, now.month, now.day, 23, 0, 0);
-    if (!now.isBefore(targetReconciliation)) {
-      targetReconciliation = targetReconciliation.add(const Duration(days: 1));
-    }
-    final delayReconciliation = targetReconciliation.difference(now);
-
     final constraints = Constraints(
       networkType: NetworkType.notRequired,
       requiresBatteryNotLow: false,
@@ -82,31 +66,14 @@ class BackgroundExecutionService {
     );
 
     debugPrint(
-      '[BackgroundExecutionService] Registering primary periodic task. '
-      'Next target: ${targetPrimary.toIso8601String()} UTC '
-      '(initialDelay: ${delayPrimary.inMinutes} min).',
+      '[BackgroundExecutionService] Registering periodic task. '
+      'Frequency: 2 hours.',
     );
 
     await Workmanager().registerPeriodicTask(
       _periodicTaskUniqueName,
       executeRecurringTransactionsTask,
-      frequency: const Duration(hours: 24),
-      initialDelay: delayPrimary,
-      existingWorkPolicy: ExistingPeriodicWorkPolicy.keep,
-      constraints: constraints,
-    );
-
-    debugPrint(
-      '[BackgroundExecutionService] Registering reconciliation periodic task. '
-      'Next target: ${targetReconciliation.toIso8601String()} UTC '
-      '(initialDelay: ${delayReconciliation.inMinutes} min).',
-    );
-
-    await Workmanager().registerPeriodicTask(
-      _reconciliationTaskUniqueName,
-      executeRecurringTransactionsTask,
-      frequency: const Duration(hours: 24),
-      initialDelay: delayReconciliation,
+      frequency: const Duration(hours: 2),
       existingWorkPolicy: ExistingPeriodicWorkPolicy.keep,
       constraints: constraints,
     );

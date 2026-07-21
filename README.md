@@ -30,7 +30,8 @@ Designed with strict **Clean Architecture** principles, the project ensures isol
 ### ⏰ Automatic & Recurring Transactions
 * **Automated Engine:** Evaluates and automatically generates scheduled transactions based on custom day intervals.
 * **End-of-Month Clamping:** Implements safe calendar clamping logic (e.g., executing transactions scheduled for the 30th or 31st on February 28th/29th or the last day of short months).
-* **Background Tasks:** Operates in the background via `workmanager` using a dual-execution strategy (primary task at 00:00 UTC+2 and a reconciliation task at 01:00 UTC+2) to verify and execute pending automatic transactions.
+* **Background Tasks & App Startup Fallback:** Operates in the background via `workmanager` using a periodic 2-hour check interval, combined with an asynchronous fallback mechanism at app startup (`main.dart` / Dashboard initialization) to ensure pending automatic transactions are created reliably.
+* **Local Push Notifications:** Dispatches translated local notifications ("Transaction [name] completed successfully" in EN, ES, CA) via `flutter_local_notifications` whenever an automatic transaction is processed in the background or at startup.
 * **Idempotency & UTC+2 Precision:** Employs deterministic UUID v5 URL-based keys to ensure idempotency across multiple runs, strictly validating that only one transaction is generated per execution cycle, calculated precisely using the UTC+2 timezone offset.
 * **Soft-Delete Support:** Easily soft-delete recurring templates, moving them to the Recycle Bin and disabling automated generation until restored or permanently purged.
 
@@ -49,7 +50,7 @@ Designed with strict **Clean Architecture** principles, the project ensures isol
 * **Enhanced CSV/Excel:** Export detailed spreadsheets containing all movement details and historical snapshots.
 * **Premium PDF Reports:** Generates clean tabular monthly statements, summary boxes, and category distribution pie charts. Formats transfers as `Source Account -> Destination Account` and embeds custom TTF fonts for perfect multi-currency unicode character rendering.
 * **Encrypted JSON Backups:** Export full database backups encrypted with AES-256-CBC using PBKDF2-HMAC-SHA256 key derivation from a user-specified password. Restoring a backup overwrites the active profile username with the one saved in the backup.
-* **Filename Standardization:** Exports are named based on document type: `Stalvi_Backup_`, `Stalvi_Table_`, and `Stalvi_Overview_` followed by a timestamp. Uses `open_filex` to let users immediately open files after exporting.
+* **Native Directory Exports & Filename Standardization:** Exports are saved directly to public user directories (prioritizing system Documents and Downloads folders, visible in system file manager Recents) without displaying third-party sharing pop-ups. Files are named based on document type: `Stalvi_Backup_`, `Stalvi_Table_`, and `Stalvi_Overview_` followed by a timestamp. Uses `open_filex` to let users immediately open files after exporting.
 
 ### 🛡️ Robust Security Measures
 * **Database Encryption:** SQLite database file is encrypted utilizing **SQLCipher (AES-256)**.
@@ -78,7 +79,7 @@ On application launch or language switch, default database entities (such as "My
 * **Security & Storage:** `flutter_secure_storage`, `local_auth`, `encrypt`, `crypto`
 * **Charts & Analytics:** `fl_chart`
 * **Background Tasks:** `workmanager`
-* **Exporting & Utilities:** `pdf`, `share_plus`, `file_picker`, `open_filex`, `uuid`, `shared_preferences`
+* **Exporting & Utilities:** `pdf`, `file_picker`, `open_filex`, `uuid`, `shared_preferences`, `path_provider`
 
 ---
 

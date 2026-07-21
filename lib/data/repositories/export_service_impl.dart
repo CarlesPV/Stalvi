@@ -11,7 +11,6 @@ import 'package:encrypt/encrypt.dart' as enc;
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
@@ -32,31 +31,76 @@ import 'package:stalvi/domain/repositories/i_export_service.dart';
 
 class ExportServiceImpl implements IExportService {
   Future<String> _saveFile(List<int> bytes, String filename) async {
-    if (Platform.isAndroid) {
-      // In Android 13+, WRITE_EXTERNAL_STORAGE is deprecated and not needed for Downloads if using MediaStore,
-      // but to use File IO in /storage/emulated/0/Download we might need it or just try without.
-      var status = await Permission.storage.status;
-      if (!status.isGranted) {
-        await Permission.storage.request();
-      }
-    }
-
     Directory? dir;
+
     if (Platform.isAndroid) {
-      dir = Directory('/storage/emulated/0/Download');
-      if (!await dir.exists()) {
-        dir = await getExternalStorageDirectory();
+      // 1. Try public Documents directory (/storage/emulated/0/Documents)
+      final docsDir = Directory('/storage/emulated/0/Documents');
+      try {
+        if (await docsDir.exists()) {
+          dir = docsDir;
+        } else if (await docsDir
+            .create(recursive: true)
+            .then((_) => true)
+            .catchError((_) => false)) {
+          dir = docsDir;
+        }
+      } catch (_) {}
+
+      // 2. Try public Download directory (/storage/emulated/0/Download)
+      if (dir == null) {
+        final downloadsDir = Directory('/storage/emulated/0/Download');
+        try {
+          if (await downloadsDir.exists()) {
+            dir = downloadsDir;
+          } else if (await downloadsDir
+              .create(recursive: true)
+              .then((_) => true)
+              .catchError((_) => false)) {
+            dir = downloadsDir;
+          }
+        } catch (_) {}
       }
-    } else {
-      dir = await getDownloadsDirectory();
-      dir ??= await getApplicationDocumentsDirectory();
+
+      // 3. Fallback: derive root storage path from getExternalStorageDirectory
+      if (dir == null) {
+        try {
+          final extDir = await getExternalStorageDirectory();
+          if (extDir != null) {
+            final rootPath = extDir.path.split('/Android/data').first;
+            final rootDocs = Directory('$rootPath/Documents');
+            final rootDownloads = Directory('$rootPath/Download');
+
+            if (await rootDocs.exists() ||
+                await rootDocs
+                    .create(recursive: true)
+                    .then((_) => true)
+                    .catchError((_) => false)) {
+              dir = rootDocs;
+            } else if (await rootDownloads.exists() ||
+                await rootDownloads
+                    .create(recursive: true)
+                    .then((_) => true)
+                    .catchError((_) => false)) {
+              dir = rootDownloads;
+            }
+          }
+        } catch (_) {}
+      }
     }
 
+    // Fallback for iOS / macOS / Windows / Linux or Android fallback
     if (dir == null) {
-      throw const ExportException(
-        message: 'Could not find a directory to save the file',
-        code: 'NO_DIRECTORY',
-      );
+      try {
+        if (Platform.isIOS || Platform.isMacOS) {
+          dir = await getApplicationDocumentsDirectory();
+        } else {
+          dir = await getDownloadsDirectory() ??
+              await getApplicationDocumentsDirectory();
+        }
+      } catch (_) {
+        dir = await getApplicationDocumentsDirectory();
+      }
     }
 
     final file = File('${dir.path}/$filename');

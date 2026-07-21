@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:stalvi/data/database/app_database.dart';
 import 'package:stalvi/domain/usecases/auto_purge_usecase.dart';
 import 'package:stalvi/domain/usecases/sync_exchange_rates_usecase.dart';
+import 'package:stalvi/infrastructure/services/notification_service.dart';
 import 'locale_provider.dart';
 import 'repository_providers.dart';
 
@@ -25,6 +26,7 @@ final autoPurgeUseCaseProvider = Provider<AutoPurgeUseCase>((ref) {
 });
 
 /// App-wide startup gate.
+
 ///
 /// Resolves to [void] once all critical services are initialised and the
 /// application is safe to transition from [SplashScreen] to the auth/dashboard
@@ -36,6 +38,17 @@ final autoPurgeUseCaseProvider = Provider<AutoPurgeUseCase>((ref) {
 final appStartupProvider = FutureProvider<void>((ref) async {
   // Critical path — open the encrypted Drift/SQLCipher database.
   await ref.watch(appDatabaseProvider.future);
+
+  // Initialize notification service and request permissions asynchronously
+  try {
+    final notificationService = ref.read(notificationServiceProvider);
+    await notificationService.initialize();
+    await notificationService.requestPermissions();
+  } catch (e) {
+    debugPrint(
+      'Notification service initialization skipped or failed during startup: $e',
+    );
+  }
 
   // Auto-purge old trash items
   try {

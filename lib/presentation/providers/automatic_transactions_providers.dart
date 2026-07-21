@@ -4,6 +4,8 @@ import 'package:stalvi/domain/usecases/automatic_transactions/crud_automatic_tra
 import 'package:stalvi/domain/usecases/execute_recurring_transactions_usecase.dart';
 import 'package:stalvi/presentation/providers/repository_providers.dart';
 
+import 'package:stalvi/infrastructure/services/notification_service.dart';
+
 final createAutomaticTransactionUseCaseProvider = Provider((ref) {
   final repo = ref.watch(automaticTransactionRepositoryProvider);
   return CreateAutomaticTransactionUseCase(repo);
@@ -42,18 +44,20 @@ final automaticTransactionsListProvider =
 });
 
 /// Provides the [ExecuteRecurringTransactionsUseCase] with all required
-/// repositories: automatic, transaction, account, profile, and exchange rate.
+/// repositories: automatic, transaction, account, profile, exchange rate, and notification service.
 final executeRecurringTransactionsUseCaseProvider = Provider((ref) {
   final automaticRepo = ref.watch(automaticTransactionRepositoryProvider);
   final transactionRepo = ref.watch(transactionRepositoryProvider);
   final accountRepo = ref.watch(accountRepositoryProvider);
   final profileRepo = ref.watch(profileRepositoryProvider);
   final exchangeRateRepo = ref.watch(exchangeRateRepositoryProvider);
+  final notificationService = ref.watch(notificationServiceProvider);
   return ExecuteRecurringTransactionsUseCase(
     automaticRepo,
     transactionRepo,
     accountRepo,
     profileRepo,
     exchangeRateRepo,
+    notificationService,
   );
 });

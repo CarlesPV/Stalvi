@@ -30,6 +30,7 @@ import '../../widgets/edit_account_dialog.dart';
 import '../transactions/transaction_details_dialog.dart';
 import 'package:stalvi/core/utils/icon_helper.dart';
 import '../../providers/transaction_filter_provider.dart';
+import '../../providers/automatic_transactions_providers.dart';
 
 /// The main application scaffold — shown after successful authentication.
 ///
@@ -71,6 +72,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(discreetModeProvider.notifier).setDiscreet(true);
       _checkBiometricOptIn();
+      _executeFallbackTransactions();
     });
   }
 
@@ -152,6 +154,20 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen>
         );
       },
     );
+  }
+
+  Future<void> _executeFallbackTransactions() async {
+    try {
+      final useCase = ref.read(executeRecurringTransactionsUseCaseProvider);
+      await useCase.execute();
+      debugPrint(
+        '[DashboardScreen] Fallback recurring transactions check completed.',
+      );
+    } catch (e, st) {
+      debugPrint(
+        '[DashboardScreen] Fallback recurring transactions check failed: $e\n$st',
+      );
+    }
   }
 
   @override

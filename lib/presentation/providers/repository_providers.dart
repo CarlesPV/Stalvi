@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:stalvi/core/utils/navigator_key.dart';
@@ -318,16 +319,40 @@ final accountBalanceProvider =
   double balance = account.initialBalance;
   for (final tx in transactions) {
     if (tx.accountId == accountId) {
+      double effectiveAmount = tx.amount / 100.0;
+
+      // Apply currency conversion if necessary using the snapshot
+      if (tx.originalCurrency != account.currency &&
+          tx.exchangeRateSnapshot != null) {
+        try {
+          final rates =
+              jsonDecode(tx.exchangeRateSnapshot!) as Map<String, dynamic>;
+          final double? rateOriginal =
+              (rates[tx.originalCurrency] as num?)?.toDouble();
+          final double? rateAccount =
+              (rates[account.currency] as num?)?.toDouble();
+
+          if (rateOriginal != null &&
+              rateAccount != null &&
+              rateOriginal != 0) {
+            // Convert from original currency to base currency, then to account currency
+            effectiveAmount = (effectiveAmount / rateOriginal) * rateAccount;
+          }
+        } catch (_) {
+          // Fallback to unconverted amount if parsing fails
+        }
+      }
+
       if (tx.type == TransactionType.income) {
-        balance += tx.amount / 100.0;
+        balance += effectiveAmount;
       } else if (tx.type == TransactionType.expense) {
-        balance -= tx.amount / 100.0;
+        balance -= effectiveAmount;
       } else if (tx.type == TransactionType.transfer) {
         bool isOrigin = !tx.id.endsWith('_dst');
         if (isOrigin) {
-          balance -= tx.amount / 100.0;
+          balance -= effectiveAmount;
         } else {
-          balance += tx.amount / 100.0;
+          balance += effectiveAmount;
         }
       }
     }
