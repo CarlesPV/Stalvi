@@ -349,3 +349,17 @@
   - [x] **Workmanager Background Engine:** Configured Workmanager to execute pending automatic transaction evaluations every 3 hours (`Duration(hours: 3)`) in the background, paired with Dashboard load fallback execution and exact UTC+2 date calculation.
   - [x] **File Export Prioritization:** Standardized file saving to target system `Download` -> `Downloads` -> `Documents` -> `Stalvi` directories sequentially before emergency fallback, preventing access errors on various Android versions.
   - [x] **Production Readiness & QA:** Ensured 0 static analysis warnings, 100% test pass rate across all unit and widget tests, and green CI/CD build status.
+
+- [x] **Phase 49: Strict Notification Permissions Workflow, Legal Compliance & Technical Debt Cleanup**
+  - [x] **Strict Opt-In Notification Workflow:** Refactored push notification toggle to default to `false` (OFF) for strict user opt-in consent. Integrated native OS permission verification (`isPermissionGranted`, `isPermissionPermanentlyDenied`, `requestPermissions`).
+  - [x] **OS Settings Integration:** Implemented system settings redirection dialog (`openAppSettings()`) when notification permissions are permanently denied, providing clear user feedback in English, Spanish, and Catalan.
+  - [x] **Store-Ready Legal Compliance:** Updated localized Terms and Conditions (`assets/legal/terms_*.md`) to explicitly detail SQLCipher local encryption, zero-telemetry architecture, minimal exchange rate API connection footprint, GDPR/LOPDGDD compliance, and financial liability disclaimers.
+  - [x] **Code Quality & Technical Debt Cleanup:** Cleaned up unused imports, dead code paths, obsolete test files, and orphan translation keys across English, Spanish, and Catalan `.arb` bundles.
+  - [x] **QA & Verification:** Maintained 100% test pass rate across unit, widget, and integration tests with zero analyzer warnings (`flutter analyze`).
+
+- [x] **Phase 50: Store-Ready Legal Overhaul**
+  - [x] **Legal Content Overhaul:** Overhauled Terms & Conditions and Privacy Policy markdown assets across English, Spanish, and Catalan (`assets/legal/terms_*.md`, `assets/legal/privacy_*.md`) with store-compliant legal provisions including "As-Is" clauses, financial disclaimers, acceptable use policies, and local data non-recovery disclosures.
+  - [x] **UI Scrollability Integrity:** Verified UI integrity for large markdown documents in `TermsAndConditionsViewer`, ensuring `SingleChildScrollView` layout rendering prevents overflows across mobile screen sizes.
+  - [x] **Static Analysis & Testing:** Ensured 0 static analyzer warnings/infos (`flutter analyze`) and verified 100% automated unit/widget test suite pass rate (`flutter test`).
+  - [x] **CI/CD Workflow Readiness:** Verified GitHub Actions CI/CD pipeline compatibility for release deployment.
+

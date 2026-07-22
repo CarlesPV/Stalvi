@@ -19,11 +19,11 @@ class SettingsRepository implements ISettingsRepository {
   Future<bool> getNotificationsEnabled() async {
     try {
       if (_prefs != null) {
-        return _prefs.getBool(kNotificationsEnabledKey) ?? true;
+        return _prefs.getBool(kNotificationsEnabledKey) ?? false;
       }
       return await _secureStorage.getNotificationsEnabled();
     } catch (_) {
-      return true;
+      return false;
     }
   }
 

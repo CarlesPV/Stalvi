@@ -1,17 +1,15 @@
-# Active Task: Phase 48 - Background Resilience & Final Polish
+# Active Task: Phase 50 - Store-Ready Legal Overhaul & Final App Store Validation
 
 ## 🎯 Objective
-Finalize production readiness by fixing background task execution for automated transactions, implementing notification toggles with permission handling, refining file export paths, and ensuring 100% test coverage and CI/CD success.
+Redactar y desplegar documentos legales (Términos y Condiciones, y Política de Privacidad) exhaustivos, de nivel profesional y jurídicamente blindados en Inglés, Español y Catalán. Garantizar el cumplimiento de GDPR, LOPDGDD y CCPA, preparando la app para su publicación inmediata en las tiendas.
 
 ## 🏗️ Architecture & Core Components
-*   **Clean Architecture:** Domain rules for transactions, Infrastructure for Workmanager, Notifications, and File System.
-*   **State Management:** Riverpod for Settings/Notification toggles.
-*   **Background Tasks:** Workmanager executing every 3 hours reliably.
-*   **Localization:** EN, ES, CA support for new settings.
+*   **Static Assets:** Sobrescritura de `assets/legal/privacy_*.md` y `assets/legal/terms_*.md`.
+*   **Presentation Layer:** Verificación del renderizado del Markdown para textos largos (scroll, rendimiento).
+*   **Compliance:** Exención explícita de responsabilidad financiera, aclaración sobre el uso de la API de divisas de terceros y confirmación de la naturaleza 100% local y encriptada (SQLCipher) de los datos.
 
 ## ✅ Task Checklist
-- [x] **Optional Notifications:** Add a toggle in Profile & Security (Settings) between Language and T&C to enable/disable notifications. Default is ON. Check and request system permissions when toggling ON. Fully translated to EN, ES, CA.
-- [x] **Fix Automatic Transactions:** Fix the "Day X of month" transaction logic. Configure Workmanager to reliably check for pending transactions every 2-3 hours in the background.
-- [x] **Export Priorities:** Refactor export logic to attempt saving to the `Downloads` folder first, falling back to `Documents` if it fails.
-- [x] **Quality Assurance:** Ensure the app compiles with 0 warnings, passes all unit/integration tests, and the CI/CD workflows are green.
-- [x] **Documentation Update:** Update README.md, roadmap.md, and code comments to reflect the final production-ready state.
+- [ ] **Privacy Policy Overhaul:** Generar políticas de privacidad detalladas (EN, ES, CA) declarando la nula recolección de datos personales, almacenamiento local seguro y el uso anónimo de APIs externas.
+- [ ] **Terms & Conditions Overhaul:** Generar T&C detallados (EN, ES, CA) estableciendo que la app es una herramienta informativa, sin responsabilidad sobre decisiones o pérdidas financieras del usuario.
+- [ ] **UI/UX Validation:** Asegurar que las pantallas `TermsScreen` y `PrivacyScreen` renderizan correctamente los nuevos documentos extensos sin desbordamientos de UI en dispositivos pequeños.
+- [ ] **Quality Assurance:** Ejecutar `flutter analyze` y los tests unitarios/widgets para asegurar 100% de cobertura y ningún error (0 warnings, 0 info) tras la actualización de los assets. Actualizar `roadmap.md` a Fase 50 completada.

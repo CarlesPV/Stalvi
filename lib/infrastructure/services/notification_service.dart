@@ -79,14 +79,7 @@ class NotificationService {
       }
 
       _isInitialized = true;
-      debugPrint(
-        '[NotificationService] Local notifications initialized successfully.',
-      );
-    } catch (e, st) {
-      debugPrint(
-        '[NotificationService] Failed to initialize local notifications: $e\n$st',
-      );
-    }
+    } catch (_) {}
   }
 
   /// Checks if OS notification permission is currently granted.
@@ -108,6 +101,17 @@ class NotificationService {
       }
       final status = await Permission.notification.status;
       return status.isGranted;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  /// Checks if OS notification permission is permanently denied.
+  Future<bool> isPermissionPermanentlyDenied() async {
+    try {
+      if (kIsWeb) return false;
+      final status = await Permission.notification.status;
+      return status.isPermanentlyDenied;
     } catch (_) {
       return false;
     }
@@ -137,11 +141,7 @@ class NotificationService {
       }
       final status = await Permission.notification.request();
       return status.isGranted;
-    } catch (e) {
-      debugPrint(
-        '[NotificationService] Error requesting notification permissions: $e',
-      );
-    }
+    } catch (_) {}
     return false;
   }
 
@@ -219,12 +219,7 @@ class NotificationService {
         payload.body,
         details,
       );
-      debugPrint(
-        '[NotificationService] Notification dispatched: id=$id title="${payload.title}" body="${payload.body}"',
-      );
-    } catch (e, st) {
-      debugPrint('[NotificationService] Failed to show notification: $e\n$st');
-    }
+    } catch (_) {}
   }
 }
 

@@ -11,6 +11,7 @@ import '../../providers/locale_provider.dart';
 import '../../providers/theme_provider.dart';
 import '../../providers/settings_notifier.dart';
 import '../../widgets/terms_and_conditions_viewer.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'about_me_screen.dart' as stalvi_about_me;
 
 class ProfileSettingsScreen extends ConsumerStatefulWidget {
@@ -709,10 +710,36 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                     secondary: const Icon(Icons.notifications_rounded),
                     title: Text(l10n.settingsNotifications),
                     value: ref.watch(settingsNotifierProvider),
-                    onChanged: (bool value) {
-                      ref
-                          .read(settingsNotifierProvider.notifier)
+                    onChanged: (bool value) async {
+                      final result = await ref
+                          .read(profileSettingsControllerProvider.notifier)
                           .toggleNotifications(value);
+                      if (result ==
+                              NotificationToggleResult.permanentlyDenied &&
+                          context.mounted) {
+                        showDialog(
+                          context: context,
+                          builder: (ctx) => AlertDialog(
+                            title:
+                                Text(l10n.notificationsPermanentlyDeniedTitle),
+                            content:
+                                Text(l10n.notificationsPermanentlyDeniedBody),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(ctx),
+                                child: Text(l10n.btnCancel),
+                              ),
+                              ElevatedButton(
+                                onPressed: () {
+                                  Navigator.pop(ctx);
+                                  openAppSettings();
+                                },
+                                child: Text(l10n.btnOpenSettings),
+                              ),
+                            ],
+                          ),
+                        );
+                      }
                     },
                   ),
                   const Divider(),

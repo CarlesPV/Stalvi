@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:stalvi/core/l10n/app_localizations.dart';
 
 /// A premium, stateless presentation viewer for legal texts (Terms and Conditions / Privacy Policy).
@@ -153,6 +155,9 @@ class _LegalDocumentView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return FutureBuilder<String>(
       future:
           rootBundle.loadString(assetPath).catchError((_) => fallbackContent),
@@ -164,170 +169,50 @@ class _LegalDocumentView extends StatelessWidget {
         }
 
         final content = snapshot.data ?? fallbackContent;
-        final parsedWidgets = _parseMarkdown(content, context);
 
-        return Scrollbar(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: parsedWidgets,
+        return Markdown(
+          data: content,
+          selectable: true,
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+          onTapLink: (text, href, title) {
+            if (href != null) {
+              launchUrl(Uri.parse(href), mode: LaunchMode.externalApplication);
+            }
+          },
+          styleSheet: MarkdownStyleSheet.fromTheme(theme).copyWith(
+            h1: theme.textTheme.headlineSmall?.copyWith(
+              fontWeight: FontWeight.w800,
+              color: colorScheme.onSurface,
+              letterSpacing: -0.5,
+            ),
+            h2: theme.textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: colorScheme.primary,
+              letterSpacing: -0.2,
+            ),
+            h3: theme.textTheme.bodyLarge?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: colorScheme.onSurface,
+            ),
+            p: theme.textTheme.bodyMedium?.copyWith(
+              color: colorScheme.onSurfaceVariant,
+              height: 1.5,
+            ),
+            listBullet: theme.textTheme.bodyMedium?.copyWith(
+              color: colorScheme.primary,
+              fontWeight: FontWeight.bold,
+            ),
+            horizontalRuleDecoration: BoxDecoration(
+              border: Border(
+                top: BorderSide(
+                  color: colorScheme.outlineVariant.withValues(alpha: 0.5),
+                  width: 1.0,
+                ),
+              ),
             ),
           ),
         );
       },
-    );
-  }
-
-  /// Custom lightweight line-by-line Markdown parsing utility.
-  ///
-  /// Maps headers (#, ##, ###), lists (*, -), empty lines, and normal text to
-  /// rich styled widgets without outputting raw markup characters.
-  List<Widget> _parseMarkdown(String markdown, BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-    final lines = markdown.split('\n');
-    final widgets = <Widget>[];
-
-    for (var i = 0; i < lines.length; i++) {
-      final line = lines[i].trim();
-      if (line.isEmpty) {
-        widgets.add(const SizedBox(height: 8));
-        continue;
-      }
-
-      if (line.startsWith('# ')) {
-        // Main Header (H1)
-        widgets.add(
-          Padding(
-            padding: const EdgeInsets.only(top: 16, bottom: 10),
-            child: Text(
-              line.substring(2),
-              style: theme.textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.w800,
-                color: colorScheme.onSurface,
-                letterSpacing: -0.5,
-              ),
-            ),
-          ),
-        );
-      } else if (line.startsWith('## ')) {
-        // Section Header (H2)
-        widgets.add(
-          Padding(
-            padding: const EdgeInsets.only(top: 14, bottom: 8),
-            child: Text(
-              line.substring(3),
-              style: theme.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: colorScheme.primary,
-                letterSpacing: -0.2,
-              ),
-            ),
-          ),
-        );
-      } else if (line.startsWith('### ')) {
-        // Sub Header (H3)
-        widgets.add(
-          Padding(
-            padding: const EdgeInsets.only(top: 10, bottom: 6),
-            child: Text(
-              line.substring(4),
-              style: theme.textTheme.bodyLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: colorScheme.onSurface,
-              ),
-            ),
-          ),
-        );
-      } else if (line.startsWith('* ') || line.startsWith('- ')) {
-        // List Item
-        final text = line.substring(2);
-        widgets.add(
-          Padding(
-            padding: const EdgeInsets.only(left: 12, bottom: 6),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 7, right: 10),
-                  child: Container(
-                    width: 5,
-                    height: 5,
-                    decoration: BoxDecoration(
-                      color: colorScheme.primary,
-                      shape: BoxShape.circle,
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: _buildFormattedText(text, theme, colorScheme),
-                ),
-              ],
-            ),
-          ),
-        );
-      } else {
-        // Regular Paragraph
-        widgets.add(
-          Padding(
-            padding: const EdgeInsets.only(bottom: 8),
-            child: _buildFormattedText(line, theme, colorScheme),
-          ),
-        );
-      }
-    }
-
-    return widgets;
-  }
-
-  /// Formats text containing simple markdown elements like bolding (`**text**`).
-  Widget _buildFormattedText(
-    String text,
-    ThemeData theme,
-    ColorScheme colorScheme,
-  ) {
-    final regex = RegExp(r'\*\*(.*?)\*\*');
-    final matches = regex.allMatches(text);
-    if (matches.isEmpty) {
-      return Text(
-        text,
-        style: theme.textTheme.bodyMedium?.copyWith(
-          color: colorScheme.onSurfaceVariant,
-          height: 1.5,
-        ),
-      );
-    }
-
-    final spans = <TextSpan>[];
-    var start = 0;
-    for (final match in matches) {
-      if (match.start > start) {
-        spans.add(TextSpan(text: text.substring(start, match.start)));
-      }
-      spans.add(
-        TextSpan(
-          text: match.group(1),
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: colorScheme.onSurface,
-          ),
-        ),
-      );
-      start = match.end;
-    }
-    if (start < text.length) {
-      spans.add(TextSpan(text: text.substring(start)));
-    }
-
-    return RichText(
-      text: TextSpan(
-        style: theme.textTheme.bodyMedium?.copyWith(
-          color: colorScheme.onSurfaceVariant,
-          height: 1.5,
-        ),
-        children: spans,
-      ),
     );
   }
 }

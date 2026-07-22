@@ -38,17 +38,10 @@ class ExecuteRecurringTransactionsUseCase {
     final todayUtcPlus2 =
         DateTime.utc(nowUtcPlus2.year, nowUtcPlus2.month, nowUtcPlus2.day);
 
-    debugPrint(
-      '[ExecuteRecurringTxns] Starting evaluation. Today in UTC+2 is: $todayUtcPlus2',
-    );
-
     final automaticTxns = await automaticRepo.getAllAutomaticTransactions();
-    int fired = 0;
-    int skipped = 0;
 
     for (final autoTxn in automaticTxns) {
       if (autoTxn.isDeleted || !autoTxn.isActive || autoTxn.deletedAt != null) {
-        skipped++;
         continue;
       }
 
@@ -68,7 +61,6 @@ class ExecuteRecurringTransactionsUseCase {
             nextDateUtcPlus2.isAtSameMomentAs(todayUtcPlus2)) {
           try {
             await _fireTransaction(currentAutoTxn, nowUtc, nextDateUtcPlus2);
-            fired++;
 
             final nextDate = calculateNextTriggerDateUtcPlus2(
               currentAutoTxn.nextExecutionDate,
@@ -77,27 +69,19 @@ class ExecuteRecurringTransactionsUseCase {
             );
 
             if (!nextDate.isAfter(currentAutoTxn.nextExecutionDate)) {
-              debugPrint(
-                '[ExecuteRecurringTxns] ERROR: nextDate is not after current nextExecutionDate! Breaking loop to prevent infinite loop.',
-              );
               break;
             }
 
             currentAutoTxn =
                 currentAutoTxn.copyWith(nextExecutionDate: nextDate);
-          } catch (e, st) {
-            debugPrint(
-              '[ExecuteRecurringTxns] ERROR firing "${currentAutoTxn.name}": $e\n$st',
-            );
+          } catch (_) {
             break;
           }
         } else {
-          skipped++;
           break;
         }
       }
     }
-    debugPrint('[ExecuteRecurringTxns] Done. fired=$fired skipped=$skipped');
   }
 
   Future<void> _fireTransaction(
@@ -113,11 +97,7 @@ class ExecuteRecurringTransactionsUseCase {
     final existingTxn =
         await transactionRepo.getTransactionById(deterministicId);
 
-    if (existingTxn != null) {
-      debugPrint(
-        '[ExecuteRecurringTxns] Transaction already generated for cycle $executionCycleDateUtcPlus2 (id: $deterministicId). Skipping creation.',
-      );
-    } else {
+    if (existingTxn == null) {
       final account = await accountRepo.getAccountById(autoTxn.accountId);
       final profile = account != null
           ? await profileRepo.getProfileById(account.userId)
@@ -194,11 +174,7 @@ class ExecuteRecurringTransactionsUseCase {
               languageCode: languageCode,
             );
           }
-        } catch (e, st) {
-          debugPrint(
-            '[ExecuteRecurringTxns] Failed to send notification for ${autoTxn.name}: $e\n$st',
-          );
-        }
+        } catch (_) {}
       }
     }
 

@@ -1,5 +1,4 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter/foundation.dart';
 import 'package:stalvi/data/database/app_database.dart';
 import 'package:stalvi/domain/usecases/auto_purge_usecase.dart';
 import 'package:stalvi/domain/usecases/sync_exchange_rates_usecase.dart';
@@ -26,7 +25,6 @@ final autoPurgeUseCaseProvider = Provider<AutoPurgeUseCase>((ref) {
 });
 
 /// App-wide startup gate.
-
 ///
 /// Resolves to [void] once all critical services are initialised and the
 /// application is safe to transition from [SplashScreen] to the auth/dashboard
@@ -43,20 +41,17 @@ final appStartupProvider = FutureProvider<void>((ref) async {
   try {
     final notificationService = ref.read(notificationServiceProvider);
     await notificationService.initialize();
-    await notificationService.requestPermissions();
-  } catch (e) {
-    debugPrint(
-      'Notification service initialization skipped or failed during startup: $e',
-    );
-  }
+    final isGranted = await notificationService.requestPermissions();
+    if (isGranted) {
+      final settingsRepo = ref.read(settingsRepositoryProvider);
+      await settingsRepo.setNotificationsEnabled(true);
+    }
+  } catch (_) {}
 
   // Auto-purge old trash items
   try {
     await ref.read(autoPurgeUseCaseProvider).execute();
-  } catch (e) {
-    // If the database is still initializing or there's an error, log it but don't crash startup.
-    debugPrint('AutoPurge failed during startup: $e');
-  }
+  } catch (_) {}
 
   // Sync and update/translate default categories/tags on startup if profile exists
   try {
@@ -75,10 +70,5 @@ final appStartupProvider = FutureProvider<void>((ref) async {
     );
     // Note: this deliberately runs without awaiting it to avoid blocking startup
     syncRatesUseCase.execute(baseCurrency: profile.defaultCurrency);
-  } catch (e) {
-    // Safe to ignore if profile is not setup yet (e.g., first launch)
-    debugPrint(
-      'Default data synchronization skipped or failed during startup: $e',
-    );
-  }
+  } catch (_) {}
 });

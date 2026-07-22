@@ -160,14 +160,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen>
     try {
       final useCase = ref.read(executeRecurringTransactionsUseCaseProvider);
       await useCase.execute();
-      debugPrint(
-        '[DashboardScreen] Fallback recurring transactions check completed.',
-      );
-    } catch (e, st) {
-      debugPrint(
-        '[DashboardScreen] Fallback recurring transactions check failed: $e\n$st',
-      );
-    }
+    } catch (_) {}
   }
 
   @override

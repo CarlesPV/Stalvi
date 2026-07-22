@@ -1858,6 +1858,24 @@ abstract class AppLocalizations {
   /// **'Push Notifications'**
   String get settingsNotifications;
 
+  /// No description provided for @notificationsPermanentlyDeniedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications Disabled'**
+  String get notificationsPermanentlyDeniedTitle;
+
+  /// No description provided for @notificationsPermanentlyDeniedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You have permanently denied notification permissions. Please enable them in your system settings to receive alerts.'**
+  String get notificationsPermanentlyDeniedBody;
+
+  /// No description provided for @btnOpenSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Settings'**
+  String get btnOpenSettings;
+
   /// No description provided for @settingsThemeMode.
   ///
   /// In en, this message translates to:

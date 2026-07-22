@@ -676,7 +676,32 @@ This document lists the completed phases of the Stalvi development roadmap, prov
   - Clean code formatting pass across all modified files (`dart format .`).
   - All unit, widget, and integration tests in the test suite pass with a 100% success rate.
 
+### Phase 49: Strict Notification Permissions Workflow, Legal Compliance & Technical Debt Cleanup
+* **Completion Date:** July 22, 2026
+* **Objective:** Establish a strict opt-in push notification workflow with native OS permission checks and settings redirection, update legal Terms and Conditions for store publishing (GDPR/LOPDGDD compliance and financial disclaimers), and execute a deep technical debt cleanup.
+* **Accomplishments:**
+  - **Strict Opt-In Notifications:** Changed push notifications toggle default to `false` (OFF). Integrated native permission checks (`isPermissionGranted`, `isPermissionPermanentlyDenied`, `requestPermissions`) when users toggle notifications ON.
+  - **OS System Settings Redirection:** Added dialog prompts (`openAppSettings()`) when notifications are permanently denied at the OS level, fully localized in English, Spanish, and Catalan.
+  - **Exhaustive Legal Documentation:** Updated `assets/legal/terms_ca.md`, `assets/legal/terms_en.md`, and `assets/legal/terms_es.md` detailing SQLCipher local encryption, zero telemetry, exchange rate API privacy, GDPR/LOPDGDD compliance, and financial liability disclaimers.
+  - **Technical Debt Cleanup:** Removed dead code, unused imports, obsolete test scripts, and orphan translation keys across all `.arb` bundles.
+* **Verification:**
+  - 100% clean static analysis (`flutter analyze` with 0 issues).
+  - All unit, widget, and integration tests pass cleanly with a 100% success rate.
+
+### Phase 50: Store-Ready Legal Overhaul
+* **Completion Date:** July 22, 2026
+* **Objective:** Validate UI scrollability and integrity for expanded legal documents, ensure 0 analyzer warnings, maintain 100% test pass rate, update project roadmap documentation, and ensure CI/CD workflow readiness.
+* **Accomplishments:**
+  - **Store-Ready Legal Assets:** Overhauled legal markdown documentation across English, Spanish, and Catalan (`terms_*.md`, `privacy_*.md`) with store-compliant legal provisions, financial disclaimers, acceptable use policies, and local data non-recovery disclosures.
+  - **UI Integrity & Scroll Safeguards:** Verified `TermsAndConditionsViewer` layout hierarchy (`Scaffold` + `Scrollbar` + `SingleChildScrollView`), guaranteeing full scrollability and zero visual overflows regardless of legal text length.
+  - **Static Analysis & Testing:** Ensured 0 static analyzer warnings/infos on `flutter analyze`, achieved 100% test suite pass rate on `flutter test`, and verified CI/CD pipeline readiness.
+* **Verification:**
+  - 100% clean static analysis (`flutter analyze` with 0 issues).
+  - 100% pass rate across all unit and widget tests.
+
 ## Recent Updates
+- Finalized Phase 50 (Store-Ready Legal Overhaul), validating UI layout scrollability for large legal markdown documents, achieving 0 analyzer warnings/infos, maintaining 100% test pass rate, and confirming CI/CD workflow readiness.
+- Finalized Phase 49 (Strict Notification Permissions Workflow, Legal Compliance & Technical Debt Cleanup), implementing strict opt-in notification controls with native OS permission checks and settings redirection, store-ready legal compliance documentation in EN/ES/CA, and thorough technical debt cleanup.
 - Finalized Phase 48 (Background Resilience, Optional Notifications & File Export Priorities), implementing user-configurable push notifications in settings, 3-hour Workmanager periodic background task execution with UTC+2 precision, strict storage directory prioritization, and updated documentation.
 - Completed Phase 47 (Export UX & Directory Optimization), refactoring export services for public directory access, adding iOS file sharing keys, and removing share_plus pop-ups.
 - Performed final QA and launch readiness pass for Phase 46, ensuring 100% test pass rate, clean static analysis, local push notification triggers, 2-hour periodic background processing, and accurate cross-currency balance calculations.

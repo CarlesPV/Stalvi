@@ -67,8 +67,8 @@ class ProfileSettingsController extends _$ProfileSettingsController {
     }
   }
 
-  Future<void> toggleNotifications(bool value) async {
-    await ref
+  Future<NotificationToggleResult> toggleNotifications(bool value) async {
+    return await ref
         .read(settingsNotifierProvider.notifier)
         .toggleNotifications(value);
   }

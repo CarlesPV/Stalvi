@@ -28,10 +28,6 @@ void callbackDispatcher() {
   Workmanager().executeTask((task, inputData) async {
     ProviderContainer? container;
     try {
-      debugPrint(
-        '[BackgroundExecutionService] "$task" started at ${DateTime.now().toUtc().toIso8601String()}',
-      );
-
       container = ProviderContainer();
 
       // Ensure NotificationService and Drift DB are initialized in background isolate
@@ -43,18 +39,10 @@ void callbackDispatcher() {
         final useCase =
             container.read(executeRecurringTransactionsUseCaseProvider);
         await useCase.execute();
-        debugPrint(
-          '[BackgroundExecutionService] "$task" completed successfully.',
-        );
-      } else {
-        debugPrint(
-          '[BackgroundExecutionService] Unknown task "$task" — skipping.',
-        );
       }
 
       return true;
-    } catch (e, st) {
-      debugPrint('[BackgroundExecutionService] "$task" FAILED: $e\n$st');
+    } catch (_) {
       return false;
     } finally {
       container?.dispose();
@@ -85,11 +73,6 @@ class BackgroundExecutionService {
       requiresCharging: false,
       requiresDeviceIdle: false,
       requiresStorageNotLow: false,
-    );
-
-    debugPrint(
-      '[BackgroundExecutionService] Registering periodic task. '
-      'Frequency: 3 hours.',
     );
 
     await Workmanager().registerPeriodicTask(

@@ -970,6 +970,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsNotifications => 'Push Notifications';
 
   @override
+  String get notificationsPermanentlyDeniedTitle => 'Notifications Disabled';
+
+  @override
+  String get notificationsPermanentlyDeniedBody =>
+      'You have permanently denied notification permissions. Please enable them in your system settings to receive alerts.';
+
+  @override
+  String get btnOpenSettings => 'Open Settings';
+
+  @override
   String get settingsThemeMode => 'Theme Mode';
 
   @override

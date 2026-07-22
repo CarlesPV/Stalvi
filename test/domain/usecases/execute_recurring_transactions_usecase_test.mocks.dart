@@ -625,6 +625,15 @@ class MockNotificationService extends _i1.Mock
       ) as _i9.Future<bool>);
 
   @override
+  _i9.Future<bool> isPermissionPermanentlyDenied() => (super.noSuchMethod(
+        Invocation.method(
+          #isPermissionPermanentlyDenied,
+          [],
+        ),
+        returnValue: _i9.Future<bool>.value(false),
+      ) as _i9.Future<bool>);
+
+  @override
   _i9.Future<bool> requestPermissions() => (super.noSuchMethod(
         Invocation.method(
           #requestPermissions,

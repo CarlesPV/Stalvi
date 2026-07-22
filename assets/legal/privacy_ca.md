@@ -1,40 +1,77 @@
 # Política de Privadesa
 
-**Data d'entrada en vigor:** 17 de juliol de 2026
+**Data d'entrada en vigor:** 22 de juliol de 2026
 
 ## 1. Introducció
-Benvingut a Stalvi. Respectem la teva privadesa i estem fermament compromesos a mantenir segura la teva informació personal i financera. Aquesta Política de Privadesa exhaustiva explica el nostre enfocament sobre la recopilació, el processament i la protecció de dades quan utilitzes l'aplicació mòbil Stalvi (l'"Aplicació").
+Benvingut a **Stalvi** ("nosaltres", "nostre" o "l'Aplicació"). Stalvi és una aplicació de gestió de finances personals dissenyada amb arquitectura "local-first" i sota la filosofia de privadesa des del disseny (*privacy-by-design*). Estem fermament compromesos a protegir la teva privadesa i a garantir que les teves dades financeres romanguin confidencials, segures i sota el teu control exclusiu.
 
-Aquesta Política de Privadesa compleix amb els estrictes estàndards establerts pel Reglament General de Protecció de Dades (RGPD) de la Unió Europea (Reglament (UE) 2016/679) i la Llei Orgànica de Protecció de Dades Personals i garantia dels drets digitals d'Espanya (LOPDGDD 3/2018).
+Aquesta Política de Privadesa explica les nostres pràctiques pel que fa a la privadesa de dades, la seguretat i el compliment dels estàndards normatius globals, incloent:
+- El **Reglament General de Protecció de Dades (RGPD)** de la Unió Europea (Reglament (UE) 2016/679).
+- La **Llei Orgànica de Protecció de Dades Personals i garantia dels drets digitals d'Espanya (LOPDGDD 3/2018)**.
+- La **California Consumer Privacy Act (CCPA)**, esmenada per la **California Privacy Rights Act (CPRA)**.
 
-## 2. Recopilació i Processament de Dades
-Stalvi opera exclusivament sota una arquitectura "local-first" (prioritat local). Això significa:
-- **Sense Sincronització al Núvol:** No recopilem, transmetem, pugem ni emmagatzemem les teves dades personals o financeres en servidors externs, bases de dades o serveis al núvol.
-- **Dades Emmagatzemades Localment:** Les dades processades per l'Aplicació inclouen el teu perfil d'usuari, transaccions financeres, pressupostos, saldos de comptes i preferències de l'aplicació. Aquesta informació és generada per tu i roman estrictament confinada al teu dispositiu físic.
+En utilitzar Stalvi, acceptes les pràctiques de privadesa descrites en aquest document.
 
-## 3. Emmagatzematge de Dades i Seguretat
-La protecció de la teva informació financera confidencial és la nostra màxima prioritat. Emprem mesures de seguretat avançades per garantir que les teves dades romanguin inaccessibles per a parts no autoritzades:
-- **Xifratge de la Base de Dades:** Totes les dades emmagatzemades localment estan fortament xifrades utilitzant SQLCipher. Les teves dades es xifren en repòs a l'emmagatzematge del teu dispositiu.
-- **Autenticació Biomètrica i PIN:** L'accés a l'Aplicació està protegit pels mecanismes d'autenticació biomètrica natius del teu dispositiu (com Empremta dactilar o FaceID) i un Número d'Identificació Personal (PIN) segur.
-- **Aïllament de Dades:** Com que l'Aplicació funciona sense connexió i sense sincronització amb servidors, les teves dades estan inherentment protegides contra escletxes de servidors remots, intercepcions de xarxa i mineria de dades per part de tercers.
+---
 
-## 4. Intercanvi de Dades i Tercers
-Garantim que les teves dades personals i financeres són completament privades.
-- No venem, lloguem ni compartim les teves dades amb tercers, anunciants o corredors de dades.
-- L'Aplicació no integra programari d'anàlisi o seguiment de tercers que pugui monitorar els teus hàbits financers o patrons d'ús personal.
+## 2. Zero Telemetria i Zero Recopilació de Dades Personals
+Stalvi opera sota un model estricte de **Zero Telemetria**.
+- **Sense Recopilació pel Desenvolupador:** Nosaltres, com a desenvolupadors de l'Aplicació, **no** recopilem, emmagatzemem, transmetem, processem ni venem cap de les teves dades personals o financeres.
+- **Sense Registre d'Usuari:** Stalvi no requereix la creació de comptes d'usuari, registre per correu electrònic, número de telèfon ni inicis de sessió al núvol.
+- **Sense Anàlisi ni Seguiment:** L'Aplicació conté **zero** SDKs de seguiment de tercers, telemetria, agregadors d'informes de fallades (per exemple, Firebase Analytics, Google Analytics, Sentry), programari publicitari o eines d'elaboració de perfils de comportament.
 
-## 5. Els Teus Drets sota el RGPD i la LOPDGDD
-Com a usuari que resideix a la Unió Europea o a Espanya, se't garanteixen drets específics pel que fa a les teves dades personals. Com que Stalvi és una aplicació estrictament local, pots exercir tots aquests drets directament dins de l'aplicació sense necessitat d'enviar-nos una sol·licitud:
-- **Dret d'Accés i Portabilitat:** Tens accés total a les teves dades en tot moment. Pots exercir el teu dret a la portabilitat de les dades exportant les teves dades com un fitxer de còpia de seguretat xifrat o un full de càlcul CSV en qualsevol moment.
-- **Dret de Rectificació:** Pots editar, modificar o actualitzar qualsevol transacció, compte o pressupost inexacte o incomplet directament a través de la interfície de l'Aplicació.
-- **Dret de Supressió ("Dret a l'Oblit"):** Mantens el control total sobre el cicle de vida de les teves dades. Pots eliminar permanentment transaccions específiques o esborrar de forma segura totes les dades de l'Aplicació del teu dispositiu utilitzant la funció "Eliminar Totes les Dades" al menú de configuració.
-- **Dret a la Limitació del Tractament:** Atès que el processament de dades ocorre completament de forma local en funció de les teves entrades directes, tu controles quan i com es processen les teves dades simplement triant si utilitzar o no l'Aplicació.
+---
 
-## 6. Privadesa dels Menors
-Stalvi no està destinat a ser utilitzat per persones menors de 14 anys sense el consentiment explícit d'un pare o tutor legal. No recopilem conscientment dades personals de menors, ja que tota la recopilació de dades es limita estrictament al dispositiu local de l'usuari.
+## 3. Emmagatzematge Local de Dades i Xifratge Avançat (AES-256)
+Totes les dades creades o gestionades dins de Stalvi (incloses transaccions financeres, saldos de comptes, pressupostos, categories personalitzades, etiquetes i preferències d'usuari) s'emmagatzemen exclusivament al teu dispositiu físic.
 
-## 7. Canvis en aquesta Política de Privadesa
-Ens reservem el dret d'actualitzar o modificar aquesta Política de Privadesa en qualsevol moment per reflectir canvis en els requisits legals o en les característiques de l'Aplicació. Qualsevol canvi substancial se't comunicarà a través d'una actualització de l'Aplicació. El teu ús continuat de l'Aplicació després de qualsevol actualització constitueix la teva acceptació de la Política de Privadesa revisada.
+- **Xifratge SQLCipher AES-256:** La base de dades SQLite subadjacent es xifra en repòs mitjançant **SQLCipher amb xifratge AES de 256 bits**. Això garanteix que, encara que s'obtingui accés físic al sistema de fitxers del teu dispositiu, les teves dades financeres continuaran sent il·legibles sense la teva clau de xifratge.
+- **Protecció Biomètrica i PIN:** L'accés a l'Aplicació està protegit pels mecanismes natius d'autenticació biomètrica del teu dispositiu (empremta dactilar, Touch ID o Face ID) i un Número d'Identificació Personal (PIN) personalitzat.
+- **Aïllament de Dades:** Atès que les dades mai surten del teu dispositiu per allotjar-se en els nostres servidors, la teva informació està inherentment protegida contra escletxes en servidors remots, filtracions de dades, intercepcions de xarxa i mineria de dades corporativa.
 
-## 8. Informació de Contacte
-Si tens cap pregunta, inquietud o consulta respecte a aquesta Política de Privadesa o les nostres pràctiques de protecció de dades, posa't en contacte amb el desenvolupador a través de GitHub a https://github.com/CarlesPV.
+---
+
+## 4. Connectivitat a Internet i APIs Obertes de Tercers
+Stalvi està dissenyat per funcionar completament sense connexió. L'**única** instància en què l'Aplicació inicia una connexió a Internet és per obtenir els tipus de canvi de divises actualitzats.
+
+- **Sol·licituds Anònimes de Tipus de Canvi:** Quan actualitzes els tipus de conversió de moneda, Stalvi consulta una API pública de tipus de canvi de tercers a través d'HTTPS segur.
+- **Garanties de Privadesa:** Aquestes sol·licituds API són estrictament anònimes. La sol·licitud conté **únicament** els paràmetres de sol·licitud HTTP estàndard necessaris per obtenir les taules de tipus de canvi públiques (per exemple, símbols de moneda base i destí). **Mai** es transmeten identificadors d'usuari, tokens personals vinculats a IP, identificadors de dispositiu, detalls de comptes ni meitats o imports de transaccions.
+- **Sense Publicitat ni Corredors de Dades:** No mantenim aliances amb anunciants, xarxes d'afiliats ni corredors de dades (*data brokers*).
+
+---
+
+## 5. Control Absolut de l'Usuari i Portabilitat de Dades
+Mantens el 100% de la propietat i el control sobre els teus registres financers i còpies de seguretat de dades.
+
+- **Exportació i Portabilitat de Dades:** Pots exportar els teus registres financers en qualsevol moment en formats estàndard (com fitxers de còpia de seguretat xifrats o fulls de càlcul CSV sense xifrar) per transferir les teves dades o realitzar còpies de seguretat meves o manuals.
+- **Importació i Restauració de Dades:** Tu decideixes quan i on restaurar les teves còpies de seguretat de la base de dades xifrada.
+- **Eliminació de Dades:** Pots eliminar de forma permanent transaccions individuals, restablir categories o executar una operació completa d'**"Eliminar Totes les Dades"** des de la configuració de l'Aplicació. Realitzar aquesta acció purga de forma permanent totes les bases de dades locals xifrades i la configuració emmagatzemada en memòria cau del teu dispositiu.
+
+---
+
+## 6. Drets Normatius (RGPD, LOPDGDD i CCPA/CPRA)
+
+### 6.1. Drets a la UE / Espanya (RGPD / LOPDGDD)
+Sota el RGPD i la LOPDGDD, els interessats tenen drets d'accés, rectificació, supressió, limitació del tractament, oposició i portabilitat de dades:
+- Atès que tot el processament es realitza localment al teu dispositiu sota el teu control físic directe, tu exerceixes tots els drets de l'interessat directament des de la interfície d'usuari de l'Aplicació (per exemple, editant registres, exportant dades o esborrant bases de dades locals).
+- Atès que no posseïm ni allotgem les teves dades, no podem accedir, generar, modificar ni eliminar les teves dades personals en nom teu.
+
+### 6.2. Residents de Califòrnia (CCPA / CPRA)
+- **No Venda ni Intercanvi d'Informació Personal:** Stalvi **no** ven, lloga, cedeix, divulga, difon, transfereix ni comunica informació personal a tercers a canvi de contraprestació monetària o d'altre valor.
+- **Dret a Conèixer i Eliminar:** Els usuaris de Califòrnia poden exercir el seu dret a conèixer quines dades existeixen i eliminar totes les seves dades financeres personals emmagatzemades directament a través de la interfície local de l'aplicació.
+
+---
+
+## 7. Privadesa de Menors
+Stalvi no està dirigit a menors de 14 anys (o 13 anys en jurisdiccions regulades per COPPA). No recopilem conscientment dades personals de menors. Atès que totes les dades són creades localment per l'operador del dispositiu, els pares i tutors mantenen la supervisió física completa de l'ús del dispositiu.
+
+---
+
+## 8. Canvis en aquesta Política de Privadesa
+Podem actualitzar aquesta Política de Privadesa periòdicament per reflectir actualitzacions de l'aplicació o estàndards de compliment legal. Les versions actualitzades s'inclouran en els llançaments de l'Aplicació i es publicaran al nostre repositori de codi font. L'ús continuat de Stalvi després d'una actualització constitueix l'acceptació dels termes actualitzats.
+
+---
+
+## 9. Informació de Contacte
+Si tens preguntes, comentaris o consultes legals pel que fa a aquesta Política de Privadesa, pots posar-te en contacte amb el mantenidor del projecte a través de GitHub:
+- **Repositori / Suport:** [https://github.com/CarlesPV](https://github.com/CarlesPV)

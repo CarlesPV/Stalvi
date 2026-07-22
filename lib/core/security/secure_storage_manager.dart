@@ -307,14 +307,14 @@ class SecureStorageManager {
   }
 
   /// Retrieves the saved push notifications setting from secure storage.
-  /// Defaults to `true` (ON) if not set or on exception.
+  /// Defaults to `false` (OFF) if not set or on exception.
   Future<bool> getNotificationsEnabled() async {
     try {
       final value = await _readWithRetry(_kNotificationsEnabledKey);
-      if (value == null) return true;
+      if (value == null) return false;
       return value == 'true';
     } on Exception {
-      return true;
+      return false;
     }
   }
 

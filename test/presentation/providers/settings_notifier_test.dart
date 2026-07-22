@@ -46,9 +46,9 @@ void main() {
   });
 
   group('SettingsNotifier', () {
-    test('initial state defaults to true (ON)', () async {
+    test('initial state defaults to false (OFF)', () async {
       final state = container.read(settingsNotifierProvider);
-      expect(state, isTrue);
+      expect(state, isFalse);
     });
 
     test('initial state loads persisted false (OFF) from repository', () async {
@@ -74,8 +74,9 @@ void main() {
         () async {
       final notifier = container.read(settingsNotifierProvider.notifier);
 
-      await notifier.toggleNotifications(false);
+      final result = await notifier.toggleNotifications(false);
 
+      expect(result, NotificationToggleResult.success);
       expect(container.read(settingsNotifierProvider), isFalse);
       expect(fakeSettingsRepo.notificationsEnabled, isFalse);
       verifyNever(() => mockNotificationService.isPermissionGranted());
@@ -89,11 +90,31 @@ void main() {
           .thenAnswer((_) async => true);
 
       final notifier = container.read(settingsNotifierProvider.notifier);
-      await notifier.toggleNotifications(true);
+      final result = await notifier.toggleNotifications(true);
 
+      expect(result, NotificationToggleResult.success);
       expect(container.read(settingsNotifierProvider), isTrue);
       expect(fakeSettingsRepo.notificationsEnabled, isTrue);
       verify(() => mockNotificationService.isPermissionGranted()).called(1);
+      verifyNever(() => mockNotificationService.requestPermissions());
+    });
+
+    test('toggleNotifications(true) when permanently denied', () async {
+      fakeSettingsRepo.notificationsEnabled = false;
+      when(() => mockNotificationService.isPermissionGranted())
+          .thenAnswer((_) async => false);
+      when(() => mockNotificationService.isPermissionPermanentlyDenied())
+          .thenAnswer((_) async => true);
+
+      final notifier = container.read(settingsNotifierProvider.notifier);
+      final result = await notifier.toggleNotifications(true);
+
+      expect(result, NotificationToggleResult.permanentlyDenied);
+      expect(container.read(settingsNotifierProvider), isFalse);
+      expect(fakeSettingsRepo.notificationsEnabled, isFalse);
+      verify(() => mockNotificationService.isPermissionGranted()).called(1);
+      verify(() => mockNotificationService.isPermissionPermanentlyDenied())
+          .called(1);
       verifyNever(() => mockNotificationService.requestPermissions());
     });
 
@@ -103,12 +124,15 @@ void main() {
       fakeSettingsRepo.notificationsEnabled = false;
       when(() => mockNotificationService.isPermissionGranted())
           .thenAnswer((_) async => false);
+      when(() => mockNotificationService.isPermissionPermanentlyDenied())
+          .thenAnswer((_) async => false);
       when(() => mockNotificationService.requestPermissions())
           .thenAnswer((_) async => true);
 
       final notifier = container.read(settingsNotifierProvider.notifier);
-      await notifier.toggleNotifications(true);
+      final result = await notifier.toggleNotifications(true);
 
+      expect(result, NotificationToggleResult.success);
       expect(container.read(settingsNotifierProvider), isTrue);
       expect(fakeSettingsRepo.notificationsEnabled, isTrue);
       verify(() => mockNotificationService.isPermissionGranted()).called(1);
@@ -121,12 +145,15 @@ void main() {
       fakeSettingsRepo.notificationsEnabled = false;
       when(() => mockNotificationService.isPermissionGranted())
           .thenAnswer((_) async => false);
+      when(() => mockNotificationService.isPermissionPermanentlyDenied())
+          .thenAnswer((_) async => false);
       when(() => mockNotificationService.requestPermissions())
           .thenAnswer((_) async => false);
 
       final notifier = container.read(settingsNotifierProvider.notifier);
-      await notifier.toggleNotifications(true);
+      final result = await notifier.toggleNotifications(true);
 
+      expect(result, NotificationToggleResult.denied);
       expect(container.read(settingsNotifierProvider), isFalse);
       expect(fakeSettingsRepo.notificationsEnabled, isFalse);
       verify(() => mockNotificationService.isPermissionGranted()).called(1);

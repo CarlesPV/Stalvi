@@ -972,10 +972,21 @@ class AppLocalizationsCa extends AppLocalizations {
   String get settingsLanguage => 'Idioma';
 
   @override
-  String get settingsNotifications => 'Notificacions push';
+  String get settingsNotifications => 'Notificacions Push';
 
   @override
-  String get settingsThemeMode => 'Mode de tema';
+  String get notificationsPermanentlyDeniedTitle =>
+      'Notificacions Desactivades';
+
+  @override
+  String get notificationsPermanentlyDeniedBody =>
+      'Has denegat permanentment els permisos de notificació. Si us plau, activa\'ls a la configuració del sistema per rebre alertes.';
+
+  @override
+  String get btnOpenSettings => 'Obrir Configuració';
+
+  @override
+  String get settingsThemeMode => 'Mode de Tema';
 
   @override
   String get themeModeDark => 'Fosc';
