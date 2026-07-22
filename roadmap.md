@@ -339,7 +339,13 @@
   - [x] **QA & Final Polish:** Guarantee 100% test coverage, 0 lint warnings, and full CI/CD success for app store readiness.
 
 - [x] **Phase 47: Export UX & Directory Optimization**
-  - [x] Refactor export services to target public mobile locations (system Recents / Documents directory first, followed by Downloads directory) avoiding app-private `Android/data` paths.
+  - [x] Refactor export services to target public mobile locations adhering to strict directory priority rules (`Download` -> `Downloads` -> `Documents` -> `Stalvi` -> application documents fallback) avoiding app-private `Android/data` paths.
   - [x] Add iOS file sharing keys (`UIFileSharingEnabled` & `LSSupportsOpeningDocumentsInPlace`) to `Info.plist` to expose exports in iOS Files app Recents.
   - [x] Remove `share_plus` dependencies from the project to eliminate third-party share pop-ups.
   - [x] Clean up code architecture, passing all CI/CD, security workflows, tests, and static analysis without warnings.
+
+- [x] **Phase 48: Background Resilience, Optional Notifications & File Export Priorities**
+  - [x] **Optional Push Notifications:** Added a user-configurable push notifications toggle in Profile & Security settings (between Language and T&C options, defaulting to ON) with runtime OS permission requests and full localization in English, Spanish, and Catalan.
+  - [x] **Workmanager Background Engine:** Configured Workmanager to execute pending automatic transaction evaluations every 3 hours (`Duration(hours: 3)`) in the background, paired with Dashboard load fallback execution and exact UTC+2 date calculation.
+  - [x] **File Export Prioritization:** Standardized file saving to target system `Download` -> `Downloads` -> `Documents` -> `Stalvi` directories sequentially before emergency fallback, preventing access errors on various Android versions.
+  - [x] **Production Readiness & QA:** Ensured 0 static analysis warnings, 100% test pass rate across all unit and widget tests, and green CI/CD build status.

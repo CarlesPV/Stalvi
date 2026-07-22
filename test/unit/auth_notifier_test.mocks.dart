@@ -203,6 +203,26 @@ class MockSecureStorageManager extends _i1.Mock
       ) as _i3.Future<void>);
 
   @override
+  _i3.Future<bool> getNotificationsEnabled() => (super.noSuchMethod(
+        Invocation.method(
+          #getNotificationsEnabled,
+          [],
+        ),
+        returnValue: _i3.Future<bool>.value(false),
+      ) as _i3.Future<bool>);
+
+  @override
+  _i3.Future<void> setNotificationsEnabled(bool? enabled) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setNotificationsEnabled,
+          [enabled],
+        ),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
+
+  @override
   _i3.Future<void> saveLockoutTimestamp(int? epochMs) => (super.noSuchMethod(
         Invocation.method(
           #saveLockoutTimestamp,

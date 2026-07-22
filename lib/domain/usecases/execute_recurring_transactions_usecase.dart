@@ -10,6 +10,7 @@ import '../repositories/i_automatic_transaction_repository.dart';
 import '../repositories/i_exchange_rate_repository.dart';
 import '../repositories/i_profile_repository.dart';
 import '../repositories/i_transaction_repository.dart';
+import '../repositories/i_settings_repository.dart';
 import '../../infrastructure/services/notification_service.dart';
 
 class ExecuteRecurringTransactionsUseCase {
@@ -19,6 +20,7 @@ class ExecuteRecurringTransactionsUseCase {
   final IProfileRepository profileRepo;
   final IExchangeRateRepository exchangeRateRepo;
   final NotificationService? notificationService;
+  final ISettingsRepository? settingsRepo;
 
   ExecuteRecurringTransactionsUseCase(
     this.automaticRepo,
@@ -27,6 +29,7 @@ class ExecuteRecurringTransactionsUseCase {
     this.profileRepo,
     this.exchangeRateRepo, [
     this.notificationService,
+    this.settingsRepo,
   ]);
 
   Future<void> execute() async {
@@ -177,16 +180,20 @@ class ExecuteRecurringTransactionsUseCase {
 
       if (notificationService != null) {
         try {
-          String? languageCode;
-          try {
-            languageCode = await SecureStorageManager().getUserLocale();
-          } catch (_) {}
-          languageCode ??= PlatformDispatcher.instance.locale.languageCode;
+          final notificationsEnabled =
+              await settingsRepo?.getNotificationsEnabled() ?? true;
+          if (notificationsEnabled) {
+            String? languageCode;
+            try {
+              languageCode = await SecureStorageManager().getUserLocale();
+            } catch (_) {}
+            languageCode ??= PlatformDispatcher.instance.locale.languageCode;
 
-          await notificationService!.showAutomaticTransactionNotification(
-            transactionName: autoTxn.name,
-            languageCode: languageCode,
-          );
+            await notificationService!.showAutomaticTransactionNotification(
+              transactionName: autoTxn.name,
+              languageCode: languageCode,
+            );
+          }
         } catch (e, st) {
           debugPrint(
             '[ExecuteRecurringTxns] Failed to send notification for ${autoTxn.name}: $e\n$st',
@@ -232,7 +239,15 @@ class ExecuteRecurringTransactionsUseCase {
         nextDate = _advanceByYears(fromUtc2, 1, fromUtc2.month, fromUtc2.day);
         break;
       case RecurrenceType.specificDayOfMonth:
-        nextDate = _advanceByMonths(fromUtc2, 1, recurrenceDays);
+        final lastDayThisMonth =
+            DateTime.utc(fromUtc2.year, fromUtc2.month + 1, 0).day;
+        final targetDayThisMonth = recurrenceDays.clamp(1, lastDayThisMonth);
+        if (fromUtc2.day < targetDayThisMonth) {
+          nextDate =
+              DateTime.utc(fromUtc2.year, fromUtc2.month, targetDayThisMonth);
+        } else {
+          nextDate = _advanceByMonths(fromUtc2, 1, recurrenceDays);
+        }
         break;
     }
 

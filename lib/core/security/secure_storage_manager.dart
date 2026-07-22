@@ -47,6 +47,10 @@ class SecureStorageManager {
   /// Storage key constant for persisting the user's selected theme mode.
   static const String _kThemeModeKey = 'stalvi_theme_mode';
 
+  /// Storage key constant for persisting push notifications setting.
+  static const String _kNotificationsEnabledKey =
+      'stalvi_notifications_enabled';
+
   /// Storage key constant for persisting the PIN brute-force lockout timestamp
   /// (milliseconds since epoch, stored as a decimal string).
   static const String _kPinLockoutTimestampKey = 'stalvi_pin_lockout_ts';
@@ -297,6 +301,30 @@ class SecureStorageManager {
     } on Exception catch (e) {
       throw SecureStorageException(
         'Failed to save theme mode to secure storage.',
+        cause: e,
+      );
+    }
+  }
+
+  /// Retrieves the saved push notifications setting from secure storage.
+  /// Defaults to `true` (ON) if not set or on exception.
+  Future<bool> getNotificationsEnabled() async {
+    try {
+      final value = await _readWithRetry(_kNotificationsEnabledKey);
+      if (value == null) return true;
+      return value == 'true';
+    } on Exception {
+      return true;
+    }
+  }
+
+  /// Persists the push notifications setting to secure storage.
+  Future<void> setNotificationsEnabled(bool enabled) async {
+    try {
+      await _writeWithRetry(_kNotificationsEnabledKey, enabled.toString());
+    } on Exception catch (e) {
+      throw SecureStorageException(
+        'Failed to save notifications setting to secure storage.',
         cause: e,
       );
     }

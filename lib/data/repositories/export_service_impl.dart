@@ -30,82 +30,67 @@ import 'package:stalvi/domain/entities/transaction_type.dart';
 import 'package:stalvi/domain/repositories/i_export_service.dart';
 
 class ExportServiceImpl implements IExportService {
+  /// Saves generated file bytes to user-accessible storage adhering to strict priority rules:
+  ///
+  /// BUSINESS RULES FOR FILE EXPORT DIRECTORY PRIORITIZATION:
+  /// 1. PRIORITY 1: /storage/emulated/0/Download
+  /// 2. PRIORITY 2: /storage/emulated/0/Downloads
+  /// 3. PRIORITY 3: /storage/emulated/0/Documents
+  /// 4. PRIORITY 4: /storage/emulated/0/Stalvi
   Future<String> _saveFile(List<int> bytes, String filename) async {
-    Directory? dir;
+    final targetDirs = <Directory>[];
 
     if (Platform.isAndroid) {
-      // 1. Try public Documents directory (/storage/emulated/0/Documents)
-      final docsDir = Directory('/storage/emulated/0/Documents');
+      targetDirs.add(Directory('/storage/emulated/0/Download'));
+      targetDirs.add(Directory('/storage/emulated/0/Downloads'));
+      targetDirs.add(Directory('/storage/emulated/0/Documents'));
+      targetDirs.add(Directory('/storage/emulated/0/Stalvi'));
+    } else {
       try {
-        if (await docsDir.exists()) {
-          dir = docsDir;
-        } else if (await docsDir
-            .create(recursive: true)
-            .then((_) => true)
-            .catchError((_) => false)) {
-          dir = docsDir;
+        final downloadsDir = await getDownloadsDirectory();
+        if (downloadsDir != null) {
+          targetDirs.add(downloadsDir);
         }
       } catch (_) {}
-
-      // 2. Try public Download directory (/storage/emulated/0/Download)
-      if (dir == null) {
-        final downloadsDir = Directory('/storage/emulated/0/Download');
-        try {
-          if (await downloadsDir.exists()) {
-            dir = downloadsDir;
-          } else if (await downloadsDir
-              .create(recursive: true)
-              .then((_) => true)
-              .catchError((_) => false)) {
-            dir = downloadsDir;
-          }
-        } catch (_) {}
-      }
-
-      // 3. Fallback: derive root storage path from getExternalStorageDirectory
-      if (dir == null) {
-        try {
-          final extDir = await getExternalStorageDirectory();
-          if (extDir != null) {
-            final rootPath = extDir.path.split('/Android/data').first;
-            final rootDocs = Directory('$rootPath/Documents');
-            final rootDownloads = Directory('$rootPath/Download');
-
-            if (await rootDocs.exists() ||
-                await rootDocs
-                    .create(recursive: true)
-                    .then((_) => true)
-                    .catchError((_) => false)) {
-              dir = rootDocs;
-            } else if (await rootDownloads.exists() ||
-                await rootDownloads
-                    .create(recursive: true)
-                    .then((_) => true)
-                    .catchError((_) => false)) {
-              dir = rootDownloads;
-            }
-          }
-        } catch (_) {}
-      }
-    }
-
-    // Fallback for iOS / macOS / Windows / Linux or Android fallback
-    if (dir == null) {
       try {
-        if (Platform.isIOS || Platform.isMacOS) {
-          dir = await getApplicationDocumentsDirectory();
-        } else {
-          dir = await getDownloadsDirectory() ??
-              await getApplicationDocumentsDirectory();
-        }
-      } catch (_) {
-        dir = await getApplicationDocumentsDirectory();
+        final docsDir = await getApplicationDocumentsDirectory();
+        targetDirs.add(docsDir);
+      } catch (_) {}
+    }
+
+    for (final dir in targetDirs) {
+      final savedPath = await _tryWriteFile(dir, filename, bytes);
+      if (savedPath != null) {
+        return savedPath;
       }
     }
 
-    final file = File('${dir.path}/$filename');
+    // Emergency Fallback: Application documents directory
+    final fallbackDir = await getApplicationDocumentsDirectory();
+    final file = File('${fallbackDir.path}/$filename');
     await file.writeAsBytes(bytes, flush: true);
     return file.path;
+  }
+
+  Future<String?> _tryWriteFile(
+    Directory dir,
+    String filename,
+    List<int> bytes,
+  ) async {
+    try {
+      if (!await dir.exists()) {
+        final created = await dir
+            .create(recursive: true)
+            .then((_) => true)
+            .catchError((_) => false);
+        if (!created) return null;
+      }
+      final file = File('${dir.path}/$filename');
+      await file.writeAsBytes(bytes, flush: true);
+      return file.path;
+    } catch (_) {
+      return null;
+    }
   }
 
   @override

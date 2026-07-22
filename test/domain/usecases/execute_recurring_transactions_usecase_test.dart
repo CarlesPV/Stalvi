@@ -12,6 +12,7 @@ import 'package:stalvi/domain/repositories/i_profile_repository.dart';
 import 'package:stalvi/domain/repositories/i_transaction_repository.dart';
 import 'package:stalvi/domain/usecases/execute_recurring_transactions_usecase.dart';
 
+import 'package:stalvi/domain/repositories/i_settings_repository.dart';
 import 'package:stalvi/infrastructure/services/notification_service.dart';
 
 import 'execute_recurring_transactions_usecase_test.mocks.dart';
@@ -23,6 +24,7 @@ import 'execute_recurring_transactions_usecase_test.mocks.dart';
   IProfileRepository,
   IExchangeRateRepository,
   NotificationService,
+  ISettingsRepository,
 ])
 void main() {
   group(
@@ -100,6 +102,20 @@ void main() {
       expect(nextDate, utcPlus2(2025, 2, 28));
     });
 
+    test(
+        'SpecificDayOfMonth targets the current month if the day has not passed',
+        () {
+      final from = utcPlus2(2026, 7, 3);
+      final nextDate =
+          ExecuteRecurringTransactionsUseCase.calculateNextTriggerDateUtcPlus2(
+        from,
+        RecurrenceType.specificDayOfMonth,
+        5, // The 5th day of the month
+      );
+      // Targets July, day 5
+      expect(nextDate, utcPlus2(2026, 7, 5));
+    });
+
     test('SpecificDayOfMonth advances to the specific day of the next month',
         () {
       final from = utcPlus2(2026, 7, 17);
@@ -114,7 +130,7 @@ void main() {
     });
 
     test('SpecificDayOfMonth clamps if target day exceeds next month days', () {
-      final from = utcPlus2(2026, 1, 15);
+      final from = utcPlus2(2026, 1, 31);
       final nextDate =
           ExecuteRecurringTransactionsUseCase.calculateNextTriggerDateUtcPlus2(
         from,
@@ -258,9 +274,12 @@ void main() {
       verify(mockAutomaticRepo.updateAutomaticTransaction(any)).called(1);
     });
 
-    test('Dispatches local push notification when transaction is created',
+    test(
+        'Dispatches local push notification when transaction is created and settings allow it',
         () async {
       final mockNotificationService = MockNotificationService();
+      final mockSettingsRepo = MockISettingsRepository();
+
       final usecaseWithNotification = ExecuteRecurringTransactionsUseCase(
         mockAutomaticRepo,
         mockTransactionRepo,
@@ -268,6 +287,7 @@ void main() {
         mockProfileRepo,
         mockExchangeRateRepo,
         mockNotificationService,
+        mockSettingsRepo,
       );
 
       final autoTxn = AutomaticTransaction(
@@ -306,6 +326,8 @@ void main() {
       );
       when(mockAutomaticRepo.updateAutomaticTransaction(any))
           .thenAnswer((_) async => autoTxn);
+      when(mockSettingsRepo.getNotificationsEnabled())
+          .thenAnswer((_) async => true);
       when(
         mockNotificationService.showAutomaticTransactionNotification(
           transactionName: anyNamed('transactionName'),
@@ -316,12 +338,78 @@ void main() {
 
       await usecaseWithNotification.execute();
 
+      verify(mockSettingsRepo.getNotificationsEnabled()).called(1);
       verify(
         mockNotificationService.showAutomaticTransactionNotification(
           transactionName: 'Gym Subscription',
           languageCode: anyNamed('languageCode'),
         ),
       ).called(1);
+    });
+
+    test('Does not dispatch notification if settings disable it', () async {
+      final mockNotificationService = MockNotificationService();
+      final mockSettingsRepo = MockISettingsRepository();
+
+      final usecaseWithNotification = ExecuteRecurringTransactionsUseCase(
+        mockAutomaticRepo,
+        mockTransactionRepo,
+        mockAccountRepo,
+        mockProfileRepo,
+        mockExchangeRateRepo,
+        mockNotificationService,
+        mockSettingsRepo,
+      );
+
+      final autoTxn = AutomaticTransaction(
+        id: 'auto-notify-2',
+        name: 'Disabled Notification',
+        amount: 3000,
+        currency: 'EUR',
+        type: TransactionType.expense,
+        accountId: 'acc-1',
+        categoryId: 'cat-1',
+        recurrenceType: RecurrenceType.monthly,
+        recurrenceDays: 1,
+        nextExecutionDate:
+            DateTime.now().toUtc().subtract(const Duration(days: 1)),
+        isActive: true,
+        createdAt: DateTime.now().toUtc(),
+      );
+
+      when(mockAutomaticRepo.getAllAutomaticTransactions())
+          .thenAnswer((_) async => [autoTxn]);
+      when(mockTransactionRepo.getTransactionById(any))
+          .thenAnswer((_) async => null);
+      when(mockAccountRepo.getAccountById(any)).thenAnswer((_) async => null);
+      when(mockTransactionRepo.createTransaction(any)).thenAnswer(
+        (_) async => dtxn.Transaction(
+          id: 'mock-notify-id-2',
+          amount: 3000,
+          date: DateTime.now().toUtc(),
+          type: TransactionType.expense,
+          accountId: 'acc-1',
+          categoryId: 'cat-1',
+          originalCurrency: 'EUR',
+          createdAt: DateTime.now().toUtc(),
+          modifiedAt: DateTime.now().toUtc(),
+        ),
+      );
+      when(mockAutomaticRepo.updateAutomaticTransaction(any))
+          .thenAnswer((_) async => autoTxn);
+      when(mockSettingsRepo.getNotificationsEnabled())
+          .thenAnswer((_) async => false);
+
+      await usecaseWithNotification.execute();
+
+      verify(mockSettingsRepo.getNotificationsEnabled()).called(1);
+      verifyNever(
+        mockNotificationService.showAutomaticTransactionNotification(
+          transactionName: anyNamed('transactionName'),
+          languageCode: anyNamed('languageCode'),
+          notificationId: anyNamed('notificationId'),
+        ),
+      );
     });
   });
 }

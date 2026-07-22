@@ -17,6 +17,7 @@ import 'package:stalvi/domain/repositories/i_automatic_transaction_repository.da
 import 'package:stalvi/domain/repositories/i_exchange_rate_repository.dart'
     as _i12;
 import 'package:stalvi/domain/repositories/i_profile_repository.dart' as _i11;
+import 'package:stalvi/domain/repositories/i_settings_repository.dart' as _i14;
 import 'package:stalvi/domain/repositories/i_transaction_repository.dart'
     as _i4;
 import 'package:stalvi/infrastructure/services/notification_service.dart'
@@ -615,6 +616,15 @@ class MockNotificationService extends _i1.Mock
       ) as _i9.Future<void>);
 
   @override
+  _i9.Future<bool> isPermissionGranted() => (super.noSuchMethod(
+        Invocation.method(
+          #isPermissionGranted,
+          [],
+        ),
+        returnValue: _i9.Future<bool>.value(false),
+      ) as _i9.Future<bool>);
+
+  @override
   _i9.Future<bool> requestPermissions() => (super.noSuchMethod(
         Invocation.method(
           #requestPermissions,
@@ -638,6 +648,36 @@ class MockNotificationService extends _i1.Mock
             #languageCode: languageCode,
             #notificationId: notificationId,
           },
+        ),
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
+}
+
+/// A class which mocks [ISettingsRepository].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockISettingsRepository extends _i1.Mock
+    implements _i14.ISettingsRepository {
+  MockISettingsRepository() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i9.Future<bool> getNotificationsEnabled() => (super.noSuchMethod(
+        Invocation.method(
+          #getNotificationsEnabled,
+          [],
+        ),
+        returnValue: _i9.Future<bool>.value(false),
+      ) as _i9.Future<bool>);
+
+  @override
+  _i9.Future<void> setNotificationsEnabled(bool? enabled) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setNotificationsEnabled,
+          [enabled],
         ),
         returnValue: _i9.Future<void>.value(),
         returnValueForMissingStub: _i9.Future<void>.value(),

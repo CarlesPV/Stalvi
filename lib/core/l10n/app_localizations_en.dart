@@ -967,6 +967,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsLanguage => 'Language';
 
   @override
+  String get settingsNotifications => 'Push Notifications';
+
+  @override
   String get settingsThemeMode => 'Theme Mode';
 
   @override

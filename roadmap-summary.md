@@ -652,7 +652,33 @@ This document lists the completed phases of the Stalvi development roadmap, prov
   - Clean code formatting pass across all files (`dart format .`).
   - All unit and widget tests in the test suite pass with a 100% success rate.
 
+### Phase 47: Export UX & Directory Optimization
+* **Completion Date:** July 21, 2026
+* **Objective:** Refactor export services to target public mobile locations adhering to strict directory priority rules (`Download` -> `Downloads` -> `Documents` -> `Stalvi` -> application documents fallback), add iOS file sharing keys to `Info.plist`, remove `share_plus` third-party share pop-ups, and ensure warning-free static analysis.
+* **Accomplishments:**
+  - **Directory Prioritization:** Standardized file exporting to attempt writing to public device directories sequentially (`/storage/emulated/0/Download`, `/storage/emulated/0/Downloads`, `/storage/emulated/0/Documents`, `/storage/emulated/0/Stalvi`) before falling back to application documents directory, avoiding app-private paths.
+  - **iOS File Integration:** Added `UIFileSharingEnabled` and `LSSupportsOpeningDocumentsInPlace` keys to iOS `Info.plist` to expose exports directly in iOS Files app Recents.
+  - **Native File Access:** Removed `share_plus` dependency to eliminate disruptive share pop-ups, using `open_filex` for instant document opening.
+* **Verification:**
+  - 100% clean static analysis (`flutter analyze` with 0 issues).
+  - All unit and widget tests pass cleanly with a 100% success rate.
+
+### Phase 48: Background Resilience, Optional Notifications & File Export Priorities
+* **Completion Date:** July 22, 2026
+* **Objective:** Finalize production readiness by implementing user-configurable optional notifications, optimizing Workmanager periodic background checks to 3 hours, enforcing file export storage priority rules, and ensuring 100% test pass rate and CI/CD workflow success.
+* **Accomplishments:**
+  - **Optional Notifications:** Implemented a push notification toggle switch in Profile & Security settings (defaulting to ON) with OS notification permission checks/requests and multi-language support (English, Spanish, Catalan).
+  - **Workmanager 3-Hour Background Execution:** Reconfigured Workmanager periodic task frequency to 3 hours (`Duration(hours: 3)`) with unrestrictive constraints, paired with Dashboard load fallback execution and exact UTC+2 date calculation.
+  - **File Export Priorities:** Enforced strict fallback order for generated CSV, PDF, and `.kbak` backups (`Download` -> `Downloads` -> `Documents` -> `Stalvi` -> emergency application documents fallback).
+  - **Documentation & QA:** Updated `README.md`, `roadmap.md`, `roadmap-summary.md`, and code comments across modified files; achieved 100% test suite pass rate and 0 analyzer warnings.
+* **Verification:**
+  - 100% clean static analysis (`flutter analyze` with 0 issues).
+  - Clean code formatting pass across all modified files (`dart format .`).
+  - All unit, widget, and integration tests in the test suite pass with a 100% success rate.
+
 ## Recent Updates
+- Finalized Phase 48 (Background Resilience, Optional Notifications & File Export Priorities), implementing user-configurable push notifications in settings, 3-hour Workmanager periodic background task execution with UTC+2 precision, strict storage directory prioritization, and updated documentation.
+- Completed Phase 47 (Export UX & Directory Optimization), refactoring export services for public directory access, adding iOS file sharing keys, and removing share_plus pop-ups.
 - Performed final QA and launch readiness pass for Phase 46, ensuring 100% test pass rate, clean static analysis, local push notification triggers, 2-hour periodic background processing, and accurate cross-currency balance calculations.
 - Upgraded dependencies, migrated providers to Riverpod 3.x annotations, cleared static analysis warnings, and resolved all test suite timer leaks and mock interface crashes (Phase 45).
 - Implemented exact UTC+2 calculations and a dual-execution background strategy (00:00 and 01:00 UTC+2) with UUID v5 URL-based idempotency checks for recurring transactions (Phase 44).

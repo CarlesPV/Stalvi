@@ -9,6 +9,7 @@ import '../splash/splash_screen.dart';
 import '../../providers/auth_notifier.dart';
 import '../../providers/locale_provider.dart';
 import '../../providers/theme_provider.dart';
+import '../../providers/settings_notifier.dart';
 import '../../widgets/terms_and_conditions_viewer.dart';
 import 'about_me_screen.dart' as stalvi_about_me;
 
@@ -702,6 +703,17 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                         ],
                       ),
                     ),
+                  ),
+                  const Divider(),
+                  SwitchListTile(
+                    secondary: const Icon(Icons.notifications_rounded),
+                    title: Text(l10n.settingsNotifications),
+                    value: ref.watch(settingsNotifierProvider),
+                    onChanged: (bool value) {
+                      ref
+                          .read(settingsNotifierProvider.notifier)
+                          .toggleNotifications(value);
+                    },
                   ),
                   const Divider(),
                   ListTile(

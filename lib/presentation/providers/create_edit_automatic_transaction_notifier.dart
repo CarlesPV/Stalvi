@@ -360,17 +360,30 @@ class CreateEditAutomaticTransactionNotifier
             break;
 
           case RecurrenceType.specificDayOfMonth:
-            int nextMonth = targetUtcPlus2.month + 1;
-            int nextYear = targetUtcPlus2.year;
-            if (nextMonth > 12) {
-              nextMonth = 1;
-              nextYear++;
+            final lastDayThisMonth =
+                DateTime.utc(targetUtcPlus2.year, targetUtcPlus2.month + 1, 0)
+                    .day;
+            final targetDayThisMonth =
+                state.recurrenceDays.clamp(1, lastDayThisMonth);
+            if (targetUtcPlus2.day <= targetDayThisMonth) {
+              targetUtcPlus2 = DateTime.utc(
+                targetUtcPlus2.year,
+                targetUtcPlus2.month,
+                targetDayThisMonth,
+              );
+            } else {
+              int nextMonth = targetUtcPlus2.month + 1;
+              int nextYear = targetUtcPlus2.year;
+              if (nextMonth > 12) {
+                nextMonth = 1;
+                nextYear++;
+              }
+              final lastDayOfNextMonth =
+                  DateTime.utc(nextYear, nextMonth + 1, 0).day;
+              final specificDay =
+                  state.recurrenceDays.clamp(1, lastDayOfNextMonth);
+              targetUtcPlus2 = DateTime.utc(nextYear, nextMonth, specificDay);
             }
-            final lastDayOfNextMonth =
-                DateTime.utc(nextYear, nextMonth + 1, 0).day;
-            final specificDay =
-                state.recurrenceDays.clamp(1, lastDayOfNextMonth);
-            targetUtcPlus2 = DateTime.utc(nextYear, nextMonth, specificDay);
             break;
         }
 

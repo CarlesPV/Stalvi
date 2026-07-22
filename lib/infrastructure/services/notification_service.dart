@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 /// Class representing the notification payload data (title & body).
 class NotificationPayload {
@@ -88,6 +89,30 @@ class NotificationService {
     }
   }
 
+  /// Checks if OS notification permission is currently granted.
+  Future<bool> isPermissionGranted() async {
+    try {
+      if (kIsWeb) return false;
+      if (Platform.isAndroid) {
+        final androidImpl =
+            _notificationsPlugin.resolvePlatformSpecificImplementation<
+                AndroidFlutterLocalNotificationsPlugin>();
+        final enabled = await androidImpl?.areNotificationsEnabled();
+        if (enabled != null) return enabled;
+      } else if (Platform.isIOS || Platform.isMacOS) {
+        final iosImpl =
+            _notificationsPlugin.resolvePlatformSpecificImplementation<
+                IOSFlutterLocalNotificationsPlugin>();
+        final permissions = await iosImpl?.checkPermissions();
+        if (permissions != null) return permissions.isEnabled;
+      }
+      final status = await Permission.notification.status;
+      return status.isGranted;
+    } catch (_) {
+      return false;
+    }
+  }
+
   /// Requests notification permissions for Android 13+ (POST_NOTIFICATIONS) and iOS/macOS.
   Future<bool> requestPermissions() async {
     try {
@@ -98,7 +123,7 @@ class NotificationService {
             _notificationsPlugin.resolvePlatformSpecificImplementation<
                 AndroidFlutterLocalNotificationsPlugin>();
         final granted = await androidImpl?.requestNotificationsPermission();
-        return granted ?? false;
+        if (granted != null) return granted;
       } else if (Platform.isIOS || Platform.isMacOS) {
         final iosImpl =
             _notificationsPlugin.resolvePlatformSpecificImplementation<
@@ -108,8 +133,10 @@ class NotificationService {
           badge: true,
           sound: true,
         );
-        return granted ?? false;
+        if (granted != null) return granted;
       }
+      final status = await Permission.notification.request();
+      return status.isGranted;
     } catch (e) {
       debugPrint(
         '[NotificationService] Error requesting notification permissions: $e',

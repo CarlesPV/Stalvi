@@ -972,6 +972,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get settingsLanguage => 'Idioma';
 
   @override
+  String get settingsNotifications => 'Notificaciones push';
+
+  @override
   String get settingsThemeMode => 'Modo de tema';
 
   @override

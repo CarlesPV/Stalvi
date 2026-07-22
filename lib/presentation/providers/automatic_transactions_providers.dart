@@ -52,6 +52,7 @@ final executeRecurringTransactionsUseCaseProvider = Provider((ref) {
   final profileRepo = ref.watch(profileRepositoryProvider);
   final exchangeRateRepo = ref.watch(exchangeRateRepositoryProvider);
   final notificationService = ref.watch(notificationServiceProvider);
+  final settingsRepo = ref.watch(settingsRepositoryProvider);
   return ExecuteRecurringTransactionsUseCase(
     automaticRepo,
     transactionRepo,
@@ -59,5 +60,6 @@ final executeRecurringTransactionsUseCaseProvider = Provider((ref) {
     profileRepo,
     exchangeRateRepo,
     notificationService,
+    settingsRepo,
   );
 });

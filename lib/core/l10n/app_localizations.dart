@@ -1852,6 +1852,12 @@ abstract class AppLocalizations {
   /// **'Language'**
   String get settingsLanguage;
 
+  /// No description provided for @settingsNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Push Notifications'**
+  String get settingsNotifications;
+
   /// No description provided for @settingsThemeMode.
   ///
   /// In en, this message translates to:

@@ -4,6 +4,7 @@ import 'package:stalvi/domain/usecases/update_credentials_usecase.dart';
 import 'package:stalvi/domain/usecases/pdf_export_date_range.dart';
 import '../../providers/repository_providers.dart';
 import '../../providers/statistics_providers.dart';
+import '../../providers/settings_notifier.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'profile_settings_controller.g.dart';
@@ -58,10 +59,18 @@ class ProfileSettingsController extends _$ProfileSettingsController {
     try {
       final repo = ref.read(profileRepositoryProvider);
       final profile = await repo.getFirstProfile();
+      if (!ref.mounted) return;
       state = state.copyWith(profile: profile, isLoading: false, error: null);
     } catch (e) {
+      if (!ref.mounted) return;
       state = state.copyWith(isLoading: false, error: e.toString());
     }
+  }
+
+  Future<void> toggleNotifications(bool value) async {
+    await ref
+        .read(settingsNotifierProvider.notifier)
+        .toggleNotifications(value);
   }
 
   Future<void> updateUsername(String username) async {
@@ -77,8 +86,10 @@ class ProfileSettingsController extends _$ProfileSettingsController {
         modifiedAt: DateTime.now(),
       );
       await repo.updateProfile(updatedProfile);
+      if (!ref.mounted) return;
       state = state.copyWith(profile: updatedProfile, isLoading: false);
     } catch (e) {
+      if (!ref.mounted) return;
       state = state.copyWith(isLoading: false, error: e.toString());
       rethrow;
     }
@@ -105,8 +116,10 @@ class ProfileSettingsController extends _$ProfileSettingsController {
       ref.invalidate(topExpenseCategoriesProvider);
       ref.invalidate(topIncomeCategoriesProvider);
       ref.invalidate(globalBalanceProvider);
+      if (!ref.mounted) return;
       state = state.copyWith(profile: updatedProfile, isLoading: false);
     } catch (e) {
+      if (!ref.mounted) return;
       state = state.copyWith(isLoading: false, error: e.toString());
       rethrow;
     }
@@ -121,6 +134,7 @@ class ProfileSettingsController extends _$ProfileSettingsController {
     try {
       final useCase = ref.read(updateCredentialsUseCaseProvider);
       await useCase.verifyOldPin(oldPin);
+      if (!ref.mounted) return;
       state = state.copyWith(
         isLoading: false,
         pinChangeStep: PinChangeStep.enterNew,
@@ -128,6 +142,7 @@ class ProfileSettingsController extends _$ProfileSettingsController {
       );
     } catch (e) {
       final newAttempts = state.failedAttempts + 1;
+      if (!ref.mounted) rethrow;
       state = state.copyWith(
         isLoading: false,
         error: e.toString(),
@@ -143,11 +158,13 @@ class ProfileSettingsController extends _$ProfileSettingsController {
       final useCase = ref.read(updateCredentialsUseCaseProvider);
       await useCase
           .execute(UpdateCredentialsParams(oldPin: oldPin, newPin: newPin));
+      if (!ref.mounted) return;
       state = state.copyWith(
         isLoading: false,
         pinChangeStep: PinChangeStep.verifyOld,
       );
     } catch (e) {
+      if (!ref.mounted) rethrow;
       state = state.copyWith(isLoading: false, error: e.toString());
       rethrow;
     }
@@ -178,6 +195,7 @@ class ProfileSettingsController extends _$ProfileSettingsController {
     try {
       final useCase = ref.read(updateCredentialsUseCaseProvider);
       await useCase.verifyOldPin(pin);
+      if (!ref.mounted) return true;
       state = state.copyWith(
         isLoading: false,
         failedDeleteAttempts: 0,
@@ -185,6 +203,7 @@ class ProfileSettingsController extends _$ProfileSettingsController {
       return true;
     } catch (e) {
       final newAttempts = state.failedDeleteAttempts + 1;
+      if (!ref.mounted) return false;
       state = state.copyWith(
         isLoading: false,
         error: e.toString(),
@@ -199,8 +218,10 @@ class ProfileSettingsController extends _$ProfileSettingsController {
     try {
       final useCase = ref.read(wipeAllDataUseCaseProvider);
       await useCase.execute();
+      if (!ref.mounted) return;
       state = state.copyWith(isLoading: false);
     } catch (e) {
+      if (!ref.mounted) rethrow;
       state = state.copyWith(isLoading: false, error: e.toString());
       rethrow;
     }
@@ -214,9 +235,11 @@ class ProfileSettingsController extends _$ProfileSettingsController {
     try {
       final useCase = ref.read(exportEncryptedJsonUseCaseProvider);
       final result = await useCase.call(password: password);
+      if (!ref.mounted) return result;
       state = state.copyWith(isLoading: false);
       return result;
     } catch (e) {
+      if (!ref.mounted) rethrow;
       state = state.copyWith(isLoading: false, error: e.toString());
       rethrow;
     }
@@ -233,8 +256,10 @@ class ProfileSettingsController extends _$ProfileSettingsController {
     try {
       final useCase = ref.read(importEncryptedJsonUseCaseProvider);
       await useCase.call(fileBytes, password: password);
+      if (!ref.mounted) return;
       state = state.copyWith(isLoading: false);
     } catch (e) {
+      if (!ref.mounted) rethrow;
       state = state.copyWith(isLoading: false, error: e.toString());
       rethrow;
     }
@@ -246,9 +271,11 @@ class ProfileSettingsController extends _$ProfileSettingsController {
     try {
       final useCase = ref.read(exportTransactionsCsvUseCaseProvider);
       final result = await useCase.call();
+      if (!ref.mounted) return result;
       state = state.copyWith(isLoading: false);
       return result;
     } catch (e) {
+      if (!ref.mounted) rethrow;
       state = state.copyWith(isLoading: false, error: e.toString());
       rethrow;
     }
@@ -268,9 +295,11 @@ class ProfileSettingsController extends _$ProfileSettingsController {
         dateRange: dateRange,
         customMonthLabel: customMonthLabel,
       );
+      if (!ref.mounted) return result;
       state = state.copyWith(isLoading: false);
       return result;
     } catch (e) {
+      if (!ref.mounted) rethrow;
       state = state.copyWith(isLoading: false, error: e.toString());
       rethrow;
     }

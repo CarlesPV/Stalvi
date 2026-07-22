@@ -6,10 +6,21 @@ import 'package:stalvi/presentation/providers/automatic_transactions_providers.d
 
 import 'package:stalvi/infrastructure/services/notification_service.dart';
 
+/// Task identifier for executing recurring automatic transactions in background.
 const String executeRecurringTransactionsTask =
     "executeRecurringTransactionsTask";
+
+/// Unique name for registering periodic background work in Workmanager.
 const String _periodicTaskUniqueName = 'stalvi.executeRecurringTransactions';
 
+/// Top-level callback dispatcher for Workmanager background tasks.
+///
+/// BUSINESS RULES FOR WORKMANAGER BACKGROUND ISOLATE:
+/// 1. Runs in a separate Dart isolate initialized by the OS via Workmanager.
+/// 2. Ensures `WidgetsFlutterBinding` is initialized before accessing platform channels.
+/// 3. Instantiates a dedicated `ProviderContainer` to initialize [NotificationService] and [AppDatabase].
+/// 4. Dispatches [ExecuteRecurringTransactionsUseCase] to evaluate pending automatic transactions.
+/// 5. Automatically disposes the `ProviderContainer` in the `finally` block to prevent isolate memory leaks.
 @pragma('vm:entry-point')
 void callbackDispatcher() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -51,11 +62,22 @@ void callbackDispatcher() {
   });
 }
 
+/// Service in the Infrastructure layer managing Workmanager background task registration and execution.
+///
+/// BUSINESS RULES FOR WORKMANAGER PERIODIC TASKS:
+/// 1. FREQUENCY: Workmanager checks for pending recurring transactions every 3 hours (`Duration(hours: 3)`).
+/// 2. CONSTRAINTS: Unrestrictive device constraints (network not required, battery/charging/idle/storage restrictions disabled)
+///    to guarantee maximum execution reliability across varied Android OEM battery management policies.
+/// 3. WORK POLICY: Uses `ExistingPeriodicWorkPolicy.replace` to ensure updated task configurations are applied cleanly.
+/// 4. DUAL-EXECUTION STRATEGY: Pairs periodic Workmanager execution with app startup evaluation on dashboard load,
+///    guaranteeing no missed executions even if the OS defers background tasks.
 class BackgroundExecutionService {
+  /// Initializes the Workmanager plugin with the entry-point [callbackDispatcher].
   static Future<void> initialize() async {
     await Workmanager().initialize(callbackDispatcher);
   }
 
+  /// Registers the periodic Workmanager task for recurring transaction processing.
   static Future<void> registerPeriodicTasks() async {
     final constraints = Constraints(
       networkType: NetworkType.notRequired,
@@ -67,14 +89,14 @@ class BackgroundExecutionService {
 
     debugPrint(
       '[BackgroundExecutionService] Registering periodic task. '
-      'Frequency: 2 hours.',
+      'Frequency: 3 hours.',
     );
 
     await Workmanager().registerPeriodicTask(
       _periodicTaskUniqueName,
       executeRecurringTransactionsTask,
-      frequency: const Duration(hours: 2),
-      existingWorkPolicy: ExistingPeriodicWorkPolicy.keep,
+      frequency: const Duration(hours: 3),
+      existingWorkPolicy: ExistingPeriodicWorkPolicy.replace,
       constraints: constraints,
     );
   }

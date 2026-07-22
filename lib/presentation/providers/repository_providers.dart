@@ -39,6 +39,8 @@ import 'package:stalvi/domain/repositories/i_savings_goal_repository.dart';
 import 'package:stalvi/domain/repositories/i_trash_repository.dart';
 import 'package:stalvi/domain/repositories/i_export_service.dart';
 import 'package:stalvi/domain/repositories/i_import_service.dart';
+import 'package:stalvi/domain/repositories/i_settings_repository.dart';
+import 'package:stalvi/infrastructure/repositories/settings_repository.dart';
 import 'package:stalvi/domain/usecases/add_transaction_usecase.dart';
 import 'package:stalvi/domain/usecases/create_profile_usecase.dart';
 import 'package:stalvi/domain/usecases/initialize_default_data_usecase.dart';
@@ -129,6 +131,11 @@ final exchangeRateRepositoryProvider = Provider<IExchangeRateRepository>((ref) {
     remoteDataSource: remoteDataSource,
     exchangeRateDao: db.exchangeRateDao,
   );
+});
+
+/// Provides the [ISettingsRepository] implementation.
+final settingsRepositoryProvider = Provider<ISettingsRepository>((ref) {
+  return SettingsRepository();
 });
 
 /// Provides the [UpdateBudgetProgressUseCase] instance.
