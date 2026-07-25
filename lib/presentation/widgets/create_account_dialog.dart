@@ -222,7 +222,7 @@ class _CreateAccountDialogState extends ConsumerState<CreateAccountDialog> {
                     const TextInputType.numberWithOptions(decimal: true),
                 decoration: InputDecoration(
                   labelText: l10n.createAccountInitialBalanceLabel,
-                  hintText: '0.00',
+                  hintText: l10n.hintAmountZero,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(16),
                   ),

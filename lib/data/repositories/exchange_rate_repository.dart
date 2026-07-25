@@ -1,18 +1,14 @@
+import 'package:stalvi/infrastructure/services/fallback_exchange_rates.dart';
 import '../network/exchange_rate_remote_data_source.dart';
 import 'package:stalvi/domain/entities/exchange_rate.dart';
 import 'package:stalvi/domain/repositories/i_exchange_rate_repository.dart';
+import '../database/daos/exchange_rate_dao.dart';
 
 /// Concrete implementation of [IExchangeRateRepository].
 ///
-/// This repository is intentionally thin — its sole responsibility is to
-/// delegate to [IExchangeRateRemoteDataSource] and map the result to the
-/// domain entity. Any [AppException] thrown by the data source propagates
-/// transparently to the caller (use case / presentation layer).
-///
-/// Caching (e.g., TTL-based local storage of rates) is deferred to a future
-/// phase and will be added here without changing the interface contract.
-import '../database/daos/exchange_rate_dao.dart';
-
+/// Responsible for fetching and syncing exchange rates, automatically falling
+/// back to local storage and hardcoded infrastructure fallback rates when
+/// offline or network errors occur.
 class ExchangeRateRepository implements IExchangeRateRepository {
   final IExchangeRateRemoteDataSource _remoteDataSource;
   final ExchangeRateDao _exchangeRateDao;
@@ -25,31 +21,51 @@ class ExchangeRateRepository implements IExchangeRateRepository {
 
   @override
   Future<ExchangeRate> getLatestRates({required String baseCurrency}) async {
-    // Return local rates if available, otherwise fetch remote
-    final localRates = await getLocalRates(baseCurrency: baseCurrency);
+    // Return local rates if available
+    final localRates = await _exchangeRateDao.getRates(baseCurrency);
     if (localRates != null) {
       return localRates;
     }
 
-    final model = await _remoteDataSource.fetchLatestRates(
-      baseCurrency: baseCurrency,
-    );
-    final domainRates = model.toDomain().copyWith(date: DateTime.now());
-    await _exchangeRateDao.saveRates(domainRates);
-    return domainRates;
+    try {
+      final model = await _remoteDataSource.fetchLatestRates(
+        baseCurrency: baseCurrency,
+      );
+      final domainRates = model.toDomain().copyWith(date: DateTime.now());
+      await _exchangeRateDao.saveRates(domainRates);
+      return domainRates;
+    } catch (_) {
+      final fallback = FallbackExchangeRates.getExchangeRate(baseCurrency);
+      await _exchangeRateDao.saveRates(fallback);
+      return fallback;
+    }
   }
 
   @override
   Future<ExchangeRate?> getLocalRates({required String baseCurrency}) async {
-    return _exchangeRateDao.getRates(baseCurrency);
+    final local = await _exchangeRateDao.getRates(baseCurrency);
+    if (local != null) {
+      return local;
+    }
+    return FallbackExchangeRates.getExchangeRate(baseCurrency);
   }
 
   @override
   Future<void> syncRates({required String baseCurrency}) async {
-    final model = await _remoteDataSource.fetchLatestRates(
-      baseCurrency: baseCurrency,
-    );
-    await _exchangeRateDao
-        .saveRates(model.toDomain().copyWith(date: DateTime.now()));
+    try {
+      final model = await _remoteDataSource.fetchLatestRates(
+        baseCurrency: baseCurrency,
+      );
+      await _exchangeRateDao
+          .saveRates(model.toDomain().copyWith(date: DateTime.now()));
+    } catch (e) {
+      // Offline fallback: ensure local database has fallback rates
+      final local = await _exchangeRateDao.getRates(baseCurrency);
+      if (local == null) {
+        final fallback = FallbackExchangeRates.getExchangeRate(baseCurrency);
+        await _exchangeRateDao.saveRates(fallback);
+      }
+      rethrow;
+    }
   }
 }

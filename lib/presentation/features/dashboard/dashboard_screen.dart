@@ -666,23 +666,28 @@ class _AccountsTab extends ConsumerWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Row(
-                  children: [
-                    Icon(
-                      Icons.bar_chart_rounded,
-                      color: colorScheme.secondary,
-                      size: 22,
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      AppLocalizations.of(context)!.settingsStatistics,
-                      style: theme.textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.w800,
-                        color: colorScheme.onSurface,
-                        letterSpacing: -0.2,
+                Flexible(
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.bar_chart_rounded,
+                        color: colorScheme.secondary,
+                        size: 22,
                       ),
-                    ),
-                  ],
+                      const SizedBox(width: 8),
+                      Flexible(
+                        child: Text(
+                          AppLocalizations.of(context)!.settingsStatistics,
+                          style: theme.textTheme.titleSmall?.copyWith(
+                            fontWeight: FontWeight.w800,
+                            color: colorScheme.onSurface,
+                            letterSpacing: -0.2,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
                 TextButton.icon(
                   onPressed: () {

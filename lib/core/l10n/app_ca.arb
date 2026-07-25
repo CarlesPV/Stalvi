@@ -1,6 +1,5 @@
 {
   "@@locale": "ca",
-
   "appTitle": "Stalvi",
   "btnCancel": "Cancel·lar",
   "btnClose": "Tancar",
@@ -47,7 +46,6 @@
   "uncategorized": "Sense categoria",
   "usernameLabel": "Nom d'usuari",
   "warning": "Advertiment",
-
   "authBiometricOptInEnable": "Habilitar biometria",
   "authBiometricOptInSkip": "Omet de moment",
   "authBiometricOptInSubtitle": "Utilitza la teva petjada dactilar o reconeixement facial per accedir a Stalvi de forma ràpida i segura en el futur.",
@@ -83,10 +81,8 @@
   "pinUpdatedSuccessfully": "PIN actualitzat correctament.",
   "pinsDoNotMatch": "Els PINs no coincideixen.",
   "statisticsTopIncome": "Categories de més ingressos",
-
   "balanceTotal": "Balanç total",
   "overview": "Resum",
-
   "accountInUseByAutoTxMessage": "Aquest compte no es pot eliminar perquè està vinculat a transaccions automàtiques actives.",
   "accountTypeBank": "Banc",
   "accountTypeCard": "Targeta",
@@ -121,11 +117,11 @@
   "categoriesAndTags": "Categories i Etiquetes",
   "categoryInUseByAutoTxMessage": "{name} està en ús per transaccions automàtiques i s'ha de reassignar.",
   "@categoryInUseByAutoTxMessage": {
-      "placeholders": {
-          "name": {
-              "type": "String"
-          }
+    "placeholders": {
+      "name": {
+        "type": "String"
       }
+    }
   },
   "categoryInUseMessage": "{name} està en ús en transaccions existents. Si us plau, seleccioneu una categoria per reassignar-les:",
   "categoryInUseTitle": "Categoria en ús",
@@ -203,7 +199,6 @@
   "tags": "Etiquetes",
   "transactions": "Transaccions",
   "unknownAccount": "Compte desconegut",
-
   "accountTypeSavings": "Estalvis",
   "addBudget": "Afegir Pressupost",
   "addSavingsGoal": "Afegir Meta d'Estalvi",
@@ -238,7 +233,6 @@
   "savingsSavedOf": "{saved} estalviats de {target}",
   "savingsTargetDate": "Data objectiu: {date}",
   "settingsBudgetsGoals": "Pressupostos i Objectius",
-
   "chart_scale": "Escala del gràfic",
   "presetCustom": "Personalitzat",
   "presetLast30Days": "Últims 30 dies",
@@ -258,7 +252,6 @@
   "statisticsTopSpending": "Categories de més despesa",
   "statisticsWhatYouEarned": "El que heu guanyat",
   "statisticsWhereMoneyGoes": "On van els vostres diners",
-
   "aboutMe": "Sobre mi",
   "aboutMeGithubButton": "Veure el meu GitHub",
   "btnExport": "Exportar",
@@ -315,7 +308,6 @@
   "themeModeLight": "Clar",
   "themeModeSystem": "Sistema",
   "transactionMovedToRecycleBin": "Transacció moguda a la paperera",
-
   "authError": "Error d'autenticació",
   "authPinIncorrect": "PIN incorrecte. Torneu-ho a provar.",
   "authSetupValidationErrorName": "Si us plau, introduïu un nom.",
@@ -367,5 +359,9 @@
         "type": "String"
       }
     }
-  }
+  },
+  "offlineModeRatesNotice": "Mode sense connexió: utilitzant tipus de canvi locals.",
+  "hintAmountZero": "0.00",
+  "errorCouldNotLaunchUrl": "No s'ha pogut obrir l'enllaç",
+  "errorLoadingContent": "Error en carregar el contingut."
 }

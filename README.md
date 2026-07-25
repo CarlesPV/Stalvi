@@ -30,7 +30,8 @@ Designed with strict **Clean Architecture** principles, the project ensures isol
 ### ⏰ Automatic & Recurring Transactions
 * **Automated Engine:** Evaluates and automatically generates scheduled transactions based on custom day intervals, weekly, monthly, yearly, or specific days of the month.
 * **End-of-Month Clamping:** Implements safe calendar clamping logic (e.g., executing transactions scheduled for the 30th or 31st on February 28th/29th or the last day of short months).
-* **Background Tasks & App Startup Fallback:** Operates in the background via `workmanager` using a periodic 3-hour check interval, combined with an asynchronous fallback mechanism at app startup (`main.dart` / Dashboard initialization) to ensure pending automatic transactions are created reliably.
+* **Background Tasks & App Startup Fallback:** Operates in the background via `BackgroundSyncService` (driven by `workmanager` using periodic work execution) combined with an asynchronous fallback mechanism at app startup (`main.dart` / Dashboard initialization) to ensure pending automatic transactions are created reliably across platforms.
+* **Offline Currency Conversion Fallback:** Provides pre-bundled offline exchange rate fallbacks in the infrastructure layer, ensuring multi-currency conversions and balance summaries function seamlessly even without an active network connection.
 * **Strict Opt-In Local Push Notifications:** Dispatches localized push notifications ("Transaction [name] completed successfully" in EN, ES, CA) via `flutter_local_notifications` whenever an automatic transaction is processed. Push notifications default to `false` (OFF) for strict opt-in user consent and privacy compliance. When toggled ON in Profile & Security settings, the app checks native OS permissions (`isPermissionGranted`, `isPermissionPermanentlyDenied`) and prompts for runtime OS permissions or guides the user directly to device system settings (`openAppSettings()`) if permission is permanently denied.
 * **Idempotency & UTC+2 Precision:** Employs deterministic UUID v5 URL-based keys to ensure idempotency across multiple runs, strictly validating that only one transaction is generated per execution cycle, calculated precisely using the UTC+2 timezone offset.
 * **Soft-Delete Support:** Easily soft-delete recurring templates, moving them to the Recycle Bin and disabling automated generation until restored or permanently purged.
@@ -145,30 +146,19 @@ lib/
    cd stalvi
    ```
 
-2. **Configure environment variables:**
-   Duplicate the `.env.example` file and rename it to `.env`:
-   ```bash
-   cp .env.example .env
-   ```
-   Open the `.env` file and set your secure local encryption key and remote API values:
-   ```env
-   DB_ENCRYPTION_KEY=your_secure_development_key_here
-   EXCHANGE_RATE_API_KEY=your_api_key_here
-   ```
-
-3. **Get dependencies:**
+2. **Get dependencies:**
    ```bash
    flutter pub get
    ```
 
-4. **Generate Code (Drift/Riverpod):**
+3. **Generate Code (Drift/Riverpod):**
    Stalvi uses `build_runner` to generate code for the Drift database and Riverpod providers. Run the following command before compiling:
    ```bash
    flutter pub run build_runner build --delete-conflicting-outputs
    ```
    *(Alternatively, use `flutter pub run build_runner watch` during development to regenerate files on changes).*
 
-5. **Run the Application:**
+4. **Run the Application:**
    * Run the app in development mode:
      ```bash
      flutter run

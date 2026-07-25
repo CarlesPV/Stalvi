@@ -31,6 +31,9 @@ target 'Runner' do
   use_frameworks!
   use_modular_headers!
 
+  # Ensure SQLCipher static/dynamic library is properly linked for encrypted SQLite database
+  pod 'SQLCipher', :modular_headers => true
+
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
 
   target 'RunnerTests' do

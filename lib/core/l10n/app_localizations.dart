@@ -2175,6 +2175,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Transaction {name} has been completed successfully.'**
   String notificationAutoTxBody(String name);
+
+  /// No description provided for @offlineModeRatesNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'Offline mode: using local exchange rates.'**
+  String get offlineModeRatesNotice;
+
+  /// No description provided for @hintAmountZero.
+  ///
+  /// In en, this message translates to:
+  /// **'0.00'**
+  String get hintAmountZero;
+
+  /// No description provided for @errorCouldNotLaunchUrl.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not launch URL'**
+  String get errorCouldNotLaunchUrl;
+
+  /// No description provided for @errorLoadingContent.
+  ///
+  /// In en, this message translates to:
+  /// **'Error loading content.'**
+  String get errorLoadingContent;
 }
 
 class _AppLocalizationsDelegate

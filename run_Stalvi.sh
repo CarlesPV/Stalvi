@@ -21,7 +21,7 @@ fi
 
 if [ "$BUILD" = true ] || [ "$CLEAN" = true ]; then
   echo "⚙️ Generando código con build_runner..."
-  dart run build_runner build --delete-conflicting-outputs
+  dart run build_runner build
 fi
 
 echo "✨ Formateando y analizando..."

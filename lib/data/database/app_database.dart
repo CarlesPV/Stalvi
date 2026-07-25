@@ -1,5 +1,9 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
+
+import 'package:stalvi/core/utils/currency_converter.dart';
+import 'package:stalvi/infrastructure/services/fallback_exchange_rates.dart';
 
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
@@ -155,6 +159,8 @@ class AppDatabase extends _$AppDatabase {
             modifiedAt: now,
           ),
         );
+
+        await _seedFallbackExchangeRates();
       },
       onUpgrade: (Migrator m, int from, int to) async {
         bool createdTransactions = false;
@@ -218,8 +224,28 @@ class AppDatabase extends _$AppDatabase {
             );
           }
         }
+
+        await _seedFallbackExchangeRates();
       },
     );
+  }
+
+  /// Populates the exchange rates table with fallback rates ONLY IF the table is empty.
+  Future<void> _seedFallbackExchangeRates() async {
+    final existingRates = await select(exchangeRates).get();
+    if (existingRates.isEmpty) {
+      final now = DateTime.now();
+      for (final baseCurrency in CurrencyConverter.supportedCurrencies) {
+        final ratesMap = FallbackExchangeRates.getFallbackRates(baseCurrency);
+        await into(exchangeRates).insertOnConflictUpdate(
+          ExchangeRatesCompanion.insert(
+            baseCurrency: baseCurrency,
+            date: now,
+            rates: jsonEncode(ratesMap),
+          ),
+        );
+      }
+    }
   }
 
   /// Opens (or creates) the encrypted database file.

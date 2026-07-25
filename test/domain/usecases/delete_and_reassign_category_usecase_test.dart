@@ -45,6 +45,10 @@ class FakeTransaction extends Fake implements Transaction {
     DateTime? modifiedAt,
     String? transferId,
     bool clearTransferId = false,
+    String? parentRecurringId,
+    bool clearParentRecurringId = false,
+    DateTime? expectedExecutionDate,
+    bool clearExpectedExecutionDate = false,
   }) {
     return FakeTransaction(
       id: id ?? this.id,

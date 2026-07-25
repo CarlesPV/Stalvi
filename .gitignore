@@ -86,10 +86,12 @@ macos/Flutter/ephemeral/
 *.xcuserstate
 
 # ==============================================================================
-# IDEs, EDITORS & OS
+# IDEs, EDITORS, AI TOOLS & OS
 # ==============================================================================
 .idea/
 .vscode/
+.gemini/
+*.log
 *.iml
 *.ipr
 *.iws

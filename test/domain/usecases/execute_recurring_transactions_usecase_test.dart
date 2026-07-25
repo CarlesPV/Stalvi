@@ -4,7 +4,6 @@ import 'package:mockito/mockito.dart';
 import 'package:stalvi/domain/entities/automatic_transaction.dart';
 import 'package:stalvi/domain/entities/recurrence_type.dart';
 import 'package:stalvi/domain/entities/transaction_type.dart';
-import 'package:stalvi/domain/entities/transaction.dart' as dtxn;
 import 'package:stalvi/domain/repositories/i_account_repository.dart';
 import 'package:stalvi/domain/repositories/i_automatic_transaction_repository.dart';
 import 'package:stalvi/domain/repositories/i_exchange_rate_repository.dart';
@@ -153,7 +152,7 @@ void main() {
     });
   });
 
-  group('ExecuteRecurringTransactionsUseCase Idempotency', () {
+  group('ExecuteRecurringTransactionsUseCase Batch and Cycle Logic', () {
     late ExecuteRecurringTransactionsUseCase usecase;
     late MockIAutomaticTransactionRepository mockAutomaticRepo;
     late MockITransactionRepository mockTransactionRepo;
@@ -177,7 +176,7 @@ void main() {
       );
     });
 
-    test('Creates a transaction if it does not exist (Idempotency check)',
+    test('Creates transactions in a single batch (Idempotency + Batch logic)',
         () async {
       final autoTxn = AutomaticTransaction(
         id: 'auto-1',
@@ -189,6 +188,7 @@ void main() {
         categoryId: 'cat-1',
         recurrenceType: RecurrenceType.monthly,
         recurrenceDays: 1,
+        // Set next execution date to yesterday to force one cycle
         nextExecutionDate:
             DateTime.now().toUtc().subtract(const Duration(days: 1)),
         isActive: true,
@@ -198,80 +198,57 @@ void main() {
       when(mockAutomaticRepo.getAllAutomaticTransactions())
           .thenAnswer((_) async => [autoTxn]);
 
-      // Not found, so it should be created
-      when(mockTransactionRepo.getTransactionById(any))
-          .thenAnswer((_) async => null);
-
       when(mockAccountRepo.getAccountById(any)).thenAnswer((_) async => null);
 
-      when(mockTransactionRepo.createTransaction(any)).thenAnswer(
-        (_) async => dtxn.Transaction(
-          id: 'mock-id',
-          amount: 1500,
-          date: DateTime.now().toUtc(),
-          type: TransactionType.expense,
-          accountId: 'acc-1',
-          categoryId: 'cat-1',
-          originalCurrency: 'EUR',
-          createdAt: DateTime.now().toUtc(),
-          modifiedAt: DateTime.now().toUtc(),
-        ),
-      );
-
+      when(mockTransactionRepo.createTransactions(any))
+          .thenAnswer((_) async {});
       when(mockAutomaticRepo.updateAutomaticTransaction(any))
           .thenAnswer((_) async => autoTxn);
 
       await usecase.execute();
 
-      verify(mockTransactionRepo.getTransactionById(any)).called(1);
-      verify(mockTransactionRepo.createTransaction(any)).called(1);
+      // Verify createTransactions is called exactly once with 1 pending transaction
+      verify(mockTransactionRepo.createTransactions(argThat(hasLength(1))))
+          .called(1);
       verify(mockAutomaticRepo.updateAutomaticTransaction(any)).called(1);
     });
 
-    test('Skips creation if transaction already exists (Idempotency check)',
+    test('Calculates exactly the missed cycles if device was off for 28 hours',
         () async {
+      final nowUtc = DateTime.now().toUtc();
+
       final autoTxn = AutomaticTransaction(
-        id: 'auto-2',
-        name: 'Spotify',
-        amount: 1000,
+        id: 'auto-daily',
+        name: 'Daily Coffee',
+        amount: 250,
         currency: 'EUR',
         type: TransactionType.expense,
         accountId: 'acc-1',
         categoryId: 'cat-1',
-        recurrenceType: RecurrenceType.monthly,
-        recurrenceDays: 1,
-        nextExecutionDate:
-            DateTime.now().toUtc().subtract(const Duration(days: 1)),
+        recurrenceType: RecurrenceType.intervalDays,
+        recurrenceDays: 1, // Daily
+        // Assume device was off for 2 days, nextExecutionDate is 2 days ago
+        nextExecutionDate: nowUtc.subtract(const Duration(days: 2)),
         isActive: true,
-        createdAt: DateTime.now().toUtc(),
+        createdAt: nowUtc.subtract(const Duration(days: 30)),
       );
 
       when(mockAutomaticRepo.getAllAutomaticTransactions())
           .thenAnswer((_) async => [autoTxn]);
 
-      // Found, so it should NOT be created
-      when(mockTransactionRepo.getTransactionById(any)).thenAnswer(
-        (_) async => dtxn.Transaction(
-          id: 'existing-id',
-          amount: 1000,
-          date: DateTime.now().toUtc(),
-          type: TransactionType.expense,
-          accountId: 'acc-1',
-          categoryId: 'cat-1',
-          originalCurrency: 'EUR',
-          createdAt: DateTime.now().toUtc(),
-          modifiedAt: DateTime.now().toUtc(),
-        ),
-      );
+      when(mockAccountRepo.getAccountById(any)).thenAnswer((_) async => null);
 
+      when(mockTransactionRepo.createTransactions(any))
+          .thenAnswer((_) async {});
       when(mockAutomaticRepo.updateAutomaticTransaction(any))
           .thenAnswer((_) async => autoTxn);
 
       await usecase.execute();
 
-      verify(mockTransactionRepo.getTransactionById(any)).called(1);
-      verifyNever(mockTransactionRepo.createTransaction(any));
-      verify(mockAutomaticRepo.updateAutomaticTransaction(any)).called(1);
+      // Verify createTransactions is called with exactly 3 transactions:
+      // (1 for 2 days ago, 1 for 1 day ago, 1 for today)
+      verify(mockTransactionRepo.createTransactions(argThat(hasLength(3))))
+          .called(1);
     });
 
     test(
@@ -308,22 +285,9 @@ void main() {
 
       when(mockAutomaticRepo.getAllAutomaticTransactions())
           .thenAnswer((_) async => [autoTxn]);
-      when(mockTransactionRepo.getTransactionById(any))
-          .thenAnswer((_) async => null);
       when(mockAccountRepo.getAccountById(any)).thenAnswer((_) async => null);
-      when(mockTransactionRepo.createTransaction(any)).thenAnswer(
-        (_) async => dtxn.Transaction(
-          id: 'mock-notify-id',
-          amount: 3000,
-          date: DateTime.now().toUtc(),
-          type: TransactionType.expense,
-          accountId: 'acc-1',
-          categoryId: 'cat-1',
-          originalCurrency: 'EUR',
-          createdAt: DateTime.now().toUtc(),
-          modifiedAt: DateTime.now().toUtc(),
-        ),
-      );
+      when(mockTransactionRepo.createTransactions(any))
+          .thenAnswer((_) async {});
       when(mockAutomaticRepo.updateAutomaticTransaction(any))
           .thenAnswer((_) async => autoTxn);
       when(mockSettingsRepo.getNotificationsEnabled())
@@ -379,22 +343,9 @@ void main() {
 
       when(mockAutomaticRepo.getAllAutomaticTransactions())
           .thenAnswer((_) async => [autoTxn]);
-      when(mockTransactionRepo.getTransactionById(any))
-          .thenAnswer((_) async => null);
       when(mockAccountRepo.getAccountById(any)).thenAnswer((_) async => null);
-      when(mockTransactionRepo.createTransaction(any)).thenAnswer(
-        (_) async => dtxn.Transaction(
-          id: 'mock-notify-id-2',
-          amount: 3000,
-          date: DateTime.now().toUtc(),
-          type: TransactionType.expense,
-          accountId: 'acc-1',
-          categoryId: 'cat-1',
-          originalCurrency: 'EUR',
-          createdAt: DateTime.now().toUtc(),
-          modifiedAt: DateTime.now().toUtc(),
-        ),
-      );
+      when(mockTransactionRepo.createTransactions(any))
+          .thenAnswer((_) async {});
       when(mockAutomaticRepo.updateAutomaticTransaction(any))
           .thenAnswer((_) async => autoTxn);
       when(mockSettingsRepo.getNotificationsEnabled())

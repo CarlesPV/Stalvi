@@ -363,3 +363,25 @@
   - [x] **Static Analysis & Testing:** Ensured 0 static analyzer warnings/infos (`flutter analyze`) and verified 100% automated unit/widget test suite pass rate (`flutter test`).
   - [x] **CI/CD Workflow Readiness:** Verified GitHub Actions CI/CD pipeline compatibility for release deployment.
 
+- [x] **Phase 51: Cross-Platform Background Execution & Recurrence Engine Refactoring**
+  - [x] **Background Sync Abstraction:** Abstracted background execution logic into a dedicated domain interface (`BackgroundSyncService`), enabling clean cross-platform task invocation.
+  - [x] **Idempotent Background Tasks:** Connected background execution via `workmanager` directly to `ExecuteRecurringTransactionsUseCase` to evaluate scheduled automatic transactions reliably.
+  - [x] **Offline Currency Fallback System:** Implemented local fallback exchange rates in the infrastructure layer (`FallbackExchangeRates`) to populate database tables on initialization when network access is unavailable.
+
+- [x] **Phase 52: Legal Compliance Integration & Production CI/CD Finalization**
+  - [x] **Store-Ready Legal Compliance:** Drafted and integrated GDPR and App Store/Google Play compliant Terms & Conditions and Privacy Policy across English, Spanish, and Catalan (`assets/legal/terms_*.md`, `assets/legal/privacy_*.md`), reflecting SQLCipher AES-256 local encrypted storage and zero-telemetry architecture.
+  - [x] **Static Analysis & Test Suite Integrity:** Resolved all static analyzer issues (`flutter analyze` with 0 warnings, 0 errors) and updated mock/unit tests to achieve a 100% test pass rate.
+  - [x] **CI/CD Workflow Synchronization:** Verified and synchronized GitHub Actions CI/CD workflows for Android and iOS automated builds and test runs.
+
+---
+
+## Post-Launch / Maintenance
+
+Future ideas, enhancements, and post-release maintenance goals:
+- [ ] **Cloud-Encrypted WebDAV / Drive Backup Sync:** Optional opt-in sync to user's private WebDAV server or Google Drive / iCloud keeping zero-telemetry and end-to-end user encryption.
+- [ ] **Custom Category Icon & Color Creator:** Allow users to define custom icons and palette colors for categories and accounts.
+- [ ] **Advanced Financial Forecasting & AI Insights:** Localized predictive analytics for projected monthly balances and spending pattern anomalies based on historical movements.
+- [ ] **Interactive CSV Import Wizard:** Column mapping interface allowing users to import transactions from external banking CSV files.
+- [ ] **Wearable Companion App:** Apple Watch and Wear OS glance widgets for quick expense entry and daily balance previews.
+
+

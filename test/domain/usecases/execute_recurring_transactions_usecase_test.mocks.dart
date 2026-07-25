@@ -214,6 +214,17 @@ class MockITransactionRepository extends _i1.Mock
       ) as _i9.Future<_i3.Transaction>);
 
   @override
+  _i9.Future<void> createTransactions(List<_i3.Transaction>? transactions) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #createTransactions,
+          [transactions],
+        ),
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
+
+  @override
   _i9.Future<_i4.TransferPair> createTransferPair({
     required _i3.Transaction? originTransaction,
     required _i3.Transaction? destinationTransaction,

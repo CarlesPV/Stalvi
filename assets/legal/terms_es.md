@@ -1,6 +1,6 @@
 # Términos y Condiciones de Uso
 
-**Fecha de entrada en vigor:** 22 de julio de 2026
+**Fecha de entrada en vigor:** 25 de julio de 2026
 
 Lea detenidamente estos Términos y Condiciones ("Términos", "Acuerdo") antes de descargar, instalar, acceder o utilizar la aplicación móvil Stalvi (la "Aplicación" o "App").
 
@@ -11,117 +11,96 @@ Al descargar, instalar, abrir, acceder o utilizar la Aplicación, usted reconoce
 ---
 
 ## 1. Descripción del Servicio y Funcionalidad Principal
-
-Stalvi es una herramienta de gestión financiera personal centrada en la privacidad y diseñada bajo una arquitectura local ("offline-first"). Permite a los usuarios registrar, categorizar, supervisar y visualizar sus ingresos, gastos, presupuestos, objetivos de ahorro y transacciones recurrentes directamente en sus dispositivos móviles personales.
-
----
-
-## 2. Provisión "Tal Cual" ("As-Is") y "Según Disponibilidad" (Sin Garantías)
-
-EN LA MÁXIMA MEDIDA PERMITIDA POR LA LEY APLICABLE, LA APLICACIÓN SE PROPORCIONA ESTRICTAMENTE **"TAL CUAL"** Y **"SEGÚN DISPONIBILIDAD"**, CON TODAS SUS POSIBLES FALLAS, DEFECTOS Y ERRORES, Y SIN GARANTÍA NI CONDICIÓN DE NINGÚN TIPO.
-
-STALVI, SUS DESARROLLADORES, COLABORADORES, LICENCIANTES Y PROVEEDORES EXPRESAMENTE DESESTIMAN TODA GARANTÍA Y CONDICIÓN, YA SEA EXPRESA, IMPLÍCITA, LEGAL O DE OTRO TIPO, INCLUYENDO PERO NO LIMITÁNDOSE A:
-- GARANTÍAS IMPLÍCITAS DE COMERCIABILIDAD, CALIDAD SATISFACTORIA, IDONEIDAD PARA UN PROPÓSITO EN PARTICULAR, TÍTULO Y NO INFRACCIÓN;
-- CUALQUIER GARANTÍA DERIVADA DEL CURSO DE LA NEGOCIACIÓN, EL USO O EL COMERCIO;
-- CUALQUIER GARANTÍA DE QUE LA APLICACIÓN SATISFARÁ SUS REQUISITOS, LOGRARÁ CUALQUIER RESULTADO PREVISTO, O SERÁ COMPATIBLE O FUNCIONARÁ CON CUALQUIER OTRO SOFTWARE, APLICACIÓN, SISTEMA O DISPOSITIVO;
-- CUALQUIER GARANTÍA DE QUE EL FUNCIONAMIENTO DE LA APLICACIÓN SERÁ ININTERRUMPIDO, PUNTUAL, SEGURO O LIBRE DE ERRORES O ERRORES DE PROGRAMACIÓN.
-
-USTED RECONOCE QUE EL USO DE LA APLICACIÓN SE REALIZA BAJO SU ÚNICO Y EXCLUSIVO RIESGO.
+Stalvi es una herramienta de gestión financiera personal centrada en la privacidad y diseñada bajo una arquitectura local (*local-first*). Permite a los usuarios registrar, categorizar, supervisar y analizar sus ingresos, gastos, presupuestos, objetivos de ahorro y transacciones recurrentes directamente en sus dispositivos móviles personales.
 
 ---
 
-## 3. Exención de Responsabilidad Financiera, Fiscal y de Divisas (Cero Responsabilidad)
+## 2. Arquitectura Local-First y Cifrado SQLCipher
+- **Almacenamiento Exclusivamente Local:** Stalvi funciona bajo una estricta **arquitectura local (*local-first*)**. Todos los registros de transacciones, saldos de cuentas, presupuestos, categorías, resúmenes de PIN y preferencias se almacenan exclusivamente en su dispositivo. Stalvi no transmite, respalda, sincroniza, almacena ni procesa sus datos financieros en servidores externos o servicios en la nube.
+- **Cifrado SQLCipher AES-256:** La base de datos SQLite subyacente se cifra en reposo mediante **SQLCipher con cifrado AES de 256 bits**. Las claves criptográficas están protegidas mediante interfaces de almacenamiento seguro del sistema respaldadas por hardware nativo (Android KeyStore / iOS Keychain a través de `flutter_secure_storage`).
+- **Sin Acceso Remoto ni Puertas Traseras:** Los desarrolladores no tienen ningún acceso a su dispositivo, a su PIN, a sus claves de cifrado ni a su base de datos.
 
-### 3.1. Herramienta Exclusivamente Informativa y de Registro Personal
+---
+
+## 3. Procesamiento en Segundo Plano y Tareas Automatizadas de WorkManager
+- **Ejecución en Segundo Plano en el Dispositivo:** Stalvi utiliza mecanismos de ejecución en segundo plano del sistema (**WorkManager** en Android, **BGTaskScheduler** en iOS) para ejecutar tareas automatizadas localmente sin necesidad de que el usuario abra la aplicación.
+- **Alcance del Trabajo en Segundo Plano:** La ejecución en segundo plano se limita a:
+  1. Procesar de forma transparente e idempotente las transacciones recurrentes programadas para actualizar el libro contable sin duplicados.
+  2. Actualizar las fuentes de respaldo de tipos de cambio de divisas cuando se detecte una conexión activa a Internet.
+  3. Programar notificaciones locales para pagos pendientes o recordatorios de facturas.
+- **Exención sobre la Programación del SO:** El momento exacto de ejecución de las tareas en segundo plano está sujeto a las políticas de optimización de batería del sistema operativo. Stalvi no garantiza la ejecución al minuto exacto de dichas tareas.
+
+---
+
+## 4. Exención de Responsabilidad Financiera, Fiscal y de Divisas (Cero Responsabilidad)
+
+### 4.1. Herramienta Exclusivamente Informativa y de Registro Personal
 STALVI ES UNA APLICACIÓN PURAMENTE INFORMATIVA, DE REGISTRO DE DATOS PERSONALES Y SEGUIMIENTO ESTADÍSTICO. STALVI NO ES UN BANCO, INSTITUCIÓN FINANCIERA, ASESOR DE INVERSIONES, CONTADOR PÚBLICO NI SERVICIO DE ASESORÍA FISCAL.
 
 NI LA APLICACIÓN NI SUS DESARROLLADORES PRESTAN ASESORAMIENTO LEGAL, FISCAL, CONTABLE, DE INVERSIÓN, HIPOTECARIO, CREDITICIO O FINANCIERO DE NINGÚN TIPO. NINGÚN CONTENIDO, CÁLCULO, RESUMEN, GRÁFICO, INFORME O ESTADÍSTICA PRODUCIDO POR LA APLICACIÓN DEBERÁ INTERPRETARSE COMO PLANIFICACIÓN FINANCIERA O ASESORAMIENTO PROFESIONAL.
 
-### 3.2. Asunción de Cero Responsabilidad por Pérdidas Financieras y Errores de Cálculo
+### 4.2. Cero Responsabilidad por Pérdidas Financieras y Errores de Cálculo
 USTED RECONOCE Y ACEPTA EXPRESAMENTE QUE LOS DESARROLLADORES, MANTENEDORES Y PROPIETARIOS DE STALVI ASUMEN **CERO RESPONSABILIDAD Y CERO OBLIGACIÓN** POR CUALQUIER:
 - PÉRDIDA FINANCIERA, GASTO INESPERADO, SOBREGIRO BANCARIO, COMISIÓN BANCARIA, DEUDA, ESTIMACIÓN PRESUPUESTARIA INEXACTA O DECISIÓN DE INVERSIÓN DESAFORTUNADA RESULTANTE DIRECTA O INDIRECTAMENTE DEL USO O DE LA CONFIANZA EN LA APLICACIÓN;
 - DISCREPANCIA DE CÁLCULO, ERROR DE REDONDEO, ERROR ALGORÍTMICO O COMPUTACIONAL EN LOS TOTALES DE TRANSACCIONES, SALDOS, GASTOS RECURRENTES O PROYECCIONES ESTADÍSTICAS;
-- PROBLEMA FISCAL, ESTIMACIÓN INCORRECTA DE DEDUCCIONES FISCALES, OMISIÓN O DECLARACIÓN INEXACTA ANTE CUALQUIER AUTORIDAD TRIBUTARIA;
+- PROBLEMA FISCAL, ESTIMACIÓN INCORRECTA DE DEDUCCIONES FISCALES, OMISIÓN O DECLARACIÓN INEXACTA ANTE CUALQUIER AUTORITAT TRIBUTARIA;
 - INEXACTITUD, DESFASE O DISCREPANCIA EN LA CONVERSIÓN DE DIVISAS, TIPOS DE CAMBIO, CÁLCULOS MULTIDIVISA O CÁLCULOS DE TIPOS DE CAMBIO HISTÓRICOS.
 
-USTED ES EL ÚNICO RESPONSIBLE DE VERIFICAR LA EXACTITUD DE TODAS LAS TRANSACCIONES, CÁLCULOS Y DATOS FINANCIEROS CON LOS EXTRACTOS OFICIALES EMITIDOS POR SU BANCO O INSTITUCIÓN FINANCIERA.
+USTED ES EL ÚNICO RESPONSABLE DE VERIFICAR LA EXACTITUD DE TODAS LAS TRANSACCIONES, CÁLCULOS Y DATOS FINANCIEROS CON LOS EXTRACTOS OFICIALES EMITIDOS POR SU BANCO O INSTITUCIÓN FINANCIERA.
 
 ---
 
-## 4. Reconocimiento de Arquitectura Exclusivamente Local, Almacenamiento y Seguridad
-
-### 4.1. Almacenamiento puramente Local
-Stalvi funciona bajo una estricta **arquitectura local ("local-first")**. Todos los datos introducidos en la Aplicación (registros de transacciones, categorías, saldos de cuentas, presupuestos, resúmenes criptográficos del PIN y ajustes personalizados) se almacenan exclusivamente en su dispositivo móvil local. Stalvi no transmite, respalda, sincroniza, almacena ni procesa sus datos financieros en ningún servidor externo ni servicio en la nube.
-
-### 4.2. Imposibilidad de Recuperación en Caso de Pérdida de PIN o Datos sin Copia de Seguridad
-DEBIDO A QUE TODOS LOS DATOS SE ALMACENAN ÚNICAMENTE EN SU DISPOSITIVO LOCAL Y CIFRADOS EN REPOSO:
-- **SIN ACCESO REMOTO NI PUERTAS TRASERAS:** LOS DESARROLLADORES NO TIENEN ABSOLUTAMENTE NINGÚN ACCESO A SU DISPOSITIVO, A SU PIN, A SUS CLAVES DE CIFRADO NI A LOS DATOS DE SU APLICACIÓN.
-- **PIN OLVIDADO:** SI OLVIDA O PIERDE SU NÚMERO DE IDENTIFICACIÓN PERSONAL (PIN) O SUS CREDENCIALES BIOMÉTRICAS, SUS DATOS CIFRADOS NO PODRÁN SER DESCIFRADOS NI RECUPERADOS POR NOSOTROS NI POR NINGÚN TERCERO.
-- **PÉRDIDA O DAÑO DEL DISPOSITIVO:** SI SU DISPOSITIVO SE PIERDE, ES ROBADO, SE DAÑA, SE REFORMATÉA, SE RESTABLECE DE FÁBRICA O SI LA APLICACIÓN SE DESINSTALA SIN UNA COPIA DE SEGURIDAD CIFRADA PREVIAMENTE EXPORTADA POR USTED, SUS DATOS SE PERDERÁN DE FORMA PERMANENTE E IRRECUPERABLE.
-
-USTED RECONOCE EXPRESAMENTE QUE ES SU ÚNICA RESPONSABILIDAD MEMORIZAR SU PIN Y EXPORTAR PERIÓDICAMENTE COPIAS DE SEGURIDAD CIFRADAS DE SUS DATOS A UNA UBICACIÓN EXTERNA SEGURA.
+## 5. Responsabilidad del Usuario y Copia de Seguridad de Datos
+- **PIN o Autenticación Biométrica Olvidada:** Debido a que todos los datos están cifrados en el dispositivo con claves gestionadas por sus credenciales locales, si olvida su PIN o pierde el acceso biométrico, su base de datos será inaccesible e ilegible. **Los desarrolladores no pueden restablecer su PIN ni recuperar sus datos cifrados.**
+- **Pérdida o Daño del Dispositivo:** Si su dispositivo se pierde, daña, roba, restablece de fábrica o si desinstala la App sin exportar previamente una copia de seguridad cifrada, sus datos financieros se perderán permanentemente.
+- **Responsabilidad de Copia de Seguridad:** Usted es el único responsable de realizar copias de seguridad periódicas cifradas o exportaciones CSV y transferirlas a un almacenamiento externo seguro.
 
 ---
 
-## 5. Política de Uso Aceptable y Normas de Conducta
-
-Usted acepta utilizar la Aplicación únicamente para fines personales y legales, y en pleno cumplimiento de todas las leyes, regulaciones y normativas locales, nacionales e internacionales aplicables.
+## 6. Política de Uso Aceptable y Conductas Prohibidas
+Usted acepta utilizar la Aplicación únicamente para fines personales y legales, y en cumplimiento de todas las leyes locales, nacionales e internacionales aplicables.
 
 Usted acepta explícitamente **NO**:
-1. Utilizar la Aplicación para ninguna actividad financiera ilegal, fraudulenta, engañosa o no autorizada, incluyendo pero no limitándose al blanqueo de capitales, juegos de azar ilegales, evasión de sanciones o fraude fiscal;
-2. Descompilar, realizar ingeniería inversa, desmontar, descifrar, intentar derivar el código fuente o modificar la Aplicación, salvo en la medida permitida por la ley aplicable o por licencias de código abierto específicas;
-3. Eludir, desactivar, manipular o interferir con cualquier función de seguridad de la Aplicación, incluida la protección por PIN, la autenticación biométrica, el cifrado de la base de datos o los mecanismos de bloqueo de exportación;
-4. Introducir virus, troyanos, gusanos, bombas lógicas, malware o cualquier otro código malicioso que pudiera comprometer la integridad del dispositivo o de los archivos de la base de datos;
-5. Alquilar, arrendar, prestar, vender, sublicenciar, ceder, distribuir o explotar comercialmente la Aplicación o cualquier parte de la misma;
-6. Utilizar la Aplicación de cualquier manera que pueda interferir, interrumpir o dañar los sistemas o recursos del dispositivo de otros usuarios.
+1. Utilizar la Aplicación para actividades financieras ilegales, fraudulentas o no autorizadas, incluyendo blanqueo de capitales, evasión de sanciones o fraude fiscal;
+2. Descompilar, realizar ingeniería inversa, desmontar, descifrar, intentar derivar el código fuente o modificar la Aplicación, salvo en la medida permitida por las licencias de código abierto aplicables;
+3. Eludir, desactivar o interferir con las funciones de seguridad de la Aplicación, incluida la verificación de PIN, protección biométrica, cifrado de base de datos o mecanismos de exportación;
+4. Introducir virus, troyanos, malware o código malicioso que comprometa la integridad del dispositivo o de la base de datos;
+5. Alquilar, arrendar, prestar, vender, sublicenciar, distribuir o explotar comercialmente la Aplicación o cualquier parte de la misma.
 
 ---
 
-## 6. Concesión de Licencia y Derechos de Propiedad Intelectual
+## 7. Concesión de Licencia y Propiedad Intelectual
+Stalvi le otorga una licencia revocable, no exclusiva, intransferible, limitada y personal para instalar y utilizar la Aplicación en dispositivos compatibles de su propiedad o bajo su control.
 
-Stalvi le otorga una licencia revocable, no exclusiva, intransferible, limitada y personal para descargar, instalar y utilizar la Aplicación en un dispositivo móvil compatible de su propiedad o bajo su control, estrictamente de acuerdo con los términos de este Acuerdo.
-
-Todos los derechos de propiedad intelectual, títulos e intereses en y para la Aplicación —incluidos, entre otros, el código fuente, la arquitectura de software, el diseño de interfaz/experiencia de usuario (UI/UX), temas visuales, gráficos, iconos, logotipos, documentación y activos subyacentes— siguen siendo propiedad exclusiva de Stalvi y sus licenciantes. Todos los derechos no concedidos expresamente a usted están reservados por Stalvi.
-
----
-
-## 7. Limitación de Responsabilidad
-
-EN LA MEDIDA MÁXIMA PERMITIDA POR LA LEY APLICABLE, EN NINGÚN CASO STALVI, SUS DESARROLLADORES, AFILIADOS, DIRECTIVOS, AGENTES, PROVEEDORES O LICENCIANTES SERÁN RESPONSABLES ANTE USTED O CUALQUIER TERCERO POR NINGÚN DAÑO DIRECTO, INDIRECTO, INCIDENTAL, ESPECIAL, PUNITIVO, EJEMPLAR O CONSECUENTE DE NINGÚN TIPO (INCLUYENDO, ENTRE OTROS, DAÑOS POR PÉRDIDA DE GANANCIAS, INGRESOS, DATOS, FONDO DE COMERCIO, AHORROS, INTERRUPCIÓN DE LA ACTIVIDAD, FALLO DEL ORDENADOR O DISPOSITIVO, ERRORES DE CÁLCULO FINANCIERO O CUALQUIER OTRO DAÑO O PÉRDIDA COMERCIAL O FINANCIERA) DERIVADO DE O EN RELACIÓN CON:
-- SU ACCESO, USO O INCAPACIDAD DE ACCEDER O UTILIZAR LA APLICACIÓN;
-- CUALQUIER FALLO, ERROR, OMISIÓN, INTERRUPCIÓN, DEFECTO, RETRASO EN EL FUNCIONAMIENTO O TRANSMISIÓN;
-- CUALQUIER PÉRDIDA DE DATOS RESULTANTE DE PINS OLVIDADOS, RESTABLECIMIENTO DEL DISPOSITIVO, DESINSTALACIÓN DE LA APLICACIÓN O DATOS SIN COPIA DE SEGURIDAD;
-- CUALQUIER CONFIANZA DEPOSITADA POR USTED EN LA EXACTITUD, INTEGRIDAD O CONVERSIONES DE DIVISAS DE CUALQUIER ESTADÍSTICA, PRESUPUESTO O CÁLCULO DENTRO DE LA APP.
-
-ESTA LIMITACIÓN SE APLICA INDEPENDIENTEMENTE DE LA TEORÍA DE RESPONSABILIDAD (CONTRATO, RESPONSABILIDAD EXTRACONTRACTUAL, NEGLIGENCIA, RESPONSABILIDAD OBJETIVA O DE OTRO TIPO), INCLUSO SI STALVI HA SIDO ADVERTIDO DE LA POSIBILIDAD DE TALES DAÑOS.
+Todos los derechos de propiedad intelectual, títulos e intereses en la Aplicación —incluidos el código, la arquitectura de software, el diseño UI/UX, temas visuales, gráficos, iconos, logotipos y documentación— siguen siendo propiedad exclusiva de Stalvi y sus licenciantes. Todos los derechos no concedidos expresamente quedan reservados.
 
 ---
 
-## 8. Modificaciones de los Términos y de la Aplicación
+## 8. Exención de Garantías ("TAL CUAL" y "SEGÓN DISPONIBILIDAD")
+EN LA MEDIDA MÁXIMA PERMITIDA POR LA LEY APLICABLE, LA APLICACIÓN SE PROPORCIONA ESTRICTAMENTE **"TAL CUAL"** Y **"SEGÚN DISPONIBILIDAD"**, CON TODAS SUS POSIBLES FALLAS Y SIN GARANTÍA DE NINGÚN TIPO.
 
-Nos reservamos el derecho, a nuestra entera discreción, de modificar, actualizar, suspender o reemplazar estos Términos o cualquier parte de la Aplicación en cualquier momento sin previo aviso.
-
-Los Términos actualizados entrarán en vigor inmediatamente después de su publicación dentro de la Aplicación o del repositorio. Su acceso o uso continuado de la Aplicación tras la publicación de cualquier cambio constituye su aceptación vinculante de dichos cambios. Le recomendamos revisar estos Términos periódicamente.
-
----
-
-## 9. Ley Aplicable y Jurisdicción para la Resolución de Disputas
-
-Estos Términos y el uso que usted haga de la Aplicación se regirán e interpretarán de conformidad con las leyes de España y las regulaciones de la Unión Europea, sin dar efecto a ningún principio de conflicto de leyes.
-
-Cualquier disputa, controversia o reclamación que surja de o en relación con este Acuerdo, incluida su formación, validez, incumplimiento o terminación, se someterá a la jurisdicción exclusiva de los tribunales competentes de España.
+STALVI DESESTIMA TODA GARANTÍA, EXPRESA, IMPLÍCITA O LEGAL, INCLUYENDO GARANTÍAS IMPLÍCITAS DE COMERCIABILIDAD, CALIDAD SATISFACTORIA, IDONEIDAD PARA UN PROPÓSITO PARTICULAR, TÍTULO Y NO INFRACCIÓN. STALVI NO GARANTIZA QUE LA APLICACIÓN FUNCIONE DE FORMA ININTERRUMPIDA, SEGURA O LIBRE DE ERRORES.
 
 ---
 
-## 10. Divisibilidad y Acuerdo Completo
-
-Si un tribunal de jurisdicción competente considera que alguna disposición de estos Términos es inválida, ilegal o inaplicable, dicha disposición se modificará en la medida mínima necesaria para que sea válida y aplicable, y las disposiciones restantes de estos Términos permanecerán en pleno vigor y efecto.
-
-Estos Términos constituyen el acuerdo completo entre usted y Stalvi con respecto al objeto del presente documento y reemplazan todos los entendimientos, acuerdos o comunicaciones previos o contemporáneos.
+## 9. Limitación de Responsabilidad
+EN LA MEDIDA MÁXIMA PERMITIDA POR LA LEY APLICABLE, EN NINGÚN CASO STALVI, SUS DESARROLLADORES, AFILIADOS, DIRECTIVOS, AGENTES O PROVEEDORES SERÁN RESPONSABLES DE NINGÚN DAÑO DIRECTO, INDIRECTO, INCIDENTAL, ESPECIAL, PUNITIVO O CONSECUENTE (INCLUYENDO PÉRDIDAS DE GANANCIAS, DATOS, INGRESOS, AHORROS, INTERRUPCIÓN DE ACTIVIDAD O ERRORES DE CÁLCULO FINANCIERO) DERIVADO DEL USO O LA INCAPACIDAD DE USO DE LA APLICACIÓN.
 
 ---
 
-## 11. Información de Contacto
+## 10. Términos Específicos para App Store y Google Play Store
+- **Términos de Apple App Store:** Usted reconoce que este Acuerdo se celebra únicamente entre usted y Stalvi, y no con Apple Inc. Apple no es responsable de la Aplicación ni de su contenido, mantenimiento o servicios de soporte. Apple no tiene obligación alguna de prestar servicios de mantenimiento o soporte con respecto a la Aplicación. En la máxima medida permitida por la ley, Apple no tendrá ninguna obligación de garantía con respecto a la Aplicación. Apple y las subsidiarias de Apple son terceros beneficiarios de este Acuerdo y tendrán derecho a hacer cumplir este Acuerdo contra usted.
+- **Términos de Google Play Store:** Usted reconoce que Google LLC no es responsable de prestar mantenimiento, soporte o resolver reclamaciones relativas a la Aplicación.
 
-Si tiene alguna pregunta, inquietud o consulta con respecto a estos Términos y Condiciones, comuníquese con el desarrollador a través de GitHub en:  
-[https://github.com/CarlesPV](https://github.com/CarlesPV)
+---
+
+## 11. Ley Aplicable y Jurisdicción
+Estos Términos y el uso de la Aplicación se regirán e interpretarán de conformidad con las leyes de España y las regulaciones de la Unión Europea. Cualquier disputa o reclamación que surja de o en relación con este Acuerdo se someterá a la jurisdicción exclusiva de los tribunales competentes de España.
+
+---
+
+## 12. Divisibilidad, Modificaciones y Contacto
+- **Divisibilidad:** Si alguna disposición de estos Términos se considera inválida o inaplicable, se modificará en la medida mínima necesaria y el resto permanecerá en pleno vigor.
+- **Modificaciones:** Nos reservamos el derecho de actualizar estos Términos en cualquier momento. El uso continuado tras los cambios constituye la aceptación de los Términos modificados.
+- **Contacto:** Para consultas legales, contacte al desarrollador en GitHub en:  
+  [https://github.com/CarlesPV](https://github.com/CarlesPV)

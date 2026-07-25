@@ -42,7 +42,7 @@ class _AboutMeScreenState extends ConsumerState<AboutMeScreen> {
       });
     } catch (e) {
       setState(() {
-        _markdownData = 'Error loading content.';
+        _markdownData = AppLocalizations.of(context)!.errorLoadingContent;
         _isLoading = false;
       });
     }
@@ -53,7 +53,9 @@ class _AboutMeScreenState extends ConsumerState<AboutMeScreen> {
     if (!await launchUrl(url)) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Could not launch URL')),
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.errorCouldNotLaunchUrl),
+          ),
         );
       }
     }

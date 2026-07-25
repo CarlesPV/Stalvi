@@ -4,6 +4,7 @@ import '../repositories/i_budget_repository.dart';
 import '../repositories/i_category_repository.dart';
 import 'update_budget_progress_usecase.dart';
 
+/// Parameters required to create a new category budget limit.
 class CreateBudgetParams {
   final String id;
   final String accountId;
@@ -22,6 +23,10 @@ class CreateBudgetParams {
   });
 }
 
+/// Use case that validates and creates a category [Budget].
+///
+/// Validates target amount limits and date boundaries, and calculates
+/// initial spending progress upon creation.
 class CreateBudgetUseCase {
   final IBudgetRepository _budgetRepository;
   final ICategoryRepository _categoryRepository;

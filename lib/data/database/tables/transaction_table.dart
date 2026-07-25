@@ -39,6 +39,16 @@ class Transactions extends Table {
   /// Links both legs of a transfer pair. Null for income/expense rows.
   TextColumn get transferId => text().named('transfer_id').nullable()();
 
+  TextColumn get parentRecurringId =>
+      text().named('parent_recurring_id').nullable()();
+  DateTimeColumn get expectedExecutionDate =>
+      dateTime().named('expected_execution_date').nullable()();
+
   @override
   Set<Column> get primaryKey => {id};
+
+  @override
+  List<Set<Column>> get uniqueKeys => [
+        {parentRecurringId, expectedExecutionDate},
+      ];
 }

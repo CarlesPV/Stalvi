@@ -7,6 +7,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stalvi/data/database/app_database.dart';
 import 'package:stalvi/core/security/secure_storage_manager.dart';
 
+/// Use case that completely wipes user data, clears hardware keystore keys,
+/// deletes local SQLite database files, and performs a cold application exit.
 class WipeAllDataUseCase {
   final SecureStorageManager _secureStorageManager;
   final AppDatabase _appDatabase;

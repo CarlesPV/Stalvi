@@ -3,6 +3,8 @@ import 'dart:developer';
 import '../entities/exchange_rate.dart';
 import '../repositories/i_exchange_rate_repository.dart';
 
+/// Use case responsible for synchronizing local currency exchange rates
+/// with remote APIs or offline fallbacks.
 class SyncExchangeRatesUseCase {
   final IExchangeRateRepository _repository;
 

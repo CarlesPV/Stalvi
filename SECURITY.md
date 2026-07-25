@@ -4,7 +4,6 @@ This document outlines the security standards for both human contributors and AI
 
 ## AI Agent Security Protocols
 - **No Hardcoded Secrets:** The agent MUST NOT output raw secrets, API keys, JWT tokens, or database credentials in code generation, terminal outputs, or memory scratchpads (`.agents/memory/`).
-- **Environment Variables:** Always use `.env` files (via `flutter_dotenv`) for sensitive configurations. NEVER commit `.env` files.
 - **Dependency Management:** The agent must ask for explicit human confirmation before installing any new third-party Flutter/Dart package (`flutter pub add`).
 
 ## Application Specific Security Rules

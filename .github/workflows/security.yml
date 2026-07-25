@@ -19,11 +19,6 @@ jobs:
           channel: 'stable'
           cache: true
           
-      - name: Generate dummy .env file for security scan
-        run: |
-          echo "DB_ENCRYPTION_KEY=ci_dummy_encryption_key_12345" >> .env
-          echo "EXCHANGE_RATE_API_KEY=ci_dummy_api_key_12345" >> .env
-
       - name: Get dependencies
         run: flutter pub get
 
@@ -31,7 +26,7 @@ jobs:
         run: flutter gen-l10n
 
       - name: Run code generation (build_runner)
-        run: dart run build_runner build --delete-conflicting-outputs
+        run: dart run build_runner build
 
       # 1. Dart/Flutter native dependency vulnerability scanning
       - name: Audit Dart Dependencies
@@ -40,9 +35,6 @@ jobs:
       # 2. Advanced Static Analysis (Linter configuration covers most security practices)
       - name: Run Flutter Analyze
         run: flutter analyze
-          
-      - name: Remove dummy .env file for Trivy scan
-        run: rm -f .env
           
       # 3. Trivy: file system and container scanner (looks for exposed secrets, etc.)
       - name: Run Trivy Vulnerability Scanner

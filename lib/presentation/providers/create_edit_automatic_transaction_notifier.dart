@@ -310,9 +310,11 @@ class CreateEditAutomaticTransactionNotifier
       final trimmedNotes = state.notes.trim();
 
       DateTime calcNextDate() {
-        // On edit: keep an existing *future* next-execution date unchanged so
-        // the user does not lose their already-scheduled firing window.
+        // On edit: keep an existing *future* next-execution date unchanged ONLY IF
+        // the user has not changed the recurrence settings.
         if (arg != null &&
+            arg!.recurrenceType == state.recurrenceType &&
+            arg!.recurrenceDays == state.recurrenceDays &&
             arg!.nextExecutionDate.toUtc().isAfter(DateTime.now().toUtc())) {
           return arg!.nextExecutionDate;
         }

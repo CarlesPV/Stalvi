@@ -318,9 +318,11 @@ class _CreateEditAutomaticTransactionScreenState
                                   letterSpacing: -1.0,
                                 ),
                                 textAlign: TextAlign.center,
-                                decoration: const InputDecoration(
-                                  hintText: '0.00',
-                                  hintStyle: TextStyle(color: Colors.grey),
+                                decoration: InputDecoration(
+                                  hintText: AppLocalizations.of(context)!
+                                      .hintAmountZero,
+                                  hintStyle:
+                                      const TextStyle(color: Colors.grey),
                                   border: InputBorder.none,
                                   contentPadding: EdgeInsets.zero,
                                 ),

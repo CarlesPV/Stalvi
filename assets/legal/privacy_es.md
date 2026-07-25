@@ -1,77 +1,91 @@
 # Política de Privacidad
 
-**Fecha de entrada en vigor:** 22 de julio de 2026
+**Fecha de entrada en vigor:** 25 de julio de 2026
 
 ## 1. Introducción
-Bienvenido a **Stalvi** ("nosotros", "nuestro" o "la Aplicación"). Stalvi es una aplicación de gestión de finanzas personales diseñada con arquitectura "local-first" y bajo la filosofía de privacidad por diseño (*privacy-by-design*). Estamos firmemente comprometidos a proteger su privacidad y garantizar que sus datos financieros permanezcan confidenciales, seguros y bajo su control exclusivo.
+Bienvenido a **Stalvi** ("nosotros", "nuestro" o "la Aplicación"). Stalvi es una aplicación de gestión de finanzas personales diseñada con arquitectura local (*local-first*) y bajo la filosofía de privacidad desde el diseño (*privacy-by-design*). Estamos firmemente comprometidos a proteger su privacidad y a garantizar que sus datos financieros permanezcan confidenciales, seguros y bajo su control exclusivo.
 
-Esta Política de Privacidad explica nuestras prácticas con respecto a la privacidad de datos, seguridad y cumplimiento de los estándares normativos globales, incluyendo:
-- El **Reglamento General de Protección de Datos (RGPD)** de la Unión Europea (Reglamento (UE) 2016/679).
-- La **Ley Orgánica de Protección de Datos Personales y garantía de los derechos digitales de España (LOPDGDD 3/2018)**.
-- La **California Consumer Privacy Act (CCPA)**, modificada por la **California Privacy Rights Act (CPRA)**.
+Esta Política de Privacidad detalla nuestras prácticas de tratamiento de datos, arquitectura de seguridad y estándares de cumplimiento normativo, incluyendo:
+- **Reglamento General de Protección de Datos (RGPD)** de la Unión Europea (Reglamento (UE) 2016/679).
+- **Ley Orgánica de Protección de Datos Personales y garantía de los derechos digitales (LOPDGDD 3/2018)** de España.
+- **California Consumer Privacy Act (CCPA)**, modificada por la **California Privacy Rights Act (CPRA)**.
+- **Directrices de Revisión de App Store de Apple** (Sección 5.1 - Privacidad, Recopilación y Almacenamiento de Datos).
+- **Políticas para Desarrolladores de Google Play** (Datos de Usuario, Servicios Financieros y requisitos de Divulgación Destacada).
 
-Al utilizar Stalvi, usted acepta las prácticas de privacidad descritas en este documento.
+Al utilizar Stalvi, usted reconoce y acepta las prácticas de privacidad descritas en este documento.
 
 ---
 
 ## 2. Cero Telemetría y Cero Recopilación de Datos Personales
-Stalvi opera bajo un modelo estricto de **Cero Telemetría**.
-- **Sin Recopilación por el Desarrollador:** Nosotros, como desarrolladores de la Aplicación, **no** recopilamos, almacenamos, transmitimos, procesamos ni vendemos ninguno de sus datos personales o financieros.
-- **Sin Registro de Usuario:** Stalvi no requiere la creación de cuentas de usuario, registro por correo electrónico, número de teléfono ni inicios de sesión en la nube.
-- **Sin Análisis ni Seguimiento:** La Aplicación contiene **cero** SDKs de seguimiento de terceros, telemetría, agregadores de informes de fallos (p. ej., Firebase Analytics, Google Analytics, Sentry), software publicitario o herramientas de elaboración de perfiles de comportamiento.
+Stalvi opera bajo un modelo estricto de **Cero Telemetría**:
+- **Sin Recopilación de Datos por el Desarrollador:** No recopilamos, almacenamos, rastreamos, procesamos ni vendemos ninguno de sus datos personales, financieros o de comportamiento.
+- **Sin Registro de Usuario:** Stalvi no requiere la creación de cuentas de usuario, registro por correo electrónico, verificación por número de teléfono ni inicio de sesión en servicios en la nube.
+- **Sin SDKs de Análisis o Seguimiento de Terceros:** La Aplicación contiene cero herramientas de telemetría de terceros, agregadores de informes de fallos (p. ej., Firebase Analytics, Sentry, Mixpanel), marcos publicitarios o herramientas de elaboración de perfiles de comportamiento.
 
 ---
 
-## 3. Almacenamiento Local de Datos y Cifrado Avanzado (AES-256)
-Todos los datos creados o gestionados dentro de Stalvi (incluidas transacciones financieras, saldos de cuentas, presupuestos, categorías personalizadas, etiquetas y preferencias de usuario) se almacenan exclusivamente en su dispositivo físico.
+## 3. Arquitectura Local-First y Cifrado SQLCipher (AES-256)
+Todos los datos introducidos o generados dentro de Stalvi (incluidas transacciones financieras, saldos de cuentas, presupuestos, reglas recurrentes, categorías, etiquetas y preferencias) se almacenan exclusivamente en su dispositivo físico.
 
-- **Cifrado SQLCipher AES-256:** La base de datos SQLite subyacente se cifra en reposo mediante **SQLCipher con cifrado AES de 256 bits**. Esto garantiza que, incluso si se obtiene acceso físico al sistema de archivos de su dispositivo, sus datos financieros seguirán siendo ilegibles sin su clave de cifrado.
-- **Protección Biométrica y PIN:** El acceso a la Aplicación está protegido por los mecanismos nativos de autenticación biométrica de su dispositivo (huella dactilar, Touch ID o Face ID) y un Número de Identificación Personal (PIN) personalizado.
-- **Aislamiento de Datos:** Debido a que los datos nunca salen de su dispositivo para alojarse en nuestros servidores, su información está inherentemente protegida contra brechas en servidores remotos, filtraciones de datos, intercepciones de red y minería de datos corporativa.
-
----
-
-## 4. Conectividad a Internet y APIs Abiertas de Terceros
-Stalvi está diseñado para funcionar completamente sin conexión. La **única** instancia en la que la Aplicación inicia una conexión a Internet es para obtener los tipos de cambio de divisas actualizados.
-
-- **Solicitudes Anónimas de Tipos de Cambio:** Cuando actualiza los tipos de conversión de moneda, Stalvi consulta una API pública de tipos de cambio de terceros a través de HTTPS seguro.
-- **Garantías de Privacidad:** Estas solicitudes API son estrictamente anónimas. La solicitud contiene **únicamente** los parámetros de solicitud HTTP estándar necesarios para obtener las tablas de tipos de cambio públicas (p. ej., símbolos de moneda base y destino). **Nunca** se transmiten identificadores de usuario, tokens personales vinculados a IP, identificadores de dispositivo, detalles de cuentas ni importes de transacciones.
-- **Sin Publicidad ni Corredores de Datos:** No mantenemos alianzas con anunciantes, redes de afiliados ni corredores de datos (*data brokers*).
+- **Cifrado de Base de Datos SQLCipher AES-256:** La base de datos SQLite subyacente se cifra en reposo mediante **SQLCipher con cifrado AES de 256 bits**. Sus datos financieros resultan ilegibles sin la clave criptográfica.
+- **Gestión Segura de Claves en Hardware:** Las claves criptográficas y las credenciales de acceso se aíslan y gestionan de forma segura utilizando el KeyStore nativo del dispositivo (Android) o Keychain (iOS) a través de interfaces de almacenamiento seguro del sistema (`flutter_secure_storage`).
+- **Autenticación Biométrica y PIN:** El acceso a la Aplicación está protegido en el dispositivo mediante mecanismos biométricos (Face ID, Touch ID, huella dactilar) o un Número de Identificación Personal (PIN) definido por el usuario.
+- **Aislamiento Absoluto de Datos:** Puesto que ningún dato se transmite a servidores externos, su información está protegida frente a brechas de datos remotas, ataques a servidores, intercepciones de red y minería de datos corporativa.
 
 ---
 
-## 5. Control Absoluto del Usuario y Portabilidad de Datos
-Usted mantiene el 100% de la propiedad y el control sobre sus registros financieros y copias de seguridad de datos.
+## 4. Ejecución de Tareas en Segundo Plano en el Dispositivo
+Stalvi utiliza programadores nativos del sistema en segundo plano (**WorkManager** en Android, **BGTaskScheduler** en iOS) para mantener actualizados los registros financieros sin intervención del usuario.
 
-- **Exportación y Portabilidad de Datos:** Puede exportar sus registros financieros en cualquier momento en formatos estándar (como archivos de copia de seguridad cifrados o hojas de cálculo CSV sin cifrar) para transferir sus datos o realizar copias de seguridad manuales.
-- **Importación y Restauración de Datos:** Usted decide cuándo y dónde restaurar sus copias de seguridad de la base de datos cifrada.
-- **Eliminación de Datos:** Puede eliminar de forma permanente transacciones individuales, restablecer categorías o ejecutar una operación completa de **"Eliminar Todos los Datos"** desde la configuración de la Aplicación. Realizar esta acción purga de forma permanente todas las bases de datos locales cifradas y la configuración almacenada en caché de su dispositivo.
+- **Propósito de las Tareas en Segundo Plano:** La ejecución en segundo plano se limita estrictamente a:
+  1. Evaluar las transacciones recurrentes programadas de forma idempotente para evitar entradas duplicadas.
+  2. Actualizar las fuentes de respaldo de tipos de cambio de divisas sin conexión cuando haya conectividad a Internet.
+  3. Emitir notificaciones locales para recordatorios de facturas o pagos programados.
+- **Operación Exclusivamente Local:** Todas las operaciones en segundo plano se ejecutan **100% localmente en su dispositivo**. Las tareas en segundo plano no recopilan, registran ni filtran telemetría, identificadores de dispositivo o datos financieros hacia servidores remotos.
 
 ---
 
-## 6. Derechos Normativos (RGPD, LOPDGDD y CCPA/CPRA)
+## 5. Conectividad a Internet y APIs Abiertas Anónimas
+Stalvi está diseñado para funcionar completamente sin conexión. La **única** situación en la que la Aplicación inicia una solicitud de red saliente es para consultar los tipos de cambio de divisas públicos.
 
-### 6.1. Derechos en la UE / España (RGPD / LOPDGDD)
+- **Solicitudes Anónimas de Tipos de Cambio:** Cuando se actualizan las divisas, Stalvi consulta una API pública de tipos de cambio de terceros mediante HTTPS cifrado.
+- **Sin Transmisión de Identificadores:** Estas solicitudes contienen estrictamente los parámetros HTTP estándar necesarios para obtener las tablas de tipos de cambio públicas (p. ej., códigos de moneda base y destino). **Nunca** se envían credenciales de usuario, identificadores de dispositivo, tokens vinculados a la IP, importes de transacciones o saldos de cuentas.
+- **Sin Publicidad ni Corredores de Datos:** No mantenemos alianzas con anunciantes, redes de afiliados, proveedores de seguimiento ni corredores de datos (*data brokers*).
+
+---
+
+## 6. Propiedad de Datos, Control y Cumplimiento de Derechos
+
+### 6.1. Derechos en la UE / España (RGPD y LOPDGDD 3/2018)
 Bajo el RGPD y la LOPDGDD, los interesados tienen derechos de acceso, rectificación, supresión, limitación del tratamiento, oposición y portabilidad de datos:
-- Puesto que todo el procesamiento se realiza localmente en su dispositivo bajo su control físico directo, usted ejerce todos los derechos del interesado directamente desde la interfaz de usuario de la Aplicación (p. ej., editando registros, exportando datos o borrando bases de datos locales).
-- Dado que no poseemos ni alojamos sus datos, no podemos acceder, generar, modificar ni eliminar sus datos personales en su nombre.
+- **Ejercicio Directo de Derechos:** Dado que todo el tratamiento se realiza localmente bajo su control físico, usted ejerce todos los derechos del interesado directamente en la interfaz de la Aplicación (p. ej., modificando transacciones, exportando archivos o borrando bases de datos).
+- **Sin Acceso por el Desarrollador:** Puesto que no conservamos, transmitimos ni almacenamos sus datos en ningún servidor, no podemos acceder, generar, modificar ni eliminar sus datos personales en su nombre.
 
 ### 6.2. Residentes de California (CCPA / CPRA)
-- **No Venta ni Intercambio de Información Personal:** Stalvi **no** vende, alquila, cede, divulga, difunde, transfiere ni comunica información personal a terceros a cambio de contraprestación monetaria o de otro valor.
-- **Derecho a Conocer y Eliminar:** Los usuarios de California pueden ejercer su derecho a conocer qué datos existen y eliminar todos sus datos financieros personales almacenados directamente a través de la interfaz local de la aplicación.
+- **No Venta ni Intercambio:** Stalvi **no vende, alquila ni comparte** su información personal con terceros a cambio de contraprestación monetaria o de otro valor.
+- **Derecho a Conocer y Eliminar:** Usted ejerce su derecho a conocer y eliminar todos los datos financieros personales almacenados directamente a través de la interfaz local de la Aplicación.
 
 ---
 
-## 7. Privacidad de Menores
-Stalvi no está dirigido a menores de 14 años (o 13 años en jurisdicciones reguladas por COPPA). No recopilamos a sabiendas datos personales de menores. Dado que todos los datos son creados localmente por el operador del dispositivo, los padres y tutores mantienen la supervisión física completa del uso del dispositivo.
+## 7. Retención y Eliminación Permanente de Datos
+- **Exportación de Datos:** Puede exportar sus datos en cualquier momento en formatos estándar (archivos de copia de seguridad cifrados o hojas de cálculo CSV) para su respaldo personal o migración.
+- **Borrado Permanente:** Puede activar la acción **"Eliminar Todos los Datos"** en la configuración de la Aplicación. Esto elimina de forma permanente todos los archivos de bases de datos locales cifradas y preferencias del dispositivo. La desinstalación de la Aplicación también elimina todos los archivos de bases de datos locales.
 
 ---
 
-## 8. Cambios en esta Política de Privacidad
-Podemos actualizar esta Política de Privacidad periódicamente para reflejar actualizaciones de la aplicación o estándares de cumplimiento legal. Las versiones actualizadas se incluirán en los lanzamientos de la Aplicación y se publicarán en nuestro repositorio de código fuente. El uso continuado de Stalvi después de una actualización constituye la aceptación de los términos actualizados.
+## 8. Privacidad de Menores
+Stalvi no está dirigido a menores de 16 años (o 13 años bajo COPPA). No recopilamos a sabiendas datos personales de menores. Puesto que todos los datos residen localmente en el dispositivo, los padres y tutores mantienen la supervisión completa del uso del dispositivo.
 
 ---
 
-## 9. Información de Contacto
-Si tiene preguntas, comentarios o consultas legales con respecto a esta Política de Privacidad, puede ponerse en contacto con el mantenedor del proyecto a través de GitHub:
-- **Repositorio / Soporte:** [https://github.com/CarlesPV](https://github.com/CarlesPV)
+## 9. Cumplimiento de Políticas de App Store y Google Play
+- **Directrices de Revisión de App Store (5.1.1 y 5.1.2):** Stalvi revela todo el uso de datos, limita la recopilación a cero y proporciona control total de los datos al usuario.
+- **Políticas para Desarrolladores de Google Play:** Stalvi cumple con las políticas de Datos de Usuario, Servicios Financieros y divulgación de tareas WorkManager en segundo plano al mantener el procesamiento 100% local y cero intercambio de datos.
+
+---
+
+## 10. Actualizaciones de la Política e Información de Contacto
+Podemos actualizar esta Política de Privacidad para reflejar mejoras del software o cambios normativos. Las actualizaciones se incluirán en los lanzamientos de la aplicación y en el repositorio.
+
+Para consultas sobre privacidad, contacte al desarrollador:
+- **Repositorio de GitHub y Soporte:** [https://github.com/CarlesPV](https://github.com/CarlesPV)

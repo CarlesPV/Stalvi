@@ -1,15 +1,15 @@
-# Active Task: Phase 50 - Store-Ready Legal Overhaul & Final App Store Validation
+# Phase 52: Pre-Launch QA, Localization, Legal Compliance, and Documentation
 
-## 🎯 Objective
-Redactar y desplegar documentos legales (Términos y Condiciones, y Política de Privacidad) exhaustivos, de nivel profesional y jurídicamente blindados en Inglés, Español y Catalán. Garantizar el cumplimiento de GDPR, LOPDGDD y CCPA, preparando la app para su publicación inmediata en las tiendas.
+## Status: IN PROGRESS
+## Objective
+Ensure the application is 100% production-ready. This includes a strict UI/Localization audit, green CI/CD pipelines with zero warnings, comprehensive legal compliance (T&C and Privacy Policy), and fully updated project documentation.
 
-## 🏗️ Architecture & Core Components
-*   **Static Assets:** Sobrescritura de `assets/legal/privacy_*.md` y `assets/legal/terms_*.md`.
-*   **Presentation Layer:** Verificación del renderizado del Markdown para textos largos (scroll, rendimiento).
-*   **Compliance:** Exención explícita de responsabilidad financiera, aclaración sobre el uso de la API de divisas de terceros y confirmación de la naturaleza 100% local y encriptada (SQLCipher) de los datos.
+## Tasks
+- [ ] 52.1: Audit all UI files. Eliminate hardcoded text (except "Stalvi"), ensure perfectly synced translations (En, Es, Ca), and verify no UI layout overflows exist.
+- [ ] 52.2: Comprehensive QA. Execute and fix all unit/integration tests, linting warnings, and ensure CI/CD workflows pass with zero errors, warnings, or info flags.
+- [ ] 52.3: Legal Compliance. Generate and update comprehensive Terms & Conditions and Privacy Policy for all 3 languages, tailored to app store requirements.
+- [ ] 52.4: Documentation. Update README.md, roadmap.md, and inline code comments to reflect the current fully functional state of the application.
 
-## ✅ Task Checklist
-- [ ] **Privacy Policy Overhaul:** Generar políticas de privacidad detalladas (EN, ES, CA) declarando la nula recolección de datos personales, almacenamiento local seguro y el uso anónimo de APIs externas.
-- [ ] **Terms & Conditions Overhaul:** Generar T&C detallados (EN, ES, CA) estableciendo que la app es una herramienta informativa, sin responsabilidad sobre decisiones o pérdidas financieras del usuario.
-- [ ] **UI/UX Validation:** Asegurar que las pantallas `TermsScreen` y `PrivacyScreen` renderizan correctamente los nuevos documentos extensos sin desbordamientos de UI en dispositivos pequeños.
-- [ ] **Quality Assurance:** Ejecutar `flutter analyze` y los tests unitarios/widgets para asegurar 100% de cobertura y ningún error (0 warnings, 0 info) tras la actualización de los assets. Actualizar `roadmap.md` a Fase 50 completada.
+## Current Context
+- **Architecture**: Clean Architecture + Riverpod + Drift (SQLCipher).
+- **Strict Rule**: All agents MUST directly modify files. NO code snippets in chat output. Optimize token usage.

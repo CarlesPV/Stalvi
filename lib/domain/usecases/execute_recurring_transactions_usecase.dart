@@ -13,6 +13,11 @@ import '../repositories/i_transaction_repository.dart';
 import '../repositories/i_settings_repository.dart';
 import '../../infrastructure/services/notification_service.dart';
 
+/// Use case that evaluates pending automatic/recurring transaction templates
+/// and generates corresponding transaction records deterministically.
+///
+/// Ensures idempotency via deterministic UUID v5 URL-based keys and performs
+/// exact trigger date calculations using the UTC+2 timezone offset.
 class ExecuteRecurringTransactionsUseCase {
   final IAutomaticTransactionRepository automaticRepo;
   final ITransactionRepository transactionRepo;
@@ -40,69 +45,40 @@ class ExecuteRecurringTransactionsUseCase {
 
     final automaticTxns = await automaticRepo.getAllAutomaticTransactions();
 
+    final pendingTransactions = <dtxn.Transaction>[];
+    final updatedAutoTxns = <AutomaticTransaction>[];
+    final autoTxnsToNotify = <AutomaticTransaction>[];
+
     for (final autoTxn in automaticTxns) {
       if (autoTxn.isDeleted || !autoTxn.isActive || autoTxn.deletedAt != null) {
         continue;
       }
 
       var currentAutoTxn = autoTxn;
+      var hasPendingCycles = false;
 
-      while (true) {
-        final nextDateUtc = currentAutoTxn.nextExecutionDate.toUtc();
-        final nextDateUtcPlus2Instant =
-            nextDateUtc.add(const Duration(hours: 2));
-        final nextDateUtcPlus2 = DateTime.utc(
-          nextDateUtcPlus2Instant.year,
-          nextDateUtcPlus2Instant.month,
-          nextDateUtcPlus2Instant.day,
-        );
+      // Determine if there are pending cycles
+      final initialNextDateUtc = currentAutoTxn.nextExecutionDate.toUtc();
+      final initialNextDateUtcPlus2Instant =
+          initialNextDateUtc.add(const Duration(hours: 2));
+      final initialNextDateUtcPlus2 = DateTime.utc(
+        initialNextDateUtcPlus2Instant.year,
+        initialNextDateUtcPlus2Instant.month,
+        initialNextDateUtcPlus2Instant.day,
+      );
 
-        if (nextDateUtcPlus2.isBefore(todayUtcPlus2) ||
-            nextDateUtcPlus2.isAtSameMomentAs(todayUtcPlus2)) {
-          try {
-            await _fireTransaction(currentAutoTxn, nowUtc, nextDateUtcPlus2);
-
-            final nextDate = calculateNextTriggerDateUtcPlus2(
-              currentAutoTxn.nextExecutionDate,
-              currentAutoTxn.recurrenceType,
-              currentAutoTxn.recurrenceDays,
-            );
-
-            if (!nextDate.isAfter(currentAutoTxn.nextExecutionDate)) {
-              break;
-            }
-
-            currentAutoTxn =
-                currentAutoTxn.copyWith(nextExecutionDate: nextDate);
-          } catch (_) {
-            break;
-          }
-        } else {
-          break;
-        }
+      if (initialNextDateUtcPlus2.isBefore(todayUtcPlus2) ||
+          initialNextDateUtcPlus2.isAtSameMomentAs(todayUtcPlus2)) {
+        hasPendingCycles = true;
       }
-    }
-  }
 
-  Future<void> _fireTransaction(
-    AutomaticTransaction autoTxn,
-    DateTime nowUtc,
-    DateTime executionCycleDateUtcPlus2,
-  ) async {
-    final idempotencyKey =
-        'stalvi://autotxn/${autoTxn.id}/${executionCycleDateUtcPlus2.year}-${executionCycleDateUtcPlus2.month.toString().padLeft(2, '0')}-${executionCycleDateUtcPlus2.day.toString().padLeft(2, '0')}';
-    final deterministicId =
-        const Uuid().v5(Namespace.url.value, idempotencyKey);
+      if (!hasPendingCycles) continue;
 
-    final existingTxn =
-        await transactionRepo.getTransactionById(deterministicId);
-
-    if (existingTxn == null) {
+      // Fetch rates once per autoTxn if needed
       final account = await accountRepo.getAccountById(autoTxn.accountId);
       final profile = account != null
           ? await profileRepo.getProfileById(account.userId)
           : null;
-
       final String originalCurrency = autoTxn.currency;
       final String defaultCurrency =
           profile?.defaultCurrency ?? originalCurrency;
@@ -140,51 +116,101 @@ class ExecuteRecurringTransactionsUseCase {
         convertedAmount = (autoTxn.amount / exchangeRate).round();
       }
 
-      final newTxn = dtxn.Transaction(
-        id: deterministicId,
-        amount: autoTxn.amount,
-        date: nowUtc,
-        type: autoTxn.type,
-        accountId: autoTxn.accountId,
-        categoryId: autoTxn.categoryId,
-        notes: autoTxn.notes,
-        originalCurrency: originalCurrency,
-        convertedAmount: convertedAmount,
-        exchangeRate: exchangeRate,
-        exchangeRateSnapshot: exchangeRateSnapshot,
-        createdAt: nowUtc,
-        modifiedAt: nowUtc,
-      );
+      bool createdAny = false;
 
-      await transactionRepo.createTransaction(newTxn);
+      // Generate all missing cycles
+      while (true) {
+        final cycleNextDateUtc = currentAutoTxn.nextExecutionDate.toUtc();
+        final cycleNextDateUtcPlus2Instant =
+            cycleNextDateUtc.add(const Duration(hours: 2));
+        final cycleNextDateUtcPlus2 = DateTime.utc(
+          cycleNextDateUtcPlus2Instant.year,
+          cycleNextDateUtcPlus2Instant.month,
+          cycleNextDateUtcPlus2Instant.day,
+        );
 
-      if (notificationService != null) {
-        try {
-          final notificationsEnabled =
-              await settingsRepo?.getNotificationsEnabled() ?? true;
-          if (notificationsEnabled) {
-            String? languageCode;
-            try {
-              languageCode = await SecureStorageManager().getUserLocale();
-            } catch (_) {}
-            languageCode ??= PlatformDispatcher.instance.locale.languageCode;
+        if (cycleNextDateUtcPlus2.isBefore(todayUtcPlus2) ||
+            cycleNextDateUtcPlus2.isAtSameMomentAs(todayUtcPlus2)) {
+          final idempotencyKey =
+              'stalvi://autotxn/${autoTxn.id}/${cycleNextDateUtcPlus2.year}-${cycleNextDateUtcPlus2.month.toString().padLeft(2, '0')}-${cycleNextDateUtcPlus2.day.toString().padLeft(2, '0')}';
+          final deterministicId =
+              const Uuid().v5(Namespace.url.value, idempotencyKey);
 
+          final newTxn = dtxn.Transaction(
+            id: deterministicId,
+            amount: autoTxn.amount,
+            date: nowUtc,
+            type: autoTxn.type,
+            accountId: autoTxn.accountId,
+            categoryId: autoTxn.categoryId,
+            notes: autoTxn.notes,
+            originalCurrency: originalCurrency,
+            convertedAmount: convertedAmount,
+            exchangeRate: exchangeRate,
+            exchangeRateSnapshot: exchangeRateSnapshot,
+            createdAt: nowUtc,
+            modifiedAt: nowUtc,
+            parentRecurringId: autoTxn.id,
+            expectedExecutionDate: cycleNextDateUtc,
+          );
+
+          pendingTransactions.add(newTxn);
+          createdAny = true;
+
+          final nextDate = calculateNextTriggerDateUtcPlus2(
+            currentAutoTxn.nextExecutionDate,
+            currentAutoTxn.recurrenceType,
+            currentAutoTxn.recurrenceDays,
+          );
+
+          if (!nextDate.isAfter(currentAutoTxn.nextExecutionDate)) {
+            // Break safety loop if it doesn't advance
+            break;
+          }
+
+          currentAutoTxn = currentAutoTxn.copyWith(nextExecutionDate: nextDate);
+        } else {
+          break; // Catch up to today
+        }
+      }
+
+      if (createdAny) {
+        updatedAutoTxns.add(currentAutoTxn);
+        autoTxnsToNotify.add(currentAutoTxn);
+      }
+    }
+
+    // Batch insert transactions (insertOrIgnore handles existing deterministic IDs or unique constraints)
+    if (pendingTransactions.isNotEmpty) {
+      await transactionRepo.createTransactions(pendingTransactions);
+    }
+
+    // Update automatic txns
+    for (final updatedTxn in updatedAutoTxns) {
+      await automaticRepo.updateAutomaticTransaction(updatedTxn);
+    }
+
+    // Notifications
+    if (notificationService != null && autoTxnsToNotify.isNotEmpty) {
+      try {
+        final notificationsEnabled =
+            await settingsRepo?.getNotificationsEnabled() ?? true;
+        if (notificationsEnabled) {
+          String? languageCode;
+          try {
+            languageCode = await SecureStorageManager().getUserLocale();
+          } catch (_) {}
+          languageCode ??= PlatformDispatcher.instance.locale.languageCode;
+
+          for (final autoTxn in autoTxnsToNotify) {
             await notificationService!.showAutomaticTransactionNotification(
               transactionName: autoTxn.name,
               languageCode: languageCode,
             );
           }
-        } catch (_) {}
-      }
+        }
+      } catch (_) {}
     }
-
-    final nextDate = calculateNextTriggerDateUtcPlus2(
-      autoTxn.nextExecutionDate,
-      autoTxn.recurrenceType,
-      autoTxn.recurrenceDays,
-    );
-    final updatedAutoTxn = autoTxn.copyWith(nextExecutionDate: nextDate);
-    await automaticRepo.updateAutomaticTransaction(updatedAutoTxn);
   }
 
   /// Pure function that calculates the exact next trigger date in UTC+2 (truncating time to 00:00:00).

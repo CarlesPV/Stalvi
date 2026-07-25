@@ -1142,4 +1142,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String notificationAutoTxBody(String name) {
     return 'Transaction $name has been completed successfully.';
   }
+
+  @override
+  String get offlineModeRatesNotice =>
+      'Offline mode: using local exchange rates.';
+
+  @override
+  String get hintAmountZero => '0.00';
+
+  @override
+  String get errorCouldNotLaunchUrl => 'Could not launch URL';
+
+  @override
+  String get errorLoadingContent => 'Error loading content.';
 }

@@ -53,6 +53,9 @@ class TransferPair {
 abstract class ITransactionRepository {
   Future<Transaction> createTransaction(Transaction transaction);
 
+  /// Atomically inserts multiple transactions in a single batch operation.
+  Future<void> createTransactions(List<Transaction> transactions);
+
   /// Atomically creates both legs of a transfer and updates both account
   /// balances inside a single Drift `transaction()` block.
   Future<TransferPair> createTransferPair({

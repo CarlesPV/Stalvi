@@ -16,6 +16,8 @@ class Transaction {
   final String? exchangeRateSnapshot;
   final DateTime createdAt;
   final DateTime modifiedAt;
+  final String? parentRecurringId;
+  final DateTime? expectedExecutionDate;
 
   /// Shared identifier linking both legs of a transfer pair.
   ///
@@ -42,6 +44,8 @@ class Transaction {
     required this.createdAt,
     required this.modifiedAt,
     this.transferId,
+    this.parentRecurringId,
+    this.expectedExecutionDate,
   });
 
   @override
@@ -63,7 +67,9 @@ class Transaction {
         other.exchangeRateSnapshot == exchangeRateSnapshot &&
         other.createdAt == createdAt &&
         other.modifiedAt == modifiedAt &&
-        other.transferId == transferId;
+        other.transferId == transferId &&
+        other.parentRecurringId == parentRecurringId &&
+        other.expectedExecutionDate == expectedExecutionDate;
   }
 
   @override
@@ -82,7 +88,9 @@ class Transaction {
         exchangeRateSnapshot.hashCode ^
         createdAt.hashCode ^
         modifiedAt.hashCode ^
-        transferId.hashCode;
+        transferId.hashCode ^
+        parentRecurringId.hashCode ^
+        expectedExecutionDate.hashCode;
   }
 
   Transaction copyWith({
@@ -102,6 +110,10 @@ class Transaction {
     DateTime? modifiedAt,
     String? transferId,
     bool clearTransferId = false,
+    String? parentRecurringId,
+    bool clearParentRecurringId = false,
+    DateTime? expectedExecutionDate,
+    bool clearExpectedExecutionDate = false,
   }) {
     return Transaction(
       id: id ?? this.id,
@@ -119,6 +131,12 @@ class Transaction {
       createdAt: createdAt ?? this.createdAt,
       modifiedAt: modifiedAt ?? this.modifiedAt,
       transferId: clearTransferId ? null : (transferId ?? this.transferId),
+      parentRecurringId: clearParentRecurringId
+          ? null
+          : (parentRecurringId ?? this.parentRecurringId),
+      expectedExecutionDate: clearExpectedExecutionDate
+          ? null
+          : (expectedExecutionDate ?? this.expectedExecutionDate),
     );
   }
 }

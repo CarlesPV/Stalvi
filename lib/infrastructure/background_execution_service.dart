@@ -5,6 +5,7 @@ import 'package:stalvi/presentation/providers/app_startup_provider.dart';
 import 'package:stalvi/presentation/providers/automatic_transactions_providers.dart';
 
 import 'package:stalvi/infrastructure/services/notification_service.dart';
+import 'package:stalvi/domain/services/background_sync_service.dart';
 
 /// Task identifier for executing recurring automatic transactions in background.
 const String executeRecurringTransactionsTask =
@@ -41,9 +42,9 @@ void callbackDispatcher() {
         await useCase.execute();
       }
 
-      return true;
+      return Future.value(true);
     } catch (_) {
-      return false;
+      return Future.value(false);
     } finally {
       container?.dispose();
     }
@@ -59,14 +60,16 @@ void callbackDispatcher() {
 /// 3. WORK POLICY: Uses `ExistingPeriodicWorkPolicy.replace` to ensure updated task configurations are applied cleanly.
 /// 4. DUAL-EXECUTION STRATEGY: Pairs periodic Workmanager execution with app startup evaluation on dashboard load,
 ///    guaranteeing no missed executions even if the OS defers background tasks.
-class BackgroundExecutionService {
+class BackgroundExecutionService implements BackgroundSyncService {
   /// Initializes the Workmanager plugin with the entry-point [callbackDispatcher].
-  static Future<void> initialize() async {
+  @override
+  Future<void> initialize() async {
     await Workmanager().initialize(callbackDispatcher);
   }
 
   /// Registers the periodic Workmanager task for recurring transaction processing.
-  static Future<void> registerPeriodicTasks() async {
+  @override
+  Future<void> registerPeriodicTasks() async {
     final constraints = Constraints(
       networkType: NetworkType.notRequired,
       requiresBatteryNotLow: false,
@@ -78,7 +81,7 @@ class BackgroundExecutionService {
     await Workmanager().registerPeriodicTask(
       _periodicTaskUniqueName,
       executeRecurringTransactionsTask,
-      frequency: const Duration(hours: 3),
+      frequency: const Duration(hours: 4),
       existingWorkPolicy: ExistingPeriodicWorkPolicy.replace,
       constraints: constraints,
     );
