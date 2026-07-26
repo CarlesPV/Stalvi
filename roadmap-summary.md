@@ -700,6 +700,7 @@ This document lists the completed phases of the Stalvi development roadmap, prov
   - 100% pass rate across all unit and widget tests.
 
 ## Recent Updates
+- Finalized Phase 53 (Recurrence Precision, Input Rules & Process Exit Reliability), ensuring past missed recurring transactions generate with historical dates, enforcing 25-character name limits without emojis, fixing database close deadlocks during data wipes with a 500ms timeout for clean app process restarts, aligning CI/CD workflows for iOS pod installs, and passing all 530 tests with 0 analyzer warnings.
 - Finalized Phase 50 (Store-Ready Legal Overhaul), validating UI layout scrollability for large legal markdown documents, achieving 0 analyzer warnings/infos, maintaining 100% test pass rate, and confirming CI/CD workflow readiness.
 - Finalized Phase 49 (Strict Notification Permissions Workflow, Legal Compliance & Technical Debt Cleanup), implementing strict opt-in notification controls with native OS permission checks and settings redirection, store-ready legal compliance documentation in EN/ES/CA, and thorough technical debt cleanup.
 - Finalized Phase 48 (Background Resilience, Optional Notifications & File Export Priorities), implementing user-configurable push notifications in settings, 3-hour Workmanager periodic background task execution with UTC+2 precision, strict storage directory prioritization, and updated documentation.

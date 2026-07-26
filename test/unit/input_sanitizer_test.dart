@@ -46,7 +46,9 @@ void main() {
   });
 
   group('InputSanitizer.containsEmoji', () {
-    test('detects emojis and special characters correctly while accepting accents', () {
+    test(
+        'detects emojis and special characters correctly while accepting accents',
+        () {
       expect(InputSanitizer.containsEmoji('Carles'), false);
       expect(InputSanitizer.containsEmoji('Carles Peña'), false);
       expect(InputSanitizer.containsEmoji('María-José.1'), false);

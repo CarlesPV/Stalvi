@@ -99,5 +99,10 @@ jobs:
       - name: Run code generation (build_runner)
         run: dart run build_runner build --delete-conflicting-outputs
 
-      - name: Build iOS App (No Code Sign)
-        run: flutter build ios --no-codesign --debug
+      - name: Install CocoaPods
+        run: |
+          cd ios
+          pod install
+
+      - name: Build iOS App (Simulator, No Code Sign)
+        run: flutter build ios --simulator --no-codesign

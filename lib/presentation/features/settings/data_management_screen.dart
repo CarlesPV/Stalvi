@@ -1,4 +1,6 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:open_filex/open_filex.dart';
@@ -7,7 +9,6 @@ import 'package:stalvi/infrastructure/services/biometric_auth_service.dart';
 import 'package:stalvi/domain/usecases/pdf_export_date_range.dart';
 import 'profile_settings_controller.dart';
 import 'pin_verification_sheet.dart';
-import '../splash/splash_screen.dart';
 
 class DataManagementScreen extends ConsumerStatefulWidget {
   const DataManagementScreen({super.key});
@@ -348,10 +349,9 @@ class _DataManagementScreenState extends ConsumerState<DataManagementScreen> {
       if (!context.mounted) return;
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text(l10n.importSuccess)));
-      Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (_) => const SplashScreen()),
-        (_) => false,
-      );
+      // Completely close/exit the app process for a clean restart.
+      await SystemNavigator.pop();
+      exit(0);
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(

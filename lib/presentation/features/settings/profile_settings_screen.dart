@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -6,7 +7,6 @@ import 'package:stalvi/core/utils/input_sanitizer.dart';
 import 'package:stalvi/infrastructure/services/biometric_auth_service.dart';
 import 'profile_settings_controller.dart';
 import 'pin_verification_sheet.dart';
-import '../splash/splash_screen.dart';
 import '../../providers/auth_notifier.dart';
 import '../../providers/locale_provider.dart';
 import '../../providers/theme_provider.dart';
@@ -565,16 +565,17 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                       .wipeAllData();
 
                   // Invalidate the auth notifier so it rebuilds from scratch.
-                  // hasPin() will now return false, yielding setupRequired.
                   ref.invalidate(authNotifierProvider);
 
-                  if (context.mounted) {
-                    Navigator.of(context).pushAndRemoveUntil(
-                      MaterialPageRoute(
-                        builder: (context) => const SplashScreen(),
-                      ),
-                      (route) => false,
-                    );
+                  // Completely close/exit the app process for a clean restart.
+                  if (Platform.isIOS) {
+                    exit(0);
+                  } else {
+                    try {
+                      await SystemNavigator.pop();
+                    } catch (_) {}
+                    await Future.delayed(const Duration(milliseconds: 300));
+                    exit(0);
                   }
                 },
                 child: FittedBox(
