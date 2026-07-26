@@ -129,8 +129,8 @@ void main() {
         final result = await repository.getLatestRates(baseCurrency: 'EUR');
 
         expect(result.baseCurrency, 'EUR');
-        expect(result.rates['USD'], equals(1.08));
-        expect(result.rates['GBP'], equals(0.85));
+        expect(result.rates['USD'], equals(1.15));
+        expect(result.rates['GBP'], equals(0.86));
         verify(() => mockDao.saveRates(any())).called(1);
       },
     );
@@ -150,7 +150,7 @@ void main() {
 
         expect(result.baseCurrency, 'USD');
         expect(result.rates['USD'], equals(1.0));
-        expect(result.rates['EUR'], closeTo(0.9259, 0.001));
+        expect(result.rates['EUR'], closeTo(0.8695, 0.001));
         verify(() => mockDao.saveRates(any())).called(1);
       },
     );
@@ -166,7 +166,7 @@ void main() {
 
         expect(result, isNotNull);
         expect(result!.baseCurrency, 'GBP');
-        expect(result.rates['EUR'], closeTo(1.176, 0.01));
+        expect(result.rates['EUR'], closeTo(1.1627, 0.01));
       },
     );
 

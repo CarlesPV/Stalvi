@@ -139,7 +139,7 @@ class ExecuteRecurringTransactionsUseCase {
           final newTxn = dtxn.Transaction(
             id: deterministicId,
             amount: autoTxn.amount,
-            date: nowUtc,
+            date: cycleNextDateUtc,
             type: autoTxn.type,
             accountId: autoTxn.accountId,
             categoryId: autoTxn.categoryId,

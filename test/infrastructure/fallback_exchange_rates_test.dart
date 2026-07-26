@@ -17,8 +17,8 @@ void main() {
       final usdRates = FallbackExchangeRates.getFallbackRates('USD');
 
       expect(usdRates['USD'], equals(1.0));
-      expect(usdRates['EUR'], closeTo(0.9259, 0.001));
-      expect(usdRates['GBP'], closeTo(0.787, 0.01));
+      expect(usdRates['EUR'], closeTo(0.8695, 0.001));
+      expect(usdRates['GBP'], closeTo(0.7478, 0.01));
     });
 
     test('returns complete ExchangeRate entity', () {
