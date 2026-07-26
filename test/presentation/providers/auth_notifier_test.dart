@@ -240,6 +240,52 @@ void main() {
         expect(state.error.toString(), contains('enter a name'));
       });
 
+      test('sets error state if Name exceeds 25 characters', () async {
+        when(() => mockSecureStorage.hasPin()).thenAnswer((_) async => false);
+
+        final container = createContainer();
+        await container.read(authNotifierProvider.future);
+
+        await container.read(authNotifierProvider.notifier).setupProfile(
+              name: 'ThisIsAVeryLongNameThatExceeds25Chars',
+              username: 'carlespv',
+              pin: '1234',
+              confirmPin: '1234',
+              acceptTerms: true,
+              defaultCurrency: 'EUR',
+            );
+
+        final state = container.read(authNotifierProvider);
+        expect(state.hasError, true);
+        expect(
+          state.error.toString(),
+          contains('Name cannot exceed 25 characters'),
+        );
+      });
+
+      test('sets error state if Name contains emojis', () async {
+        when(() => mockSecureStorage.hasPin()).thenAnswer((_) async => false);
+
+        final container = createContainer();
+        await container.read(authNotifierProvider.future);
+
+        await container.read(authNotifierProvider.notifier).setupProfile(
+              name: 'Carles 😀',
+              username: 'carlespv',
+              pin: '1234',
+              confirmPin: '1234',
+              acceptTerms: true,
+              defaultCurrency: 'EUR',
+            );
+
+        final state = container.read(authNotifierProvider);
+        expect(state.hasError, true);
+        expect(
+          state.error.toString(),
+          contains('Name cannot contain emojis'),
+        );
+      });
+
       test('sets error state if Username is empty', () async {
         when(() => mockSecureStorage.hasPin()).thenAnswer((_) async => false);
 
@@ -258,6 +304,52 @@ void main() {
         final state = container.read(authNotifierProvider);
         expect(state.hasError, true);
         expect(state.error.toString(), contains('enter a username'));
+      });
+
+      test('sets error state if Username exceeds 25 characters', () async {
+        when(() => mockSecureStorage.hasPin()).thenAnswer((_) async => false);
+
+        final container = createContainer();
+        await container.read(authNotifierProvider.future);
+
+        await container.read(authNotifierProvider.notifier).setupProfile(
+              name: 'Carles',
+              username: 'ThisIsAVeryLongUsernameThatExceeds25Chars',
+              pin: '1234',
+              confirmPin: '1234',
+              acceptTerms: true,
+              defaultCurrency: 'EUR',
+            );
+
+        final state = container.read(authNotifierProvider);
+        expect(state.hasError, true);
+        expect(
+          state.error.toString(),
+          contains('Username cannot exceed 25 characters'),
+        );
+      });
+
+      test('sets error state if Username contains emojis', () async {
+        when(() => mockSecureStorage.hasPin()).thenAnswer((_) async => false);
+
+        final container = createContainer();
+        await container.read(authNotifierProvider.future);
+
+        await container.read(authNotifierProvider.notifier).setupProfile(
+              name: 'Carles',
+              username: 'carlespv🚀',
+              pin: '1234',
+              confirmPin: '1234',
+              acceptTerms: true,
+              defaultCurrency: 'EUR',
+            );
+
+        final state = container.read(authNotifierProvider);
+        expect(state.hasError, true);
+        expect(
+          state.error.toString(),
+          contains('Username cannot contain emojis'),
+        );
       });
     });
 

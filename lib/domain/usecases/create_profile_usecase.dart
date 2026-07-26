@@ -6,6 +6,7 @@ import 'package:uuid/uuid.dart';
 import 'package:stalvi/core/errors/app_exceptions.dart';
 import 'package:stalvi/core/l10n/app_localizations.dart';
 import 'package:stalvi/core/security/secure_storage_manager.dart';
+import 'package:stalvi/core/utils/input_sanitizer.dart';
 import '../entities/account_type.dart';
 import '../entities/profile.dart';
 import '../repositories/i_profile_repository.dart';
@@ -74,15 +75,37 @@ class CreateProfileUseCase {
       );
     }
 
-    if (params.name.trim().isEmpty) {
+    final trimmedName = params.name.trim();
+    if (trimmedName.isEmpty) {
       throw const ValidationException(
         message: 'Name cannot be empty.',
       );
     }
+    if (trimmedName.length > 25) {
+      throw const ValidationException(
+        message: 'Name cannot exceed 25 characters.',
+      );
+    }
+    if (InputSanitizer.containsEmoji(params.name)) {
+      throw const ValidationException(
+        message: 'Name cannot contain emojis.',
+      );
+    }
 
-    if (params.username.trim().isEmpty) {
+    final trimmedUsername = params.username.trim();
+    if (trimmedUsername.isEmpty) {
       throw const ValidationException(
         message: 'Username cannot be empty.',
+      );
+    }
+    if (trimmedUsername.length > 25) {
+      throw const ValidationException(
+        message: 'Username cannot exceed 25 characters.',
+      );
+    }
+    if (InputSanitizer.containsEmoji(params.username)) {
+      throw const ValidationException(
+        message: 'Username cannot contain emojis.',
       );
     }
 

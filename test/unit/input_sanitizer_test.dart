@@ -44,4 +44,19 @@ void main() {
       expect(InputSanitizer.sanitizeToPlainText('admin OR 1=1'), 'admin');
     });
   });
+
+  group('InputSanitizer.containsEmoji', () {
+    test('detects emojis and special characters correctly while accepting accents', () {
+      expect(InputSanitizer.containsEmoji('Carles'), false);
+      expect(InputSanitizer.containsEmoji('Carles Peña'), false);
+      expect(InputSanitizer.containsEmoji('María-José.1'), false);
+      expect(InputSanitizer.containsEmoji('Françoise_Lluís'), false);
+      expect(InputSanitizer.containsEmoji('Carles 😀'), true);
+      expect(InputSanitizer.containsEmoji('🚀 User'), true);
+      expect(InputSanitizer.containsEmoji('Test ❤️'), true);
+      expect(InputSanitizer.containsEmoji('<script>'), true);
+      expect(InputSanitizer.containsEmoji('User@Name'), true);
+      expect(InputSanitizer.containsEmoji(''), false);
+    });
+  });
 }

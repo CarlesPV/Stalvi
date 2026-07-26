@@ -3,8 +3,10 @@ name: Security Audit
 on:
   schedule:
     - cron: '0 0 * * 0' # Execute every Sunday at midnight
+  push:
+    branches: [ "main", "develop" ]
   pull_request:
-    branches: [ main ]
+    branches: [ "main", "develop" ]
 
 jobs:
   security-scans:
@@ -26,7 +28,7 @@ jobs:
         run: flutter gen-l10n
 
       - name: Run code generation (build_runner)
-        run: dart run build_runner build
+        run: dart run build_runner build --delete-conflicting-outputs
 
       # 1. Dart/Flutter native dependency vulnerability scanning
       - name: Audit Dart Dependencies

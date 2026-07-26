@@ -1004,6 +1004,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get authSetupValidationErrorName => 'Please enter a name.';
 
   @override
+  String get authSetupValidationErrorNameEmoji =>
+      'Name cannot contain emojis or special characters.';
+
+  @override
+  String get authSetupValidationErrorNameLength =>
+      'Name cannot exceed 25 characters.';
+
+  @override
   String get authSetupValidationErrorPinLength =>
       'PIN must be between 4 and 8 digits.';
 
@@ -1016,6 +1024,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get authSetupValidationErrorUsername => 'Please enter a username.';
+
+  @override
+  String get authSetupValidationErrorUsernameEmoji =>
+      'Username cannot contain emojis or special characters.';
+
+  @override
+  String get authSetupValidationErrorUsernameLength =>
+      'Username cannot exceed 25 characters.';
 
   @override
   String get autoTxErrorInvalidDayOfMonth =>

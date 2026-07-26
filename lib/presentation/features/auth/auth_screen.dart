@@ -11,6 +11,7 @@ import 'package:stalvi/infrastructure/services/biometric_auth_service.dart';
 import '../../providers/auth_notifier.dart';
 import '../../providers/locale_provider.dart';
 import '../../widgets/terms_and_conditions_viewer.dart';
+import 'package:stalvi/core/utils/input_sanitizer.dart';
 
 class AuthScreen extends ConsumerStatefulWidget {
   const AuthScreen({super.key});
@@ -283,6 +284,18 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
         errorStr.contains('accept_terms')) {
       return l10n.authSetupValidationErrorTerms;
     }
+    if (errorStr.contains('Name cannot exceed 25')) {
+      return l10n.authSetupValidationErrorNameLength;
+    }
+    if (errorStr.contains('Name cannot contain emojis')) {
+      return l10n.authSetupValidationErrorNameEmoji;
+    }
+    if (errorStr.contains('Username cannot exceed 25')) {
+      return l10n.authSetupValidationErrorUsernameLength;
+    }
+    if (errorStr.contains('Username cannot contain emojis')) {
+      return l10n.authSetupValidationErrorUsernameEmoji;
+    }
     if (errorStr.contains('enter a name') ||
         errorStr.contains('Name cannot be empty') ||
         errorStr.contains('name_empty')) {
@@ -542,6 +555,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
           TextFormField(
             controller: _nameController,
             textCapitalization: TextCapitalization.words,
+            maxLength: 25,
             decoration: InputDecoration(
               labelText: l10n.authSetupNameLabel,
               prefixIcon: const Icon(Icons.person_outline),
@@ -549,16 +563,27 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
               fillColor: colorScheme.surfaceContainerLow.withValues(alpha: 0.6),
               border:
                   OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+              counterText: '',
             ),
-            validator: (val) => (val == null || val.trim().isEmpty)
-                ? l10n.authSetupValidationErrorName
-                : null,
+            validator: (val) {
+              if (val == null || val.trim().isEmpty) {
+                return l10n.authSetupValidationErrorName;
+              }
+              if (val.trim().length > 25) {
+                return l10n.authSetupValidationErrorNameLength;
+              }
+              if (InputSanitizer.containsEmoji(val)) {
+                return l10n.authSetupValidationErrorNameEmoji;
+              }
+              return null;
+            },
           ),
           const SizedBox(height: 16),
 
           // Username Input
           TextFormField(
             controller: _usernameController,
+            maxLength: 25,
             decoration: InputDecoration(
               labelText: l10n.authSetupUsernameLabel,
               prefixIcon: const Icon(Icons.alternate_email),
@@ -566,10 +591,20 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
               fillColor: colorScheme.surfaceContainerLow.withValues(alpha: 0.6),
               border:
                   OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+              counterText: '',
             ),
-            validator: (val) => (val == null || val.trim().isEmpty)
-                ? l10n.authSetupValidationErrorUsername
-                : null,
+            validator: (val) {
+              if (val == null || val.trim().isEmpty) {
+                return l10n.authSetupValidationErrorUsername;
+              }
+              if (val.trim().length > 25) {
+                return l10n.authSetupValidationErrorUsernameLength;
+              }
+              if (InputSanitizer.containsEmoji(val)) {
+                return l10n.authSetupValidationErrorUsernameEmoji;
+              }
+              return null;
+            },
           ),
           const SizedBox(height: 16),
 

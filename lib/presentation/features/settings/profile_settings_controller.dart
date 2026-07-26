@@ -1,3 +1,5 @@
+import 'package:stalvi/core/errors/app_exceptions.dart';
+import 'package:stalvi/core/utils/input_sanitizer.dart';
 import 'package:stalvi/domain/entities/profile.dart';
 import 'package:stalvi/domain/repositories/i_export_service.dart';
 import 'package:stalvi/domain/usecases/update_credentials_usecase.dart';
@@ -76,7 +78,18 @@ class ProfileSettingsController extends _$ProfileSettingsController {
   Future<void> updateUsername(String username) async {
     final currentProfile = state.profile;
     if (currentProfile == null) return;
-    if (username.trim().isEmpty) return;
+    final trimmed = username.trim();
+    if (trimmed.isEmpty) return;
+    if (trimmed.length > 25) {
+      throw const ValidationException(
+        message: 'Username cannot exceed 25 characters.',
+      );
+    }
+    if (InputSanitizer.containsEmoji(username)) {
+      throw const ValidationException(
+        message: 'Username cannot contain emojis.',
+      );
+    }
 
     state = state.copyWith(isLoading: true, error: null);
     try {

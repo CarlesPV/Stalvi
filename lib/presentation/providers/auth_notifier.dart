@@ -8,6 +8,7 @@ import 'package:stalvi/domain/usecases/create_profile_usecase.dart';
 import 'locale_provider.dart';
 import 'repository_providers.dart';
 import 'package:stalvi/core/l10n/app_localizations.dart';
+import 'package:stalvi/core/utils/input_sanitizer.dart';
 
 /// Describes the current authentication status for this session.
 enum AuthStatus {
@@ -227,16 +228,47 @@ class AuthNotifier extends AsyncNotifier<AuthStatus> {
       );
       return;
     }
-    if (name.trim().isEmpty) {
+    final trimmedName = name.trim();
+    if (trimmedName.isEmpty) {
       state = AsyncValue.error(
         'Please enter a name.',
         StackTrace.current,
       );
       return;
     }
-    if (username.trim().isEmpty) {
+    if (trimmedName.length > 25) {
+      state = AsyncValue.error(
+        'Name cannot exceed 25 characters.',
+        StackTrace.current,
+      );
+      return;
+    }
+    if (InputSanitizer.containsEmoji(name)) {
+      state = AsyncValue.error(
+        'Name cannot contain emojis.',
+        StackTrace.current,
+      );
+      return;
+    }
+
+    final trimmedUsername = username.trim();
+    if (trimmedUsername.isEmpty) {
       state = AsyncValue.error(
         'Please enter a username.',
+        StackTrace.current,
+      );
+      return;
+    }
+    if (trimmedUsername.length > 25) {
+      state = AsyncValue.error(
+        'Username cannot exceed 25 characters.',
+        StackTrace.current,
+      );
+      return;
+    }
+    if (InputSanitizer.containsEmoji(username)) {
+      state = AsyncValue.error(
+        'Username cannot contain emojis.',
         StackTrace.current,
       );
       return;

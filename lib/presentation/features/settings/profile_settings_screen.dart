@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:stalvi/core/l10n/app_localizations.dart';
+import 'package:stalvi/core/utils/input_sanitizer.dart';
 import 'package:stalvi/infrastructure/services/biometric_auth_service.dart';
 import 'profile_settings_controller.dart';
 import 'pin_verification_sheet.dart';
@@ -34,8 +35,10 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
           title: Text(l10n.usernameLabel),
           content: TextField(
             controller: controller,
+            maxLength: 25,
             decoration: InputDecoration(
               hintText: l10n.usernameLabel,
+              counterText: '',
             ),
             autofocus: true,
           ),
@@ -48,13 +51,45 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
               ),
             ),
             ElevatedButton(
-              onPressed: () {
-                if (controller.text.trim().isNotEmpty) {
-                  ref
-                      .read(profileSettingsControllerProvider.notifier)
-                      .updateUsername(controller.text);
+              onPressed: () async {
+                final text = controller.text.trim();
+                if (text.isEmpty) {
+                  return;
                 }
-                Navigator.of(context).pop();
+                if (text.length > 25) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        l10n.authSetupValidationErrorUsernameLength,
+                      ),
+                    ),
+                  );
+                  return;
+                }
+                if (InputSanitizer.containsEmoji(text)) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        l10n.authSetupValidationErrorUsernameEmoji,
+                      ),
+                    ),
+                  );
+                  return;
+                }
+                try {
+                  await ref
+                      .read(profileSettingsControllerProvider.notifier)
+                      .updateUsername(text);
+                  if (context.mounted) {
+                    Navigator.of(context).pop();
+                  }
+                } catch (e) {
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(e.toString())),
+                    );
+                  }
+                }
               },
               child: FittedBox(
                 fit: BoxFit.scaleDown,

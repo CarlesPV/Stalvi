@@ -1924,6 +1924,18 @@ abstract class AppLocalizations {
   /// **'Please enter a name.'**
   String get authSetupValidationErrorName;
 
+  /// No description provided for @authSetupValidationErrorNameEmoji.
+  ///
+  /// In en, this message translates to:
+  /// **'Name cannot contain emojis or special characters.'**
+  String get authSetupValidationErrorNameEmoji;
+
+  /// No description provided for @authSetupValidationErrorNameLength.
+  ///
+  /// In en, this message translates to:
+  /// **'Name cannot exceed 25 characters.'**
+  String get authSetupValidationErrorNameLength;
+
   /// No description provided for @authSetupValidationErrorPinLength.
   ///
   /// In en, this message translates to:
@@ -1947,6 +1959,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Please enter a username.'**
   String get authSetupValidationErrorUsername;
+
+  /// No description provided for @authSetupValidationErrorUsernameEmoji.
+  ///
+  /// In en, this message translates to:
+  /// **'Username cannot contain emojis or special characters.'**
+  String get authSetupValidationErrorUsernameEmoji;
+
+  /// No description provided for @authSetupValidationErrorUsernameLength.
+  ///
+  /// In en, this message translates to:
+  /// **'Username cannot exceed 25 characters.'**
+  String get authSetupValidationErrorUsernameLength;
 
   /// No description provided for @autoTxErrorInvalidDayOfMonth.
   ///
