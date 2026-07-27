@@ -76,3 +76,13 @@
 -dontwarn javax.annotation.**
 -dontwarn kotlin.Unit
 -dontwarn kotlin.reflect.jvm.internal.**
+
+# ---------------------------------------------------------------------------
+# WorkManager / Room (Fix for Release Mode crash)
+# ---------------------------------------------------------------------------
+-keep class androidx.work.** { *; }
+-dontwarn androidx.work.**
+-keep class androidx.startup.** { *; }
+-dontwarn androidx.startup.**
+-keep class androidx.room.** { *; }
+-dontwarn androidx.room.**
