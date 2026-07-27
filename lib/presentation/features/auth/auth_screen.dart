@@ -31,6 +31,11 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
   final _usernameController = TextEditingController();
   final _pinController = TextEditingController();
   final _confirmPinController = TextEditingController();
+
+  final _nameFocusNode = FocusNode();
+  final _usernameFocusNode = FocusNode();
+  final _pinFocusNode = FocusNode();
+  final _confirmPinFocusNode = FocusNode();
   bool _acceptTerms = false;
   String _selectedCurrency = 'EUR';
 
@@ -88,6 +93,10 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
     _usernameController.dispose();
     _pinController.dispose();
     _confirmPinController.dispose();
+    _nameFocusNode.dispose();
+    _usernameFocusNode.dispose();
+    _pinFocusNode.dispose();
+    _confirmPinFocusNode.dispose();
     super.dispose();
   }
 
@@ -554,6 +563,11 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
           // Name Input
           TextFormField(
             controller: _nameController,
+            focusNode: _nameFocusNode,
+            textInputAction: TextInputAction.next,
+            onFieldSubmitted: (_) {
+              _usernameFocusNode.requestFocus();
+            },
             textCapitalization: TextCapitalization.words,
             maxLength: 25,
             decoration: InputDecoration(
@@ -583,6 +597,11 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
           // Username Input
           TextFormField(
             controller: _usernameController,
+            focusNode: _usernameFocusNode,
+            textInputAction: TextInputAction.next,
+            onFieldSubmitted: (_) {
+              _pinFocusNode.requestFocus();
+            },
             maxLength: 25,
             decoration: InputDecoration(
               labelText: l10n.authSetupUsernameLabel,
@@ -611,6 +630,11 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
           // PIN Input
           TextFormField(
             controller: _pinController,
+            focusNode: _pinFocusNode,
+            textInputAction: TextInputAction.next,
+            onFieldSubmitted: (_) {
+              _confirmPinFocusNode.requestFocus();
+            },
             obscureText: true,
             keyboardType: TextInputType.number,
             maxLength: 8,
@@ -638,6 +662,11 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
           // Confirm PIN Input
           TextFormField(
             controller: _confirmPinController,
+            focusNode: _confirmPinFocusNode,
+            textInputAction: TextInputAction.done,
+            onFieldSubmitted: (_) {
+              _confirmPinFocusNode.unfocus();
+            },
             obscureText: true,
             keyboardType: TextInputType.number,
             maxLength: 8,

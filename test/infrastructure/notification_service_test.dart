@@ -62,6 +62,49 @@ void main() {
         equals('Transaction Electricity Bill has been completed successfully.'),
       );
     });
+
+    test('Formats budget exceeded payload correctly for all languages', () {
+      final en = NotificationService.formatBudgetExceededNotification(
+        languageCode: 'en',
+      );
+      expect(en.title, equals('Budget Limit Exceeded'));
+      expect(en.body, equals('You have exceeded your budget limit.'));
+
+      final es = NotificationService.formatBudgetExceededNotification(
+        languageCode: 'es',
+      );
+      expect(es.title, equals('Presupuesto superado'));
+      expect(es.body, equals('Has superado el límite de tu presupuesto.'));
+
+      final ca = NotificationService.formatBudgetExceededNotification(
+        languageCode: 'ca',
+      );
+      expect(ca.title, equals('Pressupost superat'));
+      expect(ca.body, equals('Heu superat el límit del vostre pressupost.'));
+    });
+
+    test('Formats goal reached payload correctly for all languages', () {
+      final en =
+          NotificationService.formatGoalReachedNotification(languageCode: 'en');
+      expect(en.title, equals('Savings Goal Reached'));
+      expect(
+        en.body,
+        equals('Congratulations! You have reached your savings goal.'),
+      );
+
+      final es =
+          NotificationService.formatGoalReachedNotification(languageCode: 'es');
+      expect(es.title, equals('Meta de ahorro alcanzada'));
+      expect(es.body, equals('¡Felicidades! Has alcanzado tu meta de ahorro.'));
+
+      final ca =
+          NotificationService.formatGoalReachedNotification(languageCode: 'ca');
+      expect(ca.title, equals('Objectiu d\'estalvi assolit'));
+      expect(
+        ca.body,
+        equals('Felicitats! Heu assolit el vostre objectiu d\'estalvi.'),
+      );
+    });
   });
 
   group('NotificationService Dispatch', () {
@@ -97,6 +140,60 @@ void main() {
           12345,
           'Transacción automática creada',
           'La transacción Gym Membership se ha completado con éxito.',
+          any,
+        ),
+      ).called(1);
+    });
+
+    test(
+        'showBudgetExceededNotification calls plugin show method with correct arguments',
+        () async {
+      when(
+        mockPlugin.show(
+          any,
+          any,
+          any,
+          any,
+        ),
+      ).thenAnswer((_) async {});
+
+      await service.showBudgetExceededNotification(
+        languageCode: 'es',
+        notificationId: 9999,
+      );
+
+      verify(
+        mockPlugin.show(
+          9999,
+          'Presupuesto superado',
+          'Has superado el límite de tu presupuesto.',
+          any,
+        ),
+      ).called(1);
+    });
+
+    test(
+        'showGoalReachedNotification calls plugin show method with correct arguments',
+        () async {
+      when(
+        mockPlugin.show(
+          any,
+          any,
+          any,
+          any,
+        ),
+      ).thenAnswer((_) async {});
+
+      await service.showGoalReachedNotification(
+        languageCode: 'ca',
+        notificationId: 8888,
+      );
+
+      verify(
+        mockPlugin.show(
+          8888,
+          'Objectiu d\'estalvi assolit',
+          'Felicitats! Heu assolit el vostre objectiu d\'estalvi.',
           any,
         ),
       ).called(1);

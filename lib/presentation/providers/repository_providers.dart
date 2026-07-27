@@ -60,7 +60,9 @@ import 'package:stalvi/domain/usecases/export_transactions_csv_use_case.dart';
 import 'package:stalvi/domain/usecases/export_monthly_pdf_use_case.dart';
 import 'package:stalvi/core/l10n/app_localizations.dart';
 import 'package:stalvi/domain/services/background_sync_service.dart';
+import 'package:stalvi/domain/services/financial_threshold_service.dart';
 import 'package:stalvi/infrastructure/background_execution_service.dart';
+import 'package:stalvi/infrastructure/services/notification_service.dart';
 import 'app_startup_provider.dart';
 import 'locale_provider.dart';
 import 'statistics_providers.dart';
@@ -160,6 +162,18 @@ final updateBudgetProgressUseCaseProvider =
   );
 });
 
+/// Provides the [IFinancialThresholdService] implementation.
+final financialThresholdServiceProvider =
+    Provider<IFinancialThresholdService>((ref) {
+  return FinancialThresholdService(
+    ref.watch(budgetRepositoryProvider),
+    ref.watch(savingsGoalRepositoryProvider),
+    ref.watch(transactionRepositoryProvider),
+    ref.watch(accountRepositoryProvider),
+    ref.watch(exchangeRateRepositoryProvider),
+  );
+});
+
 /// Provides the [AddTransactionUseCase] instance.
 final addTransactionUseCaseProvider = Provider<AddTransactionUseCase>((ref) {
   final transactionRepo = ref.watch(transactionRepositoryProvider);
@@ -173,6 +187,9 @@ final addTransactionUseCaseProvider = Provider<AddTransactionUseCase>((ref) {
     exchangeRateRepo,
     ref.watch(savingsGoalRepositoryProvider),
     ref.watch(updateBudgetProgressUseCaseProvider),
+    ref.watch(financialThresholdServiceProvider),
+    ref.watch(notificationServiceProvider),
+    ref.watch(settingsRepositoryProvider),
   );
 });
 

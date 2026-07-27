@@ -174,6 +174,62 @@ class NotificationService {
     return NotificationPayload(title: title, body: body);
   }
 
+  /// Formats notification payload for budget exceeded alert localized for English, Spanish, and Catalan.
+  static NotificationPayload formatBudgetExceededNotification({
+    String? languageCode,
+  }) {
+    final lang = languageCode?.toLowerCase() ?? 'en';
+
+    String title;
+    String body;
+
+    switch (lang) {
+      case 'es':
+        title = 'Presupuesto superado';
+        body = 'Has superado el límite de tu presupuesto.';
+        break;
+      case 'ca':
+        title = 'Pressupost superat';
+        body = 'Heu superat el límit del vostre pressupost.';
+        break;
+      case 'en':
+      default:
+        title = 'Budget Limit Exceeded';
+        body = 'You have exceeded your budget limit.';
+        break;
+    }
+
+    return NotificationPayload(title: title, body: body);
+  }
+
+  /// Formats notification payload for savings goal reached alert localized for English, Spanish, and Catalan.
+  static NotificationPayload formatGoalReachedNotification({
+    String? languageCode,
+  }) {
+    final lang = languageCode?.toLowerCase() ?? 'en';
+
+    String title;
+    String body;
+
+    switch (lang) {
+      case 'es':
+        title = 'Meta de ahorro alcanzada';
+        body = '¡Felicidades! Has alcanzado tu meta de ahorro.';
+        break;
+      case 'ca':
+        title = 'Objectiu d\'estalvi assolit';
+        body = 'Felicitats! Heu assolit el vostre objectiu d\'estalvi.';
+        break;
+      case 'en':
+      default:
+        title = 'Savings Goal Reached';
+        body = 'Congratulations! You have reached your savings goal.';
+        break;
+    }
+
+    return NotificationPayload(title: title, body: body);
+  }
+
   /// Shows a local push notification for a created automatic transaction.
   Future<void> showAutomaticTransactionNotification({
     required String transactionName,
@@ -189,6 +245,45 @@ class NotificationService {
       languageCode: languageCode,
     );
 
+    await _showNotificationPayload(payload, notificationId: notificationId);
+  }
+
+  /// Shows a local push notification when a budget limit is exceeded.
+  Future<void> showBudgetExceededNotification({
+    String? languageCode,
+    int? notificationId,
+  }) async {
+    if (!_isInitialized) {
+      await initialize();
+    }
+
+    final payload = formatBudgetExceededNotification(
+      languageCode: languageCode,
+    );
+
+    await _showNotificationPayload(payload, notificationId: notificationId);
+  }
+
+  /// Shows a local push notification when a savings goal is reached.
+  Future<void> showGoalReachedNotification({
+    String? languageCode,
+    int? notificationId,
+  }) async {
+    if (!_isInitialized) {
+      await initialize();
+    }
+
+    final payload = formatGoalReachedNotification(
+      languageCode: languageCode,
+    );
+
+    await _showNotificationPayload(payload, notificationId: notificationId);
+  }
+
+  Future<void> _showNotificationPayload(
+    NotificationPayload payload, {
+    int? notificationId,
+  }) async {
     const androidDetails = AndroidNotificationDetails(
       channelId,
       channelName,

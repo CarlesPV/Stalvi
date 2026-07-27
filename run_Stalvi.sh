@@ -26,7 +26,7 @@ fi
 
 echo "✨ Formateando y analizando..."
 dart format .
-flutter analyze --no-fatal-warnings --no-fatal-infos
+flutter analyze --fatal-warnings --fatal-infos
 
 echo "🚀 Lanzando en el dispositivo..."
 flutter run -d 25ba202f

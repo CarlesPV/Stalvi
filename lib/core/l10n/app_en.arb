@@ -223,7 +223,6 @@
   "pdfBudgetsTitle": "Budgets",
   "pdfSavingsColCompleted": "% Completed",
   "pdfSavingsColName": "Name",
-  "pdfSavingsColTarget": "Target Amount",
   "pdfSavingsGoalsTitle": "Savings Goals",
   "savingsGoal": "Savings Goal",
   "savingsGoalAchieved": "Goal achieved!",
@@ -355,8 +354,6 @@
   "splashSecureStorageError": "Stalvi couldn't initialise its secure storage. Please check available device storage and try again.",
   "splashStartupFailed": "Startup Failed",
   "unexpectedError": "An unexpected error occurred. Please try again.",
-  "notificationAutoTxTitle": "Automatic Transaction Created",
-  "notificationAutoTxBody": "Transaction {name} has been completed successfully.",
   "@notificationAutoTxBody": {
     "placeholders": {
       "name": {
@@ -364,7 +361,6 @@
       }
     }
   },
-  "offlineModeRatesNotice": "Offline mode: using local exchange rates.",
   "hintAmountZero": "0.00",
   "errorCouldNotLaunchUrl": "Could not launch URL",
   "errorLoadingContent": "Error loading content."

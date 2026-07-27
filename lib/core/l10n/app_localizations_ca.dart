@@ -718,9 +718,6 @@ class AppLocalizationsCa extends AppLocalizations {
   String get pdfSavingsColName => 'Nom';
 
   @override
-  String get pdfSavingsColTarget => 'Quantitat Objectiu';
-
-  @override
   String get pdfSavingsGoalsTitle => 'Metes d\'Estalvi';
 
   @override
@@ -1166,18 +1163,6 @@ class AppLocalizationsCa extends AppLocalizations {
   @override
   String get unexpectedError =>
       'S\'ha produït un error inesperat. Si us plau, torneu-ho a provar.';
-
-  @override
-  String get notificationAutoTxTitle => 'Transacció automàtica creada';
-
-  @override
-  String notificationAutoTxBody(String name) {
-    return 'La transacció $name s\'ha completat amb èxit.';
-  }
-
-  @override
-  String get offlineModeRatesNotice =>
-      'Mode sense connexió: utilitzant tipus de canvi locals.';
 
   @override
   String get hintAmountZero => '0.00';

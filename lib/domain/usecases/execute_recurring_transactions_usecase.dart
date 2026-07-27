@@ -12,6 +12,7 @@ import '../repositories/i_profile_repository.dart';
 import '../repositories/i_transaction_repository.dart';
 import '../repositories/i_settings_repository.dart';
 import '../../infrastructure/services/notification_service.dart';
+import '../services/financial_threshold_service.dart';
 
 /// Use case that evaluates pending automatic/recurring transaction templates
 /// and generates corresponding transaction records deterministically.
@@ -24,6 +25,7 @@ class ExecuteRecurringTransactionsUseCase {
   final IAccountRepository accountRepo;
   final IProfileRepository profileRepo;
   final IExchangeRateRepository exchangeRateRepo;
+  final IFinancialThresholdService financialThresholdService;
   final NotificationService? notificationService;
   final ISettingsRepository? settingsRepo;
 
@@ -32,7 +34,8 @@ class ExecuteRecurringTransactionsUseCase {
     this.transactionRepo,
     this.accountRepo,
     this.profileRepo,
-    this.exchangeRateRepo, [
+    this.exchangeRateRepo,
+    this.financialThresholdService, [
     this.notificationService,
     this.settingsRepo,
   ]);
@@ -180,9 +183,12 @@ class ExecuteRecurringTransactionsUseCase {
       }
     }
 
+    var thresholdResults = <ThresholdResult>[];
     // Batch insert transactions (insertOrIgnore handles existing deterministic IDs or unique constraints)
     if (pendingTransactions.isNotEmpty) {
       await transactionRepo.createTransactions(pendingTransactions);
+      thresholdResults = await financialThresholdService
+          .evaluateThresholds(pendingTransactions);
     }
 
     // Update automatic txns
@@ -191,7 +197,8 @@ class ExecuteRecurringTransactionsUseCase {
     }
 
     // Notifications
-    if (notificationService != null && autoTxnsToNotify.isNotEmpty) {
+    if (notificationService != null &&
+        (autoTxnsToNotify.isNotEmpty || thresholdResults.isNotEmpty)) {
       try {
         final notificationsEnabled =
             await settingsRepo?.getNotificationsEnabled() ?? true;
@@ -207,6 +214,19 @@ class ExecuteRecurringTransactionsUseCase {
               transactionName: autoTxn.name,
               languageCode: languageCode,
             );
+          }
+
+          for (final result in thresholdResults) {
+            if (result.isBudgetExceeded) {
+              await notificationService!.showBudgetExceededNotification(
+                languageCode: languageCode,
+              );
+            }
+            if (result.isSavingsGoalReached) {
+              await notificationService!.showGoalReachedNotification(
+                languageCode: languageCode,
+              );
+            }
           }
         }
       } catch (_) {}

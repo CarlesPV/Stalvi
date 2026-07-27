@@ -717,9 +717,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pdfSavingsColName => 'Name';
 
   @override
-  String get pdfSavingsColTarget => 'Target Amount';
-
-  @override
   String get pdfSavingsGoalsTitle => 'Savings Goals';
 
   @override
@@ -1150,18 +1147,6 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get unexpectedError =>
       'An unexpected error occurred. Please try again.';
-
-  @override
-  String get notificationAutoTxTitle => 'Automatic Transaction Created';
-
-  @override
-  String notificationAutoTxBody(String name) {
-    return 'Transaction $name has been completed successfully.';
-  }
-
-  @override
-  String get offlineModeRatesNotice =>
-      'Offline mode: using local exchange rates.';
 
   @override
   String get hintAmountZero => '0.00';

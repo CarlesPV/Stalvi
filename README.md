@@ -41,6 +41,7 @@ Designed with strict **Clean Architecture** principles, the project ensures isol
 * **Savings Goals:** Track financial progress with dedicated targets. Savings goals can be selected directly as destinations in transfers.
 * **Read-Only Padlock Indicators:** Visual padlock icons trail strictly read-only/non-editable fields (excluding date fields) on the Budgets and Savings Goals sheets, aligning with the design of the Accounts detail views.
 * **Dynamic Recalculations:** Progress bars and spent percentages recalculate in real-time when transactions are added, edited, or deleted.
+* **Reactive Notifications:** Receive automatic multi-language push notifications when budget thresholds are exceeded or savings goals are reached.
 
 ### 🔍 Concurrent Filters & Analytical Charts
 * **Multi-Dimensional Search:** Filter transactions simultaneously by transaction type, category, date range, amount range, tag, and currency using reactive Drift query builders.

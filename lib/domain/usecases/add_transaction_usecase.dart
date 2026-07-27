@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:stalvi/core/errors/app_exceptions.dart';
+import 'package:stalvi/core/security/secure_storage_manager.dart';
 import '../entities/account.dart';
 import '../entities/exchange_rate.dart';
 import '../entities/savings_goal.dart';
@@ -10,7 +12,10 @@ import '../repositories/i_profile_repository.dart';
 import '../repositories/i_exchange_rate_repository.dart';
 import '../repositories/i_savings_goal_repository.dart';
 import '../repositories/i_transaction_repository.dart';
+import '../repositories/i_settings_repository.dart';
+import '../../infrastructure/services/notification_service.dart';
 import 'update_budget_progress_usecase.dart';
+import '../services/financial_threshold_service.dart';
 import 'package:stalvi/core/utils/input_sanitizer.dart';
 import 'package:uuid/uuid.dart';
 
@@ -77,6 +82,9 @@ class AddTransactionUseCase {
   final IExchangeRateRepository _exchangeRateRepository;
   final ISavingsGoalRepository _savingsGoalRepository;
   final UpdateBudgetProgressUseCase _updateBudgetProgressUseCase;
+  final IFinancialThresholdService _financialThresholdService;
+  final NotificationService? _notificationService;
+  final ISettingsRepository? _settingsRepository;
 
   static const _uuid = Uuid();
 
@@ -87,7 +95,10 @@ class AddTransactionUseCase {
     this._exchangeRateRepository,
     this._savingsGoalRepository,
     this._updateBudgetProgressUseCase,
-  );
+    this._financialThresholdService, [
+    this._notificationService,
+    this._settingsRepository,
+  ]);
 
   Future<Transaction> execute(AddTransactionParams params) async {
     // Validate: amount must be positive.
@@ -316,6 +327,9 @@ class AddTransactionUseCase {
         if (savedTxn.type == TransactionType.expense) {
           await _updateBudgetProgressUseCase.execute(transaction: savedTxn);
         }
+        final thresholds =
+            await _financialThresholdService.evaluateThresholds([savedTxn]);
+        await _handleThresholdNotifications(thresholds);
         return savedTxn;
       }
 
@@ -362,6 +376,9 @@ class AddTransactionUseCase {
         originTransaction: originTxn,
         destinationTransaction: destinationTxn,
       );
+      final thresholds = await _financialThresholdService
+          .evaluateThresholds([pair.origin, pair.destination]);
+      await _handleThresholdNotifications(thresholds);
       return pair.origin;
     }
 
@@ -387,6 +404,39 @@ class AddTransactionUseCase {
     if (savedTxn.type == TransactionType.expense) {
       await _updateBudgetProgressUseCase.execute(transaction: savedTxn);
     }
+    final thresholds =
+        await _financialThresholdService.evaluateThresholds([savedTxn]);
+    await _handleThresholdNotifications(thresholds);
     return savedTxn;
+  }
+
+  Future<void> _handleThresholdNotifications(
+    List<ThresholdResult> thresholdResults,
+  ) async {
+    if (_notificationService == null || thresholdResults.isEmpty) return;
+    try {
+      final notificationsEnabled =
+          await _settingsRepository?.getNotificationsEnabled() ?? true;
+      if (!notificationsEnabled) return;
+
+      String? languageCode;
+      try {
+        languageCode = await SecureStorageManager().getUserLocale();
+      } catch (_) {}
+      languageCode ??= PlatformDispatcher.instance.locale.languageCode;
+
+      for (final result in thresholdResults) {
+        if (result.isBudgetExceeded) {
+          await _notificationService.showBudgetExceededNotification(
+            languageCode: languageCode,
+          );
+        }
+        if (result.isSavingsGoalReached) {
+          await _notificationService.showGoalReachedNotification(
+            languageCode: languageCode,
+          );
+        }
+      }
+    } catch (_) {}
   }
 }

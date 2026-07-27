@@ -1396,12 +1396,6 @@ abstract class AppLocalizations {
   /// **'Name'**
   String get pdfSavingsColName;
 
-  /// No description provided for @pdfSavingsColTarget.
-  ///
-  /// In en, this message translates to:
-  /// **'Target Amount'**
-  String get pdfSavingsColTarget;
-
   /// No description provided for @pdfSavingsGoalsTitle.
   ///
   /// In en, this message translates to:
@@ -2187,24 +2181,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'An unexpected error occurred. Please try again.'**
   String get unexpectedError;
-
-  /// No description provided for @notificationAutoTxTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Automatic Transaction Created'**
-  String get notificationAutoTxTitle;
-
-  /// No description provided for @notificationAutoTxBody.
-  ///
-  /// In en, this message translates to:
-  /// **'Transaction {name} has been completed successfully.'**
-  String notificationAutoTxBody(String name);
-
-  /// No description provided for @offlineModeRatesNotice.
-  ///
-  /// In en, this message translates to:
-  /// **'Offline mode: using local exchange rates.'**
-  String get offlineModeRatesNotice;
 
   /// No description provided for @hintAmountZero.
   ///

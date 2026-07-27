@@ -672,6 +672,42 @@ class MockNotificationService extends _i1.Mock
         returnValue: _i9.Future<void>.value(),
         returnValueForMissingStub: _i9.Future<void>.value(),
       ) as _i9.Future<void>);
+
+  @override
+  _i9.Future<void> showBudgetExceededNotification({
+    String? languageCode,
+    int? notificationId,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #showBudgetExceededNotification,
+          [],
+          {
+            #languageCode: languageCode,
+            #notificationId: notificationId,
+          },
+        ),
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
+
+  @override
+  _i9.Future<void> showGoalReachedNotification({
+    String? languageCode,
+    int? notificationId,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #showGoalReachedNotification,
+          [],
+          {
+            #languageCode: languageCode,
+            #notificationId: notificationId,
+          },
+        ),
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
 }
 
 /// A class which mocks [ISettingsRepository].

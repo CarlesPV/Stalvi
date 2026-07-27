@@ -223,7 +223,6 @@
   "pdfBudgetsTitle": "Pressupostos",
   "pdfSavingsColCompleted": "% Completat",
   "pdfSavingsColName": "Nom",
-  "pdfSavingsColTarget": "Quantitat Objectiu",
   "pdfSavingsGoalsTitle": "Metes d'Estalvi",
   "savingsGoal": "Objectiu d'estalvi",
   "savingsGoalAchieved": "Objectiu aconseguit!",
@@ -355,8 +354,6 @@
   "splashSecureStorageError": "Stalvi no ha pogut inicialitzar el seu emmagatzematge segur. Si us plau, comproveu l'espai disponible al dispositiu i torneu-ho a provar.",
   "splashStartupFailed": "Error d'Inici",
   "unexpectedError": "S'ha produït un error inesperat. Si us plau, torneu-ho a provar.",
-  "notificationAutoTxTitle": "Transacció automàtica creada",
-  "notificationAutoTxBody": "La transacció {name} s'ha completat amb èxit.",
   "@notificationAutoTxBody": {
     "placeholders": {
       "name": {
@@ -364,7 +361,6 @@
       }
     }
   },
-  "offlineModeRatesNotice": "Mode sense connexió: utilitzant tipus de canvi locals.",
   "hintAmountZero": "0.00",
   "errorCouldNotLaunchUrl": "No s'ha pogut obrir l'enllaç",
   "errorLoadingContent": "Error en carregar el contingut."

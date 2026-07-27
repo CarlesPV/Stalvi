@@ -13,6 +13,8 @@ import 'package:stalvi/domain/usecases/execute_recurring_transactions_usecase.da
 
 import 'package:stalvi/domain/repositories/i_settings_repository.dart';
 import 'package:stalvi/infrastructure/services/notification_service.dart';
+import 'package:stalvi/domain/services/financial_threshold_service.dart';
+import 'package:stalvi/domain/entities/transaction.dart';
 
 import 'execute_recurring_transactions_usecase_test.mocks.dart';
 
@@ -25,6 +27,15 @@ import 'execute_recurring_transactions_usecase_test.mocks.dart';
   NotificationService,
   ISettingsRepository,
 ])
+class FakeFinancialThresholdService implements IFinancialThresholdService {
+  @override
+  Future<List<ThresholdResult>> evaluateThresholds(
+    List<Transaction> transactions,
+  ) async {
+    return [];
+  }
+}
+
 void main() {
   group(
       'ExecuteRecurringTransactionsUseCase Date Calculations (UTC+2 Boundaries)',
@@ -159,6 +170,7 @@ void main() {
     late MockIAccountRepository mockAccountRepo;
     late MockIProfileRepository mockProfileRepo;
     late MockIExchangeRateRepository mockExchangeRateRepo;
+    late FakeFinancialThresholdService fakeFinancialThresholdService;
 
     setUp(() {
       mockAutomaticRepo = MockIAutomaticTransactionRepository();
@@ -166,6 +178,7 @@ void main() {
       mockAccountRepo = MockIAccountRepository();
       mockProfileRepo = MockIProfileRepository();
       mockExchangeRateRepo = MockIExchangeRateRepository();
+      fakeFinancialThresholdService = FakeFinancialThresholdService();
 
       usecase = ExecuteRecurringTransactionsUseCase(
         mockAutomaticRepo,
@@ -173,6 +186,7 @@ void main() {
         mockAccountRepo,
         mockProfileRepo,
         mockExchangeRateRepo,
+        fakeFinancialThresholdService,
       );
     });
 
@@ -263,6 +277,7 @@ void main() {
         mockAccountRepo,
         mockProfileRepo,
         mockExchangeRateRepo,
+        fakeFinancialThresholdService,
         mockNotificationService,
         mockSettingsRepo,
       );
@@ -321,6 +336,7 @@ void main() {
         mockAccountRepo,
         mockProfileRepo,
         mockExchangeRateRepo,
+        fakeFinancialThresholdService,
         mockNotificationService,
         mockSettingsRepo,
       );
@@ -362,5 +378,98 @@ void main() {
         ),
       );
     });
+
+    test(
+        'Dispatches threshold push notifications when recurring execution triggers threshold results',
+        () async {
+      final mockNotificationService = MockNotificationService();
+      final mockSettingsRepo = MockISettingsRepository();
+      final thresholdService = ThresholdTestFinancialThresholdService([
+        ThresholdResult(isBudgetExceeded: true),
+        ThresholdResult(isSavingsGoalReached: true),
+      ]);
+
+      final usecaseWithThresholdNotifications =
+          ExecuteRecurringTransactionsUseCase(
+        mockAutomaticRepo,
+        mockTransactionRepo,
+        mockAccountRepo,
+        mockProfileRepo,
+        mockExchangeRateRepo,
+        thresholdService,
+        mockNotificationService,
+        mockSettingsRepo,
+      );
+
+      final autoTxn = AutomaticTransaction(
+        id: 'auto-notify-threshold',
+        name: 'Electric Bill',
+        amount: 5000,
+        currency: 'EUR',
+        type: TransactionType.expense,
+        accountId: 'acc-1',
+        categoryId: 'cat-1',
+        recurrenceType: RecurrenceType.monthly,
+        recurrenceDays: 1,
+        nextExecutionDate:
+            DateTime.now().toUtc().subtract(const Duration(days: 1)),
+        isActive: true,
+        createdAt: DateTime.now().toUtc(),
+      );
+
+      when(mockAutomaticRepo.getAllAutomaticTransactions())
+          .thenAnswer((_) async => [autoTxn]);
+      when(mockAccountRepo.getAccountById(any)).thenAnswer((_) async => null);
+      when(mockTransactionRepo.createTransactions(any))
+          .thenAnswer((_) async {});
+      when(mockAutomaticRepo.updateAutomaticTransaction(any))
+          .thenAnswer((_) async => autoTxn);
+      when(mockSettingsRepo.getNotificationsEnabled())
+          .thenAnswer((_) async => true);
+      when(
+        mockNotificationService.showAutomaticTransactionNotification(
+          transactionName: anyNamed('transactionName'),
+          languageCode: anyNamed('languageCode'),
+          notificationId: anyNamed('notificationId'),
+        ),
+      ).thenAnswer((_) async {});
+      when(
+        mockNotificationService.showBudgetExceededNotification(
+          languageCode: anyNamed('languageCode'),
+          notificationId: anyNamed('notificationId'),
+        ),
+      ).thenAnswer((_) async {});
+      when(
+        mockNotificationService.showGoalReachedNotification(
+          languageCode: anyNamed('languageCode'),
+          notificationId: anyNamed('notificationId'),
+        ),
+      ).thenAnswer((_) async {});
+
+      await usecaseWithThresholdNotifications.execute();
+
+      verify(
+        mockNotificationService.showBudgetExceededNotification(
+          languageCode: anyNamed('languageCode'),
+        ),
+      ).called(1);
+      verify(
+        mockNotificationService.showGoalReachedNotification(
+          languageCode: anyNamed('languageCode'),
+        ),
+      ).called(1);
+    });
   });
+}
+
+class ThresholdTestFinancialThresholdService
+    implements IFinancialThresholdService {
+  final List<ThresholdResult> results;
+  ThresholdTestFinancialThresholdService(this.results);
+  @override
+  Future<List<ThresholdResult>> evaluateThresholds(
+    List<Transaction> transactions,
+  ) async {
+    return results;
+  }
 }
