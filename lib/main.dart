@@ -24,8 +24,9 @@ import 'package:stalvi/infrastructure/background_execution_service.dart';
 /// The root [ProviderScope] enables Riverpod for the entire widget tree.
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await BackgroundExecutionService.initialize();
-  await BackgroundExecutionService.registerPeriodicTasks();
+  final backgroundSync = BackgroundExecutionService();
+  await backgroundSync.initialize();
+  await backgroundSync.registerPeriodicTasks();
   runApp(
     const ProviderScope(
       child: StalviApp(),

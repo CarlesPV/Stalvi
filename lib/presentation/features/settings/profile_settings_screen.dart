@@ -1,15 +1,18 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:stalvi/core/l10n/app_localizations.dart';
+import 'package:stalvi/core/utils/input_sanitizer.dart';
 import 'package:stalvi/infrastructure/services/biometric_auth_service.dart';
 import 'profile_settings_controller.dart';
 import 'pin_verification_sheet.dart';
-import '../splash/splash_screen.dart';
 import '../../providers/auth_notifier.dart';
 import '../../providers/locale_provider.dart';
 import '../../providers/theme_provider.dart';
+import '../../providers/settings_notifier.dart';
 import '../../widgets/terms_and_conditions_viewer.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'about_me_screen.dart' as stalvi_about_me;
 
 class ProfileSettingsScreen extends ConsumerStatefulWidget {
@@ -32,8 +35,10 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
           title: Text(l10n.usernameLabel),
           content: TextField(
             controller: controller,
+            maxLength: 25,
             decoration: InputDecoration(
               hintText: l10n.usernameLabel,
+              counterText: '',
             ),
             autofocus: true,
           ),
@@ -46,13 +51,45 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
               ),
             ),
             ElevatedButton(
-              onPressed: () {
-                if (controller.text.trim().isNotEmpty) {
-                  ref
-                      .read(profileSettingsControllerProvider.notifier)
-                      .updateUsername(controller.text);
+              onPressed: () async {
+                final text = controller.text.trim();
+                if (text.isEmpty) {
+                  return;
                 }
-                Navigator.of(context).pop();
+                if (text.length > 25) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        l10n.authSetupValidationErrorUsernameLength,
+                      ),
+                    ),
+                  );
+                  return;
+                }
+                if (InputSanitizer.containsEmoji(text)) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        l10n.authSetupValidationErrorUsernameEmoji,
+                      ),
+                    ),
+                  );
+                  return;
+                }
+                try {
+                  await ref
+                      .read(profileSettingsControllerProvider.notifier)
+                      .updateUsername(text);
+                  if (context.mounted) {
+                    Navigator.of(context).pop();
+                  }
+                } catch (e) {
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(e.toString())),
+                    );
+                  }
+                }
               },
               child: FittedBox(
                 fit: BoxFit.scaleDown,
@@ -528,16 +565,17 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                       .wipeAllData();
 
                   // Invalidate the auth notifier so it rebuilds from scratch.
-                  // hasPin() will now return false, yielding setupRequired.
                   ref.invalidate(authNotifierProvider);
 
-                  if (context.mounted) {
-                    Navigator.of(context).pushAndRemoveUntil(
-                      MaterialPageRoute(
-                        builder: (context) => const SplashScreen(),
-                      ),
-                      (route) => false,
-                    );
+                  // Completely close/exit the app process for a clean restart.
+                  if (Platform.isIOS) {
+                    exit(0);
+                  } else {
+                    try {
+                      await SystemNavigator.pop();
+                    } catch (_) {}
+                    await Future.delayed(const Duration(milliseconds: 300));
+                    exit(0);
                   }
                 },
                 child: FittedBox(
@@ -702,6 +740,43 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                         ],
                       ),
                     ),
+                  ),
+                  const Divider(),
+                  SwitchListTile(
+                    secondary: const Icon(Icons.notifications_rounded),
+                    title: Text(l10n.settingsNotifications),
+                    value: ref.watch(settingsNotifierProvider),
+                    onChanged: (bool value) async {
+                      final result = await ref
+                          .read(profileSettingsControllerProvider.notifier)
+                          .toggleNotifications(value);
+                      if (result ==
+                              NotificationToggleResult.permanentlyDenied &&
+                          context.mounted) {
+                        showDialog(
+                          context: context,
+                          builder: (ctx) => AlertDialog(
+                            title:
+                                Text(l10n.notificationsPermanentlyDeniedTitle),
+                            content:
+                                Text(l10n.notificationsPermanentlyDeniedBody),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(ctx),
+                                child: Text(l10n.btnCancel),
+                              ),
+                              ElevatedButton(
+                                onPressed: () {
+                                  Navigator.pop(ctx);
+                                  openAppSettings();
+                                },
+                                child: Text(l10n.btnOpenSettings),
+                              ),
+                            ],
+                          ),
+                        );
+                      }
+                    },
                   ),
                   const Divider(),
                   ListTile(

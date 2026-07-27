@@ -1,18 +1,19 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 
+import 'package:stalvi/core/utils/currency_converter.dart';
+import 'package:stalvi/infrastructure/services/fallback_exchange_rates.dart';
+
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
-// ignore: depend_on_referenced_packages
+// ignore: depend_onreferenced_packages
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
 // Import sqlcipher_flutter_libs to ensure the SQLCipher native library is
 // bundled and loaded at runtime. The package replaces the default sqlite3
 // library with one that includes SQLCipher support.
-import 'package:sqlcipher_flutter_libs/sqlcipher_flutter_libs.dart';
-// ignore: depend_on_referenced_packages
-import 'package:sqlite3/open.dart';
 
 import 'package:uuid/uuid.dart';
 
@@ -158,6 +159,8 @@ class AppDatabase extends _$AppDatabase {
             modifiedAt: now,
           ),
         );
+
+        await _seedFallbackExchangeRates();
       },
       onUpgrade: (Migrator m, int from, int to) async {
         bool createdTransactions = false;
@@ -221,8 +224,28 @@ class AppDatabase extends _$AppDatabase {
             );
           }
         }
+
+        await _seedFallbackExchangeRates();
       },
     );
+  }
+
+  /// Populates the exchange rates table with fallback rates ONLY IF the table is empty.
+  Future<void> _seedFallbackExchangeRates() async {
+    final existingRates = await select(exchangeRates).get();
+    if (existingRates.isEmpty) {
+      final now = DateTime.now();
+      for (final baseCurrency in CurrencyConverter.supportedCurrencies) {
+        final ratesMap = FallbackExchangeRates.getFallbackRates(baseCurrency);
+        await into(exchangeRates).insertOnConflictUpdate(
+          ExchangeRatesCompanion.insert(
+            baseCurrency: baseCurrency,
+            date: now,
+            rates: jsonEncode(ratesMap),
+          ),
+        );
+      }
+    }
   }
 
   /// Opens (or creates) the encrypted database file.
@@ -233,11 +256,6 @@ class AppDatabase extends _$AppDatabase {
   static Future<QueryExecutor> _openEncryptedDatabase(
     String cipherKey,
   ) async {
-    // 1. Override the native library to use SQLCipher
-    if (Platform.isAndroid) {
-      open.overrideFor(OperatingSystem.android, openCipherOnAndroid);
-    }
-
     final dbFolder = await getApplicationDocumentsDirectory();
     final dbFile = File(p.join(dbFolder.path, 'stalvi.db'));
 

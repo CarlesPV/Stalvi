@@ -8,6 +8,7 @@ import 'package:stalvi/domain/usecases/create_profile_usecase.dart';
 import 'locale_provider.dart';
 import 'repository_providers.dart';
 import 'package:stalvi/core/l10n/app_localizations.dart';
+import 'package:stalvi/core/utils/input_sanitizer.dart';
 
 /// Describes the current authentication status for this session.
 enum AuthStatus {
@@ -147,7 +148,7 @@ class AuthNotifier extends AsyncNotifier<AuthStatus> {
 
   /// Presents the native biometric prompt to authenticate the user.
   Future<void> authenticate() async {
-    final currentStatus = state.valueOrNull;
+    final currentStatus = state.value;
 
     if (currentStatus == AuthStatus.authenticated ||
         currentStatus == AuthStatus.lockedOut ||
@@ -227,16 +228,47 @@ class AuthNotifier extends AsyncNotifier<AuthStatus> {
       );
       return;
     }
-    if (name.trim().isEmpty) {
+    final trimmedName = name.trim();
+    if (trimmedName.isEmpty) {
       state = AsyncValue.error(
         'Please enter a name.',
         StackTrace.current,
       );
       return;
     }
-    if (username.trim().isEmpty) {
+    if (trimmedName.length > 25) {
+      state = AsyncValue.error(
+        'Name cannot exceed 25 characters.',
+        StackTrace.current,
+      );
+      return;
+    }
+    if (InputSanitizer.containsEmoji(name)) {
+      state = AsyncValue.error(
+        'Name cannot contain emojis.',
+        StackTrace.current,
+      );
+      return;
+    }
+
+    final trimmedUsername = username.trim();
+    if (trimmedUsername.isEmpty) {
       state = AsyncValue.error(
         'Please enter a username.',
+        StackTrace.current,
+      );
+      return;
+    }
+    if (trimmedUsername.length > 25) {
+      state = AsyncValue.error(
+        'Username cannot exceed 25 characters.',
+        StackTrace.current,
+      );
+      return;
+    }
+    if (InputSanitizer.containsEmoji(username)) {
+      state = AsyncValue.error(
+        'Username cannot contain emojis.',
         StackTrace.current,
       );
       return;
@@ -306,7 +338,7 @@ class AuthNotifier extends AsyncNotifier<AuthStatus> {
   ///  4. If that attempt is wrong → trigger another 30 s lockout (step 2 again).
   ///  The cycle repeats indefinitely and survives app restarts.
   Future<bool> verifyPin(String pin) async {
-    final currentStatus = state.valueOrNull;
+    final currentStatus = state.value;
     if (currentStatus == AuthStatus.authenticated ||
         currentStatus == AuthStatus.lockedOut ||
         currentStatus == AuthStatus.pinLockedOut ||

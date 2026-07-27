@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:ffi';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:drift/drift.dart' hide isNull, isNotNull;
 import 'package:drift/native.dart';
@@ -8,16 +7,9 @@ import 'package:stalvi/data/database/tables/account_table.dart';
 import 'package:stalvi/domain/entities/transaction.dart' as domain;
 import 'package:stalvi/domain/entities/transaction_type.dart' as domain;
 import 'package:stalvi/data/repositories/transaction_repository.dart';
-// ignore: depend_on_referenced_packages
-import 'package:sqlite3/open.dart';
+// ignore: depend_onreferenced_packages
 
 void main() {
-  setUpAll(() {
-    open.overrideFor(OperatingSystem.linux, () {
-      return DynamicLibrary.open('libsqlite3.so.0');
-    });
-  });
-
   late AppDatabase db;
   late TransactionRepository repository;
 

@@ -1,6 +1,5 @@
 {
   "@@locale": "es",
-
   "appTitle": "Stalvi",
   "btnCancel": "Cancelar",
   "btnClose": "Cerrar",
@@ -47,7 +46,6 @@
   "uncategorized": "Sin categoría",
   "usernameLabel": "Nombre de usuario",
   "warning": "Advertencia",
-
   "authBiometricOptInEnable": "Habilitar biometría",
   "authBiometricOptInSkip": "Omitir por ahora",
   "authBiometricOptInSubtitle": "Usa tu huella dactilar o reconocimiento facial para acceder a Stalvi de forma rápida y segura en el futuro.",
@@ -83,10 +81,8 @@
   "pinUpdatedSuccessfully": "PIN actualizado correctamente.",
   "pinsDoNotMatch": "Los PINs no coinciden.",
   "statisticsTopIncome": "Categorías de mayor ingreso",
-
   "balanceTotal": "Balance total",
   "overview": "Resumen",
-
   "accountInUseByAutoTxMessage": "Esta cuenta no se puede eliminar porque está vinculada a transacciones automáticas activas.",
   "accountTypeBank": "Banco",
   "accountTypeCard": "Tarjeta",
@@ -121,11 +117,11 @@
   "categoriesAndTags": "Categorías y Etiquetas",
   "categoryInUseByAutoTxMessage": "{name} está en uso por transacciones automáticas y debe ser reasignada.",
   "@categoryInUseByAutoTxMessage": {
-      "placeholders": {
-          "name": {
-              "type": "String"
-          }
+    "placeholders": {
+      "name": {
+        "type": "String"
       }
+    }
   },
   "categoryInUseMessage": "{name} está en uso en transacciones existentes. Por favor, seleccione una categoría para reasignarlas:",
   "categoryInUseTitle": "Categoría en uso",
@@ -203,7 +199,6 @@
   "tags": "Etiquetas",
   "transactions": "Transacciones",
   "unknownAccount": "Cuenta desconocida",
-
   "accountTypeSavings": "Ahorros",
   "addBudget": "Añadir Presupuesto",
   "addSavingsGoal": "Añadir Meta de Ahorro",
@@ -228,7 +223,6 @@
   "pdfBudgetsTitle": "Presupuestos",
   "pdfSavingsColCompleted": "% Completado",
   "pdfSavingsColName": "Nombre",
-  "pdfSavingsColTarget": "Cantidad Objetivo",
   "pdfSavingsGoalsTitle": "Metas de Ahorro",
   "savingsGoal": "Objetivo de ahorro",
   "savingsGoalAchieved": "¡Objetivo conseguido!",
@@ -238,7 +232,6 @@
   "savingsSavedOf": "{saved} guardados de {target}",
   "savingsTargetDate": "Fecha objetivo: {date}",
   "settingsBudgetsGoals": "Presupuestos y Objetivos",
-
   "chart_scale": "Escala del gráfico",
   "presetCustom": "Personalizado",
   "presetLast30Days": "Últimos 30 días",
@@ -258,7 +251,6 @@
   "statisticsTopSpending": "Categorías de mayor gasto",
   "statisticsWhatYouEarned": "Lo que ha ganado",
   "statisticsWhereMoneyGoes": "A dónde va su dinero",
-
   "aboutMe": "Sobre mí",
   "aboutMeGithubButton": "Ver mi GitHub",
   "btnExport": "Exportar",
@@ -306,19 +298,26 @@
   "settingsAutomaticTransactions": "Transacciones Automáticas",
   "settingsDataManagement": "Gestión de Datos",
   "settingsLanguage": "Idioma",
-  "settingsThemeMode": "Modo de tema",
+  "settingsNotifications": "Notificaciones Push",
+  "notificationsPermanentlyDeniedTitle": "Notificaciones Desactivadas",
+  "notificationsPermanentlyDeniedBody": "Has denegado permanentemente los permisos de notificación. Por favor, actívalos en los ajustes del sistema para recibir alertas.",
+  "btnOpenSettings": "Abrir Ajustes",
+  "settingsThemeMode": "Modo de Tema",
   "themeModeDark": "Oscuro",
   "themeModeLight": "Claro",
   "themeModeSystem": "Sistema",
   "transactionMovedToRecycleBin": "Transacción movida a la papelera",
-
   "authError": "Error de autenticación",
   "authPinIncorrect": "PIN incorrecto. Inténtelo de nuevo.",
   "authSetupValidationErrorName": "Por favor, introduzca un nombre.",
+  "authSetupValidationErrorNameEmoji": "El nombre no puede contener emoticonos ni caracteres especiales.",
+  "authSetupValidationErrorNameLength": "El nombre no puede superar los 25 caracteres.",
   "authSetupValidationErrorPinLength": "El PIN debe tener entre 4 y 8 dígitos.",
   "authSetupValidationErrorPinMatch": "Los PIN no coinciden.",
   "authSetupValidationErrorTerms": "Debe aceptar los Términos y Condiciones y la Política de Privacidad para continuar.",
   "authSetupValidationErrorUsername": "Por favor, introduzca un nombre de usuario.",
+  "authSetupValidationErrorUsernameEmoji": "El nombre de usuario no puede contener emoticonos ni caracteres especiales.",
+  "authSetupValidationErrorUsernameLength": "El nombre de usuario no puede superar los 25 caracteres.",
   "autoTxErrorInvalidDayOfMonth": "Día del mes no válido (debe ser de 1 a 31)",
   "autoTxErrorInvalidRecurrenceInterval": "Intervalo de recurrencia no válido",
   "createAccountErrorFailed": "Fallo al crear la cuenta",
@@ -354,5 +353,15 @@
   "incorrectOldPin": "PIN antiguo incorrecto.",
   "splashSecureStorageError": "Stalvi no pudo inicializar su almacenamiento seguro. Por favor, compruebe el almacenamiento disponible del dispositivo e inténtelo de nuevo.",
   "splashStartupFailed": "Error de Inicio",
-  "unexpectedError": "Ocurrió un error inesperado. Por favor, inténtelo de nuevo."
+  "unexpectedError": "Ocurrió un error inesperado. Por favor, inténtelo de nuevo.",
+  "@notificationAutoTxBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "hintAmountZero": "0.00",
+  "errorCouldNotLaunchUrl": "No se pudo abrir el enlace",
+  "errorLoadingContent": "Error al cargar el contenido."
 }

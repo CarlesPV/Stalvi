@@ -718,9 +718,6 @@ class AppLocalizationsCa extends AppLocalizations {
   String get pdfSavingsColName => 'Nom';
 
   @override
-  String get pdfSavingsColTarget => 'Quantitat Objectiu';
-
-  @override
   String get pdfSavingsGoalsTitle => 'Metes d\'Estalvi';
 
   @override
@@ -972,7 +969,21 @@ class AppLocalizationsCa extends AppLocalizations {
   String get settingsLanguage => 'Idioma';
 
   @override
-  String get settingsThemeMode => 'Mode de tema';
+  String get settingsNotifications => 'Notificacions Push';
+
+  @override
+  String get notificationsPermanentlyDeniedTitle =>
+      'Notificacions Desactivades';
+
+  @override
+  String get notificationsPermanentlyDeniedBody =>
+      'Has denegat permanentment els permisos de notificació. Si us plau, activa\'ls a la configuració del sistema per rebre alertes.';
+
+  @override
+  String get btnOpenSettings => 'Obrir Configuració';
+
+  @override
+  String get settingsThemeMode => 'Mode de Tema';
 
   @override
   String get themeModeDark => 'Fosc';
@@ -996,6 +1007,14 @@ class AppLocalizationsCa extends AppLocalizations {
   String get authSetupValidationErrorName => 'Si us plau, introduïu un nom.';
 
   @override
+  String get authSetupValidationErrorNameEmoji =>
+      'El nom no pot contenir emoticones ni caràcters especials.';
+
+  @override
+  String get authSetupValidationErrorNameLength =>
+      'El nom no pot superar els 25 caràcters.';
+
+  @override
   String get authSetupValidationErrorPinLength =>
       'El PIN ha de tenir entre 4 i 8 dígits.';
 
@@ -1009,6 +1028,14 @@ class AppLocalizationsCa extends AppLocalizations {
   @override
   String get authSetupValidationErrorUsername =>
       'Si us plau, introduïu un nom d\'usuari.';
+
+  @override
+  String get authSetupValidationErrorUsernameEmoji =>
+      'El nom d\'usuari no pot contenir emoticones ni caràcters especials.';
+
+  @override
+  String get authSetupValidationErrorUsernameLength =>
+      'El nom d\'usuari no pot superar els 25 caràcters.';
 
   @override
   String get autoTxErrorInvalidDayOfMonth =>
@@ -1136,4 +1163,13 @@ class AppLocalizationsCa extends AppLocalizations {
   @override
   String get unexpectedError =>
       'S\'ha produït un error inesperat. Si us plau, torneu-ho a provar.';
+
+  @override
+  String get hintAmountZero => '0.00';
+
+  @override
+  String get errorCouldNotLaunchUrl => 'No s\'ha pogut obrir l\'enllaç';
+
+  @override
+  String get errorLoadingContent => 'Error en carregar el contingut.';
 }

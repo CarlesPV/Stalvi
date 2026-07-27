@@ -606,7 +606,109 @@ This document lists the completed phases of the Stalvi development roadmap, prov
   - 100% clean static analysis (`flutter analyze --fatal-infos --fatal-warnings` with 0 issues).
   - All 508 automated unit and widget tests pass cleanly with a 100% success rate.
 
+#### Phase 43: Backup Username Update & Filename Customization
+* **Completion Date:** July 18, 2026
+* **Objective:** Ensure restoration updates the active user's profile name, standardize filename prefixes based on document type (Stalvi_Backup, Stalvi_Table, Stalvi_Overview), and confirm 100% build health.
+* **Accomplishments:**
+  - **Profile Restoration Sync**: Updated `ImportServiceImpl` to overwrite the active user's profile name in the database with the one preserved in the backup JSON.
+  - **Filename Customization**: Standardized export filenames to append `yyyyMMdd_HHmmss` timestamps prefixed with `Stalvi_Backup_`, `Stalvi_Table_`, and `Stalvi_Overview_`.
+  - **CI & Build Validation**: Executed all tests (508) and verified 0 warnings/infos on static analysis.
+* **Verification:**
+  - 100% clean static analysis (`flutter analyze --fatal-infos --fatal-warnings` with 0 issues).
+  - All 508 automated unit and widget tests pass cleanly with a 100% success rate.
+
+### Phase 44: Exact UTC+2 Calculations & Dual-Execution Background Strategy with Idempotency
+* **Completion Date:** July 19, 2026
+* **Objective:** Prevent timezone discrepancies in recurring transactions by forcing exact UTC+2 calculations, implement a robust dual-execution background strategy (at 00:00 and 01:00 UTC+2), and prevent duplicate creations with UUID v5 URL-based idempotency keys.
+* **Accomplishments:**
+  - **Exact UTC+2 Boundaries**: Reconfigured date calculations for automatic transactions to operate strictly within the UTC+2 timezone, truncating time to exact date boundaries.
+  - **Dual Background Strategy**: Implemented dual Daily execution triggers (00:00 and 01:00 UTC+2) to verify and execute pending transactions, preventing Doze mode or task interruption drops.
+  - **UUID v5 Idempotency**: Employed Uuid v5 URL-based deterministic keys generated from transaction cycle and ID, checking if a transaction exists before creating it, enforcing strict idempotency.
+  - **Robust Testing**: Expanded `execute_recurring_transactions_usecase_test.dart` to cover both calculations under leap years and short months, and strict idempotency checks simulating multiple firings.
+### Phase 45: Package Upgrades, Riverpod 3.0 Migration & QA Pass
+* **Completion Date:** July 19, 2026
+* **Objective:** Upgrade outdated dependencies (including `share_plus`, `workmanager`, and replacing `flutter_markdown` with `flutter_markdown_plus`), configure compilation for Java 17 compatibility, migrate providers to Riverpod 3.x generator annotations, clear deprecations/warnings, and achieve 100% test pass rate.
+* **Accomplishments:**
+  - **Dependency & Gradle Upgrades**: Upgraded dependencies (`share_plus`, `workmanager`, replacing `flutter_markdown` with `flutter_markdown_plus`) and set Android targets/Kotlin JVM compile options to Java 17.
+  - **Riverpod 3.x Migration**: Migrated the state management controllers and providers to Riverpod 3.x `@riverpod` annotations generator syntax.
+  - **Deprecation Cleanup**: Replaced deprecated `bytes` with `readAsBytes()` on `PlatformFile`, and removed deprecated `encryptedSharedPreferences` configuration.
+  - **Static Analysis**: Resolved 37 code analyzer warnings, warnings on unnecessary const keywords, formatting issues in theme API doc comments, and unused variables.
+  - **Test Suite Optimization**: Solved test timer leaks, mock interface issues, layout constraints, and auto-dispose timing bugs, achieving 100% pass rate.
+* **Verification:**
+  - 100% clean static analysis (`flutter analyze --fatal-infos --fatal-warnings` with 0 issues).
+  - All 498 automated unit and widget tests pass cleanly with a 100% success rate.
+
+### Phase 46: Core Bug Fixes & Launch Readiness
+* **Completion Date:** July 21, 2026
+* **Objective:** Perform final quality assurance, resolve file export issues across all devices, fix cross-currency balance conversion accuracy, stabilize background automatic transactions with periodic checks and startup fallbacks, add local notifications, and verify 100% test pass rate and static analysis.
+* **Accomplishments:**
+  - **Export Integrity:** Fixed file exporting issues across device storage systems (Downloads folder and Scoped Storage) for PDF, CSV, and encrypted JSON backups.
+  - **Currency Conversion Accuracy:** Enforced accurate multi-currency conversions during balance recalculations on Income, Expense, and Transfer transactions.
+  - **Background Execution Reliability:** Transitioned Workmanager to a reliable 2-hour periodic background service paired with an asynchronous app startup fallback to guarantee automatic transaction triggers.
+  - **Local Push Notifications:** Integrated `flutter_local_notifications` to dispatch localized push notifications ("Transaction [name] completed successfully") when automatic transactions execute.
+  - **QA & Final Polish:** Achieved 100% test suite pass rate, clean static analysis (`flutter analyze` with 0 warnings/infos), and automated code formatting with `dart format`.
+* **Verification:**
+  - 100% clean static analysis (`flutter analyze` with 0 issues).
+  - Clean code formatting pass across all files (`dart format .`).
+  - All unit and widget tests in the test suite pass with a 100% success rate.
+
+### Phase 47: Export UX & Directory Optimization
+* **Completion Date:** July 21, 2026
+* **Objective:** Refactor export services to target public mobile locations adhering to strict directory priority rules (`Download` -> `Downloads` -> `Documents` -> `Stalvi` -> application documents fallback), add iOS file sharing keys to `Info.plist`, remove `share_plus` third-party share pop-ups, and ensure warning-free static analysis.
+* **Accomplishments:**
+  - **Directory Prioritization:** Standardized file exporting to attempt writing to public device directories sequentially (`/storage/emulated/0/Download`, `/storage/emulated/0/Downloads`, `/storage/emulated/0/Documents`, `/storage/emulated/0/Stalvi`) before falling back to application documents directory, avoiding app-private paths.
+  - **iOS File Integration:** Added `UIFileSharingEnabled` and `LSSupportsOpeningDocumentsInPlace` keys to iOS `Info.plist` to expose exports directly in iOS Files app Recents.
+  - **Native File Access:** Removed `share_plus` dependency to eliminate disruptive share pop-ups, using `open_filex` for instant document opening.
+* **Verification:**
+  - 100% clean static analysis (`flutter analyze` with 0 issues).
+  - All unit and widget tests pass cleanly with a 100% success rate.
+
+### Phase 48: Background Resilience, Optional Notifications & File Export Priorities
+* **Completion Date:** July 22, 2026
+* **Objective:** Finalize production readiness by implementing user-configurable optional notifications, optimizing Workmanager periodic background checks to 3 hours, enforcing file export storage priority rules, and ensuring 100% test pass rate and CI/CD workflow success.
+* **Accomplishments:**
+  - **Optional Notifications:** Implemented a push notification toggle switch in Profile & Security settings (defaulting to ON) with OS notification permission checks/requests and multi-language support (English, Spanish, Catalan).
+  - **Workmanager 3-Hour Background Execution:** Reconfigured Workmanager periodic task frequency to 3 hours (`Duration(hours: 3)`) with unrestrictive constraints, paired with Dashboard load fallback execution and exact UTC+2 date calculation.
+  - **File Export Priorities:** Enforced strict fallback order for generated CSV, PDF, and `.kbak` backups (`Download` -> `Downloads` -> `Documents` -> `Stalvi` -> emergency application documents fallback).
+  - **Documentation & QA:** Updated `README.md`, `roadmap.md`, `roadmap-summary.md`, and code comments across modified files; achieved 100% test suite pass rate and 0 analyzer warnings.
+* **Verification:**
+  - 100% clean static analysis (`flutter analyze` with 0 issues).
+  - Clean code formatting pass across all modified files (`dart format .`).
+  - All unit, widget, and integration tests in the test suite pass with a 100% success rate.
+
+### Phase 49: Strict Notification Permissions Workflow, Legal Compliance & Technical Debt Cleanup
+* **Completion Date:** July 22, 2026
+* **Objective:** Establish a strict opt-in push notification workflow with native OS permission checks and settings redirection, update legal Terms and Conditions for store publishing (GDPR/LOPDGDD compliance and financial disclaimers), and execute a deep technical debt cleanup.
+* **Accomplishments:**
+  - **Strict Opt-In Notifications:** Changed push notifications toggle default to `false` (OFF). Integrated native permission checks (`isPermissionGranted`, `isPermissionPermanentlyDenied`, `requestPermissions`) when users toggle notifications ON.
+  - **OS System Settings Redirection:** Added dialog prompts (`openAppSettings()`) when notifications are permanently denied at the OS level, fully localized in English, Spanish, and Catalan.
+  - **Exhaustive Legal Documentation:** Updated `assets/legal/terms_ca.md`, `assets/legal/terms_en.md`, and `assets/legal/terms_es.md` detailing SQLCipher local encryption, zero telemetry, exchange rate API privacy, GDPR/LOPDGDD compliance, and financial liability disclaimers.
+  - **Technical Debt Cleanup:** Removed dead code, unused imports, obsolete test scripts, and orphan translation keys across all `.arb` bundles.
+* **Verification:**
+  - 100% clean static analysis (`flutter analyze` with 0 issues).
+  - All unit, widget, and integration tests pass cleanly with a 100% success rate.
+
+### Phase 50: Store-Ready Legal Overhaul
+* **Completion Date:** July 22, 2026
+* **Objective:** Validate UI scrollability and integrity for expanded legal documents, ensure 0 analyzer warnings, maintain 100% test pass rate, update project roadmap documentation, and ensure CI/CD workflow readiness.
+* **Accomplishments:**
+  - **Store-Ready Legal Assets:** Overhauled legal markdown documentation across English, Spanish, and Catalan (`terms_*.md`, `privacy_*.md`) with store-compliant legal provisions, financial disclaimers, acceptable use policies, and local data non-recovery disclosures.
+  - **UI Integrity & Scroll Safeguards:** Verified `TermsAndConditionsViewer` layout hierarchy (`Scaffold` + `Scrollbar` + `SingleChildScrollView`), guaranteeing full scrollability and zero visual overflows regardless of legal text length.
+  - **Static Analysis & Testing:** Ensured 0 static analyzer warnings/infos on `flutter analyze`, achieved 100% test suite pass rate on `flutter test`, and verified CI/CD pipeline readiness.
+* **Verification:**
+  - 100% clean static analysis (`flutter analyze` with 0 issues).
+  - 100% pass rate across all unit and widget tests.
+
 ## Recent Updates
+- Finalized Phase 53 (Recurrence Precision, Input Rules & Process Exit Reliability), ensuring past missed recurring transactions generate with historical dates, enforcing 25-character name limits without emojis, fixing database close deadlocks during data wipes with a 500ms timeout for clean app process restarts, aligning CI/CD workflows for iOS pod installs, and passing all 530 tests with 0 analyzer warnings.
+- Finalized Phase 50 (Store-Ready Legal Overhaul), validating UI layout scrollability for large legal markdown documents, achieving 0 analyzer warnings/infos, maintaining 100% test pass rate, and confirming CI/CD workflow readiness.
+- Finalized Phase 49 (Strict Notification Permissions Workflow, Legal Compliance & Technical Debt Cleanup), implementing strict opt-in notification controls with native OS permission checks and settings redirection, store-ready legal compliance documentation in EN/ES/CA, and thorough technical debt cleanup.
+- Finalized Phase 48 (Background Resilience, Optional Notifications & File Export Priorities), implementing user-configurable push notifications in settings, 3-hour Workmanager periodic background task execution with UTC+2 precision, strict storage directory prioritization, and updated documentation.
+- Completed Phase 47 (Export UX & Directory Optimization), refactoring export services for public directory access, adding iOS file sharing keys, and removing share_plus pop-ups.
+- Performed final QA and launch readiness pass for Phase 46, ensuring 100% test pass rate, clean static analysis, local push notification triggers, 2-hour periodic background processing, and accurate cross-currency balance calculations.
+- Upgraded dependencies, migrated providers to Riverpod 3.x annotations, cleared static analysis warnings, and resolved all test suite timer leaks and mock interface crashes (Phase 45).
+- Implemented exact UTC+2 calculations and a dual-execution background strategy (00:00 and 01:00 UTC+2) with UUID v5 URL-based idempotency checks for recurring transactions (Phase 44).
+- Fixed backup import username update and standardized export filename prefixes (Phase 43).
 - Resolved transfer transaction resolution bugs in PDF export by querying raw transactions for destination matching (Phase 42).
 - Added padlock icons trailing read-only input fields in Budgets and Savings Goals detail sheets (Phase 41).
 - Completed detailed GDPR/LOPDGDD compliance legal documents rewrite across Catalan, English, and Spanish (Phase 40).
@@ -633,4 +735,3 @@ This document lists the completed phases of the Stalvi development roadmap, prov
 - Added full Unicode font support in PDF exports using Roboto font assets to fix currency symbol placeholders.
 - Updated Terms and Privacy policy legal markdown assets for Catalan, English, and Spanish.
 - Achieved a completely clean static analysis check with 0 issues on `flutter analyze` and 100% test pass rate.
-\n- [x] Fixed backup system to save the username and include the destination account for transfers.\n- [x] Improved backup format validation on import.

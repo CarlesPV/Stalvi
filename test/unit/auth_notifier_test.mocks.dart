@@ -24,6 +24,7 @@ import 'package:stalvi/infrastructure/services/biometric_auth_service.dart'
 // ignore_for_file: unnecessary_parenthesis
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
+// ignore_for_file: invalid_use_of_internal_member
 
 /// A class which mocks [SecureStorageManager].
 ///
@@ -196,6 +197,26 @@ class MockSecureStorageManager extends _i1.Mock
         Invocation.method(
           #setThemeMode,
           [themeMode],
+        ),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
+
+  @override
+  _i3.Future<bool> getNotificationsEnabled() => (super.noSuchMethod(
+        Invocation.method(
+          #getNotificationsEnabled,
+          [],
+        ),
+        returnValue: _i3.Future<bool>.value(false),
+      ) as _i3.Future<bool>);
+
+  @override
+  _i3.Future<void> setNotificationsEnabled(bool? enabled) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setNotificationsEnabled,
+          [enabled],
         ),
         returnValue: _i3.Future<void>.value(),
         returnValueForMissingStub: _i3.Future<void>.value(),

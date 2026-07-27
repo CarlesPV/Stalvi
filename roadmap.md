@@ -314,12 +314,89 @@
   - [x] Maintain 100% build health, static analysis compliance, and test pass rate.
 
 - [x] **Phase 43: Backup Username Update & Filename Customization**
-  - [x] Update import service to overwrite the active user's profile name with the one saved in the backup payload.
-  - [x] Rename export filename prefixes based on document type: "Stalvi_Backup" for backups, "Stalvi_Table" for CSVs, and "Stalvi_Overview" for PDFs.
-  - [x] Ensure 100% build health, clean lint checks (0 issues on `flutter analyze`), and successfully execute all tests.
+  - [x] Ensure restoration updates the active user's profile name in the database with the one preserved in the backup.
+  - [x] Standardize export filenames to append `yyyyMMdd_HHmmss` timestamps prefixed with `Stalvi_Backup_`, `Stalvi_Table_`, and `Stalvi_Overview_`.
+  - [x] Maintain 100% build health, static analysis compliance, and test pass rate.
 
-- [ ] **Phase 44: Future Analysis & Next Steps**
-  - [ ] Analyze app usage and user feedback to inform future development.
-  - [ ] Identify and resolve potential bottlenecks in database queries and UI rendering.
-  - [ ] Outline the requirements for the next major feature release.
-  - [ ] Plan for updating Flutter and community packages to their latest stable versions.
+- [x] **Phase 44: Exact UTC+2 Calculations & Dual-Execution Background Strategy with Idempotency**
+  - [x] Implement exact UTC+2 calculations for recurring transaction trigger dates to avoid timezone discrepancies.
+  - [x] Set up dual-execution background strategy executing at 00:00 and 01:00 UTC+2 daily.
+  - [x] Introduce UUID v5 URL-based keys for robust idempotency checks, preventing duplicate transaction creation on multiple runs.
+  - [x] Write comprehensive unit tests verifying calculation logic across leap years, short months, and idempotency.
+
+- [x] **Phase 45: Package Upgrades, Riverpod 3.0 Migration & QA Pass**
+  - [x] Upgrade dependencies including `share_plus`, `workmanager`, and replace `flutter_markdown` with `flutter_markdown_plus`.
+  - [x] Upgrade Android build environment to Java 17 compile compatibility.
+  - [x] Migrate state providers to Riverpod 3.0 generator annotation syntax.
+  - [x] Resolve deprecation warnings (`encryptedSharedPreferences`, `PlatformFile.bytes` usage) and code static analysis warnings.
+  - [x] Fix and stabilize unit and widget test suite (timer leaks, platform interface mocks, view bounds, snackbar overflows).
+
+- [x] **Phase 46: Core Bug Fixes & Launch Readiness**
+  - [x] **Export Integrity:** Resolve file export issues (PDF, CSV, Backups) on all devices by using proper Scoped Storage (Downloads folder) or robust FileProvider implementations.
+  - [x] **Currency Conversion Accuracy:** Enforce correct cross-currency conversions when updating Wallet/Account balances on Incomes, Expenses, and Transfers.
+  - [x] **Background Execution Reliability:** Implement a dual strategy (2h Workmanager periodic check + App startup fallback) to ensure Automatic Transactions never fail to create.
+  - [x] **Notifications:** Integrate `flutter_local_notifications` to push a localized success message when an automatic transaction fires.
+  - [x] **QA & Final Polish:** Guarantee 100% test coverage, 0 lint warnings, and full CI/CD success for app store readiness.
+
+- [x] **Phase 47: Export UX & Directory Optimization**
+  - [x] Refactor export services to target public mobile locations adhering to strict directory priority rules (`Download` -> `Downloads` -> `Documents` -> `Stalvi` -> application documents fallback) avoiding app-private `Android/data` paths.
+  - [x] Add iOS file sharing keys (`UIFileSharingEnabled` & `LSSupportsOpeningDocumentsInPlace`) to `Info.plist` to expose exports in iOS Files app Recents.
+  - [x] Remove `share_plus` dependencies from the project to eliminate third-party share pop-ups.
+  - [x] Clean up code architecture, passing all CI/CD, security workflows, tests, and static analysis without warnings.
+
+- [x] **Phase 48: Background Resilience, Optional Notifications & File Export Priorities**
+  - [x] **Optional Push Notifications:** Added a user-configurable push notifications toggle in Profile & Security settings (between Language and T&C options, defaulting to ON) with runtime OS permission requests and full localization in English, Spanish, and Catalan.
+  - [x] **Workmanager Background Engine:** Configured Workmanager to execute pending automatic transaction evaluations every 3 hours (`Duration(hours: 3)`) in the background, paired with Dashboard load fallback execution and exact UTC+2 date calculation.
+  - [x] **File Export Prioritization:** Standardized file saving to target system `Download` -> `Downloads` -> `Documents` -> `Stalvi` directories sequentially before emergency fallback, preventing access errors on various Android versions.
+  - [x] **Production Readiness & QA:** Ensured 0 static analysis warnings, 100% test pass rate across all unit and widget tests, and green CI/CD build status.
+
+- [x] **Phase 49: Strict Notification Permissions Workflow, Legal Compliance & Technical Debt Cleanup**
+  - [x] **Strict Opt-In Notification Workflow:** Refactored push notification toggle to default to `false` (OFF) for strict user opt-in consent. Integrated native OS permission verification (`isPermissionGranted`, `isPermissionPermanentlyDenied`, `requestPermissions`).
+  - [x] **OS Settings Integration:** Implemented system settings redirection dialog (`openAppSettings()`) when notification permissions are permanently denied, providing clear user feedback in English, Spanish, and Catalan.
+  - [x] **Store-Ready Legal Compliance:** Updated localized Terms and Conditions (`assets/legal/terms_*.md`) to explicitly detail SQLCipher local encryption, zero-telemetry architecture, minimal exchange rate API connection footprint, GDPR/LOPDGDD compliance, and financial liability disclaimers.
+  - [x] **Code Quality & Technical Debt Cleanup:** Cleaned up unused imports, dead code paths, obsolete test files, and orphan translation keys across English, Spanish, and Catalan `.arb` bundles.
+  - [x] **QA & Verification:** Maintained 100% test pass rate across unit, widget, and integration tests with zero analyzer warnings (`flutter analyze`).
+
+- [x] **Phase 50: Store-Ready Legal Overhaul**
+  - [x] **Legal Content Overhaul:** Overhauled Terms & Conditions and Privacy Policy markdown assets across English, Spanish, and Catalan (`assets/legal/terms_*.md`, `assets/legal/privacy_*.md`) with store-compliant legal provisions including "As-Is" clauses, financial disclaimers, acceptable use policies, and local data non-recovery disclosures.
+  - [x] **UI Scrollability Integrity:** Verified UI integrity for large markdown documents in `TermsAndConditionsViewer`, ensuring `SingleChildScrollView` layout rendering prevents overflows across mobile screen sizes.
+  - [x] **Static Analysis & Testing:** Ensured 0 static analyzer warnings/infos (`flutter analyze`) and verified 100% automated unit/widget test suite pass rate (`flutter test`).
+  - [x] **CI/CD Workflow Readiness:** Verified GitHub Actions CI/CD pipeline compatibility for release deployment.
+
+- [x] **Phase 51: Cross-Platform Background Execution & Recurrence Engine Refactoring**
+  - [x] **Background Sync Abstraction:** Abstracted background execution logic into a dedicated domain interface (`BackgroundSyncService`), enabling clean cross-platform task invocation.
+  - [x] **Idempotent Background Tasks:** Connected background execution via `workmanager` directly to `ExecuteRecurringTransactionsUseCase` to evaluate scheduled automatic transactions reliably.
+  - [x] **Offline Currency Fallback System:** Implemented local fallback exchange rates in the infrastructure layer (`FallbackExchangeRates`) to populate database tables on initialization when network access is unavailable.
+
+- [x] **Phase 52: Legal Compliance Integration & Production CI/CD Finalization**
+  - [x] **Store-Ready Legal Compliance:** Drafted and integrated GDPR and App Store/Google Play compliant Terms & Conditions and Privacy Policy across English, Spanish, and Catalan (`assets/legal/terms_*.md`, `assets/legal/privacy_*.md`), reflecting SQLCipher AES-256 local encrypted storage and zero-telemetry architecture.
+  - [x] **Static Analysis & Test Suite Integrity:** Resolved all static analyzer issues (`flutter analyze` with 0 warnings, 0 errors) and updated mock/unit tests to achieve a 100% test pass rate.
+  - [x] **CI/CD Workflow Synchronization:** Verified and synchronized GitHub Actions CI/CD workflows for Android and iOS automated builds and test runs.
+
+- [x] **Phase 53: Recurrence Precision, Input Rules & Process Exit Reliability**
+  - [x] **Automatic Recurrence Date Precision:** Ensured missing past transactions (e.g., app not opened for multiple days/weeks) generate all pending transaction instances with their exact historical dates rather than today's date.
+  - [x] **Profile & User Name Input Rules:** Enforced a strict max length of 25 characters for name and username inputs during account creation, preventing emojis and special characters while permitting standard accented letters (tildes in EN, ES, CA).
+  - [x] **Cold Application Restart & Database Release:** Fixed database connection deadlock during "Wipe All Data" by introducing a 500ms timeout on database `close()`, allowing clean database deletion and reliable application exit/restart on physical iOS and Android devices.
+  - [x] **CI/CD Workflow Alignment:** Synchronized GitHub Actions workflows (`ci.yml` and `security.yml`) for `main` and `develop` branches, ensuring `pod install` and simulator iOS builds pass cleanly.
+  - [x] **100% Test Pass Rate & Static Analysis:** Verified all 530 unit, widget, and integration tests pass with zero static analyzer warnings or errors (`flutter analyze --fatal-infos --fatal-warnings`).
+
+- [x] **Phase 54: Reactive Budgets & Goals Notifications and Code Cleanup**
+  - [x] Implemented a reactive system where budget and savings goals are automatically updated and validated upon every transaction creation.
+  - [x] Implemented an automated trigger for multi-language push notifications when budget thresholds or savings goals are met.
+  - [x] Performed a comprehensive code cleanup across the `lib/` and `test/` directories, removing dead code, unused files, orphan translation keys, and obsolete comments.
+  - [x] Removed temporary scripts and files no longer needed for production.
+  - [x] Maintained 100% test suite pass rate across unit, widget, and integration tests, and zero static analysis issues.
+
+
+---
+
+## Post-Launch / Maintenance
+
+Future ideas, enhancements, and post-release maintenance goals:
+- [ ] **Cloud-Encrypted WebDAV / Drive Backup Sync:** Optional opt-in sync to user's private WebDAV server or Google Drive / iCloud keeping zero-telemetry and end-to-end user encryption.
+- [ ] **Custom Category Icon & Color Creator:** Allow users to define custom icons and palette colors for categories and accounts.
+- [ ] **Advanced Financial Forecasting & AI Insights:** Localized predictive analytics for projected monthly balances and spending pattern anomalies based on historical movements.
+- [ ] **Interactive CSV Import Wizard:** Column mapping interface allowing users to import transactions from external banking CSV files.
+- [ ] **Wearable Companion App:** Apple Watch and Wear OS glance widgets for quick expense entry and daily balance previews.
+
+

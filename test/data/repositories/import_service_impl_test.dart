@@ -1,8 +1,6 @@
-import 'dart:ffi';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:drift/native.dart';
-import 'package:sqlite3/open.dart';
 import 'package:stalvi/core/errors/app_exceptions.dart';
 import 'package:stalvi/data/database/app_database.dart';
 import 'package:stalvi/data/repositories/import_service_impl.dart';
@@ -11,12 +9,6 @@ import 'package:stalvi/domain/repositories/i_export_service.dart';
 class MockExportService extends Mock implements IExportService {}
 
 void main() {
-  setUpAll(() {
-    open.overrideFor(OperatingSystem.linux, () {
-      return DynamicLibrary.open('libsqlite3.so.0');
-    });
-  });
-
   late AppDatabase db;
   late MockExportService mockExportService;
   late ImportServiceImpl importService;

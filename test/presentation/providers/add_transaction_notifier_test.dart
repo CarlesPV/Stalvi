@@ -87,7 +87,7 @@ void main() {
     test('initializes with default state values', () {
       buildContainer(accounts: []);
 
-      final state = container.read(addTransactionNotifierProvider);
+      final state = container.read(addTransactionProvider);
 
       expect(state.amountText, '');
       expect(state.type, TransactionType.expense);
@@ -105,24 +105,26 @@ void main() {
         () async {
       buildContainer(accounts: [testAccount]);
 
+      final sub = container.listen(addTransactionProvider, (_, __) {});
       // Wait for accounts list to resolve to populate notifier's listener
       await container.read(accountsListProvider.future);
 
-      final state = container.read(addTransactionNotifierProvider);
+      final state = container.read(addTransactionProvider);
       expect(state.accountId, testAccount.id);
+      sub.close();
     });
 
     test('updates amount, notes, and date correctly', () {
       buildContainer();
 
-      final notifier = container.read(addTransactionNotifierProvider.notifier);
+      final notifier = container.read(addTransactionProvider.notifier);
 
       notifier.updateAmount('55.42');
       notifier.updateNotes('Electricity bill');
       final newDate = DateTime(2026, 6, 1);
       notifier.updateDate(newDate);
 
-      final state = container.read(addTransactionNotifierProvider);
+      final state = container.read(addTransactionProvider);
       expect(state.amountText, '55.42');
       expect(state.notes, 'Electricity bill');
       expect(state.date, newDate);
@@ -131,12 +133,12 @@ void main() {
     test('updates account and category correctly', () {
       buildContainer();
 
-      final notifier = container.read(addTransactionNotifierProvider.notifier);
+      final notifier = container.read(addTransactionProvider.notifier);
 
       notifier.updateAccount('acc_custom');
       notifier.updateCategory('cat_custom');
 
-      final state = container.read(addTransactionNotifierProvider);
+      final state = container.read(addTransactionProvider);
       expect(state.accountId, 'acc_custom');
       expect(state.categoryId, 'cat_custom');
     });
@@ -144,12 +146,12 @@ void main() {
     test('updates currency and tag correctly', () {
       buildContainer();
 
-      final notifier = container.read(addTransactionNotifierProvider.notifier);
+      final notifier = container.read(addTransactionProvider.notifier);
 
       notifier.updateCurrency('USD');
       notifier.updateTag('tag_123');
 
-      final state = container.read(addTransactionNotifierProvider);
+      final state = container.read(addTransactionProvider);
       expect(state.currency, 'USD');
       expect(state.tagId, 'tag_123');
     });
@@ -157,14 +159,14 @@ void main() {
     test('resets category selection when transaction type changes', () {
       buildContainer();
 
-      final notifier = container.read(addTransactionNotifierProvider.notifier);
+      final notifier = container.read(addTransactionProvider.notifier);
 
       notifier.updateType(TransactionType.expense);
       notifier.updateCategory('cat_expense');
 
       // Verify category is set
       expect(
-        container.read(addTransactionNotifierProvider).categoryId,
+        container.read(addTransactionProvider).categoryId,
         'cat_expense',
       );
 
@@ -172,7 +174,7 @@ void main() {
       notifier.updateType(TransactionType.income);
 
       // Verify type changed and category got reset to null
-      final state = container.read(addTransactionNotifierProvider);
+      final state = container.read(addTransactionProvider);
       expect(state.type, TransactionType.income);
       expect(state.categoryId, isNull);
     });
@@ -180,14 +182,14 @@ void main() {
     test('does not reset category if type changes to the same value', () {
       buildContainer();
 
-      final notifier = container.read(addTransactionNotifierProvider.notifier);
+      final notifier = container.read(addTransactionProvider.notifier);
 
       notifier.updateType(TransactionType.expense);
       notifier.updateCategory('cat_expense');
 
       notifier.updateType(TransactionType.expense);
 
-      final state = container.read(addTransactionNotifierProvider);
+      final state = container.read(addTransactionProvider);
       expect(state.categoryId, 'cat_expense');
     });
   });
@@ -198,15 +200,14 @@ void main() {
         () async {
       buildContainer();
 
-      final notifier = container.read(addTransactionNotifierProvider.notifier);
+      final notifier = container.read(addTransactionProvider.notifier);
       notifier.updateAmount('not-a-number');
       notifier.updateAccount(testAccount.id);
 
       final success = await notifier.submit();
 
       expect(success, isFalse);
-      final status =
-          container.read(addTransactionNotifierProvider).submissionStatus;
+      final status = container.read(addTransactionProvider).submissionStatus;
       expect(status.hasError, isTrue);
       expect(status.error, isA<ValidationException>());
       expect((status.error as ValidationException).code, 'INVALID_AMOUNT');
@@ -218,15 +219,14 @@ void main() {
         () async {
       buildContainer();
 
-      final notifier = container.read(addTransactionNotifierProvider.notifier);
+      final notifier = container.read(addTransactionProvider.notifier);
       notifier.updateAmount('-12.50');
       notifier.updateAccount(testAccount.id);
 
       final success = await notifier.submit();
 
       expect(success, isFalse);
-      final status =
-          container.read(addTransactionNotifierProvider).submissionStatus;
+      final status = container.read(addTransactionProvider).submissionStatus;
       expect(status.hasError, isTrue);
       expect(status.error, isA<ValidationException>());
       verifyZeroInteractions(mockUseCase);
@@ -237,14 +237,13 @@ void main() {
         () async {
       buildContainer(accounts: []);
 
-      final notifier = container.read(addTransactionNotifierProvider.notifier);
+      final notifier = container.read(addTransactionProvider.notifier);
       notifier.updateAmount('10.00');
 
       final success = await notifier.submit();
 
       expect(success, isFalse);
-      final status =
-          container.read(addTransactionNotifierProvider).submissionStatus;
+      final status = container.read(addTransactionProvider).submissionStatus;
       expect(status.hasError, isTrue);
       expect(status.error, isA<ValidationException>());
       expect((status.error as ValidationException).code, 'ACCOUNT_REQUIRED');
@@ -256,7 +255,7 @@ void main() {
         () async {
       buildContainer();
 
-      final notifier = container.read(addTransactionNotifierProvider.notifier);
+      final notifier = container.read(addTransactionProvider.notifier);
       notifier.updateAmount('10.00');
       notifier.updateAccount(testAccount.id);
       // category is missing
@@ -264,8 +263,7 @@ void main() {
       final success = await notifier.submit();
 
       expect(success, isFalse);
-      final status =
-          container.read(addTransactionNotifierProvider).submissionStatus;
+      final status = container.read(addTransactionProvider).submissionStatus;
       expect(status.hasError, isTrue);
       expect(status.error, isA<ValidationException>());
       expect((status.error as ValidationException).code, 'CATEGORY_REQUIRED');
@@ -277,7 +275,7 @@ void main() {
         () async {
       buildContainer();
 
-      final notifier = container.read(addTransactionNotifierProvider.notifier);
+      final notifier = container.read(addTransactionProvider.notifier);
       notifier.updateAmount('10.00');
       notifier.updateAccount(testAccount.id);
       notifier.updateCategory(testCategory.id);
@@ -287,8 +285,7 @@ void main() {
       final success = await notifier.submit();
 
       expect(success, isFalse);
-      final status =
-          container.read(addTransactionNotifierProvider).submissionStatus;
+      final status = container.read(addTransactionProvider).submissionStatus;
       expect(status.hasError, isTrue);
       expect(status.error, isA<ValidationException>());
       expect((status.error as ValidationException).code, 'CURRENCY_REQUIRED');
@@ -300,7 +297,7 @@ void main() {
         () async {
       buildContainer();
 
-      final notifier = container.read(addTransactionNotifierProvider.notifier);
+      final notifier = container.read(addTransactionProvider.notifier);
       notifier.updateAmount('150.00');
       notifier.updateAccount(testAccount.id);
       notifier.updateCategory(testCategory.id);
@@ -325,7 +322,7 @@ void main() {
       final success = await notifier.submit();
 
       expect(success, isTrue);
-      final finalState = container.read(addTransactionNotifierProvider);
+      final finalState = container.read(addTransactionProvider);
       expect(finalState.submissionStatus.isLoading, isFalse);
       expect(finalState.submissionStatus.hasError, isFalse);
 
@@ -342,7 +339,7 @@ void main() {
     test('submit sets error when usecase throws an exception', () async {
       buildContainer();
 
-      final notifier = container.read(addTransactionNotifierProvider.notifier);
+      final notifier = container.read(addTransactionProvider.notifier);
       notifier.updateAmount('10.00');
       notifier.updateAccount(testAccount.id);
       notifier.updateCategory(testCategory.id);
@@ -355,7 +352,7 @@ void main() {
       final success = await notifier.submit();
 
       expect(success, isFalse);
-      final finalState = container.read(addTransactionNotifierProvider);
+      final finalState = container.read(addTransactionProvider);
       expect(finalState.submissionStatus.hasError, isTrue);
       expect(finalState.submissionStatus.error, testException);
     });
@@ -365,7 +362,7 @@ void main() {
         () async {
       buildContainer();
 
-      final notifier = container.read(addTransactionNotifierProvider.notifier);
+      final notifier = container.read(addTransactionProvider.notifier);
       notifier.updateType(TransactionType.transfer);
       notifier.updateAmount('50.00');
       notifier.updateAccount(testAccount.id);
@@ -403,14 +400,14 @@ void main() {
         () async {
       buildContainer();
 
-      final notifier = container.read(addTransactionNotifierProvider.notifier);
+      final notifier = container.read(addTransactionProvider.notifier);
       notifier.updateAmount('not-a-number');
       notifier.updateAccount(testAccount.id);
 
       final success = await notifier.submit();
       expect(success, isFalse);
 
-      var state = container.read(addTransactionNotifierProvider);
+      var state = container.read(addTransactionProvider);
       expect(state.errors.containsKey('amount'), isTrue);
       expect(state.errors['amount'], 'INVALID_AMOUNT');
       expect(state.errors.containsKey('categoryId'), isTrue);
@@ -418,7 +415,7 @@ void main() {
 
       // Update amount -> should clear amount error
       notifier.updateAmount('12.50');
-      state = container.read(addTransactionNotifierProvider);
+      state = container.read(addTransactionProvider);
       expect(state.errors.containsKey('amount'), isFalse);
       expect(
         state.errors.containsKey('categoryId'),
@@ -427,7 +424,7 @@ void main() {
 
       // Update category -> should clear category error
       notifier.updateCategory(testCategory.id);
-      state = container.read(addTransactionNotifierProvider);
+      state = container.read(addTransactionProvider);
       expect(state.errors.containsKey('categoryId'), isFalse);
       expect(state.errors.isEmpty, isTrue);
     });
@@ -436,19 +433,19 @@ void main() {
         () async {
       buildContainer();
 
-      final notifier = container.read(addTransactionNotifierProvider.notifier);
+      final notifier = container.read(addTransactionProvider.notifier);
       notifier.updateAmount('not-a-number');
 
       final success = await notifier.submit();
       expect(success, isFalse);
 
-      var state = container.read(addTransactionNotifierProvider);
+      var state = container.read(addTransactionProvider);
       expect(state.errors.isNotEmpty, isTrue);
       expect(state.submissionStatus.hasError, isTrue);
 
       // Switch type to income
       notifier.updateType(TransactionType.income);
-      state = container.read(addTransactionNotifierProvider);
+      state = container.read(addTransactionProvider);
       expect(state.errors.isEmpty, isTrue);
       expect(state.submissionStatus.hasError, isFalse);
     });

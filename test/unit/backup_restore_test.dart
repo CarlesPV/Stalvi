@@ -1,9 +1,7 @@
 import 'dart:io';
-import 'dart:ffi';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
-import 'package:sqlite3/open.dart';
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
@@ -40,15 +38,14 @@ class FakePathProviderPlatform extends Fake
   Future<String?> getExternalStoragePath() async {
     return tempDir;
   }
+
+  @override
+  Future<String?> getTemporaryPath() async {
+    return tempDir;
+  }
 }
 
 void main() {
-  setUpAll(() {
-    open.overrideFor(OperatingSystem.linux, () {
-      return DynamicLibrary.open('libsqlite3.so.0');
-    });
-  });
-
   late Directory tempDir;
 
   setUp(() async {

@@ -1,9 +1,7 @@
-import 'dart:ffi';
 import 'package:drift/drift.dart' as drift;
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
-// ignore: depend_on_referenced_packages
-import 'package:sqlite3/open.dart';
+// ignore: depend_onreferenced_packages
 
 import 'package:stalvi/data/database/app_database.dart';
 import 'package:stalvi/data/database/daos/account_dao.dart';
@@ -57,12 +55,6 @@ Future<String> _insertAccount(
 // ─── Tests ────────────────────────────────────────────────────────────────────
 
 void main() {
-  setUpAll(() {
-    open.overrideFor(OperatingSystem.linux, () {
-      return DynamicLibrary.open('libsqlite3.so.0');
-    });
-  });
-
   late AppDatabase database;
   late AccountDao dao;
 

@@ -86,6 +86,7 @@ void main() {
           accountsListProvider.overrideWith((ref) => Stream.value(<Account>[])),
         ],
       );
+      addTearDown(container.dispose);
 
       // Act
       await tester.pumpWidget(buildTestApp(container: container));
@@ -133,6 +134,7 @@ void main() {
         container.read(authNotifierProvider).value,
         AuthStatus.authenticated,
       );
+      container.dispose();
     });
 
     testWidgets(
@@ -153,6 +155,7 @@ void main() {
           accountsListProvider.overrideWith((ref) => Stream.value(<Account>[])),
         ],
       );
+      addTearDown(container.dispose);
 
       // Act
       await tester.pumpWidget(buildTestApp(container: container));
@@ -193,6 +196,7 @@ void main() {
         container.read(authNotifierProvider).value,
         AuthStatus.authenticated,
       );
+      container.dispose();
     });
 
     testWidgets(
@@ -217,6 +221,7 @@ void main() {
           accountsListProvider.overrideWith((ref) => Stream.value(<Account>[])),
         ],
       );
+      addTearDown(container.dispose);
 
       // Act
       await tester.pumpWidget(buildTestApp(container: container));

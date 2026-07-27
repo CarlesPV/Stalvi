@@ -1,4 +1,13 @@
 class InputSanitizer {
+  /// Returns true if [input] contains emojis or prohibited special characters/code.
+  /// Standard letters (including accents/tildes: á, é, í, ó, ú, ñ, ç, etc.), numbers,
+  /// spaces, dots, hyphens, and underscores are permitted.
+  static bool containsEmoji(String input) {
+    if (input.isEmpty) return false;
+    final invalidRegex = RegExp(r'[^\p{L}\p{N}\s._\-]', unicode: true);
+    return invalidRegex.hasMatch(input);
+  }
+
   static String sanitizeToPlainText(String input) {
     if (input.isEmpty) return input;
 

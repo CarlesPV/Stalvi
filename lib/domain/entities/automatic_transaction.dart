@@ -115,7 +115,21 @@ class AutomaticTransaction {
         return _advanceByYears(fromDate, 1, fromDate.month, fromDate.day);
 
       case RecurrenceType.specificDayOfMonth:
-        return _advanceByMonths(fromDate, 1, recurrenceDays);
+        final lastDayThisMonth =
+            DateTime(fromDate.year, fromDate.month + 1, 0).day;
+        final targetDayThisMonth = recurrenceDays.clamp(1, lastDayThisMonth);
+        if (fromDate.day < targetDayThisMonth) {
+          return DateTime(
+            fromDate.year,
+            fromDate.month,
+            targetDayThisMonth,
+            fromDate.hour,
+            fromDate.minute,
+            fromDate.second,
+          );
+        } else {
+          return _advanceByMonths(fromDate, 1, recurrenceDays);
+        }
     }
   }
 

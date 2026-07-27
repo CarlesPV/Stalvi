@@ -346,6 +346,60 @@ void main() {
       verifyZeroInteractions(mockProfileRepository);
     });
 
+    test('should throw ValidationException when Name exceeds 25 characters',
+        () async {
+      // Arrange
+      const params = CreateProfileParams(
+        name: 'ThisIsAVeryLongNameThatExceeds25Chars',
+        username: 'carlespv',
+        pin: '1234',
+        defaultCurrency: 'EUR',
+        locale: 'es',
+        acceptedTerms: true,
+      );
+
+      // Act & Assert
+      expect(
+        () => usecase.execute(params),
+        throwsA(
+          isA<ValidationException>().having(
+            (e) => e.message,
+            'message',
+            contains('Name cannot exceed 25 characters'),
+          ),
+        ),
+      );
+      verifyZeroInteractions(mockSecureStorageManager);
+      verifyZeroInteractions(mockProfileRepository);
+    });
+
+    test('should throw ValidationException when Name contains emojis',
+        () async {
+      // Arrange
+      const params = CreateProfileParams(
+        name: 'Carles 😀',
+        username: 'carlespv',
+        pin: '1234',
+        defaultCurrency: 'EUR',
+        locale: 'es',
+        acceptedTerms: true,
+      );
+
+      // Act & Assert
+      expect(
+        () => usecase.execute(params),
+        throwsA(
+          isA<ValidationException>().having(
+            (e) => e.message,
+            'message',
+            contains('Name cannot contain emojis'),
+          ),
+        ),
+      );
+      verifyZeroInteractions(mockSecureStorageManager);
+      verifyZeroInteractions(mockProfileRepository);
+    });
+
     test('should throw ValidationException when Username is empty', () async {
       // Arrange
       const params = CreateProfileParams(
@@ -365,6 +419,60 @@ void main() {
             (e) => e.message,
             'message',
             contains('Username cannot be empty'),
+          ),
+        ),
+      );
+      verifyZeroInteractions(mockSecureStorageManager);
+      verifyZeroInteractions(mockProfileRepository);
+    });
+
+    test('should throw ValidationException when Username exceeds 25 characters',
+        () async {
+      // Arrange
+      const params = CreateProfileParams(
+        name: 'Carles',
+        username: 'ThisIsAVeryLongUsernameThatExceeds25Chars',
+        pin: '1234',
+        defaultCurrency: 'EUR',
+        locale: 'es',
+        acceptedTerms: true,
+      );
+
+      // Act & Assert
+      expect(
+        () => usecase.execute(params),
+        throwsA(
+          isA<ValidationException>().having(
+            (e) => e.message,
+            'message',
+            contains('Username cannot exceed 25 characters'),
+          ),
+        ),
+      );
+      verifyZeroInteractions(mockSecureStorageManager);
+      verifyZeroInteractions(mockProfileRepository);
+    });
+
+    test('should throw ValidationException when Username contains emojis',
+        () async {
+      // Arrange
+      const params = CreateProfileParams(
+        name: 'Carles',
+        username: 'carlespv🚀',
+        pin: '1234',
+        defaultCurrency: 'EUR',
+        locale: 'es',
+        acceptedTerms: true,
+      );
+
+      // Act & Assert
+      expect(
+        () => usecase.execute(params),
+        throwsA(
+          isA<ValidationException>().having(
+            (e) => e.message,
+            'message',
+            contains('Username cannot contain emojis'),
           ),
         ),
       );

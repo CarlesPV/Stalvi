@@ -15,6 +15,9 @@ import 'package:stalvi/domain/repositories/i_transaction_repository.dart';
 import 'package:stalvi/domain/repositories/i_savings_goal_repository.dart';
 import 'package:stalvi/domain/usecases/add_transaction_usecase.dart';
 import 'package:stalvi/domain/usecases/update_budget_progress_usecase.dart';
+import 'package:stalvi/domain/services/financial_threshold_service.dart';
+import 'package:stalvi/domain/repositories/i_settings_repository.dart';
+import 'package:stalvi/infrastructure/services/notification_service.dart';
 
 // ---------------------------------------------------------------------------
 // Mocks & Fakes
@@ -35,6 +38,13 @@ class MockSavingsGoalRepository extends Mock
 
 class MockUpdateBudgetProgressUseCase extends Mock
     implements UpdateBudgetProgressUseCase {}
+
+class MockFinancialThresholdService extends Mock
+    implements IFinancialThresholdService {}
+
+class MockNotificationService extends Mock implements NotificationService {}
+
+class MockSettingsRepository extends Mock implements ISettingsRepository {}
 
 class FakeTransaction extends Fake implements Transaction {}
 
@@ -153,6 +163,7 @@ void main() {
   late MockExchangeRateRepository mockExchangeRateRepo;
   late MockSavingsGoalRepository mockSavingsGoalRepo;
   late MockUpdateBudgetProgressUseCase mockUpdateBudgetProgressUseCase;
+  late MockFinancialThresholdService mockFinancialThresholdService;
 
   setUpAll(() {
     registerFallbackValue(FakeTransaction());
@@ -166,6 +177,10 @@ void main() {
     mockExchangeRateRepo = MockExchangeRateRepository();
     mockSavingsGoalRepo = MockSavingsGoalRepository();
     mockUpdateBudgetProgressUseCase = MockUpdateBudgetProgressUseCase();
+    mockFinancialThresholdService = MockFinancialThresholdService();
+
+    when(() => mockFinancialThresholdService.evaluateThresholds(any()))
+        .thenAnswer((_) async => []);
 
     when(
       () => mockExchangeRateRepo.getLocalRates(
@@ -180,6 +195,7 @@ void main() {
       mockExchangeRateRepo,
       mockSavingsGoalRepo,
       mockUpdateBudgetProgressUseCase,
+      mockFinancialThresholdService,
     );
   });
 
@@ -696,6 +712,111 @@ void main() {
                 .having((e) => e.code, 'code', 'RATE_NOT_FOUND'),
           ),
         );
+      });
+    });
+
+    group('threshold push notifications', () {
+      late MockNotificationService mockNotificationService;
+      late MockSettingsRepository mockSettingsRepo;
+      late AddTransactionUseCase usecaseWithNotifications;
+
+      setUp(() {
+        mockNotificationService = MockNotificationService();
+        mockSettingsRepo = MockSettingsRepository();
+
+        when(() => mockSettingsRepo.getNotificationsEnabled())
+            .thenAnswer((_) async => true);
+        when(
+          () => mockNotificationService.showBudgetExceededNotification(
+            languageCode: any(named: 'languageCode'),
+          ),
+        ).thenAnswer((_) async {});
+        when(
+          () => mockNotificationService.showGoalReachedNotification(
+            languageCode: any(named: 'languageCode'),
+          ),
+        ).thenAnswer((_) async {});
+
+        usecaseWithNotifications = AddTransactionUseCase(
+          mockTransactionRepo,
+          mockAccountRepo,
+          mockProfileRepo,
+          mockExchangeRateRepo,
+          mockSavingsGoalRepo,
+          mockUpdateBudgetProgressUseCase,
+          mockFinancialThresholdService,
+          mockNotificationService,
+          mockSettingsRepo,
+        );
+      });
+
+      test(
+          'triggers showBudgetExceededNotification when budget threshold is exceeded',
+          () async {
+        final params = _incomeParams();
+        final account = _buildAccount();
+        final profile = _buildProfile();
+
+        when(() => mockAccountRepo.getAccountById(params.accountId))
+            .thenAnswer((_) async => account);
+        when(() => mockProfileRepo.getProfileById(account.userId))
+            .thenAnswer((_) async => profile);
+        when(
+          () => mockUpdateBudgetProgressUseCase.execute(
+            transaction: any(named: 'transaction'),
+          ),
+        ).thenAnswer((_) async {});
+        when(() => mockTransactionRepo.createTransaction(any())).thenAnswer(
+          (inv) async => inv.positionalArguments[0] as Transaction,
+        );
+        when(() => mockFinancialThresholdService.evaluateThresholds(any()))
+            .thenAnswer(
+          (_) async => [
+            ThresholdResult(isBudgetExceeded: true),
+          ],
+        );
+
+        await usecaseWithNotifications.execute(params);
+
+        verify(
+          () => mockNotificationService.showBudgetExceededNotification(
+            languageCode: any(named: 'languageCode'),
+          ),
+        ).called(1);
+      });
+
+      test('triggers showGoalReachedNotification when savings goal is reached',
+          () async {
+        final params = _incomeParams();
+        final account = _buildAccount();
+        final profile = _buildProfile();
+
+        when(() => mockAccountRepo.getAccountById(params.accountId))
+            .thenAnswer((_) async => account);
+        when(() => mockProfileRepo.getProfileById(account.userId))
+            .thenAnswer((_) async => profile);
+        when(
+          () => mockUpdateBudgetProgressUseCase.execute(
+            transaction: any(named: 'transaction'),
+          ),
+        ).thenAnswer((_) async {});
+        when(() => mockTransactionRepo.createTransaction(any())).thenAnswer(
+          (inv) async => inv.positionalArguments[0] as Transaction,
+        );
+        when(() => mockFinancialThresholdService.evaluateThresholds(any()))
+            .thenAnswer(
+          (_) async => [
+            ThresholdResult(isSavingsGoalReached: true),
+          ],
+        );
+
+        await usecaseWithNotifications.execute(params);
+
+        verify(
+          () => mockNotificationService.showGoalReachedNotification(
+            languageCode: any(named: 'languageCode'),
+          ),
+        ).called(1);
       });
     });
   });

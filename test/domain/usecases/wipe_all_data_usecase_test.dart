@@ -1,12 +1,10 @@
 import 'dart:io';
-import 'dart:ffi';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 import 'package:drift/native.dart';
-// ignore: depend_on_referenced_packages
-import 'package:sqlite3/open.dart';
+// ignore: depend_onreferenced_packages
 
 import 'package:stalvi/core/security/secure_storage_manager.dart';
 import 'package:stalvi/data/database/app_database.dart';
@@ -34,12 +32,6 @@ class FakePathProviderPlatform extends Fake
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-
-  setUpAll(() {
-    open.overrideFor(OperatingSystem.linux, () {
-      return DynamicLibrary.open('libsqlite3.so.0');
-    });
-  });
 
   late WipeAllDataUseCase useCase;
   late MockSecureStorageManager mockSecureStorageManager;

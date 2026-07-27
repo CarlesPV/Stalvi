@@ -3,8 +3,10 @@ name: Security Audit
 on:
   schedule:
     - cron: '0 0 * * 0' # Execute every Sunday at midnight
+  push:
+    branches: [ "main", "develop" ]
   pull_request:
-    branches: [ main ]
+    branches: [ "main", "develop" ]
 
 jobs:
   security-scans:
@@ -19,11 +21,6 @@ jobs:
           channel: 'stable'
           cache: true
           
-      - name: Generate dummy .env file for security scan
-        run: |
-          echo "DB_ENCRYPTION_KEY=ci_dummy_encryption_key_12345" >> .env
-          echo "EXCHANGE_RATE_API_KEY=ci_dummy_api_key_12345" >> .env
-
       - name: Get dependencies
         run: flutter pub get
 
@@ -40,9 +37,6 @@ jobs:
       # 2. Advanced Static Analysis (Linter configuration covers most security practices)
       - name: Run Flutter Analyze
         run: flutter analyze
-          
-      - name: Remove dummy .env file for Trivy scan
-        run: rm -f .env
           
       # 3. Trivy: file system and container scanner (looks for exposed secrets, etc.)
       - name: Run Trivy Vulnerability Scanner

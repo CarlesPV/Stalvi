@@ -1,7 +1,6 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:stalvi/core/utils/navigator_key.dart';
-import '../features/splash/splash_screen.dart';
 import 'package:stalvi/data/repositories/account_repository.dart';
 import 'package:stalvi/data/repositories/category_repository.dart';
 import 'package:stalvi/data/repositories/tag_repository.dart';
@@ -38,6 +37,8 @@ import 'package:stalvi/domain/repositories/i_savings_goal_repository.dart';
 import 'package:stalvi/domain/repositories/i_trash_repository.dart';
 import 'package:stalvi/domain/repositories/i_export_service.dart';
 import 'package:stalvi/domain/repositories/i_import_service.dart';
+import 'package:stalvi/domain/repositories/i_settings_repository.dart';
+import 'package:stalvi/infrastructure/repositories/settings_repository.dart';
 import 'package:stalvi/domain/usecases/add_transaction_usecase.dart';
 import 'package:stalvi/domain/usecases/create_profile_usecase.dart';
 import 'package:stalvi/domain/usecases/initialize_default_data_usecase.dart';
@@ -56,9 +57,18 @@ import 'package:stalvi/domain/usecases/import_encrypted_json_use_case.dart';
 import 'package:stalvi/domain/usecases/export_transactions_csv_use_case.dart';
 import 'package:stalvi/domain/usecases/export_monthly_pdf_use_case.dart';
 import 'package:stalvi/core/l10n/app_localizations.dart';
+import 'package:stalvi/domain/services/background_sync_service.dart';
+import 'package:stalvi/domain/services/financial_threshold_service.dart';
+import 'package:stalvi/infrastructure/background_execution_service.dart';
+import 'package:stalvi/infrastructure/services/notification_service.dart';
 import 'app_startup_provider.dart';
 import 'locale_provider.dart';
 import 'statistics_providers.dart';
+
+/// Provides the [BackgroundSyncService] implementation.
+final backgroundSyncServiceProvider = Provider<BackgroundSyncService>((ref) {
+  return BackgroundExecutionService();
+});
 
 /// Provides the [IProfileRepository] implementation.
 /// Requires the database to be initialized, using [appDatabaseProvider.requireValue].
@@ -130,6 +140,11 @@ final exchangeRateRepositoryProvider = Provider<IExchangeRateRepository>((ref) {
   );
 });
 
+/// Provides the [ISettingsRepository] implementation.
+final settingsRepositoryProvider = Provider<ISettingsRepository>((ref) {
+  return SettingsRepository();
+});
+
 /// Provides the [UpdateBudgetProgressUseCase] instance.
 final updateBudgetProgressUseCaseProvider =
     Provider<UpdateBudgetProgressUseCase>((ref) {
@@ -142,6 +157,18 @@ final updateBudgetProgressUseCaseProvider =
     transactionRepo,
     accountRepo,
     exchangeRateRepo,
+  );
+});
+
+/// Provides the [IFinancialThresholdService] implementation.
+final financialThresholdServiceProvider =
+    Provider<IFinancialThresholdService>((ref) {
+  return FinancialThresholdService(
+    ref.watch(budgetRepositoryProvider),
+    ref.watch(savingsGoalRepositoryProvider),
+    ref.watch(transactionRepositoryProvider),
+    ref.watch(accountRepositoryProvider),
+    ref.watch(exchangeRateRepositoryProvider),
   );
 });
 
@@ -158,6 +185,9 @@ final addTransactionUseCaseProvider = Provider<AddTransactionUseCase>((ref) {
     exchangeRateRepo,
     ref.watch(savingsGoalRepositoryProvider),
     ref.watch(updateBudgetProgressUseCaseProvider),
+    ref.watch(financialThresholdServiceProvider),
+    ref.watch(notificationServiceProvider),
+    ref.watch(settingsRepositoryProvider),
   );
 });
 
@@ -318,16 +348,40 @@ final accountBalanceProvider =
   double balance = account.initialBalance;
   for (final tx in transactions) {
     if (tx.accountId == accountId) {
+      double effectiveAmount = tx.amount / 100.0;
+
+      // Apply currency conversion if necessary using the snapshot
+      if (tx.originalCurrency != account.currency &&
+          tx.exchangeRateSnapshot != null) {
+        try {
+          final rates =
+              jsonDecode(tx.exchangeRateSnapshot!) as Map<String, dynamic>;
+          final double? rateOriginal =
+              (rates[tx.originalCurrency] as num?)?.toDouble();
+          final double? rateAccount =
+              (rates[account.currency] as num?)?.toDouble();
+
+          if (rateOriginal != null &&
+              rateAccount != null &&
+              rateOriginal != 0) {
+            // Convert from original currency to base currency, then to account currency
+            effectiveAmount = (effectiveAmount / rateOriginal) * rateAccount;
+          }
+        } catch (_) {
+          // Fallback to unconverted amount if parsing fails
+        }
+      }
+
       if (tx.type == TransactionType.income) {
-        balance += tx.amount / 100.0;
+        balance += effectiveAmount;
       } else if (tx.type == TransactionType.expense) {
-        balance -= tx.amount / 100.0;
+        balance -= effectiveAmount;
       } else if (tx.type == TransactionType.transfer) {
         bool isOrigin = !tx.id.endsWith('_dst');
         if (isOrigin) {
-          balance -= tx.amount / 100.0;
+          balance -= effectiveAmount;
         } else {
-          balance += tx.amount / 100.0;
+          balance += effectiveAmount;
         }
       }
     }
@@ -385,27 +439,9 @@ final importServiceProvider = Provider<IImportService>((ref) {
     database: db,
     exportService: exportService,
     onImportSuccess: () {
-      // 1. Invalidate Riverpod providers (all data-related ones)
-      ref.invalidate(appDatabaseProvider);
-      ref.invalidate(appStartupProvider);
-      ref.invalidate(defaultProfileProvider);
-      ref.invalidate(accountsListProvider);
-      ref.invalidate(categoriesListProvider);
-      ref.invalidate(budgetsStreamProvider);
-      ref.invalidate(savingsGoalsStreamProvider);
-      ref.invalidate(transactionsStreamProvider);
-      ref.invalidate(rawTransactionsStreamProvider);
-      ref.invalidate(tagsListProvider);
-
-      // 2. Clear background memory (image/drawing cache)
+      // Clear background memory cache before process exit / restart.
       PaintingBinding.instance.imageCache.clear();
       PaintingBinding.instance.imageCache.clearLiveImages();
-
-      // 3. Restart/redirect to Splash
-      navigatorKey.currentState?.pushAndRemoveUntil(
-        MaterialPageRoute(builder: (_) => const SplashScreen()),
-        (_) => false,
-      );
     },
   );
 });

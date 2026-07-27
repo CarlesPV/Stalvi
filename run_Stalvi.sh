@@ -21,12 +21,12 @@ fi
 
 if [ "$BUILD" = true ] || [ "$CLEAN" = true ]; then
   echo "⚙️ Generando código con build_runner..."
-  dart run build_runner build --delete-conflicting-outputs
+  dart run build_runner build
 fi
 
 echo "✨ Formateando y analizando..."
 dart format .
-flutter analyze --no-fatal-warnings --no-fatal-infos
+flutter analyze --fatal-warnings --fatal-infos
 
 echo "🚀 Lanzando en el dispositivo..."
 flutter run -d 25ba202f

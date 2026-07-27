@@ -22,6 +22,8 @@ extension TransactionMapper on Transaction {
       modifiedAt: modifiedAt,
       isDeleted: false,
       transferId: transferId,
+      parentRecurringId: parentRecurringId,
+      expectedExecutionDate: expectedExecutionDate,
     );
   }
 
@@ -55,6 +57,8 @@ extension DbTransactionMapper on db.Transaction {
       createdAt: createdAt,
       modifiedAt: modifiedAt,
       transferId: transferId,
+      parentRecurringId: parentRecurringId,
+      expectedExecutionDate: expectedExecutionDate,
     );
   }
 

@@ -3,10 +3,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:stalvi/infrastructure/services/biometric_auth_service.dart';
 import 'package:stalvi/core/security/secure_storage_manager.dart';
 import 'package:local_auth/local_auth.dart';
-// ignore: depend_on_referenced_packages
+
 import 'package:local_auth_platform_interface/local_auth_platform_interface.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:local_auth/error_codes.dart' as auth_error;
 
 class MockLocalAuthentication extends Mock implements LocalAuthentication {}
 
@@ -86,8 +85,9 @@ void main() {
       when(
         () => mockLocalAuth.authenticate(
           localizedReason: any(named: 'localizedReason'),
-          options: any(named: 'options'),
           authMessages: any(named: 'authMessages'),
+          biometricOnly: any(named: 'biometricOnly'),
+          persistAcrossBackgrounding: any(named: 'persistAcrossBackgrounding'),
         ),
       ).thenAnswer((_) async => true);
 
@@ -104,8 +104,9 @@ void main() {
       when(
         () => mockLocalAuth.authenticate(
           localizedReason: any(named: 'localizedReason'),
-          options: any(named: 'options'),
           authMessages: any(named: 'authMessages'),
+          biometricOnly: any(named: 'biometricOnly'),
+          persistAcrossBackgrounding: any(named: 'persistAcrossBackgrounding'),
         ),
       ).thenAnswer((_) async => false);
 
@@ -122,12 +123,13 @@ void main() {
       when(
         () => mockLocalAuth.authenticate(
           localizedReason: any(named: 'localizedReason'),
-          options: any(named: 'options'),
           authMessages: any(named: 'authMessages'),
+          biometricOnly: any(named: 'biometricOnly'),
+          persistAcrossBackgrounding: any(named: 'persistAcrossBackgrounding'),
         ),
       ).thenThrow(
         PlatformException(
-          code: auth_error.lockedOut,
+          code: 'LockedOut',
           message: 'Locked out',
         ),
       );
@@ -147,8 +149,9 @@ void main() {
       when(
         () => mockLocalAuth.authenticate(
           localizedReason: any(named: 'localizedReason'),
-          options: any(named: 'options'),
           authMessages: any(named: 'authMessages'),
+          biometricOnly: any(named: 'biometricOnly'),
+          persistAcrossBackgrounding: any(named: 'persistAcrossBackgrounding'),
         ),
       ).thenThrow(PlatformException(code: 'other', message: 'Other error'));
 
@@ -167,8 +170,9 @@ void main() {
       when(
         () => mockLocalAuth.authenticate(
           localizedReason: any(named: 'localizedReason'),
-          options: any(named: 'options'),
           authMessages: any(named: 'authMessages'),
+          biometricOnly: any(named: 'biometricOnly'),
+          persistAcrossBackgrounding: any(named: 'persistAcrossBackgrounding'),
         ),
       ).thenThrow(Exception('General error'));
 

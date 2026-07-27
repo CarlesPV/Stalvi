@@ -47,6 +47,26 @@ class TransactionRepository implements ITransactionRepository {
     }
   }
 
+  @override
+  Future<void> createTransactions(List<domain.Transaction> transactions) async {
+    if (transactions.isEmpty) return;
+    try {
+      await _db.batch((batch) {
+        batch.insertAll(
+          _db.transactions,
+          transactions.map((t) => t.toDb()).toList(),
+          mode: InsertMode.insertOrIgnore,
+        );
+      });
+    } catch (e) {
+      throw DatabaseException(
+        message: 'Failed to create transactions in batch',
+        code: 'TRANSACTION_BATCH_INSERT_FAILED',
+        details: e,
+      );
+    }
+  }
+
   // ── Transfer pair ─────────────────────────────────────────────────────────
 
   /// Atomically inserts both legs of a transfer and adjusts both account

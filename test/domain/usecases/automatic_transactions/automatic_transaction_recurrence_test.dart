@@ -210,6 +210,19 @@ void main() {
 
     // ── specificDayOfMonth ────────────────────────────────────────────────────
     group('specificDayOfMonth', () {
+      test('targets the specific day in the current month if not yet passed',
+          () {
+        final txn = _buildAutoTxn(
+          recurrenceType: RecurrenceType.specificDayOfMonth,
+          recurrenceDays: 15,
+        );
+        final from = DateTime(2026, 1, 5);
+        final next = txn.calculateNextExecutionDate(from);
+        expect(next.year, 2026);
+        expect(next.month, 1);
+        expect(next.day, 15);
+      });
+
       test('advances to the target day in the next calendar month', () {
         final txn = _buildAutoTxn(
           recurrenceType: RecurrenceType.specificDayOfMonth,

@@ -3,6 +3,10 @@ import '../repositories/i_account_repository.dart';
 import '../repositories/i_budget_repository.dart';
 import '../repositories/i_automatic_transaction_repository.dart';
 
+/// Use case responsible for deleting an account.
+///
+/// Ensures the account is not linked to active automatic transactions and that
+/// default account constraints are respected.
 class DeleteAccountUseCase {
   final IAccountRepository _accountRepository;
   final IBudgetRepository _budgetRepository;

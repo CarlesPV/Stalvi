@@ -15,9 +15,10 @@ This document tracks known issues in the Stalvi application that require resolut
 * **Symptom:** The application crashes at launch with `failed to load dynamic library libsqlite3.so` on Android.
 * **Resolution:** Replaced `NativeDatabase.createInBackground` with the standard `NativeDatabase` constructor. This ensures that the FFI dynamic library overrides configured via `open.overrideFor` on the main thread are properly applied when opening the SQLCipher database, rather than being lost across an isolate boundary.
 
-### 3. Recurring Transaction End-of-Month Recurrence Logic Edge Cases
-* **Symptom:** The automatic/recurring transaction generation engine failed to handle months with fewer days correctly when scheduling transactions on specific days of the month (e.g. 30th or 31st), resulting in potential execution delays or errors during short months.
-* **Resolution:** Refactored execution date calculation to apply safe end-of-month clamping logic (e.g. executing a transaction scheduled for the 31st on February 28th/29th or April 30th) and subsequently restoring to the target day on future longer months.
+### 4. Application Exit Freeze During "Wipe All Data"
+* **Symptom:** When wiping all application data from the settings screen on a physical device, the application cleared all data successfully but failed to exit/close, remaining stuck on the settings screen.
+* **Resolution:** Identified that calling `_appDatabase.close()` while active Riverpod UI stream listeners were attached caused `close()` to hang indefinitely. Added a 500ms timeout to `close()` in `WipeAllDataUseCase` to prevent deadlocking, and delegated process termination (`SystemNavigator.pop()` and `exit(0)`) to the UI layer after data purge completion.
+
 
 
 

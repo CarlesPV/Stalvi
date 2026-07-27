@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:flutter/services.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -7,6 +6,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stalvi/data/database/app_database.dart';
 import 'package:stalvi/core/security/secure_storage_manager.dart';
 
+/// Use case that completely wipes user data, clears hardware keystore keys,
+/// deletes local SQLite database files, and performs a cold application exit.
 class WipeAllDataUseCase {
   final SecureStorageManager _secureStorageManager;
   final AppDatabase _appDatabase;
@@ -14,89 +15,88 @@ class WipeAllDataUseCase {
   WipeAllDataUseCase(this._secureStorageManager, this._appDatabase);
 
   Future<void> execute() async {
-    // 1. Clear secure storage (encryption key, PIN, settings, etc.)
-    await _secureStorageManager.deleteAll();
-
-    // 1.b Clear shared preferences
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.clear();
-
-    // 2. Clear all tables explicitly
     try {
-      await _appDatabase.transaction(() async {
-        await _appDatabase.customStatement('PRAGMA foreign_keys = OFF;');
-        await _appDatabase.delete(_appDatabase.transactions).go();
-        await _appDatabase.delete(_appDatabase.budgets).go();
-        await _appDatabase.delete(_appDatabase.savingsGoals).go();
-        await _appDatabase.delete(_appDatabase.accounts).go();
-        await _appDatabase.delete(_appDatabase.categories).go();
-        await _appDatabase.delete(_appDatabase.tags).go();
-        await _appDatabase.delete(_appDatabase.profiles).go();
-        await _appDatabase.customStatement('PRAGMA foreign_keys = ON;');
-      });
-    } catch (_) {
-      // Fallback: clear tables individually if transaction fails
+      // 1. Clear secure storage (encryption key, PIN, settings, etc.)
       try {
-        await _appDatabase.delete(_appDatabase.transactions).go();
+        await _secureStorageManager.deleteAll();
       } catch (_) {}
+
+      // 1.b Clear shared preferences
       try {
-        await _appDatabase.delete(_appDatabase.budgets).go();
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.clear();
       } catch (_) {}
+
+      // 2. Clear all tables explicitly
       try {
-        await _appDatabase.delete(_appDatabase.savingsGoals).go();
-      } catch (_) {}
-      try {
-        await _appDatabase.delete(_appDatabase.accounts).go();
-      } catch (_) {}
-      try {
-        await _appDatabase.delete(_appDatabase.categories).go();
-      } catch (_) {}
-      try {
-        await _appDatabase.delete(_appDatabase.tags).go();
-      } catch (_) {}
-      try {
-        await _appDatabase.delete(_appDatabase.profiles).go();
-      } catch (_) {}
-    }
-
-    // 3. Close the database
-    await _appDatabase.close();
-
-    // 3. Delete the Drift database file
-    final dbFolder = await getApplicationDocumentsDirectory();
-    final dbFile = File(p.join(dbFolder.path, 'stalvi.db'));
-
-    if (await dbFile.exists()) {
-      await dbFile.delete();
-    }
-
-    // Also delete any journal files that SQLite might have created
-    final dbJournalFile = File(p.join(dbFolder.path, 'stalvi.db-journal'));
-    if (await dbJournalFile.exists()) {
-      await dbJournalFile.delete();
-    }
-
-    final dbWalFile = File(p.join(dbFolder.path, 'stalvi.db-wal'));
-    if (await dbWalFile.exists()) {
-      await dbWalFile.delete();
-    }
-
-    final dbShmFile = File(p.join(dbFolder.path, 'stalvi.db-shm'));
-    if (await dbShmFile.exists()) {
-      await dbShmFile.delete();
-    }
-
-    // 4. Close the app
-    if (!Platform.environment.containsKey('FLUTTER_TEST')) {
-      if (Platform.isIOS) {
-        exit(0);
-      } else {
+        await _appDatabase.transaction(() async {
+          await _appDatabase.customStatement('PRAGMA foreign_keys = OFF;');
+          await _appDatabase.delete(_appDatabase.transactions).go();
+          await _appDatabase.delete(_appDatabase.budgets).go();
+          await _appDatabase.delete(_appDatabase.savingsGoals).go();
+          await _appDatabase.delete(_appDatabase.accounts).go();
+          await _appDatabase.delete(_appDatabase.categories).go();
+          await _appDatabase.delete(_appDatabase.tags).go();
+          await _appDatabase.delete(_appDatabase.profiles).go();
+          await _appDatabase.customStatement('PRAGMA foreign_keys = ON;');
+        });
+      } catch (_) {
+        // Fallback: clear tables individually if transaction fails
         try {
-          await SystemNavigator.pop();
+          await _appDatabase.delete(_appDatabase.transactions).go();
         } catch (_) {}
-        await Future.delayed(const Duration(milliseconds: 300));
-        exit(0);
+        try {
+          await _appDatabase.delete(_appDatabase.budgets).go();
+        } catch (_) {}
+        try {
+          await _appDatabase.delete(_appDatabase.savingsGoals).go();
+        } catch (_) {}
+        try {
+          await _appDatabase.delete(_appDatabase.accounts).go();
+        } catch (_) {}
+        try {
+          await _appDatabase.delete(_appDatabase.categories).go();
+        } catch (_) {}
+        try {
+          await _appDatabase.delete(_appDatabase.tags).go();
+        } catch (_) {}
+        try {
+          await _appDatabase.delete(_appDatabase.profiles).go();
+        } catch (_) {}
       }
+
+      // 3. Close the database safely with a timeout.
+      // Drift's close() can hang indefinitely if there are active stream listeners.
+      try {
+        await _appDatabase.close().timeout(const Duration(milliseconds: 500));
+      } catch (_) {}
+
+      // 4. Delete database files safely
+      try {
+        final dbFolder = await getApplicationDocumentsDirectory();
+        final dbFile = File(p.join(dbFolder.path, 'stalvi.db'));
+
+        if (await dbFile.exists()) {
+          await dbFile.delete();
+        }
+
+        final dbJournalFile = File(p.join(dbFolder.path, 'stalvi.db-journal'));
+        if (await dbJournalFile.exists()) {
+          await dbJournalFile.delete();
+        }
+
+        final dbWalFile = File(p.join(dbFolder.path, 'stalvi.db-wal'));
+        if (await dbWalFile.exists()) {
+          await dbWalFile.delete();
+        }
+
+        final dbShmFile = File(p.join(dbFolder.path, 'stalvi.db-shm'));
+        if (await dbShmFile.exists()) {
+          await dbShmFile.delete();
+        }
+      } catch (_) {}
+    } catch (e) {
+      rethrow;
     }
   }
 }

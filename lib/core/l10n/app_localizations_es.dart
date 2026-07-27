@@ -718,9 +718,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String get pdfSavingsColName => 'Nombre';
 
   @override
-  String get pdfSavingsColTarget => 'Cantidad Objetivo';
-
-  @override
   String get pdfSavingsGoalsTitle => 'Metas de Ahorro';
 
   @override
@@ -972,7 +969,21 @@ class AppLocalizationsEs extends AppLocalizations {
   String get settingsLanguage => 'Idioma';
 
   @override
-  String get settingsThemeMode => 'Modo de tema';
+  String get settingsNotifications => 'Notificaciones Push';
+
+  @override
+  String get notificationsPermanentlyDeniedTitle =>
+      'Notificaciones Desactivadas';
+
+  @override
+  String get notificationsPermanentlyDeniedBody =>
+      'Has denegado permanentemente los permisos de notificación. Por favor, actívalos en los ajustes del sistema para recibir alertas.';
+
+  @override
+  String get btnOpenSettings => 'Abrir Ajustes';
+
+  @override
+  String get settingsThemeMode => 'Modo de Tema';
 
   @override
   String get themeModeDark => 'Oscuro';
@@ -996,6 +1007,14 @@ class AppLocalizationsEs extends AppLocalizations {
   String get authSetupValidationErrorName => 'Por favor, introduzca un nombre.';
 
   @override
+  String get authSetupValidationErrorNameEmoji =>
+      'El nombre no puede contener emoticonos ni caracteres especiales.';
+
+  @override
+  String get authSetupValidationErrorNameLength =>
+      'El nombre no puede superar los 25 caracteres.';
+
+  @override
   String get authSetupValidationErrorPinLength =>
       'El PIN debe tener entre 4 y 8 dígitos.';
 
@@ -1009,6 +1028,14 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get authSetupValidationErrorUsername =>
       'Por favor, introduzca un nombre de usuario.';
+
+  @override
+  String get authSetupValidationErrorUsernameEmoji =>
+      'El nombre de usuario no puede contener emoticonos ni caracteres especiales.';
+
+  @override
+  String get authSetupValidationErrorUsernameLength =>
+      'El nombre de usuario no puede superar los 25 caracteres.';
 
   @override
   String get autoTxErrorInvalidDayOfMonth =>
@@ -1136,4 +1163,13 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get unexpectedError =>
       'Ocurrió un error inesperado. Por favor, inténtelo de nuevo.';
+
+  @override
+  String get hintAmountZero => '0.00';
+
+  @override
+  String get errorCouldNotLaunchUrl => 'No se pudo abrir el enlace';
+
+  @override
+  String get errorLoadingContent => 'Error al cargar el contenido.';
 }

@@ -1,4 +1,6 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:open_filex/open_filex.dart';
@@ -7,7 +9,6 @@ import 'package:stalvi/infrastructure/services/biometric_auth_service.dart';
 import 'package:stalvi/domain/usecases/pdf_export_date_range.dart';
 import 'profile_settings_controller.dart';
 import 'pin_verification_sheet.dart';
-import '../splash/splash_screen.dart';
 
 class DataManagementScreen extends ConsumerStatefulWidget {
   const DataManagementScreen({super.key});
@@ -275,6 +276,8 @@ class _DataManagementScreenState extends ConsumerState<DataManagementScreen> {
           .read(profileSettingsControllerProvider.notifier)
           .exportEncryptedBackup(password: password);
       if (!context.mounted) return;
+
+      if (!context.mounted) return;
       _showExportSuccess(context, result.filePath, l10n.exportSuccess);
     } catch (e) {
       if (context.mounted) {
@@ -330,11 +333,11 @@ class _DataManagementScreenState extends ConsumerState<DataManagementScreen> {
 
     if (confirmed != true || !context.mounted) return;
 
-    final pickerResult = await FilePicker.platform
+    final pickerResult = await FilePickerPlatform.instance
         .pickFiles(type: FileType.any, allowMultiple: false, withData: true);
     if (pickerResult == null || pickerResult.files.isEmpty) return;
-    final fileBytes = pickerResult.files.first.bytes;
-    if (fileBytes == null || !context.mounted) return;
+    final fileBytes = await pickerResult.files.first.readAsBytes();
+    if (!context.mounted) return;
 
     final password = await _askImportPassword(context);
     if (password == null || password.isEmpty || !context.mounted) return;
@@ -343,13 +346,17 @@ class _DataManagementScreenState extends ConsumerState<DataManagementScreen> {
       await ref
           .read(profileSettingsControllerProvider.notifier)
           .importEncryptedBackup(fileBytes, password: password);
-      if (!context.mounted) return;
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(l10n.importSuccess)));
-      Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (_) => const SplashScreen()),
-        (_) => false,
-      );
+
+      // Completely close/exit the app process for a clean restart.
+      if (Platform.isIOS) {
+        exit(0);
+      } else {
+        try {
+          await SystemNavigator.pop();
+        } catch (_) {}
+        await Future.delayed(const Duration(milliseconds: 300));
+        exit(0);
+      }
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -368,6 +375,8 @@ class _DataManagementScreenState extends ConsumerState<DataManagementScreen> {
       final result = await ref
           .read(profileSettingsControllerProvider.notifier)
           .exportTransactionsCsv();
+      if (!context.mounted) return;
+
       if (!context.mounted) return;
       _showExportSuccess(
         context,
@@ -423,6 +432,8 @@ class _DataManagementScreenState extends ConsumerState<DataManagementScreen> {
                 ? l10n.pdfExportLast30Days
                 : null,
           );
+      if (!context.mounted) return;
+
       if (!context.mounted) return;
       _showExportSuccess(
         context,

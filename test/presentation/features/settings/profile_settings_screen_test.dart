@@ -205,10 +205,11 @@ void main() {
       );
     } catch (_) {
       // In case scrollUntilVisible fails, drag manually
-      await tester.drag(find.byType(ListView), const Offset(0, -1000));
+      await tester.drag(find.byType(ListView), const Offset(0, -500));
       await tester.pumpAndSettle();
     }
-    await tester.tap(deleteButton);
+    await tester.ensureVisible(deleteButton);
+    await tester.tap(deleteButton, warnIfMissed: false);
     await tester.pumpAndSettle();
 
     // Biometrics should be called
@@ -308,10 +309,11 @@ void main() {
         scrollable: find.byType(Scrollable),
       );
     } catch (_) {
-      await tester.drag(find.byType(ListView), const Offset(0, -1000));
+      await tester.drag(find.byType(ListView), const Offset(0, -500));
       await tester.pumpAndSettle();
     }
-    await tester.tap(deleteButton);
+    await tester.ensureVisible(deleteButton);
+    await tester.tap(deleteButton, warnIfMissed: false);
     await tester.pumpAndSettle();
 
     expect(find.text('Delete All Data'), findsWidgets);

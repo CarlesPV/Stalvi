@@ -30,6 +30,7 @@ import '../../widgets/edit_account_dialog.dart';
 import '../transactions/transaction_details_dialog.dart';
 import 'package:stalvi/core/utils/icon_helper.dart';
 import '../../providers/transaction_filter_provider.dart';
+import '../../providers/automatic_transactions_providers.dart';
 
 /// The main application scaffold — shown after successful authentication.
 ///
@@ -71,6 +72,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(discreetModeProvider.notifier).setDiscreet(true);
       _checkBiometricOptIn();
+      _executeFallbackTransactions();
     });
   }
 
@@ -152,6 +154,13 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen>
         );
       },
     );
+  }
+
+  Future<void> _executeFallbackTransactions() async {
+    try {
+      final useCase = ref.read(executeRecurringTransactionsUseCaseProvider);
+      await useCase.execute();
+    } catch (_) {}
   }
 
   @override
@@ -294,7 +303,7 @@ class _OverviewTab extends ConsumerWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final transactionsAsync = ref.watch(transactionsStreamProvider);
-    final transactions = transactionsAsync.valueOrNull ?? [];
+    final transactions = transactionsAsync.value ?? [];
     final now = DateTime.now();
     final thirtyDaysAgo = now.subtract(const Duration(days: 30));
     final last30DaysTxns = transactions.where(
@@ -657,23 +666,28 @@ class _AccountsTab extends ConsumerWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Row(
-                  children: [
-                    Icon(
-                      Icons.bar_chart_rounded,
-                      color: colorScheme.secondary,
-                      size: 22,
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      AppLocalizations.of(context)!.settingsStatistics,
-                      style: theme.textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.w800,
-                        color: colorScheme.onSurface,
-                        letterSpacing: -0.2,
+                Flexible(
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.bar_chart_rounded,
+                        color: colorScheme.secondary,
+                        size: 22,
                       ),
-                    ),
-                  ],
+                      const SizedBox(width: 8),
+                      Flexible(
+                        child: Text(
+                          AppLocalizations.of(context)!.settingsStatistics,
+                          style: theme.textTheme.titleSmall?.copyWith(
+                            fontWeight: FontWeight.w800,
+                            color: colorScheme.onSurface,
+                            letterSpacing: -0.2,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
                 TextButton.icon(
                   onPressed: () {
@@ -926,7 +940,7 @@ class _TransactionItem extends ConsumerWidget {
     final color =
         isIncome ? financialColors.positive : financialColors.negative;
 
-    final categories = ref.watch(categoriesListProvider).valueOrNull ?? [];
+    final categories = ref.watch(categoriesListProvider).value ?? [];
     Category? category;
     if (transaction.categoryId != null) {
       for (final c in categories) {
@@ -1511,7 +1525,7 @@ class _BalanceCard extends ConsumerWidget {
                   ),
                 ),
                 data: (totalBalance) {
-                  final profile = ref.watch(defaultProfileProvider).valueOrNull;
+                  final profile = ref.watch(defaultProfileProvider).value;
                   final currency = profile?.defaultCurrency ?? 'EUR';
                   final formatter = ref.watch(currencyFormatterProvider);
                   final balanceStr = formatter.format(
@@ -1604,7 +1618,7 @@ class _StatCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final summaryAsync = ref.watch(dashboardPeriodSummaryProvider);
-    final profile = ref.watch(defaultProfileProvider).valueOrNull;
+    final profile = ref.watch(defaultProfileProvider).value;
     final currency = profile?.defaultCurrency ?? 'EUR';
     final formatter = ref.watch(currencyFormatterProvider);
 

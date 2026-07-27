@@ -717,9 +717,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pdfSavingsColName => 'Name';
 
   @override
-  String get pdfSavingsColTarget => 'Target Amount';
-
-  @override
   String get pdfSavingsGoalsTitle => 'Savings Goals';
 
   @override
@@ -967,6 +964,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsLanguage => 'Language';
 
   @override
+  String get settingsNotifications => 'Push Notifications';
+
+  @override
+  String get notificationsPermanentlyDeniedTitle => 'Notifications Disabled';
+
+  @override
+  String get notificationsPermanentlyDeniedBody =>
+      'You have permanently denied notification permissions. Please enable them in your system settings to receive alerts.';
+
+  @override
+  String get btnOpenSettings => 'Open Settings';
+
+  @override
   String get settingsThemeMode => 'Theme Mode';
 
   @override
@@ -991,6 +1001,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get authSetupValidationErrorName => 'Please enter a name.';
 
   @override
+  String get authSetupValidationErrorNameEmoji =>
+      'Name cannot contain emojis or special characters.';
+
+  @override
+  String get authSetupValidationErrorNameLength =>
+      'Name cannot exceed 25 characters.';
+
+  @override
   String get authSetupValidationErrorPinLength =>
       'PIN must be between 4 and 8 digits.';
 
@@ -1003,6 +1021,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get authSetupValidationErrorUsername => 'Please enter a username.';
+
+  @override
+  String get authSetupValidationErrorUsernameEmoji =>
+      'Username cannot contain emojis or special characters.';
+
+  @override
+  String get authSetupValidationErrorUsernameLength =>
+      'Username cannot exceed 25 characters.';
 
   @override
   String get autoTxErrorInvalidDayOfMonth =>
@@ -1121,4 +1147,13 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get unexpectedError =>
       'An unexpected error occurred. Please try again.';
+
+  @override
+  String get hintAmountZero => '0.00';
+
+  @override
+  String get errorCouldNotLaunchUrl => 'Could not launch URL';
+
+  @override
+  String get errorLoadingContent => 'Error loading content.';
 }

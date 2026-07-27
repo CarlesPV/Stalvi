@@ -20,22 +20,42 @@ import 'package:stalvi/domain/entities/transaction_type.dart';
 class FakePathProviderPlatform extends Fake
     with MockPlatformInterfaceMixin
     implements PathProviderPlatform {
-  final String tempDir;
-  FakePathProviderPlatform(this.tempDir);
+  final String? downloadsPath;
+  final String? docsPath;
+  final bool throwOnDownloads;
+
+  FakePathProviderPlatform({
+    this.downloadsPath,
+    this.docsPath,
+    this.throwOnDownloads = false,
+  });
+
+  FakePathProviderPlatform.legacy(String tempDir)
+      : downloadsPath = tempDir,
+        docsPath = tempDir,
+        throwOnDownloads = false;
 
   @override
   Future<String?> getApplicationDocumentsPath() async {
-    return tempDir;
+    return docsPath;
   }
 
   @override
   Future<String?> getDownloadsPath() async {
-    return tempDir;
+    if (throwOnDownloads) {
+      throw Exception('Downloads directory unavailable');
+    }
+    return downloadsPath;
   }
 
   @override
   Future<String?> getExternalStoragePath() async {
-    return tempDir;
+    return downloadsPath;
+  }
+
+  @override
+  Future<String?> getTemporaryPath() async {
+    return docsPath;
   }
 }
 
@@ -82,7 +102,8 @@ void main() {
 
   setUp(() async {
     tempDir = await Directory.systemTemp.createTemp('export_service_test');
-    PathProviderPlatform.instance = FakePathProviderPlatform(tempDir.path);
+    PathProviderPlatform.instance =
+        FakePathProviderPlatform.legacy(tempDir.path);
     service = ExportServiceImpl();
   });
 
@@ -542,6 +563,82 @@ void main() {
       // Assert – first 4 bytes of a valid PDF are always %PDF
       final header = String.fromCharCodes(result.bytes.sublist(0, 4));
       expect(header, equals('%PDF'));
+    });
+  });
+
+  // ──────────────── File export fallback tests ─────────────────────────
+
+  group('File export directory resolution and fallback logic', () {
+    late Directory downloadsDir;
+    late Directory docsDir;
+
+    setUp(() async {
+      final rootTemp =
+          await Directory.systemTemp.createTemp('export_fallback_test');
+      downloadsDir = Directory('${rootTemp.path}/Downloads');
+      docsDir = Directory('${rootTemp.path}/Documents');
+      await downloadsDir.create(recursive: true);
+      await docsDir.create(recursive: true);
+    });
+
+    tearDown(() async {
+      if (downloadsDir.parent.existsSync()) {
+        await downloadsDir.parent.delete(recursive: true);
+      }
+    });
+
+    test(
+        'always attempts to save file into Downloads directory first when available',
+        () async {
+      PathProviderPlatform.instance = FakePathProviderPlatform(
+        downloadsPath: downloadsDir.path,
+        docsPath: docsDir.path,
+      );
+
+      final result = await service.generateCsv(
+        [_makeTransaction()],
+        accounts: _emptyAccounts,
+        categories: _emptyCategories,
+      );
+
+      expect(result.filePath, startsWith(downloadsDir.path));
+      expect(File(result.filePath!).existsSync(), isTrue);
+    });
+
+    test(
+        'falls back to Documents directory when Downloads directory is unavailable (null)',
+        () async {
+      PathProviderPlatform.instance = FakePathProviderPlatform(
+        downloadsPath: null,
+        docsPath: docsDir.path,
+      );
+
+      final result = await service.generateCsv(
+        [_makeTransaction()],
+        accounts: _emptyAccounts,
+        categories: _emptyCategories,
+      );
+
+      expect(result.filePath, startsWith(docsDir.path));
+      expect(File(result.filePath!).existsSync(), isTrue);
+    });
+
+    test(
+        'falls back to Documents directory when getDownloadsPath throws an exception',
+        () async {
+      PathProviderPlatform.instance = FakePathProviderPlatform(
+        throwOnDownloads: true,
+        docsPath: docsDir.path,
+      );
+
+      final result = await service.generateCsv(
+        [_makeTransaction()],
+        accounts: _emptyAccounts,
+        categories: _emptyCategories,
+      );
+
+      expect(result.filePath, startsWith(docsDir.path));
+      expect(File(result.filePath!).existsSync(), isTrue);
     });
   });
 }

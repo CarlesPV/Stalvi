@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 /// Custom theme extension for financial colors (positive/income and negative/expenses).
-/// This allows us to access these colors cleanly using Theme.of(context).extension<FinancialColors>()!
+/// This allows us to access these colors cleanly using `Theme.of(context).extension<FinancialColors>()!`
 @immutable
 class FinancialColors extends ThemeExtension<FinancialColors> {
   final Color positive;

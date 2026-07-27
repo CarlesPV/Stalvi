@@ -2,6 +2,7 @@ import 'package:stalvi/core/errors/app_exceptions.dart';
 import '../entities/savings_goal.dart';
 import '../repositories/i_savings_goal_repository.dart';
 
+/// Parameters required to create a new savings goal target.
 class CreateSavingsGoalParams {
   final String id;
   final String name;
@@ -22,6 +23,7 @@ class CreateSavingsGoalParams {
   });
 }
 
+/// Use case that validates and persists a new [SavingsGoal].
 class CreateSavingsGoalUseCase {
   final ISavingsGoalRepository _savingsGoalRepository;
 

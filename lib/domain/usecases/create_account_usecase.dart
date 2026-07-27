@@ -3,6 +3,7 @@ import '../entities/account.dart';
 import '../entities/account_type.dart';
 import '../repositories/i_account_repository.dart';
 
+/// Parameters required to create a new financial account.
 class CreateAccountParams {
   final String id;
   final String userId;
@@ -27,6 +28,10 @@ class CreateAccountParams {
   });
 }
 
+/// Use case that validates and creates a new [Account].
+///
+/// Ensures mandatory initial balance constraints and persists the entity
+/// via [IAccountRepository].
 class CreateAccountUseCase {
   final IAccountRepository _repository;
 

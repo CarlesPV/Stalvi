@@ -7,6 +7,7 @@ import 'package:stalvi/domain/usecases/update_credentials_usecase.dart';
 import 'package:stalvi/presentation/features/settings/profile_settings_controller.dart';
 import 'package:stalvi/presentation/providers/repository_providers.dart';
 import 'package:stalvi/presentation/providers/statistics_providers.dart';
+import 'package:stalvi/presentation/providers/settings_notifier.dart';
 import 'package:stalvi/domain/entities/period_summary.dart';
 
 class FakeProfileRepository implements IProfileRepository {
@@ -270,6 +271,8 @@ void main() {
         ],
       );
 
+      final _ =
+          testContainer.listen(profileSettingsControllerProvider, (_, __) {});
       final controller =
           testContainer.read(profileSettingsControllerProvider.notifier);
 
@@ -299,6 +302,17 @@ void main() {
       expect(dashboardPeriodSummaryBuildCount, 2);
 
       testContainer.dispose();
+    });
+  });
+
+  group('ProfileSettingsController notifications toggle', () {
+    test('toggleNotifications delegates to SettingsNotifier', () async {
+      final controller =
+          container.read(profileSettingsControllerProvider.notifier);
+      await controller.toggleNotifications(false);
+
+      final isEnabled = container.read(settingsNotifierProvider);
+      expect(isEnabled, isFalse);
     });
   });
 }

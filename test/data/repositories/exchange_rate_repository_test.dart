@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
@@ -54,158 +56,139 @@ void main() {
     );
   });
 
-  group('ExchangeRateRepository — getLatestRates', () {
+  group('ExchangeRateRepository — getLatestRates & Offline Fallback', () {
     // -----------------------------------------------------------------------
-    // Happy path
+    // Happy path & Local Cache
     // -----------------------------------------------------------------------
     test(
-      'GIVEN the data source returns a valid ExchangeRateModel '
-      'WHEN getLatestRates is called with baseCurrency "EUR" '
-      'THEN returns the correctly mapped ExchangeRate domain entity',
+      'GIVEN local rates exist in DAO '
+      'WHEN getLatestRates is called '
+      'THEN returns the cached local rates without calling remote data source',
       () async {
-        // Arrange
+        final cached = ExchangeRate(
+          baseCurrency: 'EUR',
+          date: DateTime.now(),
+          rates: {'USD': 1.08, 'GBP': 0.85},
+        );
+        when(() => mockDao.getRates('EUR')).thenAnswer((_) async => cached);
+
+        final result = await repository.getLatestRates(baseCurrency: 'EUR');
+
+        expect(result, equals(cached));
+        verifyNever(
+          () => mockDataSource.fetchLatestRates(
+            baseCurrency: any(named: 'baseCurrency'),
+          ),
+        );
+      },
+    );
+
+    test(
+      'GIVEN no local rates exist and remote data source returns valid model '
+      'WHEN getLatestRates is called '
+      'THEN fetches remote, saves to DAO, and returns mapped entity',
+      () async {
         final model = _buildModel(
           base: 'EUR',
           date: DateTime(2026, 6, 13),
           rates: {'USD': 1.085, 'GBP': 0.856},
         );
+        when(() => mockDao.getRates('EUR')).thenAnswer((_) async => null);
         when(
           () => mockDataSource.fetchLatestRates(baseCurrency: 'EUR'),
         ).thenAnswer((_) async => model);
         when(() => mockDao.saveRates(any())).thenAnswer((_) async {});
-        when(() => mockDao.getRates(any())).thenAnswer((_) async => null);
 
-        // Act
         final result = await repository.getLatestRates(baseCurrency: 'EUR');
 
-        // Assert
-        expect(result, isA<ExchangeRate>());
         expect(result.baseCurrency, 'EUR');
-        expect(
-          result.date.difference(DateTime.now()).inSeconds.abs() < 5,
-          true,
-        );
         expect(result.rates['USD'], closeTo(1.085, 0.001));
-        expect(result.rates['GBP'], closeTo(0.856, 0.001));
+        verify(() => mockDao.saveRates(any())).called(1);
+      },
+    );
 
-        verify(
+    // -----------------------------------------------------------------------
+    // Offline Fallback logic
+    // -----------------------------------------------------------------------
+    test(
+      'GIVEN no local rates exist and remote data source throws NetworkException (NO_INTERNET) '
+      'WHEN getLatestRates is called '
+      'THEN gracefully returns infrastructure fallback rates and saves them to DAO',
+      () async {
+        when(() => mockDao.getRates('EUR')).thenAnswer((_) async => null);
+        when(
           () => mockDataSource.fetchLatestRates(baseCurrency: 'EUR'),
-        ).called(1);
+        ).thenThrow(
+          const NetworkException(
+            message: 'No internet connection',
+            code: 'NO_INTERNET',
+          ),
+        );
+        when(() => mockDao.saveRates(any())).thenAnswer((_) async {});
+
+        final result = await repository.getLatestRates(baseCurrency: 'EUR');
+
+        expect(result.baseCurrency, 'EUR');
+        expect(result.rates['USD'], equals(1.15));
+        expect(result.rates['GBP'], equals(0.86));
+        verify(() => mockDao.saveRates(any())).called(1);
       },
     );
 
     test(
-      'GIVEN the data source returns a model with multiple currencies '
+      'GIVEN no local rates exist and remote data source throws SocketException '
       'WHEN getLatestRates is called '
-      'THEN the resulting ExchangeRate.rateFor helper resolves correctly',
+      'THEN gracefully returns infrastructure fallback rates and saves them to DAO',
       () async {
-        // Arrange
-        final model = _buildModel(
-          base: 'USD',
-          rates: {'EUR': 0.921, 'JPY': 150.32, 'GBP': 0.788},
-        );
+        when(() => mockDao.getRates('USD')).thenAnswer((_) async => null);
         when(
           () => mockDataSource.fetchLatestRates(baseCurrency: 'USD'),
-        ).thenAnswer((_) async => model);
+        ).thenThrow(const SocketException('Host lookup failed'));
         when(() => mockDao.saveRates(any())).thenAnswer((_) async {});
-        when(() => mockDao.getRates(any())).thenAnswer((_) async => null);
 
-        // Act
         final result = await repository.getLatestRates(baseCurrency: 'USD');
 
-        // Assert
         expect(result.baseCurrency, 'USD');
-        expect(result.rateFor('EUR'), closeTo(0.921, 0.001));
-        expect(result.rateFor('JPY'), closeTo(150.32, 0.01));
-        expect(result.rateFor('XXX'), isNull); // Unknown currency → null
+        expect(result.rates['USD'], equals(1.0));
+        expect(result.rates['EUR'], closeTo(0.8695, 0.001));
+        verify(() => mockDao.saveRates(any())).called(1);
       },
     );
 
-    // -----------------------------------------------------------------------
-    // Error propagation
-    // -----------------------------------------------------------------------
     test(
-      'GIVEN the data source throws a NetworkException '
-      'WHEN getLatestRates is called '
-      'THEN the repository propagates the same NetworkException unchanged',
+      'GIVEN getLocalRates is called when DAO returns null '
+      'WHEN getLocalRates is invoked '
+      'THEN returns fallback exchange rates for requested base currency',
       () async {
-        // Arrange
-        const expectedException = NetworkException(
-          message: 'No internet connection or host unreachable.',
-          code: 'NO_INTERNET',
-        );
+        when(() => mockDao.getRates('GBP')).thenAnswer((_) async => null);
+
+        final result = await repository.getLocalRates(baseCurrency: 'GBP');
+
+        expect(result, isNotNull);
+        expect(result!.baseCurrency, 'GBP');
+        expect(result.rates['EUR'], closeTo(1.1627, 0.01));
+      },
+    );
+
+    test(
+      'GIVEN syncRates encounters network exception and DAO is empty '
+      'WHEN syncRates is called '
+      'THEN populates DAO with infrastructure fallback rates before rethrowing exception',
+      () async {
         when(
           () => mockDataSource.fetchLatestRates(baseCurrency: 'EUR'),
-        ).thenThrow(expectedException);
-        when(() => mockDao.getRates(any())).thenAnswer((_) async => null);
+        ).thenThrow(
+          const NetworkException(message: 'Offline', code: 'NO_INTERNET'),
+        );
+        when(() => mockDao.getRates('EUR')).thenAnswer((_) async => null);
+        when(() => mockDao.saveRates(any())).thenAnswer((_) async {});
 
-        // Act & Assert
         await expectLater(
-          repository.getLatestRates(baseCurrency: 'EUR'),
-          throwsA(
-            isA<NetworkException>()
-                .having((e) => e.code, 'code', 'NO_INTERNET')
-                .having(
-                  (e) => e.message,
-                  'message',
-                  'No internet connection or host unreachable.',
-                ),
-          ),
+          repository.syncRates(baseCurrency: 'EUR'),
+          throwsA(isA<NetworkException>()),
         );
-      },
-    );
 
-    test(
-      'GIVEN the data source throws a NetworkException with code HTTP_4XX '
-      'WHEN getLatestRates is called '
-      'THEN the repository propagates it without wrapping or swallowing',
-      () async {
-        // Arrange
-        const exception = NetworkException(
-          message: 'Exchange rate API returned a client error.',
-          code: 'HTTP_4XX',
-          details: 'HTTP 404: Not Found',
-        );
-        when(
-          () => mockDataSource.fetchLatestRates(baseCurrency: 'XYZ'),
-        ).thenThrow(exception);
-        when(() => mockDao.getRates(any())).thenAnswer((_) async => null);
-
-        // Act & Assert
-        await expectLater(
-          repository.getLatestRates(baseCurrency: 'XYZ'),
-          throwsA(
-            isA<NetworkException>()
-                .having((e) => e.code, 'code', 'HTTP_4XX')
-                .having((e) => e.details, 'details', 'HTTP 404: Not Found'),
-          ),
-        );
-      },
-    );
-
-    test(
-      'GIVEN the data source throws a NetworkException with code PARSE_ERROR '
-      'WHEN getLatestRates is called '
-      'THEN the repository propagates it with all fields intact',
-      () async {
-        // Arrange
-        const exception = NetworkException(
-          message: 'Failed to parse exchange rate response.',
-          code: 'PARSE_ERROR',
-        );
-        when(
-          () => mockDataSource.fetchLatestRates(baseCurrency: 'EUR'),
-        ).thenThrow(exception);
-        when(() => mockDao.getRates(any())).thenAnswer((_) async => null);
-
-        // Act & Assert
-        await expectLater(
-          repository.getLatestRates(baseCurrency: 'EUR'),
-          throwsA(
-            isA<NetworkException>()
-                .having((e) => e.code, 'code', 'PARSE_ERROR'),
-          ),
-        );
+        verify(() => mockDao.saveRates(any())).called(1);
       },
     );
   });

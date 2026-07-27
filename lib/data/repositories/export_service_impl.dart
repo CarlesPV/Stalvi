@@ -11,7 +11,6 @@ import 'package:encrypt/encrypt.dart' as enc;
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
@@ -31,37 +30,67 @@ import 'package:stalvi/domain/entities/transaction_type.dart';
 import 'package:stalvi/domain/repositories/i_export_service.dart';
 
 class ExportServiceImpl implements IExportService {
+  /// Saves generated file bytes to user-accessible storage adhering to strict priority rules:
+  ///
+  /// BUSINESS RULES FOR FILE EXPORT DIRECTORY PRIORITIZATION:
+  /// 1. PRIORITY 1: /storage/emulated/0/Download
+  /// 2. PRIORITY 2: /storage/emulated/0/Downloads
+  /// 3. PRIORITY 3: /storage/emulated/0/Documents
+  /// 4. PRIORITY 4: /storage/emulated/0/Stalvi
   Future<String> _saveFile(List<int> bytes, String filename) async {
-    if (Platform.isAndroid) {
-      // In Android 13+, WRITE_EXTERNAL_STORAGE is deprecated and not needed for Downloads if using MediaStore,
-      // but to use File IO in /storage/emulated/0/Download we might need it or just try without.
-      var status = await Permission.storage.status;
-      if (!status.isGranted) {
-        await Permission.storage.request();
-      }
-    }
+    final targetDirs = <Directory>[];
 
-    Directory? dir;
     if (Platform.isAndroid) {
-      dir = Directory('/storage/emulated/0/Download');
-      if (!await dir.exists()) {
-        dir = await getExternalStorageDirectory();
-      }
+      targetDirs.add(Directory('/storage/emulated/0/Download'));
+      targetDirs.add(Directory('/storage/emulated/0/Downloads'));
+      targetDirs.add(Directory('/storage/emulated/0/Documents'));
+      targetDirs.add(Directory('/storage/emulated/0/Stalvi'));
     } else {
-      dir = await getDownloadsDirectory();
-      dir ??= await getApplicationDocumentsDirectory();
+      try {
+        final downloadsDir = await getDownloadsDirectory();
+        if (downloadsDir != null) {
+          targetDirs.add(downloadsDir);
+        }
+      } catch (_) {}
+      try {
+        final docsDir = await getApplicationDocumentsDirectory();
+        targetDirs.add(docsDir);
+      } catch (_) {}
     }
 
-    if (dir == null) {
-      throw const ExportException(
-        message: 'Could not find a directory to save the file',
-        code: 'NO_DIRECTORY',
-      );
+    for (final dir in targetDirs) {
+      final savedPath = await _tryWriteFile(dir, filename, bytes);
+      if (savedPath != null) {
+        return savedPath;
+      }
     }
 
-    final file = File('${dir.path}/$filename');
+    // Emergency Fallback: Application documents directory
+    final fallbackDir = await getApplicationDocumentsDirectory();
+    final file = File('${fallbackDir.path}/$filename');
     await file.writeAsBytes(bytes, flush: true);
     return file.path;
+  }
+
+  Future<String?> _tryWriteFile(
+    Directory dir,
+    String filename,
+    List<int> bytes,
+  ) async {
+    try {
+      if (!await dir.exists()) {
+        final created = await dir
+            .create(recursive: true)
+            .then((_) => true)
+            .catchError((_) => false);
+        if (!created) return null;
+      }
+      final file = File('${dir.path}/$filename');
+      await file.writeAsBytes(bytes, flush: true);
+      return file.path;
+    } catch (_) {
+      return null;
+    }
   }
 
   @override

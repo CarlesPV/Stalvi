@@ -21,7 +21,7 @@ void main() {
   });
 
   ProviderContainer createContainer({
-    List<Override> overrides = const [],
+    List overrides = const [],
   }) {
     final container = ProviderContainer(
       overrides: [

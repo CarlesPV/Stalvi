@@ -29,7 +29,7 @@ class AutomaticTransactionsScreen extends ConsumerWidget {
 
     final transactionsAsync = ref.watch(automaticTransactionsListProvider);
     final categoriesAsync = ref.watch(categoriesListProvider);
-    final categories = categoriesAsync.valueOrNull ?? [];
+    final categories = categoriesAsync.value ?? [];
 
     return Scaffold(
       appBar: AppBar(

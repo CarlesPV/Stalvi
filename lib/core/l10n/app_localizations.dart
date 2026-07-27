@@ -1396,12 +1396,6 @@ abstract class AppLocalizations {
   /// **'Name'**
   String get pdfSavingsColName;
 
-  /// No description provided for @pdfSavingsColTarget.
-  ///
-  /// In en, this message translates to:
-  /// **'Target Amount'**
-  String get pdfSavingsColTarget;
-
   /// No description provided for @pdfSavingsGoalsTitle.
   ///
   /// In en, this message translates to:
@@ -1852,6 +1846,30 @@ abstract class AppLocalizations {
   /// **'Language'**
   String get settingsLanguage;
 
+  /// No description provided for @settingsNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Push Notifications'**
+  String get settingsNotifications;
+
+  /// No description provided for @notificationsPermanentlyDeniedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications Disabled'**
+  String get notificationsPermanentlyDeniedTitle;
+
+  /// No description provided for @notificationsPermanentlyDeniedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You have permanently denied notification permissions. Please enable them in your system settings to receive alerts.'**
+  String get notificationsPermanentlyDeniedBody;
+
+  /// No description provided for @btnOpenSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Settings'**
+  String get btnOpenSettings;
+
   /// No description provided for @settingsThemeMode.
   ///
   /// In en, this message translates to:
@@ -1900,6 +1918,18 @@ abstract class AppLocalizations {
   /// **'Please enter a name.'**
   String get authSetupValidationErrorName;
 
+  /// No description provided for @authSetupValidationErrorNameEmoji.
+  ///
+  /// In en, this message translates to:
+  /// **'Name cannot contain emojis or special characters.'**
+  String get authSetupValidationErrorNameEmoji;
+
+  /// No description provided for @authSetupValidationErrorNameLength.
+  ///
+  /// In en, this message translates to:
+  /// **'Name cannot exceed 25 characters.'**
+  String get authSetupValidationErrorNameLength;
+
   /// No description provided for @authSetupValidationErrorPinLength.
   ///
   /// In en, this message translates to:
@@ -1923,6 +1953,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Please enter a username.'**
   String get authSetupValidationErrorUsername;
+
+  /// No description provided for @authSetupValidationErrorUsernameEmoji.
+  ///
+  /// In en, this message translates to:
+  /// **'Username cannot contain emojis or special characters.'**
+  String get authSetupValidationErrorUsernameEmoji;
+
+  /// No description provided for @authSetupValidationErrorUsernameLength.
+  ///
+  /// In en, this message translates to:
+  /// **'Username cannot exceed 25 characters.'**
+  String get authSetupValidationErrorUsernameLength;
 
   /// No description provided for @autoTxErrorInvalidDayOfMonth.
   ///
@@ -2139,6 +2181,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'An unexpected error occurred. Please try again.'**
   String get unexpectedError;
+
+  /// No description provided for @hintAmountZero.
+  ///
+  /// In en, this message translates to:
+  /// **'0.00'**
+  String get hintAmountZero;
+
+  /// No description provided for @errorCouldNotLaunchUrl.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not launch URL'**
+  String get errorCouldNotLaunchUrl;
+
+  /// No description provided for @errorLoadingContent.
+  ///
+  /// In en, this message translates to:
+  /// **'Error loading content.'**
+  String get errorLoadingContent;
 }
 
 class _AppLocalizationsDelegate

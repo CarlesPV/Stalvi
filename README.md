@@ -28,9 +28,12 @@ Designed with strict **Clean Architecture** principles, the project ensures isol
 * **Inline Input Validation:** Form inputs perform real-time validations, dynamically resetting and clearing validation errors as values are updated.
 
 ### ⏰ Automatic & Recurring Transactions
-* **Automated Engine:** Evaluates and automatically generates scheduled transactions based on custom day intervals.
+* **Automated Engine:** Evaluates and automatically generates scheduled transactions based on custom day intervals, weekly, monthly, yearly, or specific days of the month.
 * **End-of-Month Clamping:** Implements safe calendar clamping logic (e.g., executing transactions scheduled for the 30th or 31st on February 28th/29th or the last day of short months).
-* **Background Tasks:** Operates in the background via `workmanager` to verify and execute pending automatic transactions periodically.
+* **Background Tasks & App Startup Fallback:** Operates in the background via `BackgroundSyncService` (driven by `workmanager` using periodic work execution) combined with an asynchronous fallback mechanism at app startup (`main.dart` / Dashboard initialization) to ensure pending automatic transactions are created reliably across platforms.
+* **Offline Currency Conversion Fallback:** Provides pre-bundled offline exchange rate fallbacks in the infrastructure layer, ensuring multi-currency conversions and balance summaries function seamlessly even without an active network connection.
+* **Strict Opt-In Local Push Notifications:** Dispatches localized push notifications ("Transaction [name] completed successfully" in EN, ES, CA) via `flutter_local_notifications` whenever an automatic transaction is processed. Push notifications default to `false` (OFF) for strict opt-in user consent and privacy compliance. When toggled ON in Profile & Security settings, the app checks native OS permissions (`isPermissionGranted`, `isPermissionPermanentlyDenied`) and prompts for runtime OS permissions or guides the user directly to device system settings (`openAppSettings()`) if permission is permanently denied.
+* **Idempotency & UTC+2 Precision:** Employs deterministic UUID v5 URL-based keys to ensure idempotency across multiple runs, strictly validating that only one transaction is generated per execution cycle, calculated precisely using the UTC+2 timezone offset.
 * **Soft-Delete Support:** Easily soft-delete recurring templates, moving them to the Recycle Bin and disabling automated generation until restored or permanently purged.
 
 ### 📊 Budgets & Savings Goals
@@ -38,6 +41,7 @@ Designed with strict **Clean Architecture** principles, the project ensures isol
 * **Savings Goals:** Track financial progress with dedicated targets. Savings goals can be selected directly as destinations in transfers.
 * **Read-Only Padlock Indicators:** Visual padlock icons trail strictly read-only/non-editable fields (excluding date fields) on the Budgets and Savings Goals sheets, aligning with the design of the Accounts detail views.
 * **Dynamic Recalculations:** Progress bars and spent percentages recalculate in real-time when transactions are added, edited, or deleted.
+* **Reactive Notifications:** Receive automatic multi-language push notifications when budget thresholds are exceeded or savings goals are reached.
 
 ### 🔍 Concurrent Filters & Analytical Charts
 * **Multi-Dimensional Search:** Filter transactions simultaneously by transaction type, category, date range, amount range, tag, and currency using reactive Drift query builders.
@@ -48,7 +52,7 @@ Designed with strict **Clean Architecture** principles, the project ensures isol
 * **Enhanced CSV/Excel:** Export detailed spreadsheets containing all movement details and historical snapshots.
 * **Premium PDF Reports:** Generates clean tabular monthly statements, summary boxes, and category distribution pie charts. Formats transfers as `Source Account -> Destination Account` and embeds custom TTF fonts for perfect multi-currency unicode character rendering.
 * **Encrypted JSON Backups:** Export full database backups encrypted with AES-256-CBC using PBKDF2-HMAC-SHA256 key derivation from a user-specified password. Restoring a backup overwrites the active profile username with the one saved in the backup.
-* **Filename Standardization:** Exports are named based on document type: `Stalvi_Backup_`, `Stalvi_Table_`, and `Stalvi_Overview_` followed by a timestamp. Uses `open_filex` to let users immediately open files after exporting.
+* **Native Directory Exports & Directory Prioritization:** File exports adhere to strict public storage priority rules (Android: Priority 1 `/storage/emulated/0/Download`, Priority 2 `/storage/emulated/0/Downloads`, Priority 3 `/storage/emulated/0/Documents`, Priority 4 `/storage/emulated/0/Stalvi`, followed by emergency application documents fallback; iOS: system Downloads and Documents directories). Exports are immediately visible in system file managers and Recents without displaying third-party sharing pop-ups. Files are named based on document type with timestamps: `Stalvi_Backup_`, `Stalvi_Table_`, and `Stalvi_Overview_`. Uses `open_filex` to let users immediately open files after exporting.
 
 ### 🛡️ Robust Security Measures
 * **Database Encryption:** SQLite database file is encrypted utilizing **SQLCipher (AES-256)**.
@@ -77,7 +81,7 @@ On application launch or language switch, default database entities (such as "My
 * **Security & Storage:** `flutter_secure_storage`, `local_auth`, `encrypt`, `crypto`
 * **Charts & Analytics:** `fl_chart`
 * **Background Tasks:** `workmanager`
-* **Exporting & Utilities:** `pdf`, `share_plus`, `file_picker`, `open_filex`, `uuid`, `shared_preferences`
+* **Exporting & Utilities:** `pdf`, `file_picker`, `open_filex`, `uuid`, `shared_preferences`, `path_provider`
 
 ---
 
@@ -143,30 +147,19 @@ lib/
    cd stalvi
    ```
 
-2. **Configure environment variables:**
-   Duplicate the `.env.example` file and rename it to `.env`:
-   ```bash
-   cp .env.example .env
-   ```
-   Open the `.env` file and set your secure local encryption key and remote API values:
-   ```env
-   DB_ENCRYPTION_KEY=your_secure_development_key_here
-   EXCHANGE_RATE_API_KEY=your_api_key_here
-   ```
-
-3. **Get dependencies:**
+2. **Get dependencies:**
    ```bash
    flutter pub get
    ```
 
-4. **Generate Code (Drift/Riverpod):**
+3. **Generate Code (Drift/Riverpod):**
    Stalvi uses `build_runner` to generate code for the Drift database and Riverpod providers. Run the following command before compiling:
    ```bash
    flutter pub run build_runner build --delete-conflicting-outputs
    ```
    *(Alternatively, use `flutter pub run build_runner watch` during development to regenerate files on changes).*
 
-5. **Run the Application:**
+4. **Run the Application:**
    * Run the app in development mode:
      ```bash
      flutter run
