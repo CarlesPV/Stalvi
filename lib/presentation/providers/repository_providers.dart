@@ -1,8 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:stalvi/core/utils/navigator_key.dart';
-import '../features/splash/splash_screen.dart';
 import 'package:stalvi/data/repositories/account_repository.dart';
 import 'package:stalvi/data/repositories/category_repository.dart';
 import 'package:stalvi/data/repositories/tag_repository.dart';
@@ -441,27 +439,9 @@ final importServiceProvider = Provider<IImportService>((ref) {
     database: db,
     exportService: exportService,
     onImportSuccess: () {
-      // 1. Invalidate Riverpod providers (all data-related ones)
-      ref.invalidate(appDatabaseProvider);
-      ref.invalidate(appStartupProvider);
-      ref.invalidate(defaultProfileProvider);
-      ref.invalidate(accountsListProvider);
-      ref.invalidate(categoriesListProvider);
-      ref.invalidate(budgetsStreamProvider);
-      ref.invalidate(savingsGoalsStreamProvider);
-      ref.invalidate(transactionsStreamProvider);
-      ref.invalidate(rawTransactionsStreamProvider);
-      ref.invalidate(tagsListProvider);
-
-      // 2. Clear background memory (image/drawing cache)
+      // Clear background memory cache before process exit / restart.
       PaintingBinding.instance.imageCache.clear();
       PaintingBinding.instance.imageCache.clearLiveImages();
-
-      // 3. Restart/redirect to Splash
-      navigatorKey.currentState?.pushAndRemoveUntil(
-        MaterialPageRoute(builder: (_) => const SplashScreen()),
-        (_) => false,
-      );
     },
   );
 });

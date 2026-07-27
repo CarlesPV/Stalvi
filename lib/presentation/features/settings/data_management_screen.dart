@@ -346,12 +346,17 @@ class _DataManagementScreenState extends ConsumerState<DataManagementScreen> {
       await ref
           .read(profileSettingsControllerProvider.notifier)
           .importEncryptedBackup(fileBytes, password: password);
-      if (!context.mounted) return;
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(l10n.importSuccess)));
+
       // Completely close/exit the app process for a clean restart.
-      await SystemNavigator.pop();
-      exit(0);
+      if (Platform.isIOS) {
+        exit(0);
+      } else {
+        try {
+          await SystemNavigator.pop();
+        } catch (_) {}
+        await Future.delayed(const Duration(milliseconds: 300));
+        exit(0);
+      }
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
