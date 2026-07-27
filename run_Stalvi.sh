@@ -4,12 +4,15 @@ set -e
 # Detectar argumentos
 CLEAN=false
 BUILD=false
+MODE="--release"
 
 for arg in "$@"; do
   if [ "$arg" == "--clean" ] || [ "$arg" == "-c" ]; then
     CLEAN=true
   elif [ "$arg" == "--build" ] || [ "$arg" == "-b" ]; then
     BUILD=true
+  elif [ "$arg" == "--debug" ]; then
+    MODE="--debug"
   fi
 done
 
@@ -28,5 +31,5 @@ echo "✨ Formateando y analizando..."
 dart format .
 flutter analyze --fatal-warnings --fatal-infos
 
-echo "🚀 Lanzando en el dispositivo..."
-flutter run -d 25ba202f
+echo "🚀 Lanzando en el dispositivo (Modo: ${MODE#--})..."
+flutter run $MODE -d 25ba202f
