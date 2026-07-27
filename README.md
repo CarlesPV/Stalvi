@@ -4,7 +4,7 @@
 [![Dart](https://img.shields.io/badge/Dart-%230175C2.svg?style=for-the-badge&logo=Dart&logoColor=white)](https://dart.dev)
 [![SQLite](https://img.shields.io/badge/SQLite-%2307405e.svg?style=for-the-badge&logo=sqlite&logoColor=white)](https://sqlite.org)
 [![SQLCipher](https://img.shields.io/badge/Encryption-AES--256-green?style=for-the-badge)](https://www.zetetic.net/sqlcipher/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
+[![License: All Rights Reserved](https://img.shields.io/badge/License-All_Rights_Reserved-red.svg?style=for-the-badge)](#license)
 
 Stalvi is a premium, local-first personal finance control mobile application built with Flutter. It is designed to empower users with full control over their financial data through comprehensive tracking, advanced statistics, and zero-telemetry, offline-first local storage. It features state-of-the-art security, multi-currency support with dynamic conversion, and full localization in English, Spanish, and Catalan.
 
@@ -182,3 +182,12 @@ To run static analysis check for lints and formatting:
 ```bash
 flutter analyze
 ```
+
+---
+
+## 📄 License
+
+Copyright © 2026 Carles / Stalvi. All rights reserved.
+
+This source code is made available publicly strictly for personal portfolio, code review, and evaluation purposes. No permission is granted to copy, modify, distribute, sublicense, or publish this software or any part of it for commercial or non-commercial use.
+
