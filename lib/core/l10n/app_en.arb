@@ -130,6 +130,8 @@
   "createAccountNameHint": "e.g. Personal Card, Cash, etc.",
   "createAccountNameLabel": "Account Name",
   "createAccountTitle": "Create New Account",
+  "createNewCategory": "Create New Category",
+  "createNewLabel": "Create New Label",
   "createAccountTypeLabel": "Account Type",
   "createAutomaticTransaction": "Create Automatic Transaction",
   "defaultAccountLabel": "Default",

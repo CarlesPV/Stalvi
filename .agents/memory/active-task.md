@@ -1,15 +1,16 @@
-# Phase 54: Reactive Threshold Monitoring & Codebase Optimization
+# Phase 55: Transaction UX Enhancements & Automatic Transaction Labels
 
-## Status: IN PROGRESS
+## Status: COMPLETED
 ## Objective
-Implement real-time updating and threshold monitoring for Budgets and Savings Goals upon every transaction creation (manual and automatic). Trigger localized push notifications when thresholds are reached. Perform a global codebase cleanup (dead code, unused assets, obsolete comments) and ensure 100% CI/CD and test pass rate.
+Enhance the user experience of transaction forms by reordering Category and Label fields, implementing inline creation for both, and ensuring parity between manual and automatic transactions by adding Label support to the latter. Ensure all new data points are securely backed up.
 
 ## Tasks
-- [ ] 54.1: Develop `FinancialThresholdService` to evaluate Budgets and Savings Goals against real-time balances upon transaction insertion.
-- [ ] 54.2: Integrate the threshold service into `AddTransactionUseCase` and `ExecuteRecurringTransactionsUseCase`.
-- [ ] 54.3: Add localized push notifications strings (EN, ES, CA) and trigger them when a budget limit is exceeded or a savings goal is achieved.
-- [ ] 54.4: Execute global dead code analysis, remove unused files/comments, and fix all analyzer warnings.
-- [ ] 54.5: Ensure 100% pass rate for all unit/widget/integration tests, verify CI/CD workflows, and update project documentation (`roadmap.md`, `README.md`).
+- [x] 55.1: Update `AutomaticTransaction` entity, Drift schema, and DAOs to include an optional `labelId`. Create safe DB migration.
+- [x] 55.2: Update Backup and Restore UseCases / DTOs to include the new `labelId` in JSON exports.
+- [x] 55.3: Refactor `AddTransaction` and `AddAutomaticTransaction` forms to position the Label field directly below the Category field.
+- [x] 55.4: Implement inline "Create New Category" and "Create New Label" options as the first items in the respective selectors. Ensure auto-save and auto-select behavior using Riverpod.
+- [x] 55.5: Update translations (EN, ES, CA) for the new UI elements.
+- [x] 55.6: Ensure 100% pass rate for unit, widget, and integration tests, verify CI/CD workflows without warnings, and update docs.
 
 ## Current Context
 - **Architecture**: Clean Architecture + Riverpod + Drift (SQLCipher).

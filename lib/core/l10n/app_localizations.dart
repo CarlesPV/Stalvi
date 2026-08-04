@@ -838,6 +838,18 @@ abstract class AppLocalizations {
   /// **'Create New Account'**
   String get createAccountTitle;
 
+  /// No description provided for @createNewCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Create New Category'**
+  String get createNewCategory;
+
+  /// No description provided for @createNewLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Create New Label'**
+  String get createNewLabel;
+
   /// No description provided for @createAccountTypeLabel.
   ///
   /// In en, this message translates to:

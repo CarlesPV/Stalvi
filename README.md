@@ -24,11 +24,13 @@ Designed with strict **Clean Architecture** principles, the project ensures isol
 * **Income, Expense, & Transfers:** Record and categorize financial movements.
 * **Atomic Transfers:** Dual-movement linked transactions with automatic sync. Restoring or soft-deleting one leg of a transfer automatically mirrors the operation on the other.
 * **Category Deletion Safety:** Prompts users to reassign existing transactions when deleting a category in use. Reassignment targets are strictly filtered based on the category type.
+* **Inline Category & Label Creation:** Selectors include top-level "Create New Category" and "Create New Label" options, opening inline creation dialogs and automatically selecting the newly created entity.
 * **Historical Exchange Rates:** Saves a currency exchange rate snapshot within each transaction at creation time to preserve historical balance integrity, regardless of future rate fluctuations.
 * **Inline Input Validation:** Form inputs perform real-time validations, dynamically resetting and clearing validation errors as values are updated.
 
 ### ⏰ Automatic & Recurring Transactions
 * **Automated Engine:** Evaluates and automatically generates scheduled transactions based on custom day intervals, weekly, monthly, yearly, or specific days of the month.
+* **Full Category & Label Parity:** Supports optional Label/Tag association in automatic transaction templates alongside Category, fully preserved in database schema and JSON backups.
 * **End-of-Month Clamping:** Implements safe calendar clamping logic (e.g., executing transactions scheduled for the 30th or 31st on February 28th/29th or the last day of short months).
 * **Background Tasks & App Startup Fallback:** Operates in the background via `BackgroundSyncService` (driven by `workmanager` using periodic work execution) combined with an asynchronous fallback mechanism at app startup (`main.dart` / Dashboard initialization) to ensure pending automatic transactions are created reliably across platforms.
 * **Offline Currency Conversion Fallback:** Provides pre-bundled offline exchange rate fallbacks in the infrastructure layer, ensuring multi-currency conversions and balance summaries function seamlessly even without an active network connection.

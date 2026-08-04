@@ -105,7 +105,7 @@ void main() {
   }
 
   group('CreateEditAutomaticTransactionNotifier State Management', () {
-    test('initializes with default state values', () {
+    test('initializes with default state values including null labelId', () {
       buildContainer(accounts: []);
       final state =
           container.read(createEditAutomaticTransactionProvider(null));
@@ -115,13 +115,14 @@ void main() {
       expect(state.type, TransactionType.expense);
       expect(state.accountId, isNull);
       expect(state.categoryId, isNull);
+      expect(state.labelId, isNull);
       expect(state.notes, '');
       expect(state.currency, 'EUR');
       expect(state.recurrenceDays, 30);
       expect(state.submissionStatus, const AsyncData<void>(null));
     });
 
-    test('initializes with transaction values when editing', () {
+    test('initializes with transaction values including labelId when editing', () {
       buildContainer();
       final txn = AutomaticTransaction(
         id: 'txn_1',
@@ -131,6 +132,7 @@ void main() {
         type: TransactionType.expense,
         accountId: 'acc_1',
         categoryId: 'cat_1',
+        labelId: 'label_123',
         notes: 'Monthly rent',
         recurrenceDays: 14,
         nextExecutionDate: DateTime.now(),
@@ -145,8 +147,23 @@ void main() {
       expect(state.currency, 'USD');
       expect(state.accountId, 'acc_1');
       expect(state.categoryId, 'cat_1');
+      expect(state.labelId, 'label_123');
       expect(state.notes, 'Monthly rent');
       expect(state.recurrenceDays, 14);
+    });
+
+    test('updateLabel updates labelId in state', () {
+      buildContainer();
+      final notifier =
+          container.read(createEditAutomaticTransactionProvider(null).notifier);
+
+      expect(container.read(createEditAutomaticTransactionProvider(null)).labelId, isNull);
+
+      notifier.updateLabel('tag_99');
+      expect(container.read(createEditAutomaticTransactionProvider(null)).labelId, 'tag_99');
+
+      notifier.updateLabel(null);
+      expect(container.read(createEditAutomaticTransactionProvider(null)).labelId, isNull);
     });
   });
 
@@ -170,7 +187,7 @@ void main() {
       expect(state.errors['name'], 'NAME_REQUIRED');
     });
 
-    test('submit succeeds and calls create use case for new transaction',
+    test('submit succeeds and passes labelId to create use case',
         () async {
       buildContainer();
       final notifier =
@@ -180,6 +197,7 @@ void main() {
       notifier.updateAmount('9.99');
       notifier.updateAccount(testAccount.id);
       notifier.updateCategory(testCategory.id);
+      notifier.updateLabel('label_spotify');
       notifier.updateCurrency('EUR');
       notifier.updateRecurrence(RecurrenceType.intervalDays, 30);
 
@@ -187,9 +205,6 @@ void main() {
           .thenAnswer((_) async => FakeAutomaticTransaction());
 
       final success = await notifier.submit();
-      if (!success) {
-        // Validation failed
-      }
 
       expect(success, isTrue);
       final captured = verify(() => mockCreateUseCase.execute(captureAny()))
@@ -197,6 +212,7 @@ void main() {
           .first as AutomaticTransaction;
       expect(captured.name, 'Spotify');
       expect(captured.amount, 999);
+      expect(captured.labelId, 'label_spotify');
       expect(captured.recurrenceDays, 30);
     });
 
@@ -211,6 +227,7 @@ void main() {
         type: TransactionType.expense,
         accountId: 'acc_1',
         categoryId: 'cat_1',
+        labelId: 'label_home',
         notes: '',
         recurrenceDays: 30,
         nextExecutionDate: DateTime.now(),
@@ -233,6 +250,7 @@ void main() {
           .first as AutomaticTransaction;
       expect(captured.id, 'txn_1');
       expect(captured.amount, 55000);
+      expect(captured.labelId, 'label_home');
       verifyNever(() => mockCreateUseCase.execute(any()));
     });
   });

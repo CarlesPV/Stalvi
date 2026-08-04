@@ -6,6 +6,7 @@ import 'package:stalvi/core/theme/app_theme.dart';
 import 'package:stalvi/domain/entities/account.dart';
 import 'package:stalvi/domain/entities/category.dart';
 import 'package:stalvi/domain/entities/category_type.dart';
+import 'package:stalvi/domain/entities/tag.dart';
 import 'package:stalvi/domain/entities/transaction_type.dart';
 import 'package:stalvi/domain/entities/automatic_transaction.dart';
 import 'package:stalvi/domain/entities/recurrence_type.dart';
@@ -13,6 +14,7 @@ import '../../providers/create_edit_automatic_transaction_notifier.dart';
 import '../../providers/repository_providers.dart';
 import 'package:stalvi/core/utils/currency_formatter.dart';
 import 'package:stalvi/core/utils/icon_helper.dart';
+import 'categories_tags_management_screen.dart';
 
 class CreateEditAutomaticTransactionScreen extends ConsumerStatefulWidget {
   final AutomaticTransaction? transactionToEdit;
@@ -148,6 +150,7 @@ class _CreateEditAutomaticTransactionScreenState
 
     final accountsAsync = ref.watch(accountsListProvider);
     final categoriesAsync = ref.watch(categoriesListProvider);
+    final tagsAsync = ref.watch(tagsListProvider);
 
     final accounts = accountsAsync.value ?? [];
     final selectedAccount = accounts.isEmpty
@@ -163,6 +166,14 @@ class _CreateEditAutomaticTransactionScreenState
         : categories.firstWhere(
             (c) => c.id == state.categoryId,
             orElse: () => categories.first,
+          );
+
+    final tags = tagsAsync.value ?? [];
+    final selectedTag = state.labelId == null
+        ? null
+        : tags.firstWhere(
+            (t) => t.id == state.labelId,
+            orElse: () => tags.first,
           );
 
     final isLoading = state.submissionStatus.isLoading;
@@ -469,6 +480,19 @@ class _CreateEditAutomaticTransactionScreenState
                         color: colorScheme.outline.withValues(alpha: 0.08),
                       ),
                       _FormSelectorTile(
+                        label: "${l10n.labelTag} ${l10n.optionalPlaceholder}",
+                        value: selectedTag != null
+                            ? selectedTag.name
+                            : "${l10n.labelSelectTag} ${l10n.optionalPlaceholder}",
+                        icon: Icons.local_offer_rounded,
+                        iconColor: colorScheme.tertiary,
+                        onTap: () => _showTagSelector(context, tags, initialTxn),
+                      ),
+                      Divider(
+                        height: 1,
+                        color: colorScheme.outline.withValues(alpha: 0.08),
+                      ),
+                      _FormSelectorTile(
                         label: l10n.labelCurrency,
                         value: state.currency ?? l10n.labelSelectCurrency,
                         icon: Icons.monetization_on_rounded,
@@ -498,7 +522,7 @@ class _CreateEditAutomaticTransactionScreenState
                 TextField(
                   controller: _notesController,
                   maxLines: 3,
-                  maxLength: 20,
+                  maxLength: 23,
                   style: theme.textTheme.bodyMedium,
                   decoration: InputDecoration(
                     labelText: "${l10n.labelNotes} ${l10n.optionalPlaceholder}",
@@ -792,9 +816,47 @@ class _CreateEditAutomaticTransactionScreenState
               Flexible(
                 child: ListView.builder(
                   shrinkWrap: true,
-                  itemCount: filteredCategories.length,
+                  itemCount: filteredCategories.length + 1, // +1 for "Create New"
                   itemBuilder: (context, index) {
-                    final category = filteredCategories[index];
+                    if (index == 0) {
+                      return Container(
+                        margin: const EdgeInsets.only(bottom: 10),
+                        decoration: BoxDecoration(
+                          color: colorScheme.primary.withValues(alpha: 0.08),
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(
+                            color: colorScheme.primary.withValues(alpha: 0.4),
+                          ),
+                        ),
+                        child: Material(
+                          color: Colors.transparent,
+                          child: ListTile(
+                            leading: CircleAvatar(
+                              backgroundColor: colorScheme.primary.withValues(alpha: 0.12),
+                              child: Icon(Icons.add_rounded, color: colorScheme.primary, size: 20),
+                            ),
+                            title: Text(
+                              AppLocalizations.of(context)!.createNewCategory,
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                fontWeight: FontWeight.w700,
+                                color: colorScheme.primary,
+                              ),
+                            ),
+                            onTap: () async {
+                              Navigator.of(context).pop();
+                              final newId = await CategoryDialog.show(context, ref);
+                              if (newId != null) {
+                                ref
+                                    .read(createEditAutomaticTransactionProvider(initialTxn).notifier)
+                                    .updateCategory(newId);
+                              }
+                            },
+                          ),
+                        ),
+                      );
+                    }
+
+                    final category = filteredCategories[index - 1];
                     final isSelected = state.categoryId == category.id;
                     final catColor = _parseHexColor(category.color);
                     final catIcon = _getIconData(category.icon);
@@ -840,6 +902,152 @@ class _CreateEditAutomaticTransactionScreenState
                                   ).notifier,
                                 )
                                 .updateCategory(category.id);
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _showTagSelector(
+    BuildContext context,
+    List<Tag> tags,
+    AutomaticTransaction? initialTxn,
+  ) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final state = ref.read(createEditAutomaticTransactionProvider(initialTxn));
+    final l10n = AppLocalizations.of(context)!;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (context) {
+        return Container(
+          padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                l10n.labelSelectTag,
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w800,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 16),
+              Flexible(
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: tags.length + 2, // +1 for "Create New", +1 for "None"
+                  itemBuilder: (context, index) {
+                    if (index == 0) {
+                      return Container(
+                        margin: const EdgeInsets.only(bottom: 10),
+                        decoration: BoxDecoration(
+                          color: colorScheme.tertiary.withValues(alpha: 0.08),
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(
+                            color: colorScheme.tertiary.withValues(alpha: 0.4),
+                          ),
+                        ),
+                        child: Material(
+                          color: Colors.transparent,
+                          child: ListTile(
+                            leading: CircleAvatar(
+                              backgroundColor: colorScheme.tertiary.withValues(alpha: 0.12),
+                              child: Icon(Icons.add_rounded, color: colorScheme.tertiary, size: 20),
+                            ),
+                            title: Text(
+                              AppLocalizations.of(context)!.createNewLabel,
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                fontWeight: FontWeight.w700,
+                                color: colorScheme.tertiary,
+                              ),
+                            ),
+                            onTap: () async {
+                              Navigator.of(context).pop();
+                              final newId = await TagDialog.show(context, ref);
+                              if (newId != null) {
+                                ref
+                                    .read(createEditAutomaticTransactionProvider(initialTxn).notifier)
+                                    .updateLabel(newId);
+                              }
+                            },
+                          ),
+                        ),
+                      );
+                    }
+
+                    final isNone = index == 1;
+                    final isSelected = isNone
+                        ? state.labelId == null
+                        : state.labelId == tags[index - 2].id;
+
+                    final tag = isNone ? null : tags[index - 2];
+                    final tagName = isNone ? l10n.noTag : tag!.name;
+
+                    return Container(
+                      margin: const EdgeInsets.only(bottom: 10),
+                      decoration: BoxDecoration(
+                        color: isSelected
+                            ? colorScheme.tertiary.withValues(alpha: 0.08)
+                            : colorScheme.surfaceContainerHighest
+                                .withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(14),
+                        border: Border.all(
+                          color: isSelected
+                              ? colorScheme.tertiary.withValues(alpha: 0.4)
+                              : Colors.transparent,
+                        ),
+                      ),
+                      child: Material(
+                        color: Colors.transparent,
+                        child: ListTile(
+                          leading: CircleAvatar(
+                            backgroundColor:
+                                colorScheme.tertiary.withValues(alpha: 0.12),
+                            child: Icon(
+                              isNone
+                                  ? Icons.block_rounded
+                                  : Icons.local_offer_rounded,
+                              color: colorScheme.tertiary,
+                              size: 20,
+                            ),
+                          ),
+                          title: Text(
+                            tagName,
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          trailing: isSelected
+                              ? Icon(
+                                  Icons.check_circle_rounded,
+                                  color: colorScheme.tertiary,
+                                )
+                              : null,
+                          onTap: () {
+                            ref
+                                .read(
+                                  createEditAutomaticTransactionProvider(
+                                    initialTxn,
+                                  ).notifier,
+                                )
+                                .updateLabel(tag?.id);
                             Navigator.of(context).pop();
                           },
                         ),

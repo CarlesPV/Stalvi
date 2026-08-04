@@ -402,6 +402,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get createAccountTitle => 'Create New Account';
 
   @override
+  String get createNewCategory => 'Create New Category';
+
+  @override
+  String get createNewLabel => 'Create New Label';
+
+  @override
   String get createAccountTypeLabel => 'Account Type';
 
   @override

@@ -403,6 +403,12 @@ class AppLocalizationsCa extends AppLocalizations {
   String get createAccountTitle => 'Crear nou compte';
 
   @override
+  String get createNewCategory => 'Crear nova categoria';
+
+  @override
+  String get createNewLabel => 'Crear nova etiqueta';
+
+  @override
   String get createAccountTypeLabel => 'Tipus de compte';
 
   @override

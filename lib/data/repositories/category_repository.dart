@@ -45,7 +45,7 @@ class CategoryRepository implements ICategoryRepository {
   Future<Category> updateCategory(Category category) async {
     final dbCategory = category.toDb();
     await (_db.update(_db.categories)..where((c) => c.id.equals(category.id)))
-        .write(dbCategory.toCompanion(true));
+        .write(dbCategory.toCompanion(false));
     return category;
   }
 

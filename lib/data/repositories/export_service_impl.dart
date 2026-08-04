@@ -647,6 +647,7 @@ class ExportServiceImpl implements IExportService {
         'account_id': a.accountId,
         'category_id': a.categoryId,
         'tag_id': a.tagId,
+        'label_id': a.labelId,
         'notes': a.notes,
         'recurrence_type': a.recurrenceType.name,
         'recurrence_days': a.recurrenceDays,

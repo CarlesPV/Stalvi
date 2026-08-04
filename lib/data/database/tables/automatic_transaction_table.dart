@@ -19,6 +19,8 @@ class AutomaticTransactions extends Table {
       text().named('category_id').nullable().references(Categories, #id)();
   TextColumn get tagId =>
       text().named('tag_id').nullable().references(Tags, #id)();
+  TextColumn get labelId =>
+      text().named('label_id').nullable()();
   TextColumn get notes => text().nullable()();
   IntColumn get recurrenceType => intEnum<RecurrenceType>()
       .named('recurrence_type')

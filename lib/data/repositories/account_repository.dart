@@ -82,7 +82,7 @@ class AccountRepository implements IAccountRepository {
       }
       final dbAccount = account.toDb();
       await (_db.update(_db.accounts)..where((a) => a.id.equals(account.id)))
-          .write(dbAccount.toCompanion(true));
+          .write(dbAccount.toCompanion(false));
       return account;
     });
   }

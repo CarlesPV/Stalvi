@@ -37,7 +37,7 @@ class TagRepository implements ITagRepository {
   Future<Tag> updateTag(Tag tag) async {
     final dbTag = tag.toDb();
     await (_db.update(_db.tags)..where((t) => t.id.equals(tag.id)))
-        .write(dbTag.toCompanion(true));
+        .write(dbTag.toCompanion(false));
     return tag;
   }
 

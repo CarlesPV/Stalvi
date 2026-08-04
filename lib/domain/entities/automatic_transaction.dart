@@ -10,6 +10,7 @@ class AutomaticTransaction {
   final String accountId;
   final String? categoryId;
   final String? tagId;
+  final String? labelId;
   final String? notes;
   final RecurrenceType recurrenceType;
 
@@ -36,6 +37,7 @@ class AutomaticTransaction {
     required this.accountId,
     this.categoryId,
     this.tagId,
+    this.labelId,
     this.notes,
     this.recurrenceType = RecurrenceType.intervalDays,
     required this.recurrenceDays,
@@ -55,6 +57,7 @@ class AutomaticTransaction {
     String? accountId,
     String? categoryId,
     String? tagId,
+    String? labelId,
     String? notes,
     RecurrenceType? recurrenceType,
     int? recurrenceDays,
@@ -74,6 +77,7 @@ class AutomaticTransaction {
       accountId: accountId ?? this.accountId,
       categoryId: categoryId ?? this.categoryId,
       tagId: tagId ?? this.tagId,
+      labelId: labelId ?? this.labelId,
       notes: notes ?? this.notes,
       recurrenceType: recurrenceType ?? this.recurrenceType,
       recurrenceDays: recurrenceDays ?? this.recurrenceDays,

@@ -387,6 +387,15 @@
   - [x] Removed temporary scripts and files no longer needed for production.
   - [x] Maintained 100% test suite pass rate across unit, widget, and integration tests, and zero static analysis issues.
 
+- [x] **Phase 55: Transaction UX Enhancements & Automatic Transaction Labels**
+  - [x] Update `AutomaticTransaction` entity, Drift schema, and DAOs to include optional `labelId` support with safe DB migration.
+  - [x] Update Backup and Restore UseCases / DTOs to include `labelId` in JSON exports and restorations.
+  - [x] Refactor `AddTransactionScreen` and `CreateEditAutomaticTransactionScreen` forms to position the Label field directly below the Category field.
+  - [x] Implement inline "Create New Category" and "Create New Label" dropdown options as top items in selectors with auto-save and auto-select behavior.
+  - [x] Add localized translation strings (`createNewCategory`, `createNewLabel`, `createNewTag`) in English, Spanish, and Catalan.
+  - [x] Achieve 100% test pass rate across unit, widget, and integration tests, clean static analysis (`0` issues), and update documentation.
+
+
 
 ---
 
