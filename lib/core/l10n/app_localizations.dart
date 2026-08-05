@@ -358,12 +358,6 @@ abstract class AppLocalizations {
   /// **'Transaction created successfully!'**
   String get txnSuccessCreated;
 
-  /// No description provided for @uncategorized.
-  ///
-  /// In en, this message translates to:
-  /// **'Uncategorized'**
-  String get uncategorized;
-
   /// No description provided for @usernameLabel.
   ///
   /// In en, this message translates to:

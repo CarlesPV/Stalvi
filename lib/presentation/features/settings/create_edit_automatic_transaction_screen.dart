@@ -441,7 +441,7 @@ class _CreateEditAutomaticTransactionScreenState
                       ),
                       _FormSelectorTile(
                         label: l10n.labelCategory,
-                        value: selectedCategory?.name ?? l10n.uncategorized,
+                        value: selectedCategory?.name ?? l10n.labelSelectCategory,
                         icon: selectedCategory != null
                             ? _getIconData(selectedCategory.icon)
                             : Icons.category_rounded,

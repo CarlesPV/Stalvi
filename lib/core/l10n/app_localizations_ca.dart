@@ -139,9 +139,6 @@ class AppLocalizationsCa extends AppLocalizations {
   String get txnSuccessCreated => 'Transacció creada amb èxit!';
 
   @override
-  String get uncategorized => 'Sense categoria';
-
-  @override
   String get usernameLabel => 'Nom d\'usuari';
 
   @override

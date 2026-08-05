@@ -263,7 +263,7 @@ class TransactionDetailsDialog extends ConsumerWidget {
                     _DetailRow(
                       label: l10n.labelCategory,
                       valueWidget: Text(
-                        category?.name ?? l10n.uncategorized,
+                        category?.name ?? '-',
                         style: theme.textTheme.bodyMedium
                             ?.copyWith(fontWeight: FontWeight.bold),
                       ),

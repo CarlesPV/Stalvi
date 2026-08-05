@@ -21,7 +21,7 @@ Designed with strict **Clean Architecture** principles, the project ensures isol
 ## ✨ Core Features
 
 ### 💰 Movement & Transaction Engine
-* **Income, Expense, & Transfers:** Record and categorize financial movements.
+* **Income, Expense, & Transfers:** Record and explicitly categorize financial movements without mandatory "Uncategorized" defaults.
 * **Atomic Transfers:** Dual-movement linked transactions with automatic sync. Restoring or soft-deleting one leg of a transfer automatically mirrors the operation on the other.
 * **Category Deletion Safety:** Prompts users to reassign existing transactions when deleting a category in use. Reassignment targets are strictly filtered based on the category type.
 * **Inline Category & Label Creation:** Selectors include top-level "Create New Category" and "Create New Label" options, opening inline creation dialogs and automatically selecting the newly created entity.

@@ -139,9 +139,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get txnSuccessCreated => 'Transaction created successfully!';
 
   @override
-  String get uncategorized => 'Uncategorized';
-
-  @override
   String get usernameLabel => 'Username';
 
   @override

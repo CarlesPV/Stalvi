@@ -662,6 +662,33 @@ void main() {
 
     // ── Common validation failures ───────────────────────────────────────────
     group('common — failure cases', () {
+      test('throws ValidationException when category is null for income/expense', () async {
+        final params = AddTransactionParams(
+          id: 'txn_income_no_cat',
+          amount: 1000,
+          date: _now,
+          type: TransactionType.income,
+          accountId: 'account_1',
+          categoryId: null, // missing category
+        );
+        final account = _buildAccount();
+        final profile = _buildProfile();
+
+        when(() => mockAccountRepo.getAccountById(any()))
+            .thenAnswer((_) async => account);
+        when(() => mockProfileRepo.getProfileById(any()))
+            .thenAnswer((_) async => profile);
+
+        final call = usecase.execute(params);
+        await expectLater(
+          () => call,
+          throwsA(
+            isA<ValidationException>()
+                .having((e) => e.code, 'code', 'CATEGORY_REQUIRED'),
+          ),
+        );
+      });
+
       test('throws ValidationException when amount <= 0', () async {
         final call = usecase.execute(_incomeParams(amount: 0));
         await expectLater(() => call, throwsA(isA<ValidationException>()));

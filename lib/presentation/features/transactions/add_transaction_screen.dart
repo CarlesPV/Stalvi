@@ -511,7 +511,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                         _FormSelectorTile(
                           label: AppLocalizations.of(context)!.labelCategory,
                           value: selectedCategory?.name ??
-                              AppLocalizations.of(context)!.uncategorized,
+                              AppLocalizations.of(context)!.labelSelectCategory,
                           icon: selectedCategory != null
                               ? _getIconData(selectedCategory.icon)
                               : Icons.category_rounded,
@@ -983,7 +983,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                 child: ListView.builder(
                   shrinkWrap: true,
                   itemCount:
-                      filteredCategories.length + 2, // +1 for "Uncategorized", +1 for "Create New"
+                      filteredCategories.length + 1, // +1 for "Create New"
                   itemBuilder: (context, index) {
                     if (index == 0) {
                       return Container(
@@ -1023,22 +1023,11 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                       );
                     }
 
-                    final isUncategorized = index == 1;
-                    final isSelected = isUncategorized
-                        ? state.categoryId == null
-                        : state.categoryId == filteredCategories[index - 2].id;
-
-                    final category =
-                        isUncategorized ? null : filteredCategories[index - 2];
-                    final catColor = isUncategorized
-                        ? colorScheme.onSurfaceVariant
-                        : _parseHexColor(category!.color);
-                    final catIcon = isUncategorized
-                        ? Icons.category_rounded
-                        : _getIconData(category!.icon);
-                    final catName = isUncategorized
-                        ? AppLocalizations.of(context)!.uncategorized
-                        : category!.name;
+                    final category = filteredCategories[index - 1];
+                    final isSelected = state.categoryId == category.id;
+                    final catColor = _parseHexColor(category.color);
+                    final catIcon = _getIconData(category.icon);
+                    final catName = category.name;
 
                     return Container(
                       margin: const EdgeInsets.only(bottom: 10),
@@ -1073,7 +1062,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                           onTap: () {
                             ref
                                 .read(addTransactionProvider.notifier)
-                                .updateCategory(category?.id);
+                                .updateCategory(category.id);
                             Navigator.of(context).pop();
                           },
                         ),
