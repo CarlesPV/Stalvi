@@ -401,6 +401,12 @@
   - [x] Unify the category selector UI/UX for standard transactions with recurring transactions.
   - [x] Achieve 100% test pass rate across 548 unit, widget, and integration tests, clean static analysis (`0` warnings/errors on `flutter analyze`), and update project documentation.
 
+- [x] **Phase 57: Play Store Build Optimization & R8 Code/Resource Shrinking**
+  - [x] Refine ProGuard rules (`android/app/proguard-rules.pro`) by removing overly broad `-keep` rules for Flutter embedding and AndroidX libraries, allowing R8 to perform deep tree-shaking using library consumer rules.
+  - [x] Configure `resourceConfigurations += setOf("en", "es", "ca")` in `android/app/build.gradle.kts` to strip unused localization resources from external dependencies.
+  - [x] Explicitly enable R8 full mode (`android.enableR8.fullMode=true`) in `android/gradle.properties`.
+  - [x] Build and verify release App Bundle (`app-release.aab`) with 100% build health and zero runtime crashes.
+
 ---
 
 ## Post-Launch / Maintenance

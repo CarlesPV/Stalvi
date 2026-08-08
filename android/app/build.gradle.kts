@@ -29,6 +29,7 @@ android {
         targetSdk = 36
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        resourceConfigurations += setOf("en", "es", "ca")
     }
 
     signingConfigs {

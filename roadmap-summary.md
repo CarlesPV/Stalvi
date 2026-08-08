@@ -699,8 +699,87 @@ This document lists the completed phases of the Stalvi development roadmap, prov
   - 100% clean static analysis (`flutter analyze` with 0 issues).
   - 100% pass rate across all unit and widget tests.
 
+### Phase 51: Cross-Platform Background Execution & Recurrence Engine Refactoring
+* **Completion Date:** July 25, 2026
+* **Objective:** Abstract background execution logic into a dedicated domain interface (`BackgroundSyncService`), connect Workmanager directly to recurring transaction use cases, and implement offline currency exchange fallbacks.
+* **Accomplishments:**
+  - **Background Sync Abstraction:** Abstracted background execution logic into a dedicated domain interface (`BackgroundSyncService`), enabling clean cross-platform task invocation.
+  - **Idempotent Background Tasks:** Connected background execution via `workmanager` directly to `ExecuteRecurringTransactionsUseCase` to evaluate scheduled automatic transactions reliably.
+  - **Offline Currency Fallback System:** Implemented local fallback exchange rates in the infrastructure layer (`FallbackExchangeRates`) to populate database tables on initialization when network access is unavailable.
+* **Verification:**
+  - 100% clean static analysis (`flutter analyze` with 0 issues).
+  - All unit, widget, and integration tests pass with a 100% success rate.
+
+### Phase 52: Legal Compliance Integration & Production CI/CD Finalization
+* **Completion Date:** July 28, 2026
+* **Objective:** Draft and integrate GDPR/store-compliant legal terms, clean up static analysis warnings, and synchronize GitHub Actions CI/CD workflows for release.
+* **Accomplishments:**
+  - **Store-Ready Legal Compliance:** Drafted and integrated GDPR and App Store/Google Play compliant Terms & Conditions and Privacy Policy across English, Spanish, and Catalan (`assets/legal/terms_*.md`, `assets/legal/privacy_*.md`), reflecting SQLCipher AES-256 local encrypted storage and zero-telemetry architecture.
+  - **Static Analysis & Test Suite Integrity:** Resolved all static analyzer issues (`flutter analyze` with 0 warnings, 0 errors) and updated mock/unit tests to achieve a 100% test pass rate.
+  - **CI/CD Workflow Synchronization:** Verified and synchronized GitHub Actions CI/CD workflows for Android and iOS automated builds and test runs.
+* **Verification:**
+  - 100% clean static analysis (`flutter analyze` with 0 issues).
+  - 100% pass rate across all unit and widget tests.
+
+### Phase 53: Recurrence Precision, Input Rules & Process Exit Reliability
+* **Completion Date:** August 1, 2026
+* **Objective:** Ensure past missed recurring transactions generate with exact historical dates, enforce input validation rules (max 25 chars without emojis), fix database close deadlocks during data wipes, and synchronize CI/CD workflows.
+* **Accomplishments:**
+  - **Automatic Recurrence Date Precision:** Ensured missing past transactions (e.g., app not opened for multiple days/weeks) generate all pending transaction instances with their exact historical dates rather than today's date.
+  - **Profile & User Name Input Rules:** Enforced a strict max length of 25 characters for name and username inputs during account creation, preventing emojis and special characters while permitting standard accented letters.
+  - **Cold Application Restart & Database Release:** Fixed database connection deadlock during "Wipe All Data" by introducing a 500ms timeout on database `close()`, allowing clean database deletion and reliable application exit/restart on physical iOS and Android devices.
+  - **CI/CD Workflow Alignment:** Synchronized GitHub Actions workflows (`ci.yml` and `security.yml`) for `main` and `develop` branches, ensuring `pod install` and simulator iOS builds pass cleanly.
+* **Verification:**
+  - 100% test pass rate across 530 unit, widget, and integration tests with zero static analyzer warnings or errors (`flutter analyze --fatal-infos --fatal-warnings`).
+
+### Phase 54: Reactive Budgets & Goals Notifications and Code Cleanup
+* **Completion Date:** August 3, 2026
+* **Objective:** Implement reactive budget/goal updates and automated push notifications upon transaction creation, execute a comprehensive codebase cleanup, and maintain 100% test coverage.
+* **Accomplishments:**
+  - **Reactive Budgets & Goals:** Implemented a reactive system where budget and savings goals are automatically updated and validated upon every transaction creation.
+  - **Automated Push Notifications:** Implemented an automated trigger for multi-language push notifications when budget thresholds or savings goals are met.
+  - **Comprehensive Code Cleanup:** Performed a comprehensive code cleanup across `lib/` and `test/` directories, removing dead code, unused files, orphan translation keys, and obsolete comments.
+* **Verification:**
+  - 100% test pass rate across unit, widget, and integration tests with zero static analysis issues.
+
+### Phase 55: Transaction UX Enhancements & Automatic Transaction Labels
+* **Completion Date:** August 5, 2026
+* **Objective:** Add optional `labelId` support to automatic transactions, position Label fields below Categories in forms, implement inline "Create New Category/Label" options, and add localization keys across EN, ES, CA.
+* **Accomplishments:**
+  - **Label Support in Automatic Transactions:** Updated `AutomaticTransaction` entity, Drift schema, DAOs, and Backup/Restore UseCases/DTOs to include optional `labelId` support with safe DB migration.
+  - **Form UI & Inline Entity Creation:** Refactored `AddTransactionScreen` and `CreateEditAutomaticTransactionScreen` forms to position the Label field directly below the Category field. Implemented inline "Create New Category" and "Create New Label" dropdown options as top items in selectors with auto-save and auto-select behavior.
+  - **Localization & Test Suite:** Added localized translation strings (`createNewCategory`, `createNewLabel`, `createNewTag`) in English, Spanish, and Catalan.
+* **Verification:**
+  - 100% test pass rate across unit, widget, and integration tests, clean static analysis (`0` issues).
+
+### Phase 56: CI/CD Stabilization and Domain Refinement
+* **Completion Date:** August 7, 2026
+* **Objective:** Upgrade `workmanager` dependency and Gradle configurations, eliminate mandatory "Uncategorized" category fallbacks, unify category selector UI/UX, and ensure 100% build health.
+* **Accomplishments:**
+  - **CI/CD & Gradle Upgrades:** Upgraded `workmanager` package to latest supported release and realign Gradle/Kotlin build script configurations (`build.gradle.kts`) to fix Android CI build failures (`WorkmanagerPlugin`).
+  - **Domain & UI Unification:** Refactored transaction domain logic to eliminate mandatory "Uncategorized" category fallbacks, enforcing explicit category selection across all standard and recurring transactions. Unified category selector UI/UX.
+* **Verification:**
+  - 100% test pass rate across 548 unit, widget, and integration tests, clean static analysis (`0` warnings/errors on `flutter analyze`).
+
+### Phase 57: Play Store Build Optimization & R8 Code/Resource Shrinking
+* **Completion Date:** August 8, 2026
+* **Objective:** Optimize the Android production build for Play Store release by removing overly permissive ProGuard keep rules, configuring resource shrinking for supported languages, and enabling R8 full mode.
+* **Accomplishments:**
+  - **ProGuard / R8 Rules Refinement:** Removed blanket `-keep` rules for Flutter embedding and AndroidX libraries (`androidx.work`, `androidx.room`, `androidx.security`, `androidx.biometric`, `androidx.startup`) in `android/app/proguard-rules.pro`, enabling R8 deep tree-shaking via library consumer rules.
+  - **Resource Shrinking & Language Stripping:** Configured `resourceConfigurations += setOf("en", "es", "ca")` in `android/app/build.gradle.kts` to purge unused localization strings and drawables from external dependencies.
+  - **R8 Full Mode:** Declared `android.enableR8.fullMode=true` in `android/gradle.properties` for aggressive code optimization.
+  - **Verification:** Successfully compiled release App Bundle (`app-release.aab`) with clean build health and verified that native security, FFI, and background modules function without crashes.
+* **Verification:**
+  - 100% clean release App Bundle compilation (`flutter build appbundle --release`).
+
 ## Recent Updates
+- Finalized Phase 57 (Play Store Build Optimization & R8 Code/Resource Shrinking), eliminating overly broad ProGuard rules, restricting unused localization resources to EN/ES/CA, enabling R8 full mode, and verifying release App Bundle builds.
+- Completed Phase 56 (CI/CD Stabilization and Domain Refinement), upgrading workmanager, fixing Android CI Gradle builds, removing uncategorized fallbacks, and unifying category UI selectors.
+- Completed Phase 55 (Transaction UX Enhancements & Automatic Transaction Labels), adding labelId support in automatic transactions, inline entity creation dropdowns, and ARB localizations.
+- Completed Phase 54 (Reactive Budgets & Goals Notifications and Code Cleanup), enabling reactive budget/goal updates and automated notification triggers.
 - Finalized Phase 53 (Recurrence Precision, Input Rules & Process Exit Reliability), ensuring past missed recurring transactions generate with historical dates, enforcing 25-character name limits without emojis, fixing database close deadlocks during data wipes with a 500ms timeout for clean app process restarts, aligning CI/CD workflows for iOS pod installs, and passing all 530 tests with 0 analyzer warnings.
+- Completed Phase 52 (Legal Compliance Integration & Production CI/CD Finalization), integrating GDPR/store compliance legal docs and synchronizing GitHub Actions CI/CD workflows.
+- Completed Phase 51 (Cross-Platform Background Execution & Recurrence Engine Refactoring), abstracting background sync interfaces and implementing offline fallback exchange rates.
 - Finalized Phase 50 (Store-Ready Legal Overhaul), validating UI layout scrollability for large legal markdown documents, achieving 0 analyzer warnings/infos, maintaining 100% test pass rate, and confirming CI/CD workflow readiness.
 - Finalized Phase 49 (Strict Notification Permissions Workflow, Legal Compliance & Technical Debt Cleanup), implementing strict opt-in notification controls with native OS permission checks and settings redirection, store-ready legal compliance documentation in EN/ES/CA, and thorough technical debt cleanup.
 - Finalized Phase 48 (Background Resilience, Optional Notifications & File Export Priorities), implementing user-configurable push notifications in settings, 3-hour Workmanager periodic background task execution with UTC+2 precision, strict storage directory prioritization, and updated documentation.

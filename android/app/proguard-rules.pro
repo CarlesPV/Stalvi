@@ -9,9 +9,7 @@
 # ---------------------------------------------------------------------------
 # Flutter embedding
 # ---------------------------------------------------------------------------
--keep class io.flutter.** { *; }
--keep class io.flutter.embedding.** { *; }
--dontwarn io.flutter.embedding.**
+# (Relying on built-in rules from Flutter embedding AAR)
 
 # ---------------------------------------------------------------------------
 # SQLCipher / SQLite JNI bridge
@@ -35,14 +33,12 @@
 # ---------------------------------------------------------------------------
 # Flutter Secure Storage (EncryptedSharedPreferences / Keystore)
 # ---------------------------------------------------------------------------
--keep class androidx.security.crypto.** { *; }
--dontwarn androidx.security.crypto.**
+# (Relying on built-in rules from AndroidX Security)
 
 # ---------------------------------------------------------------------------
 # Local Auth / Biometrics
 # ---------------------------------------------------------------------------
--keep class androidx.biometric.** { *; }
--dontwarn androidx.biometric.**
+# (Relying on built-in rules from AndroidX Biometric)
 
 # ---------------------------------------------------------------------------
 # General Android / Jetpack
@@ -80,9 +76,4 @@
 # ---------------------------------------------------------------------------
 # WorkManager / Room (Fix for Release Mode crash)
 # ---------------------------------------------------------------------------
--keep class androidx.work.** { *; }
--dontwarn androidx.work.**
--keep class androidx.startup.** { *; }
--dontwarn androidx.startup.**
--keep class androidx.room.** { *; }
--dontwarn androidx.room.**
+# (Relying on built-in rules from AndroidX Work, Startup, and Room)
