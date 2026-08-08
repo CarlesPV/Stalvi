@@ -270,6 +270,7 @@ class ImportServiceImpl implements IImportService {
                   accountId: at['account_id'] as String,
                   categoryId: Value(at['category_id'] as String?),
                   tagId: Value(at['tag_id'] as String?),
+                  labelId: Value(at['label_id'] as String?),
                   notes: Value(at['notes'] as String?),
                   recurrenceType: Value(
                     _parseRecurrenceType(at['recurrence_type'] as String?),

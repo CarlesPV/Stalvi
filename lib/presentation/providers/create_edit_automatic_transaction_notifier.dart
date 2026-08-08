@@ -19,6 +19,7 @@ class CreateEditAutomaticTransactionState {
   final TransactionType type;
   final String? accountId;
   final String? categoryId;
+  final String? labelId;
   final String notes;
   final String? currency;
   final RecurrenceType recurrenceType;
@@ -33,6 +34,7 @@ class CreateEditAutomaticTransactionState {
     required this.type,
     required this.accountId,
     required this.categoryId,
+    this.labelId,
     required this.notes,
     this.currency,
     required this.recurrenceType,
@@ -49,6 +51,7 @@ class CreateEditAutomaticTransactionState {
       type: TransactionType.expense,
       accountId: null,
       categoryId: null,
+      labelId: null,
       notes: '',
       currency: null,
       recurrenceType: RecurrenceType.intervalDays,
@@ -68,6 +71,7 @@ class CreateEditAutomaticTransactionState {
       type: transaction.type,
       accountId: transaction.accountId,
       categoryId: transaction.categoryId,
+      labelId: transaction.labelId,
       notes: transaction.notes ?? '',
       currency: transaction.currency,
       recurrenceType: transaction.recurrenceType,
@@ -84,6 +88,7 @@ class CreateEditAutomaticTransactionState {
     TransactionType? type,
     String? accountId,
     String? Function()? categoryId,
+    String? Function()? labelId,
     String? notes,
     String? Function()? currency,
     RecurrenceType? recurrenceType,
@@ -98,6 +103,7 @@ class CreateEditAutomaticTransactionState {
       type: type ?? this.type,
       accountId: accountId ?? this.accountId,
       categoryId: categoryId != null ? categoryId() : this.categoryId,
+      labelId: labelId != null ? labelId() : this.labelId,
       notes: notes ?? this.notes,
       currency: currency != null ? currency() : this.currency,
       recurrenceType: recurrenceType ?? this.recurrenceType,
@@ -197,6 +203,10 @@ class CreateEditAutomaticTransactionNotifier
       newErrors.remove('categoryId');
     }
     state = state.copyWith(categoryId: () => categoryId, errors: newErrors);
+  }
+
+  void updateLabel(String? labelId) {
+    state = state.copyWith(labelId: () => labelId);
   }
 
   void updateNotes(String notes) {
@@ -401,6 +411,7 @@ class CreateEditAutomaticTransactionNotifier
         type: state.type,
         accountId: state.accountId!,
         categoryId: state.categoryId,
+        labelId: state.labelId,
         notes: trimmedNotes.isEmpty ? null : trimmedNotes,
         recurrenceType: state.recurrenceType,
         recurrenceDays: state.recurrenceDays,

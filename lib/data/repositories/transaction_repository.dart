@@ -151,7 +151,7 @@ class TransactionRepository implements ITransactionRepository {
       final dbTransaction = transaction.toDb();
       final updated = await (_db.update(_db.transactions)
             ..where((t) => t.id.equals(transaction.id)))
-          .write(dbTransaction.toCompanion(true));
+          .write(dbTransaction.toCompanion(false));
 
       if (updated == 0) {
         throw NotFoundException(

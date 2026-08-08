@@ -121,7 +121,7 @@ class _BudgetsTabBody extends ConsumerWidget {
               (c) => c.id == budget.categoryId,
               orElse: () => Category(
                 id: budget.categoryId,
-                name: AppLocalizations.of(context)!.uncategorized,
+                name: '-',
                 icon: 'category',
                 color: '#94A3B8',
                 createdAt: DateTime.now(),

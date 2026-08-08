@@ -13,8 +13,8 @@ import 'package:stalvi/domain/entities/savings_goal.dart';
 import '../../providers/add_transaction_notifier.dart';
 import '../../providers/repository_providers.dart';
 import 'package:stalvi/core/utils/currency_formatter.dart';
-
 import 'package:stalvi/core/utils/icon_helper.dart';
+import '../settings/categories_tags_management_screen.dart';
 
 /// Screen containing the transaction creation form.
 ///
@@ -511,7 +511,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                         _FormSelectorTile(
                           label: AppLocalizations.of(context)!.labelCategory,
                           value: selectedCategory?.name ??
-                              AppLocalizations.of(context)!.uncategorized,
+                              AppLocalizations.of(context)!.labelSelectCategory,
                           icon: selectedCategory != null
                               ? _getIconData(selectedCategory.icon)
                               : Icons.category_rounded,
@@ -544,6 +544,21 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                               ),
                             ),
                           ),
+                        Divider(
+                          height: 1,
+                          color: colorScheme.outline.withValues(alpha: 0.08),
+                        ),
+                        // Tag Selector
+                        _FormSelectorTile(
+                          label:
+                              "${AppLocalizations.of(context)!.labelTag} ${AppLocalizations.of(context)!.optionalPlaceholder}",
+                          value: selectedTag != null
+                              ? selectedTag.name
+                              : "${AppLocalizations.of(context)!.labelSelectTag} ${AppLocalizations.of(context)!.optionalPlaceholder}",
+                          icon: Icons.local_offer_rounded,
+                          iconColor: colorScheme.tertiary,
+                          onTap: () => _showTagSelector(context, tags),
+                        ),
                       ],
                       Divider(
                         height: 1,
@@ -612,21 +627,6 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                             ),
                           ),
                         ),
-                      Divider(
-                        height: 1,
-                        color: colorScheme.outline.withValues(alpha: 0.08),
-                      ),
-                      // Tag Selector
-                      _FormSelectorTile(
-                        label:
-                            "${AppLocalizations.of(context)!.labelTag} ${AppLocalizations.of(context)!.optionalPlaceholder}",
-                        value: selectedTag != null
-                            ? selectedTag.name
-                            : "${AppLocalizations.of(context)!.labelSelectTag} ${AppLocalizations.of(context)!.optionalPlaceholder}",
-                        icon: Icons.local_offer_rounded,
-                        iconColor: colorScheme.tertiary,
-                        onTap: () => _showTagSelector(context, tags),
-                      ),
                     ],
                   ),
                 ),
@@ -637,7 +637,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                 TextField(
                   controller: _notesController,
                   maxLines: 3,
-                  maxLength: 20,
+                  maxLength: 23,
                   style: theme.textTheme.bodyMedium,
                   decoration: InputDecoration(
                     labelText:
@@ -983,24 +983,51 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                 child: ListView.builder(
                   shrinkWrap: true,
                   itemCount:
-                      filteredCategories.length + 1, // +1 for "Uncategorized"
+                      filteredCategories.length + 1, // +1 for "Create New"
                   itemBuilder: (context, index) {
-                    final isUncategorized = index == 0;
-                    final isSelected = isUncategorized
-                        ? state.categoryId == null
-                        : state.categoryId == filteredCategories[index - 1].id;
+                    if (index == 0) {
+                      return Container(
+                        margin: const EdgeInsets.only(bottom: 10),
+                        decoration: BoxDecoration(
+                          color: colorScheme.primary.withValues(alpha: 0.08),
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(
+                            color: colorScheme.primary.withValues(alpha: 0.4),
+                          ),
+                        ),
+                        child: Material(
+                          color: Colors.transparent,
+                          child: ListTile(
+                            leading: CircleAvatar(
+                              backgroundColor: colorScheme.primary.withValues(alpha: 0.12),
+                              child: Icon(Icons.add_rounded, color: colorScheme.primary, size: 20),
+                            ),
+                            title: Text(
+                              AppLocalizations.of(context)!.createNewCategory,
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                fontWeight: FontWeight.w700,
+                                color: colorScheme.primary,
+                              ),
+                            ),
+                            onTap: () async {
+                              Navigator.of(context).pop();
+                              final newId = await CategoryDialog.show(context, ref);
+                              if (newId != null) {
+                                ref
+                                    .read(addTransactionProvider.notifier)
+                                    .updateCategory(newId);
+                              }
+                            },
+                          ),
+                        ),
+                      );
+                    }
 
-                    final category =
-                        isUncategorized ? null : filteredCategories[index - 1];
-                    final catColor = isUncategorized
-                        ? colorScheme.onSurfaceVariant
-                        : _parseHexColor(category!.color);
-                    final catIcon = isUncategorized
-                        ? Icons.category_rounded
-                        : _getIconData(category!.icon);
-                    final catName = isUncategorized
-                        ? AppLocalizations.of(context)!.uncategorized
-                        : category!.name;
+                    final category = filteredCategories[index - 1];
+                    final isSelected = state.categoryId == category.id;
+                    final catColor = _parseHexColor(category.color);
+                    final catIcon = _getIconData(category.icon);
+                    final catName = category.name;
 
                     return Container(
                       margin: const EdgeInsets.only(bottom: 10),
@@ -1016,26 +1043,29 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                               : Colors.transparent,
                         ),
                       ),
-                      child: ListTile(
-                        leading: CircleAvatar(
-                          backgroundColor: catColor.withValues(alpha: 0.12),
-                          child: Icon(catIcon, color: catColor, size: 20),
-                        ),
-                        title: Text(
-                          catName,
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            fontWeight: FontWeight.w700,
+                      child: Material(
+                        color: Colors.transparent,
+                        child: ListTile(
+                          leading: CircleAvatar(
+                            backgroundColor: catColor.withValues(alpha: 0.12),
+                            child: Icon(catIcon, color: catColor, size: 20),
                           ),
+                          title: Text(
+                            catName,
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          trailing: isSelected
+                              ? Icon(Icons.check_circle_rounded, color: catColor)
+                              : null,
+                          onTap: () {
+                            ref
+                                .read(addTransactionProvider.notifier)
+                                .updateCategory(category.id);
+                            Navigator.of(context).pop();
+                          },
                         ),
-                        trailing: isSelected
-                            ? Icon(Icons.check_circle_rounded, color: catColor)
-                            : null,
-                        onTap: () {
-                          ref
-                              .read(addTransactionProvider.notifier)
-                              .updateCategory(category?.id);
-                          Navigator.of(context).pop();
-                        },
                       ),
                     );
                   },
@@ -1206,14 +1236,52 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
               Flexible(
                 child: ListView.builder(
                   shrinkWrap: true,
-                  itemCount: tags.length + 1, // +1 for "None"
+                  itemCount: tags.length + 2, // +1 for "Create New", +1 for "None"
                   itemBuilder: (context, index) {
-                    final isNone = index == 0;
+                    if (index == 0) {
+                      return Container(
+                        margin: const EdgeInsets.only(bottom: 10),
+                        decoration: BoxDecoration(
+                          color: colorScheme.tertiary.withValues(alpha: 0.08),
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(
+                            color: colorScheme.tertiary.withValues(alpha: 0.4),
+                          ),
+                        ),
+                        child: Material(
+                          color: Colors.transparent,
+                          child: ListTile(
+                            leading: CircleAvatar(
+                              backgroundColor: colorScheme.tertiary.withValues(alpha: 0.12),
+                              child: Icon(Icons.add_rounded, color: colorScheme.tertiary, size: 20),
+                            ),
+                            title: Text(
+                              AppLocalizations.of(context)!.createNewLabel,
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                fontWeight: FontWeight.w700,
+                                color: colorScheme.tertiary,
+                              ),
+                            ),
+                            onTap: () async {
+                              Navigator.of(context).pop();
+                              final newId = await TagDialog.show(context, ref);
+                              if (newId != null) {
+                                ref
+                                    .read(addTransactionProvider.notifier)
+                                    .updateTag(newId);
+                              }
+                            },
+                          ),
+                        ),
+                      );
+                    }
+
+                    final isNone = index == 1;
                     final isSelected = isNone
                         ? state.tagId == null
-                        : state.tagId == tags[index - 1].id;
+                        : state.tagId == tags[index - 2].id;
 
-                    final tag = isNone ? null : tags[index - 1];
+                    final tag = isNone ? null : tags[index - 2];
                     final tagName = isNone
                         ? AppLocalizations.of(context)!.noTag
                         : tag!.name;
@@ -1232,36 +1300,39 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                               : Colors.transparent,
                         ),
                       ),
-                      child: ListTile(
-                        leading: CircleAvatar(
-                          backgroundColor:
-                              colorScheme.tertiary.withValues(alpha: 0.12),
-                          child: Icon(
-                            isNone
-                                ? Icons.block_rounded
-                                : Icons.local_offer_rounded,
-                            color: colorScheme.tertiary,
-                            size: 20,
+                      child: Material(
+                        color: Colors.transparent,
+                        child: ListTile(
+                          leading: CircleAvatar(
+                            backgroundColor:
+                                colorScheme.tertiary.withValues(alpha: 0.12),
+                            child: Icon(
+                              isNone
+                                  ? Icons.block_rounded
+                                  : Icons.local_offer_rounded,
+                              color: colorScheme.tertiary,
+                              size: 20,
+                            ),
                           ),
-                        ),
-                        title: Text(
-                          tagName,
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            fontWeight: FontWeight.w700,
+                          title: Text(
+                            tagName,
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.w700,
+                            ),
                           ),
+                          trailing: isSelected
+                              ? Icon(
+                                  Icons.check_circle_rounded,
+                                  color: colorScheme.tertiary,
+                                )
+                              : null,
+                          onTap: () {
+                            ref
+                                .read(addTransactionProvider.notifier)
+                                .updateTag(tag?.id);
+                            Navigator.of(context).pop();
+                          },
                         ),
-                        trailing: isSelected
-                            ? Icon(
-                                Icons.check_circle_rounded,
-                                color: colorScheme.tertiary,
-                              )
-                            : null,
-                        onTap: () {
-                          ref
-                              .read(addTransactionProvider.notifier)
-                              .updateTag(tag?.id);
-                          Navigator.of(context).pop();
-                        },
                       ),
                     );
                   },

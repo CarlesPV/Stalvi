@@ -139,9 +139,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String get txnSuccessCreated => '¡Transacción creada con éxito!';
 
   @override
-  String get uncategorized => 'Sin categoría';
-
-  @override
   String get usernameLabel => 'Nombre de usuario';
 
   @override
@@ -401,6 +398,12 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get createAccountTitle => 'Crear nueva cuenta';
+
+  @override
+  String get createNewCategory => 'Crear nueva categoría';
+
+  @override
+  String get createNewLabel => 'Crear nueva etiqueta';
 
   @override
   String get createAccountTypeLabel => 'Tipo de cuenta';

@@ -6,6 +6,7 @@ import 'package:stalvi/domain/entities/account.dart';
 import 'package:stalvi/domain/entities/account_type.dart';
 import 'package:stalvi/domain/entities/category.dart';
 import 'package:stalvi/domain/entities/category_type.dart';
+import 'package:stalvi/domain/entities/tag.dart';
 import 'package:stalvi/domain/entities/profile.dart';
 import 'package:stalvi/domain/entities/automatic_transaction.dart';
 import 'package:stalvi/presentation/features/settings/create_edit_automatic_transaction_screen.dart';
@@ -62,6 +63,14 @@ void main() {
     modifiedAt: DateTime.now(),
   );
 
+  final testTag = Tag(
+    id: 'tag_1',
+    name: 'Subscriptions',
+    isDeleted: false,
+    createdAt: DateTime.now(),
+    modifiedAt: DateTime.now(),
+  );
+
   final testProfile = Profile(
     id: 'user_1',
     name: 'Test User',
@@ -89,6 +98,8 @@ void main() {
         accountsListProvider.overrideWith((ref) => Stream.value([testAccount])),
         categoriesListProvider
             .overrideWith((ref) => Stream.value([testCategory])),
+        tagsListProvider
+            .overrideWith((ref) async => [testTag]),
         defaultProfileProvider.overrideWith((ref) => testProfile),
         secureStorageProvider.overrideWithValue(mockSecureStorage),
       ],
@@ -261,5 +272,66 @@ void main() {
 
     // The validation error should appear
     expect(find.text('Invalid day of month (must be 1-31)'), findsOneWidget);
+  });
+
+  testWidgets(
+      'CreateEditAutomaticTransactionScreen places Label field immediately below Category field',
+      (WidgetTester tester) async {
+    tester.view.physicalSize = const Size(1080, 2400);
+    tester.view.devicePixelRatio = 3.0;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await tester.pumpWidget(createTestableWidget());
+    await tester.pumpAndSettle();
+
+    final categoryTile = find.text('Category');
+    final tagTile = find.text('Tag (Optional)');
+    final currencyTile = find.text('Currency');
+    final recurrenceTile = find.text('Recurrence');
+
+    expect(categoryTile, findsOneWidget);
+    expect(tagTile, findsOneWidget);
+    expect(currencyTile, findsOneWidget);
+    expect(recurrenceTile, findsOneWidget);
+
+    final categoryY = tester.getTopLeft(categoryTile).dy;
+    final tagY = tester.getTopLeft(tagTile).dy;
+    final currencyY = tester.getTopLeft(currencyTile).dy;
+    final recurrenceY = tester.getTopLeft(recurrenceTile).dy;
+
+    expect(categoryY < tagY, isTrue, reason: 'Label/Tag field must be below Category field');
+    expect(tagY < currencyY, isTrue, reason: 'Label/Tag field must be above Currency field');
+    expect(currencyY < recurrenceY, isTrue, reason: 'Currency field must be above Recurrence field');
+  });
+
+  testWidgets(
+      'selecting a label in CreateEditAutomaticTransactionScreen updates the form state tile',
+      (WidgetTester tester) async {
+    tester.view.physicalSize = const Size(1080, 2400);
+    tester.view.devicePixelRatio = 3.0;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await tester.pumpWidget(createTestableWidget());
+    await tester.pumpAndSettle();
+
+    final tagTile = find.text('Tag (Optional)');
+    await tester.scrollUntilVisible(
+      tagTile,
+      50,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.tap(tagTile);
+    await tester.pumpAndSettle();
+
+    expect(find.text('Select Tag'), findsOneWidget);
+    final tagOption = find.text('Subscriptions');
+    expect(tagOption, findsOneWidget);
+
+    await tester.tap(tagOption);
+    await tester.pumpAndSettle();
+
+    expect(find.text('Subscriptions'), findsOneWidget);
   });
 }

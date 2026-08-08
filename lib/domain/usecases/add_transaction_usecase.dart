@@ -135,6 +135,14 @@ class AddTransactionUseCase {
       );
     }
 
+    // Validate: category is strictly required for income and expense transactions
+    if (params.type != TransactionType.transfer && params.categoryId == null) {
+      throw const ValidationException(
+        message: 'A category is required for income and expense transactions',
+        code: 'CATEGORY_REQUIRED',
+      );
+    }
+
     Account? destinationAccount;
     SavingsGoal? destinationGoal;
     // Transfer-specific validation.

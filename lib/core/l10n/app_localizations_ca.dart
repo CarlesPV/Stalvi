@@ -139,9 +139,6 @@ class AppLocalizationsCa extends AppLocalizations {
   String get txnSuccessCreated => 'Transacció creada amb èxit!';
 
   @override
-  String get uncategorized => 'Sense categoria';
-
-  @override
   String get usernameLabel => 'Nom d\'usuari';
 
   @override
@@ -401,6 +398,12 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get createAccountTitle => 'Crear nou compte';
+
+  @override
+  String get createNewCategory => 'Crear nova categoria';
+
+  @override
+  String get createNewLabel => 'Crear nova etiqueta';
 
   @override
   String get createAccountTypeLabel => 'Tipus de compte';

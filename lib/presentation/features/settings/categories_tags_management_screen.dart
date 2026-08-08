@@ -34,11 +34,11 @@ class _CategoriesTagsManagementScreenState
   }
 
   void _showAddCategory() {
-    _CategoryDialog.show(context, ref);
+    CategoryDialog.show(context, ref);
   }
 
   void _showAddTag() {
-    _TagDialog.show(context, ref);
+    TagDialog.show(context, ref);
   }
 
   @override
@@ -260,7 +260,7 @@ class _CategoriesTab extends ConsumerWidget {
                   IconButton(
                     icon: const Icon(Icons.edit),
                     onPressed: () =>
-                        _CategoryDialog.show(context, ref, category: category),
+                        CategoryDialog.show(context, ref, category: category),
                   ),
                   IconButton(
                     icon: const Icon(Icons.delete, color: Colors.red),
@@ -426,7 +426,7 @@ class _TagsTab extends ConsumerWidget {
                 children: [
                   IconButton(
                     icon: const Icon(Icons.edit),
-                    onPressed: () => _TagDialog.show(context, ref, tag: tag),
+                    onPressed: () => TagDialog.show(context, ref, tag: tag),
                   ),
                   IconButton(
                     icon: const Icon(Icons.delete, color: Colors.red),
@@ -444,25 +444,25 @@ class _TagsTab extends ConsumerWidget {
   }
 }
 
-class _CategoryDialog extends StatefulWidget {
+class CategoryDialog extends StatefulWidget {
   final Category? category;
   final WidgetRef ref;
-  const _CategoryDialog({this.category, required this.ref});
+  const CategoryDialog({super.key, this.category, required this.ref});
 
-  static void show(BuildContext context, WidgetRef ref, {Category? category}) {
-    showModalBottomSheet(
+  static Future<String?> show(BuildContext context, WidgetRef ref, {Category? category}) {
+    return showModalBottomSheet<String>(
       context: context,
       isScrollControlled: true,
       useSafeArea: true,
-      builder: (ctx) => _CategoryDialog(category: category, ref: ref),
+      builder: (ctx) => CategoryDialog(category: category, ref: ref),
     );
   }
 
   @override
-  State<_CategoryDialog> createState() => _CategoryDialogState();
+  State<CategoryDialog> createState() => CategoryDialogState();
 }
 
-class _CategoryDialogState extends State<_CategoryDialog> {
+class CategoryDialogState extends State<CategoryDialog> {
   final _nameController = TextEditingController();
   String _selectedColor = '#2196F3';
   String _selectedIcon = 'category';
@@ -552,9 +552,10 @@ class _CategoryDialogState extends State<_CategoryDialog> {
                 if (_nameController.text.trim().isEmpty) return;
                 final repo = widget.ref.read(categoryRepositoryProvider);
                 if (widget.category == null) {
+                  final newId = const Uuid().v4();
                   await repo.createCategory(
                     Category(
-                      id: const Uuid().v4(),
+                      id: newId,
                       name: _nameController.text.trim(),
                       icon: _selectedIcon,
                       color: _selectedColor,
@@ -562,6 +563,7 @@ class _CategoryDialogState extends State<_CategoryDialog> {
                       modifiedAt: DateTime.now(),
                     ),
                   );
+                  if (context.mounted) Navigator.pop(context, newId);
                 } else {
                   await repo.updateCategory(
                     widget.category!.copyWith(
@@ -571,8 +573,8 @@ class _CategoryDialogState extends State<_CategoryDialog> {
                       modifiedAt: DateTime.now(),
                     ),
                   );
+                  if (context.mounted) Navigator.pop(context, widget.category!.id);
                 }
-                if (context.mounted) Navigator.pop(context);
               },
               child: Text(l10n.btnSave),
             ),
@@ -583,25 +585,25 @@ class _CategoryDialogState extends State<_CategoryDialog> {
   }
 }
 
-class _TagDialog extends StatefulWidget {
+class TagDialog extends StatefulWidget {
   final Tag? tag;
   final WidgetRef ref;
-  const _TagDialog({this.tag, required this.ref});
+  const TagDialog({super.key, this.tag, required this.ref});
 
-  static void show(BuildContext context, WidgetRef ref, {Tag? tag}) {
-    showModalBottomSheet(
+  static Future<String?> show(BuildContext context, WidgetRef ref, {Tag? tag}) {
+    return showModalBottomSheet<String>(
       context: context,
       isScrollControlled: true,
       useSafeArea: true,
-      builder: (ctx) => _TagDialog(tag: tag, ref: ref),
+      builder: (ctx) => TagDialog(tag: tag, ref: ref),
     );
   }
 
   @override
-  State<_TagDialog> createState() => _TagDialogState();
+  State<TagDialog> createState() => TagDialogState();
 }
 
-class _TagDialogState extends State<_TagDialog> {
+class TagDialogState extends State<TagDialog> {
   final _nameController = TextEditingController();
 
   @override
@@ -644,14 +646,17 @@ class _TagDialogState extends State<_TagDialog> {
                 if (_nameController.text.trim().isEmpty) return;
                 final repo = widget.ref.read(tagRepositoryProvider);
                 if (widget.tag == null) {
+                  final newId = const Uuid().v4();
                   await repo.createTag(
                     Tag(
-                      id: const Uuid().v4(),
+                      id: newId,
                       name: _nameController.text.trim(),
                       createdAt: DateTime.now(),
                       modifiedAt: DateTime.now(),
                     ),
                   );
+                  widget.ref.invalidate(tagsListProvider);
+                  if (context.mounted) Navigator.pop(context, newId);
                 } else {
                   await repo.updateTag(
                     widget.tag!.copyWith(
@@ -659,9 +664,9 @@ class _TagDialogState extends State<_TagDialog> {
                       modifiedAt: DateTime.now(),
                     ),
                   );
+                  widget.ref.invalidate(tagsListProvider);
+                  if (context.mounted) Navigator.pop(context, widget.tag!.id);
                 }
-                widget.ref.invalidate(tagsListProvider);
-                if (context.mounted) Navigator.pop(context);
               },
               child: Text(l10n.btnSave),
             ),

@@ -34,7 +34,7 @@ class ProfileRepository implements IProfileRepository {
   Future<Profile> updateProfile(Profile profile) async {
     final dbProfile = profile.toDb();
     await (_db.update(_db.profiles)..where((p) => p.id.equals(profile.id)))
-        .write(dbProfile.toCompanion(true));
+        .write(dbProfile.toCompanion(false));
     return profile;
   }
 

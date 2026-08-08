@@ -358,12 +358,6 @@ abstract class AppLocalizations {
   /// **'Transaction created successfully!'**
   String get txnSuccessCreated;
 
-  /// No description provided for @uncategorized.
-  ///
-  /// In en, this message translates to:
-  /// **'Uncategorized'**
-  String get uncategorized;
-
   /// No description provided for @usernameLabel.
   ///
   /// In en, this message translates to:
@@ -837,6 +831,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Create New Account'**
   String get createAccountTitle;
+
+  /// No description provided for @createNewCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Create New Category'**
+  String get createNewCategory;
+
+  /// No description provided for @createNewLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Create New Label'**
+  String get createNewLabel;
 
   /// No description provided for @createAccountTypeLabel.
   ///
