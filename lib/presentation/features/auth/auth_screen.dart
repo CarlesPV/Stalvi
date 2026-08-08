@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui';
 
 import 'package:flutter/gestures.dart';
@@ -1291,7 +1292,7 @@ class _LockedOutContent extends StatelessWidget {
 
 // ─── PIN Brute-force Lockout Content (with countdown timer) ──────────────────
 
-class _PinLockoutContent extends StatelessWidget {
+class _PinLockoutContent extends StatefulWidget {
   final ColorScheme colorScheme;
   final ThemeData theme;
   final int secondsRemaining;
@@ -1303,9 +1304,40 @@ class _PinLockoutContent extends StatelessWidget {
   });
 
   @override
+  State<_PinLockoutContent> createState() => _PinLockoutContentState();
+}
+
+class _PinLockoutContentState extends State<_PinLockoutContent> {
+  late int secondsRemaining;
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    secondsRemaining = widget.secondsRemaining;
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (secondsRemaining > 0) {
+        setState(() {
+          secondsRemaining--;
+        });
+      } else {
+        timer.cancel();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final isCountingDown = secondsRemaining > 0;
+    final colorScheme = widget.colorScheme;
+    final theme = widget.theme;
 
     return Column(
       mainAxisSize: MainAxisSize.min,

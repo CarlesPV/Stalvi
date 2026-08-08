@@ -328,7 +328,7 @@ class _CreateEditAutomaticTransactionScreenState
                                   fontWeight: FontWeight.w800,
                                   letterSpacing: -1.0,
                                 ),
-                                textAlign: TextAlign.center,
+                                textAlign: TextAlign.left,
                                 decoration: InputDecoration(
                                   hintText: AppLocalizations.of(context)!
                                       .hintAmountZero,

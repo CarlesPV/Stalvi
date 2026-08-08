@@ -719,6 +719,16 @@ This document lists the completed phases of the Stalvi development roadmap, prov
 * **Verification:**
   - 100% clean release App Bundle compilation (`flutter build appbundle --release`).
 
+### Phase 58: PIN Lockout Timer Update & Transaction Amount Field Cursor Alignment
+* **Completion Date:** August 8, 2026
+* **Objective:** Fix the 30-second PIN lockout countdown update on the authentication screen and reposition the text input cursor to the left side of the currency symbol in transaction forms.
+* **Accomplishments:**
+  - **Dynamic PIN Lockout Timer:** Refactored `_PinLockoutContent` in `auth_screen.dart` to a `StatefulWidget` equipped with an internal `Timer.periodic`, ensuring the 30-second countdown ticks visually and dynamically down to zero.
+  - **Transaction Amount Input Alignment:** Updated `textAlign: TextAlign.left` on amount input text fields in `add_transaction_screen.dart` and `create_edit_automatic_transaction_screen.dart`.
+  - **Improved Cursor UX:** Placed the text cursor at the left side immediately following the currency symbol, avoiding visual confusion with decimal inputs.
+* **Verification:**
+  - 100% test pass rate across unit, widget, and integration tests, clean static analysis (`0` warnings/errors on `flutter analyze`).
+
 ## Recent Updates
 - Finalized Phase 57 (Play Store Build Optimization & R8 Code/Resource Shrinking), eliminating overly broad ProGuard rules, restricting unused localization resources to EN/ES/CA, enabling R8 full mode, and verifying release App Bundle builds.
 - Completed Phase 56 (CI/CD Stabilization and Domain Refinement), upgrading workmanager, fixing Android CI Gradle builds, removing uncategorized fallbacks, and unifying category UI selectors.

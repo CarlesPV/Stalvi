@@ -407,6 +407,12 @@
   - [x] Explicitly enable R8 full mode (`android.enableR8.fullMode=true`) in `android/gradle.properties`.
   - [x] Build and verify release App Bundle (`app-release.aab`) with 100% build health and zero runtime crashes.
 
+- [x] **Phase 58: PIN Lockout Timer Update & Transaction Amount Field Cursor Alignment**
+  - [x] Convert `_PinLockoutContent` in `auth_screen.dart` to a `StatefulWidget` with an internal periodic timer to dynamically update the 30-second countdown on the lockout screen.
+  - [x] Adjust text alignment to `TextAlign.left` in the amount entry field for both standard transactions (`add_transaction_screen.dart`) and automatic transactions (`create_edit_automatic_transaction_screen.dart`).
+  - [x] Ensure text cursor is positioned at the left side immediately following the currency symbol for clearer input UX.
+  - [x] Verify static analysis (`0` issues) and 100% test pass rate across all unit and widget tests.
+
 ---
 
 ## Post-Launch / Maintenance
