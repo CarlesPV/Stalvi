@@ -161,8 +161,9 @@ final updateBudgetProgressUseCaseProvider =
 });
 
 /// Provides the [IFinancialThresholdService] implementation.
-final financialThresholdServiceProvider =
-    Provider<IFinancialThresholdService>((ref) {
+final financialThresholdServiceProvider = Provider<IFinancialThresholdService>((
+  ref,
+) {
   return FinancialThresholdService(
     ref.watch(budgetRepositoryProvider),
     ref.watch(savingsGoalRepositoryProvider),
@@ -242,8 +243,9 @@ final updateAccountUseCaseProvider = Provider<UpdateAccountUseCase>((ref) {
 });
 
 /// Provides the [UpdateCredentialsUseCase] instance.
-final updateCredentialsUseCaseProvider =
-    Provider<UpdateCredentialsUseCase>((ref) {
+final updateCredentialsUseCaseProvider = Provider<UpdateCredentialsUseCase>((
+  ref,
+) {
   final secureStorage = ref.watch(secureStorageProvider);
   return UpdateCredentialsUseCase(secureStorage);
 });
@@ -260,8 +262,9 @@ final trashUsecasesProvider = Provider<TrashUsecases>((ref) {
   final trashRepo = ref.watch(trashRepositoryProvider);
   final transactionRepo = ref.watch(transactionRepositoryProvider);
   final accountRepo = ref.watch(accountRepositoryProvider);
-  final updateBudgetProgressUseCase =
-      ref.watch(updateBudgetProgressUseCaseProvider);
+  final updateBudgetProgressUseCase = ref.watch(
+    updateBudgetProgressUseCaseProvider,
+  );
   return TrashUsecases(
     trashRepo,
     transactionRepo,
@@ -339,7 +342,10 @@ final accountBalanceProvider =
     return AsyncError(accountAsync.error!, accountAsync.stackTrace!);
   }
   if (transactionsAsync.hasError) {
-    return AsyncError(transactionsAsync.error!, transactionsAsync.stackTrace!);
+    return AsyncError(
+      transactionsAsync.error!,
+      transactionsAsync.stackTrace!,
+    );
   }
 
   final account = accountAsync.value!.firstWhere((a) => a.id == accountId);
@@ -401,8 +407,9 @@ final deleteAndReassignCategoryUseCaseProvider =
     Provider<DeleteAndReassignCategoryUseCase>((ref) {
   final categoryRepo = ref.watch(categoryRepositoryProvider);
   final transactionRepo = ref.watch(transactionRepositoryProvider);
-  final automaticTransactionRepo =
-      ref.watch(automaticTransactionRepositoryProvider);
+  final automaticTransactionRepo = ref.watch(
+    automaticTransactionRepositoryProvider,
+  );
   return DeleteAndReassignCategoryUseCase(
     categoryRepo,
     transactionRepo,
@@ -447,29 +454,32 @@ final importServiceProvider = Provider<IImportService>((ref) {
 });
 
 /// Provides the [ExportEncryptedJsonUseCase] instance.
-final exportEncryptedJsonUseCaseProvider =
-    Provider<ExportEncryptedJsonUseCase>((ref) {
-  return ExportEncryptedJsonUseCase(
-    profileRepository: ref.watch(profileRepositoryProvider),
-    accountRepository: ref.watch(accountRepositoryProvider),
-    categoryRepository: ref.watch(categoryRepositoryProvider),
-    tagRepository: ref.watch(tagRepositoryProvider),
-    transactionRepository: ref.watch(transactionRepositoryProvider),
-    budgetRepository: ref.watch(budgetRepositoryProvider),
-    savingsGoalRepository: ref.watch(savingsGoalRepositoryProvider),
-    automaticTransactionRepository:
-        ref.watch(automaticTransactionRepositoryProvider),
-    exportService: ref.watch(exportServiceProvider),
-  );
-});
+final exportEncryptedJsonUseCaseProvider = Provider<ExportEncryptedJsonUseCase>(
+  (ref) {
+    return ExportEncryptedJsonUseCase(
+      profileRepository: ref.watch(profileRepositoryProvider),
+      accountRepository: ref.watch(accountRepositoryProvider),
+      categoryRepository: ref.watch(categoryRepositoryProvider),
+      tagRepository: ref.watch(tagRepositoryProvider),
+      transactionRepository: ref.watch(transactionRepositoryProvider),
+      budgetRepository: ref.watch(budgetRepositoryProvider),
+      savingsGoalRepository: ref.watch(savingsGoalRepositoryProvider),
+      automaticTransactionRepository: ref.watch(
+        automaticTransactionRepositoryProvider,
+      ),
+      exportService: ref.watch(exportServiceProvider),
+    );
+  },
+);
 
 /// Provides the [ImportEncryptedJsonUseCase] instance.
-final importEncryptedJsonUseCaseProvider =
-    Provider<ImportEncryptedJsonUseCase>((ref) {
-  return ImportEncryptedJsonUseCase(
-    importService: ref.watch(importServiceProvider),
-  );
-});
+final importEncryptedJsonUseCaseProvider = Provider<ImportEncryptedJsonUseCase>(
+  (ref) {
+    return ImportEncryptedJsonUseCase(
+      importService: ref.watch(importServiceProvider),
+    );
+  },
+);
 
 /// Provides the [ExportTransactionsCsvUseCase] instance.
 final exportTransactionsCsvUseCaseProvider =
@@ -484,8 +494,9 @@ final exportTransactionsCsvUseCaseProvider =
 });
 
 /// Provides the [ExportMonthlyPdfUseCase] instance.
-final exportMonthlyPdfUseCaseProvider =
-    Provider<ExportMonthlyPdfUseCase>((ref) {
+final exportMonthlyPdfUseCaseProvider = Provider<ExportMonthlyPdfUseCase>((
+  ref,
+) {
   final locale = ref.watch(localeProvider);
   final l10n = lookupAppLocalizations(locale);
   return ExportMonthlyPdfUseCase(

@@ -15,32 +15,34 @@ void main() {
     await db.close();
   });
 
-  test('Database initialization seeds default Account and Categories',
-      () async {
-    // Act: Querying the tables will trigger the onCreate migration logic
-    final accounts = await db.select(db.accounts).get();
-    final categories = await db.select(db.categories).get();
-    final profiles = await db.select(db.profiles).get();
+  test(
+    'Database initialization seeds default Account and Categories',
+    () async {
+      // Act: Querying the tables will trigger the onCreate migration logic
+      final accounts = await db.select(db.accounts).get();
+      final categories = await db.select(db.categories).get();
+      final profiles = await db.select(db.profiles).get();
 
-    // Assert: Anonymous profile was created
-    expect(profiles.length, 1);
-    expect(profiles.first.name, 'Anonymous');
+      // Assert: Anonymous profile was created
+      expect(profiles.length, 1);
+      expect(profiles.first.name, 'Anonymous');
 
-    // Assert: No default account should be created in DB migration
-    expect(accounts.length, 0);
+      // Assert: No default account should be created in DB migration
+      expect(accounts.length, 0);
 
-    // Assert: Functional Categories were created
-    expect(categories.length, 3);
+      // Assert: Functional Categories were created
+      expect(categories.length, 3);
 
-    final categoryNames = categories.map((c) => c.name).toList();
-    expect(categoryNames, contains('Food'));
-    expect(categoryNames, contains('Transport'));
-    expect(categoryNames, contains('Salary'));
+      final categoryNames = categories.map((c) => c.name).toList();
+      expect(categoryNames, contains('Food'));
+      expect(categoryNames, contains('Transport'));
+      expect(categoryNames, contains('Salary'));
 
-    final foodCat = categories.firstWhere((c) => c.name == 'Food');
-    expect(foodCat.associatedType, CategoryAssociatedType.expense);
+      final foodCat = categories.firstWhere((c) => c.name == 'Food');
+      expect(foodCat.associatedType, CategoryAssociatedType.expense);
 
-    final salaryCat = categories.firstWhere((c) => c.name == 'Salary');
-    expect(salaryCat.associatedType, CategoryAssociatedType.income);
-  });
+      final salaryCat = categories.firstWhere((c) => c.name == 'Salary');
+      expect(salaryCat.associatedType, CategoryAssociatedType.income);
+    },
+  );
 }

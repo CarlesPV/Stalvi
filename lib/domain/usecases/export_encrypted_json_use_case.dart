@@ -76,8 +76,9 @@ class ExportEncryptedJsonUseCase {
     final tags = List<Tag>.from(results[2] as Iterable);
     final budgets = List<Budget>.from(results[3] as Iterable);
     final savingsGoals = List<SavingsGoal>.from(results[4] as Iterable);
-    final automaticTransactions =
-        List<AutomaticTransaction>.from(results[5] as Iterable);
+    final automaticTransactions = List<AutomaticTransaction>.from(
+      results[5] as Iterable,
+    );
 
     final allTransactions =
         await _transactionRepository.watchRawTransactions().first;

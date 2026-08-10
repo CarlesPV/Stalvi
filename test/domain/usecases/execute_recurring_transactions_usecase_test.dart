@@ -46,8 +46,11 @@ void main() {
     }
 
     test('IntervalDays advances correctly', () {
-      final from =
-          utcPlus2(2026, 7, 17); // 00:00:00 UTC+2 -> 2026-07-16 22:00 UTC
+      final from = utcPlus2(
+        2026,
+        7,
+        17,
+      ); // 00:00:00 UTC+2 -> 2026-07-16 22:00 UTC
       final nextDate =
           ExecuteRecurringTransactionsUseCase.calculateNextTriggerDateUtcPlus2(
         from,
@@ -113,31 +116,34 @@ void main() {
     });
 
     test(
-        'SpecificDayOfMonth targets the current month if the day has not passed',
-        () {
-      final from = utcPlus2(2026, 7, 3);
-      final nextDate =
-          ExecuteRecurringTransactionsUseCase.calculateNextTriggerDateUtcPlus2(
-        from,
-        RecurrenceType.specificDayOfMonth,
-        5, // The 5th day of the month
-      );
-      // Targets July, day 5
-      expect(nextDate, utcPlus2(2026, 7, 5));
-    });
+      'SpecificDayOfMonth targets the current month if the day has not passed',
+      () {
+        final from = utcPlus2(2026, 7, 3);
+        final nextDate = ExecuteRecurringTransactionsUseCase
+            .calculateNextTriggerDateUtcPlus2(
+          from,
+          RecurrenceType.specificDayOfMonth,
+          5, // The 5th day of the month
+        );
+        // Targets July, day 5
+        expect(nextDate, utcPlus2(2026, 7, 5));
+      },
+    );
 
-    test('SpecificDayOfMonth advances to the specific day of the next month',
-        () {
-      final from = utcPlus2(2026, 7, 17);
-      final nextDate =
-          ExecuteRecurringTransactionsUseCase.calculateNextTriggerDateUtcPlus2(
-        from,
-        RecurrenceType.specificDayOfMonth,
-        5, // The 5th day of the month
-      );
-      // Advances to August, day 5
-      expect(nextDate, utcPlus2(2026, 8, 5));
-    });
+    test(
+      'SpecificDayOfMonth advances to the specific day of the next month',
+      () {
+        final from = utcPlus2(2026, 7, 17);
+        final nextDate = ExecuteRecurringTransactionsUseCase
+            .calculateNextTriggerDateUtcPlus2(
+          from,
+          RecurrenceType.specificDayOfMonth,
+          5, // The 5th day of the month
+        );
+        // Advances to August, day 5
+        expect(nextDate, utcPlus2(2026, 8, 5));
+      },
+    );
 
     test('SpecificDayOfMonth clamps if target day exceeds next month days', () {
       final from = utcPlus2(2026, 1, 31);
@@ -190,141 +196,160 @@ void main() {
       );
     });
 
-    test('Creates transactions in a single batch (Idempotency + Batch logic)',
-        () async {
-      final autoTxn = AutomaticTransaction(
-        id: 'auto-1',
-        name: 'Netflix',
-        amount: 1500,
-        currency: 'EUR',
-        type: TransactionType.expense,
-        accountId: 'acc-1',
-        categoryId: 'cat-1',
-        recurrenceType: RecurrenceType.monthly,
-        recurrenceDays: 1,
-        // Set next execution date to yesterday to force one cycle
-        nextExecutionDate:
-            DateTime.now().toUtc().subtract(const Duration(days: 1)),
-        isActive: true,
-        createdAt: DateTime.now().toUtc(),
-      );
+    test(
+      'Creates transactions in a single batch (Idempotency + Batch logic)',
+      () async {
+        final autoTxn = AutomaticTransaction(
+          id: 'auto-1',
+          name: 'Netflix',
+          amount: 1500,
+          currency: 'EUR',
+          type: TransactionType.expense,
+          accountId: 'acc-1',
+          categoryId: 'cat-1',
+          recurrenceType: RecurrenceType.monthly,
+          recurrenceDays: 1,
+          // Set next execution date to yesterday to force one cycle
+          nextExecutionDate: DateTime.now().toUtc().subtract(
+                const Duration(days: 1),
+              ),
+          isActive: true,
+          createdAt: DateTime.now().toUtc(),
+        );
 
-      when(mockAutomaticRepo.getAllAutomaticTransactions())
-          .thenAnswer((_) async => [autoTxn]);
+        when(
+          mockAutomaticRepo.getAllAutomaticTransactions(),
+        ).thenAnswer((_) async => [autoTxn]);
 
-      when(mockAccountRepo.getAccountById(any)).thenAnswer((_) async => null);
+        when(mockAccountRepo.getAccountById(any)).thenAnswer((_) async => null);
 
-      when(mockTransactionRepo.createTransactions(any))
-          .thenAnswer((_) async {});
-      when(mockAutomaticRepo.updateAutomaticTransaction(any))
-          .thenAnswer((_) async => autoTxn);
+        when(
+          mockTransactionRepo.createTransactions(any),
+        ).thenAnswer((_) async {});
+        when(
+          mockAutomaticRepo.updateAutomaticTransaction(any),
+        ).thenAnswer((_) async => autoTxn);
 
-      await usecase.execute();
+        await usecase.execute();
 
-      // Verify createTransactions is called exactly once with 1 pending transaction
-      verify(mockTransactionRepo.createTransactions(argThat(hasLength(1))))
-          .called(1);
-      verify(mockAutomaticRepo.updateAutomaticTransaction(any)).called(1);
-    });
-
-    test('Calculates exactly the missed cycles if device was off for 28 hours',
-        () async {
-      final nowUtc = DateTime.now().toUtc();
-
-      final autoTxn = AutomaticTransaction(
-        id: 'auto-daily',
-        name: 'Daily Coffee',
-        amount: 250,
-        currency: 'EUR',
-        type: TransactionType.expense,
-        accountId: 'acc-1',
-        categoryId: 'cat-1',
-        recurrenceType: RecurrenceType.intervalDays,
-        recurrenceDays: 1, // Daily
-        // Assume device was off for 2 days, nextExecutionDate is 2 days ago
-        nextExecutionDate: nowUtc.subtract(const Duration(days: 2)),
-        isActive: true,
-        createdAt: nowUtc.subtract(const Duration(days: 30)),
-      );
-
-      when(mockAutomaticRepo.getAllAutomaticTransactions())
-          .thenAnswer((_) async => [autoTxn]);
-
-      when(mockAccountRepo.getAccountById(any)).thenAnswer((_) async => null);
-
-      when(mockTransactionRepo.createTransactions(any))
-          .thenAnswer((_) async {});
-      when(mockAutomaticRepo.updateAutomaticTransaction(any))
-          .thenAnswer((_) async => autoTxn);
-
-      await usecase.execute();
-
-      // Verify createTransactions is called with exactly 3 transactions:
-      // (1 for 2 days ago, 1 for 1 day ago, 1 for today)
-      verify(mockTransactionRepo.createTransactions(argThat(hasLength(3))))
-          .called(1);
-    });
+        // Verify createTransactions is called exactly once with 1 pending transaction
+        verify(
+          mockTransactionRepo.createTransactions(argThat(hasLength(1))),
+        ).called(1);
+        verify(mockAutomaticRepo.updateAutomaticTransaction(any)).called(1);
+      },
+    );
 
     test(
-        'Dispatches local push notification when transaction is created and settings allow it',
-        () async {
-      final mockNotificationService = MockNotificationService();
-      final mockSettingsRepo = MockISettingsRepository();
+      'Calculates exactly the missed cycles if device was off for 28 hours',
+      () async {
+        final nowUtc = DateTime.now().toUtc();
 
-      final usecaseWithNotification = ExecuteRecurringTransactionsUseCase(
-        mockAutomaticRepo,
-        mockTransactionRepo,
-        mockAccountRepo,
-        mockProfileRepo,
-        mockExchangeRateRepo,
-        fakeFinancialThresholdService,
-        mockNotificationService,
-        mockSettingsRepo,
-      );
+        final autoTxn = AutomaticTransaction(
+          id: 'auto-daily',
+          name: 'Daily Coffee',
+          amount: 250,
+          currency: 'EUR',
+          type: TransactionType.expense,
+          accountId: 'acc-1',
+          categoryId: 'cat-1',
+          recurrenceType: RecurrenceType.intervalDays,
+          recurrenceDays: 1, // Daily
+          // Assume device was off for 2 days, nextExecutionDate is 2 days ago
+          nextExecutionDate: nowUtc.subtract(const Duration(days: 2)),
+          isActive: true,
+          createdAt: nowUtc.subtract(const Duration(days: 30)),
+        );
 
-      final autoTxn = AutomaticTransaction(
-        id: 'auto-notify-1',
-        name: 'Gym Subscription',
-        amount: 3000,
-        currency: 'EUR',
-        type: TransactionType.expense,
-        accountId: 'acc-1',
-        categoryId: 'cat-1',
-        recurrenceType: RecurrenceType.monthly,
-        recurrenceDays: 1,
-        nextExecutionDate:
-            DateTime.now().toUtc().subtract(const Duration(days: 1)),
-        isActive: true,
-        createdAt: DateTime.now().toUtc(),
-      );
+        when(
+          mockAutomaticRepo.getAllAutomaticTransactions(),
+        ).thenAnswer((_) async => [autoTxn]);
 
-      when(mockAutomaticRepo.getAllAutomaticTransactions())
-          .thenAnswer((_) async => [autoTxn]);
-      when(mockAccountRepo.getAccountById(any)).thenAnswer((_) async => null);
-      when(mockTransactionRepo.createTransactions(any))
-          .thenAnswer((_) async {});
-      when(mockAutomaticRepo.updateAutomaticTransaction(any))
-          .thenAnswer((_) async => autoTxn);
-      when(mockSettingsRepo.getNotificationsEnabled())
-          .thenAnswer((_) async => true);
-      when(
-        mockNotificationService.showAutomaticTransactionNotification(
-          transactionName: anyNamed('transactionName'),
-          languageCode: anyNamed('languageCode'),
-          notificationId: anyNamed('notificationId'),
-        ),
-      ).thenAnswer((_) async {});
+        when(mockAccountRepo.getAccountById(any)).thenAnswer((_) async => null);
 
-      await usecaseWithNotification.execute();
+        when(
+          mockTransactionRepo.createTransactions(any),
+        ).thenAnswer((_) async {});
+        when(
+          mockAutomaticRepo.updateAutomaticTransaction(any),
+        ).thenAnswer((_) async => autoTxn);
 
-      verify(mockSettingsRepo.getNotificationsEnabled()).called(1);
-      verify(
-        mockNotificationService.showAutomaticTransactionNotification(
-          transactionName: 'Gym Subscription',
-          languageCode: anyNamed('languageCode'),
-        ),
-      ).called(1);
-    });
+        await usecase.execute();
+
+        // Verify createTransactions is called with exactly 3 transactions:
+        // (1 for 2 days ago, 1 for 1 day ago, 1 for today)
+        verify(
+          mockTransactionRepo.createTransactions(argThat(hasLength(3))),
+        ).called(1);
+      },
+    );
+
+    test(
+      'Dispatches local push notification when transaction is created and settings allow it',
+      () async {
+        final mockNotificationService = MockNotificationService();
+        final mockSettingsRepo = MockISettingsRepository();
+
+        final usecaseWithNotification = ExecuteRecurringTransactionsUseCase(
+          mockAutomaticRepo,
+          mockTransactionRepo,
+          mockAccountRepo,
+          mockProfileRepo,
+          mockExchangeRateRepo,
+          fakeFinancialThresholdService,
+          mockNotificationService,
+          mockSettingsRepo,
+        );
+
+        final autoTxn = AutomaticTransaction(
+          id: 'auto-notify-1',
+          name: 'Gym Subscription',
+          amount: 3000,
+          currency: 'EUR',
+          type: TransactionType.expense,
+          accountId: 'acc-1',
+          categoryId: 'cat-1',
+          recurrenceType: RecurrenceType.monthly,
+          recurrenceDays: 1,
+          nextExecutionDate: DateTime.now().toUtc().subtract(
+                const Duration(days: 1),
+              ),
+          isActive: true,
+          createdAt: DateTime.now().toUtc(),
+        );
+
+        when(
+          mockAutomaticRepo.getAllAutomaticTransactions(),
+        ).thenAnswer((_) async => [autoTxn]);
+        when(mockAccountRepo.getAccountById(any)).thenAnswer((_) async => null);
+        when(
+          mockTransactionRepo.createTransactions(any),
+        ).thenAnswer((_) async {});
+        when(
+          mockAutomaticRepo.updateAutomaticTransaction(any),
+        ).thenAnswer((_) async => autoTxn);
+        when(
+          mockSettingsRepo.getNotificationsEnabled(),
+        ).thenAnswer((_) async => true);
+        when(
+          mockNotificationService.showAutomaticTransactionNotification(
+            transactionName: anyNamed('transactionName'),
+            languageCode: anyNamed('languageCode'),
+            notificationId: anyNamed('notificationId'),
+          ),
+        ).thenAnswer((_) async {});
+
+        await usecaseWithNotification.execute();
+
+        verify(mockSettingsRepo.getNotificationsEnabled()).called(1);
+        verify(
+          mockNotificationService.showAutomaticTransactionNotification(
+            transactionName: 'Gym Subscription',
+            languageCode: anyNamed('languageCode'),
+          ),
+        ).called(1);
+      },
+    );
 
     test('Does not dispatch notification if settings disable it', () async {
       final mockNotificationService = MockNotificationService();
@@ -351,21 +376,26 @@ void main() {
         categoryId: 'cat-1',
         recurrenceType: RecurrenceType.monthly,
         recurrenceDays: 1,
-        nextExecutionDate:
-            DateTime.now().toUtc().subtract(const Duration(days: 1)),
+        nextExecutionDate: DateTime.now().toUtc().subtract(
+              const Duration(days: 1),
+            ),
         isActive: true,
         createdAt: DateTime.now().toUtc(),
       );
 
-      when(mockAutomaticRepo.getAllAutomaticTransactions())
-          .thenAnswer((_) async => [autoTxn]);
+      when(
+        mockAutomaticRepo.getAllAutomaticTransactions(),
+      ).thenAnswer((_) async => [autoTxn]);
       when(mockAccountRepo.getAccountById(any)).thenAnswer((_) async => null);
-      when(mockTransactionRepo.createTransactions(any))
-          .thenAnswer((_) async {});
-      when(mockAutomaticRepo.updateAutomaticTransaction(any))
-          .thenAnswer((_) async => autoTxn);
-      when(mockSettingsRepo.getNotificationsEnabled())
-          .thenAnswer((_) async => false);
+      when(
+        mockTransactionRepo.createTransactions(any),
+      ).thenAnswer((_) async {});
+      when(
+        mockAutomaticRepo.updateAutomaticTransaction(any),
+      ).thenAnswer((_) async => autoTxn);
+      when(
+        mockSettingsRepo.getNotificationsEnabled(),
+      ).thenAnswer((_) async => false);
 
       await usecaseWithNotification.execute();
 
@@ -380,85 +410,91 @@ void main() {
     });
 
     test(
-        'Dispatches threshold push notifications when recurring execution triggers threshold results',
-        () async {
-      final mockNotificationService = MockNotificationService();
-      final mockSettingsRepo = MockISettingsRepository();
-      final thresholdService = ThresholdTestFinancialThresholdService([
-        ThresholdResult(isBudgetExceeded: true),
-        ThresholdResult(isSavingsGoalReached: true),
-      ]);
+      'Dispatches threshold push notifications when recurring execution triggers threshold results',
+      () async {
+        final mockNotificationService = MockNotificationService();
+        final mockSettingsRepo = MockISettingsRepository();
+        final thresholdService = ThresholdTestFinancialThresholdService([
+          ThresholdResult(isBudgetExceeded: true),
+          ThresholdResult(isSavingsGoalReached: true),
+        ]);
 
-      final usecaseWithThresholdNotifications =
-          ExecuteRecurringTransactionsUseCase(
-        mockAutomaticRepo,
-        mockTransactionRepo,
-        mockAccountRepo,
-        mockProfileRepo,
-        mockExchangeRateRepo,
-        thresholdService,
-        mockNotificationService,
-        mockSettingsRepo,
-      );
+        final usecaseWithThresholdNotifications =
+            ExecuteRecurringTransactionsUseCase(
+          mockAutomaticRepo,
+          mockTransactionRepo,
+          mockAccountRepo,
+          mockProfileRepo,
+          mockExchangeRateRepo,
+          thresholdService,
+          mockNotificationService,
+          mockSettingsRepo,
+        );
 
-      final autoTxn = AutomaticTransaction(
-        id: 'auto-notify-threshold',
-        name: 'Electric Bill',
-        amount: 5000,
-        currency: 'EUR',
-        type: TransactionType.expense,
-        accountId: 'acc-1',
-        categoryId: 'cat-1',
-        recurrenceType: RecurrenceType.monthly,
-        recurrenceDays: 1,
-        nextExecutionDate:
-            DateTime.now().toUtc().subtract(const Duration(days: 1)),
-        isActive: true,
-        createdAt: DateTime.now().toUtc(),
-      );
+        final autoTxn = AutomaticTransaction(
+          id: 'auto-notify-threshold',
+          name: 'Electric Bill',
+          amount: 5000,
+          currency: 'EUR',
+          type: TransactionType.expense,
+          accountId: 'acc-1',
+          categoryId: 'cat-1',
+          recurrenceType: RecurrenceType.monthly,
+          recurrenceDays: 1,
+          nextExecutionDate: DateTime.now().toUtc().subtract(
+                const Duration(days: 1),
+              ),
+          isActive: true,
+          createdAt: DateTime.now().toUtc(),
+        );
 
-      when(mockAutomaticRepo.getAllAutomaticTransactions())
-          .thenAnswer((_) async => [autoTxn]);
-      when(mockAccountRepo.getAccountById(any)).thenAnswer((_) async => null);
-      when(mockTransactionRepo.createTransactions(any))
-          .thenAnswer((_) async {});
-      when(mockAutomaticRepo.updateAutomaticTransaction(any))
-          .thenAnswer((_) async => autoTxn);
-      when(mockSettingsRepo.getNotificationsEnabled())
-          .thenAnswer((_) async => true);
-      when(
-        mockNotificationService.showAutomaticTransactionNotification(
-          transactionName: anyNamed('transactionName'),
-          languageCode: anyNamed('languageCode'),
-          notificationId: anyNamed('notificationId'),
-        ),
-      ).thenAnswer((_) async {});
-      when(
-        mockNotificationService.showBudgetExceededNotification(
-          languageCode: anyNamed('languageCode'),
-          notificationId: anyNamed('notificationId'),
-        ),
-      ).thenAnswer((_) async {});
-      when(
-        mockNotificationService.showGoalReachedNotification(
-          languageCode: anyNamed('languageCode'),
-          notificationId: anyNamed('notificationId'),
-        ),
-      ).thenAnswer((_) async {});
+        when(
+          mockAutomaticRepo.getAllAutomaticTransactions(),
+        ).thenAnswer((_) async => [autoTxn]);
+        when(mockAccountRepo.getAccountById(any)).thenAnswer((_) async => null);
+        when(
+          mockTransactionRepo.createTransactions(any),
+        ).thenAnswer((_) async {});
+        when(
+          mockAutomaticRepo.updateAutomaticTransaction(any),
+        ).thenAnswer((_) async => autoTxn);
+        when(
+          mockSettingsRepo.getNotificationsEnabled(),
+        ).thenAnswer((_) async => true);
+        when(
+          mockNotificationService.showAutomaticTransactionNotification(
+            transactionName: anyNamed('transactionName'),
+            languageCode: anyNamed('languageCode'),
+            notificationId: anyNamed('notificationId'),
+          ),
+        ).thenAnswer((_) async {});
+        when(
+          mockNotificationService.showBudgetExceededNotification(
+            languageCode: anyNamed('languageCode'),
+            notificationId: anyNamed('notificationId'),
+          ),
+        ).thenAnswer((_) async {});
+        when(
+          mockNotificationService.showGoalReachedNotification(
+            languageCode: anyNamed('languageCode'),
+            notificationId: anyNamed('notificationId'),
+          ),
+        ).thenAnswer((_) async {});
 
-      await usecaseWithThresholdNotifications.execute();
+        await usecaseWithThresholdNotifications.execute();
 
-      verify(
-        mockNotificationService.showBudgetExceededNotification(
-          languageCode: anyNamed('languageCode'),
-        ),
-      ).called(1);
-      verify(
-        mockNotificationService.showGoalReachedNotification(
-          languageCode: anyNamed('languageCode'),
-        ),
-      ).called(1);
-    });
+        verify(
+          mockNotificationService.showBudgetExceededNotification(
+            languageCode: anyNamed('languageCode'),
+          ),
+        ).called(1);
+        verify(
+          mockNotificationService.showGoalReachedNotification(
+            languageCode: anyNamed('languageCode'),
+          ),
+        ).called(1);
+      },
+    );
   });
 }
 

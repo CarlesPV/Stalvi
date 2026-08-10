@@ -13,16 +13,10 @@ class InitializeDefaultDataUseCase {
   final ICategoryRepository _categoryRepository;
   final ITagRepository _tagRepository;
 
-  InitializeDefaultDataUseCase(
-    this._categoryRepository,
-    this._tagRepository,
-  );
+  InitializeDefaultDataUseCase(this._categoryRepository, this._tagRepository);
 
   /// Executes the default data seeding (categories and tags only).
-  Future<void> execute({
-    required String userId,
-    String? locale,
-  }) async {
+  Future<void> execute({required String userId, String? locale}) async {
     final now = DateTime.now();
     final lang = locale ?? 'en';
 
@@ -44,6 +38,11 @@ class InitializeDefaultDataUseCase {
         'Travel': 'Travel',
         'Investments': 'Investments',
         'Gifts': 'Gifts',
+        'Pet': 'Pet',
+        'PersonalCare': 'Personal Care',
+        'Sport': 'Sport',
+        'Sale': 'Sale',
+        'Refund': 'Refund',
       },
       'es': {
         'Food': 'Comida',
@@ -59,6 +58,11 @@ class InitializeDefaultDataUseCase {
         'Travel': 'Viajes',
         'Investments': 'Inversiones',
         'Gifts': 'Regalos',
+        'Pet': 'Mascota',
+        'PersonalCare': 'Cuidado Personal',
+        'Sport': 'Deporte',
+        'Sale': 'Venta',
+        'Refund': 'Reembolso',
       },
       'ca': {
         'Food': 'Alimentació',
@@ -74,6 +78,11 @@ class InitializeDefaultDataUseCase {
         'Travel': 'Viatges',
         'Investments': 'Inversions',
         'Gifts': 'Regals',
+        'Pet': 'Mascota',
+        'PersonalCare': 'Cura Personal',
+        'Sport': 'Esport',
+        'Sale': 'Venda',
+        'Refund': 'Reemborsament',
       },
     };
 
@@ -161,15 +170,50 @@ class InitializeDefaultDataUseCase {
       {
         'id': 'c3b07384-d113-4c56-bf56-f0279d813812',
         'key': 'Investments',
-        'icon': 'trending_up',
-        'color': '#8BC34A',
-        'type': CategoryType.income,
+        'icon': 'show_chart',
+        'color': '#607D8B',
+        'type': CategoryType.both,
       },
       {
         'id': 'c3b07384-d113-4c56-bf56-f0279d813813',
         'key': 'Gifts',
         'icon': 'card_giftcard',
         'color': '#FFC107',
+        'type': CategoryType.income,
+      },
+      {
+        'id': 'c3b07384-d113-4c56-bf56-f0279d813814',
+        'key': 'Pet',
+        'icon': 'pets',
+        'color': '#795548',
+        'type': CategoryType.expense,
+      },
+      {
+        'id': 'c3b07384-d113-4c56-bf56-f0279d813815',
+        'key': 'PersonalCare',
+        'icon': 'spa',
+        'color': '#F06292',
+        'type': CategoryType.expense,
+      },
+      {
+        'id': 'c3b07384-d113-4c56-bf56-f0279d813816',
+        'key': 'Sport',
+        'icon': 'sports_soccer',
+        'color': '#FF5722',
+        'type': CategoryType.expense,
+      },
+      {
+        'id': 'c3b07384-d113-4c56-bf56-f0279d813817',
+        'key': 'Sale',
+        'icon': 'sell',
+        'color': '#4CAF50',
+        'type': CategoryType.income,
+      },
+      {
+        'id': 'c3b07384-d113-4c56-bf56-f0279d813818',
+        'key': 'Refund',
+        'icon': 'currency_exchange',
+        'color': '#8BC34A',
         'type': CategoryType.income,
       },
     ];
@@ -189,13 +233,15 @@ class InitializeDefaultDataUseCase {
       if (dbCategory == null) {
         final hasIconMatch = existingCategories.any((c) => c.icon == icon);
         if (hasIconMatch) {
-          final matchByIcon =
-              existingCategories.firstWhere((c) => c.icon == icon);
+          final matchByIcon = existingCategories.firstWhere(
+            (c) => c.icon == icon,
+          );
           if (matchByIcon.id != id) {
             // Delete the old category with the non-stable ID
             try {
-              await _categoryRepository
-                  .deleteCategoryPermanently(matchByIcon.id);
+              await _categoryRepository.deleteCategoryPermanently(
+                matchByIcon.id,
+              );
             } catch (_) {}
           } else {
             dbCategory = matchByIcon;
@@ -206,6 +252,8 @@ class InitializeDefaultDataUseCase {
       if (dbCategory != null) {
         final updatedCat = dbCategory.copyWith(
           name: localizedName,
+          associatedType: type,
+          icon: icon,
           isDeleted: false,
           modifiedAt: now,
         );
@@ -294,8 +342,9 @@ class InitializeDefaultDataUseCase {
     };
 
     for (final tag in existingTags) {
-      final isNewStableId =
-          defaultTagConfigs.any((config) => config['id'] == tag.id);
+      final isNewStableId = defaultTagConfigs.any(
+        (config) => config['id'] == tag.id,
+      );
       if (allDefaultNames.contains(tag.name) && !isNewStableId) {
         try {
           await _tagRepository.deleteTagPermanently(tag.id);

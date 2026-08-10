@@ -16,10 +16,7 @@ import 'package:stalvi/core/utils/icon_helper.dart';
 class TransactionDetailsDialog extends ConsumerWidget {
   final Transaction transaction;
 
-  const TransactionDetailsDialog({
-    super.key,
-    required this.transaction,
-  });
+  const TransactionDetailsDialog({super.key, required this.transaction});
 
   static void show(BuildContext context, Transaction transaction) {
     showModalBottomSheet(
@@ -72,10 +69,9 @@ class TransactionDetailsDialog extends ConsumerWidget {
         ? Icons.swap_horiz_rounded
         : (isIncome ? Icons.trending_up_rounded : Icons.trending_down_rounded);
 
-    final dateStr =
-        DateFormat.yMMMMd(Localizations.localeOf(context).toString())
-            .add_jm()
-            .format(transaction.date);
+    final dateStr = DateFormat.yMMMMd(
+      Localizations.localeOf(context).toString(),
+    ).add_jm().format(transaction.date);
 
     final accounts = ref.watch(accountsListProvider).value ?? [];
     Account? account;
@@ -167,8 +163,10 @@ class TransactionDetailsDialog extends ConsumerWidget {
             // Large stylized amount
             Center(
               child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 12,
+                ),
                 decoration: BoxDecoration(
                   color: color.withValues(alpha: 0.08),
                   borderRadius: BorderRadius.circular(20),
@@ -199,8 +197,9 @@ class TransactionDetailsDialog extends ConsumerWidget {
             // Details grid/list
             Container(
               decoration: BoxDecoration(
-                color:
-                    colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+                color: colorScheme.surfaceContainerHighest.withValues(
+                  alpha: 0.3,
+                ),
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
                   color: colorScheme.outline.withValues(alpha: 0.08),
@@ -213,8 +212,9 @@ class TransactionDetailsDialog extends ConsumerWidget {
                       label: l10n.labelOriginAccount,
                       valueWidget: Text(
                         originAccount?.name ?? l10n.unknownAccount,
-                        style: theme.textTheme.bodyMedium
-                            ?.copyWith(fontWeight: FontWeight.bold),
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       icon: originAccount != null
                           ? _getIconData(originAccount.icon)
@@ -231,8 +231,9 @@ class TransactionDetailsDialog extends ConsumerWidget {
                       label: l10n.labelDestinationAccount,
                       valueWidget: Text(
                         destinationAccount?.name ?? l10n.unknownAccount,
-                        style: theme.textTheme.bodyMedium
-                            ?.copyWith(fontWeight: FontWeight.bold),
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       icon: destinationAccount != null
                           ? _getIconData(destinationAccount.icon)
@@ -246,8 +247,9 @@ class TransactionDetailsDialog extends ConsumerWidget {
                       label: l10n.labelAccount,
                       valueWidget: Text(
                         account?.name ?? l10n.unknownAccount,
-                        style: theme.textTheme.bodyMedium
-                            ?.copyWith(fontWeight: FontWeight.bold),
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       icon: account != null
                           ? _getIconData(account.icon)
@@ -264,8 +266,9 @@ class TransactionDetailsDialog extends ConsumerWidget {
                       label: l10n.labelCategory,
                       valueWidget: Text(
                         category?.name ?? '-',
-                        style: theme.textTheme.bodyMedium
-                            ?.copyWith(fontWeight: FontWeight.bold),
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       icon: category != null
                           ? _getIconData(category.icon)
@@ -283,8 +286,9 @@ class TransactionDetailsDialog extends ConsumerWidget {
                     label: l10n.labelDate,
                     valueWidget: Text(
                       dateStr,
-                      style: theme.textTheme.bodyMedium
-                          ?.copyWith(fontWeight: FontWeight.bold),
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     icon: Icons.calendar_today_rounded,
                     iconColor: colorScheme.primary,
@@ -298,8 +302,9 @@ class TransactionDetailsDialog extends ConsumerWidget {
                       label: l10n.labelNotes,
                       valueWidget: Text(
                         transaction.notes!,
-                        style: theme.textTheme.bodyMedium
-                            ?.copyWith(fontWeight: FontWeight.bold),
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       icon: Icons.notes_rounded,
                       iconColor: colorScheme.secondary,
@@ -370,8 +375,9 @@ class TransactionDetailsDialog extends ConsumerWidget {
       context: context,
       builder: (dialogContext) {
         return AlertDialog(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
+          ),
           title: Row(
             children: [
               Icon(
@@ -383,11 +389,11 @@ class TransactionDetailsDialog extends ConsumerWidget {
               Expanded(child: Text(l10n.deleteTransactionTitle)),
             ],
           ),
-          content: Text(
-            l10n.deleteTransactionConfirmation,
+          content: Text(l10n.deleteTransactionConfirmation),
+          actionsPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 12,
           ),
-          actionsPadding:
-              const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(dialogContext).pop(),

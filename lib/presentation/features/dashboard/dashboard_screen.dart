@@ -110,8 +110,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen>
         final colorScheme = Theme.of(context).colorScheme;
 
         return AlertDialog(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
+          ),
           title: Row(
             children: [
               Icon(
@@ -124,8 +125,10 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen>
             ],
           ),
           content: Text(l10n.authBiometricOptInSubtitle),
-          actionsPadding:
-              const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          actionsPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 12,
+          ),
           actions: [
             TextButton(
               onPressed: () async {
@@ -271,14 +274,13 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen>
           const begin = Offset(0.0, 0.1);
           const end = Offset.zero;
           const curve = Curves.easeOutCubic;
-          final tween =
-              Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+          final tween = Tween(
+            begin: begin,
+            end: end,
+          ).chain(CurveTween(curve: curve));
           return SlideTransition(
             position: animation.drive(tween),
-            child: FadeTransition(
-              opacity: animation,
-              child: child,
-            ),
+            child: FadeTransition(opacity: animation, child: child),
           );
         },
         transitionDuration: const Duration(milliseconds: 300),
@@ -293,10 +295,7 @@ class _OverviewTab extends ConsumerWidget {
   final Animation<double> shimmer;
   final FinancialColors financialColors;
 
-  const _OverviewTab({
-    required this.shimmer,
-    required this.financialColors,
-  });
+  const _OverviewTab({required this.shimmer, required this.financialColors});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -400,8 +399,10 @@ class _OverviewTab extends ConsumerWidget {
                   child: EmptyStateWidget(
                     icon: Icons.receipt_long_outlined,
                     title: AppLocalizations.of(context)!.noTransactionsTitle,
-                    subtitle:
-                        AppLocalizations.of(context)!.noTransactionsSubtitle,
+                    subtitle: AppLocalizations.of(
+                      context,
+                    )!
+                        .noTransactionsSubtitle,
                     actionLabel: AppLocalizations.of(context)!.addTransaction,
                     onActionPressed: () {
                       final state = context
@@ -822,11 +823,7 @@ class _AccountItem extends ConsumerWidget {
                 color: accColor.withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Icon(
-                accIcon,
-                color: accColor,
-                size: 20,
-              ),
+              child: Icon(accIcon, color: accColor, size: 20),
             ),
             const SizedBox(width: 12),
             Expanded(
@@ -842,8 +839,10 @@ class _AccountItem extends ConsumerWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    _getLocalizedAccountType(context, account.type)
-                        .toUpperCase(),
+                    _getLocalizedAccountType(
+                      context,
+                      account.type,
+                    ).toUpperCase(),
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: colorScheme.onSurfaceVariant,
                       fontSize: 11,
@@ -905,10 +904,7 @@ class _AccountItem extends ConsumerWidget {
 class _TransactionItem extends ConsumerWidget {
   final Transaction transaction;
 
-  const _TransactionItem({
-    super.key,
-    required this.transaction,
-  });
+  const _TransactionItem({super.key, required this.transaction});
 
   Color _parseHexColor(String hexString) {
     final buffer = StringBuffer();
@@ -966,8 +962,9 @@ class _TransactionItem extends ConsumerWidget {
           isIncome ? financialColors.positive : financialColors.negative;
     }
 
-    final dateStr = DateFormat.yMMMd(Localizations.localeOf(context).toString())
-        .format(transaction.date);
+    final dateStr = DateFormat.yMMMd(
+      Localizations.localeOf(context).toString(),
+    ).format(transaction.date);
 
     return InkWell(
       onTap: () {
@@ -989,11 +986,7 @@ class _TransactionItem extends ConsumerWidget {
                 color: iconColor.withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Icon(
-                icon,
-                color: iconColor,
-                size: 20,
-              ),
+              child: Icon(icon, color: iconColor, size: 20),
             ),
             const SizedBox(width: 12),
             Expanded(
@@ -1004,11 +997,18 @@ class _TransactionItem extends ConsumerWidget {
                     transaction.notes?.isNotEmpty == true
                         ? transaction.notes!
                         : (transaction.type == TransactionType.transfer
-                            ? AppLocalizations.of(context)!
+                            ? AppLocalizations.of(
+                                context,
+                              )!
                                 .filterSheetTransferType
                             : (isIncome
-                                ? AppLocalizations.of(context)!.fallbackIncome
-                                : AppLocalizations.of(context)!
+                                ? AppLocalizations.of(
+                                    context,
+                                  )!
+                                    .fallbackIncome
+                                : AppLocalizations.of(
+                                    context,
+                                  )!
                                     .fallbackExpense)),
                     style: theme.textTheme.bodyMedium?.copyWith(
                       fontWeight: FontWeight.w700,
@@ -1049,10 +1049,7 @@ class _GenericSkeletonTab extends StatelessWidget {
   final Animation<double> shimmer;
   final int itemCount;
 
-  const _GenericSkeletonTab({
-    required this.shimmer,
-    required this.itemCount,
-  });
+  const _GenericSkeletonTab({required this.shimmer, required this.itemCount});
 
   @override
   Widget build(BuildContext context) {
@@ -1118,8 +1115,9 @@ class _SettingsSkeletonTab extends ConsumerWidget {
                     ),
                     Icon(
                       Icons.chevron_right_rounded,
-                      color:
-                          colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
+                      color: colorScheme.onSurfaceVariant.withValues(
+                        alpha: 0.7,
+                      ),
                     ),
                   ],
                 ),
@@ -1166,8 +1164,9 @@ class _SettingsSkeletonTab extends ConsumerWidget {
                     ),
                     Icon(
                       Icons.chevron_right_rounded,
-                      color:
-                          colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
+                      color: colorScheme.onSurfaceVariant.withValues(
+                        alpha: 0.7,
+                      ),
                     ),
                   ],
                 ),
@@ -1205,7 +1204,9 @@ class _SettingsSkeletonTab extends ConsumerWidget {
                     const SizedBox(width: 14),
                     Expanded(
                       child: Text(
-                        AppLocalizations.of(context)!
+                        AppLocalizations.of(
+                          context,
+                        )!
                             .settingsAutomaticTransactions,
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                               fontWeight: FontWeight.w700,
@@ -1215,8 +1216,9 @@ class _SettingsSkeletonTab extends ConsumerWidget {
                     ),
                     Icon(
                       Icons.chevron_right_rounded,
-                      color:
-                          colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
+                      color: colorScheme.onSurfaceVariant.withValues(
+                        alpha: 0.7,
+                      ),
                     ),
                   ],
                 ),
@@ -1262,8 +1264,9 @@ class _SettingsSkeletonTab extends ConsumerWidget {
                     ),
                     Icon(
                       Icons.chevron_right_rounded,
-                      color:
-                          colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
+                      color: colorScheme.onSurfaceVariant.withValues(
+                        alpha: 0.7,
+                      ),
                     ),
                   ],
                 ),
@@ -1309,8 +1312,9 @@ class _SettingsSkeletonTab extends ConsumerWidget {
                     ),
                     Icon(
                       Icons.chevron_right_rounded,
-                      color:
-                          colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
+                      color: colorScheme.onSurfaceVariant.withValues(
+                        alpha: 0.7,
+                      ),
                     ),
                   ],
                 ),
@@ -1356,8 +1360,9 @@ class _SettingsSkeletonTab extends ConsumerWidget {
                     ),
                     Icon(
                       Icons.chevron_right_rounded,
-                      color:
-                          colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
+                      color: colorScheme.onSurfaceVariant.withValues(
+                        alpha: 0.7,
+                      ),
                     ),
                   ],
                 ),
@@ -1489,8 +1494,9 @@ class _BalanceCard extends ConsumerWidget {
                 width: 170,
                 height: 34,
                 decoration: BoxDecoration(
-                  color: colorScheme.onPrimary
-                      .withValues(alpha: 0.18 + 0.12 * shimmer.value),
+                  color: colorScheme.onPrimary.withValues(
+                    alpha: 0.18 + 0.12 * shimmer.value,
+                  ),
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
@@ -1511,8 +1517,9 @@ class _BalanceCard extends ConsumerWidget {
                     width: 170,
                     height: 34,
                     decoration: BoxDecoration(
-                      color: colorScheme.onPrimary
-                          .withValues(alpha: 0.18 + 0.12 * shimmer.value),
+                      color: colorScheme.onPrimary.withValues(
+                        alpha: 0.18 + 0.12 * shimmer.value,
+                      ),
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
@@ -1556,8 +1563,9 @@ class _BalanceCard extends ConsumerWidget {
                 width: 110,
                 height: 15,
                 decoration: BoxDecoration(
-                  color: colorScheme.onPrimary
-                      .withValues(alpha: 0.12 + 0.08 * shimmer.value),
+                  color: colorScheme.onPrimary.withValues(
+                    alpha: 0.12 + 0.08 * shimmer.value,
+                  ),
                   borderRadius: BorderRadius.circular(4),
                 ),
               ),
@@ -1565,7 +1573,9 @@ class _BalanceCard extends ConsumerWidget {
             error: (_, __) => const SizedBox(height: 15),
             data: (accounts) {
               return Text(
-                AppLocalizations.of(context)!
+                AppLocalizations.of(
+                  context,
+                )!
                     .acrossAccountsCount(accounts.length),
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: colorScheme.onPrimary.withValues(alpha: 0.75),
@@ -1678,8 +1688,10 @@ class _StatCard extends ConsumerWidget {
               final amount =
                   (isIncome ? summary.totalIncome : summary.totalExpense) /
                       100.0;
-              final amountStr =
-                  formatter.format(amount, currencyCode: currency);
+              final amountStr = formatter.format(
+                amount,
+                currencyCode: currency,
+              );
               return FittedBox(
                 fit: BoxFit.scaleDown,
                 alignment: Alignment.centerLeft,

@@ -8,6 +8,7 @@ import 'package:stalvi/core/l10n/app_localizations.dart';
 import 'package:stalvi/core/theme/app_theme.dart';
 import 'package:stalvi/domain/entities/category_statistic.dart';
 import 'package:stalvi/domain/entities/period_summary.dart';
+import 'package:stalvi/presentation/features/settings/data_management_screen.dart';
 import 'package:stalvi/presentation/features/statistics/statistics_screen.dart';
 import 'package:stalvi/presentation/providers/statistics_providers.dart';
 
@@ -141,55 +142,53 @@ void main() {
   group('StatisticsScreen — state rendering', () {
     // ── Loading state ────────────────────────────────────────────────────────
 
-    testWidgets(
-      'shows shimmer skeleton widgets when providers are loading',
-      (WidgetTester tester) async {
-        // Arrange: futures that never resolve → AsyncValue.loading
-        await tester.pumpWidget(
-          _buildTestWidget(
-            summaryState: const AsyncLoading<PeriodSummary>(),
-            expenseCatState: const AsyncLoading<List<CategoryStatistic>>(),
-            incomeCatState: const AsyncLoading<List<CategoryStatistic>>(),
-          ),
-        );
+    testWidgets('shows shimmer skeleton widgets when providers are loading', (
+      WidgetTester tester,
+    ) async {
+      // Arrange: futures that never resolve → AsyncValue.loading
+      await tester.pumpWidget(
+        _buildTestWidget(
+          summaryState: const AsyncLoading<PeriodSummary>(),
+          expenseCatState: const AsyncLoading<List<CategoryStatistic>>(),
+          incomeCatState: const AsyncLoading<List<CategoryStatistic>>(),
+        ),
+      );
 
-        // Assert: filter chips and app bar title are present
-        expect(find.text('Statistics'), findsOneWidget);
+      // Assert: filter chips and app bar title are present
+      expect(find.text('Statistics'), findsOneWidget);
 
-        // The date-preset chips are always rendered immediately.
-        expect(find.text('This Month'), findsOneWidget);
-        expect(find.text('Last 3 Months'), findsOneWidget);
-        expect(find.text('Last 6 Months'), findsOneWidget);
-        expect(find.text('This Year'), findsOneWidget);
+      // The date-preset chips are always rendered immediately.
+      expect(find.text('This Month'), findsOneWidget);
+      expect(find.text('Last 3 Months'), findsOneWidget);
+      expect(find.text('Last 6 Months'), findsOneWidget);
+      expect(find.text('This Year'), findsOneWidget);
 
-        // No real data should be visible.
-        expect(find.text('Net Balance'), findsNothing);
-      },
-    );
+      // No real data should be visible.
+      expect(find.text('Net Balance'), findsNothing);
+    });
 
     // ── Error state ──────────────────────────────────────────────────────────
 
-    testWidgets(
-      'shows inline error widget when periodSummaryProvider fails',
-      (WidgetTester tester) async {
-        await tester.pumpWidget(
-          _buildTestWidget(
-            summaryState: AsyncError<PeriodSummary>(
-              Exception('DB error'),
-              StackTrace.empty,
-            ),
-            expenseCatState: AsyncData(_fakeExpenseCategories),
-            incomeCatState: AsyncData(_fakeIncomeCategories),
+    testWidgets('shows inline error widget when periodSummaryProvider fails', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(
+        _buildTestWidget(
+          summaryState: AsyncError<PeriodSummary>(
+            Exception('DB error'),
+            StackTrace.empty,
           ),
-        );
+          expenseCatState: AsyncData(_fakeExpenseCategories),
+          incomeCatState: AsyncData(_fakeIncomeCategories),
+        ),
+      );
 
-        // Pump to let Riverpod rebuild the widget with the AsyncError state.
-        await tester.pump();
+      // Pump to let Riverpod rebuild the widget with the AsyncError state.
+      await tester.pump();
 
-        // The _InlineError widget shows err.toString()
-        expect(find.textContaining('DB error'), findsAtLeastNWidgets(1));
-      },
-    );
+      // The _InlineError widget shows err.toString()
+      expect(find.textContaining('DB error'), findsAtLeastNWidgets(1));
+    });
 
     testWidgets(
       'shows empty state widget when expense categories list is empty',
@@ -228,16 +227,10 @@ void main() {
         await tester.pump(const Duration(milliseconds: 200));
 
         // Scroll down to reveal the income section
-        await tester.drag(
-          find.byType(CustomScrollView),
-          const Offset(0, -600),
-        );
+        await tester.drag(find.byType(CustomScrollView), const Offset(0, -600));
         await tester.pump(const Duration(milliseconds: 200));
 
-        expect(
-          find.text('No income recorded in this period.'),
-          findsOneWidget,
-        );
+        expect(find.text('No income recorded in this period.'), findsOneWidget);
       },
     );
 
@@ -271,10 +264,7 @@ void main() {
         expect(find.text('Transport'), findsOneWidget);
 
         // Scroll down to see income section
-        await tester.drag(
-          find.byType(CustomScrollView),
-          const Offset(0, -600),
-        );
+        await tester.drag(find.byType(CustomScrollView), const Offset(0, -600));
         await tester.pump(const Duration(milliseconds: 200));
 
         // Assert: income section and categories now visible
@@ -284,74 +274,66 @@ void main() {
       },
     );
 
-    testWidgets(
-      'displays Surplus badge when income exceeds expenses',
-      (WidgetTester tester) async {
-        // Income €5,000 > Expense €3,100 → Surplus
-        await tester.pumpWidget(
-          _buildTestWidget(
-            summaryState: const AsyncData(_fakeSummary),
-            expenseCatState: AsyncData(_fakeExpenseCategories),
-            incomeCatState: AsyncData(_fakeIncomeCategories),
-          ),
-        );
+    testWidgets('displays Surplus badge when income exceeds expenses', (
+      WidgetTester tester,
+    ) async {
+      // Income €5,000 > Expense €3,100 → Surplus
+      await tester.pumpWidget(
+        _buildTestWidget(
+          summaryState: const AsyncData(_fakeSummary),
+          expenseCatState: AsyncData(_fakeExpenseCategories),
+          incomeCatState: AsyncData(_fakeIncomeCategories),
+        ),
+      );
 
-        await tester.pump();
+      await tester.pump();
 
-        expect(find.text('▲ Surplus'), findsOneWidget);
-      },
-    );
+      expect(find.text('▲ Surplus'), findsOneWidget);
+    });
 
-    testWidgets(
-      'displays Deficit badge when expenses exceed income',
-      (WidgetTester tester) async {
-        const deficitSummary = PeriodSummary(
-          totalIncome: 100000, // €1,000
-          totalExpense: 200000, // €2,000
-        );
+    testWidgets('displays Deficit badge when expenses exceed income', (
+      WidgetTester tester,
+    ) async {
+      const deficitSummary = PeriodSummary(
+        totalIncome: 100000, // €1,000
+        totalExpense: 200000, // €2,000
+      );
 
-        await tester.pumpWidget(
-          _buildTestWidget(
-            summaryState: const AsyncData(deficitSummary),
-            expenseCatState: AsyncData(_fakeExpenseCategories),
-            incomeCatState: AsyncData(_fakeIncomeCategories),
-          ),
-        );
+      await tester.pumpWidget(
+        _buildTestWidget(
+          summaryState: const AsyncData(deficitSummary),
+          expenseCatState: AsyncData(_fakeExpenseCategories),
+          incomeCatState: AsyncData(_fakeIncomeCategories),
+        ),
+      );
 
-        await tester.pump();
+      await tester.pump();
 
-        expect(find.text('▼ Deficit'), findsOneWidget);
-      },
-    );
+      expect(find.text('▼ Deficit'), findsOneWidget);
+    });
 
     // ── Filter chips ─────────────────────────────────────────────────────────
 
-    testWidgets(
-      'renders all preset filter chips',
-      (WidgetTester tester) async {
-        await tester.pumpWidget(
-          _buildTestWidget(
-            summaryState: const AsyncData(_fakeSummary),
-            expenseCatState: AsyncData(_fakeExpenseCategories),
-            incomeCatState: AsyncData(_fakeIncomeCategories),
-          ),
-        );
+    testWidgets('renders all preset filter chips', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        _buildTestWidget(
+          summaryState: const AsyncData(_fakeSummary),
+          expenseCatState: AsyncData(_fakeExpenseCategories),
+          incomeCatState: AsyncData(_fakeIncomeCategories),
+        ),
+      );
 
-        await tester.pump();
+      await tester.pump();
 
-        for (final preset in StatisticsDatePreset.values) {
-          final chip = find.text(preset.label);
-          if (tester.any(chip) == false) {
-            await tester.drag(
-              find.byType(ListView).first,
-              const Offset(-300, 0),
-            );
-            await tester.pump(const Duration(milliseconds: 200));
-          }
-          expect(find.text(preset.label), findsOneWidget);
+      for (final preset in StatisticsDatePreset.values) {
+        final chip = find.text(preset.label);
+        if (tester.any(chip) == false) {
+          await tester.drag(find.byType(ListView).first, const Offset(-300, 0));
+          await tester.pump(const Duration(milliseconds: 200));
         }
-      },
-    );
+        expect(find.text(preset.label), findsOneWidget);
+      }
+    });
 
     testWidgets(
       'tapping a filter chip updates the selected chip without crashing',
@@ -378,7 +360,7 @@ void main() {
     // ── Screen structure ─────────────────────────────────────────────────────
 
     testWidgets(
-      'has back-navigation button and date-range icon button in AppBar',
+      'has back-navigation button, export button, and date-range icon button in AppBar',
       (WidgetTester tester) async {
         await tester.pumpWidget(
           _buildTestWidget(
@@ -391,7 +373,31 @@ void main() {
         await tester.pump();
 
         expect(find.byIcon(Icons.arrow_back_ios_new_rounded), findsOneWidget);
+        expect(find.byIcon(Icons.file_download_outlined), findsOneWidget);
         expect(find.byIcon(Icons.date_range_rounded), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      'tapping export icon button navigates to DataManagementScreen',
+      (WidgetTester tester) async {
+        await tester.pumpWidget(
+          _buildTestWidget(
+            summaryState: const AsyncData(_fakeSummary),
+            expenseCatState: AsyncData(_fakeExpenseCategories),
+            incomeCatState: AsyncData(_fakeIncomeCategories),
+          ),
+        );
+
+        await tester.pump();
+
+        final exportBtn = find.byIcon(Icons.file_download_outlined);
+        expect(exportBtn, findsOneWidget);
+
+        await tester.tap(exportBtn);
+        await tester.pumpAndSettle();
+
+        expect(find.byType(DataManagementScreen), findsOneWidget);
       },
     );
   });

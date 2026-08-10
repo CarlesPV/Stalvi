@@ -74,10 +74,12 @@ void main() {
     container = ProviderContainer(
       overrides: [
         addTransactionUseCaseProvider.overrideWithValue(mockUseCase),
-        accountsListProvider
-            .overrideWith((ref) => Stream.value(accounts ?? [testAccount])),
-        categoriesListProvider
-            .overrideWith((ref) => Stream.value([testCategory])),
+        accountsListProvider.overrideWith(
+          (ref) => Stream.value(accounts ?? [testAccount]),
+        ),
+        categoriesListProvider.overrideWith(
+          (ref) => Stream.value([testCategory]),
+        ),
         defaultProfileProvider.overrideWith((ref) => profile ?? testProfile),
       ],
     );
@@ -101,18 +103,19 @@ void main() {
     });
 
     test(
-        'initializes with the default account ID when accounts are already loaded',
-        () async {
-      buildContainer(accounts: [testAccount]);
+      'initializes with the default account ID when accounts are already loaded',
+      () async {
+        buildContainer(accounts: [testAccount]);
 
-      final sub = container.listen(addTransactionProvider, (_, __) {});
-      // Wait for accounts list to resolve to populate notifier's listener
-      await container.read(accountsListProvider.future);
+        final sub = container.listen(addTransactionProvider, (_, __) {});
+        // Wait for accounts list to resolve to populate notifier's listener
+        await container.read(accountsListProvider.future);
 
-      final state = container.read(addTransactionProvider);
-      expect(state.accountId, testAccount.id);
-      sub.close();
-    });
+        final state = container.read(addTransactionProvider);
+        expect(state.accountId, testAccount.id);
+        sub.close();
+      },
+    );
 
     test('updates amount, notes, and date correctly', () {
       buildContainer();
@@ -165,10 +168,7 @@ void main() {
       notifier.updateCategory('cat_expense');
 
       // Verify category is set
-      expect(
-        container.read(addTransactionProvider).categoryId,
-        'cat_expense',
-      );
+      expect(container.read(addTransactionProvider).categoryId, 'cat_expense');
 
       // Change type to income
       notifier.updateType(TransactionType.income);
@@ -196,145 +196,151 @@ void main() {
 
   group('AddTransactionNotifier Validation & Form Submission', () {
     test(
-        'submit returns false and sets validation error on invalid amount format',
-        () async {
-      buildContainer();
+      'submit returns false and sets validation error on invalid amount format',
+      () async {
+        buildContainer();
 
-      final notifier = container.read(addTransactionProvider.notifier);
-      notifier.updateAmount('not-a-number');
-      notifier.updateAccount(testAccount.id);
+        final notifier = container.read(addTransactionProvider.notifier);
+        notifier.updateAmount('not-a-number');
+        notifier.updateAccount(testAccount.id);
 
-      final success = await notifier.submit();
+        final success = await notifier.submit();
 
-      expect(success, isFalse);
-      final status = container.read(addTransactionProvider).submissionStatus;
-      expect(status.hasError, isTrue);
-      expect(status.error, isA<ValidationException>());
-      expect((status.error as ValidationException).code, 'INVALID_AMOUNT');
-      verifyZeroInteractions(mockUseCase);
-    });
-
-    test(
-        'submit returns false and sets validation error on negative/zero amount',
-        () async {
-      buildContainer();
-
-      final notifier = container.read(addTransactionProvider.notifier);
-      notifier.updateAmount('-12.50');
-      notifier.updateAccount(testAccount.id);
-
-      final success = await notifier.submit();
-
-      expect(success, isFalse);
-      final status = container.read(addTransactionProvider).submissionStatus;
-      expect(status.hasError, isTrue);
-      expect(status.error, isA<ValidationException>());
-      verifyZeroInteractions(mockUseCase);
-    });
+        expect(success, isFalse);
+        final status = container.read(addTransactionProvider).submissionStatus;
+        expect(status.hasError, isTrue);
+        expect(status.error, isA<ValidationException>());
+        expect((status.error as ValidationException).code, 'INVALID_AMOUNT');
+        verifyZeroInteractions(mockUseCase);
+      },
+    );
 
     test(
-        'submit returns false and sets validation error when account is missing',
-        () async {
-      buildContainer(accounts: []);
+      'submit returns false and sets validation error on negative/zero amount',
+      () async {
+        buildContainer();
 
-      final notifier = container.read(addTransactionProvider.notifier);
-      notifier.updateAmount('10.00');
+        final notifier = container.read(addTransactionProvider.notifier);
+        notifier.updateAmount('-12.50');
+        notifier.updateAccount(testAccount.id);
 
-      final success = await notifier.submit();
+        final success = await notifier.submit();
 
-      expect(success, isFalse);
-      final status = container.read(addTransactionProvider).submissionStatus;
-      expect(status.hasError, isTrue);
-      expect(status.error, isA<ValidationException>());
-      expect((status.error as ValidationException).code, 'ACCOUNT_REQUIRED');
-      verifyZeroInteractions(mockUseCase);
-    });
-
-    test(
-        'submit returns false and sets validation error when category is missing',
-        () async {
-      buildContainer();
-
-      final notifier = container.read(addTransactionProvider.notifier);
-      notifier.updateAmount('10.00');
-      notifier.updateAccount(testAccount.id);
-      // category is missing
-
-      final success = await notifier.submit();
-
-      expect(success, isFalse);
-      final status = container.read(addTransactionProvider).submissionStatus;
-      expect(status.hasError, isTrue);
-      expect(status.error, isA<ValidationException>());
-      expect((status.error as ValidationException).code, 'CATEGORY_REQUIRED');
-      verifyZeroInteractions(mockUseCase);
-    });
+        expect(success, isFalse);
+        final status = container.read(addTransactionProvider).submissionStatus;
+        expect(status.hasError, isTrue);
+        expect(status.error, isA<ValidationException>());
+        verifyZeroInteractions(mockUseCase);
+      },
+    );
 
     test(
-        'submit returns false and sets validation error when currency is missing',
-        () async {
-      buildContainer();
+      'submit returns false and sets validation error when account is missing',
+      () async {
+        buildContainer(accounts: []);
 
-      final notifier = container.read(addTransactionProvider.notifier);
-      notifier.updateAmount('10.00');
-      notifier.updateAccount(testAccount.id);
-      notifier.updateCategory(testCategory.id);
-      // Remove currency to trigger error
-      notifier.updateCurrency('');
+        final notifier = container.read(addTransactionProvider.notifier);
+        notifier.updateAmount('10.00');
 
-      final success = await notifier.submit();
+        final success = await notifier.submit();
 
-      expect(success, isFalse);
-      final status = container.read(addTransactionProvider).submissionStatus;
-      expect(status.hasError, isTrue);
-      expect(status.error, isA<ValidationException>());
-      expect((status.error as ValidationException).code, 'CURRENCY_REQUIRED');
-      verifyZeroInteractions(mockUseCase);
-    });
+        expect(success, isFalse);
+        final status = container.read(addTransactionProvider).submissionStatus;
+        expect(status.hasError, isTrue);
+        expect(status.error, isA<ValidationException>());
+        expect((status.error as ValidationException).code, 'ACCOUNT_REQUIRED');
+        verifyZeroInteractions(mockUseCase);
+      },
+    );
 
     test(
-        'submit calls usecase and transitions to success when inputs are valid',
-        () async {
-      buildContainer();
+      'submit returns false and sets validation error when category is missing',
+      () async {
+        buildContainer();
 
-      final notifier = container.read(addTransactionProvider.notifier);
-      notifier.updateAmount('150.00');
-      notifier.updateAccount(testAccount.id);
-      notifier.updateCategory(testCategory.id);
-      notifier.updateCurrency('EUR');
-      notifier.updateNotes('   Weekly grocery   ');
+        final notifier = container.read(addTransactionProvider.notifier);
+        notifier.updateAmount('10.00');
+        notifier.updateAccount(testAccount.id);
+        // category is missing
 
-      when(() => mockUseCase.execute(any())).thenAnswer(
-        (_) async => Transaction(
-          id: 'txn_generated',
-          amount: 15000,
-          date: DateTime.now(),
-          type: TransactionType.expense,
-          accountId: testAccount.id,
-          categoryId: testCategory.id,
-          notes: 'Weekly grocery',
-          originalCurrency: 'EUR',
-          createdAt: DateTime.now(),
-          modifiedAt: DateTime.now(),
-        ),
-      );
+        final success = await notifier.submit();
 
-      final success = await notifier.submit();
+        expect(success, isFalse);
+        final status = container.read(addTransactionProvider).submissionStatus;
+        expect(status.hasError, isTrue);
+        expect(status.error, isA<ValidationException>());
+        expect((status.error as ValidationException).code, 'CATEGORY_REQUIRED');
+        verifyZeroInteractions(mockUseCase);
+      },
+    );
 
-      expect(success, isTrue);
-      final finalState = container.read(addTransactionProvider);
-      expect(finalState.submissionStatus.isLoading, isFalse);
-      expect(finalState.submissionStatus.hasError, isFalse);
+    test(
+      'submit returns false and sets validation error when currency is missing',
+      () async {
+        buildContainer();
 
-      final captured = verify(() => mockUseCase.execute(captureAny()))
-          .captured
-          .first as AddTransactionParams;
-      expect(captured.amount, 15000); // 150.00 converted to cents
-      expect(captured.accountId, testAccount.id);
-      expect(captured.categoryId, testCategory.id);
-      expect(captured.notes, 'Weekly grocery'); // Trimmed notes
-      expect(captured.currency, 'EUR');
-    });
+        final notifier = container.read(addTransactionProvider.notifier);
+        notifier.updateAmount('10.00');
+        notifier.updateAccount(testAccount.id);
+        notifier.updateCategory(testCategory.id);
+        // Remove currency to trigger error
+        notifier.updateCurrency('');
+
+        final success = await notifier.submit();
+
+        expect(success, isFalse);
+        final status = container.read(addTransactionProvider).submissionStatus;
+        expect(status.hasError, isTrue);
+        expect(status.error, isA<ValidationException>());
+        expect((status.error as ValidationException).code, 'CURRENCY_REQUIRED');
+        verifyZeroInteractions(mockUseCase);
+      },
+    );
+
+    test(
+      'submit calls usecase and transitions to success when inputs are valid',
+      () async {
+        buildContainer();
+
+        final notifier = container.read(addTransactionProvider.notifier);
+        notifier.updateAmount('150.00');
+        notifier.updateAccount(testAccount.id);
+        notifier.updateCategory(testCategory.id);
+        notifier.updateCurrency('EUR');
+        notifier.updateNotes('   Weekly grocery   ');
+
+        when(() => mockUseCase.execute(any())).thenAnswer(
+          (_) async => Transaction(
+            id: 'txn_generated',
+            amount: 15000,
+            date: DateTime.now(),
+            type: TransactionType.expense,
+            accountId: testAccount.id,
+            categoryId: testCategory.id,
+            notes: 'Weekly grocery',
+            originalCurrency: 'EUR',
+            createdAt: DateTime.now(),
+            modifiedAt: DateTime.now(),
+          ),
+        );
+
+        final success = await notifier.submit();
+
+        expect(success, isTrue);
+        final finalState = container.read(addTransactionProvider);
+        expect(finalState.submissionStatus.isLoading, isFalse);
+        expect(finalState.submissionStatus.hasError, isFalse);
+
+        final captured = verify(() => mockUseCase.execute(captureAny()))
+            .captured
+            .first as AddTransactionParams;
+        expect(captured.amount, 15000); // 150.00 converted to cents
+        expect(captured.accountId, testAccount.id);
+        expect(captured.categoryId, testCategory.id);
+        expect(captured.notes, 'Weekly grocery'); // Trimmed notes
+        expect(captured.currency, 'EUR');
+      },
+    );
 
     test('submit sets error when usecase throws an exception', () async {
       buildContainer();
@@ -345,8 +351,10 @@ void main() {
       notifier.updateCategory(testCategory.id);
       notifier.updateCurrency('EUR');
 
-      const testException =
-          DatabaseException(message: 'Disk error', code: 'WRITE_ERROR');
+      const testException = DatabaseException(
+        message: 'Disk error',
+        code: 'WRITE_ERROR',
+      );
       when(() => mockUseCase.execute(any())).thenThrow(testException);
 
       final success = await notifier.submit();
@@ -358,96 +366,101 @@ void main() {
     });
 
     test(
-        'submit calls usecase with destinationAccountId for transfer transactions',
-        () async {
-      buildContainer();
+      'submit calls usecase with destinationAccountId for transfer transactions',
+      () async {
+        buildContainer();
 
-      final notifier = container.read(addTransactionProvider.notifier);
-      notifier.updateType(TransactionType.transfer);
-      notifier.updateAmount('50.00');
-      notifier.updateAccount(testAccount.id);
-      notifier.updateToAccount('acc_dest');
-      notifier.updateCurrency('EUR');
-      // Category is not required for transfers based on validation logic
+        final notifier = container.read(addTransactionProvider.notifier);
+        notifier.updateType(TransactionType.transfer);
+        notifier.updateAmount('50.00');
+        notifier.updateAccount(testAccount.id);
+        notifier.updateToAccount('acc_dest');
+        notifier.updateCurrency('EUR');
+        // Category is not required for transfers based on validation logic
 
-      when(() => mockUseCase.execute(any())).thenAnswer(
-        (_) async => Transaction(
-          id: 'txn_generated',
-          amount: 5000,
-          date: DateTime.now(),
-          type: TransactionType.transfer,
-          accountId: testAccount.id,
-          originalCurrency: 'EUR',
-          createdAt: DateTime.now(),
-          modifiedAt: DateTime.now(),
-        ),
-      );
+        when(() => mockUseCase.execute(any())).thenAnswer(
+          (_) async => Transaction(
+            id: 'txn_generated',
+            amount: 5000,
+            date: DateTime.now(),
+            type: TransactionType.transfer,
+            accountId: testAccount.id,
+            originalCurrency: 'EUR',
+            createdAt: DateTime.now(),
+            modifiedAt: DateTime.now(),
+          ),
+        );
 
-      final success = await notifier.submit();
+        final success = await notifier.submit();
 
-      expect(success, isTrue);
-      final captured = verify(() => mockUseCase.execute(captureAny()))
-          .captured
-          .first as AddTransactionParams;
-      expect(captured.amount, 5000);
-      expect(captured.type, TransactionType.transfer);
-      expect(captured.accountId, testAccount.id);
-      expect(captured.destinationAccountId, 'acc_dest');
-      expect(captured.notes, isNull);
-    });
+        expect(success, isTrue);
+        final captured = verify(() => mockUseCase.execute(captureAny()))
+            .captured
+            .first as AddTransactionParams;
+        expect(captured.amount, 5000);
+        expect(captured.type, TransactionType.transfer);
+        expect(captured.accountId, testAccount.id);
+        expect(captured.destinationAccountId, 'acc_dest');
+        expect(captured.notes, isNull);
+      },
+    );
 
-    test('submit populates state.errors, and updates dynamically clear them',
-        () async {
-      buildContainer();
+    test(
+      'submit populates state.errors, and updates dynamically clear them',
+      () async {
+        buildContainer();
 
-      final notifier = container.read(addTransactionProvider.notifier);
-      notifier.updateAmount('not-a-number');
-      notifier.updateAccount(testAccount.id);
+        final notifier = container.read(addTransactionProvider.notifier);
+        notifier.updateAmount('not-a-number');
+        notifier.updateAccount(testAccount.id);
 
-      final success = await notifier.submit();
-      expect(success, isFalse);
+        final success = await notifier.submit();
+        expect(success, isFalse);
 
-      var state = container.read(addTransactionProvider);
-      expect(state.errors.containsKey('amount'), isTrue);
-      expect(state.errors['amount'], 'INVALID_AMOUNT');
-      expect(state.errors.containsKey('categoryId'), isTrue);
-      expect(state.errors['categoryId'], 'CATEGORY_REQUIRED');
+        var state = container.read(addTransactionProvider);
+        expect(state.errors.containsKey('amount'), isTrue);
+        expect(state.errors['amount'], 'INVALID_AMOUNT');
+        expect(state.errors.containsKey('categoryId'), isTrue);
+        expect(state.errors['categoryId'], 'CATEGORY_REQUIRED');
 
-      // Update amount -> should clear amount error
-      notifier.updateAmount('12.50');
-      state = container.read(addTransactionProvider);
-      expect(state.errors.containsKey('amount'), isFalse);
-      expect(
-        state.errors.containsKey('categoryId'),
-        isTrue,
-      ); // category error still there
+        // Update amount -> should clear amount error
+        notifier.updateAmount('12.50');
+        state = container.read(addTransactionProvider);
+        expect(state.errors.containsKey('amount'), isFalse);
+        expect(
+          state.errors.containsKey('categoryId'),
+          isTrue,
+        ); // category error still there
 
-      // Update category -> should clear category error
-      notifier.updateCategory(testCategory.id);
-      state = container.read(addTransactionProvider);
-      expect(state.errors.containsKey('categoryId'), isFalse);
-      expect(state.errors.isEmpty, isTrue);
-    });
+        // Update category -> should clear category error
+        notifier.updateCategory(testCategory.id);
+        state = container.read(addTransactionProvider);
+        expect(state.errors.containsKey('categoryId'), isFalse);
+        expect(state.errors.isEmpty, isTrue);
+      },
+    );
 
-    test('updateType completely clears errors and resets submissionStatus',
-        () async {
-      buildContainer();
+    test(
+      'updateType completely clears errors and resets submissionStatus',
+      () async {
+        buildContainer();
 
-      final notifier = container.read(addTransactionProvider.notifier);
-      notifier.updateAmount('not-a-number');
+        final notifier = container.read(addTransactionProvider.notifier);
+        notifier.updateAmount('not-a-number');
 
-      final success = await notifier.submit();
-      expect(success, isFalse);
+        final success = await notifier.submit();
+        expect(success, isFalse);
 
-      var state = container.read(addTransactionProvider);
-      expect(state.errors.isNotEmpty, isTrue);
-      expect(state.submissionStatus.hasError, isTrue);
+        var state = container.read(addTransactionProvider);
+        expect(state.errors.isNotEmpty, isTrue);
+        expect(state.submissionStatus.hasError, isTrue);
 
-      // Switch type to income
-      notifier.updateType(TransactionType.income);
-      state = container.read(addTransactionProvider);
-      expect(state.errors.isEmpty, isTrue);
-      expect(state.submissionStatus.hasError, isFalse);
-    });
+        // Switch type to income
+        notifier.updateType(TransactionType.income);
+        state = container.read(addTransactionProvider);
+        expect(state.errors.isEmpty, isTrue);
+        expect(state.submissionStatus.hasError, isFalse);
+      },
+    );
   });
 }

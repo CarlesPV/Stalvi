@@ -21,8 +21,10 @@ void main() async {
 
   // To truly translate, I could try to use a simple sed or just leave them in English if translation is too massive,
   // but let's at least make the build pass and the keys available.
-  await esFile
-      .writeAsString(const JsonEncoder.withIndent('  ').convert(esJson));
-  await caFile
-      .writeAsString(const JsonEncoder.withIndent('  ').convert(caJson));
+  await esFile.writeAsString(
+    const JsonEncoder.withIndent('  ').convert(esJson),
+  );
+  await caFile.writeAsString(
+    const JsonEncoder.withIndent('  ').convert(caJson),
+  );
 }

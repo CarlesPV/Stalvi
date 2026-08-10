@@ -77,16 +77,20 @@ class FinancialThresholdService implements IFinancialThresholdService {
           categoryId: catId,
           accountId: budget.accountId,
           type: TransactionType.expense,
-          dateRange:
-              DateTimeRange(start: budget.startDate, end: budget.endDate),
+          dateRange: DateTimeRange(
+            start: budget.startDate,
+            end: budget.endDate,
+          ),
         );
 
-        final txStream =
-            _transactionRepository.watchFilteredTransactions(filter);
+        final txStream = _transactionRepository.watchFilteredTransactions(
+          filter,
+        );
         final budgetTransactions = await txStream.first;
 
-        final budgetAccount =
-            await _accountRepository.getAccountById(budget.accountId);
+        final budgetAccount = await _accountRepository.getAccountById(
+          budget.accountId,
+        );
         if (budgetAccount == null) continue;
 
         int totalSpentCents = 0;
@@ -107,12 +111,7 @@ class FinancialThresholdService implements IFinancialThresholdService {
         }
 
         if (totalSpentCents >= budget.targetAmount) {
-          results.add(
-            ThresholdResult(
-              isBudgetExceeded: true,
-              budget: budget,
-            ),
-          );
+          results.add(ThresholdResult(isBudgetExceeded: true, budget: budget));
         }
       }
     }
@@ -152,10 +151,7 @@ class FinancialThresholdService implements IFinancialThresholdService {
 
       if (totalSavedCents >= goal.targetAmount) {
         results.add(
-          ThresholdResult(
-            isSavingsGoalReached: true,
-            savingsGoal: goal,
-          ),
+          ThresholdResult(isSavingsGoalReached: true, savingsGoal: goal),
         );
       }
     }

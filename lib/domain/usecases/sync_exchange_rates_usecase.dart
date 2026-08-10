@@ -15,8 +15,9 @@ class SyncExchangeRatesUseCase {
   /// Does not throw exceptions to ensure silent failure.
   Future<void> execute({required String baseCurrency}) async {
     try {
-      final ExchangeRate? localRates =
-          await _repository.getLocalRates(baseCurrency: baseCurrency);
+      final ExchangeRate? localRates = await _repository.getLocalRates(
+        baseCurrency: baseCurrency,
+      );
 
       final now = DateTime.now();
 

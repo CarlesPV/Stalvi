@@ -43,9 +43,7 @@ class BiometricAuthService {
             signInTitle: signInTitle,
             cancelButton: cancelButton,
           ),
-          IOSAuthMessages(
-            cancelButton: cancelButton,
-          ),
+          IOSAuthMessages(cancelButton: cancelButton),
         ],
         biometricOnly: true,
         persistAcrossBackgrounding: true,

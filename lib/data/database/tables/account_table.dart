@@ -1,13 +1,7 @@
 import 'package:drift/drift.dart';
 import 'profile_table.dart';
 
-enum AccountType {
-  cash,
-  bank,
-  savings,
-  card,
-  other,
-}
+enum AccountType { cash, bank, savings, card, other }
 
 @DataClassName('Account')
 class Accounts extends Table {

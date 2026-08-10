@@ -40,12 +40,11 @@ void main() {
     );
   }
 
-  testWidgets('switches locale and displays correct localized terms',
-      (WidgetTester tester) async {
+  testWidgets('switches locale and displays correct localized terms', (
+    WidgetTester tester,
+  ) async {
     final container = ProviderContainer(
-      overrides: [
-        secureStorageProvider.overrideWithValue(mockSecureStorage),
-      ],
+      overrides: [secureStorageProvider.overrideWithValue(mockSecureStorage)],
     );
 
     // Initial load: defaults to English (or system)

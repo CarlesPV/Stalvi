@@ -125,9 +125,7 @@ class ExportMonthlyPdfUseCase {
     final allRawTransactions =
         await _transactionRepository.watchRawTransactions().first;
 
-    await _exchangeRateRepository.getLatestRates(
-      baseCurrency: targetCurrency,
-    );
+    await _exchangeRateRepository.getLatestRates(baseCurrency: targetCurrency);
 
     final monthTransactions = allTransactions.where((tx) {
       return !tx.date.isBefore(startDate) && !tx.date.isAfter(endDate);

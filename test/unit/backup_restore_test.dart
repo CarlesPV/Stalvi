@@ -66,8 +66,10 @@ void main() {
     await db.customStatement('PRAGMA foreign_keys = ON');
 
     final exportService = ExportServiceImpl();
-    final importService =
-        ImportServiceImpl(database: db, exportService: exportService);
+    final importService = ImportServiceImpl(
+      database: db,
+      exportService: exportService,
+    );
 
     // Seed a profile
     await db.delete(db.profiles).go();

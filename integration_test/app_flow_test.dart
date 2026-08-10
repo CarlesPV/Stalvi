@@ -19,8 +19,9 @@ class MockAuthNotifier extends AuthNotifier {
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  testWidgets('App Flow: Bypass Auth, Add Transaction, Return to Dashboard',
-      (WidgetTester tester) async {
+  testWidgets('App Flow: Bypass Auth, Add Transaction, Return to Dashboard', (
+    WidgetTester tester,
+  ) async {
     // 1. Initialize the app with mocked authentication
     await tester.pumpWidget(
       ProviderScope(

@@ -129,25 +129,27 @@ void main() {
   // ── No filters – baseline ───────────────────────────────────────────────────
 
   group('TransactionDao.watchFiltered() — no filters', () {
-    test('returns all non-deleted transactions when no filter is applied',
-        () async {
-      await _seedProfile(database, 'u1');
-      await _seedAccount(database, id: 'acc1', userId: 'u1');
-      await _seedTransaction(database, id: 't1', accountId: 'acc1');
-      await _seedTransaction(database, id: 't2', accountId: 'acc1');
-      await _seedTransaction(
-        database,
-        id: 't3',
-        accountId: 'acc1',
-        isDeleted: true,
-      );
+    test(
+      'returns all non-deleted transactions when no filter is applied',
+      () async {
+        await _seedProfile(database, 'u1');
+        await _seedAccount(database, id: 'acc1', userId: 'u1');
+        await _seedTransaction(database, id: 't1', accountId: 'acc1');
+        await _seedTransaction(database, id: 't2', accountId: 'acc1');
+        await _seedTransaction(
+          database,
+          id: 't3',
+          accountId: 'acc1',
+          isDeleted: true,
+        );
 
-      final stream = dao.watchFiltered();
-      final result = await stream.first;
+        final stream = dao.watchFiltered();
+        final result = await stream.first;
 
-      expect(result.length, 2);
-      expect(result.map((t) => t.id), containsAll(['t1', 't2']));
-    });
+        expect(result.length, 2);
+        expect(result.map((t) => t.id), containsAll(['t1', 't2']));
+      },
+    );
 
     test('retrieves exchangeRateSnapshot correctly', () async {
       await _seedProfile(database, 'u1');
@@ -467,17 +469,19 @@ void main() {
       expect(result.first.id, 't_tagged');
     });
 
-    test('returns empty list when tag does not exist in the database',
-        () async {
-      await _seedProfile(database, 'u1');
-      await _seedAccount(database, id: 'acc1', userId: 'u1');
-      await _seedTransaction(database, id: 't1', accountId: 'acc1');
+    test(
+      'returns empty list when tag does not exist in the database',
+      () async {
+        await _seedProfile(database, 'u1');
+        await _seedAccount(database, id: 'acc1', userId: 'u1');
+        await _seedTransaction(database, id: 't1', accountId: 'acc1');
 
-      final stream = dao.watchFiltered(tagId: 'nonexistent_tag');
-      final result = await stream.first;
+        final stream = dao.watchFiltered(tagId: 'nonexistent_tag');
+        final result = await stream.first;
 
-      expect(result, isEmpty);
-    });
+        expect(result, isEmpty);
+      },
+    );
 
     test('is case-insensitive (SQLite LIKE default behaviour)', () async {
       await _seedProfile(database, 'u1');
@@ -502,61 +506,63 @@ void main() {
   // ── combined filters ────────────────────────────────────────────────────────
 
   group('TransactionDao.watchFiltered() — multiple filters combined', () {
-    test('AND semantics: all active filters must match simultaneously',
-        () async {
-      await _seedProfile(database, 'u1');
-      await _seedAccount(database, id: 'acc1', userId: 'u1');
-      await _seedCategory(database, id: 'cat1');
+    test(
+      'AND semantics: all active filters must match simultaneously',
+      () async {
+        await _seedProfile(database, 'u1');
+        await _seedAccount(database, id: 'acc1', userId: 'u1');
+        await _seedCategory(database, id: 'cat1');
 
-      // Matches type + category + amount.
-      await _seedTransaction(
-        database,
-        id: 't_match',
-        accountId: 'acc1',
-        type: TransactionType.expense,
-        categoryId: 'cat1',
-        amount: 500,
-      );
+        // Matches type + category + amount.
+        await _seedTransaction(
+          database,
+          id: 't_match',
+          accountId: 'acc1',
+          type: TransactionType.expense,
+          categoryId: 'cat1',
+          amount: 500,
+        );
 
-      // Wrong type.
-      await _seedTransaction(
-        database,
-        id: 't_wrong_type',
-        accountId: 'acc1',
-        type: TransactionType.income,
-        categoryId: 'cat1',
-        amount: 500,
-      );
+        // Wrong type.
+        await _seedTransaction(
+          database,
+          id: 't_wrong_type',
+          accountId: 'acc1',
+          type: TransactionType.income,
+          categoryId: 'cat1',
+          amount: 500,
+        );
 
-      // Wrong category.
-      await _seedTransaction(
-        database,
-        id: 't_wrong_cat',
-        accountId: 'acc1',
-        type: TransactionType.expense,
-        amount: 500,
-      );
+        // Wrong category.
+        await _seedTransaction(
+          database,
+          id: 't_wrong_cat',
+          accountId: 'acc1',
+          type: TransactionType.expense,
+          amount: 500,
+        );
 
-      // Amount too low.
-      await _seedTransaction(
-        database,
-        id: 't_low_amt',
-        accountId: 'acc1',
-        type: TransactionType.expense,
-        categoryId: 'cat1',
-        amount: 10,
-      );
+        // Amount too low.
+        await _seedTransaction(
+          database,
+          id: 't_low_amt',
+          accountId: 'acc1',
+          type: TransactionType.expense,
+          categoryId: 'cat1',
+          amount: 10,
+        );
 
-      final stream = dao.watchFiltered(
-        type: TransactionType.expense,
-        categoryId: 'cat1',
-        minAmountCents: 100,
-      );
-      final result = await stream.first;
+        final stream = dao.watchFiltered(
+          type: TransactionType.expense,
+          categoryId: 'cat1',
+          minAmountCents: 100,
+        );
+        final result = await stream.first;
 
-      expect(result.length, 1);
-      expect(result.first.id, 't_match');
-    });
+        expect(result.length, 1);
+        expect(result.first.id, 't_match');
+      },
+    );
 
     test('accountId + type + currency combination', () async {
       await _seedProfile(database, 'u1');
@@ -600,22 +606,24 @@ void main() {
   // ── soft-delete is always enforced ─────────────────────────────────────────
 
   group('TransactionDao.watchFiltered() — isDeleted always enforced', () {
-    test('never returns soft-deleted rows regardless of other filters',
-        () async {
-      await _seedProfile(database, 'u1');
-      await _seedAccount(database, id: 'acc1', userId: 'u1');
+    test(
+      'never returns soft-deleted rows regardless of other filters',
+      () async {
+        await _seedProfile(database, 'u1');
+        await _seedAccount(database, id: 'acc1', userId: 'u1');
 
-      await _seedTransaction(
-        database,
-        id: 't_deleted',
-        accountId: 'acc1',
-        isDeleted: true,
-      );
+        await _seedTransaction(
+          database,
+          id: 't_deleted',
+          accountId: 'acc1',
+          isDeleted: true,
+        );
 
-      final stream = dao.watchFiltered();
-      final result = await stream.first;
+        final stream = dao.watchFiltered();
+        final result = await stream.first;
 
-      expect(result, isEmpty);
-    });
+        expect(result, isEmpty);
+      },
+    );
   });
 }

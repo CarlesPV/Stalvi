@@ -69,9 +69,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                 if (InputSanitizer.containsEmoji(text)) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text(
-                        l10n.authSetupValidationErrorUsernameEmoji,
-                      ),
+                      content: Text(l10n.authSetupValidationErrorUsernameEmoji),
                     ),
                   );
                   return;
@@ -85,9 +83,9 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                   }
                 } catch (e) {
                   if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(e.toString())),
-                    );
+                    ScaffoldMessenger.of(
+                      context,
+                    ).showSnackBar(SnackBar(content: Text(e.toString())));
                   }
                 }
               },
@@ -130,10 +128,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                 isExpanded: true,
                 initialValue: selected,
                 items: currencies.entries.map((e) {
-                  return DropdownMenuItem(
-                    value: e.key,
-                    child: Text(e.value),
-                  );
+                  return DropdownMenuItem(value: e.key, child: Text(e.value));
                 }).toList(),
                 onChanged: (val) {
                   if (val != null) {
@@ -178,9 +173,9 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
     final currentState = ref.read(profileSettingsControllerProvider);
 
     if (currentState.failedAttempts >= 6) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.errorMaxPinAttempts)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.errorMaxPinAttempts)));
       return;
     }
 
@@ -248,8 +243,10 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                             obscureText: true,
                             autofocus: true,
                             textAlign: TextAlign.center,
-                            style:
-                                const TextStyle(letterSpacing: 8, fontSize: 24),
+                            style: const TextStyle(
+                              letterSpacing: 8,
+                              fontSize: 24,
+                            ),
                             inputFormatters: [
                               FilteringTextInputFormatter.digitsOnly,
                             ],
@@ -356,8 +353,9 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                                                 );
                                             if (context.mounted) {
                                               Navigator.of(context).pop();
-                                              ScaffoldMessenger.of(context)
-                                                  .showSnackBar(
+                                              ScaffoldMessenger.of(
+                                                context,
+                                              ).showSnackBar(
                                                 SnackBar(
                                                   content: Text(
                                                     l10n.pinUpdatedSuccessfully,
@@ -385,16 +383,18 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                                                   )) {
                                                 displayError =
                                                     l10n.errorPinNotNumeric;
-                                              } else if (errorMsg
-                                                      .contains('no_pin_set') ||
+                                              } else if (errorMsg.contains(
+                                                    'no_pin_set',
+                                                  ) ||
                                                   errorMsg.contains(
                                                     'No PIN is currently set',
                                                   )) {
                                                 displayError =
                                                     l10n.errorNoPinSet;
                                               }
-                                              ScaffoldMessenger.of(context)
-                                                  .showSnackBar(
+                                              ScaffoldMessenger.of(
+                                                context,
+                                              ).showSnackBar(
                                                 SnackBar(
                                                   content: Text(displayError),
                                                 ),
@@ -481,9 +481,9 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
     final currentState = ref.read(profileSettingsControllerProvider);
 
     if (currentState.failedDeleteAttempts >= 6) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.errorMaxPinAttempts)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.errorMaxPinAttempts)));
       return;
     }
 
@@ -495,9 +495,9 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
       if (!authenticated) {
         final updatedState = ref.read(profileSettingsControllerProvider);
         if (updatedState.failedDeleteAttempts >= 6) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(l10n.errorMaxPinAttempts)),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(l10n.errorMaxPinAttempts)));
         }
         return; // Auth cancelled or failed.
       }
@@ -599,9 +599,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
     final state = ref.watch(profileSettingsControllerProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.profileSettingsTitle),
-      ),
+      appBar: AppBar(title: Text(l10n.profileSettingsTitle)),
       body: state.isLoading && state.profile == null
           ? const Center(child: CircularProgressIndicator())
           : SafeArea(
@@ -645,9 +643,9 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                       constraints: const BoxConstraints(maxWidth: 140),
                       child: DropdownButton<ThemeMode>(
                         value: ref.watch(themeProvider),
-                        dropdownColor: Theme.of(context)
-                            .colorScheme
-                            .surfaceContainerHighest,
+                        dropdownColor: Theme.of(
+                          context,
+                        ).colorScheme.surfaceContainerHighest,
                         borderRadius: BorderRadius.circular(12),
                         underline: const SizedBox(),
                         icon: Icon(
@@ -682,8 +680,9 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                                   .textTheme
                                   .bodyMedium
                                   ?.copyWith(
-                                    color:
-                                        Theme.of(context).colorScheme.onSurface,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onSurface,
                                   ),
                             ),
                           );
@@ -699,9 +698,9 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                       constraints: const BoxConstraints(maxWidth: 140),
                       child: DropdownButton<String>(
                         value: ref.watch(localeProvider).languageCode,
-                        dropdownColor: Theme.of(context)
-                            .colorScheme
-                            .surfaceContainerHighest,
+                        dropdownColor: Theme.of(
+                          context,
+                        ).colorScheme.surfaceContainerHighest,
                         borderRadius: BorderRadius.circular(12),
                         underline: const SizedBox(),
                         icon: Icon(
@@ -756,10 +755,12 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                         showDialog(
                           context: context,
                           builder: (ctx) => AlertDialog(
-                            title:
-                                Text(l10n.notificationsPermanentlyDeniedTitle),
-                            content:
-                                Text(l10n.notificationsPermanentlyDeniedBody),
+                            title: Text(
+                              l10n.notificationsPermanentlyDeniedTitle,
+                            ),
+                            content: Text(
+                              l10n.notificationsPermanentlyDeniedBody,
+                            ),
                             actions: [
                               TextButton(
                                 onPressed: () => Navigator.pop(ctx),

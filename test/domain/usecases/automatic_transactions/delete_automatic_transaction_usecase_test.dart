@@ -19,37 +19,39 @@ void main() {
   });
 
   test(
-      'should set isDeleted to true, isActive to false, and deletedAt to current time',
-      () async {
-    final now = DateTime.now();
-    final txn = AutomaticTransaction(
-      id: 'test-id',
-      name: 'Test',
-      amount: 1000,
-      currency: 'EUR',
-      type: TransactionType.expense,
-      accountId: 'account-1',
-      recurrenceDays: 30,
-      nextExecutionDate: now,
-      createdAt: now,
-    );
+    'should set isDeleted to true, isActive to false, and deletedAt to current time',
+    () async {
+      final now = DateTime.now();
+      final txn = AutomaticTransaction(
+        id: 'test-id',
+        name: 'Test',
+        amount: 1000,
+        currency: 'EUR',
+        type: TransactionType.expense,
+        accountId: 'account-1',
+        recurrenceDays: 30,
+        nextExecutionDate: now,
+        createdAt: now,
+      );
 
-    when(mockRepository.getAutomaticTransactionById('test-id'))
-        .thenAnswer((_) async => txn);
+      when(
+        mockRepository.getAutomaticTransactionById('test-id'),
+      ).thenAnswer((_) async => txn);
 
-    await useCase.execute('test-id');
+      await useCase.execute('test-id');
 
-    verify(
-      mockRepository.updateAutomaticTransaction(
-        argThat(
-          predicate<AutomaticTransaction>(
-            (updatedTxn) =>
-                updatedTxn.isDeleted == true &&
-                updatedTxn.isActive == false &&
-                updatedTxn.deletedAt != null,
+      verify(
+        mockRepository.updateAutomaticTransaction(
+          argThat(
+            predicate<AutomaticTransaction>(
+              (updatedTxn) =>
+                  updatedTxn.isDeleted == true &&
+                  updatedTxn.isActive == false &&
+                  updatedTxn.deletedAt != null,
+            ),
           ),
         ),
-      ),
-    ).called(1);
-  });
+      ).called(1);
+    },
+  );
 }

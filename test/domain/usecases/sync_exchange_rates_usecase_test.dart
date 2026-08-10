@@ -20,8 +20,9 @@ void main() {
 
   group('SyncExchangeRatesUseCase', () {
     test('should sync when local rates do not exist', () async {
-      when(mockRepository.getLocalRates(baseCurrency: 'EUR'))
-          .thenAnswer((_) async => null);
+      when(
+        mockRepository.getLocalRates(baseCurrency: 'EUR'),
+      ).thenAnswer((_) async => null);
 
       await usecase.execute(baseCurrency: 'EUR');
 
@@ -30,28 +31,38 @@ void main() {
 
     test('should sync when local rates are older than 24 hours', () async {
       final oldDate = DateTime.now().subtract(const Duration(hours: 25));
-      final oldRates =
-          ExchangeRate(baseCurrency: 'EUR', date: oldDate, rates: {});
-      when(mockRepository.getLocalRates(baseCurrency: 'EUR'))
-          .thenAnswer((_) async => oldRates);
+      final oldRates = ExchangeRate(
+        baseCurrency: 'EUR',
+        date: oldDate,
+        rates: {},
+      );
+      when(
+        mockRepository.getLocalRates(baseCurrency: 'EUR'),
+      ).thenAnswer((_) async => oldRates);
 
       await usecase.execute(baseCurrency: 'EUR');
 
       verify(mockRepository.syncRates(baseCurrency: 'EUR')).called(1);
     });
 
-    test('should not sync when local rates are younger than 24 hours',
-        () async {
-      final recentDate = DateTime.now().subtract(const Duration(hours: 23));
-      final recentRates =
-          ExchangeRate(baseCurrency: 'EUR', date: recentDate, rates: {});
-      when(mockRepository.getLocalRates(baseCurrency: 'EUR'))
-          .thenAnswer((_) async => recentRates);
+    test(
+      'should not sync when local rates are younger than 24 hours',
+      () async {
+        final recentDate = DateTime.now().subtract(const Duration(hours: 23));
+        final recentRates = ExchangeRate(
+          baseCurrency: 'EUR',
+          date: recentDate,
+          rates: {},
+        );
+        when(
+          mockRepository.getLocalRates(baseCurrency: 'EUR'),
+        ).thenAnswer((_) async => recentRates);
 
-      await usecase.execute(baseCurrency: 'EUR');
+        await usecase.execute(baseCurrency: 'EUR');
 
-      verifyNever(mockRepository.syncRates(baseCurrency: 'EUR'));
-    });
+        verifyNever(mockRepository.syncRates(baseCurrency: 'EUR'));
+      },
+    );
 
     test('strict 8-currency limit check', () {
       const supportedCurrencies = CurrencyConverter.supportedCurrencies;

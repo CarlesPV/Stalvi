@@ -19,20 +19,24 @@ class AutomaticTransactionDao extends DatabaseAccessor<AppDatabase>
   }
 
   Future<AutomaticTransactionEntity> getAutomaticTransactionById(String id) {
-    return (select(automaticTransactions)..where((t) => t.id.equals(id)))
+    return (select(
+      automaticTransactions,
+    )..where((t) => t.id.equals(id)))
         .getSingle();
   }
 
   Future<List<AutomaticTransactionEntity>> getAllAutomaticTransactions() {
-    return (select(automaticTransactions)
-          ..where((t) => t.isDeleted.equals(false)))
+    return (select(
+      automaticTransactions,
+    )..where((t) => t.isDeleted.equals(false)))
         .get();
   }
 
   /// Streams all automatic transactions, emitting whenever the table changes.
   Stream<List<AutomaticTransactionEntity>> watchAllAutomaticTransactions() {
-    return (select(automaticTransactions)
-          ..where((t) => t.isDeleted.equals(false)))
+    return (select(
+      automaticTransactions,
+    )..where((t) => t.isDeleted.equals(false)))
         .watch();
   }
 

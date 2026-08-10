@@ -30,8 +30,9 @@ class CurrencyConverter {
 
     if (tx.exchangeRateSnapshot != null) {
       try {
-        final Map<String, dynamic> ratesMap =
-            jsonDecode(tx.exchangeRateSnapshot!);
+        final Map<String, dynamic> ratesMap = jsonDecode(
+          tx.exchangeRateSnapshot!,
+        );
         final num? rateOrig = ratesMap[tx.originalCurrency];
         final num? rateTarget = ratesMap[targetCurrency];
 

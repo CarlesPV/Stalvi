@@ -5,8 +5,9 @@ import 'package:stalvi/presentation/widgets/empty_state_widget.dart';
 
 void main() {
   group('EmptyStateWidget Tests', () {
-    testWidgets('renders title, subtitle and icon correctly',
-        (WidgetTester tester) async {
+    testWidgets('renders title, subtitle and icon correctly', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -29,8 +30,9 @@ void main() {
       expect(find.byType(FilledButton), findsNothing);
     });
 
-    testWidgets('renders action button and fires callback on tap',
-        (WidgetTester tester) async {
+    testWidgets('renders action button and fires callback on tap', (
+      WidgetTester tester,
+    ) async {
       var callbackCalled = false;
 
       await tester.pumpWidget(
@@ -61,24 +63,25 @@ void main() {
     });
 
     testWidgets(
-        'renders SVG fallback graphic correctly when svgAssetPath is provided',
-        (WidgetTester tester) async {
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(
-            body: EmptyStateWidget(
-              svgAssetPath: 'assets/dummy_icon.svg',
-              title: 'SVG Title',
-              subtitle: 'SVG Subtitle description.',
+      'renders SVG fallback graphic correctly when svgAssetPath is provided',
+      (WidgetTester tester) async {
+        await tester.pumpWidget(
+          const MaterialApp(
+            home: Scaffold(
+              body: EmptyStateWidget(
+                svgAssetPath: 'assets/dummy_icon.svg',
+                title: 'SVG Title',
+                subtitle: 'SVG Subtitle description.',
+              ),
             ),
           ),
-        ),
-      );
+        );
 
-      expect(find.text('SVG Title'), findsOneWidget);
-      // Verify image wrapper is rendered
-      expect(find.byType(Image), findsOneWidget);
-    });
+        expect(find.text('SVG Title'), findsOneWidget);
+        // Verify image wrapper is rendered
+        expect(find.byType(Image), findsOneWidget);
+      },
+    );
 
     testWidgets('supports light theme colors', (WidgetTester tester) async {
       await tester.pumpWidget(
@@ -94,10 +97,12 @@ void main() {
         ),
       );
 
-      final BuildContext lightContext =
-          tester.element(find.byType(EmptyStateWidget));
-      final Color lightPrimaryColor =
-          Theme.of(lightContext).colorScheme.primary;
+      final BuildContext lightContext = tester.element(
+        find.byType(EmptyStateWidget),
+      );
+      final Color lightPrimaryColor = Theme.of(
+        lightContext,
+      ).colorScheme.primary;
       expect(lightPrimaryColor, AppTheme.navyDark);
     });
 
@@ -115,8 +120,9 @@ void main() {
         ),
       );
 
-      final BuildContext darkContext =
-          tester.element(find.byType(EmptyStateWidget));
+      final BuildContext darkContext = tester.element(
+        find.byType(EmptyStateWidget),
+      );
       final Color darkPrimaryColor = Theme.of(darkContext).colorScheme.primary;
       expect(darkPrimaryColor, const Color(0xFF60A5FA));
     });

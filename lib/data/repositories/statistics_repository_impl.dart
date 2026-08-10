@@ -9,9 +9,7 @@ import 'package:stalvi/domain/repositories/i_statistics_repository.dart';
 class StatisticsRepositoryImpl implements IStatisticsRepository {
   final StatisticsDao _dao;
 
-  StatisticsRepositoryImpl(
-    this._dao,
-  );
+  StatisticsRepositoryImpl(this._dao);
 
   @override
   Future<PeriodSummary> getPeriodSummary({

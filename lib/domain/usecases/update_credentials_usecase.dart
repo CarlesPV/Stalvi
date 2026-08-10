@@ -8,10 +8,7 @@ class UpdateCredentialsParams {
   final String oldPin;
   final String newPin;
 
-  const UpdateCredentialsParams({
-    required this.oldPin,
-    required this.newPin,
-  });
+  const UpdateCredentialsParams({required this.oldPin, required this.newPin});
 }
 
 class UpdateCredentialsUseCase {
@@ -38,14 +35,10 @@ class UpdateCredentialsUseCase {
     // 2. Validate new PIN length and numeric format
     final newPin = params.newPin;
     if (newPin.length < 4 || newPin.length > 8) {
-      throw const ValidationException(
-        message: 'pin_length_invalid',
-      );
+      throw const ValidationException(message: 'pin_length_invalid');
     }
     if (int.tryParse(newPin) == null) {
-      throw const ValidationException(
-        message: 'pin_not_numeric',
-      );
+      throw const ValidationException(message: 'pin_not_numeric');
     }
 
     // 3. Hash new PIN and save

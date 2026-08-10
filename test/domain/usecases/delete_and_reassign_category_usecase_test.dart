@@ -84,37 +84,39 @@ void main() {
 
   group('DeleteAndReassignCategoryUseCase', () {
     test(
-        'isCategoryInUse throws CategoryInUseByAutomaticTransactionException if in use by auto tx',
-        () async {
-      final autoTx = AutomaticTransaction(
-        id: '1',
-        name: 'Auto',
-        amount: 100,
-        currency: 'USD',
-        type: TransactionType.expense,
-        accountId: 'acc1',
-        categoryId: 'cat1',
-        recurrenceDays: 30,
-        nextExecutionDate: DateTime.now(),
-        createdAt: DateTime.now(),
-      );
-      when(() => mockAutomaticTransactionRepo.watchAllAutomaticTransactions())
-          .thenAnswer((_) => Stream.value([autoTx]));
+      'isCategoryInUse throws CategoryInUseByAutomaticTransactionException if in use by auto tx',
+      () async {
+        final autoTx = AutomaticTransaction(
+          id: '1',
+          name: 'Auto',
+          amount: 100,
+          currency: 'USD',
+          type: TransactionType.expense,
+          accountId: 'acc1',
+          categoryId: 'cat1',
+          recurrenceDays: 30,
+          nextExecutionDate: DateTime.now(),
+          createdAt: DateTime.now(),
+        );
+        when(
+          () => mockAutomaticTransactionRepo.watchAllAutomaticTransactions(),
+        ).thenAnswer((_) => Stream.value([autoTx]));
 
-      expect(
-        () => useCase.isCategoryInUse('cat1'),
-        throwsA(isA<CategoryInUseByAutomaticTransactionException>()),
-      );
-    });
+        expect(
+          () => useCase.isCategoryInUse('cat1'),
+          throwsA(isA<CategoryInUseByAutomaticTransactionException>()),
+        );
+      },
+    );
 
     test('isCategoryInUse returns true when transactions exist', () async {
-      when(() => mockAutomaticTransactionRepo.watchAllAutomaticTransactions())
-          .thenAnswer((_) => Stream.value([]));
-      when(() => mockTransactionRepo.watchFilteredTransactions(any()))
-          .thenAnswer(
-        (_) => Stream.value([
-          FakeTransaction(id: '1', categoryId: 'cat1'),
-        ]),
+      when(
+        () => mockAutomaticTransactionRepo.watchAllAutomaticTransactions(),
+      ).thenAnswer((_) => Stream.value([]));
+      when(
+        () => mockTransactionRepo.watchFilteredTransactions(any()),
+      ).thenAnswer(
+        (_) => Stream.value([FakeTransaction(id: '1', categoryId: 'cat1')]),
       );
 
       final result = await useCase.isCategoryInUse('cat1');
@@ -122,46 +124,52 @@ void main() {
     });
 
     test('isCategoryInUse returns false when no transactions exist', () async {
-      when(() => mockAutomaticTransactionRepo.watchAllAutomaticTransactions())
-          .thenAnswer((_) => Stream.value([]));
-      when(() => mockTransactionRepo.watchFilteredTransactions(any()))
-          .thenAnswer((_) => Stream.value([]));
+      when(
+        () => mockAutomaticTransactionRepo.watchAllAutomaticTransactions(),
+      ).thenAnswer((_) => Stream.value([]));
+      when(
+        () => mockTransactionRepo.watchFilteredTransactions(any()),
+      ).thenAnswer((_) => Stream.value([]));
 
       final result = await useCase.isCategoryInUse('cat1');
       expect(result, isFalse);
     });
 
-    test('execute throws ArgumentError when old and new categories are same',
-        () async {
-      expect(
-        () => useCase.execute(oldCategoryId: 'cat1', newCategoryId: 'cat1'),
-        throwsA(isA<ArgumentError>()),
-      );
-    });
+    test(
+      'execute throws ArgumentError when old and new categories are same',
+      () async {
+        expect(
+          () => useCase.execute(oldCategoryId: 'cat1', newCategoryId: 'cat1'),
+          throwsA(isA<ArgumentError>()),
+        );
+      },
+    );
 
     test('execute reassigns transactions and deletes old category', () async {
       final tx1 = FakeTransaction(id: 'tx1', categoryId: 'oldCat');
       final tx2 = FakeTransaction(id: 'tx2', categoryId: 'oldCat');
 
-      when(() => mockTransactionRepo.watchFilteredTransactions(any()))
-          .thenAnswer((_) => Stream.value([tx1, tx2]));
+      when(
+        () => mockTransactionRepo.watchFilteredTransactions(any()),
+      ).thenAnswer((_) => Stream.value([tx1, tx2]));
 
-      when(() => mockTransactionRepo.updateTransaction(any()))
-          .thenAnswer((_) async => tx1);
+      when(
+        () => mockTransactionRepo.updateTransaction(any()),
+      ).thenAnswer((_) async => tx1);
 
-      when(() => mockAutomaticTransactionRepo.watchAllAutomaticTransactions())
-          .thenAnswer((_) => Stream.value([]));
+      when(
+        () => mockAutomaticTransactionRepo.watchAllAutomaticTransactions(),
+      ).thenAnswer((_) => Stream.value([]));
 
-      when(() => mockCategoryRepo.deleteCategory('oldCat'))
-          .thenAnswer((_) async {});
+      when(
+        () => mockCategoryRepo.deleteCategory('oldCat'),
+      ).thenAnswer((_) async {});
 
       await useCase.execute(oldCategoryId: 'oldCat', newCategoryId: 'newCat');
 
       verify(
         () => mockTransactionRepo.updateTransaction(
-          any(
-            that: predicate<Transaction>((tx) => tx.categoryId == 'newCat'),
-          ),
+          any(that: predicate<Transaction>((tx) => tx.categoryId == 'newCat')),
         ),
       ).called(2);
       verify(() => mockCategoryRepo.deleteCategory('oldCat')).called(1);
@@ -211,17 +219,20 @@ void main() {
       );
 
       // Deleting income category should return other income cats + custom cats
-      final replacementsIncome =
-          await useCase.getReplacementCategories(catIncome);
+      final replacementsIncome = await useCase.getReplacementCategories(
+        catIncome,
+      );
       expect(replacementsIncome.map((c) => c.id).toList(), ['cus1', 'cus2']);
 
       // Deleting custom category should return ALL other categories
-      final replacementsCustom =
-          await useCase.getReplacementCategories(catCustom);
-      expect(
-        replacementsCustom.map((c) => c.id).toList(),
-        ['inc1', 'exp1', 'cus2'],
+      final replacementsCustom = await useCase.getReplacementCategories(
+        catCustom,
       );
+      expect(replacementsCustom.map((c) => c.id).toList(), [
+        'inc1',
+        'exp1',
+        'cus2',
+      ]);
     });
   });
 }

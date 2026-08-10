@@ -102,8 +102,9 @@ void main() {
 
   setUp(() async {
     tempDir = await Directory.systemTemp.createTemp('export_service_test');
-    PathProviderPlatform.instance =
-        FakePathProviderPlatform.legacy(tempDir.path);
+    PathProviderPlatform.instance = FakePathProviderPlatform.legacy(
+      tempDir.path,
+    );
     service = ExportServiceImpl();
   });
 
@@ -117,47 +118,49 @@ void main() {
 
   group('generateCsv', () {
     test(
-        'result has correct MIME type and matches Stalvi_Export_yyyyMMdd_HHmmss.csv filename pattern',
-        () async {
-      // Arrange
-      final tx = _makeTransaction();
+      'result has correct MIME type and matches Stalvi_Export_yyyyMMdd_HHmmss.csv filename pattern',
+      () async {
+        // Arrange
+        final tx = _makeTransaction();
 
-      // Act
-      final result = await service.generateCsv(
-        [tx],
-        accounts: _emptyAccounts,
-        categories: _emptyCategories,
-      );
+        // Act
+        final result = await service.generateCsv(
+          [tx],
+          accounts: _emptyAccounts,
+          categories: _emptyCategories,
+        );
 
-      // Assert
-      expect(result.mimeType, equals('text/csv'));
-      expect(
-        result.filename,
-        matches(RegExp(r'^Stalvi_Table_\d{8}_\d{6}\.csv$')),
-      );
-    });
+        // Assert
+        expect(result.mimeType, equals('text/csv'));
+        expect(
+          result.filename,
+          matches(RegExp(r'^Stalvi_Table_\d{8}_\d{6}\.csv$')),
+        );
+      },
+    );
 
     test(
-        'CSV output has a header row as the first line with exchange_rate_snapshot and transfer_id',
-        () async {
-      // Arrange
-      final tx = _makeTransaction();
+      'CSV output has a header row as the first line with exchange_rate_snapshot and transfer_id',
+      () async {
+        // Arrange
+        final tx = _makeTransaction();
 
-      // Act
-      final result = await service.generateCsv(
-        [tx],
-        accounts: _emptyAccounts,
-        categories: _emptyCategories,
-      );
-      final lines = utf8.decode(result.bytes).split('\n');
+        // Act
+        final result = await service.generateCsv(
+          [tx],
+          accounts: _emptyAccounts,
+          categories: _emptyCategories,
+        );
+        final lines = utf8.decode(result.bytes).split('\n');
 
-      // Assert
-      expect(lines.first, contains('Date'));
-      expect(lines.first, contains('Type'));
-      expect(lines.first, contains('Amount'));
-      expect(lines.first, contains('exchange_rate_snapshot'));
-      expect(lines.first, contains('transfer_id'));
-    });
+        // Assert
+        expect(lines.first, contains('Date'));
+        expect(lines.first, contains('Type'));
+        expect(lines.first, contains('Amount'));
+        expect(lines.first, contains('exchange_rate_snapshot'));
+        expect(lines.first, contains('transfer_id'));
+      },
+    );
 
     test('amount is converted from cents to decimal string', () async {
       // Arrange – 1050 cents = 10.50
@@ -290,172 +293,183 @@ void main() {
     const password = 'S3cur3P@ssw0rd!';
 
     test(
-        'result has correct MIME type and matches Stalvi_Export_yyyyMMdd_HHmmss.kbak filename pattern',
-        () async {
-      // Arrange
-      final tx = _makeTransaction();
+      'result has correct MIME type and matches Stalvi_Export_yyyyMMdd_HHmmss.kbak filename pattern',
+      () async {
+        // Arrange
+        final tx = _makeTransaction();
 
-      // Act
-      final result = await service.generateEncryptedJson(
-        accounts: _emptyAccounts,
-        categories: _emptyCategories,
-        tags: _emptyTags,
-        transactions: [tx],
-        budgets: const [],
-        savingsGoals: const [],
-        automaticTransactions: const [],
-        password: password,
-        userName: 'User 1',
-      );
+        // Act
+        final result = await service.generateEncryptedJson(
+          accounts: _emptyAccounts,
+          categories: _emptyCategories,
+          tags: _emptyTags,
+          transactions: [tx],
+          budgets: const [],
+          savingsGoals: const [],
+          automaticTransactions: const [],
+          password: password,
+          userName: 'User 1',
+        );
 
-      // Assert
-      expect(result.mimeType, equals('application/octet-stream'));
-      expect(
-        result.filename,
-        matches(RegExp(r'^Stalvi_Backup_\d{8}_\d{6}\.kbak$')),
-      );
-    });
+        // Assert
+        expect(result.mimeType, equals('application/octet-stream'));
+        expect(
+          result.filename,
+          matches(RegExp(r'^Stalvi_Backup_\d{8}_\d{6}\.kbak$')),
+        );
+      },
+    );
 
-    test('envelope is at least 33 bytes (16 salt + 16 iv + 1 byte cipher)',
-        () async {
-      // Arrange
-      final tx = _makeTransaction();
+    test(
+      'envelope is at least 33 bytes (16 salt + 16 iv + 1 byte cipher)',
+      () async {
+        // Arrange
+        final tx = _makeTransaction();
 
-      // Act
-      final result = await service.generateEncryptedJson(
-        accounts: _emptyAccounts,
-        categories: _emptyCategories,
-        tags: _emptyTags,
-        transactions: [tx],
-        budgets: const [],
-        savingsGoals: const [],
-        automaticTransactions: const [],
-        password: password,
-        userName: 'User 1',
-      );
+        // Act
+        final result = await service.generateEncryptedJson(
+          accounts: _emptyAccounts,
+          categories: _emptyCategories,
+          tags: _emptyTags,
+          transactions: [tx],
+          budgets: const [],
+          savingsGoals: const [],
+          automaticTransactions: const [],
+          password: password,
+          userName: 'User 1',
+        );
 
-      // Assert
-      expect(result.bytes.length, greaterThanOrEqualTo(33));
-    });
+        // Assert
+        expect(result.bytes.length, greaterThanOrEqualTo(33));
+      },
+    );
 
-    test('encryption is non-deterministic: two exports of the same data differ',
-        () async {
-      // Arrange
-      final tx = _makeTransaction();
+    test(
+      'encryption is non-deterministic: two exports of the same data differ',
+      () async {
+        // Arrange
+        final tx = _makeTransaction();
 
-      // Act
-      final result1 = await service.generateEncryptedJson(
-        accounts: _emptyAccounts,
-        categories: _emptyCategories,
-        tags: _emptyTags,
-        transactions: [tx],
-        budgets: const [],
-        savingsGoals: const [],
-        automaticTransactions: const [],
-        password: password,
-        userName: 'User 1',
-      );
-      final result2 = await service.generateEncryptedJson(
-        accounts: _emptyAccounts,
-        categories: _emptyCategories,
-        tags: _emptyTags,
-        transactions: [tx],
-        budgets: const [],
-        savingsGoals: const [],
-        automaticTransactions: const [],
-        password: password,
-        userName: 'User 1',
-      );
+        // Act
+        final result1 = await service.generateEncryptedJson(
+          accounts: _emptyAccounts,
+          categories: _emptyCategories,
+          tags: _emptyTags,
+          transactions: [tx],
+          budgets: const [],
+          savingsGoals: const [],
+          automaticTransactions: const [],
+          password: password,
+          userName: 'User 1',
+        );
+        final result2 = await service.generateEncryptedJson(
+          accounts: _emptyAccounts,
+          categories: _emptyCategories,
+          tags: _emptyTags,
+          transactions: [tx],
+          budgets: const [],
+          savingsGoals: const [],
+          automaticTransactions: const [],
+          password: password,
+          userName: 'User 1',
+        );
 
-      // Assert – random salt + IV ensure ciphertexts differ on every run
-      expect(result1.bytes, isNot(equals(result2.bytes)));
-    });
+        // Assert – random salt + IV ensure ciphertexts differ on every run
+        expect(result1.bytes, isNot(equals(result2.bytes)));
+      },
+    );
 
-    test('decrypting the envelope with the correct password recovers the JSON',
-        () async {
-      // Arrange
-      final tx = _makeTransaction();
-      final result = await service.generateEncryptedJson(
-        accounts: _emptyAccounts,
-        categories: _emptyCategories,
-        tags: _emptyTags,
-        transactions: [tx],
-        budgets: const [],
-        savingsGoals: const [],
-        automaticTransactions: const [],
-        password: password,
-        userName: 'User 1',
-      );
+    test(
+      'decrypting the envelope with the correct password recovers the JSON',
+      () async {
+        // Arrange
+        final tx = _makeTransaction();
+        final result = await service.generateEncryptedJson(
+          accounts: _emptyAccounts,
+          categories: _emptyCategories,
+          tags: _emptyTags,
+          transactions: [tx],
+          budgets: const [],
+          savingsGoals: const [],
+          automaticTransactions: const [],
+          password: password,
+          userName: 'User 1',
+        );
 
-      // Act – manually unpack envelope and decrypt
-      final envelope = Uint8List.fromList(result.bytes);
-      final salt = envelope.sublist(0, 16);
-      final ivBytes = envelope.sublist(16, 32);
-      final cipherBytes = envelope.sublist(32);
+        // Act – manually unpack envelope and decrypt
+        final envelope = Uint8List.fromList(result.bytes);
+        final salt = envelope.sublist(0, 16);
+        final ivBytes = envelope.sublist(16, 32);
+        final cipherBytes = envelope.sublist(32);
 
-      final derivedKey = ExportServiceImpl.deriveKeyForTest(password, salt);
-      final iv = enc.IV(ivBytes);
-      final encrypter = enc.Encrypter(
-        enc.AES(enc.Key(derivedKey), mode: enc.AESMode.cbc),
-      );
-      final decrypted = encrypter.decrypt(
-        enc.Encrypted(Uint8List.fromList(cipherBytes)),
-        iv: iv,
-      );
+        final derivedKey = ExportServiceImpl.deriveKeyForTest(password, salt);
+        final iv = enc.IV(ivBytes);
+        final encrypter = enc.Encrypter(
+          enc.AES(enc.Key(derivedKey), mode: enc.AESMode.cbc),
+        );
+        final decrypted = encrypter.decrypt(
+          enc.Encrypted(Uint8List.fromList(cipherBytes)),
+          iv: iv,
+        );
 
-      final payload = jsonDecode(decrypted) as Map<String, dynamic>;
+        final payload = jsonDecode(decrypted) as Map<String, dynamic>;
 
-      // Assert
-      expect(payload['version'], equals(3));
-      expect(payload['transactions'], isA<List>());
-      final firstTx =
-          (payload['transactions'] as List).first as Map<String, dynamic>;
-      expect(firstTx['id'], equals('tx-001'));
-      expect(firstTx['amount'], equals(5000));
-    });
+        // Assert
+        expect(payload['version'], equals(3));
+        expect(payload['transactions'], isA<List>());
+        final firstTx =
+            (payload['transactions'] as List).first as Map<String, dynamic>;
+        expect(firstTx['id'], equals('tx-001'));
+        expect(firstTx['amount'], equals(5000));
+      },
+    );
 
-    test('decrypting with wrong password yields corrupted output or throws',
-        () async {
-      // Arrange
-      final tx = _makeTransaction();
-      final result = await service.generateEncryptedJson(
-        accounts: _emptyAccounts,
-        categories: _emptyCategories,
-        tags: _emptyTags,
-        transactions: [tx],
-        budgets: const [],
-        savingsGoals: const [],
-        automaticTransactions: const [],
-        password: password,
-        userName: 'User 1',
-      );
+    test(
+      'decrypting with wrong password yields corrupted output or throws',
+      () async {
+        // Arrange
+        final tx = _makeTransaction();
+        final result = await service.generateEncryptedJson(
+          accounts: _emptyAccounts,
+          categories: _emptyCategories,
+          tags: _emptyTags,
+          transactions: [tx],
+          budgets: const [],
+          savingsGoals: const [],
+          automaticTransactions: const [],
+          password: password,
+          userName: 'User 1',
+        );
 
-      // Act – try to decrypt with a wrong password
-      final envelope = Uint8List.fromList(result.bytes);
-      final salt = envelope.sublist(0, 16);
-      final ivBytes = envelope.sublist(16, 32);
-      final cipherBytes = envelope.sublist(32);
+        // Act – try to decrypt with a wrong password
+        final envelope = Uint8List.fromList(result.bytes);
+        final salt = envelope.sublist(0, 16);
+        final ivBytes = envelope.sublist(16, 32);
+        final cipherBytes = envelope.sublist(32);
 
-      final wrongKey =
-          ExportServiceImpl.deriveKeyForTest('WrongPassword!', salt);
-      final iv = enc.IV(ivBytes);
-      final encrypter = enc.Encrypter(
-        enc.AES(enc.Key(wrongKey), mode: enc.AESMode.cbc),
-      );
+        final wrongKey = ExportServiceImpl.deriveKeyForTest(
+          'WrongPassword!',
+          salt,
+        );
+        final iv = enc.IV(ivBytes);
+        final encrypter = enc.Encrypter(
+          enc.AES(enc.Key(wrongKey), mode: enc.AESMode.cbc),
+        );
 
-      // Assert – decryption with wrong key produces garbage, not valid JSON
-      expect(
-        () {
-          final garbled = encrypter.decrypt(
-            enc.Encrypted(Uint8List.fromList(cipherBytes)),
-            iv: iv,
-          );
-          // If decrypt doesn't throw, the result must not be valid JSON
-          jsonDecode(garbled);
-        },
-        throwsA(anything),
-      );
-    });
+        // Assert – decryption with wrong key produces garbage, not valid JSON
+        expect(
+          () {
+            final garbled = encrypter.decrypt(
+              enc.Encrypted(Uint8List.fromList(cipherBytes)),
+              iv: iv,
+            );
+            // If decrypt doesn't throw, the result must not be valid JSON
+            jsonDecode(garbled);
+          },
+          throwsA(anything),
+        );
+      },
+    );
 
     test('empty password throws ExportException', () async {
       // Arrange
@@ -478,73 +492,75 @@ void main() {
       );
     });
 
-    test('transaction id and amount are correctly serialised in the envelope',
-        () async {
-      // Arrange
-      final tx = _makeTransaction(id: 'unique-id-xyz', amount: 99999);
-      final result = await service.generateEncryptedJson(
-        accounts: _emptyAccounts,
-        categories: _emptyCategories,
-        tags: _emptyTags,
-        transactions: [tx],
-        budgets: const [],
-        savingsGoals: const [],
-        automaticTransactions: const [],
-        password: password,
-        userName: 'User 1',
-      );
+    test(
+      'transaction id and amount are correctly serialised in the envelope',
+      () async {
+        // Arrange
+        final tx = _makeTransaction(id: 'unique-id-xyz', amount: 99999);
+        final result = await service.generateEncryptedJson(
+          accounts: _emptyAccounts,
+          categories: _emptyCategories,
+          tags: _emptyTags,
+          transactions: [tx],
+          budgets: const [],
+          savingsGoals: const [],
+          automaticTransactions: const [],
+          password: password,
+          userName: 'User 1',
+        );
 
-      // Act – decrypt and parse
-      final envelope = Uint8List.fromList(result.bytes);
-      final salt = envelope.sublist(0, 16);
-      final ivBytes = envelope.sublist(16, 32);
-      final cipherBytes = envelope.sublist(32);
+        // Act – decrypt and parse
+        final envelope = Uint8List.fromList(result.bytes);
+        final salt = envelope.sublist(0, 16);
+        final ivBytes = envelope.sublist(16, 32);
+        final cipherBytes = envelope.sublist(32);
 
-      final key = ExportServiceImpl.deriveKeyForTest(password, salt);
-      final decrypted = enc.Encrypter(
-        enc.AES(enc.Key(key), mode: enc.AESMode.cbc),
-      ).decrypt(
-        enc.Encrypted(Uint8List.fromList(cipherBytes)),
-        iv: enc.IV(ivBytes),
-      );
+        final key = ExportServiceImpl.deriveKeyForTest(password, salt);
+        final decrypted =
+            enc.Encrypter(enc.AES(enc.Key(key), mode: enc.AESMode.cbc)).decrypt(
+          enc.Encrypted(Uint8List.fromList(cipherBytes)),
+          iv: enc.IV(ivBytes),
+        );
 
-      final payload = jsonDecode(decrypted) as Map<String, dynamic>;
-      final firstTx =
-          (payload['transactions'] as List).first as Map<String, dynamic>;
+        final payload = jsonDecode(decrypted) as Map<String, dynamic>;
+        final firstTx =
+            (payload['transactions'] as List).first as Map<String, dynamic>;
 
-      // Assert
-      expect(firstTx['id'], equals('unique-id-xyz'));
-      expect(firstTx['amount'], equals(99999));
-    });
+        // Assert
+        expect(firstTx['id'], equals('unique-id-xyz'));
+        expect(firstTx['amount'], equals(99999));
+      },
+    );
   });
 
   // ──────────────────────── PDF generation ──────────────────────────────────
 
   group('generateMonthlyPdf', () {
     test(
-        'result has correct MIME type and matches Stalvi_Export_yyyyMMdd_HHmmss.pdf filename pattern',
-        () async {
-      // Arrange
-      final tx = _makeTransaction();
-      const summary = PeriodSummary(totalIncome: 10000, totalExpense: 5000);
+      'result has correct MIME type and matches Stalvi_Export_yyyyMMdd_HHmmss.pdf filename pattern',
+      () async {
+        // Arrange
+        final tx = _makeTransaction();
+        const summary = PeriodSummary(totalIncome: 10000, totalExpense: 5000);
 
-      // Act
-      final result = await service.generateMonthlyPdf(
-        [tx],
-        summary: summary,
-        month: DateTime(2025, 6),
-        l10n: lookupAppLocalizations(const Locale('en')),
-        accounts: _emptyAccounts,
-        categories: _emptyCategories,
-      );
+        // Act
+        final result = await service.generateMonthlyPdf(
+          [tx],
+          summary: summary,
+          month: DateTime(2025, 6),
+          l10n: lookupAppLocalizations(const Locale('en')),
+          accounts: _emptyAccounts,
+          categories: _emptyCategories,
+        );
 
-      // Assert
-      expect(result.mimeType, equals('application/pdf'));
-      expect(
-        result.filename,
-        matches(RegExp(r'^Stalvi_Overview_\d{8}_\d{6}\.pdf$')),
-      );
-    });
+        // Assert
+        expect(result.mimeType, equals('application/pdf'));
+        expect(
+          result.filename,
+          matches(RegExp(r'^Stalvi_Overview_\d{8}_\d{6}\.pdf$')),
+        );
+      },
+    );
 
     test('PDF bytes start with the PDF magic bytes (%PDF)', () async {
       // Arrange
@@ -573,8 +589,9 @@ void main() {
     late Directory docsDir;
 
     setUp(() async {
-      final rootTemp =
-          await Directory.systemTemp.createTemp('export_fallback_test');
+      final rootTemp = await Directory.systemTemp.createTemp(
+        'export_fallback_test',
+      );
       downloadsDir = Directory('${rootTemp.path}/Downloads');
       docsDir = Directory('${rootTemp.path}/Documents');
       await downloadsDir.create(recursive: true);
@@ -588,57 +605,60 @@ void main() {
     });
 
     test(
-        'always attempts to save file into Downloads directory first when available',
-        () async {
-      PathProviderPlatform.instance = FakePathProviderPlatform(
-        downloadsPath: downloadsDir.path,
-        docsPath: docsDir.path,
-      );
+      'always attempts to save file into Downloads directory first when available',
+      () async {
+        PathProviderPlatform.instance = FakePathProviderPlatform(
+          downloadsPath: downloadsDir.path,
+          docsPath: docsDir.path,
+        );
 
-      final result = await service.generateCsv(
-        [_makeTransaction()],
-        accounts: _emptyAccounts,
-        categories: _emptyCategories,
-      );
+        final result = await service.generateCsv(
+          [_makeTransaction()],
+          accounts: _emptyAccounts,
+          categories: _emptyCategories,
+        );
 
-      expect(result.filePath, startsWith(downloadsDir.path));
-      expect(File(result.filePath!).existsSync(), isTrue);
-    });
-
-    test(
-        'falls back to Documents directory when Downloads directory is unavailable (null)',
-        () async {
-      PathProviderPlatform.instance = FakePathProviderPlatform(
-        downloadsPath: null,
-        docsPath: docsDir.path,
-      );
-
-      final result = await service.generateCsv(
-        [_makeTransaction()],
-        accounts: _emptyAccounts,
-        categories: _emptyCategories,
-      );
-
-      expect(result.filePath, startsWith(docsDir.path));
-      expect(File(result.filePath!).existsSync(), isTrue);
-    });
+        expect(result.filePath, startsWith(downloadsDir.path));
+        expect(File(result.filePath!).existsSync(), isTrue);
+      },
+    );
 
     test(
-        'falls back to Documents directory when getDownloadsPath throws an exception',
-        () async {
-      PathProviderPlatform.instance = FakePathProviderPlatform(
-        throwOnDownloads: true,
-        docsPath: docsDir.path,
-      );
+      'falls back to Documents directory when Downloads directory is unavailable (null)',
+      () async {
+        PathProviderPlatform.instance = FakePathProviderPlatform(
+          downloadsPath: null,
+          docsPath: docsDir.path,
+        );
 
-      final result = await service.generateCsv(
-        [_makeTransaction()],
-        accounts: _emptyAccounts,
-        categories: _emptyCategories,
-      );
+        final result = await service.generateCsv(
+          [_makeTransaction()],
+          accounts: _emptyAccounts,
+          categories: _emptyCategories,
+        );
 
-      expect(result.filePath, startsWith(docsDir.path));
-      expect(File(result.filePath!).existsSync(), isTrue);
-    });
+        expect(result.filePath, startsWith(docsDir.path));
+        expect(File(result.filePath!).existsSync(), isTrue);
+      },
+    );
+
+    test(
+      'falls back to Documents directory when getDownloadsPath throws an exception',
+      () async {
+        PathProviderPlatform.instance = FakePathProviderPlatform(
+          throwOnDownloads: true,
+          docsPath: docsDir.path,
+        );
+
+        final result = await service.generateCsv(
+          [_makeTransaction()],
+          accounts: _emptyAccounts,
+          categories: _emptyCategories,
+        );
+
+        expect(result.filePath, startsWith(docsDir.path));
+        expect(File(result.filePath!).existsSync(), isTrue);
+      },
+    );
   });
 }

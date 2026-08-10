@@ -51,8 +51,9 @@ final executeRecurringTransactionsUseCaseProvider = Provider((ref) {
   final accountRepo = ref.watch(accountRepositoryProvider);
   final profileRepo = ref.watch(profileRepositoryProvider);
   final exchangeRateRepo = ref.watch(exchangeRateRepositoryProvider);
-  final financialThresholdService =
-      ref.watch(financialThresholdServiceProvider);
+  final financialThresholdService = ref.watch(
+    financialThresholdServiceProvider,
+  );
   final notificationService = ref.watch(notificationServiceProvider);
   final settingsRepo = ref.watch(settingsRepositoryProvider);
   return ExecuteRecurringTransactionsUseCase(

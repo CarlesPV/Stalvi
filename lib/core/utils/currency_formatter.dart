@@ -37,19 +37,17 @@ class CurrencyFormatter {
             name: currencyCode ?? this.currencyCode,
           )
         : (currencyCode ?? this.currencyCode) == 'CNY'
-            ? NumberFormat.currency(
-                locale: locale,
-                name: 'CNY',
-                symbol: '¥',
-              )
+            ? NumberFormat.currency(locale: locale, name: 'CNY', symbol: '¥')
             : NumberFormat.simpleCurrency(
                 locale: locale,
                 name: currencyCode ?? this.currencyCode,
               );
 
     final currencyString = currencyFmt.format(amount < 0 ? -1 : 1);
-    var result =
-        currencyString.replaceFirst(RegExp(r'[0-9.,]+'), '${numberString}M');
+    var result = currencyString.replaceFirst(
+      RegExp(r'[0-9.,]+'),
+      '${numberString}M',
+    );
 
     if (showSign && amount > 0) {
       result = '+$result';
@@ -135,13 +133,12 @@ class CurrencyFormatter {
   }
 
   /// Formats a double value to a compact currency string (e.g., €1.2M, €450K).
-  String formatCompact(
-    double amount, {
-    String? locale,
-    String? currencyCode,
-  }) {
-    final millions =
-        _formatMillions(amount, locale: locale, currencyCode: currencyCode);
+  String formatCompact(double amount, {String? locale, String? currencyCode}) {
+    final millions = _formatMillions(
+      amount,
+      locale: locale,
+      currencyCode: currencyCode,
+    );
     if (millions != null) return millions;
 
     final code = currencyCode ?? this.currencyCode;

@@ -39,48 +39,57 @@ void main() {
   }
 
   group('CategoryRepository Tests', () {
-    test('createCategory saves category and getCategoryById retrieves it',
-        () async {
-      final id = uuid.v4();
-      final category = buildTestCategory(id: id);
+    test(
+      'createCategory saves category and getCategoryById retrieves it',
+      () async {
+        final id = uuid.v4();
+        final category = buildTestCategory(id: id);
 
-      await repository.createCategory(category);
-      final retrieved = await repository.getCategoryById(id);
+        await repository.createCategory(category);
+        final retrieved = await repository.getCategoryById(id);
 
-      expect(retrieved, isNotNull);
-      expect(retrieved!.id, id);
-      expect(retrieved.name, 'Test Category');
-      expect(retrieved.associatedType, CategoryType.expense);
-    });
+        expect(retrieved, isNotNull);
+        expect(retrieved!.id, id);
+        expect(retrieved.name, 'Test Category');
+        expect(retrieved.associatedType, CategoryType.expense);
+      },
+    );
 
-    test('getAllCategories returns seeded plus new non-deleted categories',
-        () async {
-      final catActive = buildTestCategory(id: uuid.v4(), name: 'Active Cat');
-      final catDeleted = buildTestCategory(
-        id: uuid.v4(),
-        name: 'Deleted Cat',
-        isDeleted: true,
-      );
+    test(
+      'getAllCategories returns seeded plus new non-deleted categories',
+      () async {
+        final catActive = buildTestCategory(id: uuid.v4(), name: 'Active Cat');
+        final catDeleted = buildTestCategory(
+          id: uuid.v4(),
+          name: 'Deleted Cat',
+          isDeleted: true,
+        );
 
-      await repository.createCategory(catActive);
-      await repository.createCategory(catDeleted);
+        await repository.createCategory(catActive);
+        await repository.createCategory(catDeleted);
 
-      final list = await repository.getAllCategories();
+        final list = await repository.getAllCategories();
 
-      // Seeded categories: Food, Transport, Salary. Total: 3. plus Active Cat: 4.
-      expect(list.length, 4);
-      final names = list.map((c) => c.name).toList();
-      expect(names, containsAll(['Food', 'Transport', 'Salary', 'Active Cat']));
-      expect(names, isNot(contains('Deleted Cat')));
-    });
+        // Seeded categories: Food, Transport, Salary. Total: 3. plus Active Cat: 4.
+        expect(list.length, 4);
+        final names = list.map((c) => c.name).toList();
+        expect(
+          names,
+          containsAll(['Food', 'Transport', 'Salary', 'Active Cat']),
+        );
+        expect(names, isNot(contains('Deleted Cat')));
+      },
+    );
 
     test('updateCategory correctly modifies database fields', () async {
       final id = uuid.v4();
       final category = buildTestCategory(id: id, name: 'Original Category');
       await repository.createCategory(category);
 
-      final updated =
-          category.copyWith(name: 'Updated Category', color: '#00FFFF');
+      final updated = category.copyWith(
+        name: 'Updated Category',
+        color: '#00FFFF',
+      );
       await repository.updateCategory(updated);
 
       final retrieved = await repository.getCategoryById(id);

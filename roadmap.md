@@ -413,6 +413,14 @@
   - [x] Ensure text cursor is positioned at the left side immediately following the currency symbol for clearer input UX.
   - [x] Verify static analysis (`0` issues) and 100% test pass rate across all unit and widget tests.
 
+- [x] **Phase 59: Data Export Navigation, Asset Expansion, Legal Docs & Default Categories**
+  - [x] Integrate export navigation in statistics view.
+  - [x] Expand category colors (15) and icons (50), plus 4 new savings goals icons.
+  - [x] Update Legal Documents (ToS and Privacy Policy) with robust liability exemptions in EN, ES, CA.
+  - [x] Update database seeding logic for new default categories (Pet, Personal Care, Sport, Sale, Refund, Investment).
+  - [x] Ensure CI/CD workflows run securely and flawlessly with 100% test pass rate.
+
+
 ---
 
 ## Post-Launch / Maintenance

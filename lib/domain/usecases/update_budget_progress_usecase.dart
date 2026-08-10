@@ -42,8 +42,9 @@ class UpdateBudgetProgressUseCase {
           _transactionRepository.watchFilteredTransactions(filter);
       final transactions = await transactionsStream.first;
 
-      final budgetAccount =
-          await _accountRepository.getAccountById(budget.accountId);
+      final budgetAccount = await _accountRepository.getAccountById(
+        budget.accountId,
+      );
       if (budgetAccount == null) continue;
 
       int totalSpentCents = 0;

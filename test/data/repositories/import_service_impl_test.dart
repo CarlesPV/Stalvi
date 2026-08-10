@@ -55,11 +55,20 @@ void main() {
       );
 
       expect(
-        () => importService
-            .restoreFromEncryptedJson([1, 2, 3], password: 'wrong_password'),
+        () => importService.restoreFromEncryptedJson(
+          [
+            1,
+            2,
+            3,
+          ],
+          password: 'wrong_password',
+        ),
         throwsA(
-          isA<ImportException>()
-              .having((e) => e.code, 'code', 'DECRYPT_FAILED'),
+          isA<ImportException>().having(
+            (e) => e.code,
+            'code',
+            'DECRYPT_FAILED',
+          ),
         ),
       );
     });
@@ -73,11 +82,20 @@ void main() {
       ).thenAnswer((_) async => 'not-a-json-string');
 
       expect(
-        () => importService
-            .restoreFromEncryptedJson([1, 2, 3], password: 'password'),
+        () => importService.restoreFromEncryptedJson(
+          [
+            1,
+            2,
+            3,
+          ],
+          password: 'password',
+        ),
         throwsA(
-          isA<ImportException>()
-              .having((e) => e.code, 'code', 'JSON_PARSE_FAILED'),
+          isA<ImportException>().having(
+            (e) => e.code,
+            'code',
+            'JSON_PARSE_FAILED',
+          ),
         ),
       );
     });
@@ -91,11 +109,20 @@ void main() {
       ).thenAnswer((_) async => '{"version": 4}');
 
       expect(
-        () => importService
-            .restoreFromEncryptedJson([1, 2, 3], password: 'password'),
+        () => importService.restoreFromEncryptedJson(
+          [
+            1,
+            2,
+            3,
+          ],
+          password: 'password',
+        ),
         throwsA(
-          isA<ImportException>()
-              .having((e) => e.code, 'code', 'UNSUPPORTED_VERSION'),
+          isA<ImportException>().having(
+            (e) => e.code,
+            'code',
+            'UNSUPPORTED_VERSION',
+          ),
         ),
       );
     });
@@ -175,8 +202,14 @@ void main() {
 
       await seedProfile(db, 'profile-1');
 
-      await importService
-          .restoreFromEncryptedJson([1, 2, 3], password: 'password');
+      await importService.restoreFromEncryptedJson(
+        [
+          1,
+          2,
+          3,
+        ],
+        password: 'password',
+      );
 
       final accounts = await db.select(db.accounts).get();
       final categories = await db.select(db.categories).get();
@@ -200,11 +233,11 @@ void main() {
     });
 
     test(
-        'transfer pair: both legs import with correct accounts and shared transferId',
-        () async {
-      // Origin leg: acc-1 → acc-2 (negative amount, same transferId)
-      // Destination leg: acc-2 receives positive amount, same transferId
-      const validJson = '''
+      'transfer pair: both legs import with correct accounts and shared transferId',
+      () async {
+        // Origin leg: acc-1 → acc-2 (negative amount, same transferId)
+        // Destination leg: acc-2 receives positive amount, same transferId
+        const validJson = '''
       {
         "version": 3,
         "accounts": [
@@ -283,60 +316,68 @@ void main() {
       }
       ''';
 
-      when(
-        () => mockExportService.decryptJsonPayload(
-          any(),
-          password: any(named: 'password'),
-        ),
-      ).thenAnswer((_) async => validJson);
+        when(
+          () => mockExportService.decryptJsonPayload(
+            any(),
+            password: any(named: 'password'),
+          ),
+        ).thenAnswer((_) async => validJson);
 
-      await seedProfile(db, 'profile-1');
+        await seedProfile(db, 'profile-1');
 
-      await importService
-          .restoreFromEncryptedJson([1, 2, 3], password: 'password');
+        await importService.restoreFromEncryptedJson(
+          [
+            1,
+            2,
+            3,
+          ],
+          password: 'password',
+        );
 
-      final transactions = await db.select(db.transactions).get();
+        final transactions = await db.select(db.transactions).get();
 
-      expect(
-        transactions.length,
-        2,
-        reason: 'Both legs of the transfer must be imported',
-      );
+        expect(
+          transactions.length,
+          2,
+          reason: 'Both legs of the transfer must be imported',
+        );
 
-      final origin = transactions.firstWhere((t) => t.id == 'tx-origin');
-      final destination =
-          transactions.firstWhere((t) => t.id == 'tx-origin_dst');
+        final origin = transactions.firstWhere((t) => t.id == 'tx-origin');
+        final destination = transactions.firstWhere(
+          (t) => t.id == 'tx-origin_dst',
+        );
 
-      // Origin leg points to source account
-      expect(
-        origin.accountId,
-        'acc-1',
-        reason: 'Origin leg must reference the source account',
-      );
-      // Destination leg points to destination account
-      expect(
-        destination.accountId,
-        'acc-2',
-        reason: 'Destination leg must reference the destination account',
-      );
+        // Origin leg points to source account
+        expect(
+          origin.accountId,
+          'acc-1',
+          reason: 'Origin leg must reference the source account',
+        );
+        // Destination leg points to destination account
+        expect(
+          destination.accountId,
+          'acc-2',
+          reason: 'Destination leg must reference the destination account',
+        );
 
-      // Both legs share the same transferId
-      expect(origin.transferId, 'shared-transfer-uuid');
-      expect(destination.transferId, 'shared-transfer-uuid');
-      expect(
-        origin.transferId,
-        destination.transferId,
-        reason: 'Both legs must share the same transferId',
-      );
+        // Both legs share the same transferId
+        expect(origin.transferId, 'shared-transfer-uuid');
+        expect(destination.transferId, 'shared-transfer-uuid');
+        expect(
+          origin.transferId,
+          destination.transferId,
+          reason: 'Both legs must share the same transferId',
+        );
 
-      expect(origin.amount, 1000);
-      expect(destination.amount, 1000);
-    });
+        expect(origin.amount, 1000);
+        expect(destination.amount, 1000);
+      },
+    );
 
     test(
-        'transfer to savings goal: single leg imports with savingsGoalId preserved',
-        () async {
-      const validJson = '''
+      'transfer to savings goal: single leg imports with savingsGoalId preserved',
+      () async {
+        const validJson = '''
       {
         "version": 3,
         "accounts": [
@@ -399,31 +440,38 @@ void main() {
       }
       ''';
 
-      when(
-        () => mockExportService.decryptJsonPayload(
-          any(),
-          password: any(named: 'password'),
-        ),
-      ).thenAnswer((_) async => validJson);
+        when(
+          () => mockExportService.decryptJsonPayload(
+            any(),
+            password: any(named: 'password'),
+          ),
+        ).thenAnswer((_) async => validJson);
 
-      await seedProfile(db, 'profile-1');
+        await seedProfile(db, 'profile-1');
 
-      await importService
-          .restoreFromEncryptedJson([1, 2, 3], password: 'password');
+        await importService.restoreFromEncryptedJson(
+          [
+            1,
+            2,
+            3,
+          ],
+          password: 'password',
+        );
 
-      final transactions = await db.select(db.transactions).get();
-      expect(transactions.length, 1);
+        final transactions = await db.select(db.transactions).get();
+        expect(transactions.length, 1);
 
-      final tx = transactions.first;
-      expect(tx.id, 'tx-goal-transfer');
-      expect(
-        tx.savingsGoalId,
-        'goal-1',
-        reason:
-            'savings_goal_id must be preserved after import for goal transfers',
-      );
-      expect(tx.accountId, 'acc-1');
-    });
+        final tx = transactions.first;
+        expect(tx.id, 'tx-goal-transfer');
+        expect(
+          tx.savingsGoalId,
+          'goal-1',
+          reason:
+              'savings_goal_id must be preserved after import for goal transfers',
+        );
+        expect(tx.accountId, 'acc-1');
+      },
+    );
 
     test('is_deleted flag is preserved from backup', () async {
       const validJson = '''
@@ -494,8 +542,14 @@ void main() {
 
       await seedProfile(db, 'profile-1');
 
-      await importService
-          .restoreFromEncryptedJson([1, 2, 3], password: 'password');
+      await importService.restoreFromEncryptedJson(
+        [
+          1,
+          2,
+          3,
+        ],
+        password: 'password',
+      );
 
       final transactions = await db.select(db.transactions).get();
       expect(transactions.length, 2);

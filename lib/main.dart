@@ -27,11 +27,7 @@ void main() async {
   final backgroundSync = BackgroundExecutionService();
   await backgroundSync.initialize();
   await backgroundSync.registerPeriodicTasks();
-  runApp(
-    const ProviderScope(
-      child: StalviApp(),
-    ),
-  );
+  runApp(const ProviderScope(child: StalviApp()));
 }
 
 /// Configures:
@@ -64,9 +60,7 @@ class StalviApp extends ConsumerWidget {
       ],
       supportedLocales: AppLocalizations.supportedLocales,
       builder: (context, child) {
-        return LifecycleBlurWrapper(
-          child: child ?? const SizedBox.shrink(),
-        );
+        return LifecycleBlurWrapper(child: child ?? const SizedBox.shrink());
       },
       home: const SplashScreen(),
     );

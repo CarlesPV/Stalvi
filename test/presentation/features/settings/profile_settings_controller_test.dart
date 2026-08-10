@@ -67,8 +67,9 @@ void main() {
     container = ProviderContainer(
       overrides: [
         profileRepositoryProvider.overrideWithValue(fakeProfileRepository),
-        updateCredentialsUseCaseProvider
-            .overrideWithValue(fakeUpdateCredentialsUseCase),
+        updateCredentialsUseCaseProvider.overrideWithValue(
+          fakeUpdateCredentialsUseCase,
+        ),
       ],
     );
   });
@@ -85,8 +86,9 @@ void main() {
     });
 
     test('verifyOldPin moves state to enterNew on success', () async {
-      final controller =
-          container.read(profileSettingsControllerProvider.notifier);
+      final controller = container.read(
+        profileSettingsControllerProvider.notifier,
+      );
       await controller.verifyOldPin('1234');
 
       final state = container.read(profileSettingsControllerProvider);
@@ -96,28 +98,31 @@ void main() {
     });
 
     test(
-        'verifyOldPin keeps state at verifyOld, sets error, and increments failedAttempts on failure',
-        () async {
-      fakeUpdateCredentialsUseCase.shouldFailVerify = true;
-      final controller =
-          container.read(profileSettingsControllerProvider.notifier);
+      'verifyOldPin keeps state at verifyOld, sets error, and increments failedAttempts on failure',
+      () async {
+        fakeUpdateCredentialsUseCase.shouldFailVerify = true;
+        final controller = container.read(
+          profileSettingsControllerProvider.notifier,
+        );
 
-      try {
-        await controller.verifyOldPin('wrong');
-        fail('Should throw ValidationException');
-      } catch (e) {
-        expect(e, isA<ValidationException>());
-      }
+        try {
+          await controller.verifyOldPin('wrong');
+          fail('Should throw ValidationException');
+        } catch (e) {
+          expect(e, isA<ValidationException>());
+        }
 
-      final state = container.read(profileSettingsControllerProvider);
-      expect(state.pinChangeStep, PinChangeStep.verifyOld);
-      expect(state.error, contains('old_pin_incorrect'));
-      expect(state.failedAttempts, 1);
-    });
+        final state = container.read(profileSettingsControllerProvider);
+        expect(state.pinChangeStep, PinChangeStep.verifyOld);
+        expect(state.error, contains('old_pin_incorrect'));
+        expect(state.failedAttempts, 1);
+      },
+    );
 
     test('changePin sets state back to verifyOld on success', () async {
-      final controller =
-          container.read(profileSettingsControllerProvider.notifier);
+      final controller = container.read(
+        profileSettingsControllerProvider.notifier,
+      );
       await controller.verifyOldPin('1234');
 
       expect(
@@ -134,8 +139,9 @@ void main() {
 
     test('verifyOldPin blocks after 6 failed attempts', () async {
       fakeUpdateCredentialsUseCase.shouldFailVerify = true;
-      final controller =
-          container.read(profileSettingsControllerProvider.notifier);
+      final controller = container.read(
+        profileSettingsControllerProvider.notifier,
+      );
 
       // Fail 6 times
       for (int i = 0; i < 6; i++) {
@@ -165,8 +171,9 @@ void main() {
     });
 
     test('verifyDeleteDataPin returns true on success', () async {
-      final controller =
-          container.read(profileSettingsControllerProvider.notifier);
+      final controller = container.read(
+        profileSettingsControllerProvider.notifier,
+      );
       final ok = await controller.verifyDeleteDataPin('1234');
 
       expect(ok, isTrue);
@@ -174,141 +181,167 @@ void main() {
       expect(state.failedDeleteAttempts, 0);
     });
 
-    test('verifyDeleteDataPin returns false and increments attempts on failure',
-        () async {
-      fakeUpdateCredentialsUseCase.shouldFailVerify = true;
-      final controller =
-          container.read(profileSettingsControllerProvider.notifier);
-      final ok = await controller.verifyDeleteDataPin('wrong');
+    test(
+      'verifyDeleteDataPin returns false and increments attempts on failure',
+      () async {
+        fakeUpdateCredentialsUseCase.shouldFailVerify = true;
+        final controller = container.read(
+          profileSettingsControllerProvider.notifier,
+        );
+        final ok = await controller.verifyDeleteDataPin('wrong');
 
-      expect(ok, isFalse);
-      final state = container.read(profileSettingsControllerProvider);
-      expect(state.failedDeleteAttempts, 1);
-    });
-
-    test('verifyDeleteDataPin blocks and returns false after 6 failed attempts',
-        () async {
-      fakeUpdateCredentialsUseCase.shouldFailVerify = true;
-      final controller =
-          container.read(profileSettingsControllerProvider.notifier);
-
-      for (int i = 0; i < 6; i++) {
-        await controller.verifyDeleteDataPin('wrong');
-      }
-
-      final state = container.read(profileSettingsControllerProvider);
-      expect(state.failedDeleteAttempts, 6);
-
-      final ok = await controller.verifyDeleteDataPin('1234');
-      expect(ok, isFalse);
-    });
-
-    test('resetDeleteDataState resets failedDeleteAttempts if less than 6',
-        () async {
-      fakeUpdateCredentialsUseCase.shouldFailVerify = true;
-      final controller =
-          container.read(profileSettingsControllerProvider.notifier);
-
-      await controller.verifyDeleteDataPin('wrong');
-      expect(
-        container.read(profileSettingsControllerProvider).failedDeleteAttempts,
-        1,
-      );
-
-      controller.resetDeleteDataState();
-      expect(
-        container.read(profileSettingsControllerProvider).failedDeleteAttempts,
-        0,
-      );
-    });
+        expect(ok, isFalse);
+        final state = container.read(profileSettingsControllerProvider);
+        expect(state.failedDeleteAttempts, 1);
+      },
+    );
 
     test(
-        'resetDeleteDataState does not reset failedDeleteAttempts if already 6 or more',
-        () async {
-      fakeUpdateCredentialsUseCase.shouldFailVerify = true;
-      final controller =
-          container.read(profileSettingsControllerProvider.notifier);
+      'verifyDeleteDataPin blocks and returns false after 6 failed attempts',
+      () async {
+        fakeUpdateCredentialsUseCase.shouldFailVerify = true;
+        final controller = container.read(
+          profileSettingsControllerProvider.notifier,
+        );
 
-      for (int i = 0; i < 6; i++) {
+        for (int i = 0; i < 6; i++) {
+          await controller.verifyDeleteDataPin('wrong');
+        }
+
+        final state = container.read(profileSettingsControllerProvider);
+        expect(state.failedDeleteAttempts, 6);
+
+        final ok = await controller.verifyDeleteDataPin('1234');
+        expect(ok, isFalse);
+      },
+    );
+
+    test(
+      'resetDeleteDataState resets failedDeleteAttempts if less than 6',
+      () async {
+        fakeUpdateCredentialsUseCase.shouldFailVerify = true;
+        final controller = container.read(
+          profileSettingsControllerProvider.notifier,
+        );
+
         await controller.verifyDeleteDataPin('wrong');
-      }
-      expect(
-        container.read(profileSettingsControllerProvider).failedDeleteAttempts,
-        6,
-      );
+        expect(
+          container
+              .read(profileSettingsControllerProvider)
+              .failedDeleteAttempts,
+          1,
+        );
 
-      controller.resetDeleteDataState();
-      expect(
-        container.read(profileSettingsControllerProvider).failedDeleteAttempts,
-        6,
-      );
-    });
+        controller.resetDeleteDataState();
+        expect(
+          container
+              .read(profileSettingsControllerProvider)
+              .failedDeleteAttempts,
+          0,
+        );
+      },
+    );
+
+    test(
+      'resetDeleteDataState does not reset failedDeleteAttempts if already 6 or more',
+      () async {
+        fakeUpdateCredentialsUseCase.shouldFailVerify = true;
+        final controller = container.read(
+          profileSettingsControllerProvider.notifier,
+        );
+
+        for (int i = 0; i < 6; i++) {
+          await controller.verifyDeleteDataPin('wrong');
+        }
+        expect(
+          container
+              .read(profileSettingsControllerProvider)
+              .failedDeleteAttempts,
+          6,
+        );
+
+        controller.resetDeleteDataState();
+        expect(
+          container
+              .read(profileSettingsControllerProvider)
+              .failedDeleteAttempts,
+          6,
+        );
+      },
+    );
   });
 
   group('ProfileSettingsController currency update', () {
-    test('updateCurrency updates profile and invalidates dashboard providers',
-        () async {
-      int periodSummaryBuildCount = 0;
-      int dashboardPeriodSummaryBuildCount = 0;
+    test(
+      'updateCurrency updates profile and invalidates dashboard providers',
+      () async {
+        int periodSummaryBuildCount = 0;
+        int dashboardPeriodSummaryBuildCount = 0;
 
-      final testContainer = ProviderContainer(
-        overrides: [
-          profileRepositoryProvider.overrideWithValue(fakeProfileRepository),
-          updateCredentialsUseCaseProvider
-              .overrideWithValue(fakeUpdateCredentialsUseCase),
-          periodSummaryProvider.overrideWith((ref) {
-            periodSummaryBuildCount++;
-            return const AsyncData(
-              PeriodSummary(totalIncome: 0, totalExpense: 0),
-            );
-          }),
-          dashboardPeriodSummaryProvider.overrideWith((ref) {
-            dashboardPeriodSummaryBuildCount++;
-            return const AsyncData(
-              PeriodSummary(totalIncome: 0, totalExpense: 0),
-            );
-          }),
-        ],
-      );
+        final testContainer = ProviderContainer(
+          overrides: [
+            profileRepositoryProvider.overrideWithValue(fakeProfileRepository),
+            updateCredentialsUseCaseProvider.overrideWithValue(
+              fakeUpdateCredentialsUseCase,
+            ),
+            periodSummaryProvider.overrideWith((ref) {
+              periodSummaryBuildCount++;
+              return const AsyncData(
+                PeriodSummary(totalIncome: 0, totalExpense: 0),
+              );
+            }),
+            dashboardPeriodSummaryProvider.overrideWith((ref) {
+              dashboardPeriodSummaryBuildCount++;
+              return const AsyncData(
+                PeriodSummary(totalIncome: 0, totalExpense: 0),
+              );
+            }),
+          ],
+        );
 
-      final _ =
-          testContainer.listen(profileSettingsControllerProvider, (_, __) {});
-      final controller =
-          testContainer.read(profileSettingsControllerProvider.notifier);
+        final _ = testContainer.listen(
+          profileSettingsControllerProvider,
+          (_, __) {},
+        );
+        final controller = testContainer.read(
+          profileSettingsControllerProvider.notifier,
+        );
 
-      // Wait for initial profile load
-      await Future.delayed(Duration.zero);
+        // Wait for initial profile load
+        await Future.delayed(Duration.zero);
 
-      // Initialize the providers so we can track if they get invalidated
-      testContainer.read(periodSummaryProvider);
-      testContainer.read(dashboardPeriodSummaryProvider);
+        // Initialize the providers so we can track if they get invalidated
+        testContainer.read(periodSummaryProvider);
+        testContainer.read(dashboardPeriodSummaryProvider);
 
-      expect(periodSummaryBuildCount, 1);
-      expect(dashboardPeriodSummaryBuildCount, 1);
+        expect(periodSummaryBuildCount, 1);
+        expect(dashboardPeriodSummaryBuildCount, 1);
 
-      // Update currency
-      await controller.updateCurrency('USD');
+        // Update currency
+        await controller.updateCurrency('USD');
 
-      // The profile should be updated
-      final state = testContainer.read(profileSettingsControllerProvider);
-      expect(state.profile?.defaultCurrency, 'USD');
+        // The profile should be updated
+        final state = testContainer.read(profileSettingsControllerProvider);
+        expect(state.profile?.defaultCurrency, 'USD');
 
-      // Since they were invalidated and not listened to, they are disposed.
-      // Reading them again will trigger a new build.
-      testContainer.read(periodSummaryProvider);
-      testContainer.read(dashboardPeriodSummaryProvider);
+        // Since they were invalidated and not listened to, they are disposed.
+        // Reading them again will trigger a new build.
+        testContainer.read(periodSummaryProvider);
+        testContainer.read(dashboardPeriodSummaryProvider);
 
-      expect(periodSummaryBuildCount, 2);
-      expect(dashboardPeriodSummaryBuildCount, 2);
+        expect(periodSummaryBuildCount, 2);
+        expect(dashboardPeriodSummaryBuildCount, 2);
 
-      testContainer.dispose();
-    });
+        testContainer.dispose();
+      },
+    );
   });
 
   group('ProfileSettingsController notifications toggle', () {
     test('toggleNotifications delegates to SettingsNotifier', () async {
-      final controller =
-          container.read(profileSettingsControllerProvider.notifier);
+      final controller = container.read(
+        profileSettingsControllerProvider.notifier,
+      );
       await controller.toggleNotifications(false);
 
       final isEnabled = container.read(settingsNotifierProvider);

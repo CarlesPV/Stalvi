@@ -46,10 +46,12 @@ void main() {
   );
 
   test('soft deletes goal and creates refund transactions', () async {
-    when(() => mockSavingsGoalRepo.getSavingsGoalById('g1'))
-        .thenAnswer((_) async => testGoal);
-    when(() => mockSavingsGoalRepo.deleteSavingsGoal('g1'))
-        .thenAnswer((_) async {});
+    when(
+      () => mockSavingsGoalRepo.getSavingsGoalById('g1'),
+    ).thenAnswer((_) async => testGoal);
+    when(
+      () => mockSavingsGoalRepo.deleteSavingsGoal('g1'),
+    ).thenAnswer((_) async {});
 
     final tx1 = Transaction(
       id: 'tx1',
@@ -63,11 +65,13 @@ void main() {
       modifiedAt: DateTime.now(),
     );
 
-    when(() => mockTransactionRepo.watchAllTransactions())
-        .thenAnswer((_) => Stream.value([tx1]));
+    when(
+      () => mockTransactionRepo.watchAllTransactions(),
+    ).thenAnswer((_) => Stream.value([tx1]));
 
-    when(() => mockTransactionRepo.createTransaction(any()))
-        .thenAnswer((_) async => FakeTransaction());
+    when(
+      () => mockTransactionRepo.createTransaction(any()),
+    ).thenAnswer((_) async => FakeTransaction());
 
     await usecase.execute('g1');
 

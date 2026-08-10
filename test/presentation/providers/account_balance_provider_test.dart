@@ -64,15 +64,19 @@ void main() {
 
       final container = ProviderContainer(
         overrides: [
-          accountsListProvider
-              .overrideWith((ref) => Stream.value([testAccount])),
-          rawTransactionsStreamProvider
-              .overrideWith((ref) => Stream.value(transactions)),
+          accountsListProvider.overrideWith(
+            (ref) => Stream.value([testAccount]),
+          ),
+          rawTransactionsStreamProvider.overrideWith(
+            (ref) => Stream.value(transactions),
+          ),
         ],
       );
 
-      final subscription =
-          container.listen(accountBalanceProvider('acc1'), (_, __) {});
+      final subscription = container.listen(
+        accountBalanceProvider('acc1'),
+        (_, __) {},
+      );
 
       await Future<void>.delayed(const Duration(milliseconds: 100));
 
@@ -85,10 +89,7 @@ void main() {
 
     test('calculates correct balance with currency conversion', () async {
       // Rates: EUR = 1.0 (base), USD = 1.10
-      final exchangeRates = {
-        'EUR': 1.0,
-        'USD': 1.10,
-      };
+      final exchangeRates = {'EUR': 1.0, 'USD': 1.10};
       final ratesJson = jsonEncode(exchangeRates);
 
       final transactions = [
@@ -132,15 +133,19 @@ void main() {
 
       final container = ProviderContainer(
         overrides: [
-          accountsListProvider
-              .overrideWith((ref) => Stream.value([testAccount])),
-          rawTransactionsStreamProvider
-              .overrideWith((ref) => Stream.value(transactions)),
+          accountsListProvider.overrideWith(
+            (ref) => Stream.value([testAccount]),
+          ),
+          rawTransactionsStreamProvider.overrideWith(
+            (ref) => Stream.value(transactions),
+          ),
         ],
       );
 
-      final subscription =
-          container.listen(accountBalanceProvider('acc1'), (_, __) {});
+      final subscription = container.listen(
+        accountBalanceProvider('acc1'),
+        (_, __) {},
+      );
 
       await Future<void>.delayed(const Duration(milliseconds: 100));
 
@@ -154,10 +159,7 @@ void main() {
     test('calculates correct balance for transfers with conversion', () async {
       // Origin account in EUR, transaction in GBP
       // Rates: EUR = 1.0 (base), GBP = 0.85
-      final exchangeRates = {
-        'EUR': 1.0,
-        'GBP': 0.85,
-      };
+      final exchangeRates = {'EUR': 1.0, 'GBP': 0.85};
       final ratesJson = jsonEncode(exchangeRates);
 
       final transactions = [
@@ -178,15 +180,19 @@ void main() {
 
       final container = ProviderContainer(
         overrides: [
-          accountsListProvider
-              .overrideWith((ref) => Stream.value([testAccount])),
-          rawTransactionsStreamProvider
-              .overrideWith((ref) => Stream.value(transactions)),
+          accountsListProvider.overrideWith(
+            (ref) => Stream.value([testAccount]),
+          ),
+          rawTransactionsStreamProvider.overrideWith(
+            (ref) => Stream.value(transactions),
+          ),
         ],
       );
 
-      final subscription =
-          container.listen(accountBalanceProvider('acc1'), (_, __) {});
+      final subscription = container.listen(
+        accountBalanceProvider('acc1'),
+        (_, __) {},
+      );
 
       await Future<void>.delayed(const Duration(milliseconds: 100));
 
@@ -197,52 +203,55 @@ void main() {
       subscription.close();
     });
 
-    test('calculates correct balance for transfer destination with conversion',
-        () async {
-      final exchangeRates = {
-        'EUR': 1.0,
-        'JPY': 150.0,
-      };
-      final ratesJson = jsonEncode(exchangeRates);
+    test(
+      'calculates correct balance for transfer destination with conversion',
+      () async {
+        final exchangeRates = {'EUR': 1.0, 'JPY': 150.0};
+        final ratesJson = jsonEncode(exchangeRates);
 
-      final transactions = [
-        // Transfer Destination (inflow to acc1)
-        Transaction(
-          id: 'tx_transfer_dst', // destination leg
-          amount:
-              15000, // 150 EUR -> 150 EUR. Wait, if originalCurrency is EUR,
-          // because destination amount is in destination currency.
-          date: now,
-          type: TransactionType.transfer,
-          accountId: 'acc1',
-          categoryId: 'cat1',
-          originalCurrency:
-              'EUR', // Destination leg has originalCurrency = destination account currency
-          exchangeRateSnapshot: ratesJson,
-          createdAt: now,
-          modifiedAt: now,
-        ),
-      ];
+        final transactions = [
+          // Transfer Destination (inflow to acc1)
+          Transaction(
+            id: 'tx_transfer_dst', // destination leg
+            amount:
+                15000, // 150 EUR -> 150 EUR. Wait, if originalCurrency is EUR,
+            // because destination amount is in destination currency.
+            date: now,
+            type: TransactionType.transfer,
+            accountId: 'acc1',
+            categoryId: 'cat1',
+            originalCurrency:
+                'EUR', // Destination leg has originalCurrency = destination account currency
+            exchangeRateSnapshot: ratesJson,
+            createdAt: now,
+            modifiedAt: now,
+          ),
+        ];
 
-      final container = ProviderContainer(
-        overrides: [
-          accountsListProvider
-              .overrideWith((ref) => Stream.value([testAccount])),
-          rawTransactionsStreamProvider
-              .overrideWith((ref) => Stream.value(transactions)),
-        ],
-      );
+        final container = ProviderContainer(
+          overrides: [
+            accountsListProvider.overrideWith(
+              (ref) => Stream.value([testAccount]),
+            ),
+            rawTransactionsStreamProvider.overrideWith(
+              (ref) => Stream.value(transactions),
+            ),
+          ],
+        );
 
-      final subscription =
-          container.listen(accountBalanceProvider('acc1'), (_, __) {});
+        final subscription = container.listen(
+          accountBalanceProvider('acc1'),
+          (_, __) {},
+        );
 
-      await Future<void>.delayed(const Duration(milliseconds: 100));
+        await Future<void>.delayed(const Duration(milliseconds: 100));
 
-      final result = container.read(accountBalanceProvider('acc1'));
+        final result = container.read(accountBalanceProvider('acc1'));
 
-      expect(result.value, closeTo(250.0, 0.001));
+        expect(result.value, closeTo(250.0, 0.001));
 
-      subscription.close();
-    });
+        subscription.close();
+      },
+    );
   });
 }

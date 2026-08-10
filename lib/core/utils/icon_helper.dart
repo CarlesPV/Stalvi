@@ -47,6 +47,10 @@ IconData getIconData(String name) {
       return Icons.trending_up_rounded;
     case 'trending_down':
       return Icons.trending_down_rounded;
+    case 'show_chart':
+      return Icons.show_chart_rounded;
+    case 'replay':
+      return Icons.replay_rounded;
 
     // ── Shopping & Retail
     case 'shopping_cart':
@@ -289,6 +293,120 @@ IconData getIconData(String name) {
       return Icons.label_rounded;
     case 'tag':
       return Icons.tag_rounded;
+
+    // ── Travel, Aviation & Navigation
+    case 'flight_takeoff':
+      return Icons.flight_takeoff_rounded;
+    case 'flight_land':
+      return Icons.flight_land_rounded;
+    case 'commute':
+      return Icons.commute_rounded;
+    case 'subway':
+      return Icons.subway_rounded;
+    case 'electric_car':
+      return Icons.electric_car_rounded;
+    case 'motorcycle':
+      return Icons.motorcycle_rounded;
+    case 'map':
+      return Icons.map_rounded;
+    case 'explore':
+      return Icons.explore_rounded;
+    case 'navigation':
+      return Icons.navigation_rounded;
+
+    // ── Commerce, Retail & Deals
+    case 'card_membership':
+      return Icons.card_membership_rounded;
+    case 'store':
+      return Icons.store_rounded;
+    case 'local_offer':
+      return Icons.local_offer_rounded;
+
+    // ── Technology, Power & Utilities
+    case 'power':
+      return Icons.power_rounded;
+    case 'electric_bolt':
+      return Icons.electric_bolt_rounded;
+    case 'router':
+      return Icons.router_rounded;
+    case 'devices':
+      return Icons.devices_rounded;
+    case 'cloud':
+      return Icons.cloud_rounded;
+    case 'solar_power':
+      return Icons.solar_power_rounded;
+
+    // ── Dining, Beverages & Gastronomy
+    case 'local_bar':
+      return Icons.local_bar_rounded;
+    case 'liquor':
+      return Icons.liquor_rounded;
+    case 'ramen_dining':
+      return Icons.ramen_dining_rounded;
+    case 'takeout_dining':
+      return Icons.takeout_dining_rounded;
+    case 'wine_bar':
+      return Icons.wine_bar_rounded;
+    case 'coffee':
+      return Icons.coffee_rounded;
+    case 'soup_kitchen':
+      return Icons.soup_kitchen_rounded;
+
+    // ── Entertainment, Arts & Sports
+    case 'camera_alt':
+      return Icons.camera_alt_rounded;
+    case 'palette':
+      return Icons.palette_rounded;
+    case 'stadium':
+      return Icons.stadium_rounded;
+    case 'music_video':
+      return Icons.music_video_rounded;
+    case 'sports_motorsports':
+      return Icons.sports_motorsports_rounded;
+    case 'sports_golf':
+      return Icons.sports_golf_rounded;
+    case 'sports_baseball':
+      return Icons.sports_baseball_rounded;
+    case 'sports_football':
+      return Icons.sports_football_rounded;
+    case 'pool':
+      return Icons.pool_rounded;
+
+    // ── Services, Security & Maintenance
+    case 'family_restroom':
+      return Icons.family_restroom_rounded;
+    case 'content_cut':
+      return Icons.content_cut_rounded;
+    case 'dry_cleaning':
+      return Icons.dry_cleaning_rounded;
+    case 'security':
+      return Icons.security_rounded;
+    case 'shield':
+      return Icons.shield_rounded;
+    case 'workspace_premium':
+      return Icons.workspace_premium_rounded;
+    case 'pest_control':
+      return Icons.pest_control_rounded;
+    case 'roofing':
+      return Icons.roofing_rounded;
+    case 'deck':
+      return Icons.deck_rounded;
+
+    // ── Education, Time & General Life
+    case 'school_outlined':
+      return Icons.school_rounded;
+    case 'event':
+      return Icons.event_rounded;
+    case 'alarm':
+      return Icons.alarm_rounded;
+    case 'watch':
+      return Icons.watch_rounded;
+    case 'interests':
+      return Icons.interests_rounded;
+    case 'newspaper':
+      return Icons.newspaper_rounded;
+    case 'print':
+      return Icons.print_rounded;
   }
 
   // Fallback

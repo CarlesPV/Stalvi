@@ -46,8 +46,9 @@ void main() {
     });
 
     test('hardDeleteAccount is called with the correct account id', () async {
-      when(() => mockAccountRepo.hardDeleteAccount(any()))
-          .thenAnswer((_) async {});
+      when(
+        () => mockAccountRepo.hardDeleteAccount(any()),
+      ).thenAnswer((_) async {});
 
       await mockAccountRepo.hardDeleteAccount('account_1');
 
@@ -55,40 +56,49 @@ void main() {
     });
 
     test(
-        'softDeleteTransactionsByAccountId is invoked with account id by callers',
-        () async {
-      when(
-        () => mockTransactionRepo.softDeleteTransactionsByAccountId(any()),
-      ).thenAnswer((_) async {});
+      'softDeleteTransactionsByAccountId is invoked with account id by callers',
+      () async {
+        when(
+          () => mockTransactionRepo.softDeleteTransactionsByAccountId(any()),
+        ).thenAnswer((_) async {});
 
-      await mockTransactionRepo.softDeleteTransactionsByAccountId('account_1');
+        await mockTransactionRepo.softDeleteTransactionsByAccountId(
+          'account_1',
+        );
 
-      verify(
-        () =>
-            mockTransactionRepo.softDeleteTransactionsByAccountId('account_1'),
-      ).called(1);
-    });
+        verify(
+          () => mockTransactionRepo.softDeleteTransactionsByAccountId(
+            'account_1',
+          ),
+        ).called(1);
+      },
+    );
 
     test(
-        'hardDeleteTransactionsByAccountId is invoked with account id by callers',
-        () async {
-      when(
-        () => mockTransactionRepo.hardDeleteTransactionsByAccountId(any()),
-      ).thenAnswer((_) async {});
+      'hardDeleteTransactionsByAccountId is invoked with account id by callers',
+      () async {
+        when(
+          () => mockTransactionRepo.hardDeleteTransactionsByAccountId(any()),
+        ).thenAnswer((_) async {});
 
-      await mockTransactionRepo.hardDeleteTransactionsByAccountId('account_1');
+        await mockTransactionRepo.hardDeleteTransactionsByAccountId(
+          'account_1',
+        );
 
-      verify(
-        () =>
-            mockTransactionRepo.hardDeleteTransactionsByAccountId('account_1'),
-      ).called(1);
-    });
+        verify(
+          () => mockTransactionRepo.hardDeleteTransactionsByAccountId(
+            'account_1',
+          ),
+        ).called(1);
+      },
+    );
   });
 
   group('TransactionRepository — transfer mirror operations', () {
     test('deleteTransaction is called with target id', () async {
-      when(() => mockTransactionRepo.deleteTransaction(any()))
-          .thenAnswer((_) async {});
+      when(
+        () => mockTransactionRepo.deleteTransaction(any()),
+      ).thenAnswer((_) async {});
 
       await mockTransactionRepo.deleteTransaction('txn_1');
 
@@ -96,18 +106,21 @@ void main() {
     });
 
     test('hardDeleteTransaction is called with target id', () async {
-      when(() => mockTransactionRepo.hardDeleteTransaction(any()))
-          .thenAnswer((_) async {});
+      when(
+        () => mockTransactionRepo.hardDeleteTransaction(any()),
+      ).thenAnswer((_) async {});
 
       await mockTransactionRepo.hardDeleteTransaction('txn_1');
 
-      verify(() => mockTransactionRepo.hardDeleteTransaction('txn_1'))
-          .called(1);
+      verify(
+        () => mockTransactionRepo.hardDeleteTransaction('txn_1'),
+      ).called(1);
     });
 
     test('restoreTransaction is called with target id', () async {
-      when(() => mockTransactionRepo.restoreTransaction(any()))
-          .thenAnswer((_) async {});
+      when(
+        () => mockTransactionRepo.restoreTransaction(any()),
+      ).thenAnswer((_) async {});
 
       await mockTransactionRepo.restoreTransaction('txn_1');
 

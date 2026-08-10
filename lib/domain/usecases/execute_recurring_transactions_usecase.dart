@@ -43,8 +43,11 @@ class ExecuteRecurringTransactionsUseCase {
   Future<void> execute() async {
     final nowUtc = DateTime.now().toUtc();
     final nowUtcPlus2 = nowUtc.add(const Duration(hours: 2));
-    final todayUtcPlus2 =
-        DateTime.utc(nowUtcPlus2.year, nowUtcPlus2.month, nowUtcPlus2.day);
+    final todayUtcPlus2 = DateTime.utc(
+      nowUtcPlus2.year,
+      nowUtcPlus2.month,
+      nowUtcPlus2.day,
+    );
 
     final automaticTxns = await automaticRepo.getAllAutomaticTransactions();
 
@@ -62,8 +65,9 @@ class ExecuteRecurringTransactionsUseCase {
 
       // Determine if there are pending cycles
       final initialNextDateUtc = currentAutoTxn.nextExecutionDate.toUtc();
-      final initialNextDateUtcPlus2Instant =
-          initialNextDateUtc.add(const Duration(hours: 2));
+      final initialNextDateUtcPlus2Instant = initialNextDateUtc.add(
+        const Duration(hours: 2),
+      );
       final initialNextDateUtcPlus2 = DateTime.utc(
         initialNextDateUtcPlus2Instant.year,
         initialNextDateUtcPlus2Instant.month,
@@ -91,8 +95,9 @@ class ExecuteRecurringTransactionsUseCase {
       String? exchangeRateSnapshot;
 
       try {
-        final localRates =
-            await exchangeRateRepo.getLocalRates(baseCurrency: defaultCurrency);
+        final localRates = await exchangeRateRepo.getLocalRates(
+          baseCurrency: defaultCurrency,
+        );
         if (localRates != null) {
           final ratesMap = Map<String, double>.from(localRates.rates);
           ratesMap[localRates.baseCurrency] = 1.0;
@@ -124,8 +129,9 @@ class ExecuteRecurringTransactionsUseCase {
       // Generate all missing cycles
       while (true) {
         final cycleNextDateUtc = currentAutoTxn.nextExecutionDate.toUtc();
-        final cycleNextDateUtcPlus2Instant =
-            cycleNextDateUtc.add(const Duration(hours: 2));
+        final cycleNextDateUtcPlus2Instant = cycleNextDateUtc.add(
+          const Duration(hours: 2),
+        );
         final cycleNextDateUtcPlus2 = DateTime.utc(
           cycleNextDateUtcPlus2Instant.year,
           cycleNextDateUtcPlus2Instant.month,
@@ -136,8 +142,10 @@ class ExecuteRecurringTransactionsUseCase {
             cycleNextDateUtcPlus2.isAtSameMomentAs(todayUtcPlus2)) {
           final idempotencyKey =
               'stalvi://autotxn/${autoTxn.id}/${cycleNextDateUtcPlus2.year}-${cycleNextDateUtcPlus2.month.toString().padLeft(2, '0')}-${cycleNextDateUtcPlus2.day.toString().padLeft(2, '0')}';
-          final deterministicId =
-              const Uuid().v5(Namespace.url.value, idempotencyKey);
+          final deterministicId = const Uuid().v5(
+            Namespace.url.value,
+            idempotencyKey,
+          );
 
           final newTxn = dtxn.Transaction(
             id: deterministicId,
@@ -187,8 +195,9 @@ class ExecuteRecurringTransactionsUseCase {
     // Batch insert transactions (insertOrIgnore handles existing deterministic IDs or unique constraints)
     if (pendingTransactions.isNotEmpty) {
       await transactionRepo.createTransactions(pendingTransactions);
-      thresholdResults = await financialThresholdService
-          .evaluateThresholds(pendingTransactions);
+      thresholdResults = await financialThresholdService.evaluateThresholds(
+        pendingTransactions,
+      );
     }
 
     // Update automatic txns
@@ -242,8 +251,11 @@ class ExecuteRecurringTransactionsUseCase {
   ) {
     final fromUtc = fromDate.toUtc();
     final fromUtcPlus2 = fromUtc.add(const Duration(hours: 2));
-    final fromUtc2 =
-        DateTime.utc(fromUtcPlus2.year, fromUtcPlus2.month, fromUtcPlus2.day);
+    final fromUtc2 = DateTime.utc(
+      fromUtcPlus2.year,
+      fromUtcPlus2.month,
+      fromUtcPlus2.day,
+    );
 
     DateTime nextDate = fromUtc2;
 
@@ -261,12 +273,18 @@ class ExecuteRecurringTransactionsUseCase {
         nextDate = _advanceByYears(fromUtc2, 1, fromUtc2.month, fromUtc2.day);
         break;
       case RecurrenceType.specificDayOfMonth:
-        final lastDayThisMonth =
-            DateTime.utc(fromUtc2.year, fromUtc2.month + 1, 0).day;
+        final lastDayThisMonth = DateTime.utc(
+          fromUtc2.year,
+          fromUtc2.month + 1,
+          0,
+        ).day;
         final targetDayThisMonth = recurrenceDays.clamp(1, lastDayThisMonth);
         if (fromUtc2.day < targetDayThisMonth) {
-          nextDate =
-              DateTime.utc(fromUtc2.year, fromUtc2.month, targetDayThisMonth);
+          nextDate = DateTime.utc(
+            fromUtc2.year,
+            fromUtc2.month,
+            targetDayThisMonth,
+          );
         } else {
           nextDate = _advanceByMonths(fromUtc2, 1, recurrenceDays);
         }

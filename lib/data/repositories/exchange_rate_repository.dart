@@ -56,8 +56,9 @@ class ExchangeRateRepository implements IExchangeRateRepository {
       final model = await _remoteDataSource.fetchLatestRates(
         baseCurrency: baseCurrency,
       );
-      await _exchangeRateDao
-          .saveRates(model.toDomain().copyWith(date: DateTime.now()));
+      await _exchangeRateDao.saveRates(
+        model.toDomain().copyWith(date: DateTime.now()),
+      );
     } catch (e) {
       // Offline fallback: ensure local database has fallback rates
       final local = await _exchangeRateDao.getRates(baseCurrency);

@@ -20,8 +20,9 @@ class DeleteAndReassignCategoryUseCase {
   Future<bool> isCategoryInUse(String categoryId) async {
     final autoTransactions =
         await _automaticTransactionRepo.watchAllAutomaticTransactions().first;
-    final inUseByAuto =
-        autoTransactions.any((tx) => tx.categoryId == categoryId);
+    final inUseByAuto = autoTransactions.any(
+      (tx) => tx.categoryId == categoryId,
+    );
     if (inUseByAuto) {
       throw const CategoryInUseByAutomaticTransactionException(
         message: 'Category is in use by automatic transactions',
@@ -87,12 +88,11 @@ class DeleteAndReassignCategoryUseCase {
 
     final autoTransactions =
         await _automaticTransactionRepo.watchAllAutomaticTransactions().first;
-    final linkedAuto =
-        autoTransactions.where((tx) => tx.categoryId == oldCategoryId);
+    final linkedAuto = autoTransactions.where(
+      (tx) => tx.categoryId == oldCategoryId,
+    );
     for (var tx in linkedAuto) {
-      final updatedTx = tx.copyWith(
-        categoryId: newCategoryId,
-      );
+      final updatedTx = tx.copyWith(categoryId: newCategoryId);
       await _automaticTransactionRepo.updateAutomaticTransaction(updatedTx);
     }
 

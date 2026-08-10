@@ -47,10 +47,7 @@ class _BiometricOptInScreenState extends ConsumerState<BiometricOptInScreen>
       PageRouteBuilder(
         pageBuilder: (_, __, ___) => const DashboardScreen(),
         transitionsBuilder: (_, animation, __, child) => FadeTransition(
-          opacity: CurvedAnimation(
-            parent: animation,
-            curve: Curves.easeInOut,
-          ),
+          opacity: CurvedAnimation(parent: animation, curve: Curves.easeInOut),
           child: child,
         ),
         transitionDuration: const Duration(milliseconds: 500),
@@ -191,8 +188,9 @@ class _BiometricOptInScreenState extends ConsumerState<BiometricOptInScreen>
                   Text(
                     l10n.authProtectedBy,
                     style: theme.textTheme.labelSmall?.copyWith(
-                      color:
-                          colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
+                      color: colorScheme.onSurfaceVariant.withValues(
+                        alpha: 0.5,
+                      ),
                       letterSpacing: 0.4,
                     ),
                   ),

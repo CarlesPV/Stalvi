@@ -222,13 +222,16 @@ class TransactionRepository implements ITransactionRepository {
         }
 
         // Hard delete this row.
-        await (_db.delete(_db.transactions)..where((t) => t.id.equals(id)))
+        await (_db.delete(
+          _db.transactions,
+        )..where((t) => t.id.equals(id)))
             .go();
 
         // Hard delete mirror if found.
         if (mirror != null) {
-          await (_db.delete(_db.transactions)
-                ..where((t) => t.id.equals(mirror!.id)))
+          await (_db.delete(
+            _db.transactions,
+          )..where((t) => t.id.equals(mirror!.id)))
               .go();
         }
       });
@@ -309,8 +312,9 @@ class TransactionRepository implements ITransactionRepository {
   @override
   Future<void> hardDeleteTransactionsByAccountId(String accountId) async {
     try {
-      await (_db.delete(_db.transactions)
-            ..where((t) => t.accountId.equals(accountId)))
+      await (_db.delete(
+        _db.transactions,
+      )..where((t) => t.accountId.equals(accountId)))
           .go();
     } catch (e) {
       throw DatabaseException(
@@ -428,8 +432,9 @@ class TransactionRepository implements ITransactionRepository {
   /// Fetches a [db.Transaction] row by [id], throwing [NotFoundException] if
   /// it does not exist.
   Future<db.Transaction> _fetchOrThrow(String id) async {
-    final row = await (_db.select(_db.transactions)
-          ..where((t) => t.id.equals(id)))
+    final row = await (_db.select(
+      _db.transactions,
+    )..where((t) => t.id.equals(id)))
         .getSingleOrNull();
     if (row == null) {
       throw NotFoundException(
@@ -443,10 +448,7 @@ class TransactionRepository implements ITransactionRepository {
   /// Finds the counterpart row of a transfer pair.
   ///
   /// Returns `null` if the mirror no longer exists.
-  Future<db.Transaction?> _findMirror(
-    String selfId,
-    String transferId,
-  ) async {
+  Future<db.Transaction?> _findMirror(String selfId, String transferId) async {
     return (_db.select(_db.transactions)
           ..where(
             (t) => t.transferId.equals(transferId) & t.id.isNotValue(selfId),

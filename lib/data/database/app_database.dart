@@ -261,9 +261,7 @@ class AppDatabase extends _$AppDatabase {
   /// The [cipherKey] is applied via `PRAGMA key` immediately after opening the
   /// connection, before any other SQL statement is executed – this is required
   /// by the SQLCipher protocol.
-  static Future<QueryExecutor> _openEncryptedDatabase(
-    String cipherKey,
-  ) async {
+  static Future<QueryExecutor> _openEncryptedDatabase(String cipherKey) async {
     final dbFolder = await getApplicationDocumentsDirectory();
     final dbFile = File(p.join(dbFolder.path, 'stalvi.db'));
 

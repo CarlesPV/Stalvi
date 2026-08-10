@@ -16,9 +16,9 @@ class SavingsGoalRepository implements ISavingsGoalRepository {
 
   @override
   Stream<List<SavingsGoal>> watchSavingsGoals() {
-    return _db.savingsGoalDao
-        .watchSavingsGoals()
-        .map((rows) => rows.map(SavingsGoalMapper.fromDataClass).toList());
+    return _db.savingsGoalDao.watchSavingsGoals().map(
+          (rows) => rows.map(SavingsGoalMapper.fromDataClass).toList(),
+        );
   }
 
   @override

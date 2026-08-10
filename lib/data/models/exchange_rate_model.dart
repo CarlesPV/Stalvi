@@ -54,11 +54,7 @@ class ExchangeRateModel {
 
   /// Maps this DTO to the domain [ExchangeRate] entity.
   ExchangeRate toDomain() {
-    return ExchangeRate(
-      baseCurrency: base,
-      date: date,
-      rates: rates,
-    );
+    return ExchangeRate(baseCurrency: base, date: date, rates: rates);
   }
 
   @override

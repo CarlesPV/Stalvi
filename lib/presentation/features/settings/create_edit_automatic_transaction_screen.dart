@@ -50,23 +50,17 @@ class _CreateEditAutomaticTransactionScreenState
 
     _nameController.addListener(() {
       ref
-          .read(
-            createEditAutomaticTransactionProvider(initialTxn).notifier,
-          )
+          .read(createEditAutomaticTransactionProvider(initialTxn).notifier)
           .updateName(_nameController.text);
     });
     _amountController.addListener(() {
       ref
-          .read(
-            createEditAutomaticTransactionProvider(initialTxn).notifier,
-          )
+          .read(createEditAutomaticTransactionProvider(initialTxn).notifier)
           .updateAmount(_amountController.text);
     });
     _notesController.addListener(() {
       ref
-          .read(
-            createEditAutomaticTransactionProvider(initialTxn).notifier,
-          )
+          .read(createEditAutomaticTransactionProvider(initialTxn).notifier)
           .updateNotes(_notesController.text);
     });
   }
@@ -126,8 +120,9 @@ class _CreateEditAutomaticTransactionScreenState
         isExpense ? financialColors.negative : financialColors.positive;
 
     ref.listen<AsyncValue<void>>(
-      createEditAutomaticTransactionProvider(initialTxn)
-          .select((s) => s.submissionStatus),
+      createEditAutomaticTransactionProvider(
+        initialTxn,
+      ).select((s) => s.submissionStatus),
       (prev, next) {
         next.when(
           data: (_) {
@@ -204,8 +199,9 @@ class _CreateEditAutomaticTransactionScreenState
                   height: 54,
                   padding: const EdgeInsets.all(4),
                   decoration: BoxDecoration(
-                    color: colorScheme.surfaceContainerHighest
-                        .withValues(alpha: 0.5),
+                    color: colorScheme.surfaceContainerHighest.withValues(
+                      alpha: 0.5,
+                    ),
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Row(
@@ -299,8 +295,9 @@ class _CreateEditAutomaticTransactionScreenState
                     return SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       child: ConstrainedBox(
-                        constraints:
-                            BoxConstraints(minWidth: constraints.maxWidth),
+                        constraints: BoxConstraints(
+                          minWidth: constraints.maxWidth,
+                        ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.baseline,
@@ -330,10 +327,13 @@ class _CreateEditAutomaticTransactionScreenState
                                 ),
                                 textAlign: TextAlign.left,
                                 decoration: InputDecoration(
-                                  hintText: AppLocalizations.of(context)!
+                                  hintText: AppLocalizations.of(
+                                    context,
+                                  )!
                                       .hintAmountZero,
-                                  hintStyle:
-                                      const TextStyle(color: Colors.grey),
+                                  hintStyle: const TextStyle(
+                                    color: Colors.grey,
+                                  ),
                                   border: InputBorder.none,
                                   contentPadding: EdgeInsets.zero,
                                 ),
@@ -374,8 +374,9 @@ class _CreateEditAutomaticTransactionScreenState
                       borderSide: BorderSide.none,
                     ),
                     filled: true,
-                    fillColor: colorScheme.surfaceContainerHighest
-                        .withValues(alpha: 0.3),
+                    fillColor: colorScheme.surfaceContainerHighest.withValues(
+                      alpha: 0.3,
+                    ),
                   ),
                 ),
                 if (state.errors.containsKey('name'))
@@ -383,15 +384,17 @@ class _CreateEditAutomaticTransactionScreenState
                     padding: const EdgeInsets.only(top: 8, left: 16),
                     child: Text(
                       l10n.autoTxNameRequired,
-                      style: theme.textTheme.bodySmall
-                          ?.copyWith(color: colorScheme.error),
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: colorScheme.error,
+                      ),
                     ),
                   ),
                 const SizedBox(height: 32),
                 Container(
                   decoration: BoxDecoration(
-                    color: colorScheme.surfaceContainerHighest
-                        .withValues(alpha: 0.3),
+                    color: colorScheme.surfaceContainerHighest.withValues(
+                      alpha: 0.3,
+                    ),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
                       color: colorScheme.outline.withValues(alpha: 0.08),
@@ -441,7 +444,8 @@ class _CreateEditAutomaticTransactionScreenState
                       ),
                       _FormSelectorTile(
                         label: l10n.labelCategory,
-                        value: selectedCategory?.name ?? l10n.labelSelectCategory,
+                        value:
+                            selectedCategory?.name ?? l10n.labelSelectCategory,
                         icon: selectedCategory != null
                             ? _getIconData(selectedCategory.icon)
                             : Icons.category_rounded,
@@ -486,7 +490,8 @@ class _CreateEditAutomaticTransactionScreenState
                             : "${l10n.labelSelectTag} ${l10n.optionalPlaceholder}",
                         icon: Icons.local_offer_rounded,
                         iconColor: colorScheme.tertiary,
-                        onTap: () => _showTagSelector(context, tags, initialTxn),
+                        onTap: () =>
+                            _showTagSelector(context, tags, initialTxn),
                       ),
                       Divider(
                         height: 1,
@@ -532,8 +537,9 @@ class _CreateEditAutomaticTransactionScreenState
                         "${l10n.labelNotesHint} ${l10n.optionalPlaceholder}",
                     hintStyle: const TextStyle(color: Colors.grey),
                     filled: true,
-                    fillColor: colorScheme.surfaceContainerHighest
-                        .withValues(alpha: 0.2),
+                    fillColor: colorScheme.surfaceContainerHighest.withValues(
+                      alpha: 0.2,
+                    ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16),
                       borderSide: BorderSide(
@@ -565,8 +571,9 @@ class _CreateEditAutomaticTransactionScreenState
                           vertical: 12,
                         ),
                         decoration: BoxDecoration(
-                          color:
-                              colorScheme.errorContainer.withValues(alpha: 0.2),
+                          color: colorScheme.errorContainer.withValues(
+                            alpha: 0.2,
+                          ),
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
                             color: colorScheme.error.withValues(alpha: 0.35),
@@ -623,8 +630,9 @@ class _CreateEditAutomaticTransactionScreenState
                           height: 24,
                           child: CircularProgressIndicator(
                             strokeWidth: 2.5,
-                            valueColor:
-                                AlwaysStoppedAnimation<Color>(Colors.white),
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              Colors.white,
+                            ),
                           ),
                         )
                       : FittedBox(
@@ -712,8 +720,9 @@ class _CreateEditAutomaticTransactionScreenState
                       decoration: BoxDecoration(
                         color: isSelected
                             ? accColor.withValues(alpha: 0.08)
-                            : colorScheme.surfaceContainerHighest
-                                .withValues(alpha: 0.2),
+                            : colorScheme.surfaceContainerHighest.withValues(
+                                alpha: 0.2,
+                              ),
                         borderRadius: BorderRadius.circular(14),
                         border: Border.all(
                           color: isSelected
@@ -780,6 +789,7 @@ class _CreateEditAutomaticTransactionScreenState
 
     final filteredCategories = categories.where((c) {
       if (c.associatedType == null) return true;
+      if (c.associatedType == CategoryType.both) return true;
       if (type == TransactionType.income &&
           c.associatedType == CategoryType.income) {
         return true;
@@ -816,7 +826,8 @@ class _CreateEditAutomaticTransactionScreenState
               Flexible(
                 child: ListView.builder(
                   shrinkWrap: true,
-                  itemCount: filteredCategories.length + 1, // +1 for "Create New"
+                  itemCount:
+                      filteredCategories.length + 1, // +1 for "Create New"
                   itemBuilder: (context, index) {
                     if (index == 0) {
                       return Container(
@@ -832,8 +843,14 @@ class _CreateEditAutomaticTransactionScreenState
                           color: Colors.transparent,
                           child: ListTile(
                             leading: CircleAvatar(
-                              backgroundColor: colorScheme.primary.withValues(alpha: 0.12),
-                              child: Icon(Icons.add_rounded, color: colorScheme.primary, size: 20),
+                              backgroundColor: colorScheme.primary.withValues(
+                                alpha: 0.12,
+                              ),
+                              child: Icon(
+                                Icons.add_rounded,
+                                color: colorScheme.primary,
+                                size: 20,
+                              ),
                             ),
                             title: Text(
                               AppLocalizations.of(context)!.createNewCategory,
@@ -844,10 +861,17 @@ class _CreateEditAutomaticTransactionScreenState
                             ),
                             onTap: () async {
                               Navigator.of(context).pop();
-                              final newId = await CategoryDialog.show(context, ref);
+                              final newId = await CategoryDialog.show(
+                                context,
+                                ref,
+                              );
                               if (newId != null) {
                                 ref
-                                    .read(createEditAutomaticTransactionProvider(initialTxn).notifier)
+                                    .read(
+                                      createEditAutomaticTransactionProvider(
+                                        initialTxn,
+                                      ).notifier,
+                                    )
                                     .updateCategory(newId);
                               }
                             },
@@ -866,8 +890,9 @@ class _CreateEditAutomaticTransactionScreenState
                       decoration: BoxDecoration(
                         color: isSelected
                             ? catColor.withValues(alpha: 0.08)
-                            : colorScheme.surfaceContainerHighest
-                                .withValues(alpha: 0.2),
+                            : colorScheme.surfaceContainerHighest.withValues(
+                                alpha: 0.2,
+                              ),
                         borderRadius: BorderRadius.circular(14),
                         border: Border.all(
                           color: isSelected
@@ -952,7 +977,8 @@ class _CreateEditAutomaticTransactionScreenState
               Flexible(
                 child: ListView.builder(
                   shrinkWrap: true,
-                  itemCount: tags.length + 2, // +1 for "Create New", +1 for "None"
+                  itemCount:
+                      tags.length + 2, // +1 for "Create New", +1 for "None"
                   itemBuilder: (context, index) {
                     if (index == 0) {
                       return Container(
@@ -968,8 +994,14 @@ class _CreateEditAutomaticTransactionScreenState
                           color: Colors.transparent,
                           child: ListTile(
                             leading: CircleAvatar(
-                              backgroundColor: colorScheme.tertiary.withValues(alpha: 0.12),
-                              child: Icon(Icons.add_rounded, color: colorScheme.tertiary, size: 20),
+                              backgroundColor: colorScheme.tertiary.withValues(
+                                alpha: 0.12,
+                              ),
+                              child: Icon(
+                                Icons.add_rounded,
+                                color: colorScheme.tertiary,
+                                size: 20,
+                              ),
                             ),
                             title: Text(
                               AppLocalizations.of(context)!.createNewLabel,
@@ -983,7 +1015,11 @@ class _CreateEditAutomaticTransactionScreenState
                               final newId = await TagDialog.show(context, ref);
                               if (newId != null) {
                                 ref
-                                    .read(createEditAutomaticTransactionProvider(initialTxn).notifier)
+                                    .read(
+                                      createEditAutomaticTransactionProvider(
+                                        initialTxn,
+                                      ).notifier,
+                                    )
                                     .updateLabel(newId);
                               }
                             },
@@ -1005,8 +1041,9 @@ class _CreateEditAutomaticTransactionScreenState
                       decoration: BoxDecoration(
                         color: isSelected
                             ? colorScheme.tertiary.withValues(alpha: 0.08)
-                            : colorScheme.surfaceContainerHighest
-                                .withValues(alpha: 0.2),
+                            : colorScheme.surfaceContainerHighest.withValues(
+                                alpha: 0.2,
+                              ),
                         borderRadius: BorderRadius.circular(14),
                         border: Border.all(
                           color: isSelected
@@ -1018,8 +1055,9 @@ class _CreateEditAutomaticTransactionScreenState
                         color: Colors.transparent,
                         child: ListTile(
                           leading: CircleAvatar(
-                            backgroundColor:
-                                colorScheme.tertiary.withValues(alpha: 0.12),
+                            backgroundColor: colorScheme.tertiary.withValues(
+                              alpha: 0.12,
+                            ),
                             child: Icon(
                               isNone
                                   ? Icons.block_rounded
@@ -1118,8 +1156,9 @@ class _CreateEditAutomaticTransactionScreenState
                       decoration: BoxDecoration(
                         color: isSelected
                             ? colorScheme.primary.withValues(alpha: 0.08)
-                            : colorScheme.surfaceContainerHighest
-                                .withValues(alpha: 0.2),
+                            : colorScheme.surfaceContainerHighest.withValues(
+                                alpha: 0.2,
+                              ),
                         borderRadius: BorderRadius.circular(14),
                         border: Border.all(
                           color: isSelected
@@ -1131,8 +1170,9 @@ class _CreateEditAutomaticTransactionScreenState
                         color: Colors.transparent,
                         child: ListTile(
                           leading: CircleAvatar(
-                            backgroundColor:
-                                colorScheme.primary.withValues(alpha: 0.12),
+                            backgroundColor: colorScheme.primary.withValues(
+                              alpha: 0.12,
+                            ),
                             child: Text(
                               CurrencyFormatter.getCurrencySymbol(code),
                               style: TextStyle(
@@ -1182,8 +1222,9 @@ class _CreateEditAutomaticTransactionScreenState
     // However, riverpod state will automatically rebuild the caller, but the bottom sheet needs its own state
     // for the custom type selection before applying.
 
-    final initialState =
-        ref.read(createEditAutomaticTransactionProvider(initialTxn));
+    final initialState = ref.read(
+      createEditAutomaticTransactionProvider(initialTxn),
+    );
 
     RecurrenceType localCustomType = initialState.recurrenceType;
     bool isCustomActive = false;
@@ -1233,8 +1274,9 @@ class _CreateEditAutomaticTransactionScreenState
                             Text(
                               l10n.recurrenceUtcWarning,
                               style: theme.textTheme.bodySmall?.copyWith(
-                                color: colorScheme.onSurfaceVariant
-                                    .withValues(alpha: 0.8),
+                                color: colorScheme.onSurfaceVariant.withValues(
+                                  alpha: 0.8,
+                                ),
                               ),
                               textAlign: TextAlign.center,
                             ),
@@ -1250,10 +1292,7 @@ class _CreateEditAutomaticTransactionScreenState
                                         initialTxn,
                                       ).notifier,
                                     )
-                                    .updateRecurrence(
-                                      RecurrenceType.weekly,
-                                      7,
-                                    );
+                                    .updateRecurrence(RecurrenceType.weekly, 7);
                                 Navigator.of(context).pop();
                               },
                             ),
@@ -1363,8 +1402,9 @@ class _CreateEditAutomaticTransactionScreenState
                                           hintText:
                                               l10n.autoTxRecurrenceCustomHint,
                                           border: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(12),
+                                            borderRadius: BorderRadius.circular(
+                                              12,
+                                            ),
                                           ),
                                           errorText: localError ??
                                               (state.errors.containsKey(
@@ -1421,8 +1461,9 @@ class _CreateEditAutomaticTransactionScreenState
                                         },
                                         child: FittedBox(
                                           fit: BoxFit.scaleDown,
-                                          child:
-                                              Text(l10n.autoTxRecurrenceApply),
+                                          child: Text(
+                                            l10n.autoTxRecurrenceApply,
+                                          ),
                                         ),
                                       ),
                                     ),

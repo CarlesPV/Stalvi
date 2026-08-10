@@ -169,8 +169,9 @@ class ProfileSettingsController extends _$ProfileSettingsController {
     state = state.copyWith(isLoading: true, error: null);
     try {
       final useCase = ref.read(updateCredentialsUseCaseProvider);
-      await useCase
-          .execute(UpdateCredentialsParams(oldPin: oldPin, newPin: newPin));
+      await useCase.execute(
+        UpdateCredentialsParams(oldPin: oldPin, newPin: newPin),
+      );
       if (!ref.mounted) return;
       state = state.copyWith(
         isLoading: false,
@@ -209,10 +210,7 @@ class ProfileSettingsController extends _$ProfileSettingsController {
       final useCase = ref.read(updateCredentialsUseCaseProvider);
       await useCase.verifyOldPin(pin);
       if (!ref.mounted) return true;
-      state = state.copyWith(
-        isLoading: false,
-        failedDeleteAttempts: 0,
-      );
+      state = state.copyWith(isLoading: false, failedDeleteAttempts: 0);
       return true;
     } catch (e) {
       final newAttempts = state.failedDeleteAttempts + 1;

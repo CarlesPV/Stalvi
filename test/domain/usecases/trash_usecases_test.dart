@@ -63,8 +63,9 @@ void main() {
             deletedAt: DateTime.now().subtract(const Duration(days: 15)),
           ),
         ];
-        when(() => mockTrashRepo.getTrashItems())
-            .thenAnswer((_) async => items);
+        when(
+          () => mockTrashRepo.getTrashItems(),
+        ).thenAnswer((_) async => items);
 
         final result = await trashUsecases.getTrashItems();
 
@@ -76,10 +77,12 @@ void main() {
     // ── restoreItem — transaction ─────────────────────────────────────────
     group('restoreItem — transaction', () {
       test('routes to transactionRepository.restoreTransaction', () async {
-        when(() => mockTransactionRepo.restoreTransaction(any()))
-            .thenAnswer((_) async {});
-        when(() => mockTransactionRepo.getTransactionById(any()))
-            .thenAnswer((_) async => null);
+        when(
+          () => mockTransactionRepo.restoreTransaction(any()),
+        ).thenAnswer((_) async {});
+        when(
+          () => mockTransactionRepo.getTransactionById(any()),
+        ).thenAnswer((_) async => null);
 
         await trashUsecases.restoreItem('txn_1', TrashItemType.transaction);
 
@@ -89,10 +92,12 @@ void main() {
       });
 
       test('does NOT call trashRepo.restoreItem for transactions', () async {
-        when(() => mockTransactionRepo.restoreTransaction(any()))
-            .thenAnswer((_) async {});
-        when(() => mockTransactionRepo.getTransactionById(any()))
-            .thenAnswer((_) async => null);
+        when(
+          () => mockTransactionRepo.restoreTransaction(any()),
+        ).thenAnswer((_) async {});
+        when(
+          () => mockTransactionRepo.getTransactionById(any()),
+        ).thenAnswer((_) async => null);
 
         await trashUsecases.restoreItem('txn_1', TrashItemType.transaction);
 
@@ -110,8 +115,9 @@ void main() {
         TrashItemType.budget,
       ]) {
         test('routes ${type.name} to trashRepo.restoreItem', () async {
-          when(() => mockTrashRepo.restoreItem(any(), type))
-              .thenAnswer((_) async {});
+          when(
+            () => mockTrashRepo.restoreItem(any(), type),
+          ).thenAnswer((_) async {});
 
           await trashUsecases.restoreItem('item_1', type);
 
@@ -125,76 +131,89 @@ void main() {
     // ── deleteItemPermanently — transaction ───────────────────────────────
     group('deleteItemPermanently — transaction', () {
       test(
-          'routes to transactionRepository.hardDeleteTransaction (includes mirror)',
-          () async {
-        when(() => mockTransactionRepo.hardDeleteTransaction('txn_1'))
-            .thenAnswer((_) async {});
+        'routes to transactionRepository.hardDeleteTransaction (includes mirror)',
+        () async {
+          when(
+            () => mockTransactionRepo.hardDeleteTransaction('txn_1'),
+          ).thenAnswer((_) async {});
 
-        await trashUsecases.deleteItemPermanently(
-          'txn_1',
-          TrashItemType.transaction,
-        );
-
-        verify(() => mockTransactionRepo.hardDeleteTransaction('txn_1'))
-            .called(1);
-        verifyZeroInteractions(mockTrashRepo);
-        verifyZeroInteractions(mockAccountRepo);
-      });
-
-      test('does NOT call trashRepo.deleteItemPermanently for transactions',
-          () async {
-        when(() => mockTransactionRepo.hardDeleteTransaction('txn_1'))
-            .thenAnswer((_) async {});
-
-        await trashUsecases.deleteItemPermanently(
-          'txn_1',
-          TrashItemType.transaction,
-        );
-
-        verifyNever(
-          () => mockTrashRepo.deleteItemPermanently(
+          await trashUsecases.deleteItemPermanently(
             'txn_1',
             TrashItemType.transaction,
-          ),
-        );
-      });
+          );
+
+          verify(
+            () => mockTransactionRepo.hardDeleteTransaction('txn_1'),
+          ).called(1);
+          verifyZeroInteractions(mockTrashRepo);
+          verifyZeroInteractions(mockAccountRepo);
+        },
+      );
+
+      test(
+        'does NOT call trashRepo.deleteItemPermanently for transactions',
+        () async {
+          when(
+            () => mockTransactionRepo.hardDeleteTransaction('txn_1'),
+          ).thenAnswer((_) async {});
+
+          await trashUsecases.deleteItemPermanently(
+            'txn_1',
+            TrashItemType.transaction,
+          );
+
+          verifyNever(
+            () => mockTrashRepo.deleteItemPermanently(
+              'txn_1',
+              TrashItemType.transaction,
+            ),
+          );
+        },
+      );
     });
 
     // ── deleteItemPermanently — account (cascade) ─────────────────────────
     group('deleteItemPermanently — account', () {
       test(
-          'routes to accountRepository.hardDeleteAccount (cascades transactions)',
-          () async {
-        when(() => mockAccountRepo.hardDeleteAccount('account_1'))
-            .thenAnswer((_) async {});
+        'routes to accountRepository.hardDeleteAccount (cascades transactions)',
+        () async {
+          when(
+            () => mockAccountRepo.hardDeleteAccount('account_1'),
+          ).thenAnswer((_) async {});
 
-        await trashUsecases.deleteItemPermanently(
-          'account_1',
-          TrashItemType.account,
-        );
-
-        verify(() => mockAccountRepo.hardDeleteAccount('account_1')).called(1);
-        verifyZeroInteractions(mockTrashRepo);
-        verifyZeroInteractions(mockTransactionRepo);
-      });
-
-      test('does NOT call trashRepo.deleteItemPermanently for accounts',
-          () async {
-        when(() => mockAccountRepo.hardDeleteAccount('account_1'))
-            .thenAnswer((_) async {});
-
-        await trashUsecases.deleteItemPermanently(
-          'account_1',
-          TrashItemType.account,
-        );
-
-        verifyNever(
-          () => mockTrashRepo.deleteItemPermanently(
+          await trashUsecases.deleteItemPermanently(
             'account_1',
             TrashItemType.account,
-          ),
-        );
-      });
+          );
+
+          verify(
+            () => mockAccountRepo.hardDeleteAccount('account_1'),
+          ).called(1);
+          verifyZeroInteractions(mockTrashRepo);
+          verifyZeroInteractions(mockTransactionRepo);
+        },
+      );
+
+      test(
+        'does NOT call trashRepo.deleteItemPermanently for accounts',
+        () async {
+          when(
+            () => mockAccountRepo.hardDeleteAccount('account_1'),
+          ).thenAnswer((_) async {});
+
+          await trashUsecases.deleteItemPermanently(
+            'account_1',
+            TrashItemType.account,
+          );
+
+          verifyNever(
+            () => mockTrashRepo.deleteItemPermanently(
+              'account_1',
+              TrashItemType.account,
+            ),
+          );
+        },
+      );
     });
 
     // ── deleteItemPermanently — other types ───────────────────────────────
@@ -204,18 +223,22 @@ void main() {
         TrashItemType.budget,
         TrashItemType.savingsGoal,
       ]) {
-        test('routes ${type.name} to trashRepo.deleteItemPermanently',
-            () async {
-          when(() => mockTrashRepo.deleteItemPermanently('item_1', type))
-              .thenAnswer((_) async {});
+        test(
+          'routes ${type.name} to trashRepo.deleteItemPermanently',
+          () async {
+            when(
+              () => mockTrashRepo.deleteItemPermanently('item_1', type),
+            ).thenAnswer((_) async {});
 
-          await trashUsecases.deleteItemPermanently('item_1', type);
+            await trashUsecases.deleteItemPermanently('item_1', type);
 
-          verify(() => mockTrashRepo.deleteItemPermanently('item_1', type))
-              .called(1);
-          verifyZeroInteractions(mockTransactionRepo);
-          verifyZeroInteractions(mockAccountRepo);
-        });
+            verify(
+              () => mockTrashRepo.deleteItemPermanently('item_1', type),
+            ).called(1);
+            verifyZeroInteractions(mockTransactionRepo);
+            verifyZeroInteractions(mockAccountRepo);
+          },
+        );
       }
     });
   });

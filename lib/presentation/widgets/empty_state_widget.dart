@@ -65,9 +65,7 @@ class EmptyStateWidget extends StatelessWidget {
                   width: 1.5,
                 ),
               ),
-              child: Center(
-                child: _buildGraphic(colorScheme),
-              ),
+              child: Center(child: _buildGraphic(colorScheme)),
             ),
             const SizedBox(height: 28),
 
@@ -135,11 +133,7 @@ class EmptyStateWidget extends StatelessWidget {
     final displayIcon =
         icon ?? (svgAssetPath == null ? Icons.info_outline_rounded : null);
     if (displayIcon != null) {
-      return Icon(
-        displayIcon,
-        size: 38,
-        color: colorScheme.primary,
-      );
+      return Icon(displayIcon, size: 38, color: colorScheme.primary);
     } else if (svgAssetPath != null) {
       return Image.asset(
         svgAssetPath!,

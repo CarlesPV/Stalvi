@@ -51,5 +51,6 @@ class ThemeNotifier extends Notifier<ThemeMode> {
 }
 
 /// Global provider for the active [ThemeMode].
-final themeProvider =
-    NotifierProvider<ThemeNotifier, ThemeMode>(ThemeNotifier.new);
+final themeProvider = NotifierProvider<ThemeNotifier, ThemeMode>(
+  ThemeNotifier.new,
+);

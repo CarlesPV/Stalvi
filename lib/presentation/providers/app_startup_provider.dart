@@ -57,8 +57,9 @@ final appStartupProvider = FutureProvider<void>((ref) async {
   try {
     final profile = await ref.read(defaultProfileProvider.future);
     final locale = ref.read(localeProvider);
-    final initializeDefaultDataUseCase =
-        ref.read(initializeDefaultDataUseCaseProvider);
+    final initializeDefaultDataUseCase = ref.read(
+      initializeDefaultDataUseCaseProvider,
+    );
     await initializeDefaultDataUseCase.execute(
       userId: profile.id,
       locale: locale.languageCode,

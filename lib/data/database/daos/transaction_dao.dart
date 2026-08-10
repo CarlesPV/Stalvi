@@ -114,7 +114,9 @@ class TransactionDao extends DatabaseAccessor<AppDatabase>
     SimpleSelectStatement<$TransactionsTable, Transaction> baseQuery,
     String tagId,
   ) async* {
-    final tag = await (select(tags)..where((tg) => tg.id.equals(tagId)))
+    final tag = await (select(
+      tags,
+    )..where((tg) => tg.id.equals(tagId)))
         .getSingleOrNull();
 
     if (tag == null) {

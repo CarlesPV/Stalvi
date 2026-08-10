@@ -68,10 +68,12 @@ void main() {
       ]),
     );
 
-    when(() => mockBiometricAuth.isBiometricsEnabled())
-        .thenAnswer((_) async => false);
-    when(() => mockBiometricAuth.isBiometricAvailable())
-        .thenAnswer((_) async => false);
+    when(
+      () => mockBiometricAuth.isBiometricsEnabled(),
+    ).thenAnswer((_) async => false);
+    when(
+      () => mockBiometricAuth.isBiometricAvailable(),
+    ).thenAnswer((_) async => false);
   });
 
   Widget createTestableWidget() {
@@ -88,8 +90,9 @@ void main() {
     );
   }
 
-  testWidgets('renders all import and export tiles',
-      (WidgetTester tester) async {
+  testWidgets('renders all import and export tiles', (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(createTestableWidget());
     await tester.pumpAndSettle();
 
@@ -110,87 +113,93 @@ void main() {
   });
 
   testWidgets(
-      'Export password dialog renders without overflow on small screens',
-      (WidgetTester tester) async {
-    tester.view.physicalSize = const Size(320, 480);
-    tester.view.devicePixelRatio = 1.0;
-    addTearDown(tester.view.resetPhysicalSize);
-    addTearDown(tester.view.resetDevicePixelRatio);
+    'Export password dialog renders without overflow on small screens',
+    (WidgetTester tester) async {
+      tester.view.physicalSize = const Size(320, 480);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
 
-    when(() => mockBiometricAuth.isBiometricsEnabled())
-        .thenAnswer((_) async => true);
-    when(() => mockBiometricAuth.isBiometricAvailable())
-        .thenAnswer((_) async => true);
-    when(
-      () => mockBiometricAuth.authenticate(
-        localizedReason: any(named: 'localizedReason'),
-        lockedOutMessage: any(named: 'lockedOutMessage'),
-        authFailedMessage: any(named: 'authFailedMessage'),
-        unknownErrorMessage: any(named: 'unknownErrorMessage'),
-        signInTitle: any(named: 'signInTitle'),
-        cancelButton: any(named: 'cancelButton'),
-      ),
-    ).thenAnswer((_) async => true);
+      when(
+        () => mockBiometricAuth.isBiometricsEnabled(),
+      ).thenAnswer((_) async => true);
+      when(
+        () => mockBiometricAuth.isBiometricAvailable(),
+      ).thenAnswer((_) async => true);
+      when(
+        () => mockBiometricAuth.authenticate(
+          localizedReason: any(named: 'localizedReason'),
+          lockedOutMessage: any(named: 'lockedOutMessage'),
+          authFailedMessage: any(named: 'authFailedMessage'),
+          unknownErrorMessage: any(named: 'unknownErrorMessage'),
+          signInTitle: any(named: 'signInTitle'),
+          cancelButton: any(named: 'cancelButton'),
+        ),
+      ).thenAnswer((_) async => true);
 
-    await tester.pumpWidget(createTestableWidget());
-    await tester.pumpAndSettle();
+      await tester.pumpWidget(createTestableWidget());
+      await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Export Encrypted Backup'));
-    await tester.pumpAndSettle();
+      await tester.tap(find.text('Export Encrypted Backup'));
+      await tester.pumpAndSettle();
 
-    expect(find.text('Set Backup Password'), findsOneWidget);
-  });
+      expect(find.text('Set Backup Password'), findsOneWidget);
+    },
+  );
 
   testWidgets(
-      'Import confirmation and password dialogs render without overflow on small screens',
-      (WidgetTester tester) async {
-    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
-      const MethodChannel('miguelruivo.flutter.plugins.filepicker'),
-      (MethodCall methodCall) async {
-        if (methodCall.method == 'pickFiles') {
-          return [
-            {
-              'path': '/mock/path/backup.json',
-              'name': 'backup.json',
-              'size': 100,
-              'bytes': Uint8List.fromList([1, 2, 3]),
-            }
-          ];
-        }
-        return null;
-      },
-    );
-    tester.view.physicalSize = const Size(320, 480);
-    tester.view.devicePixelRatio = 1.0;
-    addTearDown(tester.view.resetPhysicalSize);
-    addTearDown(tester.view.resetDevicePixelRatio);
+    'Import confirmation and password dialogs render without overflow on small screens',
+    (WidgetTester tester) async {
+      tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+        const MethodChannel('miguelruivo.flutter.plugins.filepicker'),
+        (MethodCall methodCall) async {
+          if (methodCall.method == 'pickFiles') {
+            return [
+              {
+                'path': '/mock/path/backup.json',
+                'name': 'backup.json',
+                'size': 100,
+                'bytes': Uint8List.fromList([1, 2, 3]),
+              },
+            ];
+          }
+          return null;
+        },
+      );
+      tester.view.physicalSize = const Size(320, 480);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
 
-    when(() => mockBiometricAuth.isBiometricsEnabled())
-        .thenAnswer((_) async => true);
-    when(() => mockBiometricAuth.isBiometricAvailable())
-        .thenAnswer((_) async => true);
-    when(
-      () => mockBiometricAuth.authenticate(
-        localizedReason: any(named: 'localizedReason'),
-        lockedOutMessage: any(named: 'lockedOutMessage'),
-        authFailedMessage: any(named: 'authFailedMessage'),
-        unknownErrorMessage: any(named: 'unknownErrorMessage'),
-        signInTitle: any(named: 'signInTitle'),
-        cancelButton: any(named: 'cancelButton'),
-      ),
-    ).thenAnswer((_) async => true);
+      when(
+        () => mockBiometricAuth.isBiometricsEnabled(),
+      ).thenAnswer((_) async => true);
+      when(
+        () => mockBiometricAuth.isBiometricAvailable(),
+      ).thenAnswer((_) async => true);
+      when(
+        () => mockBiometricAuth.authenticate(
+          localizedReason: any(named: 'localizedReason'),
+          lockedOutMessage: any(named: 'lockedOutMessage'),
+          authFailedMessage: any(named: 'authFailedMessage'),
+          unknownErrorMessage: any(named: 'unknownErrorMessage'),
+          signInTitle: any(named: 'signInTitle'),
+          cancelButton: any(named: 'cancelButton'),
+        ),
+      ).thenAnswer((_) async => true);
 
-    await tester.pumpWidget(createTestableWidget());
-    await tester.pumpAndSettle();
+      await tester.pumpWidget(createTestableWidget());
+      await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Import / Restore Backup'));
-    await tester.pumpAndSettle();
-    // Verify confirmation dialog is shown
-    expect(find.text('Restore Backup?'), findsOneWidget);
+      await tester.tap(find.text('Import / Restore Backup'));
+      await tester.pumpAndSettle();
+      // Verify confirmation dialog is shown
+      expect(find.text('Restore Backup?'), findsOneWidget);
 
-    await tester.tap(find.text('Restore'));
-    await tester.pumpAndSettle();
+      await tester.tap(find.text('Restore'));
+      await tester.pumpAndSettle();
 
-    expect(find.text('Enter Backup Password'), findsOneWidget);
-  });
+      expect(find.text('Enter Backup Password'), findsOneWidget);
+    },
+  );
 }

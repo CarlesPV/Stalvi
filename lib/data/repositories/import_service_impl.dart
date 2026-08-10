@@ -133,13 +133,15 @@ class ImportServiceImpl implements IImportService {
 
         // Categories have self-referencing FKs (parent_category_id).
         // We nullify the parent pointers before deleting to avoid constraint errors.
-        await _database
-            .customStatement('UPDATE categories SET parent_category_id = NULL');
+        await _database.customStatement(
+          'UPDATE categories SET parent_category_id = NULL',
+        );
         await _database.delete(_database.categories).go();
 
         // Ensure we assign accounts to the CURRENT device profile
-        final currentProfile = await (_database.select(_database.profiles)
-              ..limit(1))
+        final currentProfile = await (_database.select(
+          _database.profiles,
+        )..limit(1))
             .getSingleOrNull();
         final currentUserId = currentProfile?.id;
 
@@ -276,8 +278,9 @@ class ImportServiceImpl implements IImportService {
                     _parseRecurrenceType(at['recurrence_type'] as String?),
                   ),
                   recurrenceDays: at['recurrence_days'] as int,
-                  nextExecutionDate:
-                      DateTime.parse(at['next_execution_date'] as String),
+                  nextExecutionDate: DateTime.parse(
+                    at['next_execution_date'] as String,
+                  ),
                   createdAt: DateTime.parse(at['created_at'] as String),
                   isActive: Value((at['is_active'] as bool?) ?? true),
                   isDeleted: Value((at['is_deleted'] as bool?) ?? false),
@@ -304,10 +307,12 @@ class ImportServiceImpl implements IImportService {
                   notes: Value(tx['notes'] as String?),
                   originalCurrency: tx['original_currency'] as String,
                   convertedAmount: Value(tx['converted_amount'] as int?),
-                  exchangeRate:
-                      Value((tx['exchange_rate'] as num?)?.toDouble()),
-                  exchangeRateSnapshot:
-                      Value(tx['exchange_rate_snapshot'] as String?),
+                  exchangeRate: Value(
+                    (tx['exchange_rate'] as num?)?.toDouble(),
+                  ),
+                  exchangeRateSnapshot: Value(
+                    tx['exchange_rate_snapshot'] as String?,
+                  ),
                   transferId: Value(tx['transfer_id'] as String?),
                   isDeleted: Value((tx['is_deleted'] as bool?) ?? false),
                   createdAt: DateTime.parse(tx['created_at'] as String),

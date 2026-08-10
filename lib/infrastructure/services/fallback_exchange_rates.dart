@@ -22,8 +22,9 @@ abstract class FallbackExchangeRates {
     final baseEurRate = defaultEurRates[baseCurrency] ?? 1.0;
     final rates = <String, double>{};
     for (final entry in defaultEurRates.entries) {
-      rates[entry.key] =
-          double.parse((entry.value / baseEurRate).toStringAsFixed(6));
+      rates[entry.key] = double.parse(
+        (entry.value / baseEurRate).toStringAsFixed(6),
+      );
     }
     return rates;
   }

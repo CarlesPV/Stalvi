@@ -1,20 +1,29 @@
-# Phase 58: PIN Lockout Timer Update & Transaction Amount Field Cursor Alignment
+# Phase 59: Data Export Navigation, Asset Expansion, Legal Docs & Default Categories
 
 ## Context
 Project: Stalvi (Financial Control App)
 Architecture: Clean Architecture, Riverpod, Drift (SQLCipher)
-Current Phase Status: Completed
+Current Phase Status: In Progress
 
 ## Objectives
-- Fix the 30-second PIN lockout countdown display to dynamically update on the lock screen.
-- Reposition the text cursor on transaction amount entry fields to start at the left side, directly after the currency symbol.
-- Ensure all tests, CI checks, and static analysis pass cleanly in English.
+- Integrate an export button in the Account Statistics view routing to the Data Management section (CSV/PDF export).
+- Expand UI assets: Add 15 new colors and 50 new icons for categories, plus 4 new icons for savings goals.
+- Ensure Terms and Conditions & Privacy Policy include robust liability exemptions and full legal compliance in 3 languages.
+- Update the default Drift database seed to include new default categories (Expenses: Pet, Personal Care, Sport; Income: Sale, Refund; Both: Investment).
+- Ensure all 3 languages (English, Spanish, Catalan) are fully supported across all new features.
+- Run and pass all tests, workflows, and CIs cleanly before updating documentation.
 
 ## Tasks
-- [x] **Task 1: Lockout Timer Refresh**
-  - Convert `_PinLockoutContent` to a `StatefulWidget` with a `Timer.periodic` ticker calling `setState()`.
-- [x] **Task 2: Amount Cursor Alignment**
-  - Set `textAlign: TextAlign.left` in amount input fields in `add_transaction_screen.dart` and `create_edit_automatic_transaction_screen.dart`.
-- [x] **Task 3: Verification & Documentation**
-  - Verify static analysis (`flutter analyze`) and tests (`flutter test`).
-  - Update `roadmap.md`, `roadmap-summary.md`, `.agents/context/roadmap-summary.md`, `docs/known-issues.md`, and `active-task.md`.
+- [ ] **Task 1: Export Navigation Button**
+  - Add an export button to the left of the date picker in account statistics.
+  - Implement routing to the Data Management view.
+- [ ] **Task 2: Asset Expansion (Colors & Icons)**
+  - Add 15 new color constants.
+  - Add 50 new icon options for Categories.
+  - Add 4 new icon options for Savings Goals.
+- [ ] **Task 3: Legal Documentation Review**
+  - Update ToS and Privacy Policy for compliance and liability exemptions in 3 languages.
+- [x] **Task 4: Default Categories, CI Validation & Docs**
+  - [x] Update Drift database initialization to include the new default categories.
+  - [x] Run `flutter analyze`, `flutter test`, and GitHub Actions workflows.
+  - [x] Update `roadmap.md`, `README.md`, and `.agents/memory/active-task.md`.

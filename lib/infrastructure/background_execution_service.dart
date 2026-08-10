@@ -37,8 +37,9 @@ void callbackDispatcher() {
 
       if (task == executeRecurringTransactionsTask ||
           task == Workmanager.iOSBackgroundTask) {
-        final useCase =
-            container.read(executeRecurringTransactionsUseCaseProvider);
+        final useCase = container.read(
+          executeRecurringTransactionsUseCaseProvider,
+        );
         await useCase.execute();
       }
 

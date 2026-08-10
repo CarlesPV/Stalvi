@@ -44,8 +44,9 @@ void main() {
     SharedPreferences.setMockInitialValues({'dummy': 'value'});
 
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-        .setMockMethodCallHandler(SystemChannels.platform,
-            (MethodCall methodCall) async {
+        .setMockMethodCallHandler(SystemChannels.platform, (
+      MethodCall methodCall,
+    ) async {
       return null;
     });
 
@@ -68,201 +69,209 @@ void main() {
   });
 
   test(
-      'WipeAllDataUseCase clears all tables, secure storage, and deletes database files',
-      () async {
-    // Arrange: Ensure database is initialized and seeds exist
-    final profilesList = await db.select(db.profiles).get();
-    final categoriesList = await db.select(db.categories).get();
+    'WipeAllDataUseCase clears all tables, secure storage, and deletes database files',
+    () async {
+      // Arrange: Ensure database is initialized and seeds exist
+      final profilesList = await db.select(db.profiles).get();
+      final categoriesList = await db.select(db.categories).get();
 
-    expect(profilesList.isNotEmpty, isTrue);
-    expect(categoriesList.isNotEmpty, isTrue);
+      expect(profilesList.isNotEmpty, isTrue);
+      expect(categoriesList.isNotEmpty, isTrue);
 
-    // Create journal, wal, and shm simulation files
-    final dbJournalFile = File('${tempDir.path}/stalvi.db-journal');
-    final dbWalFile = File('${tempDir.path}/stalvi.db-wal');
-    final dbShmFile = File('${tempDir.path}/stalvi.db-shm');
+      // Create journal, wal, and shm simulation files
+      final dbJournalFile = File('${tempDir.path}/stalvi.db-journal');
+      final dbWalFile = File('${tempDir.path}/stalvi.db-wal');
+      final dbShmFile = File('${tempDir.path}/stalvi.db-shm');
 
-    await dbJournalFile.writeAsString('journal');
-    await dbWalFile.writeAsString('wal');
-    await dbShmFile.writeAsString('shm');
+      await dbJournalFile.writeAsString('journal');
+      await dbWalFile.writeAsString('wal');
+      await dbShmFile.writeAsString('shm');
 
-    final dbFile = File('${tempDir.path}/stalvi.db');
-    expect(await dbFile.exists(), isTrue);
-    expect(await dbJournalFile.exists(), isTrue);
-    expect(await dbWalFile.exists(), isTrue);
-    expect(await dbShmFile.exists(), isTrue);
+      final dbFile = File('${tempDir.path}/stalvi.db');
+      expect(await dbFile.exists(), isTrue);
+      expect(await dbJournalFile.exists(), isTrue);
+      expect(await dbWalFile.exists(), isTrue);
+      expect(await dbShmFile.exists(), isTrue);
 
-    // Act
-    await useCase.execute();
+      // Act
+      await useCase.execute();
 
-    // Assert: Secure storage clear was called
-    verify(() => mockSecureStorageManager.deleteAll()).called(1);
+      // Assert: Secure storage clear was called
+      verify(() => mockSecureStorageManager.deleteAll()).called(1);
 
-    // Assert: Database files deleted
-    expect(await dbFile.exists(), isFalse);
-    expect(await dbJournalFile.exists(), isFalse);
-    expect(await dbWalFile.exists(), isFalse);
-    expect(await dbShmFile.exists(), isFalse);
-  });
+      // Assert: Database files deleted
+      expect(await dbFile.exists(), isFalse);
+      expect(await dbJournalFile.exists(), isFalse);
+      expect(await dbWalFile.exists(), isFalse);
+      expect(await dbShmFile.exists(), isFalse);
+    },
+  );
 
   test(
-      'WipeAllDataUseCase clears all tables completely (including soft-deleted/Trash items)',
-      () async {
-    // Arrange: Seed the database with some dummy entries, including soft-deleted ones (Trash)
-    final now = DateTime.now();
+    'WipeAllDataUseCase clears all tables completely (including soft-deleted/Trash items)',
+    () async {
+      // Arrange: Seed the database with some dummy entries, including soft-deleted ones (Trash)
+      final now = DateTime.now();
 
-    // 1. Insert a Profile
-    await db.into(db.profiles).insert(
-          ProfilesCompanion.insert(
-            id: 'user_test_wipe',
-            name: 'Test Wipe',
-            username: 'testwipe',
-            password: '',
-            createdAt: now,
-            modifiedAt: now,
-          ),
-        );
+      // 1. Insert a Profile
+      await db.into(db.profiles).insert(
+            ProfilesCompanion.insert(
+              id: 'user_test_wipe',
+              name: 'Test Wipe',
+              username: 'testwipe',
+              password: '',
+              createdAt: now,
+              modifiedAt: now,
+            ),
+          );
 
-    // 2. Insert Accounts (one active, one soft-deleted/Trash)
-    await db.into(db.accounts).insert(
-          AccountsCompanion.insert(
-            id: 'acc_active',
-            userId: 'user_test_wipe',
-            name: 'Active Account',
-            type: AccountType.cash,
-            initialBalance: 10.0,
-            currency: 'EUR',
-            color: '#FFFFFF',
-            icon: 'icon',
-            createdAt: now,
-            modifiedAt: now,
-          ),
-        );
-    await db.into(db.accounts).insert(
-          AccountsCompanion.insert(
-            id: 'acc_deleted',
-            userId: 'user_test_wipe',
-            name: 'Deleted Account',
-            type: AccountType.cash,
-            initialBalance: 0.0,
-            currency: 'EUR',
-            color: '#000000',
-            icon: 'icon',
-            isDeleted: const Value(true), // soft-deleted/Trash
-            createdAt: now,
-            modifiedAt: now,
-          ),
-        );
+      // 2. Insert Accounts (one active, one soft-deleted/Trash)
+      await db.into(db.accounts).insert(
+            AccountsCompanion.insert(
+              id: 'acc_active',
+              userId: 'user_test_wipe',
+              name: 'Active Account',
+              type: AccountType.cash,
+              initialBalance: 10.0,
+              currency: 'EUR',
+              color: '#FFFFFF',
+              icon: 'icon',
+              createdAt: now,
+              modifiedAt: now,
+            ),
+          );
+      await db.into(db.accounts).insert(
+            AccountsCompanion.insert(
+              id: 'acc_deleted',
+              userId: 'user_test_wipe',
+              name: 'Deleted Account',
+              type: AccountType.cash,
+              initialBalance: 0.0,
+              currency: 'EUR',
+              color: '#000000',
+              icon: 'icon',
+              isDeleted: const Value(true), // soft-deleted/Trash
+              createdAt: now,
+              modifiedAt: now,
+            ),
+          );
 
-    // 3. Insert Categories (one active, one soft-deleted/Trash)
-    await db.into(db.categories).insert(
-          CategoriesCompanion.insert(
-            id: 'cat_active',
-            name: 'Active Cat',
-            associatedType: const Value(CategoryAssociatedType.expense),
-            icon: 'icon',
-            color: '#FFFFFF',
-            createdAt: now,
-            modifiedAt: now,
-          ),
-        );
-    await db.into(db.categories).insert(
-          CategoriesCompanion.insert(
-            id: 'cat_deleted',
-            name: 'Deleted Cat',
-            associatedType: const Value(CategoryAssociatedType.expense),
-            icon: 'icon',
-            color: '#000000',
-            isDeleted: const Value(true), // soft-deleted/Trash
-            createdAt: now,
-            modifiedAt: now,
-          ),
-        );
+      // 3. Insert Categories (one active, one soft-deleted/Trash)
+      await db.into(db.categories).insert(
+            CategoriesCompanion.insert(
+              id: 'cat_active',
+              name: 'Active Cat',
+              associatedType: const Value(CategoryAssociatedType.expense),
+              icon: 'icon',
+              color: '#FFFFFF',
+              createdAt: now,
+              modifiedAt: now,
+            ),
+          );
+      await db.into(db.categories).insert(
+            CategoriesCompanion.insert(
+              id: 'cat_deleted',
+              name: 'Deleted Cat',
+              associatedType: const Value(CategoryAssociatedType.expense),
+              icon: 'icon',
+              color: '#000000',
+              isDeleted: const Value(true), // soft-deleted/Trash
+              createdAt: now,
+              modifiedAt: now,
+            ),
+          );
 
-    // 4. Insert Tags
-    await db.into(db.tags).insert(
-          TagsCompanion.insert(
-            id: 'tag_test',
-            name: 'Test Tag',
-            createdAt: now,
-            modifiedAt: now,
-          ),
-        );
+      // 4. Insert Tags
+      await db.into(db.tags).insert(
+            TagsCompanion.insert(
+              id: 'tag_test',
+              name: 'Test Tag',
+              createdAt: now,
+              modifiedAt: now,
+            ),
+          );
 
-    // 5. Insert Transactions
-    await db.into(db.transactions).insert(
-          TransactionsCompanion.insert(
-            id: 'tx_active',
-            amount: 100,
-            date: now,
-            type: TransactionType.expense,
-            accountId: 'acc_active',
-            originalCurrency: 'EUR',
-            createdAt: now,
-            modifiedAt: now,
-          ),
-        );
+      // 5. Insert Transactions
+      await db.into(db.transactions).insert(
+            TransactionsCompanion.insert(
+              id: 'tx_active',
+              amount: 100,
+              date: now,
+              type: TransactionType.expense,
+              accountId: 'acc_active',
+              originalCurrency: 'EUR',
+              createdAt: now,
+              modifiedAt: now,
+            ),
+          );
 
-    // Verify all tables have data (including soft-deleted)
-    expect(
-      (await db.select(db.profiles).get()).any((p) => p.id == 'user_test_wipe'),
-      isTrue,
-    );
-    expect(
-      (await db.select(db.accounts).get()).any((a) => a.id == 'acc_active'),
-      isTrue,
-    );
-    expect(
-      (await db.select(db.accounts).get()).any((a) => a.id == 'acc_deleted'),
-      isTrue,
-    );
-    expect(
-      (await db.select(db.categories).get()).any((c) => c.id == 'cat_active'),
-      isTrue,
-    );
-    expect(
-      (await db.select(db.categories).get()).any((c) => c.id == 'cat_deleted'),
-      isTrue,
-    );
-    expect(
-      (await db.select(db.tags).get()).any((t) => t.id == 'tag_test'),
-      isTrue,
-    );
-    expect(
-      (await db.select(db.transactions).get()).any((t) => t.id == 'tx_active'),
-      isTrue,
-    );
+      // Verify all tables have data (including soft-deleted)
+      expect(
+        (await db.select(db.profiles).get()).any(
+          (p) => p.id == 'user_test_wipe',
+        ),
+        isTrue,
+      );
+      expect(
+        (await db.select(db.accounts).get()).any((a) => a.id == 'acc_active'),
+        isTrue,
+      );
+      expect(
+        (await db.select(db.accounts).get()).any((a) => a.id == 'acc_deleted'),
+        isTrue,
+      );
+      expect(
+        (await db.select(db.categories).get()).any((c) => c.id == 'cat_active'),
+        isTrue,
+      );
+      expect(
+        (await db.select(db.categories).get()).any(
+          (c) => c.id == 'cat_deleted',
+        ),
+        isTrue,
+      );
+      expect(
+        (await db.select(db.tags).get()).any((t) => t.id == 'tag_test'),
+        isTrue,
+      );
+      expect(
+        (await db.select(db.transactions).get()).any(
+          (t) => t.id == 'tx_active',
+        ),
+        isTrue,
+      );
 
-    // Act
-    await useCase.execute();
+      // Act
+      await useCase.execute();
 
-    // Reopen database at the same path (which should have been wiped & deleted) to verify it is clean
-    final dbFile = File('${tempDir.path}/stalvi.db');
-    final freshDb = AppDatabase.forTesting(NativeDatabase(dbFile));
+      // Reopen database at the same path (which should have been wiped & deleted) to verify it is clean
+      final dbFile = File('${tempDir.path}/stalvi.db');
+      final freshDb = AppDatabase.forTesting(NativeDatabase(dbFile));
 
-    try {
-      // On fresh creation, database executes migration onCreate which seeds 'Anonymous' profile, 'Mi Cartera' account, etc.
-      // But it should NOT contain our custom inserted test data!
-      final profiles = await freshDb.select(freshDb.profiles).get();
-      final accounts = await freshDb.select(freshDb.accounts).get();
-      final categories = await freshDb.select(freshDb.categories).get();
-      final tags = await freshDb.select(freshDb.tags).get();
-      final transactions = await freshDb.select(freshDb.transactions).get();
+      try {
+        // On fresh creation, database executes migration onCreate which seeds 'Anonymous' profile, 'Mi Cartera' account, etc.
+        // But it should NOT contain our custom inserted test data!
+        final profiles = await freshDb.select(freshDb.profiles).get();
+        final accounts = await freshDb.select(freshDb.accounts).get();
+        final categories = await freshDb.select(freshDb.categories).get();
+        final tags = await freshDb.select(freshDb.tags).get();
+        final transactions = await freshDb.select(freshDb.transactions).get();
 
-      expect(profiles.any((p) => p.id == 'user_test_wipe'), isFalse);
-      expect(accounts.any((a) => a.id == 'acc_active'), isFalse);
-      expect(accounts.any((a) => a.id == 'acc_deleted'), isFalse);
-      expect(categories.any((c) => c.id == 'cat_active'), isFalse);
-      expect(categories.any((c) => c.id == 'cat_deleted'), isFalse);
-      expect(tags.any((t) => t.id == 'tag_test'), isFalse);
-      expect(transactions.any((t) => t.id == 'tx_active'), isFalse);
+        expect(profiles.any((p) => p.id == 'user_test_wipe'), isFalse);
+        expect(accounts.any((a) => a.id == 'acc_active'), isFalse);
+        expect(accounts.any((a) => a.id == 'acc_deleted'), isFalse);
+        expect(categories.any((c) => c.id == 'cat_active'), isFalse);
+        expect(categories.any((c) => c.id == 'cat_deleted'), isFalse);
+        expect(tags.any((t) => t.id == 'tag_test'), isFalse);
+        expect(transactions.any((t) => t.id == 'tx_active'), isFalse);
 
-      // Verify the trash/recycle bin is empty (no items with isDeleted = true)
-      final trashDao = freshDb.trashDao;
-      final trashItems = await trashDao.getTrashItems();
-      expect(trashItems, isEmpty);
-    } finally {
-      await freshDb.close();
-    }
-  });
+        // Verify the trash/recycle bin is empty (no items with isDeleted = true)
+        final trashDao = freshDb.trashDao;
+        final trashItems = await trashDao.getTrashItems();
+        expect(trashItems, isEmpty);
+      } finally {
+        await freshDb.close();
+      }
+    },
+  );
 }

@@ -20,10 +20,14 @@ class BudgetsNotifier extends AsyncNotifier<void> {
     state = await AsyncValue.guard(() async {
       final repo = ref.read(budgetRepositoryProvider);
       final categoryRepo = ref.read(categoryRepositoryProvider);
-      final updateProgressUseCase =
-          ref.read(updateBudgetProgressUseCaseProvider);
-      final useCase =
-          CreateBudgetUseCase(repo, categoryRepo, updateProgressUseCase);
+      final updateProgressUseCase = ref.read(
+        updateBudgetProgressUseCaseProvider,
+      );
+      final useCase = CreateBudgetUseCase(
+        repo,
+        categoryRepo,
+        updateProgressUseCase,
+      );
       await useCase.execute(params);
     });
   }
@@ -93,6 +97,4 @@ final budgetsNotifierProvider = AsyncNotifierProvider<BudgetsNotifier, void>(
 
 /// Global provider for the [SavingsGoalsNotifier] state.
 final savingsGoalsNotifierProvider =
-    AsyncNotifierProvider<SavingsGoalsNotifier, void>(
-  SavingsGoalsNotifier.new,
-);
+    AsyncNotifierProvider<SavingsGoalsNotifier, void>(SavingsGoalsNotifier.new);

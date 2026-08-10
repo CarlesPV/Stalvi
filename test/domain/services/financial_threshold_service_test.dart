@@ -104,11 +104,13 @@ void main() {
     });
 
     test('budget threshold exceeded', () async {
-      when(() => mockBudgetRepo.getBudgetsByCategoryId('c1'))
-          .thenAnswer((_) async => [defaultBudget]);
+      when(
+        () => mockBudgetRepo.getBudgetsByCategoryId('c1'),
+      ).thenAnswer((_) async => [defaultBudget]);
 
-      when(() => mockTransactionRepo.watchFilteredTransactions(any()))
-          .thenAnswer(
+      when(
+        () => mockTransactionRepo.watchFilteredTransactions(any()),
+      ).thenAnswer(
         (_) => Stream.value([
           Transaction(
             id: 't1',
@@ -124,16 +126,15 @@ void main() {
         ]),
       );
 
-      when(() => mockAccountRepo.getAccountById('a1'))
-          .thenAnswer((_) async => defaultAccount);
+      when(
+        () => mockAccountRepo.getAccountById('a1'),
+      ).thenAnswer((_) async => defaultAccount);
 
-      when(() => mockExchangeRateRepo.getLocalRates(baseCurrency: 'USD'))
-          .thenAnswer(
-        (_) async => ExchangeRate(
-          baseCurrency: 'USD',
-          date: now,
-          rates: {'EUR': 0.85},
-        ),
+      when(
+        () => mockExchangeRateRepo.getLocalRates(baseCurrency: 'USD'),
+      ).thenAnswer(
+        (_) async =>
+            ExchangeRate(baseCurrency: 'USD', date: now, rates: {'EUR': 0.85}),
       );
 
       final triggerTx = Transaction(
@@ -156,11 +157,13 @@ void main() {
     });
 
     test('budget threshold not exceeded', () async {
-      when(() => mockBudgetRepo.getBudgetsByCategoryId('c1'))
-          .thenAnswer((_) async => [defaultBudget]); // Target 5000
+      when(
+        () => mockBudgetRepo.getBudgetsByCategoryId('c1'),
+      ).thenAnswer((_) async => [defaultBudget]); // Target 5000
 
-      when(() => mockTransactionRepo.watchFilteredTransactions(any()))
-          .thenAnswer(
+      when(
+        () => mockTransactionRepo.watchFilteredTransactions(any()),
+      ).thenAnswer(
         (_) => Stream.value([
           Transaction(
             id: 't1',
@@ -176,16 +179,15 @@ void main() {
         ]),
       );
 
-      when(() => mockAccountRepo.getAccountById('a1'))
-          .thenAnswer((_) async => defaultAccount);
+      when(
+        () => mockAccountRepo.getAccountById('a1'),
+      ).thenAnswer((_) async => defaultAccount);
 
-      when(() => mockExchangeRateRepo.getLocalRates(baseCurrency: 'USD'))
-          .thenAnswer(
-        (_) async => ExchangeRate(
-          baseCurrency: 'USD',
-          date: now,
-          rates: {'EUR': 0.85},
-        ),
+      when(
+        () => mockExchangeRateRepo.getLocalRates(baseCurrency: 'USD'),
+      ).thenAnswer(
+        (_) async =>
+            ExchangeRate(baseCurrency: 'USD', date: now, rates: {'EUR': 0.85}),
       );
 
       final triggerTx = Transaction(
@@ -205,8 +207,9 @@ void main() {
     });
 
     test('savings goal threshold reached', () async {
-      when(() => mockSavingsGoalRepo.getSavingsGoalById('g1'))
-          .thenAnswer((_) async => defaultGoal); // Target 10000
+      when(
+        () => mockSavingsGoalRepo.getSavingsGoalById('g1'),
+      ).thenAnswer((_) async => defaultGoal); // Target 10000
 
       when(() => mockTransactionRepo.watchRawTransactions()).thenAnswer(
         (_) => Stream.value([
@@ -224,13 +227,11 @@ void main() {
         ]),
       );
 
-      when(() => mockExchangeRateRepo.getLocalRates(baseCurrency: 'USD'))
-          .thenAnswer(
-        (_) async => ExchangeRate(
-          baseCurrency: 'USD',
-          date: now,
-          rates: {'EUR': 0.85},
-        ),
+      when(
+        () => mockExchangeRateRepo.getLocalRates(baseCurrency: 'USD'),
+      ).thenAnswer(
+        (_) async =>
+            ExchangeRate(baseCurrency: 'USD', date: now, rates: {'EUR': 0.85}),
       );
 
       final triggerTx = Transaction(
@@ -253,8 +254,9 @@ void main() {
     });
 
     test('savings goal threshold not reached', () async {
-      when(() => mockSavingsGoalRepo.getSavingsGoalById('g1'))
-          .thenAnswer((_) async => defaultGoal); // Target 10000
+      when(
+        () => mockSavingsGoalRepo.getSavingsGoalById('g1'),
+      ).thenAnswer((_) async => defaultGoal); // Target 10000
 
       when(() => mockTransactionRepo.watchRawTransactions()).thenAnswer(
         (_) => Stream.value([
@@ -272,13 +274,11 @@ void main() {
         ]),
       );
 
-      when(() => mockExchangeRateRepo.getLocalRates(baseCurrency: 'USD'))
-          .thenAnswer(
-        (_) async => ExchangeRate(
-          baseCurrency: 'USD',
-          date: now,
-          rates: {'EUR': 0.85},
-        ),
+      when(
+        () => mockExchangeRateRepo.getLocalRates(baseCurrency: 'USD'),
+      ).thenAnswer(
+        (_) async =>
+            ExchangeRate(baseCurrency: 'USD', date: now, rates: {'EUR': 0.85}),
       );
 
       final triggerTx = Transaction(

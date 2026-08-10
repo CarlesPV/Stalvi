@@ -25,6 +25,8 @@ extension CategoryMapper on Category {
         return db_table.CategoryAssociatedType.income;
       case CategoryType.expense:
         return db_table.CategoryAssociatedType.expense;
+      case CategoryType.both:
+        return db_table.CategoryAssociatedType.both;
     }
   }
 }
@@ -51,6 +53,8 @@ extension DbCategoryMapper on db.Category {
         return CategoryType.income;
       case db_table.CategoryAssociatedType.expense:
         return CategoryType.expense;
+      case db_table.CategoryAssociatedType.both:
+        return CategoryType.both;
     }
   }
 }

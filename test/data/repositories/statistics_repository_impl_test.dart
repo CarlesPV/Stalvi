@@ -19,9 +19,7 @@ void main() {
 
   setUp(() {
     mockDao = MockStatisticsDao();
-    repository = StatisticsRepositoryImpl(
-      mockDao,
-    );
+    repository = StatisticsRepositoryImpl(mockDao);
   });
 
   group('getPeriodSummary', () {
@@ -29,112 +27,110 @@ void main() {
     final endDate = DateTime(2023, 1, 31);
 
     test(
-        'should return correct summary using profile defaultCurrency when accountId is null',
-        () async {
-      const targetCurrency = 'EUR';
+      'should return correct summary using profile defaultCurrency when accountId is null',
+      () async {
+        const targetCurrency = 'EUR';
 
-      when(
-        mockDao.getPeriodSummaryAggregates(
+        when(
+          mockDao.getPeriodSummaryAggregates(
+            startDate: startDate,
+            endDate: endDate,
+            targetCurrency: targetCurrency,
+            accountId: null,
+          ),
+        ).thenAnswer(
+          (_) async => const PeriodSummary(totalIncome: 9000, totalExpense: 0),
+        );
+
+        final summary = await repository.getPeriodSummary(
           startDate: startDate,
           endDate: endDate,
           targetCurrency: targetCurrency,
-          accountId: null,
-        ),
-      ).thenAnswer(
-        (_) async => const PeriodSummary(
-          totalIncome: 9000,
-          totalExpense: 0,
-        ),
-      );
+        );
 
-      final summary = await repository.getPeriodSummary(
-        startDate: startDate,
-        endDate: endDate,
-        targetCurrency: targetCurrency,
-      );
-
-      expect(summary.totalIncome, 9000);
-      expect(summary.totalExpense, 0);
-    });
+        expect(summary.totalIncome, 9000);
+        expect(summary.totalExpense, 0);
+      },
+    );
 
     test(
-        'should return correct summary using account currency when accountId is provided',
-        () async {
-      const targetCurrency = 'GBP';
+      'should return correct summary using account currency when accountId is provided',
+      () async {
+        const targetCurrency = 'GBP';
 
-      when(
-        mockDao.getPeriodSummaryAggregates(
+        when(
+          mockDao.getPeriodSummaryAggregates(
+            startDate: startDate,
+            endDate: endDate,
+            targetCurrency: targetCurrency,
+            accountId: 'a1',
+          ),
+        ).thenAnswer(
+          (_) async => const PeriodSummary(totalIncome: 0, totalExpense: 4000),
+        );
+
+        final summary = await repository.getPeriodSummary(
           startDate: startDate,
           endDate: endDate,
           targetCurrency: targetCurrency,
           accountId: 'a1',
-        ),
-      ).thenAnswer(
-        (_) async => const PeriodSummary(
-          totalIncome: 0,
-          totalExpense: 4000,
-        ),
-      );
+        );
 
-      final summary = await repository.getPeriodSummary(
-        startDate: startDate,
-        endDate: endDate,
-        targetCurrency: targetCurrency,
-        accountId: 'a1',
-      );
-
-      expect(summary.totalIncome, 0);
-      expect(summary.totalExpense, 4000);
-    });
+        expect(summary.totalIncome, 0);
+        expect(summary.totalExpense, 4000);
+      },
+    );
   });
 
   group('getTopCategories', () {
     final startDate = DateTime(2023, 1, 1);
     final endDate = DateTime(2023, 1, 31);
 
-    test('should aggregate categories correctly with currency conversion',
-        () async {
-      const targetCurrency = 'EUR';
+    test(
+      'should aggregate categories correctly with currency conversion',
+      () async {
+        const targetCurrency = 'EUR';
 
-      when(
-        mockDao.getTopCategoriesAggregates(
-          startDate,
-          endDate,
-          targetCurrency,
-          type: db_table.TransactionType.expense,
-          accountId: null,
-        ),
-      ).thenAnswer(
-        (_) async => [
-          const CategoryStatistic(
-            categoryId: 'c1',
-            categoryName: 'Food',
-            categoryIcon: 'food_icon',
-            categoryColor: 'green',
-            totalAmount: 9900,
+        when(
+          mockDao.getTopCategoriesAggregates(
+            startDate,
+            endDate,
+            targetCurrency,
+            type: db_table.TransactionType.expense,
+            accountId: null,
           ),
-          const CategoryStatistic(
-            categoryId: 'c2',
-            categoryName: 'Travel',
-            categoryIcon: 'travel_icon',
-            categoryColor: 'blue',
-            totalAmount: 4500,
-          ),
-        ],
-      );
+        ).thenAnswer(
+          (_) async => [
+            const CategoryStatistic(
+              categoryId: 'c1',
+              categoryName: 'Food',
+              categoryIcon: 'food_icon',
+              categoryColor: 'green',
+              totalAmount: 9900,
+            ),
+            const CategoryStatistic(
+              categoryId: 'c2',
+              categoryName: 'Travel',
+              categoryIcon: 'travel_icon',
+              categoryColor: 'blue',
+              totalAmount: 4500,
+            ),
+          ],
+        );
 
-      final topCategories = await repository.getTopCategories(
-        startDate: startDate,
-        endDate: endDate,
-        targetCurrency: targetCurrency,
-      );
+        final topCategories = await repository.getTopCategories(
+          startDate: startDate,
+          endDate: endDate,
+          targetCurrency: targetCurrency,
+        );
 
-      expect(topCategories.length, 2);
-      expect(topCategories[0].categoryId, 'c1');
-      expect(topCategories[0].totalAmount, 9900);
+        expect(topCategories.length, 2);
+        expect(topCategories[0].categoryId, 'c1');
+        expect(topCategories[0].totalAmount, 9900);
 
-      expect(topCategories[1].categoryId, 'c2');
-      expect(topCategories[1].totalAmount, 4500);
-    });
+        expect(topCategories[1].categoryId, 'c2');
+        expect(topCategories[1].totalAmount, 4500);
+      },
+    );
   });
 }

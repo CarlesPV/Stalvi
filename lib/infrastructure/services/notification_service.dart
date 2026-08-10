@@ -9,10 +9,7 @@ class NotificationPayload {
   final String title;
   final String body;
 
-  const NotificationPayload({
-    required this.title,
-    required this.body,
-  });
+  const NotificationPayload({required this.title, required this.body});
 
   @override
   bool operator ==(Object other) =>
@@ -47,8 +44,9 @@ class NotificationService {
     if (_isInitialized) return;
 
     try {
-      const androidSettings =
-          AndroidInitializationSettings('@mipmap/launcher_icon');
+      const androidSettings = AndroidInitializationSettings(
+        '@mipmap/launcher_icon',
+      );
       const iosSettings = DarwinInitializationSettings(
         requestAlertPermission: false,
         requestBadgePermission: false,
@@ -273,9 +271,7 @@ class NotificationService {
       await initialize();
     }
 
-    final payload = formatGoalReachedNotification(
-      languageCode: languageCode,
-    );
+    final payload = formatGoalReachedNotification(languageCode: languageCode);
 
     await _showNotificationPayload(payload, notificationId: notificationId);
   }
@@ -308,12 +304,7 @@ class NotificationService {
         DateTime.now().millisecondsSinceEpoch.remainder(100000);
 
     try {
-      await _notificationsPlugin.show(
-        id,
-        payload.title,
-        payload.body,
-        details,
-      );
+      await _notificationsPlugin.show(id, payload.title, payload.body, details);
     } catch (_) {}
   }
 }

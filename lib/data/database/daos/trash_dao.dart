@@ -29,8 +29,9 @@ class TrashDao extends DatabaseAccessor<AppDatabase> with _$TrashDaoMixin {
     final items = <TrashItem>[];
 
     // Transactions
-    final transactionRows = await (select(transactions)
-          ..where((t) => t.isDeleted.equals(true)))
+    final transactionRows = await (select(
+      transactions,
+    )..where((t) => t.isDeleted.equals(true)))
         .get();
     final seenTransfers = <String>{};
     for (final t in transactionRows) {
@@ -58,8 +59,9 @@ class TrashDao extends DatabaseAccessor<AppDatabase> with _$TrashDaoMixin {
     }
 
     // Categories
-    final categoryRows = await (select(categories)
-          ..where((c) => c.isDeleted.equals(true)))
+    final categoryRows = await (select(
+      categories,
+    )..where((c) => c.isDeleted.equals(true)))
         .get();
     for (final c in categoryRows) {
       items.add(
@@ -74,8 +76,10 @@ class TrashDao extends DatabaseAccessor<AppDatabase> with _$TrashDaoMixin {
     }
 
     // Accounts
-    final accountRows =
-        await (select(accounts)..where((a) => a.isDeleted.equals(true))).get();
+    final accountRows = await (select(
+      accounts,
+    )..where((a) => a.isDeleted.equals(true)))
+        .get();
     for (final a in accountRows) {
       items.add(
         TrashItem(
@@ -89,8 +93,10 @@ class TrashDao extends DatabaseAccessor<AppDatabase> with _$TrashDaoMixin {
     }
 
     // Budgets
-    final budgetRows =
-        await (select(budgets)..where((b) => b.isDeleted.equals(true))).get();
+    final budgetRows = await (select(
+      budgets,
+    )..where((b) => b.isDeleted.equals(true)))
+        .get();
     for (final b in budgetRows) {
       items.add(
         TrashItem(
@@ -105,8 +111,9 @@ class TrashDao extends DatabaseAccessor<AppDatabase> with _$TrashDaoMixin {
     }
 
     // Savings Goals
-    final goalRows = await (select(savingsGoals)
-          ..where((s) => s.isDeleted.equals(true)))
+    final goalRows = await (select(
+      savingsGoals,
+    )..where((s) => s.isDeleted.equals(true)))
         .get();
     for (final s in goalRows) {
       items.add(
@@ -122,8 +129,9 @@ class TrashDao extends DatabaseAccessor<AppDatabase> with _$TrashDaoMixin {
     }
 
     // Automatic Transactions
-    final autoTxnRows = await (select(automaticTransactions)
-          ..where((a) => a.isDeleted.equals(true)))
+    final autoTxnRows = await (select(
+      automaticTransactions,
+    )..where((a) => a.isDeleted.equals(true)))
         .get();
     for (final a in autoTxnRows) {
       items.add(
@@ -155,9 +163,7 @@ class TrashDao extends DatabaseAccessor<AppDatabase> with _$TrashDaoMixin {
         savingsGoals,
         automaticTransactions,
       },
-    ).watch().asyncMap(
-          (_) => getTrashItems(),
-        );
+    ).watch().asyncMap((_) => getTrashItems());
   }
 
   /// Restores a soft-deleted item by setting its isDeleted to false and updating modifiedAt.
@@ -167,12 +173,14 @@ class TrashDao extends DatabaseAccessor<AppDatabase> with _$TrashDaoMixin {
     switch (type) {
       case TrashItemType.transaction:
         await transaction(() async {
-          final txn = await (select(transactions)
-                ..where((t) => t.id.equals(id)))
+          final txn = await (select(
+            transactions,
+          )..where((t) => t.id.equals(id)))
               .getSingleOrNull();
           if (txn != null && txn.isDeleted) {
-            final accountRow = await (select(accounts)
-                  ..where((a) => a.id.equals(txn.accountId)))
+            final accountRow = await (select(
+              accounts,
+            )..where((a) => a.id.equals(txn.accountId)))
                 .getSingleOrNull();
             if (accountRow != null) {
               final double delta = txn.amount / 100.0;
@@ -182,7 +190,9 @@ class TrashDao extends DatabaseAccessor<AppDatabase> with _$TrashDaoMixin {
               } else {
                 newBalance = accountRow.initialBalance - delta;
               }
-              await (update(accounts)..where((a) => a.id.equals(txn.accountId)))
+              await (update(
+                accounts,
+              )..where((a) => a.id.equals(txn.accountId)))
                   .write(
                 AccountsCompanion(
                   initialBalance: Value(newBalance),
@@ -232,7 +242,9 @@ class TrashDao extends DatabaseAccessor<AppDatabase> with _$TrashDaoMixin {
         );
         break;
       case TrashItemType.automaticTransaction:
-        await (update(automaticTransactions)..where((a) => a.id.equals(id)))
+        await (update(
+          automaticTransactions,
+        )..where((a) => a.id.equals(id)))
             .write(
           const AutomaticTransactionsCompanion(
             isDeleted: Value(false),
@@ -263,7 +275,9 @@ class TrashDao extends DatabaseAccessor<AppDatabase> with _$TrashDaoMixin {
         await (delete(savingsGoals)..where((s) => s.id.equals(id))).go();
         break;
       case TrashItemType.automaticTransaction:
-        await (delete(automaticTransactions)..where((a) => a.id.equals(id)))
+        await (delete(
+          automaticTransactions,
+        )..where((a) => a.id.equals(id)))
             .go();
         break;
     }

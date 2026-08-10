@@ -167,11 +167,13 @@ void main() {
     container = ProviderContainer(
       overrides: [
         budgetRepositoryProvider.overrideWithValue(fakeBudgetRepository),
-        savingsGoalRepositoryProvider
-            .overrideWithValue(fakeSavingsGoalRepository),
+        savingsGoalRepositoryProvider.overrideWithValue(
+          fakeSavingsGoalRepository,
+        ),
         categoryRepositoryProvider.overrideWithValue(fakeCategoryRepository),
-        updateBudgetProgressUseCaseProvider
-            .overrideWithValue(mockUpdateBudgetProgressUseCase),
+        updateBudgetProgressUseCaseProvider.overrideWithValue(
+          mockUpdateBudgetProgressUseCase,
+        ),
       ],
     );
   });
@@ -180,65 +182,67 @@ void main() {
 
   group('BudgetsNotifier', () {
     test(
-        'createBudget transitions through AsyncLoading and resolves to AsyncData',
-        () async {
-      final params = CreateBudgetParams(
-        id: '1',
-        accountId: 'account1',
-        categoryId: 'cat1',
-        targetAmount: 10000,
-        startDate: DateTime.now(),
-        endDate: DateTime.now().add(const Duration(days: 30)),
-      );
+      'createBudget transitions through AsyncLoading and resolves to AsyncData',
+      () async {
+        final params = CreateBudgetParams(
+          id: '1',
+          accountId: 'account1',
+          categoryId: 'cat1',
+          targetAmount: 10000,
+          startDate: DateTime.now(),
+          endDate: DateTime.now().add(const Duration(days: 30)),
+        );
 
-      final notifier = container.read(budgetsNotifierProvider.notifier);
+        final notifier = container.read(budgetsNotifierProvider.notifier);
 
-      // Start and collect state emissions
-      final states = <AsyncValue<void>>[];
-      final sub = container.listen(budgetsNotifierProvider, (_, next) {
-        states.add(next);
-      });
+        // Start and collect state emissions
+        final states = <AsyncValue<void>>[];
+        final sub = container.listen(budgetsNotifierProvider, (_, next) {
+          states.add(next);
+        });
 
-      await notifier.createBudget(params);
-      sub.close();
+        await notifier.createBudget(params);
+        sub.close();
 
-      expect(fakeBudgetRepository.insertCount, 1);
-      expect(
-        states.any((s) => s is AsyncLoading),
-        isTrue,
-        reason: 'Should have passed through AsyncLoading',
-      );
-      expect(states.last, isA<AsyncData<void>>());
-    });
+        expect(fakeBudgetRepository.insertCount, 1);
+        expect(
+          states.any((s) => s is AsyncLoading),
+          isTrue,
+          reason: 'Should have passed through AsyncLoading',
+        );
+        expect(states.last, isA<AsyncData<void>>());
+      },
+    );
 
     test(
-        'updateBudget transitions through AsyncLoading and resolves to AsyncData',
-        () async {
-      final params = UpdateBudgetParams(
-        id: '1',
-        categoryId: 'cat1',
-        startDate: DateTime(2024, 1, 1),
-        endDate: DateTime(2024, 3, 1),
-      );
+      'updateBudget transitions through AsyncLoading and resolves to AsyncData',
+      () async {
+        final params = UpdateBudgetParams(
+          id: '1',
+          categoryId: 'cat1',
+          startDate: DateTime(2024, 1, 1),
+          endDate: DateTime(2024, 3, 1),
+        );
 
-      final notifier = container.read(budgetsNotifierProvider.notifier);
+        final notifier = container.read(budgetsNotifierProvider.notifier);
 
-      final states = <AsyncValue<void>>[];
-      final sub = container.listen(budgetsNotifierProvider, (_, next) {
-        states.add(next);
-      });
+        final states = <AsyncValue<void>>[];
+        final sub = container.listen(budgetsNotifierProvider, (_, next) {
+          states.add(next);
+        });
 
-      await notifier.updateBudget(params);
-      sub.close();
+        await notifier.updateBudget(params);
+        sub.close();
 
-      expect(fakeBudgetRepository.updateCount, 1);
-      expect(
-        states.any((s) => s is AsyncLoading),
-        isTrue,
-        reason: 'Should have passed through AsyncLoading',
-      );
-      expect(states.last, isA<AsyncData<void>>());
-    });
+        expect(fakeBudgetRepository.updateCount, 1);
+        expect(
+          states.any((s) => s is AsyncLoading),
+          isTrue,
+          reason: 'Should have passed through AsyncLoading',
+        );
+        expect(states.last, isA<AsyncData<void>>());
+      },
+    );
 
     test('updateBudget with invalid id resolves to AsyncError', () async {
       final params = UpdateBudgetParams(
@@ -263,88 +267,91 @@ void main() {
     });
 
     test(
-        'deleteBudget transitions through AsyncLoading and resolves to AsyncData',
-        () async {
-      final notifier = container.read(budgetsNotifierProvider.notifier);
+      'deleteBudget transitions through AsyncLoading and resolves to AsyncData',
+      () async {
+        final notifier = container.read(budgetsNotifierProvider.notifier);
 
-      final states = <AsyncValue<void>>[];
-      final sub = container.listen(budgetsNotifierProvider, (_, next) {
-        states.add(next);
-      });
+        final states = <AsyncValue<void>>[];
+        final sub = container.listen(budgetsNotifierProvider, (_, next) {
+          states.add(next);
+        });
 
-      await notifier.deleteBudget('1');
-      sub.close();
+        await notifier.deleteBudget('1');
+        sub.close();
 
-      expect(fakeBudgetRepository.deleteCount, 1);
-      expect(
-        states.any((s) => s is AsyncLoading),
-        isTrue,
-        reason: 'Should have passed through AsyncLoading',
-      );
-      expect(states.last, isA<AsyncData<void>>());
-    });
+        expect(fakeBudgetRepository.deleteCount, 1);
+        expect(
+          states.any((s) => s is AsyncLoading),
+          isTrue,
+          reason: 'Should have passed through AsyncLoading',
+        );
+        expect(states.last, isA<AsyncData<void>>());
+      },
+    );
   });
 
   group('SavingsGoalsNotifier', () {
     test(
-        'createSavingsGoal transitions through AsyncLoading and resolves to AsyncData',
-        () async {
-      const params = CreateSavingsGoalParams(
-        id: '1',
-        name: 'Goal 1',
-        targetAmount: 10000,
-        currency: 'EUR',
-        color: '#FFFFFF',
-        icon: 'icon',
-      );
+      'createSavingsGoal transitions through AsyncLoading and resolves to AsyncData',
+      () async {
+        const params = CreateSavingsGoalParams(
+          id: '1',
+          name: 'Goal 1',
+          targetAmount: 10000,
+          currency: 'EUR',
+          color: '#FFFFFF',
+          icon: 'icon',
+        );
 
-      final notifier = container.read(savingsGoalsNotifierProvider.notifier);
+        final notifier = container.read(savingsGoalsNotifierProvider.notifier);
 
-      final states = <AsyncValue<void>>[];
-      final sub = container.listen(savingsGoalsNotifierProvider, (_, next) {
-        states.add(next);
-      });
+        final states = <AsyncValue<void>>[];
+        final sub = container.listen(savingsGoalsNotifierProvider, (_, next) {
+          states.add(next);
+        });
 
-      await notifier.createSavingsGoal(params);
-      sub.close();
+        await notifier.createSavingsGoal(params);
+        sub.close();
 
-      expect(fakeSavingsGoalRepository.insertCount, 1);
-      expect(
-        states.any((s) => s is AsyncLoading),
-        isTrue,
-        reason: 'Should have passed through AsyncLoading',
-      );
-      expect(states.last, isA<AsyncData<void>>());
-    });
+        expect(fakeSavingsGoalRepository.insertCount, 1);
+        expect(
+          states.any((s) => s is AsyncLoading),
+          isTrue,
+          reason: 'Should have passed through AsyncLoading',
+        );
+        expect(states.last, isA<AsyncData<void>>());
+      },
+    );
 
     test(
-        'updateSavingsGoal transitions through AsyncLoading and resolves to AsyncData',
-        () async {
-      const params = UpdateSavingsGoalParams(
-        id: '1',
-        name: 'Updated Goal',
-        color: '#2196F3',
-        icon: 'flight',
-      );
+      'updateSavingsGoal transitions through AsyncLoading and resolves to AsyncData',
+      () async {
+        const params = UpdateSavingsGoalParams(
+          id: '1',
+          name: 'Updated Goal',
+          color: '#2196F3',
+          icon: 'flight',
+        );
 
-      final notifier = container.read(savingsGoalsNotifierProvider.notifier);
+        final notifier = container.read(savingsGoalsNotifierProvider.notifier);
 
-      final states = <AsyncValue<void>>[];
-      final sub = container.listen(savingsGoalsNotifierProvider, (_, next) {
-        states.add(next);
-      });
+        final states = <AsyncValue<void>>[];
+        final sub = container.listen(savingsGoalsNotifierProvider, (_, next) {
+          states.add(next);
+        });
 
-      await notifier.updateSavingsGoal(params);
-      sub.close();
+        await notifier.updateSavingsGoal(params);
+        sub.close();
 
-      expect(fakeSavingsGoalRepository.updateCount, 1);
-      expect(
-        states.any((s) => s is AsyncLoading),
-        isTrue,
-        reason: 'Should have passed through AsyncLoading',
-      );
-      expect(states.last, isA<AsyncData<void>>());
-    });
+        expect(fakeSavingsGoalRepository.updateCount, 1);
+        expect(
+          states.any((s) => s is AsyncLoading),
+          isTrue,
+          reason: 'Should have passed through AsyncLoading',
+        );
+        expect(states.last, isA<AsyncData<void>>());
+      },
+    );
 
     test('updateSavingsGoal with invalid id resolves to AsyncError', () async {
       const params = UpdateSavingsGoalParams(
@@ -391,25 +398,26 @@ void main() {
     });
 
     test(
-        'deleteSavingsGoal transitions through AsyncLoading and resolves to AsyncData',
-        () async {
-      final notifier = container.read(savingsGoalsNotifierProvider.notifier);
+      'deleteSavingsGoal transitions through AsyncLoading and resolves to AsyncData',
+      () async {
+        final notifier = container.read(savingsGoalsNotifierProvider.notifier);
 
-      final states = <AsyncValue<void>>[];
-      final sub = container.listen(savingsGoalsNotifierProvider, (_, next) {
-        states.add(next);
-      });
+        final states = <AsyncValue<void>>[];
+        final sub = container.listen(savingsGoalsNotifierProvider, (_, next) {
+          states.add(next);
+        });
 
-      await notifier.deleteSavingsGoal('1');
-      sub.close();
+        await notifier.deleteSavingsGoal('1');
+        sub.close();
 
-      expect(fakeSavingsGoalRepository.deleteCount, 1);
-      expect(
-        states.any((s) => s is AsyncLoading),
-        isTrue,
-        reason: 'Should have passed through AsyncLoading',
-      );
-      expect(states.last, isA<AsyncData<void>>());
-    });
+        expect(fakeSavingsGoalRepository.deleteCount, 1);
+        expect(
+          states.any((s) => s is AsyncLoading),
+          isTrue,
+          reason: 'Should have passed through AsyncLoading',
+        );
+        expect(states.last, isA<AsyncData<void>>());
+      },
+    );
   });
 }

@@ -135,8 +135,12 @@ class _CreateAccountDialogState extends ConsumerState<CreateAccountDialog> {
       color: colorScheme.surface,
       borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
       child: Container(
-        padding:
-            EdgeInsets.fromLTRB(24, 12, 24, 24 + mediaQuery.viewInsets.bottom),
+        padding: EdgeInsets.fromLTRB(
+          24,
+          12,
+          24,
+          24 + mediaQuery.viewInsets.bottom,
+        ),
         child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -168,8 +172,10 @@ class _CreateAccountDialogState extends ConsumerState<CreateAccountDialog> {
 
               if (_errorMessage != null) ...[
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
                   decoration: BoxDecoration(
                     color: colorScheme.errorContainer,
                     borderRadius: BorderRadius.circular(16),
@@ -218,8 +224,9 @@ class _CreateAccountDialogState extends ConsumerState<CreateAccountDialog> {
               TextField(
                 key: const ValueKey('createAccountBalanceField'),
                 controller: _balanceController,
-                keyboardType:
-                    const TextInputType.numberWithOptions(decimal: true),
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
                 decoration: InputDecoration(
                   labelText: l10n.createAccountInitialBalanceLabel,
                   hintText: l10n.hintAmountZero,
@@ -404,8 +411,9 @@ class _CreateAccountDialogState extends ConsumerState<CreateAccountDialog> {
                       decoration: BoxDecoration(
                         color: isSelected
                             ? activeColor.withValues(alpha: 0.12)
-                            : colorScheme.surfaceContainerHighest
-                                .withValues(alpha: 0.3),
+                            : colorScheme.surfaceContainerHighest.withValues(
+                                alpha: 0.3,
+                              ),
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
                           color: isSelected ? activeColor : Colors.transparent,
@@ -433,9 +441,7 @@ class _CreateAccountDialogState extends ConsumerState<CreateAccountDialog> {
                       context: context,
                       builder: (ctx) => AlertDialog(
                         title: Text(l10n.warning),
-                        content: Text(
-                          l10n.replaceDefaultAccountConfirm,
-                        ),
+                        content: Text(l10n.replaceDefaultAccountConfirm),
                         actions: [
                           TextButton(
                             onPressed: () => Navigator.pop(ctx, false),

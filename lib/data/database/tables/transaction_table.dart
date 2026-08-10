@@ -3,11 +3,7 @@ import 'account_table.dart';
 import 'category_table.dart';
 import 'savings_goal_table.dart';
 
-enum TransactionType {
-  income,
-  expense,
-  transfer,
-}
+enum TransactionType { income, expense, transfer }
 
 @DataClassName('Transaction')
 class Transactions extends Table {

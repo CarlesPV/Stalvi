@@ -52,6 +52,10 @@ class _CreateEditSavingsGoalSheetState
     {'name': 'directions_car', 'icon': Icons.directions_car_rounded},
     {'name': 'home', 'icon': Icons.home_rounded},
     {'name': 'flight', 'icon': Icons.flight_rounded},
+    {'name': 'school', 'icon': Icons.school_rounded},
+    {'name': 'medical_services', 'icon': Icons.medical_services_rounded},
+    {'name': 'laptop', 'icon': Icons.laptop_rounded},
+    {'name': 'beach_access', 'icon': Icons.beach_access_rounded},
   ];
 
   @override
@@ -173,8 +177,12 @@ class _CreateEditSavingsGoalSheetState
       color: colorScheme.surface,
       borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
       child: Container(
-        padding:
-            EdgeInsets.fromLTRB(24, 12, 24, 24 + mediaQuery.viewInsets.bottom),
+        padding: EdgeInsets.fromLTRB(
+          24,
+          12,
+          24,
+          24 + mediaQuery.viewInsets.bottom,
+        ),
         child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -204,8 +212,10 @@ class _CreateEditSavingsGoalSheetState
                   ),
                   if (isEditing)
                     IconButton(
-                      icon:
-                          Icon(Icons.delete_outline, color: colorScheme.error),
+                      icon: Icon(
+                        Icons.delete_outline,
+                        color: colorScheme.error,
+                      ),
                       onPressed: isLoading ? null : _delete,
                     ),
                 ],
@@ -231,8 +241,9 @@ class _CreateEditSavingsGoalSheetState
                       ? Icon(
                           Icons.lock_outline_rounded,
                           size: 18,
-                          color: colorScheme.onSurfaceVariant
-                              .withValues(alpha: 0.5),
+                          color: colorScheme.onSurfaceVariant.withValues(
+                            alpha: 0.5,
+                          ),
                         )
                       : null,
                 ),
@@ -241,8 +252,9 @@ class _CreateEditSavingsGoalSheetState
               TextField(
                 controller: _amountController,
                 enabled: !isEditing,
-                keyboardType:
-                    const TextInputType.numberWithOptions(decimal: true),
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
                 decoration: InputDecoration(
                   labelText: l10n.targetAmount,
                   border: OutlineInputBorder(
@@ -260,8 +272,9 @@ class _CreateEditSavingsGoalSheetState
                       ? Icon(
                           Icons.lock_outline_rounded,
                           size: 18,
-                          color: colorScheme.onSurfaceVariant
-                              .withValues(alpha: 0.5),
+                          color: colorScheme.onSurfaceVariant.withValues(
+                            alpha: 0.5,
+                          ),
                         )
                       : null,
                 ),
@@ -286,8 +299,9 @@ class _CreateEditSavingsGoalSheetState
                       ? Icon(
                           Icons.lock_outline_rounded,
                           size: 18,
-                          color: colorScheme.onSurfaceVariant
-                              .withValues(alpha: 0.5),
+                          color: colorScheme.onSurfaceVariant.withValues(
+                            alpha: 0.5,
+                          ),
                         )
                       : null,
                 ),
@@ -420,8 +434,9 @@ class _CreateEditSavingsGoalSheetState
                       decoration: BoxDecoration(
                         color: isSelected
                             ? activeColor.withValues(alpha: 0.12)
-                            : colorScheme.surfaceContainerHighest
-                                .withValues(alpha: 0.3),
+                            : colorScheme.surfaceContainerHighest.withValues(
+                                alpha: 0.3,
+                              ),
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
                           color: isSelected ? activeColor : Colors.transparent,
@@ -451,8 +466,9 @@ class _CreateEditSavingsGoalSheetState
                         vertical: 10,
                       ),
                       decoration: BoxDecoration(
-                        color:
-                            colorScheme.errorContainer.withValues(alpha: 0.2),
+                        color: colorScheme.errorContainer.withValues(
+                          alpha: 0.2,
+                        ),
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
                           color: colorScheme.error.withValues(alpha: 0.35),

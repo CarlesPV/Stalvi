@@ -49,48 +49,54 @@ void main() {
     });
 
     test('create execute calls repository', () async {
-      when(() => repository.createAutomaticTransaction(any()))
-          .thenAnswer((_) async => txn);
+      when(
+        () => repository.createAutomaticTransaction(any()),
+      ).thenAnswer((_) async => txn);
       final result = await createUseCase.execute(txn);
       expect(result, txn);
       verify(() => repository.createAutomaticTransaction(txn)).called(1);
     });
 
     test('read execute calls repository', () async {
-      when(() => repository.getAutomaticTransactionById('1'))
-          .thenAnswer((_) async => txn);
+      when(
+        () => repository.getAutomaticTransactionById('1'),
+      ).thenAnswer((_) async => txn);
       final result = await readUseCase.execute('1');
       expect(result, txn);
       verify(() => repository.getAutomaticTransactionById('1')).called(1);
     });
 
     test('read executeAll calls repository', () async {
-      when(() => repository.getAllAutomaticTransactions())
-          .thenAnswer((_) async => [txn]);
+      when(
+        () => repository.getAllAutomaticTransactions(),
+      ).thenAnswer((_) async => [txn]);
       final result = await readUseCase.executeAll();
       expect(result, [txn]);
       verify(() => repository.getAllAutomaticTransactions()).called(1);
     });
 
     test('update execute calls repository', () async {
-      when(() => repository.updateAutomaticTransaction(any()))
-          .thenAnswer((_) async => txn);
+      when(
+        () => repository.updateAutomaticTransaction(any()),
+      ).thenAnswer((_) async => txn);
       final result = await updateUseCase.execute(txn);
       expect(result, txn);
       verify(() => repository.updateAutomaticTransaction(txn)).called(1);
     });
 
     test('delete execute performs soft delete', () async {
-      when(() => repository.getAutomaticTransactionById('1'))
-          .thenAnswer((_) async => txn);
-      when(() => repository.updateAutomaticTransaction(any()))
-          .thenAnswer((_) async => txn);
+      when(
+        () => repository.getAutomaticTransactionById('1'),
+      ).thenAnswer((_) async => txn);
+      when(
+        () => repository.updateAutomaticTransaction(any()),
+      ).thenAnswer((_) async => txn);
 
       await deleteUseCase.execute('1');
 
-      final captured =
-          verify(() => repository.updateAutomaticTransaction(captureAny()))
-              .captured;
+      final captured = verify(
+        () => repository.updateAutomaticTransaction(captureAny()),
+      ).captured;
       final updatedTxn = captured.first as AutomaticTransaction;
       expect(updatedTxn.isDeleted, isTrue);
       expect(updatedTxn.isActive, isFalse);
@@ -98,18 +104,23 @@ void main() {
     });
 
     test('restore execute performs restore', () async {
-      final deletedTxn =
-          txn.copyWith(isDeleted: true, isActive: false, deletedAt: now);
-      when(() => repository.getAutomaticTransactionById('1'))
-          .thenAnswer((_) async => deletedTxn);
-      when(() => repository.updateAutomaticTransaction(any()))
-          .thenAnswer((_) async => deletedTxn);
+      final deletedTxn = txn.copyWith(
+        isDeleted: true,
+        isActive: false,
+        deletedAt: now,
+      );
+      when(
+        () => repository.getAutomaticTransactionById('1'),
+      ).thenAnswer((_) async => deletedTxn);
+      when(
+        () => repository.updateAutomaticTransaction(any()),
+      ).thenAnswer((_) async => deletedTxn);
 
       await restoreUseCase.execute('1');
 
-      final captured =
-          verify(() => repository.updateAutomaticTransaction(captureAny()))
-              .captured;
+      final captured = verify(
+        () => repository.updateAutomaticTransaction(captureAny()),
+      ).captured;
       final restoredTxn = captured.first as AutomaticTransaction;
       expect(restoredTxn.isDeleted, isFalse);
       expect(restoredTxn.isActive, isTrue);

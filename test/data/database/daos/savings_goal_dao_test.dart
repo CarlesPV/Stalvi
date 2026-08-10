@@ -17,30 +17,32 @@ void main() {
     await database.close();
   });
 
-  test('createSavingsGoal and getSavingsGoals ignores soft-deleted items',
-      () async {
-    final now = DateTime.now();
-    await dao.createSavingsGoal(
-      SavingsGoalsCompanion.insert(
-        id: 's1',
-        name: 'Goal',
-        targetAmount: 10000,
-        color: '#000',
-        icon: 'icon',
-        createdAt: now,
-        modifiedAt: now,
-      ),
-    );
+  test(
+    'createSavingsGoal and getSavingsGoals ignores soft-deleted items',
+    () async {
+      final now = DateTime.now();
+      await dao.createSavingsGoal(
+        SavingsGoalsCompanion.insert(
+          id: 's1',
+          name: 'Goal',
+          targetAmount: 10000,
+          color: '#000',
+          icon: 'icon',
+          createdAt: now,
+          modifiedAt: now,
+        ),
+      );
 
-    final goals = await dao.getSavingsGoals();
-    expect(goals.length, 1);
-    expect(goals.first.id, 's1');
+      final goals = await dao.getSavingsGoals();
+      expect(goals.length, 1);
+      expect(goals.first.id, 's1');
 
-    await dao.softDelete('s1');
+      await dao.softDelete('s1');
 
-    final afterDelete = await dao.getSavingsGoals();
-    expect(afterDelete.isEmpty, isTrue);
-  });
+      final afterDelete = await dao.getSavingsGoals();
+      expect(afterDelete.isEmpty, isTrue);
+    },
+  );
 
   test('getSavingsGoalById ignores soft-deleted items', () async {
     final now = DateTime.now();

@@ -57,8 +57,10 @@ void main() {
     });
 
     test('formatPercentage formats percentage correctly', () {
-      final formatted =
-          CurrencyFormatter.formatPercentage(0.125, locale: 'en_US');
+      final formatted = CurrencyFormatter.formatPercentage(
+        0.125,
+        locale: 'en_US',
+      );
       expect(formatted, equals('12.50%'));
 
       final signed = CurrencyFormatter.formatPercentage(

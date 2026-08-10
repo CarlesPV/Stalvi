@@ -316,88 +316,92 @@ void main() {
   // ──────────────────────────────────────────────────────────────────────────
 
   group('watchFilteredTransactions – date range filter', () {
-    test('returns only transactions within the date range (inclusive)',
-        () async {
-      await _insertTransaction(
-        database,
-        id: 'before',
-        accountId: accountId,
-        type: TransactionType.expense,
-        amountCents: 100,
-        date: DateTime(2024, 5, 31), // just before range
-      );
-      await _insertTransaction(
-        database,
-        id: 'start',
-        accountId: accountId,
-        type: TransactionType.expense,
-        amountCents: 200,
-        date: DateTime(2024, 6, 1), // inclusive start
-      );
-      await _insertTransaction(
-        database,
-        id: 'mid',
-        accountId: accountId,
-        type: TransactionType.expense,
-        amountCents: 300,
-        date: DateTime(2024, 6, 15),
-      );
-      await _insertTransaction(
-        database,
-        id: 'end',
-        accountId: accountId,
-        type: TransactionType.income,
-        amountCents: 400,
-        date: DateTime(2024, 6, 30), // inclusive end
-      );
-      await _insertTransaction(
-        database,
-        id: 'after',
-        accountId: accountId,
-        type: TransactionType.income,
-        amountCents: 500,
-        date: DateTime(2024, 7, 1), // just after range
-      );
+    test(
+      'returns only transactions within the date range (inclusive)',
+      () async {
+        await _insertTransaction(
+          database,
+          id: 'before',
+          accountId: accountId,
+          type: TransactionType.expense,
+          amountCents: 100,
+          date: DateTime(2024, 5, 31), // just before range
+        );
+        await _insertTransaction(
+          database,
+          id: 'start',
+          accountId: accountId,
+          type: TransactionType.expense,
+          amountCents: 200,
+          date: DateTime(2024, 6, 1), // inclusive start
+        );
+        await _insertTransaction(
+          database,
+          id: 'mid',
+          accountId: accountId,
+          type: TransactionType.expense,
+          amountCents: 300,
+          date: DateTime(2024, 6, 15),
+        );
+        await _insertTransaction(
+          database,
+          id: 'end',
+          accountId: accountId,
+          type: TransactionType.income,
+          amountCents: 400,
+          date: DateTime(2024, 6, 30), // inclusive end
+        );
+        await _insertTransaction(
+          database,
+          id: 'after',
+          accountId: accountId,
+          type: TransactionType.income,
+          amountCents: 500,
+          date: DateTime(2024, 7, 1), // just after range
+        );
 
-      final stream = repo.watchFilteredTransactions(
-        TransactionQueryFilter(
-          dateRange: DateTimeRange(
-            start: DateTime(2024, 6, 1),
-            end: DateTime(2024, 6, 30),
+        final stream = repo.watchFilteredTransactions(
+          TransactionQueryFilter(
+            dateRange: DateTimeRange(
+              start: DateTime(2024, 6, 1),
+              end: DateTime(2024, 6, 30),
+            ),
           ),
-        ),
-      );
-      final result = await stream.first;
+        );
+        final result = await stream.first;
 
-      expect(result.length, 3);
-      expect(result.map((t) => t.id), containsAll(['start', 'mid', 'end']));
-      expect(result.map((t) => t.id), isNot(contains('before')));
-      expect(result.map((t) => t.id), isNot(contains('after')));
-    });
+        expect(result.length, 3);
+        expect(result.map((t) => t.id), containsAll(['start', 'mid', 'end']));
+        expect(result.map((t) => t.id), isNot(contains('before')));
+        expect(result.map((t) => t.id), isNot(contains('after')));
+      },
+    );
 
-    test('returns empty when no transactions fall within the date range',
-        () async {
-      await _insertTransaction(
-        database,
-        id: 't1',
-        accountId: accountId,
-        type: TransactionType.expense,
-        amountCents: 100,
-        date: DateTime(2024, 1, 1),
-      );
+    test(
+      'returns empty when no transactions fall within the date range',
+      () async {
+        await _insertTransaction(
+          database,
+          id: 't1',
+          accountId: accountId,
+          type: TransactionType.expense,
+          amountCents: 100,
+          date: DateTime(2024, 1, 1),
+        );
 
-      final stream = repo.watchFilteredTransactions(
-        TransactionQueryFilter(
-          dateRange: DateTimeRange(
-            start: DateTime(2025, 1, 1),
-            end: DateTime(2025, 12, 31),
+        final stream = repo.watchFilteredTransactions(
+          TransactionQueryFilter(
+            dateRange: DateTimeRange(
+              start: DateTime(2025, 1, 1),
+              end: DateTime(2025, 12, 31),
+            ),
           ),
-        ),
-      );
-      final result = await stream.first;
+        );
+        final result = await stream.first;
 
-      expect(result, isEmpty);
-    });
+        expect(result, isEmpty);
+      },
+    );
   });
 
   // ──────────────────────────────────────────────────────────────────────────
@@ -504,10 +508,7 @@ void main() {
       );
 
       final stream = repo.watchFilteredTransactions(
-        const TransactionQueryFilter(
-          minAmountCents: 100,
-          maxAmountCents: 1000,
-        ),
+        const TransactionQueryFilter(minAmountCents: 100, maxAmountCents: 1000),
       );
       final result = await stream.first;
 
@@ -522,46 +523,47 @@ void main() {
 
   group('watchFilteredTransactions – tag filter', () {
     test(
-        'returns transactions whose notes contain the tag name (resolved from tagId)',
-        () async {
-      await _seedTag(database, id: 'tag-food', name: '#food');
+      'returns transactions whose notes contain the tag name (resolved from tagId)',
+      () async {
+        await _seedTag(database, id: 'tag-food', name: '#food');
 
-      await _insertTransaction(
-        database,
-        id: 't1',
-        accountId: accountId,
-        type: TransactionType.expense,
-        amountCents: 200,
-        date: DateTime(2024, 10, 1),
-        notes: 'Groceries #food shopping',
-      );
-      await _insertTransaction(
-        database,
-        id: 't2',
-        accountId: accountId,
-        type: TransactionType.expense,
-        amountCents: 300,
-        date: DateTime(2024, 10, 2),
-        notes: 'Bus ticket #transport',
-      );
-      await _insertTransaction(
-        database,
-        id: 't3',
-        accountId: accountId,
-        type: TransactionType.income,
-        amountCents: 5000,
-        date: DateTime(2024, 10, 3),
-        notes: null, // no notes
-      );
+        await _insertTransaction(
+          database,
+          id: 't1',
+          accountId: accountId,
+          type: TransactionType.expense,
+          amountCents: 200,
+          date: DateTime(2024, 10, 1),
+          notes: 'Groceries #food shopping',
+        );
+        await _insertTransaction(
+          database,
+          id: 't2',
+          accountId: accountId,
+          type: TransactionType.expense,
+          amountCents: 300,
+          date: DateTime(2024, 10, 2),
+          notes: 'Bus ticket #transport',
+        );
+        await _insertTransaction(
+          database,
+          id: 't3',
+          accountId: accountId,
+          type: TransactionType.income,
+          amountCents: 5000,
+          date: DateTime(2024, 10, 3),
+          notes: null, // no notes
+        );
 
-      final stream = repo.watchFilteredTransactions(
-        const TransactionQueryFilter(tagId: 'tag-food'),
-      );
-      final result = await stream.first;
+        final stream = repo.watchFilteredTransactions(
+          const TransactionQueryFilter(tagId: 'tag-food'),
+        );
+        final result = await stream.first;
 
-      expect(result.length, 1);
-      expect(result.first.id, 't1');
-    });
+        expect(result.length, 1);
+        expect(result.first.id, 't1');
+      },
+    );
 
     test('tag match is case-insensitive (SQLite LIKE default)', () async {
       await _seedTag(database, id: 'tag-health', name: '#health');
@@ -650,25 +652,27 @@ void main() {
       expect(result.first.id, 'usd1');
     });
 
-    test('returns empty when no transaction uses the specified currency',
-        () async {
-      await _insertTransaction(
-        database,
-        id: 'eur1',
-        accountId: accountId,
-        type: TransactionType.expense,
-        amountCents: 200,
-        date: DateTime(2024, 11, 4),
-        currency: 'EUR',
-      );
+    test(
+      'returns empty when no transaction uses the specified currency',
+      () async {
+        await _insertTransaction(
+          database,
+          id: 'eur1',
+          accountId: accountId,
+          type: TransactionType.expense,
+          amountCents: 200,
+          date: DateTime(2024, 11, 4),
+          currency: 'EUR',
+        );
 
-      final stream = repo.watchFilteredTransactions(
-        const TransactionQueryFilter(currency: 'JPY'),
-      );
-      final result = await stream.first;
+        final stream = repo.watchFilteredTransactions(
+          const TransactionQueryFilter(currency: 'JPY'),
+        );
+        final result = await stream.first;
 
-      expect(result, isEmpty);
-    });
+        expect(result, isEmpty);
+      },
+    );
   });
 
   // ──────────────────────────────────────────────────────────────────────────
@@ -825,120 +829,121 @@ void main() {
     });
 
     test(
-        'type + category + date range + amount range + currency: all six filters',
-        () async {
-      // The single transaction that satisfies all six filters.
-      await _insertTransaction(
-        database,
-        id: 'all-match',
-        accountId: accountId,
-        type: TransactionType.expense,
-        amountCents: 750,
-        date: DateTime(2024, 9, 15),
-        categoryId: 'cat-food',
-        currency: 'EUR',
-        notes: 'Supermarket #food',
-      );
-
-      // Fails type filter
-      await _insertTransaction(
-        database,
-        id: 'fail-type',
-        accountId: accountId,
-        type: TransactionType.income,
-        amountCents: 750,
-        date: DateTime(2024, 9, 15),
-        categoryId: 'cat-food',
-        currency: 'EUR',
-        notes: 'Supermarket #food',
-      );
-
-      // Fails category filter
-      await _insertTransaction(
-        database,
-        id: 'fail-category',
-        accountId: accountId,
-        type: TransactionType.expense,
-        amountCents: 750,
-        date: DateTime(2024, 9, 15),
-        categoryId: 'cat-transport',
-        currency: 'EUR',
-        notes: 'Supermarket #food',
-      );
-
-      // Fails date range
-      await _insertTransaction(
-        database,
-        id: 'fail-date',
-        accountId: accountId,
-        type: TransactionType.expense,
-        amountCents: 750,
-        date: DateTime(2024, 10, 1), // outside September
-        categoryId: 'cat-food',
-        currency: 'EUR',
-        notes: 'Supermarket #food',
-      );
-
-      // Fails amount range (too low)
-      await _insertTransaction(
-        database,
-        id: 'fail-amount',
-        accountId: accountId,
-        type: TransactionType.expense,
-        amountCents: 50,
-        date: DateTime(2024, 9, 10),
-        categoryId: 'cat-food',
-        currency: 'EUR',
-        notes: 'Supermarket #food',
-      );
-
-      // Fails currency filter
-      await _insertTransaction(
-        database,
-        id: 'fail-currency',
-        accountId: accountId,
-        type: TransactionType.expense,
-        amountCents: 750,
-        date: DateTime(2024, 9, 15),
-        categoryId: 'cat-food',
-        currency: 'USD',
-        notes: 'Supermarket #food',
-      );
-
-      // Fails tag filter (notes don't contain #food)
-      await _insertTransaction(
-        database,
-        id: 'fail-tag',
-        accountId: accountId,
-        type: TransactionType.expense,
-        amountCents: 750,
-        date: DateTime(2024, 9, 15),
-        categoryId: 'cat-food',
-        currency: 'EUR',
-        notes: 'Supermarket – no tag',
-      );
-
-      await _seedTag(database, id: 'tag-food', name: '#food');
-
-      final stream = repo.watchFilteredTransactions(
-        TransactionQueryFilter(
-          type: domain.TransactionType.expense,
+      'type + category + date range + amount range + currency: all six filters',
+      () async {
+        // The single transaction that satisfies all six filters.
+        await _insertTransaction(
+          database,
+          id: 'all-match',
+          accountId: accountId,
+          type: TransactionType.expense,
+          amountCents: 750,
+          date: DateTime(2024, 9, 15),
           categoryId: 'cat-food',
-          dateRange: DateTimeRange(
-            start: DateTime(2024, 9, 1),
-            end: DateTime(2024, 9, 30),
-          ),
-          minAmountCents: 500,
-          maxAmountCents: 1000,
-          tagId: 'tag-food',
           currency: 'EUR',
-        ),
-      );
-      final result = await stream.first;
+          notes: 'Supermarket #food',
+        );
 
-      expect(result.length, 1);
-      expect(result.first.id, 'all-match');
-    });
+        // Fails type filter
+        await _insertTransaction(
+          database,
+          id: 'fail-type',
+          accountId: accountId,
+          type: TransactionType.income,
+          amountCents: 750,
+          date: DateTime(2024, 9, 15),
+          categoryId: 'cat-food',
+          currency: 'EUR',
+          notes: 'Supermarket #food',
+        );
+
+        // Fails category filter
+        await _insertTransaction(
+          database,
+          id: 'fail-category',
+          accountId: accountId,
+          type: TransactionType.expense,
+          amountCents: 750,
+          date: DateTime(2024, 9, 15),
+          categoryId: 'cat-transport',
+          currency: 'EUR',
+          notes: 'Supermarket #food',
+        );
+
+        // Fails date range
+        await _insertTransaction(
+          database,
+          id: 'fail-date',
+          accountId: accountId,
+          type: TransactionType.expense,
+          amountCents: 750,
+          date: DateTime(2024, 10, 1), // outside September
+          categoryId: 'cat-food',
+          currency: 'EUR',
+          notes: 'Supermarket #food',
+        );
+
+        // Fails amount range (too low)
+        await _insertTransaction(
+          database,
+          id: 'fail-amount',
+          accountId: accountId,
+          type: TransactionType.expense,
+          amountCents: 50,
+          date: DateTime(2024, 9, 10),
+          categoryId: 'cat-food',
+          currency: 'EUR',
+          notes: 'Supermarket #food',
+        );
+
+        // Fails currency filter
+        await _insertTransaction(
+          database,
+          id: 'fail-currency',
+          accountId: accountId,
+          type: TransactionType.expense,
+          amountCents: 750,
+          date: DateTime(2024, 9, 15),
+          categoryId: 'cat-food',
+          currency: 'USD',
+          notes: 'Supermarket #food',
+        );
+
+        // Fails tag filter (notes don't contain #food)
+        await _insertTransaction(
+          database,
+          id: 'fail-tag',
+          accountId: accountId,
+          type: TransactionType.expense,
+          amountCents: 750,
+          date: DateTime(2024, 9, 15),
+          categoryId: 'cat-food',
+          currency: 'EUR',
+          notes: 'Supermarket – no tag',
+        );
+
+        await _seedTag(database, id: 'tag-food', name: '#food');
+
+        final stream = repo.watchFilteredTransactions(
+          TransactionQueryFilter(
+            type: domain.TransactionType.expense,
+            categoryId: 'cat-food',
+            dateRange: DateTimeRange(
+              start: DateTime(2024, 9, 1),
+              end: DateTime(2024, 9, 30),
+            ),
+            minAmountCents: 500,
+            maxAmountCents: 1000,
+            tagId: 'tag-food',
+            currency: 'EUR',
+          ),
+        );
+        final result = await stream.first;
+
+        expect(result.length, 1);
+        expect(result.first.id, 'all-match');
+      },
+    );
   });
 
   // ──────────────────────────────────────────────────────────────────────────
@@ -946,25 +951,27 @@ void main() {
   // ──────────────────────────────────────────────────────────────────────────
 
   group('watchFilteredTransactions – soft-delete exclusion', () {
-    test('never returns soft-deleted rows even when all other filters match',
-        () async {
-      await _insertTransaction(
-        database,
-        id: 'deleted',
-        accountId: accountId,
-        type: TransactionType.expense,
-        amountCents: 500,
-        date: DateTime(2024, 1, 1),
-        currency: 'EUR',
-        isDeleted: true,
-      );
+    test(
+      'never returns soft-deleted rows even when all other filters match',
+      () async {
+        await _insertTransaction(
+          database,
+          id: 'deleted',
+          accountId: accountId,
+          type: TransactionType.expense,
+          amountCents: 500,
+          date: DateTime(2024, 1, 1),
+          currency: 'EUR',
+          isDeleted: true,
+        );
 
-      final stream = repo.watchFilteredTransactions(
-        const TransactionQueryFilter(currency: 'EUR'),
-      );
-      final result = await stream.first;
+        final stream = repo.watchFilteredTransactions(
+          const TransactionQueryFilter(currency: 'EUR'),
+        );
+        final result = await stream.first;
 
-      expect(result, isEmpty);
-    });
+        expect(result, isEmpty);
+      },
+    );
   });
 }

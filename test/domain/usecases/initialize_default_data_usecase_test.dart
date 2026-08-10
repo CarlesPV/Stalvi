@@ -36,12 +36,15 @@ void main() {
     );
 
     // Default stubbing for category calls
-    when(() => mockCategoryRepository.getAllCategories())
-        .thenAnswer((_) async => <Category>[]);
-    when(() => mockCategoryRepository.getCategoryById(any()))
-        .thenAnswer((_) async => null);
-    when(() => mockCategoryRepository.deleteCategory(any()))
-        .thenAnswer((_) async {});
+    when(
+      () => mockCategoryRepository.getAllCategories(),
+    ).thenAnswer((_) async => <Category>[]);
+    when(
+      () => mockCategoryRepository.getCategoryById(any()),
+    ).thenAnswer((_) async => null);
+    when(
+      () => mockCategoryRepository.deleteCategory(any()),
+    ).thenAnswer((_) async {});
     when(() => mockCategoryRepository.createCategory(any())).thenAnswer(
       (invocation) async => invocation.positionalArguments[0] as Category,
     );
@@ -51,8 +54,9 @@ void main() {
 
     // Default stubbing for tag calls
     when(() => mockTagRepository.getAllTags()).thenAnswer((_) async => <Tag>[]);
-    when(() => mockTagRepository.getTagById(any()))
-        .thenAnswer((_) async => null);
+    when(
+      () => mockTagRepository.getTagById(any()),
+    ).thenAnswer((_) async => null);
     when(() => mockTagRepository.deleteTag(any())).thenAnswer((_) async {});
     when(() => mockTagRepository.createTag(any())).thenAnswer(
       (invocation) async => invocation.positionalArguments[0] as Tag,
@@ -60,81 +64,88 @@ void main() {
     when(() => mockTagRepository.updateTag(any())).thenAnswer(
       (invocation) async => invocation.positionalArguments[0] as Tag,
     );
-    when(() => mockCategoryRepository.deleteCategoryPermanently(any()))
-        .thenAnswer((_) async {});
-    when(() => mockTagRepository.deleteTagPermanently(any()))
-        .thenAnswer((_) async {});
+    when(
+      () => mockCategoryRepository.deleteCategoryPermanently(any()),
+    ).thenAnswer((_) async {});
+    when(
+      () => mockTagRepository.deleteTagPermanently(any()),
+    ).thenAnswer((_) async {});
   });
 
   group('InitializeDefaultDataUseCase Unit Tests', () {
     test(
-        'should seed default typical categories and typical tags in selected locale',
-        () async {
-      // Arrange
-      const userId = 'user_123';
-      const locale = 'es';
+      'should seed default typical categories and typical tags in selected locale',
+      () async {
+        // Arrange
+        const userId = 'user_123';
+        const locale = 'es';
 
-      // Act
-      await useCase.execute(
-        userId: userId,
-        locale: locale,
-      );
+        // Act
+        await useCase.execute(userId: userId, locale: locale);
 
-      // Assert
-      final capturedCategories =
-          verify(() => mockCategoryRepository.createCategory(captureAny()))
-              .captured;
-      expect(capturedCategories.length, 13);
+        // Assert
+        final capturedCategories = verify(
+          () => mockCategoryRepository.createCategory(captureAny()),
+        ).captured;
+        expect(capturedCategories.length, 18);
 
-      final names =
-          capturedCategories.map((c) => (c as Category).name).toList();
-      expect(names, contains('Comida'));
-      expect(names, contains('Transporte'));
-      expect(names, contains('Salario'));
-      expect(names, contains('Vivienda'));
-      expect(names, contains('Servicios'));
-      expect(names, contains('Entretenimiento'));
-      expect(names, contains('Compras'));
-      expect(names, contains('Salud'));
-      expect(names, contains('Educación'));
-      expect(names, contains('Suscripciones'));
-      expect(names, contains('Viajes'));
-      expect(names, contains('Inversiones'));
-      expect(names, contains('Regalos'));
+        final names =
+            capturedCategories.map((c) => (c as Category).name).toList();
+        expect(names, contains('Comida'));
+        expect(names, contains('Transporte'));
+        expect(names, contains('Salario'));
+        expect(names, contains('Vivienda'));
+        expect(names, contains('Servicios'));
+        expect(names, contains('Entretenimiento'));
+        expect(names, contains('Compras'));
+        expect(names, contains('Salud'));
+        expect(names, contains('Educación'));
+        expect(names, contains('Suscripciones'));
+        expect(names, contains('Viajes'));
+        expect(names, contains('Inversiones'));
+        expect(names, contains('Regalos'));
+        expect(names, contains('Mascota'));
+        expect(names, contains('Cuidado Personal'));
+        expect(names, contains('Deporte'));
+        expect(names, contains('Venta'));
+        expect(names, contains('Reembolso'));
 
-      final capturedTags =
-          verify(() => mockTagRepository.createTag(captureAny())).captured;
-      expect(capturedTags.length, 6);
+        final capturedTags = verify(
+          () => mockTagRepository.createTag(captureAny()),
+        ).captured;
+        expect(capturedTags.length, 6);
 
-      final tagNames = capturedTags.map((t) => (t as Tag).name).toList();
-      expect(tagNames, contains('Viaje de verano'));
-      expect(tagNames, contains('Evento'));
-      expect(tagNames, contains('Proyecto'));
-      expect(tagNames, contains('Boda'));
-      expect(tagNames, contains('Cumpleaños'));
-      expect(tagNames, contains('Viaje de negocios'));
-    });
+        final tagNames = capturedTags.map((t) => (t as Tag).name).toList();
+        expect(tagNames, contains('Viaje de verano'));
+        expect(tagNames, contains('Evento'));
+        expect(tagNames, contains('Proyecto'));
+        expect(tagNames, contains('Boda'));
+        expect(tagNames, contains('Cumpleaños'));
+        expect(tagNames, contains('Viaje de negocios'));
+      },
+    );
 
     test(
-        'should seed categories and tags in English when no locale is specified',
-        () async {
-      // Arrange
-      const userId = 'user_123';
+      'should seed categories and tags in English when no locale is specified',
+      () async {
+        // Arrange
+        const userId = 'user_123';
 
-      // Act
-      await useCase.execute(userId: userId);
+        // Act
+        await useCase.execute(userId: userId);
 
-      // Assert
-      final capturedCategories =
-          verify(() => mockCategoryRepository.createCategory(captureAny()))
-              .captured;
-      expect(capturedCategories.length, 13);
-      final names =
-          capturedCategories.map((c) => (c as Category).name).toList();
-      expect(names, contains('Food'));
-      expect(names, contains('Transport'));
-      expect(names, contains('Salary'));
-    });
+        // Assert
+        final capturedCategories = verify(
+          () => mockCategoryRepository.createCategory(captureAny()),
+        ).captured;
+        expect(capturedCategories.length, 18);
+        final names =
+            capturedCategories.map((c) => (c as Category).name).toList();
+        expect(names, contains('Food'));
+        expect(names, contains('Transport'));
+        expect(names, contains('Salary'));
+      },
+    );
 
     test(
         'should permanently delete duplicate/old default categories and tags '
@@ -162,16 +173,15 @@ void main() {
         modifiedAt: DateTime.now(),
       );
 
-      when(() => mockCategoryRepository.getAllCategories())
-          .thenAnswer((_) async => [oldCategory]);
-      when(() => mockTagRepository.getAllTags())
-          .thenAnswer((_) async => [oldTag]);
+      when(
+        () => mockCategoryRepository.getAllCategories(),
+      ).thenAnswer((_) async => [oldCategory]);
+      when(
+        () => mockTagRepository.getAllTags(),
+      ).thenAnswer((_) async => [oldTag]);
 
       // Act
-      await useCase.execute(
-        userId: userId,
-        locale: 'en',
-      );
+      await useCase.execute(userId: userId, locale: 'en');
 
       // Assert
       // Verify no soft deletes were called
@@ -180,8 +190,9 @@ void main() {
 
       // Verify permanent deletes were called instead
       verify(
-        () => mockCategoryRepository
-            .deleteCategoryPermanently('old-random-uuid-cat'),
+        () => mockCategoryRepository.deleteCategoryPermanently(
+          'old-random-uuid-cat',
+        ),
       ).called(1);
       verify(
         () => mockTagRepository.deleteTagPermanently('old-random-uuid-tag'),
@@ -189,30 +200,29 @@ void main() {
     });
 
     test(
-        'should ensure absolutely no categories or tags have isDeleted: true during setup',
-        () async {
-      // Arrange
-      const userId = 'user_123';
+      'should ensure absolutely no categories or tags have isDeleted: true during setup',
+      () async {
+        // Arrange
+        const userId = 'user_123';
 
-      // Act
-      await useCase.execute(
-        userId: userId,
-        locale: 'en',
-      );
+        // Act
+        await useCase.execute(userId: userId, locale: 'en');
 
-      // Assert
-      final capturedCategories =
-          verify(() => mockCategoryRepository.createCategory(captureAny()))
-              .captured;
-      for (final cat in capturedCategories) {
-        expect((cat as Category).isDeleted, isFalse);
-      }
+        // Assert
+        final capturedCategories = verify(
+          () => mockCategoryRepository.createCategory(captureAny()),
+        ).captured;
+        for (final cat in capturedCategories) {
+          expect((cat as Category).isDeleted, isFalse);
+        }
 
-      final capturedTags =
-          verify(() => mockTagRepository.createTag(captureAny())).captured;
-      for (final tag in capturedTags) {
-        expect((tag as Tag).isDeleted, isFalse);
-      }
-    });
+        final capturedTags = verify(
+          () => mockTagRepository.createTag(captureAny()),
+        ).captured;
+        for (final tag in capturedTags) {
+          expect((tag as Tag).isDeleted, isFalse);
+        }
+      },
+    );
   });
 }

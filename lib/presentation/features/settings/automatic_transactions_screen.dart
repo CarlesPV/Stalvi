@@ -32,17 +32,13 @@ class AutomaticTransactionsScreen extends ConsumerWidget {
     final categories = categoriesAsync.value ?? [];
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.settingsAutomaticTransactions),
-      ),
+      appBar: AppBar(title: Text(l10n.settingsAutomaticTransactions)),
       body: transactionsAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, st) => Center(child: Text('${l10n.unexpectedError}: $e')),
         data: (transactions) {
           if (transactions.isEmpty) {
-            return Center(
-              child: Text(l10n.noDataAvailable),
-            );
+            return Center(child: Text(l10n.noDataAvailable));
           }
           return ListView.builder(
             itemCount: transactions.length,
@@ -69,8 +65,9 @@ class AutomaticTransactionsScreen extends ConsumerWidget {
 
               return Card(
                 elevation: 0,
-                color:
-                    colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+                color: colorScheme.surfaceContainerHighest.withValues(
+                  alpha: 0.3,
+                ),
                 margin: const EdgeInsets.only(bottom: 12),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),

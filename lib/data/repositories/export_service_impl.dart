@@ -309,16 +309,14 @@ class ExportServiceImpl implements IExportService {
           customMonthLabel ?? DateFormat.yMMMM(l10n.localeName).format(month);
 
       final fontData = await rootBundle.load('assets/fonts/Roboto-Regular.ttf');
-      final fontDataBold =
-          await rootBundle.load('assets/fonts/Roboto-Bold.ttf');
+      final fontDataBold = await rootBundle.load(
+        'assets/fonts/Roboto-Bold.ttf',
+      );
       final ttf = pw.Font.ttf(fontData);
       final ttfBold = pw.Font.ttf(fontDataBold);
 
       final pdf = pw.Document(
-        theme: pw.ThemeData.withFont(
-          base: ttf,
-          bold: ttfBold,
-        ),
+        theme: pw.ThemeData.withFont(base: ttf, bold: ttfBold),
       );
       final symbol = _getCurrencySymbol(defaultCurrency);
 
@@ -372,10 +370,7 @@ class ExportServiceImpl implements IExportService {
                   ),
                   _pdfSummaryItem(
                     l10n.statisticsNetBalance,
-                    '$symbol ${_centsToDecimal(
-                      summary.totalIncome - summary.totalExpense,
-                      l10n.localeName,
-                    )} $defaultCurrency',
+                    '$symbol ${_centsToDecimal(summary.totalIncome - summary.totalExpense, l10n.localeName)} $defaultCurrency',
                     summary.totalIncome >= summary.totalExpense
                         ? PdfColors.green800
                         : PdfColors.red800,
@@ -400,11 +395,14 @@ class ExportServiceImpl implements IExportService {
                 l10n.labelCurrency,
                 l10n.labelNotes,
               ],
-              headerStyle:
-                  pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 9),
+              headerStyle: pw.TextStyle(
+                fontWeight: pw.FontWeight.bold,
+                fontSize: 9,
+              ),
               cellStyle: const pw.TextStyle(fontSize: 8),
-              headerDecoration:
-                  const pw.BoxDecoration(color: PdfColors.grey300),
+              headerDecoration: const pw.BoxDecoration(
+                color: PdfColors.grey300,
+              ),
               cellAlignments: {
                 0: pw.Alignment.centerLeft,
                 1: pw.Alignment.center,
@@ -767,10 +765,7 @@ class ExportServiceImpl implements IExportService {
 
     final double maxVal = max(
       1.0,
-      max(
-        summary.totalIncome.toDouble(),
-        summary.totalExpense.toDouble(),
-      ),
+      max(summary.totalIncome.toDouble(), summary.totalExpense.toDouble()),
     );
 
     // Bar positions (centred in left/right halves of the chart area)
@@ -925,8 +920,10 @@ class ExportServiceImpl implements IExportService {
   ) {
     if (categories.isEmpty) return pw.SizedBox();
 
-    final totalAmount =
-        categories.fold<double>(0, (sum, cat) => sum + cat.totalAmount);
+    final totalAmount = categories.fold<double>(
+      0,
+      (sum, cat) => sum + cat.totalAmount,
+    );
 
     return pw.Column(
       crossAxisAlignment: pw.CrossAxisAlignment.start,
@@ -1023,11 +1020,7 @@ class ExportServiceImpl implements IExportService {
                   pw.Padding(
                     padding: const pw.EdgeInsets.all(4),
                     child: pw.Center(
-                      child: pw.Container(
-                        width: 10,
-                        height: 10,
-                        color: color,
-                      ),
+                      child: pw.Container(width: 10, height: 10, color: color),
                     ),
                   ),
                   pw.Padding(

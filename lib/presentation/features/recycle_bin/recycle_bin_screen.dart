@@ -14,15 +14,11 @@ class RecycleBinScreen extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.recycleBinTitle),
-      ),
+      appBar: AppBar(title: Text(l10n.recycleBinTitle)),
       body: state.when(
         data: (items) {
           if (items.isEmpty) {
-            return Center(
-              child: Text(l10n.recycleBinEmpty),
-            );
+            return Center(child: Text(l10n.recycleBinEmpty));
           }
 
           return ListView.builder(
@@ -131,9 +127,7 @@ class _TrashItemTile extends ConsumerWidget {
         '${l10n.recycleBinDaysRemaining(remainingDays)} • ${getTypeLabel()}',
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
-        style: TextStyle(
-          color: remainingDays <= 3 ? Colors.red : Colors.grey,
-        ),
+        style: TextStyle(color: remainingDays <= 3 ? Colors.red : Colors.grey),
       ),
       trailing: Row(
         mainAxisSize: MainAxisSize.min,

@@ -12,10 +12,7 @@ class TermsAndConditionsViewer extends StatelessWidget {
   /// Whether to initialize the viewer showing the Privacy Policy.
   final bool showPrivacyPolicy;
 
-  const TermsAndConditionsViewer({
-    super.key,
-    this.showPrivacyPolicy = false,
-  });
+  const TermsAndConditionsViewer({super.key, this.showPrivacyPolicy = false});
 
   @override
   Widget build(BuildContext context) {
@@ -163,9 +160,7 @@ class _LegalDocumentView extends StatelessWidget {
           rootBundle.loadString(assetPath).catchError((_) => fallbackContent),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
+          return const Center(child: CircularProgressIndicator());
         }
 
         final content = snapshot.data ?? fallbackContent;

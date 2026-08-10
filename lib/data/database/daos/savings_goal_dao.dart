@@ -10,12 +10,16 @@ class SavingsGoalDao extends DatabaseAccessor<AppDatabase>
   SavingsGoalDao(super.db);
 
   Future<List<SavingsGoalTableData>> getSavingsGoals() {
-    return (select(savingsGoals)..where((t) => t.isDeleted.equals(false)))
+    return (select(
+      savingsGoals,
+    )..where((t) => t.isDeleted.equals(false)))
         .get();
   }
 
   Stream<List<SavingsGoalTableData>> watchSavingsGoals() {
-    return (select(savingsGoals)..where((t) => t.isDeleted.equals(false)))
+    return (select(
+      savingsGoals,
+    )..where((t) => t.isDeleted.equals(false)))
         .watch();
   }
 
