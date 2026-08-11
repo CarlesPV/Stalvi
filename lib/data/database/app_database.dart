@@ -98,7 +98,7 @@ class AppDatabase extends _$AppDatabase {
 
   /// Bump this version whenever you add, modify, or remove tables.
   @override
-  int get schemaVersion => 11;
+  int get schemaVersion => 12;
 
   @override
   MigrationStrategy get migration {
@@ -230,6 +230,11 @@ class AppDatabase extends _$AppDatabase {
               automaticTransactions,
               automaticTransactions.labelId,
             );
+          }
+        }
+        if (from < 12) {
+          if (!createdTransactions) {
+            await m.addColumn(transactions, transactions.tagId);
           }
         }
 

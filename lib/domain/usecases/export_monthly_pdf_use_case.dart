@@ -1,10 +1,12 @@
 import '../entities/account.dart';
+import '../entities/tag.dart';
 import '../repositories/i_account_repository.dart';
 import '../repositories/i_budget_repository.dart';
 import '../repositories/i_category_repository.dart';
 import '../repositories/i_export_service.dart';
 import '../repositories/i_profile_repository.dart';
 import '../repositories/i_savings_goal_repository.dart';
+import '../repositories/i_tag_repository.dart';
 import '../repositories/i_transaction_repository.dart';
 import 'package:stalvi/core/l10n/app_localizations.dart';
 
@@ -27,6 +29,7 @@ class ExportMonthlyPdfUseCase {
   final IProfileRepository _profileRepository;
   final IAccountRepository _accountRepository;
   final ICategoryRepository _categoryRepository;
+  final ITagRepository? _tagRepository;
   final ITransactionRepository _transactionRepository;
   final IExchangeRateRepository _exchangeRateRepository;
   final GetPeriodSummaryUseCase _getPeriodSummaryUseCase;
@@ -40,6 +43,7 @@ class ExportMonthlyPdfUseCase {
     required IProfileRepository profileRepository,
     required IAccountRepository accountRepository,
     required ICategoryRepository categoryRepository,
+    ITagRepository? tagRepository,
     required ITransactionRepository transactionRepository,
     required IExchangeRateRepository exchangeRateRepository,
     required GetPeriodSummaryUseCase getPeriodSummaryUseCase,
@@ -51,6 +55,7 @@ class ExportMonthlyPdfUseCase {
   })  : _profileRepository = profileRepository,
         _accountRepository = accountRepository,
         _categoryRepository = categoryRepository,
+        _tagRepository = tagRepository,
         _transactionRepository = transactionRepository,
         _exchangeRateRepository = exchangeRateRepository,
         _getPeriodSummaryUseCase = getPeriodSummaryUseCase,
@@ -109,6 +114,9 @@ class ExportMonthlyPdfUseCase {
       ),
       _budgetRepository.getBudgets(),
       _savingsGoalRepository.getSavingsGoals(),
+      _tagRepository != null
+          ? _tagRepository.getAllTags()
+          : Future.value(<Tag>[]),
     ]);
 
     final accounts = results[0] as dynamic;
@@ -118,6 +126,7 @@ class ExportMonthlyPdfUseCase {
     final topIncomeCategories = results[4] as dynamic;
     final allBudgets = results[5] as List<Budget>;
     final allSavingsGoals = results[6] as List<SavingsGoal>;
+    final tags = results[7] as List<Tag>;
 
     // Fetch and filter transactions to target month
     final allTransactions =
@@ -184,6 +193,7 @@ class ExportMonthlyPdfUseCase {
       l10n: _l10n,
       accounts: accounts,
       categories: categories,
+      tags: tags,
       topExpenseCategories: topExpenseCategories,
       topIncomeCategories: topIncomeCategories,
       defaultCurrency: defaultCurrency,

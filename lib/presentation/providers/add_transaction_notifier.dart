@@ -325,6 +325,7 @@ class AddTransactionNotifier extends _$AddTransactionNotifier {
                   ? state.toAccountId
                   : null,
           categoryId: state.categoryId,
+          tagId: state.tagId,
           notes: trimmedNotes.isEmpty ? null : trimmedNotes,
           currency: state.currency,
         ),

@@ -1,29 +1,12 @@
-# Phase 59: Data Export Navigation, Asset Expansion, Legal Docs & Default Categories
+# Phase 60: Full Tags/Labels Integration & Category Deletion Polish
 
-## Context
-Project: Stalvi (Financial Control App)
-Architecture: Clean Architecture, Riverpod, Drift (SQLCipher)
-Current Phase Status: In Progress
-
-## Objectives
-- Integrate an export button in the Account Statistics view routing to the Data Management section (CSV/PDF export).
-- Expand UI assets: Add 15 new colors and 50 new icons for categories, plus 4 new icons for savings goals.
-- Ensure Terms and Conditions & Privacy Policy include robust liability exemptions and full legal compliance in 3 languages.
-- Update the default Drift database seed to include new default categories (Expenses: Pet, Personal Care, Sport; Income: Sale, Refund; Both: Investment).
-- Ensure all 3 languages (English, Spanish, Catalan) are fully supported across all new features.
-- Run and pass all tests, workflows, and CIs cleanly before updating documentation.
+## Objective
+Restore and fully integrate the tags/labels functionality for standard transactions across the entire app (Database, Domain, UI, Filters, and Exports). Enhance the category deletion workflow by adding visual cues (icon and color) to the re-assignment selector.
 
 ## Tasks
-- [ ] **Task 1: Export Navigation Button**
-  - Add an export button to the left of the date picker in account statistics.
-  - Implement routing to the Data Management view.
-- [ ] **Task 2: Asset Expansion (Colors & Icons)**
-  - Add 15 new color constants.
-  - Add 50 new icon options for Categories.
-  - Add 4 new icon options for Savings Goals.
-- [ ] **Task 3: Legal Documentation Review**
-  - Update ToS and Privacy Policy for compliance and liability exemptions in 3 languages.
-- [x] **Task 4: Default Categories, CI Validation & Docs**
-  - [x] Update Drift database initialization to include the new default categories.
-  - [x] Run `flutter analyze`, `flutter test`, and GitHub Actions workflows.
-  - [x] Update `roadmap.md`, `README.md`, and `.agents/memory/active-task.md`.
+- [x] **1. Database & Domain**: Bump `schemaVersion` to 12 in `app_database.dart`. Add `tag_id` (nullable) to `transaction_table.dart`. Update `Transaction` entity, `transaction_mapper.dart`, and migration logic.
+- [x] **2. Use Cases & Providers**: Update `AddTransactionParams` and `AddTransactionUseCase` to accept `tagId`. Ensure `AddTransactionNotifier.submit()` passes the `tagId`. Refactor `TransactionDao.watchFiltered` to filter using the new `tagId` column instead of the legacy `notes` LIKE query.
+- [x] **3. UI - Transactions**: Update `TransactionDetailsDialog` to show the tag/label (below Category) if it exists. Update `TransactionFilterSheet` to properly allow filtering by labels.
+- [x] **4. UI - Category Reassignment**: Update the category deletion dialog so the fallback/re-assignment selector displays the category's icon and color.
+- [x] **5. Exports & Backups**: Update `ExportServiceImpl` so CSV and PDF formats include the tag/label column. Update JSON backup mappings.
+- [x] **6. QA & Docs**: Ensure all tests pass. Update `roadmap.md` and `roadmap-summary.md` marking Phase 60 as complete. Support `ca`, `en`, and `es`.

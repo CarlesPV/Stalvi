@@ -38,6 +38,7 @@ class AddTransactionParams {
   final String? destinationSavingsGoalId;
 
   final String? categoryId;
+  final String? tagId;
   final String? notes;
   final String? currency;
 
@@ -50,6 +51,7 @@ class AddTransactionParams {
     this.destinationAccountId,
     this.destinationSavingsGoalId,
     this.categoryId,
+    this.tagId,
     this.notes,
     this.currency,
   });
@@ -310,6 +312,7 @@ class AddTransactionUseCase {
           type: TransactionType.transfer,
           accountId: params.accountId,
           categoryId: params.categoryId,
+          tagId: params.tagId,
           savingsGoalId: params.destinationSavingsGoalId,
           notes: sanitizedNotes,
           originalCurrency: originalCurrency,
@@ -357,6 +360,7 @@ class AddTransactionUseCase {
         type: TransactionType.transfer,
         accountId: params.accountId,
         categoryId: params.categoryId,
+        tagId: params.tagId,
         notes: sanitizedNotes,
         originalCurrency: originalCurrency,
         convertedAmount: convertedAmount,
@@ -374,6 +378,7 @@ class AddTransactionUseCase {
         type: TransactionType.transfer,
         accountId: params.destinationAccountId!,
         categoryId: params.categoryId,
+        tagId: params.tagId,
         notes: sanitizedNotes,
         originalCurrency: destinationAccount!.currency,
         convertedAmount: destConvertedAmount,
@@ -404,6 +409,7 @@ class AddTransactionUseCase {
       type: params.type,
       accountId: params.accountId,
       categoryId: params.categoryId,
+      tagId: params.tagId,
       notes: sanitizedNotes,
       originalCurrency: originalCurrency,
       convertedAmount: convertedAmount,

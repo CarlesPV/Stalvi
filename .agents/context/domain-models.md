@@ -48,6 +48,7 @@ The database relies on SQLite (via Drift) with SQLCipher for encryption.
 * `amount` (Integer - Stored in cents, e.g. 1000 for 10.00, must be positive)
 * `date` (DateTime)
 * `categoryId` (String/UUID/Optional)
+* `tagId` (String/UUID/Optional - Tag/Label ID)
 * `notes` (String/Optional)
 * `originalCurrency` (String)
 * `convertedAmount` (Integer/Optional)

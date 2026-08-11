@@ -303,6 +303,7 @@ class ImportServiceImpl implements IImportService {
                   type: _parseTransactionType(tx['type'] as String),
                   accountId: tx['account_id'] as String,
                   categoryId: Value(tx['category_id'] as String?),
+                  tagId: Value(tx['tag_id'] as String?),
                   savingsGoalId: Value(tx['savings_goal_id'] as String?),
                   notes: Value(tx['notes'] as String?),
                   originalCurrency: tx['original_currency'] as String,

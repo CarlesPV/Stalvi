@@ -86,6 +86,7 @@ Future<String> _seedTransaction(
   int amount = 1000,
   DateTime? date,
   String? categoryId,
+  String? tagId,
   String? notes,
   String currency = 'EUR',
   bool isDeleted = false,
@@ -100,6 +101,7 @@ Future<String> _seedTransaction(
           type: type,
           accountId: accountId,
           categoryId: drift.Value(categoryId),
+          tagId: drift.Value(tagId),
           notes: drift.Value(notes),
           originalCurrency: currency,
           isDeleted: drift.Value(isDeleted),
@@ -444,7 +446,7 @@ void main() {
   // ── tagId filter ────────────────────────────────────────────────────────────
 
   group('TransactionDao.watchFiltered(tagId:)', () {
-    test('returns transactions whose notes contain the tag name', () async {
+    test('returns transactions matching tagId', () async {
       await _seedProfile(database, 'u1');
       await _seedAccount(database, id: 'acc1', userId: 'u1');
       await _seedTag(database, id: 'tag1', name: 'groceries');
@@ -453,7 +455,8 @@ void main() {
         database,
         id: 't_tagged',
         accountId: 'acc1',
-        notes: 'Weekly #groceries run',
+        tagId: 'tag1',
+        notes: 'Weekly groceries run',
       );
       await _seedTransaction(
         database,
@@ -483,7 +486,7 @@ void main() {
       },
     );
 
-    test('is case-insensitive (SQLite LIKE default behaviour)', () async {
+    test('ignores notes and only matches tagId', () async {
       await _seedProfile(database, 'u1');
       await _seedAccount(database, id: 'acc1', userId: 'u1');
       await _seedTag(database, id: 'tag1', name: 'RENT');
@@ -492,14 +495,13 @@ void main() {
         database,
         id: 't1',
         accountId: 'acc1',
-        notes: 'Monthly rent payment',
+        notes: 'Monthly RENT payment',
       );
 
-      // Tag name is "RENT" but note has lowercase "rent" — LIKE is case-insensitive.
       final stream = dao.watchFiltered(tagId: 'tag1');
       final result = await stream.first;
 
-      expect(result.length, 1);
+      expect(result, isEmpty);
     });
   });
 

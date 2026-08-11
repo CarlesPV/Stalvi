@@ -78,6 +78,7 @@ Future<void> _insertTransaction(
   required int amountCents,
   required DateTime date,
   String? categoryId,
+  String? tagId,
   String? notes,
   String currency = 'EUR',
   bool isDeleted = false,
@@ -91,6 +92,7 @@ Future<void> _insertTransaction(
           type: type,
           accountId: accountId,
           categoryId: drift.Value(categoryId),
+          tagId: drift.Value(tagId),
           notes: drift.Value(notes),
           originalCurrency: currency,
           isDeleted: drift.Value(isDeleted),
@@ -518,12 +520,12 @@ void main() {
   });
 
   // ──────────────────────────────────────────────────────────────────────────
-  // Tag filter (notes substring)
+  // Tag filter
   // ──────────────────────────────────────────────────────────────────────────
 
   group('watchFilteredTransactions – tag filter', () {
     test(
-      'returns transactions whose notes contain the tag name (resolved from tagId)',
+      'returns transactions matching tagId (exact match)',
       () async {
         await _seedTag(database, id: 'tag-food', name: '#food');
 
@@ -534,7 +536,8 @@ void main() {
           type: TransactionType.expense,
           amountCents: 200,
           date: DateTime(2024, 10, 1),
-          notes: 'Groceries #food shopping',
+          tagId: 'tag-food',
+          notes: 'Groceries shopping',
         );
         await _insertTransaction(
           database,
@@ -543,7 +546,7 @@ void main() {
           type: TransactionType.expense,
           amountCents: 300,
           date: DateTime(2024, 10, 2),
-          notes: 'Bus ticket #transport',
+          notes: 'Bus ticket #transport', // Note contains tag but tagId is null
         );
         await _insertTransaction(
           database,
@@ -565,7 +568,7 @@ void main() {
       },
     );
 
-    test('tag match is case-insensitive (SQLite LIKE default)', () async {
+    test('ignores notes and only matches tagId', () async {
       await _seedTag(database, id: 'tag-health', name: '#health');
 
       await _insertTransaction(
@@ -583,11 +586,10 @@ void main() {
       );
       final result = await stream.first;
 
-      expect(result.length, 1);
-      expect(result.first.id, 't1');
+      expect(result, isEmpty);
     });
 
-    test('returns empty when no notes contain the tag name', () async {
+    test('returns empty when no transaction has the tagId', () async {
       await _seedTag(database, id: 'tag-gym', name: '#gym');
 
       await _insertTransaction(
@@ -829,7 +831,7 @@ void main() {
     });
 
     test(
-      'type + category + date range + amount range + currency: all six filters',
+      'type + category + date range + amount range + currency + tag: all six filters',
       () async {
         // The single transaction that satisfies all six filters.
         await _insertTransaction(
@@ -841,6 +843,7 @@ void main() {
           date: DateTime(2024, 9, 15),
           categoryId: 'cat-food',
           currency: 'EUR',
+          tagId: 'tag-food',
           notes: 'Supermarket #food',
         );
 

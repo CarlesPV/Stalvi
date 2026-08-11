@@ -488,6 +488,7 @@ final exportTransactionsCsvUseCaseProvider =
     profileRepository: ref.watch(profileRepositoryProvider),
     accountRepository: ref.watch(accountRepositoryProvider),
     categoryRepository: ref.watch(categoryRepositoryProvider),
+    tagRepository: ref.watch(tagRepositoryProvider),
     transactionRepository: ref.watch(transactionRepositoryProvider),
     exportService: ref.watch(exportServiceProvider),
   );
@@ -503,6 +504,7 @@ final exportMonthlyPdfUseCaseProvider = Provider<ExportMonthlyPdfUseCase>((
     profileRepository: ref.watch(profileRepositoryProvider),
     accountRepository: ref.watch(accountRepositoryProvider),
     categoryRepository: ref.watch(categoryRepositoryProvider),
+    tagRepository: ref.watch(tagRepositoryProvider),
     transactionRepository: ref.watch(transactionRepositoryProvider),
     exchangeRateRepository: ref.watch(exchangeRateRepositoryProvider),
     getPeriodSummaryUseCase: ref.watch(getPeriodSummaryUseCaseProvider),

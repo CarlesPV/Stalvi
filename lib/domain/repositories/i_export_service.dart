@@ -31,6 +31,7 @@ abstract class IExportService {
     List<Transaction> transactions, {
     List<Account> accounts = const [],
     List<Category> categories = const [],
+    List<Tag> tags = const [],
   });
 
   Future<ExportResult> generateEncryptedJson({
@@ -57,6 +58,7 @@ abstract class IExportService {
     required AppLocalizations l10n,
     List<Account> accounts = const [],
     List<Category> categories = const [],
+    List<Tag> tags = const [],
     List<CategoryStatistic> topExpenseCategories = const [],
     List<CategoryStatistic> topIncomeCategories = const [],
     String defaultCurrency = 'EUR',

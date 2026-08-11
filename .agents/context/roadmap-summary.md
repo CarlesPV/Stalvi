@@ -766,4 +766,6 @@ This document lists the completed phases of the Stalvi development roadmap, prov
 - Implemented cascading soft-delete/restore for Savings Goals with balance refunds.
 - Added full Unicode font support in PDF exports using Roboto font assets to fix currency symbol placeholders.
 - Updated Terms and Privacy policy legal markdown assets for Catalan, English, and Spanish.
+- Integrated export navigation in statistics, expanded category colors (15) & icons (50), seeded new default categories (Phase 59).
+- Restored & integrated tags/labels functionality across standard transactions (DB, Domain, UI, Filters, Exports) and polished category deletion dialog with visual cues (Phase 60).
 - Achieved a completely clean static analysis check with 0 issues on `flutter analyze` and 100% test pass rate.

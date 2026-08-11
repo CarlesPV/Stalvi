@@ -98,14 +98,16 @@ class ExportServiceImpl implements IExportService {
     List<Transaction> transactions, {
     List<Account> accounts = const [],
     List<Category> categories = const [],
+    List<Tag> tags = const [],
   }) async {
     try {
       final buffer = StringBuffer();
       final accountMap = {for (final a in accounts) a.id: a.name};
       final categoryMap = {for (final c in categories) c.id: c.name};
+      final tagMap = {for (final t in tags) t.id: t.name};
 
       buffer.writeln(
-        'Date,Type,Account,Category,Amount,Currency,Notes,converted_amount,exchange_rate,exchange_rate_snapshot,id,created_at,modified_at,transfer_id',
+        'Date,Type,Account,Category,Label,Amount,Currency,Notes,converted_amount,exchange_rate,exchange_rate_snapshot,id,created_at,modified_at,transfer_id',
       );
 
       final dateFormat = DateFormat('yyyy-MM-dd');
@@ -120,6 +122,9 @@ class ExportServiceImpl implements IExportService {
               tx.categoryId != null
                   ? (categoryMap[tx.categoryId!] ?? tx.categoryId!)
                   : '',
+            ),
+            _csvField(
+              tx.tagId != null ? (tagMap[tx.tagId!] ?? tx.tagId!) : '',
             ),
             _csvField(_centsToDecimal(tx.amount)),
             _csvField(tx.originalCurrency),
@@ -285,6 +290,7 @@ class ExportServiceImpl implements IExportService {
     required AppLocalizations l10n,
     List<Account> accounts = const [],
     List<Category> categories = const [],
+    List<Tag> tags = const [],
     List<CategoryStatistic> topExpenseCategories = const [],
     List<CategoryStatistic> topIncomeCategories = const [],
     String defaultCurrency = 'EUR',
@@ -304,6 +310,7 @@ class ExportServiceImpl implements IExportService {
       await initializeDateFormatting(l10n.localeName);
       final accountMap = {for (final a in accounts) a.id: a.name};
       final categoryMap = {for (final c in categories) c.id: c.name};
+      final tagMap = {for (final t in tags) t.id: t.name};
 
       final monthLabel =
           customMonthLabel ?? DateFormat.yMMMM(l10n.localeName).format(month);
@@ -391,6 +398,7 @@ class ExportServiceImpl implements IExportService {
                 l10n.filterSheetType,
                 l10n.labelAccount,
                 l10n.labelCategory,
+                l10n.labelTag,
                 l10n.labelAmount,
                 l10n.labelCurrency,
                 l10n.labelNotes,
@@ -408,9 +416,10 @@ class ExportServiceImpl implements IExportService {
                 1: pw.Alignment.center,
                 2: pw.Alignment.centerLeft,
                 3: pw.Alignment.centerLeft,
-                4: pw.Alignment.centerRight,
-                5: pw.Alignment.center,
-                6: pw.Alignment.centerLeft,
+                4: pw.Alignment.centerLeft,
+                5: pw.Alignment.centerRight,
+                6: pw.Alignment.center,
+                7: pw.Alignment.centerLeft,
               },
               data: transactions.map((tx) {
                 // For transfers: show "Origin → Destination" in the account column
@@ -437,6 +446,7 @@ class ExportServiceImpl implements IExportService {
                   tx.categoryId != null
                       ? (categoryMap[tx.categoryId!] ?? '')
                       : '-',
+                  tx.tagId != null ? (tagMap[tx.tagId!] ?? tx.tagId!) : '-',
                   '${_getCurrencySymbol(tx.originalCurrency)} ${_centsToDecimal(tx.amount, l10n.localeName)}',
                   tx.originalCurrency,
                   tx.notes ?? '-',
@@ -591,6 +601,7 @@ class ExportServiceImpl implements IExportService {
         'type': tx.type.name,
         'account_id': tx.accountId,
         'category_id': tx.categoryId,
+        'tag_id': tx.tagId,
         'savings_goal_id': tx.savingsGoalId,
         'notes': tx.notes,
         'original_currency': tx.originalCurrency,

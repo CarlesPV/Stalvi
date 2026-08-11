@@ -69,6 +69,7 @@ Transaction _makeTransaction({
   TransactionType type = TransactionType.expense,
   String accountId = 'acc-001',
   String? categoryId = 'cat-001',
+  String? tagId,
   String? notes = 'Groceries',
   String currency = 'EUR',
 }) {
@@ -80,6 +81,7 @@ Transaction _makeTransaction({
     type: type,
     accountId: accountId,
     categoryId: categoryId,
+    tagId: tagId,
     notes: notes,
     originalCurrency: currency,
     createdAt: now,
@@ -156,6 +158,8 @@ void main() {
         // Assert
         expect(lines.first, contains('Date'));
         expect(lines.first, contains('Type'));
+        expect(lines.first, contains('Category'));
+        expect(lines.first, contains('Label'));
         expect(lines.first, contains('Amount'));
         expect(lines.first, contains('exchange_rate_snapshot'));
         expect(lines.first, contains('transfer_id'));
@@ -284,6 +288,29 @@ void main() {
 
       // Assert
       expect(lines.length, equals(1)); // only header
+    });
+
+    test('resolves tagId to tag name in CSV export', () async {
+      // Arrange
+      final tag = Tag(
+        id: 'tag-100',
+        name: 'Personal',
+        createdAt: DateTime(2025, 1, 1),
+        modifiedAt: DateTime(2025, 1, 1),
+      );
+      final tx = _makeTransaction(tagId: 'tag-100');
+
+      // Act
+      final result = await service.generateCsv(
+        [tx],
+        accounts: _emptyAccounts,
+        categories: _emptyCategories,
+        tags: [tag],
+      );
+      final csvString = utf8.decode(result.bytes);
+
+      // Assert
+      expect(csvString, contains('Personal'));
     });
   });
 
@@ -421,6 +448,7 @@ void main() {
             (payload['transactions'] as List).first as Map<String, dynamic>;
         expect(firstTx['id'], equals('tx-001'));
         expect(firstTx['amount'], equals(5000));
+        expect(firstTx.containsKey('tag_id'), isTrue);
       },
     );
 

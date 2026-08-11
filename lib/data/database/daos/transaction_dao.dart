@@ -87,6 +87,11 @@ class TransactionDao extends DatabaseAccessor<AppDatabase>
       conditions = conditions & t.originalCurrency.equals(currency);
     }
 
+    // ── Tag ────────────────────────────────────────────────────────────────────
+    if (tagId != null) {
+      conditions = conditions & t.tagId.equals(tagId);
+    }
+
     query
       ..where((_) => conditions)
       ..orderBy([
@@ -94,41 +99,7 @@ class TransactionDao extends DatabaseAccessor<AppDatabase>
         (t) => OrderingTerm(expression: t.createdAt, mode: OrderingMode.desc),
       ]);
 
-    // ── Tag (resolved via subquery + LIKE on notes) ────────────────────────────
-    // If tagId is provided we return a stream that first resolves the tag name,
-    // then layers a LIKE filter on the notes column. Because Drift streams are
-    // reactive but subqueries must run asynchronously, we use asyncExpand to
-    // flatten the two futures into a single stream.
-    if (tagId != null) {
-      return _watchFilteredWithTag(query, tagId);
-    }
-
     return query.watch().map((rows) => rows.cast<Transaction>().toList());
-  }
-
-  /// Fetches the [Tag] with [tagId], extracts its name, applies a LIKE filter
-  /// on the notes column, and returns a reactive stream.
-  ///
-  /// If the tag does not exist the stream emits an empty list and completes.
-  Stream<List<Transaction>> _watchFilteredWithTag(
-    SimpleSelectStatement<$TransactionsTable, Transaction> baseQuery,
-    String tagId,
-  ) async* {
-    final tag = await (select(
-      tags,
-    )..where((tg) => tg.id.equals(tagId)))
-        .getSingleOrNull();
-
-    if (tag == null) {
-      yield [];
-      return;
-    }
-
-    // Apply LIKE filter: '%tagName%' matches the tag name inside notes.
-    // SQLite LIKE is case-insensitive for ASCII characters by default.
-    baseQuery.where((t) => t.notes.like('%${tag.name}%'));
-
-    yield* baseQuery.watch().map((rows) => rows.cast<Transaction>().toList());
   }
 
   // ── Savings Goal Cascade ──────────────────────────────────────────────────

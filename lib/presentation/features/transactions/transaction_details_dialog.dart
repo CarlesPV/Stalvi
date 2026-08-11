@@ -10,6 +10,7 @@ import 'package:stalvi/domain/entities/transaction.dart';
 import 'package:stalvi/domain/entities/transaction_type.dart';
 import '../../providers/repository_providers.dart';
 import '../../providers/statistics_providers.dart';
+import 'package:stalvi/domain/entities/tag.dart';
 
 import 'package:stalvi/core/utils/icon_helper.dart';
 
@@ -117,6 +118,17 @@ class TransactionDetailsDialog extends ConsumerWidget {
       for (final c in categories) {
         if (c.id == transaction.categoryId) {
           category = c;
+          break;
+        }
+      }
+    }
+
+    final tags = ref.watch(tagsListProvider).value ?? [];
+    Tag? tag;
+    if (transaction.tagId != null) {
+      for (final t in tags) {
+        if (t.id == transaction.tagId) {
+          tag = t;
           break;
         }
       }
@@ -276,6 +288,23 @@ class TransactionDetailsDialog extends ConsumerWidget {
                       iconColor: category != null
                           ? _parseHexColor(category.color)
                           : colorScheme.onSurfaceVariant,
+                    ),
+                  ],
+                  if (tag != null) ...[
+                    Divider(
+                      height: 1,
+                      color: colorScheme.outline.withValues(alpha: 0.08),
+                    ),
+                    _DetailRow(
+                      label: l10n.labelTag,
+                      valueWidget: Text(
+                        tag.name,
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      icon: Icons.local_offer_rounded,
+                      iconColor: colorScheme.onSurfaceVariant,
                     ),
                   ],
                   Divider(

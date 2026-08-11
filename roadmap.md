@@ -420,6 +420,11 @@
   - [x] Update database seeding logic for new default categories (Pet, Personal Care, Sport, Sale, Refund, Investment).
   - [x] Ensure CI/CD workflows run securely and flawlessly with 100% test pass rate.
 
+- [x] **Phase 60: Full Tags/Labels Integration & Category Deletion Polish** (Referred to as Phase 59 in active task)
+  - [x] Restored and integrated tags/labels functionality for standard transactions (Database, Domain, UI, Filters, Exports).
+  - [x] Enhanced category deletion workflow by adding icon and color support to the re-assignment selector.
+  - [x] Fixed all UI layout deprecations and ensured 100% test passing rate.
+  - [x] Verified full i18n localization keys completeness for CA, ES, and EN.
 
 ---
 

@@ -192,7 +192,22 @@ class _CategoriesTab extends ConsumerWidget {
                           .map(
                             (c) => DropdownMenuItem(
                               value: c.id,
-                              child: Text(c.name),
+                              child: Row(
+                                children: [
+                                  CircleAvatar(
+                                    radius: 12,
+                                    backgroundColor:
+                                        _parseCategoryHexColor(c.color),
+                                    child: Icon(
+                                      CategoryIconPicker.iconDataForKey(c.icon),
+                                      size: 14,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Text(c.name),
+                                ],
+                              ),
                             ),
                           )
                           .toList(),

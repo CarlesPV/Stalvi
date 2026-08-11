@@ -178,6 +178,7 @@ void main() {
             "type": "expense",
             "account_id": "acc-1",
             "category_id": "cat-1",
+            "tag_id": "tag-1",
             "savings_goal_id": null,
             "notes": "Lunch",
             "original_currency": "EUR",
@@ -229,6 +230,7 @@ void main() {
       expect(transactions.length, 1);
       expect(transactions.first.id, 'tx-1');
       expect(transactions.first.notes, 'Lunch');
+      expect(transactions.first.tagId, 'tag-1');
       expect(transactions.first.savingsGoalId, isNull);
     });
 
