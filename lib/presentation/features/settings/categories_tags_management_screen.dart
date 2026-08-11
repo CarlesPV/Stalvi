@@ -108,22 +108,16 @@ class _CategoriesTab extends ConsumerWidget {
           duration: const Duration(seconds: 4),
         ),
       );
-      final replacements = await ref
-          .read(deleteAndReassignCategoryUseCaseProvider)
-          .getReplacementCategories(category);
       if (!context.mounted) return;
-      _showReassignDialog(context, ref, category, replacements);
+      _showReassignDialog(context, ref, category);
       return;
     }
 
     if (!context.mounted) return;
 
     if (inUse) {
-      final replacements = await ref
-          .read(deleteAndReassignCategoryUseCaseProvider)
-          .getReplacementCategories(category);
       if (!context.mounted) return;
-      _showReassignDialog(context, ref, category, replacements);
+      _showReassignDialog(context, ref, category);
     } else {
       final confirm = await showDialog<bool>(
         context: context,
@@ -156,11 +150,11 @@ class _CategoriesTab extends ConsumerWidget {
     BuildContext context,
     WidgetRef ref,
     Category categoryToDel,
-    List<Category> replacementCategories,
   ) {
     final l10n = AppLocalizations.of(context)!;
     String? selectedNewCategoryId;
-    final otherCategories = replacementCategories;
+    final otherCategories =
+        ref.read(replacementCategoriesProvider(categoryToDel));
 
     if (otherCategories.isEmpty) {
       ScaffoldMessenger.of(

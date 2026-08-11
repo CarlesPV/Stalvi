@@ -954,7 +954,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
     // Filter categories: match transaction type (income vs expense)
     final filteredCategories = categories.where((c) {
       if (c.associatedType == null) return true; // neutral category
-      if (c.associatedType == CategoryType.both) return true;
+
       if (type == TransactionType.income &&
           c.associatedType == CategoryType.income) {
         return true;

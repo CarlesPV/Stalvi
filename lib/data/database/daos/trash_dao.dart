@@ -71,6 +71,10 @@ class TrashDao extends DatabaseAccessor<AppDatabase> with _$TrashDaoMixin {
           type: TrashItemType.category,
           daysRemaining: 30 - now.difference(c.modifiedAt).inDays,
           deletedAt: c.modifiedAt,
+          metadata: {
+            'icon': c.icon,
+            'color': c.color,
+          },
         ),
       );
     }
@@ -88,6 +92,10 @@ class TrashDao extends DatabaseAccessor<AppDatabase> with _$TrashDaoMixin {
           type: TrashItemType.account,
           daysRemaining: 30 - now.difference(a.modifiedAt).inDays,
           deletedAt: a.modifiedAt,
+          metadata: {
+            'icon': a.icon,
+            'color': a.color,
+          },
         ),
       );
     }
@@ -124,6 +132,10 @@ class TrashDao extends DatabaseAccessor<AppDatabase> with _$TrashDaoMixin {
           daysRemaining:
               30 - now.difference(s.deletedAt ?? s.modifiedAt).inDays,
           deletedAt: s.deletedAt ?? s.modifiedAt,
+          metadata: {
+            'icon': s.icon,
+            'color': s.color,
+          },
         ),
       );
     }

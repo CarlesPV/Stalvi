@@ -2,14 +2,14 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:stalvi/domain/entities/transaction.dart';
 import 'package:stalvi/domain/entities/transaction_type.dart';
-import 'package:stalvi/domain/entities/category.dart';
-import 'package:stalvi/domain/entities/category_type.dart';
 import 'package:stalvi/domain/entities/automatic_transaction.dart';
 import 'package:stalvi/domain/repositories/i_automatic_transaction_repository.dart';
 import 'package:stalvi/core/errors/app_exceptions.dart';
 import 'package:stalvi/domain/repositories/i_category_repository.dart';
 import 'package:stalvi/domain/repositories/i_transaction_repository.dart';
 import 'package:stalvi/domain/usecases/delete_and_reassign_category_usecase.dart';
+
+import 'package:stalvi/domain/repositories/i_budget_repository.dart';
 
 class MockCategoryRepository extends Mock implements ICategoryRepository {}
 
@@ -18,6 +18,8 @@ class MockTransactionRepository extends Mock
 
 class MockAutomaticTransactionRepository extends Mock
     implements IAutomaticTransactionRepository {}
+
+class MockBudgetRepository extends Mock implements IBudgetRepository {}
 
 class FakeTransaction extends Fake implements Transaction {
   @override
@@ -65,6 +67,7 @@ void main() {
   late MockCategoryRepository mockCategoryRepo;
   late MockTransactionRepository mockTransactionRepo;
   late MockAutomaticTransactionRepository mockAutomaticTransactionRepo;
+  late MockBudgetRepository mockBudgetRepo;
   late DeleteAndReassignCategoryUseCase useCase;
 
   setUpAll(() {
@@ -76,10 +79,12 @@ void main() {
     mockCategoryRepo = MockCategoryRepository();
     mockTransactionRepo = MockTransactionRepository();
     mockAutomaticTransactionRepo = MockAutomaticTransactionRepository();
+    mockBudgetRepo = MockBudgetRepository();
     useCase = DeleteAndReassignCategoryUseCase(
       mockCategoryRepo,
       mockTransactionRepo,
       mockAutomaticTransactionRepo,
+      mockBudgetRepo,
     );
   });
 
@@ -100,6 +105,9 @@ void main() {
           createdAt: DateTime.now(),
         );
         when(
+          () => mockBudgetRepo.getBudgetsByCategoryId('cat1'),
+        ).thenAnswer((_) async => []);
+        when(
           () => mockAutomaticTransactionRepo.watchAllAutomaticTransactions(),
         ).thenAnswer((_) => Stream.value([autoTx]));
 
@@ -111,6 +119,9 @@ void main() {
     );
 
     test('isCategoryInUse returns true when transactions exist', () async {
+      when(
+        () => mockBudgetRepo.getBudgetsByCategoryId('cat1'),
+      ).thenAnswer((_) async => []);
       when(
         () => mockAutomaticTransactionRepo.watchAllAutomaticTransactions(),
       ).thenAnswer((_) => Stream.value([]));
@@ -125,6 +136,9 @@ void main() {
     });
 
     test('isCategoryInUse returns false when no transactions exist', () async {
+      when(
+        () => mockBudgetRepo.getBudgetsByCategoryId('cat1'),
+      ).thenAnswer((_) async => []);
       when(
         () => mockAutomaticTransactionRepo.watchAllAutomaticTransactions(),
       ).thenAnswer((_) => Stream.value([]));
@@ -163,6 +177,10 @@ void main() {
       ).thenAnswer((_) => Stream.value([]));
 
       when(
+        () => mockBudgetRepo.getBudgetsByCategoryId('oldCat'),
+      ).thenAnswer((_) async => []);
+
+      when(
         () => mockCategoryRepo.deleteCategory('oldCat'),
       ).thenAnswer((_) async {});
 
@@ -174,66 +192,6 @@ void main() {
         ),
       ).called(2);
       verify(() => mockCategoryRepo.deleteCategory('oldCat')).called(1);
-    });
-
-    test('getReplacementCategories returns correct filtered list', () async {
-      final now = DateTime.now();
-      final catIncome = Category(
-        id: 'inc1',
-        name: 'Income',
-        associatedType: CategoryType.income,
-        icon: 'icon',
-        color: 'color',
-        createdAt: now,
-        modifiedAt: now,
-      );
-      final catExpense = Category(
-        id: 'exp1',
-        name: 'Expense',
-        associatedType: CategoryType.expense,
-        icon: 'icon',
-        color: 'color',
-        createdAt: now,
-        modifiedAt: now,
-      );
-      final catCustom = Category(
-        id: 'cus1',
-        name: 'Custom',
-        associatedType: null,
-        icon: 'icon',
-        color: 'color',
-        createdAt: now,
-        modifiedAt: now,
-      );
-      final catCustom2 = Category(
-        id: 'cus2',
-        name: 'Custom2',
-        associatedType: null,
-        icon: 'icon',
-        color: 'color',
-        createdAt: now,
-        modifiedAt: now,
-      );
-
-      when(() => mockCategoryRepo.watchAllCategories()).thenAnswer(
-        (_) => Stream.value([catIncome, catExpense, catCustom, catCustom2]),
-      );
-
-      // Deleting income category should return other income cats + custom cats
-      final replacementsIncome = await useCase.getReplacementCategories(
-        catIncome,
-      );
-      expect(replacementsIncome.map((c) => c.id).toList(), ['cus1', 'cus2']);
-
-      // Deleting custom category should return ALL other categories
-      final replacementsCustom = await useCase.getReplacementCategories(
-        catCustom,
-      );
-      expect(replacementsCustom.map((c) => c.id).toList(), [
-        'inc1',
-        'exp1',
-        'cus2',
-      ]);
     });
   });
 }

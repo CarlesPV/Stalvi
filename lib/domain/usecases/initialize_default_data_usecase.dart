@@ -172,7 +172,7 @@ class InitializeDefaultDataUseCase {
         'key': 'Investments',
         'icon': 'show_chart',
         'color': '#607D8B',
-        'type': CategoryType.both,
+        'type': null,
       },
       {
         'id': 'c3b07384-d113-4c56-bf56-f0279d813813',
@@ -223,7 +223,7 @@ class InitializeDefaultDataUseCase {
       final key = config['key'] as String;
       final icon = config['icon'] as String;
       final color = config['color'] as String;
-      final type = config['type'] as CategoryType;
+      final type = config['type'] as CategoryType?;
       final localizedName = translations[key]!;
 
       // 1. Check if the category exists by stable ID

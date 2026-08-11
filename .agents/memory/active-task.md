@@ -1,12 +1,10 @@
-# Phase 60: Full Tags/Labels Integration & Category Deletion Polish
+# Phase 61: Category Reassignment Logic & PDF Export Polish
 
 ## Objective
-Restore and fully integrate the tags/labels functionality for standard transactions across the entire app (Database, Domain, UI, Filters, and Exports). Enhance the category deletion workflow by adding visual cues (icon and color) to the re-assignment selector.
+Convert the "Investment" category to function as a custom category, eliminating the "both" category type. Refine category reassignment logic during deletion to strictly filter by type (matching type + custom categories). Improve PDF export styling by centering specific column data.
 
 ## Tasks
-- [x] **1. Database & Domain**: Bump `schemaVersion` to 12 in `app_database.dart`. Add `tag_id` (nullable) to `transaction_table.dart`. Update `Transaction` entity, `transaction_mapper.dart`, and migration logic.
-- [x] **2. Use Cases & Providers**: Update `AddTransactionParams` and `AddTransactionUseCase` to accept `tagId`. Ensure `AddTransactionNotifier.submit()` passes the `tagId`. Refactor `TransactionDao.watchFiltered` to filter using the new `tagId` column instead of the legacy `notes` LIKE query.
-- [x] **3. UI - Transactions**: Update `TransactionDetailsDialog` to show the tag/label (below Category) if it exists. Update `TransactionFilterSheet` to properly allow filtering by labels.
-- [x] **4. UI - Category Reassignment**: Update the category deletion dialog so the fallback/re-assignment selector displays the category's icon and color.
-- [x] **5. Exports & Backups**: Update `ExportServiceImpl` so CSV and PDF formats include the tag/label column. Update JSON backup mappings.
-- [x] **6. QA & Docs**: Ensure all tests pass. Update `roadmap.md` and `roadmap-summary.md` marking Phase 60 as complete. Support `ca`, `en`, and `es`.
+- [x] **1. Database & Domain (Investment Category & 'Both' Type Removal):** Update database seed logic so the "Investment" category is created as a custom user category rather than a system category of type "both". Remove the "both" category type from domain entities, enums, and DB schemas.
+- [x] **2. Domain & UI (Category Reassignment Filtering):** Modify the category deletion reassignment selector. If the deleted category is an income, show only income + custom categories. If expense, show expense + custom categories. If custom, show all categories.
+- [x] **3. UI / Export (PDF Styling):** Update the `ExportServiceImpl` (or PDF generation usecase) to center-align the text within the columns for: Transaction Type, Account, Category, and Tag.
+- [x] **4. QA, CI & Documentation:** Update unit and widget tests to reflect the removed "both" type and the new reassignment rules. Verify PDF generation tests. Ensure 100% CI pass rate, update `roadmap.md` and `roadmap-summary.md`. Ensure full compatibility with EN, ES, and CA translations.

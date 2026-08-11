@@ -410,11 +410,32 @@ final deleteAndReassignCategoryUseCaseProvider =
   final automaticTransactionRepo = ref.watch(
     automaticTransactionRepositoryProvider,
   );
+  final budgetRepo = ref.watch(budgetRepositoryProvider);
   return DeleteAndReassignCategoryUseCase(
     categoryRepo,
     transactionRepo,
     automaticTransactionRepo,
+    budgetRepo,
   );
+});
+
+/// Provides a filtered list of replacement categories when deleting a specific category.
+/// - If deleting EXPENSE -> options are EXPENSE or CUSTOM
+/// - If deleting INCOME -> options are INCOME or CUSTOM
+/// - If deleting CUSTOM -> ALL categories are options
+final replacementCategoriesProvider = Provider.family
+    .autoDispose<List<Category>, Category>((ref, categoryToDelete) {
+  final categories = ref.watch(categoriesListProvider).value ?? [];
+  return categories.where((c) {
+    if (c.id == categoryToDelete.id) return false;
+
+    // If deleting CUSTOM -> ALL categories are options
+    if (categoryToDelete.associatedType == null) return true;
+
+    // If deleting EXPENSE/INCOME -> options are same type OR CUSTOM
+    return c.associatedType == null ||
+        c.associatedType == categoryToDelete.associatedType;
+  }).toList();
 });
 
 /// Provides the [DeleteAndReassignTagUseCase] instance.
@@ -422,7 +443,12 @@ final deleteAndReassignTagUseCaseProvider =
     Provider<DeleteAndReassignTagUseCase>((ref) {
   final tagRepo = ref.watch(tagRepositoryProvider);
   final transactionRepo = ref.watch(transactionRepositoryProvider);
-  return DeleteAndReassignTagUseCase(tagRepo, transactionRepo);
+  final autoTransactionRepo = ref.watch(automaticTransactionRepositoryProvider);
+  return DeleteAndReassignTagUseCase(
+    tagRepo,
+    transactionRepo,
+    autoTransactionRepo,
+  );
 });
 
 /// Provides the [SoftDeleteSavingsGoalUseCase] instance.

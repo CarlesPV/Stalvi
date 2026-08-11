@@ -1,6 +1,6 @@
 import 'package:drift/drift.dart';
 
-enum CategoryAssociatedType { income, expense, both }
+enum CategoryAssociatedType { income, expense }
 
 @DataClassName('Category')
 class Categories extends Table {

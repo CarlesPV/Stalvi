@@ -426,6 +426,13 @@
   - [x] Fixed all UI layout deprecations and ensured 100% test passing rate.
   - [x] Verified full i18n localization keys completeness for CA, ES, and EN.
 
+- [x] **Phase 61: Category Reassignment Logic & PDF Export Polish**
+  - [x] Removed the 'both' category type from domain entities, enums, and DB schemas.
+  - [x] Updated default category seeding so the "Investment" category is created as a custom user category (null associatedType).
+  - [x] Refined category deletion reassignment filtering logic (Income shows Income + Custom, Expense shows Expense + Custom, Custom shows All).
+  - [x] Enhanced PDF export table alignment by centering the Transaction Type, Account, Category, and Tag columns.
+  - [x] Verified 100% test suite pass rate, 0 static analysis warnings, and full key parity across EN, ES, and CA translation files.
+
 ---
 
 ## Post-Launch / Maintenance

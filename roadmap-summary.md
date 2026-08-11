@@ -777,12 +777,38 @@ This document lists the completed phases of the Stalvi development roadmap, prov
 * **Objective:** Fix the 30-second PIN lockout countdown update on the authentication screen and reposition the text input cursor to the left side of the currency symbol in transaction forms.
 * **Accomplishments:**
   - **Dynamic PIN Lockout Timer:** Refactored `_PinLockoutContent` in `auth_screen.dart` to a `StatefulWidget` equipped with an internal `Timer.periodic`, ensuring the 30-second countdown ticks visually and dynamically down to zero.
-  - **Transaction Amount Input Alignment:** Updated `textAlign: TextAlign.left` on amount input text fields in `add_transaction_screen.dart` and `create_edit_automatic_transaction_screen.dart`.
-  - **Improved Cursor UX:** Placed the text cursor at the left side immediately following the currency symbol, avoiding visual confusion with decimal inputs.
+### Phase 59: Data Export Navigation, Asset Expansion, Legal Docs & Default Categories
+* **Completion Date:** August 9, 2026
+* **Objective:** Expand categories/icons/colors, update database seeding logic for default categories, update legal document liability disclaimers, and add statistics screen export navigation.
+* **Accomplishments:**
+  - **Export Navigation & Asset Expansion:** Integrated direct export navigation in statistics view, expanded category colors (15) and icons (50), plus 4 new savings goals icons.
+  - **Legal & Seeding:** Updated legal docs in EN, ES, CA and updated database seeding logic for new default categories.
 * **Verification:**
-  - 100% test pass rate across unit, widget, and integration tests, clean static analysis (`0` warnings/errors on `flutter analyze`).
+  - 100% clean static analysis (`flutter analyze` with 0 issues).
+
+### Phase 60: Full Tags/Labels Integration & Category Deletion Polish
+* **Completion Date:** August 10, 2026
+* **Objective:** Restore and integrate full tags/labels functionality for standard transactions and enhance category deletion reassignment UI.
+* **Accomplishments:**
+  - **Tags Integration:** Restored tags/labels functionality for standard transactions across Database, Domain, UI, Filters, and Exports.
+  - **Category Deletion Polish:** Enhanced category deletion workflow by adding icon and color support to the re-assignment selector.
+* **Verification:**
+  - 100% test pass rate across unit, widget, and integration tests, clean static analysis (`0` issues).
+
+### Phase 61: Category Reassignment Logic & PDF Export Polish
+* **Completion Date:** August 11, 2026
+* **Objective:** Remove 'both' category type, convert 'Investment' category to custom, enforce strict category reassignment type filtering on deletion, center-align PDF export table columns, and verify test and translation integrity.
+* **Accomplishments:**
+  - **Category Type & Seeding Refinement:** Removed the 'both' category type from entities, enums, and DB schemas. Updated default category seeding so 'Investment' is created as a custom category with null associatedType.
+  - **Reassignment Filtering:** Enforced type matching in category deletion reassignment selector (Income shows Income + Custom, Expense shows Expense + Custom, Custom shows All).
+  - **PDF Export Table Centering:** Center-aligned data columns for Transaction Type, Account, Category, and Tag in PDF export reports.
+* **Verification:**
+  - 100% test suite pass rate (557 tests passed), 0 static analysis warnings/infos (`flutter analyze`), and 100% key parity across EN, ES, and CA translation files (351 keys each).
 
 ## Recent Updates
+- Completed Phase 61 (Category Reassignment Logic & PDF Export Polish), removing the 'both' category type, converting 'Investment' category to custom, enforcing type-based reassignment filtering on category deletion, center-aligning PDF table columns, and ensuring 100% test pass rate and translation parity across EN, ES, and CA.
+- Completed Phase 60 (Full Tags/Labels Integration & Category Deletion Polish), restoring tags/labels functionality across Database, Domain, UI, Filters, and Exports.
+- Completed Phase 59 (Data Export Navigation, Asset Expansion, Legal Docs & Default Categories), expanding asset icons and colors, updating legal docs, and seeding default categories.
 - Completed Phase 58 (PIN Lockout Timer Update & Transaction Amount Field Cursor Alignment), making the 30-second PIN lockout timer tick down dynamically and aligning the amount entry cursor to the left of the currency symbol.
 - Finalized Phase 57 (Play Store Build Optimization & R8 Code/Resource Shrinking), eliminating overly broad ProGuard rules, restricting unused localization resources to EN/ES/CA, enabling R8 full mode, and verifying release App Bundle builds.
 - Completed Phase 56 (CI/CD Stabilization and Domain Refinement), upgrading workmanager, fixing Android CI Gradle builds, removing uncategorized fallbacks, and unifying category UI selectors.

@@ -32,4 +32,4 @@ dart format .
 flutter analyze --fatal-warnings --fatal-infos
 
 echo "🚀 Lanzando en el dispositivo (Modo: ${MODE#--})..."
-flutter run $MODE -d 25ba202f
+flutter run $MODE -d emulator-5554

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:stalvi/core/l10n/app_localizations.dart';
 import 'package:stalvi/core/utils/currency_formatter.dart';
 import 'package:stalvi/domain/entities/trash_item.dart';
+import 'package:stalvi/presentation/widgets/category_icon_picker.dart';
 import 'recycle_bin_provider.dart';
 
 class RecycleBinScreen extends ConsumerWidget {
@@ -113,10 +114,40 @@ class _TrashItemTile extends ConsumerWidget {
 
     final remainingDays = 30 - DateTime.now().difference(item.deletedAt).inDays;
 
+    Color getAvatarColor() {
+      if (item.metadata != null && item.metadata!['color'] != null) {
+        final colorStr = item.metadata!['color'] as String;
+        if (colorStr.isNotEmpty) {
+          return _parseTrashColor(colorStr);
+        }
+      }
+      return Colors.grey.shade300;
+    }
+
+    IconData getDisplayIcon() {
+      if (item.metadata != null && item.metadata!['icon'] != null) {
+        final iconStr = item.metadata!['icon'] as String;
+        if (iconStr.isNotEmpty) {
+          return CategoryIconPicker.iconDataForKey(iconStr);
+        }
+      }
+      return getIconForType();
+    }
+
+    Color getIconColor() {
+      if (item.metadata != null && item.metadata!['color'] != null) {
+        final colorStr = item.metadata!['color'] as String;
+        if (colorStr.isNotEmpty) {
+          return Colors.white;
+        }
+      }
+      return Colors.grey.shade700;
+    }
+
     return ListTile(
       leading: CircleAvatar(
-        backgroundColor: Colors.grey.shade300,
-        child: Icon(getIconForType(), color: Colors.grey.shade700),
+        backgroundColor: getAvatarColor(),
+        child: Icon(getDisplayIcon(), color: getIconColor()),
       ),
       title: Text(
         getFormattedTitle(),
@@ -177,5 +208,17 @@ class _TrashItemTile extends ConsumerWidget {
         ],
       ),
     );
+  }
+}
+
+Color _parseTrashColor(String hexString) {
+  if (hexString.isEmpty) return Colors.grey;
+  final buffer = StringBuffer();
+  if (hexString.length == 6 || hexString.length == 7) buffer.write('ff');
+  buffer.write(hexString.replaceFirst('#', ''));
+  try {
+    return Color(int.parse(buffer.toString(), radix: 16));
+  } catch (_) {
+    return Colors.grey;
   }
 }
