@@ -433,6 +433,11 @@
   - [x] Enhanced PDF export table alignment by centering the Transaction Type, Account, Category, and Tag columns.
   - [x] Verified 100% test suite pass rate, 0 static analysis warnings, and full key parity across EN, ES, and CA translation files.
 
+- [x] **Phase 62: Selectors UX Polish (Icons & Colors)**
+  - [x] Updated Account and Tag dropdown selectors in `TransactionFilterSheet` to display CircleAvatars containing their respective colors and icons, matching the Category selector visual design.
+  - [x] Enhanced the Account selector in `StatisticsScreen` to visually incorporate the account icon inside its color-coded CircleAvatar.
+  - [x] Verified static analysis with 0 errors, 0 warnings, and 0 infos (`flutter analyze`), ensuring 100% test suite pass rate.
+
 ---
 
 ## Post-Launch / Maintenance

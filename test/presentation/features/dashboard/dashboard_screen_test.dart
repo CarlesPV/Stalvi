@@ -359,7 +359,7 @@ void main() {
         final budgetsFinder = find.text('Budgets & Goals');
         final catTagsFinder = find.text('Categories & Tags');
         final profileSettingsFinder = find.text('Profile & Security');
-        final dataManagementFinder = find.text('Data Management');
+        final dataManagementFinder = find.text('Import & Export Data');
         final recycleBinFinder = find.text('Recycle Bin');
 
         expect(budgetsFinder, findsOneWidget);

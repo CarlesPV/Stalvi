@@ -97,7 +97,7 @@ void main() {
     await tester.pumpAndSettle();
 
     // Verify title
-    expect(find.text('Data Management'), findsOneWidget);
+    expect(find.text('Import & Export Data'), findsOneWidget);
 
     // Verify presence of list tiles
     expect(find.text('Export Encrypted Backup'), findsOneWidget);

@@ -98,6 +98,18 @@ class _TransactionFilterSheetState
     }
   }
 
+  Color _parseHexColor(String hex) {
+    if (hex.isEmpty) return Colors.grey;
+    final buffer = StringBuffer();
+    if (hex.length == 6 || hex.length == 7) buffer.write('ff');
+    buffer.write(hex.replaceFirst('#', ''));
+    try {
+      return Color(int.parse(buffer.toString(), radix: 16));
+    } catch (_) {
+      return Colors.grey;
+    }
+  }
+
   int get _activeFilterCount {
     int count = 0;
     if (_draft.accountId != null) count++;
@@ -288,7 +300,21 @@ class _TransactionFilterSheetState
                     ...accounts.map(
                       (acc) => DropdownMenuItem<String?>(
                         value: acc.id,
-                        child: Text(acc.name),
+                        child: Row(
+                          children: [
+                            CircleAvatar(
+                              radius: 12,
+                              backgroundColor: _parseHexColor(acc.color),
+                              child: Icon(
+                                getIconData(acc.icon),
+                                size: 14,
+                                color: Colors.white,
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            Text(acc.name),
+                          ],
+                        ),
                       ),
                     ),
                   ],
@@ -630,12 +656,18 @@ class _TransactionFilterSheetState
                         value: tag.id,
                         child: Row(
                           children: [
-                            Icon(
-                              Icons.label_rounded,
-                              size: 14,
-                              color: colorScheme.primary.withValues(alpha: 0.7),
+                            CircleAvatar(
+                              radius: 12,
+                              backgroundColor: colorScheme.primary.withValues(
+                                alpha: 0.15,
+                              ),
+                              child: Icon(
+                                Icons.label_rounded,
+                                size: 14,
+                                color: colorScheme.primary,
+                              ),
                             ),
-                            const SizedBox(width: 6),
+                            const SizedBox(width: 10),
                             Text(tag.name),
                           ],
                         ),

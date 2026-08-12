@@ -13,6 +13,7 @@ import '../../providers/repository_providers.dart';
 import '../../providers/statistics_providers.dart';
 import '../../widgets/empty_state_widget.dart';
 import '../settings/data_management_screen.dart';
+import 'package:stalvi/core/utils/icon_helper.dart';
 
 // ─── Main Screen ──────────────────────────────────────────────────────────────
 
@@ -191,12 +192,14 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
                                 value: acc.id,
                                 child: Row(
                                   children: [
-                                    Container(
-                                      width: 12,
-                                      height: 12,
-                                      decoration: BoxDecoration(
-                                        color: _parseHexColor(acc.color),
-                                        shape: BoxShape.circle,
+                                    CircleAvatar(
+                                      radius: 12,
+                                      backgroundColor:
+                                          _parseHexColor(acc.color),
+                                      child: Icon(
+                                        getIconData(acc.icon),
+                                        size: 14,
+                                        color: Colors.white,
                                       ),
                                     ),
                                     const SizedBox(width: 8),

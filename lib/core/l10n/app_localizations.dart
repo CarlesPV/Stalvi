@@ -1843,7 +1843,7 @@ abstract class AppLocalizations {
   /// No description provided for @settingsDataManagement.
   ///
   /// In en, this message translates to:
-  /// **'Data Management'**
+  /// **'Import & Export Data'**
   String get settingsDataManagement;
 
   /// No description provided for @settingsLanguage.

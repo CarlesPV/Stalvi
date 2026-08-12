@@ -966,7 +966,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get settingsAutomaticTransactions => 'Transacciones Automáticas';
 
   @override
-  String get settingsDataManagement => 'Gestión de Datos';
+  String get settingsDataManagement => 'Importar y Exportar Datos';
 
   @override
   String get settingsLanguage => 'Idioma';

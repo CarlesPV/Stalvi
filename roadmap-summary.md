@@ -805,7 +805,17 @@ This document lists the completed phases of the Stalvi development roadmap, prov
 * **Verification:**
   - 100% test suite pass rate (557 tests passed), 0 static analysis warnings/infos (`flutter analyze`), and 100% key parity across EN, ES, and CA translation files (351 keys each).
 
+### Phase 62: Selectors UX Polish (Icons & Colors)
+* **Completion Date:** August 12, 2026
+* **Objective:** Update account and tag dropdown selectors across filters and statistics screens to visually display their assigned icons and color accents inside CircleAvatars for UI design consistency.
+* **Accomplishments:**
+  - **Filter Sheet Selectors:** Updated account and tag `DropdownMenuItem` elements in `TransactionFilterSheet` to display CircleAvatars with color-coded backgrounds and specific icons.
+  - **Statistics Screen Account Selector:** Updated the account selector dropdown in `StatisticsScreen` to include the account icon inside its color circle avatar.
+* **Verification:**
+  - 100% test suite pass rate, 0 errors, 0 warnings, and 0 infos on static analysis (`flutter analyze`).
+
 ## Recent Updates
+- Completed Phase 62 (Selectors UX Polish (Icons & Colors)), updating account and tag selectors in filters and statistics screens to display their respective colors and icons.
 - Completed Phase 61 (Category Reassignment Logic & PDF Export Polish), removing the 'both' category type, converting 'Investment' category to custom, enforcing type-based reassignment filtering on category deletion, center-aligning PDF table columns, and ensuring 100% test pass rate and translation parity across EN, ES, and CA.
 - Completed Phase 60 (Full Tags/Labels Integration & Category Deletion Polish), restoring tags/labels functionality across Database, Domain, UI, Filters, and Exports.
 - Completed Phase 59 (Data Export Navigation, Asset Expansion, Legal Docs & Default Categories), expanding asset icons and colors, updating legal docs, and seeding default categories.
