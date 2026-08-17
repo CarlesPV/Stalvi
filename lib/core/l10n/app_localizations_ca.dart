@@ -192,9 +192,6 @@ class AppLocalizationsCa extends AppLocalizations {
   String get authProcessing => 'Processant l\'autenticació de seguretat…';
 
   @override
-  String get authProtectedBy => 'Protegit per la biometria del dispositiu';
-
-  @override
   String get authSetupAcceptAnd => ' i la ';
 
   @override

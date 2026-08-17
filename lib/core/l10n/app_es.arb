@@ -59,7 +59,6 @@
   "authPinLockedRetry": "Ahora puede intentarlo de nuevo",
   "authPinLockedTitle": "Demasiados intentos fallidos",
   "authProcessing": "Procesando autenticación de seguridad…",
-  "authProtectedBy": "Protegido por la biometría del dispositivo",
   "authSetupAcceptAnd": " y la ",
   "authSetupAcceptPrefix": "Acepto los ",
   "authSetupConfirmPinLabel": "Confirmar PIN",

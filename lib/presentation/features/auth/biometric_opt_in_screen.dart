@@ -184,16 +184,6 @@ class _BiometricOptInScreenState extends ConsumerState<BiometricOptInScreen>
                             ],
                           ),
                   ),
-                  const SizedBox(height: 24),
-                  Text(
-                    l10n.authProtectedBy,
-                    style: theme.textTheme.labelSmall?.copyWith(
-                      color: colorScheme.onSurfaceVariant.withValues(
-                        alpha: 0.5,
-                      ),
-                      letterSpacing: 0.4,
-                    ),
-                  ),
                 ],
               ),
             ),

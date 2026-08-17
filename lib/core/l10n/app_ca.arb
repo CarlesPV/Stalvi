@@ -59,7 +59,6 @@
   "authPinLockedRetry": "Ara podeu tornar-ho a provar",
   "authPinLockedTitle": "Masses intents fallits",
   "authProcessing": "Processant l'autenticació de seguretat…",
-  "authProtectedBy": "Protegit per la biometria del dispositiu",
   "authSetupAcceptAnd": " i la ",
   "authSetupAcceptPrefix": "Accepto els ",
   "authSetupConfirmPinLabel": "Confirmar PIN",

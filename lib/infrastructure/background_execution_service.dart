@@ -43,9 +43,9 @@ void callbackDispatcher() {
         await useCase.execute();
       }
 
-      return Future.value(true);
+      return true;
     } catch (_) {
-      return Future.value(false);
+      return false;
     } finally {
       container?.dispose();
     }

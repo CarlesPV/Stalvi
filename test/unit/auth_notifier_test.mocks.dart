@@ -288,6 +288,7 @@ class MockBiometricAuthService extends _i1.Mock
     required String? unknownErrorMessage,
     String? signInTitle,
     String? cancelButton,
+    String? signInHint,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -300,6 +301,7 @@ class MockBiometricAuthService extends _i1.Mock
             #unknownErrorMessage: unknownErrorMessage,
             #signInTitle: signInTitle,
             #cancelButton: cancelButton,
+            #signInHint: signInHint,
           },
         ),
         returnValue: _i3.Future<bool>.value(false),

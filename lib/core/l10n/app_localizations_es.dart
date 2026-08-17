@@ -192,9 +192,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String get authProcessing => 'Procesando autenticación de seguridad…';
 
   @override
-  String get authProtectedBy => 'Protegido por la biometría del dispositivo';
-
-  @override
   String get authSetupAcceptAnd => ' y la ';
 
   @override

@@ -454,12 +454,6 @@ abstract class AppLocalizations {
   /// **'Processing security authentication…'**
   String get authProcessing;
 
-  /// No description provided for @authProtectedBy.
-  ///
-  /// In en, this message translates to:
-  /// **'Protected by device biometrics'**
-  String get authProtectedBy;
-
   /// No description provided for @authSetupAcceptAnd.
   ///
   /// In en, this message translates to:
