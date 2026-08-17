@@ -263,6 +263,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'This account cannot be deleted because it is linked to active automatic transactions.';
 
   @override
+  String get deleteAccountWithTransactionsWarning =>
+      'This account has associated transactions. Deleting it will also delete all its transactions.';
+
+  @override
   String get accountTypeBank => 'Bank';
 
   @override
@@ -1156,4 +1160,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get errorLoadingContent => 'Error loading content.';
+
+  @override
+  String get errorCannotDeleteDefaultAccount =>
+      'Cannot delete the default account. Please set another account as default first.';
+
+  @override
+  String get errorNoDefaultAccountForReassignment =>
+      'Cannot delete account because no default account exists for reassignment.';
 }

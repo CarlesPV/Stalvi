@@ -569,6 +569,8 @@ class _CreateEditBudgetSheetState extends ConsumerState<CreateEditBudgetSheet> {
                           Expanded(
                             child: Text(
                               _validationError!,
+                              maxLines: null,
+                              overflow: TextOverflow.visible,
                               style: theme.textTheme.bodySmall?.copyWith(
                                 color: colorScheme.error,
                               ),
@@ -582,6 +584,7 @@ class _CreateEditBudgetSheetState extends ConsumerState<CreateEditBudgetSheet> {
                 const SizedBox(height: 16),
               ],
               Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Expanded(
                     child: OutlinedButton(

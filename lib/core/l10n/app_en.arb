@@ -82,6 +82,7 @@
   "balanceTotal": "Total Balance",
   "overview": "Overview",
   "accountInUseByAutoTxMessage": "This account cannot be deleted because it is linked to active automatic transactions.",
+  "deleteAccountWithTransactionsWarning": "This account has associated transactions. Deleting it will also delete all its transactions.",
   "accountTypeBank": "Bank",
   "accountTypeCard": "Card",
   "accountTypeCash": "Cash",
@@ -363,5 +364,7 @@
   },
   "hintAmountZero": "0.00",
   "errorCouldNotLaunchUrl": "Could not launch URL",
-  "errorLoadingContent": "Error loading content."
+  "errorLoadingContent": "Error loading content.",
+  "errorCannotDeleteDefaultAccount": "Cannot delete the default account. Please set another account as default first.",
+  "errorNoDefaultAccountForReassignment": "Cannot delete account because no default account exists for reassignment."
 }

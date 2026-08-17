@@ -137,6 +137,22 @@ class _EditAccountDialogState extends ConsumerState<EditAccountDialog> {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
+    setState(() => _isLoading = true);
+    bool hasTransactions = false;
+    try {
+      hasTransactions = await ref
+          .read(transactionRepositoryProvider)
+          .hasAnyTransactions(widget.account.id);
+    } catch (e) {
+      // Ignore: default to standard warning
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
+
+    if (!mounted) return;
+
     String? dialogError;
     bool isDeleting = false;
 
@@ -165,7 +181,11 @@ class _EditAccountDialogState extends ConsumerState<EditAccountDialog> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Text(l10n.deleteAllDataWarning),
+                  Text(
+                    hasTransactions
+                        ? l10n.deleteAccountWithTransactionsWarning
+                        : l10n.deleteAllDataWarning,
+                  ),
                   if (dialogError != null) ...[
                     const SizedBox(height: 16),
                     Text(
@@ -178,6 +198,7 @@ class _EditAccountDialogState extends ConsumerState<EditAccountDialog> {
                   ],
                 ],
               ),
+              actionsAlignment: MainAxisAlignment.center,
               actions: [
                 TextButton(
                   onPressed: isDeleting
@@ -228,6 +249,7 @@ class _EditAccountDialogState extends ConsumerState<EditAccountDialog> {
                                   content: Text(
                                     l10n.accountInUseByAutoTxMessage,
                                   ),
+                                  actionsAlignment: MainAxisAlignment.center,
                                   actions: [
                                     TextButton(
                                       onPressed: () => Navigator.of(ctx).pop(),
@@ -247,6 +269,13 @@ class _EditAccountDialogState extends ConsumerState<EditAccountDialog> {
                                 if (e.code == 'LAST_ACCOUNT') {
                                   dialogError =
                                       l10n.errorCannotDeleteLastAccount;
+                                } else if (e.code ==
+                                    'DEFAULT_ACCOUNT_DELETION') {
+                                  dialogError =
+                                      l10n.errorCannotDeleteDefaultAccount;
+                                } else if (e.code == 'NO_DEFAULT_ACCOUNT') {
+                                  dialogError =
+                                      l10n.errorNoDefaultAccountForReassignment;
                                 } else {
                                   dialogError = e.message;
                                 }
@@ -600,8 +629,10 @@ class _EditAccountDialogState extends ConsumerState<EditAccountDialog> {
                 ),
               ),
               const SizedBox(height: 10),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
+              Wrap(
+                alignment: WrapAlignment.spaceAround,
+                spacing: 8,
+                runSpacing: 8,
                 children: _icons.map((item) {
                   final name = item['name'] as String;
                   final icon = item['icon'] as IconData;
@@ -647,6 +678,7 @@ class _EditAccountDialogState extends ConsumerState<EditAccountDialog> {
                       builder: (ctx) => AlertDialog(
                         title: Text(l10n.warning),
                         content: Text(l10n.replaceDefaultAccountConfirm),
+                        actionsAlignment: MainAxisAlignment.center,
                         actions: [
                           TextButton(
                             onPressed: () => Navigator.pop(ctx, false),
@@ -677,6 +709,7 @@ class _EditAccountDialogState extends ConsumerState<EditAccountDialog> {
 
               // Save / Cancel button
               Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Expanded(
                     child: OutlinedButton(

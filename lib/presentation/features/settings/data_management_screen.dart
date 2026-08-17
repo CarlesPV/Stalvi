@@ -131,6 +131,7 @@ class _DataManagementScreenState extends ConsumerState<DataManagementScreen> {
                   ],
                 ),
               ),
+              actionsAlignment: MainAxisAlignment.center,
               actions: [
                 TextButton(
                   onPressed: () => Navigator.of(ctx).pop(null),
@@ -205,6 +206,7 @@ class _DataManagementScreenState extends ConsumerState<DataManagementScreen> {
                   ),
                 ],
               ),
+              actionsAlignment: MainAxisAlignment.center,
               actions: [
                 TextButton(
                   onPressed: () => Navigator.of(ctx).pop(null),
@@ -311,6 +313,7 @@ class _DataManagementScreenState extends ConsumerState<DataManagementScreen> {
           ],
         ),
         content: Text(l10n.importConfirmMessage),
+        actionsAlignment: MainAxisAlignment.center,
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),

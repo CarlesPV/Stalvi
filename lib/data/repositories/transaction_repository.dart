@@ -144,6 +144,23 @@ class TransactionRepository implements ITransactionRepository {
   }
 
   @override
+  Future<bool> hasAnyTransactions(String accountId) async {
+    try {
+      final query = _db.select(_db.transactions)
+        ..where((t) => t.accountId.equals(accountId))
+        ..limit(1);
+      final rows = await query.get();
+      return rows.isNotEmpty;
+    } catch (e) {
+      throw DatabaseException(
+        message: 'Failed to check transactions for account "$accountId"',
+        code: 'TRANSACTION_QUERY_FAILED',
+        details: e,
+      );
+    }
+  }
+
+  @override
   Future<domain.Transaction> updateTransaction(
     domain.Transaction transaction,
   ) async {

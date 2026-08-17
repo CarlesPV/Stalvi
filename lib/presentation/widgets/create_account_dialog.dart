@@ -395,8 +395,10 @@ class _CreateAccountDialogState extends ConsumerState<CreateAccountDialog> {
                 ),
               ),
               const SizedBox(height: 10),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
+              Wrap(
+                alignment: WrapAlignment.spaceAround,
+                spacing: 8,
+                runSpacing: 8,
                 children: _icons.map((item) {
                   final name = item['name'] as String;
                   final icon = item['icon'] as IconData;
@@ -442,6 +444,7 @@ class _CreateAccountDialogState extends ConsumerState<CreateAccountDialog> {
                       builder: (ctx) => AlertDialog(
                         title: Text(l10n.warning),
                         content: Text(l10n.replaceDefaultAccountConfirm),
+                        actionsAlignment: MainAxisAlignment.center,
                         actions: [
                           TextButton(
                             onPressed: () => Navigator.pop(ctx, false),
@@ -472,6 +475,7 @@ class _CreateAccountDialogState extends ConsumerState<CreateAccountDialog> {
 
               // Save / Cancel button
               Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Expanded(
                     child: OutlinedButton(

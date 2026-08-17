@@ -814,7 +814,28 @@ This document lists the completed phases of the Stalvi development roadmap, prov
 * **Verification:**
   - 100% test suite pass rate, 0 errors, 0 warnings, and 0 infos on static analysis (`flutter analyze`).
 
+### Phase 63: Production Documentation Overhaul
+* **Completion Date:** August 17, 2026
+* **Objective:** Completely overhaul project documentation for production readiness.
+* **Accomplishments:**
+  - **README.md Rewrite:** Created a comprehensive, modern README highlighting architecture, features, and security.
+* **Verification:**
+  - Documentation accurately reflects the current state of the codebase.
+
+### Phase 64: Final QA & UI/UX Polish
+* **Completion Date:** August 17, 2026
+* **Objective:** Polish UI/UX, prevent tag/category deletion orphaned data, and ensure production quality assurance.
+* **Accomplishments:**
+  - **Tag Soft-Delete:** Implemented Tag soft-delete functionality to prevent orphaned tags in transactions.
+  - **Restoration Fallbacks:** Added restoration fallbacks for transactions when their original categories or accounts are deleted.
+  - **Account Deletions:** Enhanced account deletion warnings to explicitly notify users about cascading transaction deletions.
+  - **UI/UX Polish:** Completed sweeping UI polish, ensuring dialogs and bottom sheets are correctly centered and prevent overflow.
+* **Verification:**
+  - Verified 100% test suite pass rate (558 tests passed) and zero static analysis warnings (`flutter analyze`).
+
 ## Recent Updates
+- Completed Phase 64 (Final QA & UI/UX Polish), implementing tag soft-delete logic, restoration fallbacks, enhanced account deletion warnings, and UI/UX polish, ensuring a 100% test pass rate and clean static analysis.
+- Completed Phase 63 (Production Documentation Overhaul), rewriting the README.md and verifying all architecture and feature documentation.
 - Completed Phase 62 (Selectors UX Polish (Icons & Colors)), updating account and tag selectors in filters and statistics screens to display their respective colors and icons.
 - Completed Phase 61 (Category Reassignment Logic & PDF Export Polish), removing the 'both' category type, converting 'Investment' category to custom, enforcing type-based reassignment filtering on category deletion, center-aligning PDF table columns, and ensuring 100% test pass rate and translation parity across EN, ES, and CA.
 - Completed Phase 60 (Full Tags/Labels Integration & Category Deletion Polish), restoring tags/labels functionality across Database, Domain, UI, Filters, and Exports.
@@ -860,4 +881,5 @@ This document lists the completed phases of the Stalvi development roadmap, prov
 - Implemented cascading soft-delete/restore for Savings Goals with balance refunds.
 - Added full Unicode font support in PDF exports using Roboto font assets to fix currency symbol placeholders.
 - Updated Terms and Privacy policy legal markdown assets for Catalan, English, and Spanish.
+- Completed Phase 64: Implemented tag soft-delete logic, added restoration fallbacks for transactions, enhanced account cascading deletion warnings, and applied sweeping UI polish to center dialogs and prevent text overflow.
 - Achieved a completely clean static analysis check with 0 issues on `flutter analyze` and 100% test pass rate.

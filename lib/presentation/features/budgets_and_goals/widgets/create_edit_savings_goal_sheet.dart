@@ -372,8 +372,10 @@ class _CreateEditSavingsGoalSheetState
                 ),
               ),
               const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
+              Wrap(
+                alignment: WrapAlignment.spaceAround,
+                spacing: 8,
+                runSpacing: 8,
                 children: _colors.map((colorHex) {
                   final color = _parseHexColor(colorHex);
                   final isSelected = _selectedColor == colorHex;
@@ -416,8 +418,10 @@ class _CreateEditSavingsGoalSheetState
                 }).toList(),
               ),
               const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
+              Wrap(
+                alignment: WrapAlignment.spaceAround,
+                spacing: 8,
+                runSpacing: 8,
                 children: _icons.map((item) {
                   final name = item['name'] as String;
                   final icon = item['icon'] as IconData;
@@ -485,6 +489,8 @@ class _CreateEditSavingsGoalSheetState
                           Expanded(
                             child: Text(
                               _validationError!,
+                              maxLines: null,
+                              overflow: TextOverflow.visible,
                               style: theme.textTheme.bodySmall?.copyWith(
                                 color: colorScheme.error,
                               ),
@@ -498,6 +504,7 @@ class _CreateEditSavingsGoalSheetState
                 const SizedBox(height: 16),
               ],
               Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Expanded(
                     child: OutlinedButton(

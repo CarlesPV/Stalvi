@@ -42,6 +42,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
             ),
             autofocus: true,
           ),
+          actionsAlignment: MainAxisAlignment.center,
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
@@ -142,6 +143,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
               );
             },
           ),
+          actionsAlignment: MainAxisAlignment.center,
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
@@ -535,6 +537,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
               l10n.deleteAllDataWarning,
               style: theme.textTheme.bodyMedium,
             ),
+            actionsAlignment: MainAxisAlignment.center,
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(dialogCtx).pop(),
@@ -761,6 +764,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                             content: Text(
                               l10n.notificationsPermanentlyDeniedBody,
                             ),
+                            actionsAlignment: MainAxisAlignment.center,
                             actions: [
                               TextButton(
                                 onPressed: () => Navigator.pop(ctx),

@@ -97,6 +97,9 @@ class AppTheme {
         color: Color(0xFFE2E8F0), // Slate 200
         thickness: 1,
       ),
+      inputDecorationTheme: const InputDecorationTheme(
+        errorMaxLines: 10,
+      ),
       extensions: const [
         FinancialColors(positive: mintGreenLight, negative: coralRedLight),
       ],
@@ -143,6 +146,9 @@ class AppTheme {
       dividerTheme: const DividerThemeData(
         color: Color(0xFF1E293B), // Slate 800 divider
         thickness: 1,
+      ),
+      inputDecorationTheme: const InputDecorationTheme(
+        errorMaxLines: 10,
       ),
       extensions: const [
         FinancialColors(positive: mintGreenDark, negative: coralRedDark),

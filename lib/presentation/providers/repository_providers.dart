@@ -262,6 +262,8 @@ final trashUsecasesProvider = Provider<TrashUsecases>((ref) {
   final trashRepo = ref.watch(trashRepositoryProvider);
   final transactionRepo = ref.watch(transactionRepositoryProvider);
   final accountRepo = ref.watch(accountRepositoryProvider);
+  final categoryRepo = ref.watch(categoryRepositoryProvider);
+  final profileRepo = ref.watch(profileRepositoryProvider);
   final updateBudgetProgressUseCase = ref.watch(
     updateBudgetProgressUseCaseProvider,
   );
@@ -269,6 +271,8 @@ final trashUsecasesProvider = Provider<TrashUsecases>((ref) {
     trashRepo,
     transactionRepo,
     accountRepo,
+    categoryRepo,
+    profileRepo,
     updateBudgetProgressUseCase,
   );
 });

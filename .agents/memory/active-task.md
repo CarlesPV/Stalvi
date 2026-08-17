@@ -1,10 +1,11 @@
-# Phase 62: Selectors UX Polish (Icons & Colors)
+# Phase 63: Production Readiness, UI Polish & Documentation Overhaul
 
 ## Objective
-Ensure that all Account, Category, and Tag selectors across the application (specifically global filters and statistics screens) visually display their assigned icon and color to provide a cohesive and premium User Experience.
+Ensure Stalvi is production-ready by guaranteeing a fully responsive UI with no text truncations, eliminating all technical debt (unused code/assets), finalizing legal compliance in all 3 languages, achieving a 100% CI pass rate, and overhauling all project documentation.
 
 ## Tasks
-- [x] **1. Transaction Filter Sheet:** Update `TransactionFilterSheet` account and tag `DropdownMenuItem`s to display a `CircleAvatar` with the corresponding icon and color, matching the category selector style.
-- [x] **2. Statistics Screen:** Update the Account selector in `StatisticsScreen` to include the account icon inside its color circle.
-- [x] **3. Quality Assurance & UI/UX Check:** Verify that no `RenderFlex` overflows occur in the dropdowns on smaller screens. 
-- [x] **4. CI & Documentation:** Run all unit and widget tests. Ensure 100% CI pass rate (0 warnings, 0 infos in `flutter analyze`). Update `roadmap.md` and `roadmap-summary.md` moving Phase 62 to completed.
+- [ ] **1. UI Responsiveness & Readability:** Audit all screens and widgets. Eliminate any `RenderFlex` overflows. Ensure all text, buttons, and error messages are fully readable across all screen widths. Remove text truncation (ellipses) and use flexible layouts (`Wrap`, `Expanded`, `Flexible`, `SingleChildScrollView`).
+- [ ] **2. Codebase Cleanup:** Analyze the project to remove unused imports, dead code, outdated comments, unused widgets, and orphaned translation keys across the 3 supported languages.
+- [ ] **3. Legal Terms Finalization:** Review and finalize the Terms & Conditions and Privacy Policy. Ensure they are accurate, accessible within the app, and perfectly translated into the 3 supported languages.
+- [ ] **4. CI/CD & Tests Validation:** Execute and fix all unit, widget, and integration tests. Ensure `flutter analyze` returns exactly 0 issues (no errors, warnings, or infos). Guarantee the CI/CD workflow passes perfectly.
+- [ ] **5. Documentation Overhaul:** Write a completely new and comprehensive `README.md`. Update `roadmap.md` and `roadmap-summary.md` to reflect the completion of Phase 63 and the exact current state of the app.

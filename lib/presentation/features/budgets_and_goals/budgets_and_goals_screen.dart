@@ -525,8 +525,7 @@ class _ErrorStateWidget extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              width: 80,
-              height: 80,
+              padding: const EdgeInsets.all(21),
               decoration: BoxDecoration(
                 color: colorScheme.error.withValues(alpha: 0.1),
                 shape: BoxShape.circle,

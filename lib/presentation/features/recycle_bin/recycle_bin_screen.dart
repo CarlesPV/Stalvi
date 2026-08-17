@@ -63,6 +63,8 @@ class _TrashItemTile extends ConsumerWidget {
           return Icons.savings;
         case TrashItemType.automaticTransaction:
           return Icons.autorenew;
+        case TrashItemType.tag:
+          return Icons.tag;
       }
     }
 
@@ -80,6 +82,8 @@ class _TrashItemTile extends ConsumerWidget {
           return l10n.savingsGoal;
         case TrashItemType.automaticTransaction:
           return l10n.settingsAutomaticTransactions;
+        case TrashItemType.tag:
+          return l10n.labelTag;
       }
     }
 
@@ -151,13 +155,9 @@ class _TrashItemTile extends ConsumerWidget {
       ),
       title: Text(
         getFormattedTitle(),
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
       ),
       subtitle: Text(
         '${l10n.recycleBinDaysRemaining(remainingDays)} • ${getTypeLabel()}',
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
         style: TextStyle(color: remainingDays <= 3 ? Colors.red : Colors.grey),
       ),
       trailing: Row(
@@ -182,6 +182,7 @@ class _TrashItemTile extends ConsumerWidget {
                 builder: (ctx) => AlertDialog(
                   title: Text(l10n.recycleBinDeleteConfirmTitle),
                   content: Text(l10n.recycleBinDeleteConfirmMessage),
+                  actionsAlignment: MainAxisAlignment.center,
                   actions: [
                     TextButton(
                       onPressed: () => Navigator.pop(ctx),

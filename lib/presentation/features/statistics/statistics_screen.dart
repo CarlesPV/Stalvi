@@ -906,8 +906,8 @@ class _PieChartWithLegend extends ConsumerWidget {
       child: Column(
         children: [
           // Pie chart
-          SizedBox(
-            height: 200,
+          AspectRatio(
+            aspectRatio: 1.5,
             child: PieChart(
               PieChartData(
                 sections: sections,
@@ -1142,53 +1142,55 @@ class _ChartSkeleton extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
-    return Container(
-      height: 260,
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.35),
-        borderRadius: BorderRadius.circular(24),
-      ),
-      child: Column(
-        children: [
-          // Circle shimmer
-          AnimatedBuilder(
-            animation: shimmer,
-            builder: (_, __) => Container(
-              width: 160,
-              height: 160,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Color.lerp(
-                  colorScheme.onSurface.withValues(alpha: 0.05),
-                  colorScheme.onSurface.withValues(alpha: 0.1),
-                  shimmer.value,
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(height: 16),
-          // Legend skeletons
-          ...List.generate(2, (i) {
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 8),
-              child: AnimatedBuilder(
-                animation: shimmer,
-                builder: (_, __) => Container(
-                  height: 12,
-                  decoration: BoxDecoration(
-                    color: Color.lerp(
-                      colorScheme.onSurface.withValues(alpha: 0.05),
-                      colorScheme.onSurface.withValues(alpha: 0.10),
-                      shimmer.value,
-                    ),
-                    borderRadius: BorderRadius.circular(4),
+    return AspectRatio(
+      aspectRatio: 1.2,
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.35),
+          borderRadius: BorderRadius.circular(24),
+        ),
+        child: Column(
+          children: [
+            // Circle shimmer
+            AnimatedBuilder(
+              animation: shimmer,
+              builder: (_, __) => Container(
+                width: 160,
+                height: 160,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Color.lerp(
+                    colorScheme.onSurface.withValues(alpha: 0.05),
+                    colorScheme.onSurface.withValues(alpha: 0.1),
+                    shimmer.value,
                   ),
                 ),
               ),
-            );
-          }),
-        ],
+            ),
+            const SizedBox(height: 16),
+            // Legend skeletons
+            ...List.generate(2, (i) {
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: AnimatedBuilder(
+                  animation: shimmer,
+                  builder: (_, __) => Container(
+                    height: 12,
+                    decoration: BoxDecoration(
+                      color: Color.lerp(
+                        colorScheme.onSurface.withValues(alpha: 0.05),
+                        colorScheme.onSurface.withValues(alpha: 0.10),
+                        shimmer.value,
+                      ),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
+                ),
+              );
+            }),
+          ],
+        ),
       ),
     );
   }

@@ -346,6 +346,7 @@ class TransactionDetailsDialog extends ConsumerWidget {
 
             // Action buttons: Delete in full destructiveness
             Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Expanded(
                   child: OutlinedButton(
@@ -423,6 +424,7 @@ class TransactionDetailsDialog extends ConsumerWidget {
             horizontal: 16,
             vertical: 12,
           ),
+          actionsAlignment: MainAxisAlignment.center,
           actions: [
             TextButton(
               onPressed: () => Navigator.of(dialogContext).pop(),
@@ -517,8 +519,7 @@ class _DetailRow extends StatelessWidget {
       child: Row(
         children: [
           Container(
-            width: 38,
-            height: 38,
+            padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
               color: iconColor.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(10),

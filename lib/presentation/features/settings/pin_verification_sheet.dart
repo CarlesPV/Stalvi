@@ -198,6 +198,8 @@ class _PinVerificationSheetState extends ConsumerState<PinVerificationSheet> {
               if (_errorText != null)
                 Text(
                   _errorText!,
+                  maxLines: null,
+                  overflow: TextOverflow.visible,
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: colorScheme.error,
                   ),

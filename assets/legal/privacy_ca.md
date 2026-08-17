@@ -1,6 +1,6 @@
 # Política de Privadesa
 
-**Data d'entrada en vigor:** 25 de juliol de 2026
+**Data d'entrada en vigor:** 17 d'agost de 2026
 
 ## 1. Introducció
 Benvingut a **Stalvi** ("nosaltres", "nostre" o "l'Aplicació"). Stalvi és una aplicació de gestió de finances personals dissenyada amb arquitectura local (*local-first*) i sota la filosofia de privadesa des del disseny (*privacy-by-design*). Estem fermament compromesos a protegir la teva privadesa i a garantir que les teves dades financeres romanguin confidencials, segures i sota el teu control exclusiu.

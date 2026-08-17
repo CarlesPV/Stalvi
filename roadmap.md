@@ -438,6 +438,18 @@
   - [x] Enhanced the Account selector in `StatisticsScreen` to visually incorporate the account icon inside its color-coded CircleAvatar.
   - [x] Verified static analysis with 0 errors, 0 warnings, and 0 infos (`flutter analyze`), ensuring 100% test suite pass rate.
 
+- [x] **Phase 63: Production Documentation Overhaul**
+  - [x] Complete rewrite of the project `README.md`.
+  - [x] Verified documentation covers clean architecture, local-first strategy, multi-language, and encryption.
+  - [x] Finalized roadmap for production readiness.
+
+- [x] **Phase 64: Final QA & UI/UX Polish**
+  - [x] Implemented Tag soft-delete functionality to prevent orphaned tags in transactions.
+  - [x] Added restoration fallbacks for transactions when their original categories or accounts are deleted.
+  - [x] Enhanced account deletion warnings to explicitly notify users about cascading transaction deletions.
+  - [x] Completed sweeping UI polish, ensuring dialogs and bottom sheets are correctly centered and prevent overflow.
+  - [x] Verified 100% test suite pass rate (558 tests) and zero static analysis warnings.
+
 ---
 
 ## Post-Launch / Maintenance

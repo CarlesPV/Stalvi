@@ -363,6 +363,8 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
                   Expanded(
                     child: Text(
                       error,
+                      maxLines: null,
+                      overflow: TextOverflow.visible,
                       style: theme.textTheme.bodySmall?.copyWith(
                         color: colorScheme.error,
                       ),
@@ -780,6 +782,8 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
                       padding: const EdgeInsets.only(left: 12, top: 4),
                       child: Text(
                         formFieldState.errorText ?? '',
+                        maxLines: null,
+                        overflow: TextOverflow.visible,
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: colorScheme.error,
                         ),
@@ -980,6 +984,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
                     builder: (context) => AlertDialog(
                       title: Text(l10n.authBiometricOptInTitle),
                       content: Text(l10n.authBiometricOptInSubtitle),
+                      actionsAlignment: MainAxisAlignment.center,
                       actions: [
                         TextButton(
                           onPressed: () => Navigator.of(context).pop(),

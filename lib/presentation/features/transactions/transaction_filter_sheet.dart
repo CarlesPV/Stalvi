@@ -728,6 +728,7 @@ class _TransactionFilterSheetState
 
             // ── Actions ────────────────────────────────────────────────────
             Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Expanded(
                   child: OutlinedButton(

@@ -102,8 +102,6 @@ class AutomaticTransactionsScreen extends ConsumerWidget {
                                 style: theme.textTheme.titleMedium?.copyWith(
                                   fontWeight: FontWeight.w700,
                                 ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
                               ),
                               const SizedBox(height: 4),
                               Row(
@@ -149,6 +147,7 @@ class AutomaticTransactionsScreen extends ConsumerWidget {
                                     content: Text(
                                       l10n.deleteTransactionConfirmation,
                                     ),
+                                    actionsAlignment: MainAxisAlignment.center,
                                     actions: [
                                       TextButton(
                                         onPressed: () =>

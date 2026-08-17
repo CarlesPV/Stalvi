@@ -46,9 +46,6 @@ class TransferPair {
 }
 
 // ─── Repository interface ──────────────────────────────────────────────────────
-// Domain Layer: Abstract definition of data operations for Transactions.
-// Implementation is provided in the Data layer (e.g. TransactionRepositoryImpl)
-// to enforce Clean Architecture boundaries.
 
 abstract class ITransactionRepository {
   Future<Transaction> createTransaction(Transaction transaction);
@@ -65,6 +62,7 @@ abstract class ITransactionRepository {
 
   Future<Transaction?> getTransactionById(String id);
   Future<List<Transaction>> getTransactionsByAccountId(String accountId);
+  Future<bool> hasAnyTransactions(String accountId);
   Future<Transaction> updateTransaction(Transaction transaction);
 
   /// Soft-deletes a single transaction.

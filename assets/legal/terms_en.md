@@ -1,6 +1,6 @@
 # Terms and Conditions of Use
 
-**Effective Date:** July 25, 2026
+**Effective Date:** August 17, 2026
 
 Please read these Terms and Conditions ("Terms", "Agreement") carefully before downloading, installing, accessing, or using the Stalvi mobile application (the "Application" or "App").
 

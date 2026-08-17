@@ -1,8 +1,11 @@
 import '../entities/trash_item.dart';
 import '../entities/transaction_type.dart';
+import '../entities/category_type.dart';
 import '../repositories/i_account_repository.dart';
 import '../repositories/i_transaction_repository.dart';
 import '../repositories/i_trash_repository.dart';
+import '../repositories/i_category_repository.dart';
+import '../repositories/i_profile_repository.dart';
 import 'update_budget_progress_usecase.dart';
 
 /// Use cases for the Trash (soft-delete recovery) screen.
@@ -22,12 +25,16 @@ class TrashUsecases {
   final ITrashRepository _trashRepository;
   final ITransactionRepository _transactionRepository;
   final IAccountRepository _accountRepository;
+  final ICategoryRepository _categoryRepository;
+  final IProfileRepository _profileRepository;
   final UpdateBudgetProgressUseCase _updateBudgetProgressUseCase;
 
   TrashUsecases(
     this._trashRepository,
     this._transactionRepository,
     this._accountRepository,
+    this._categoryRepository,
+    this._profileRepository,
     this._updateBudgetProgressUseCase,
   );
 
@@ -48,10 +55,80 @@ class TrashUsecases {
   /// For all other types: delegates directly to [ITrashRepository.restoreItem].
   Future<void> restoreItem(String id, TrashItemType type) async {
     if (type == TrashItemType.transaction) {
-      await _transactionRepository.restoreTransaction(id);
       final txn = await _transactionRepository.getTransactionById(id);
-      if (txn != null && txn.type == TransactionType.expense) {
-        await _updateBudgetProgressUseCase.execute(transaction: txn);
+      if (txn != null) {
+        String finalAccountId = txn.accountId;
+        String? finalCategoryId = txn.categoryId;
+        bool needsUpdate = false;
+
+        // Check if Account exists and is not deleted
+        final account = await _accountRepository.getAccountById(txn.accountId);
+        if (account == null || account.isDeleted) {
+          final profile = await _profileRepository.getFirstProfile();
+          if (profile != null) {
+            final defaultAccount =
+                await _accountRepository.getDefaultAccount(profile.id);
+            if (defaultAccount != null) {
+              finalAccountId = defaultAccount.id;
+              needsUpdate = true;
+            }
+          }
+        }
+
+        // Check Category
+        if (txn.categoryId != null) {
+          final category =
+              await _categoryRepository.getCategoryById(txn.categoryId!);
+          if (category == null || category.isDeleted) {
+            final categories = await _categoryRepository.getAllCategories();
+            final activeCategories =
+                categories.where((c) => !c.isDeleted).toList();
+
+            // If the original category is deleted, fallback to an active category of the same type
+            // to prevent the restored transaction from being orphaned or causing foreign key constraints issues.
+            if (txn.type == TransactionType.expense) {
+              final fallbackCategory = activeCategories.firstWhere(
+                (c) =>
+                    c.associatedType == CategoryType.expense ||
+                    c.associatedType == null,
+                orElse: () => activeCategories.first,
+              );
+              finalCategoryId = fallbackCategory.id;
+              needsUpdate = true;
+            } else if (txn.type == TransactionType.income) {
+              final fallbackCategory = activeCategories.firstWhere(
+                (c) =>
+                    c.associatedType == CategoryType.income ||
+                    c.associatedType == null,
+                orElse: () => activeCategories.first,
+              );
+              finalCategoryId = fallbackCategory.id;
+              needsUpdate = true;
+            } else {
+              // Transfer type, just clear the category
+              finalCategoryId = null;
+              needsUpdate = true;
+            }
+          }
+        }
+
+        if (needsUpdate) {
+          final updatedTxn = txn.copyWith(
+            accountId: finalAccountId,
+            categoryId: finalCategoryId,
+            clearTransferId: false,
+          );
+          await _transactionRepository.updateTransaction(updatedTxn);
+        }
+
+        await _transactionRepository.restoreTransaction(id);
+
+        // Ensure budget progress uses the most updated transaction
+        final restoredTxn = await _transactionRepository.getTransactionById(id);
+        if (restoredTxn != null &&
+            restoredTxn.type == TransactionType.expense) {
+          await _updateBudgetProgressUseCase.execute(transaction: restoredTxn);
+        }
       }
     } else if (type == TrashItemType.savingsGoal) {
       await _trashRepository.cascadeRestoreSavingsGoal(id);

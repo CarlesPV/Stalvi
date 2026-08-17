@@ -125,6 +125,7 @@ class _CategoriesTab extends ConsumerWidget {
           scrollable: true,
           title: Text(l10n.deleteCategoryTitle),
           content: Text(l10n.deleteCategoryConfirm(category.name)),
+          actionsAlignment: MainAxisAlignment.center,
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(ctx, false),
@@ -212,6 +213,7 @@ class _CategoriesTab extends ConsumerWidget {
                   ],
                 ),
               ),
+              actionsAlignment: MainAxisAlignment.center,
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(ctx),
@@ -309,6 +311,7 @@ class _TagsTab extends ConsumerWidget {
           scrollable: true,
           title: Text(l10n.deleteTagTitle),
           content: Text(l10n.deleteTagConfirm(tag.name)),
+          actionsAlignment: MainAxisAlignment.center,
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(ctx, false),
@@ -382,6 +385,7 @@ class _TagsTab extends ConsumerWidget {
                   ],
                 ),
               ),
+              actionsAlignment: MainAxisAlignment.center,
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(ctx),

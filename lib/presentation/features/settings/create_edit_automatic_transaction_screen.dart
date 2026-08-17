@@ -590,6 +590,8 @@ class _CreateEditAutomaticTransactionScreenState
                             Expanded(
                               child: Text(
                                 _getLocalizedError(context, error),
+                                maxLines: null,
+                                overflow: TextOverflow.visible,
                                 style: theme.textTheme.bodySmall?.copyWith(
                                   color: colorScheme.error,
                                 ),
@@ -1539,8 +1541,6 @@ class _FormSelectorTile extends StatelessWidget {
                       fontWeight: FontWeight.w700,
                       color: colorScheme.onSurface,
                     ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),

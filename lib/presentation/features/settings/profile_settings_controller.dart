@@ -140,7 +140,10 @@ class ProfileSettingsController extends _$ProfileSettingsController {
 
   Future<void> verifyOldPin(String oldPin) async {
     if (state.failedAttempts >= 6) {
-      throw Exception('Maximum PIN attempts reached. Please try again later.');
+      throw const AuthException(
+        message: 'Maximum PIN attempts reached. Please try again later.',
+        code: 'MAX_PIN_ATTEMPTS',
+      );
     }
 
     state = state.copyWith(isLoading: true, error: null);

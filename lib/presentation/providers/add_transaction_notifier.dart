@@ -86,7 +86,7 @@ class AddTransactionState {
 }
 
 /// Form state controller that manages form input fields, performs validation,
-/// and executes [AddTransactionUseCase] using the clean architecture boundaries.
+/// and executes [AddTransactionUseCase].
 @riverpod
 class AddTransactionNotifier extends _$AddTransactionNotifier {
   @override

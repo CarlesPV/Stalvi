@@ -129,6 +129,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen>
             horizontal: 16,
             vertical: 12,
           ),
+          actionsAlignment: MainAxisAlignment.center,
           actions: [
             TextButton(
               onPressed: () async {
@@ -684,7 +685,6 @@ class _AccountsTab extends ConsumerWidget {
                             color: colorScheme.onSurface,
                             letterSpacing: -0.2,
                           ),
-                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                     ],
