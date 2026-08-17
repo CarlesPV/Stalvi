@@ -215,10 +215,7 @@ class AuthNotifier extends AsyncNotifier<AuthStatus> {
       return;
     }
     if (pin != confirmPin) {
-      state = AsyncValue.error(
-        'PINs do not match.',
-        StackTrace.current,
-      );
+      state = AsyncValue.error('PINs do not match.', StackTrace.current);
       return;
     }
     if (!acceptTerms) {
@@ -230,10 +227,7 @@ class AuthNotifier extends AsyncNotifier<AuthStatus> {
     }
     final trimmedName = name.trim();
     if (trimmedName.isEmpty) {
-      state = AsyncValue.error(
-        'Please enter a name.',
-        StackTrace.current,
-      );
+      state = AsyncValue.error('Please enter a name.', StackTrace.current);
       return;
     }
     if (trimmedName.length > 25) {
@@ -253,10 +247,7 @@ class AuthNotifier extends AsyncNotifier<AuthStatus> {
 
     final trimmedUsername = username.trim();
     if (trimmedUsername.isEmpty) {
-      state = AsyncValue.error(
-        'Please enter a username.',
-        StackTrace.current,
-      );
+      state = AsyncValue.error('Please enter a username.', StackTrace.current);
       return;
     }
     if (trimmedUsername.length > 25) {
@@ -480,5 +471,6 @@ class AuthNotifier extends AsyncNotifier<AuthStatus> {
 }
 
 /// Global Riverpod provider for [AuthNotifier].
-final authNotifierProvider =
-    AsyncNotifierProvider<AuthNotifier, AuthStatus>(AuthNotifier.new);
+final authNotifierProvider = AsyncNotifierProvider<AuthNotifier, AuthStatus>(
+  AuthNotifier.new,
+);

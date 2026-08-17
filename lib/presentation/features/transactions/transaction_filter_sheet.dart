@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:stalvi/core/l10n/app_localizations.dart';
+import 'package:stalvi/core/utils/icon_helper.dart';
 import 'package:stalvi/domain/entities/transaction_type.dart';
 import '../../providers/repository_providers.dart';
 import '../../providers/transaction_filter_provider.dart';
@@ -85,6 +86,30 @@ class _TransactionFilterSheetState
 
   // ── Helpers ──────────────────────────────────────────────────────────────────
 
+  Color _parseCategoryColor(String hexString) {
+    if (hexString.isEmpty) return Colors.grey;
+    final buffer = StringBuffer();
+    if (hexString.length == 6 || hexString.length == 7) buffer.write('ff');
+    buffer.write(hexString.replaceFirst('#', ''));
+    try {
+      return Color(int.parse(buffer.toString(), radix: 16));
+    } catch (_) {
+      return Colors.grey;
+    }
+  }
+
+  Color _parseHexColor(String hex) {
+    if (hex.isEmpty) return Colors.grey;
+    final buffer = StringBuffer();
+    if (hex.length == 6 || hex.length == 7) buffer.write('ff');
+    buffer.write(hex.replaceFirst('#', ''));
+    try {
+      return Color(int.parse(buffer.toString(), radix: 16));
+    } catch (_) {
+      return Colors.grey;
+    }
+  }
+
   int get _activeFilterCount {
     int count = 0;
     if (_draft.accountId != null) count++;
@@ -135,10 +160,7 @@ class _TransactionFilterSheetState
       lastDate: now,
       initialDateRange: _draft.dateRange,
       builder: (context, child) {
-        return Theme(
-          data: Theme.of(context),
-          child: child!,
-        );
+        return Theme(data: Theme.of(context), child: child!);
       },
     );
     if (picked != null) {
@@ -278,7 +300,21 @@ class _TransactionFilterSheetState
                     ...accounts.map(
                       (acc) => DropdownMenuItem<String?>(
                         value: acc.id,
-                        child: Text(acc.name),
+                        child: Row(
+                          children: [
+                            CircleAvatar(
+                              radius: 12,
+                              backgroundColor: _parseHexColor(acc.color),
+                              child: Icon(
+                                getIconData(acc.icon),
+                                size: 14,
+                                color: Colors.white,
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            Text(acc.name),
+                          ],
+                        ),
                       ),
                     ),
                   ],
@@ -318,8 +354,9 @@ class _TransactionFilterSheetState
                   label: l10n.filterIncome,
                   selected: _draft.type == TransactionType.income,
                   onTap: () => setState(() {
-                    _draft =
-                        _draft.copyWith(typeFn: () => TransactionType.income);
+                    _draft = _draft.copyWith(
+                      typeFn: () => TransactionType.income,
+                    );
                   }),
                   colorScheme: colorScheme,
                   theme: theme,
@@ -330,8 +367,9 @@ class _TransactionFilterSheetState
                   label: l10n.filterExpense,
                   selected: _draft.type == TransactionType.expense,
                   onTap: () => setState(() {
-                    _draft =
-                        _draft.copyWith(typeFn: () => TransactionType.expense);
+                    _draft = _draft.copyWith(
+                      typeFn: () => TransactionType.expense,
+                    );
                   }),
                   colorScheme: colorScheme,
                   theme: theme,
@@ -342,8 +380,9 @@ class _TransactionFilterSheetState
                   label: l10n.filterSheetTransferType,
                   selected: _draft.type == TransactionType.transfer,
                   onTap: () => setState(() {
-                    _draft =
-                        _draft.copyWith(typeFn: () => TransactionType.transfer);
+                    _draft = _draft.copyWith(
+                      typeFn: () => TransactionType.transfer,
+                    );
                   }),
                   colorScheme: colorScheme,
                   theme: theme,
@@ -381,15 +420,47 @@ class _TransactionFilterSheetState
                   items: [
                     DropdownMenuItem<String?>(
                       value: null,
-                      child: Text(
-                        l10n.filterSheetAllCategories,
-                        style: TextStyle(color: colorScheme.onSurfaceVariant),
+                      child: Row(
+                        children: [
+                          CircleAvatar(
+                            radius: 12,
+                            backgroundColor: colorScheme.primary.withValues(
+                              alpha: 0.15,
+                            ),
+                            child: Icon(
+                              Icons.category_outlined,
+                              size: 14,
+                              color: colorScheme.primary,
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Text(
+                            l10n.filterSheetAllCategories,
+                            style:
+                                TextStyle(color: colorScheme.onSurfaceVariant),
+                          ),
+                        ],
                       ),
                     ),
                     ...categories.where((c) => !c.isDeleted).map(
                           (cat) => DropdownMenuItem<String?>(
                             value: cat.id,
-                            child: Text(cat.name),
+                            child: Row(
+                              children: [
+                                CircleAvatar(
+                                  radius: 12,
+                                  backgroundColor:
+                                      _parseCategoryColor(cat.color),
+                                  child: Icon(
+                                    getIconData(cat.icon),
+                                    size: 14,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                const SizedBox(width: 10),
+                                Text(cat.name),
+                              ],
+                            ),
                           ),
                         ),
                   ],
@@ -416,8 +487,10 @@ class _TransactionFilterSheetState
               onTap: _pickDateRange,
               borderRadius: BorderRadius.circular(14),
               child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 14,
+                ),
                 decoration: BoxDecoration(
                   border: Border.all(
                     color: _draft.dateRange != null
@@ -485,8 +558,9 @@ class _TransactionFilterSheetState
                   child: TextField(
                     key: const ValueKey('filterMinAmount'),
                     controller: _minAmountController,
-                    keyboardType:
-                        const TextInputType.numberWithOptions(decimal: true),
+                    keyboardType: const TextInputType.numberWithOptions(
+                      decimal: true,
+                    ),
                     inputFormatters: [
                       FilteringTextInputFormatter.allow(
                         RegExp(r'^\d*\.?\d{0,2}'),
@@ -494,8 +568,10 @@ class _TransactionFilterSheetState
                     ],
                     decoration: InputDecoration(
                       labelText: l10n.filterSheetMinAmount,
-                      prefixIcon:
-                          const Icon(Icons.arrow_downward_rounded, size: 16),
+                      prefixIcon: const Icon(
+                        Icons.arrow_downward_rounded,
+                        size: 16,
+                      ),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(14),
                       ),
@@ -512,8 +588,9 @@ class _TransactionFilterSheetState
                   child: TextField(
                     key: const ValueKey('filterMaxAmount'),
                     controller: _maxAmountController,
-                    keyboardType:
-                        const TextInputType.numberWithOptions(decimal: true),
+                    keyboardType: const TextInputType.numberWithOptions(
+                      decimal: true,
+                    ),
                     inputFormatters: [
                       FilteringTextInputFormatter.allow(
                         RegExp(r'^\d*\.?\d{0,2}'),
@@ -521,8 +598,10 @@ class _TransactionFilterSheetState
                     ],
                     decoration: InputDecoration(
                       labelText: l10n.filterSheetMaxAmount,
-                      prefixIcon:
-                          const Icon(Icons.arrow_upward_rounded, size: 16),
+                      prefixIcon: const Icon(
+                        Icons.arrow_upward_rounded,
+                        size: 16,
+                      ),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(14),
                       ),
@@ -577,12 +656,18 @@ class _TransactionFilterSheetState
                         value: tag.id,
                         child: Row(
                           children: [
-                            Icon(
-                              Icons.label_rounded,
-                              size: 14,
-                              color: colorScheme.primary.withValues(alpha: 0.7),
+                            CircleAvatar(
+                              radius: 12,
+                              backgroundColor: colorScheme.primary.withValues(
+                                alpha: 0.15,
+                              ),
+                              child: Icon(
+                                Icons.label_rounded,
+                                size: 14,
+                                color: colorScheme.primary,
+                              ),
                             ),
-                            const SizedBox(width: 6),
+                            const SizedBox(width: 10),
                             Text(tag.name),
                           ],
                         ),
@@ -629,10 +714,8 @@ class _TransactionFilterSheetState
                   ),
                 ),
                 ..._currencies.map(
-                  (code) => DropdownMenuItem<String?>(
-                    value: code,
-                    child: Text(code),
-                  ),
+                  (code) =>
+                      DropdownMenuItem<String?>(value: code, child: Text(code)),
                 ),
               ],
               onChanged: (val) {
@@ -645,6 +728,7 @@ class _TransactionFilterSheetState
 
             // ── Actions ────────────────────────────────────────────────────
             Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Expanded(
                   child: OutlinedButton(
@@ -755,8 +839,9 @@ class _TypeChip extends StatelessWidget {
       selected: selected,
       showCheckmark: false,
       backgroundColor: colorScheme.surfaceContainerHighest,
-      selectedColor:
-          (accentColor ?? colorScheme.primary).withValues(alpha: 0.15),
+      selectedColor: (accentColor ?? colorScheme.primary).withValues(
+        alpha: 0.15,
+      ),
       side: BorderSide(
         color: selected
             ? (accentColor ?? colorScheme.primary)

@@ -1,6 +1,6 @@
 # Termes i Condicions d'Ús
 
-**Data d'entrada en vigor:** 25 de juliol de 2026
+**Data d'entrada en vigor:** 17 d'agost de 2026
 
 Llegeix detingudament aquests Termes i Condicions ("Termes", "Acord") abans de descarregar, instal·lar, accedir o utilitzar l'aplicació mòbil Stalvi (l'"Aplicació" o "App").
 
@@ -39,9 +39,10 @@ STALVI ÉS UNA APLICACIÓ PURAMENT INFORMATIVA, DE REGISTRE DE DADES PERSONALS I
 
 NI L'APLICACIÓ NI ELS SEUS DESENVOLUPADORS PRESTEN ASSESSORAMENT LEGAL, FISCAL, COMPTABLE, D'INVERSIÓ, HIPOTECARI, CREDITICI O FINANCER DE CAP MENA. CAP CONTINGUT, CÀLCUL, RESUM, GRÀFIC, INFORME O ESTADÍSTICA PRODUÏDA PER L'APLICACIÓ S'HAURÀ D'INTERPRETAR COM A PLANIFICACIÓ FINANCERA O ASSESSORAMENT PROFESSIONAL.
 
-### 4.2. Zero Responsabilitat per Pèrdues Financeres i Errors de Càlcul
-RECONEIXES I ACCEPTES EXPRESSEMENT QUE ELS DESENVOLUPADORS, MANTENIDORS I PROPIETARIS DE STALVI ASSUMEIXEN **ZERO RESPONSABILITAT I ZERO OBLIGACIÓ** PER QUALSEVOL:
+### 4.2. Zero Responsabilitat per Pèrdues Financeres, Pèrdua de Dades i Errors de Càlcul
+RECONEIXES I ACCEPTES EXPRESSEMENT QUE ELS DESENVOLUPADORS, MANTENIDORS I PROPIETARIS DE STALVI ASSUMEIXEN **ZERO RESPONSABILITAT I ZERO OBLIGACIÓ** SOTA QUALSEVOL CIRCUMSTÀNCIA PER QUALSEVOL:
 - PÈRDUA FINANCERA, DESPESA INESPERADA, DESCOBERT BANCARI, COMISSIÓ BANCÀRIA, DEUTE, ESTIMACIÓ PRESSUPOSTÀRIA INEXACTA O DECISIÓ D'INVERSIÓ DESAFORTUNADA RESULTANT DIRECTAMENT O INDIRECTA DE L'ÚS O DE LA CONFIANÇA EN L'APLICACIÓ;
+- PÈRDUA DE DADES, CORRUPCIÓ O INACCESSIBILITAT DE LA TEVA BASE DE DADES A CAUSA DE FALLADES DEL DISPOSITIU, PIN OBLIDAT, ERRORS DE PROGRAMARI O MANCA DE CÒPIES DE SEGURETAT;
 - DISCREPÀNCIA DE CÀLCUL, ERROR D'ARRODONIMENT, ERROR ALGORÍTMIC O COMPUTACIONAL EN ELS TOTALS DE TRANSACCIONS, SALDOS, DESPESES RECURRENTS O PROJECCIONS ESTADÍSTIQUES;
 - PROBLEMA FISCAL, ESTIMACIÓ INCORRECTA DE DEDUCCIONS FISCALS, OMISSIÓ O DECLARACIÓ INEXACTA DAVANT QUALSEVOL AUTORITAT TRIBUTÀRIA;
 - INEXACTITUD, DESFASE O DISCREPÀNCIA EN LA CONVERSIÓ DE DIVISES, TIPUS DE CANVI, CÀLCULS MULTIDIVISA O CÀLCULS DE TIPUS DE CANVI HISTÒRICS.
@@ -51,7 +52,7 @@ ETS L'ÚNIC RESPONSIBLE DE VERIFICAR L'EXACTITUD DE TOTES LES TRANSACCIONS, CÀL
 ---
 
 ## 5. Responsabilitat de l'Usuari i Còpia de Seguretat de Dades
-- **PIN o Autenticació Biomètrica Oblidada:** Atès que totes les dades estan xifrades al dispositiu amb claus gestionades per les teves credencials locals, si oblides el teu PIN o perds l'accés biomètric, la teva base de dades serà inacaccessible i il·legible. **Els desenvolupadors no poden restablir el teu PIN ni recuperar les teves dades xifrades.**
+- **PIN o Autenticació Biomètrica Oblidada:** Atès que totes les dades estan xifrades al dispositiu amb claus gestionades per les teves credencials locals, si oblides el teu PIN o perds l'accés biomètric, la teva base de dades serà inaccessible i il·legible. **Els desenvolupadors no poden restablir el teu PIN ni recuperar les teves dades xifrades.**
 - **Pèrdua o Dany del Dispositiu:** Si el teu dispositiu es perd, danya, roba, restableix de fàbrica o si desinstal·les l'App sense exportar prèviament una còpia de seguretat xifrada, les teves dades financeres es perdran permanentment.
 - **Responsabilitat de Còpia de Seguretat:** Ets l'únic responsable de realitzar còpies de seguretat periòdiques xifrades o exportacions CSV i transferir-les a un emmagatzematge extern segur.
 

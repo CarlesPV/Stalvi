@@ -72,12 +72,15 @@ void main() {
   );
 
   test('reassigns budgets to default account and deletes account', () async {
-    when(() => mockAccountRepo.getAccountById('acc1'))
-        .thenAnswer((_) async => testAccount);
-    when(() => mockAccountRepo.getDefaultAccount('user1'))
-        .thenAnswer((_) async => defaultAccount);
-    when(() => mockAutomaticRepo.getAllAutomaticTransactions())
-        .thenAnswer((_) async => []);
+    when(
+      () => mockAccountRepo.getAccountById('acc1'),
+    ).thenAnswer((_) async => testAccount);
+    when(
+      () => mockAccountRepo.getDefaultAccount('user1'),
+    ).thenAnswer((_) async => defaultAccount);
+    when(
+      () => mockAutomaticRepo.getAllAutomaticTransactions(),
+    ).thenAnswer((_) async => []);
 
     final budget = Budget(
       id: 'b1',
@@ -106,17 +109,17 @@ void main() {
   });
 
   test('throws if trying to delete default account', () async {
-    when(() => mockAccountRepo.getAccountById('acc2'))
-        .thenAnswer((_) async => defaultAccount);
-    when(() => mockAccountRepo.getDefaultAccount('user1'))
-        .thenAnswer((_) async => defaultAccount);
-    when(() => mockAutomaticRepo.getAllAutomaticTransactions())
-        .thenAnswer((_) async => []);
+    when(
+      () => mockAccountRepo.getAccountById('acc2'),
+    ).thenAnswer((_) async => defaultAccount);
+    when(
+      () => mockAccountRepo.getDefaultAccount('user1'),
+    ).thenAnswer((_) async => defaultAccount);
+    when(
+      () => mockAutomaticRepo.getAllAutomaticTransactions(),
+    ).thenAnswer((_) async => []);
 
-    expect(
-      () => usecase.execute('acc2'),
-      throwsA(isA<ValidationException>()),
-    );
+    expect(() => usecase.execute('acc2'), throwsA(isA<ValidationException>()));
   });
 
   test('throws if account has linked automatic transactions', () async {
@@ -135,10 +138,12 @@ void main() {
       createdAt: DateTime.now(),
     );
 
-    when(() => mockAccountRepo.getAccountById('acc1'))
-        .thenAnswer((_) async => testAccount);
-    when(() => mockAutomaticRepo.getAllAutomaticTransactions())
-        .thenAnswer((_) async => [autoTxn]);
+    when(
+      () => mockAccountRepo.getAccountById('acc1'),
+    ).thenAnswer((_) async => testAccount);
+    when(
+      () => mockAutomaticRepo.getAllAutomaticTransactions(),
+    ).thenAnswer((_) async => [autoTxn]);
 
     expect(
       () => usecase.execute('acc1'),

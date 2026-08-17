@@ -1,7 +1,1 @@
-enum AccountType {
-  cash,
-  bank,
-  savings,
-  card,
-  other,
-}
+enum AccountType { cash, bank, savings, card, other }

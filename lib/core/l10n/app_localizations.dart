@@ -454,12 +454,6 @@ abstract class AppLocalizations {
   /// **'Processing security authentication…'**
   String get authProcessing;
 
-  /// No description provided for @authProtectedBy.
-  ///
-  /// In en, this message translates to:
-  /// **'Protected by device biometrics'**
-  String get authProtectedBy;
-
   /// No description provided for @authSetupAcceptAnd.
   ///
   /// In en, this message translates to:
@@ -597,6 +591,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'This account cannot be deleted because it is linked to active automatic transactions.'**
   String get accountInUseByAutoTxMessage;
+
+  /// No description provided for @deleteAccountWithTransactionsWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'This account has associated transactions. Deleting it will also delete all its transactions.'**
+  String get deleteAccountWithTransactionsWarning;
 
   /// No description provided for @accountTypeBank.
   ///
@@ -1843,7 +1843,7 @@ abstract class AppLocalizations {
   /// No description provided for @settingsDataManagement.
   ///
   /// In en, this message translates to:
-  /// **'Data Management'**
+  /// **'Import & Export Data'**
   String get settingsDataManagement;
 
   /// No description provided for @settingsLanguage.
@@ -2205,6 +2205,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Error loading content.'**
   String get errorLoadingContent;
+
+  /// No description provided for @errorCannotDeleteDefaultAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot delete the default account. Please set another account as default first.'**
+  String get errorCannotDeleteDefaultAccount;
+
+  /// No description provided for @errorNoDefaultAccountForReassignment.
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot delete account because no default account exists for reassignment.'**
+  String get errorNoDefaultAccountForReassignment;
 }
 
 class _AppLocalizationsDelegate

@@ -46,9 +46,7 @@ class _CategoriesTagsManagementScreenState
     final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          l10n.categoriesAndTags,
-        ),
+        title: Text(l10n.categoriesAndTags),
         bottom: TabBar(
           controller: _tabController,
           tabs: [
@@ -59,10 +57,7 @@ class _CategoriesTagsManagementScreenState
       ),
       body: TabBarView(
         controller: _tabController,
-        children: const [
-          _CategoriesTab(),
-          _TagsTab(),
-        ],
+        children: const [_CategoriesTab(), _TagsTab()],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -75,6 +70,18 @@ class _CategoriesTagsManagementScreenState
         child: const Icon(Icons.add),
       ),
     );
+  }
+}
+
+Color _parseCategoryHexColor(String hexString) {
+  if (hexString.isEmpty) return Colors.grey;
+  final buffer = StringBuffer();
+  if (hexString.length == 6 || hexString.length == 7) buffer.write('ff');
+  buffer.write(hexString.replaceFirst('#', ''));
+  try {
+    return Color(int.parse(buffer.toString(), radix: 16));
+  } catch (_) {
+    return Colors.grey;
   }
 }
 
@@ -101,22 +108,16 @@ class _CategoriesTab extends ConsumerWidget {
           duration: const Duration(seconds: 4),
         ),
       );
-      final replacements = await ref
-          .read(deleteAndReassignCategoryUseCaseProvider)
-          .getReplacementCategories(category);
       if (!context.mounted) return;
-      _showReassignDialog(context, ref, category, replacements);
+      _showReassignDialog(context, ref, category);
       return;
     }
 
     if (!context.mounted) return;
 
     if (inUse) {
-      final replacements = await ref
-          .read(deleteAndReassignCategoryUseCaseProvider)
-          .getReplacementCategories(category);
       if (!context.mounted) return;
-      _showReassignDialog(context, ref, category, replacements);
+      _showReassignDialog(context, ref, category);
     } else {
       final confirm = await showDialog<bool>(
         context: context,
@@ -124,6 +125,7 @@ class _CategoriesTab extends ConsumerWidget {
           scrollable: true,
           title: Text(l10n.deleteCategoryTitle),
           content: Text(l10n.deleteCategoryConfirm(category.name)),
+          actionsAlignment: MainAxisAlignment.center,
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(ctx, false),
@@ -149,18 +151,16 @@ class _CategoriesTab extends ConsumerWidget {
     BuildContext context,
     WidgetRef ref,
     Category categoryToDel,
-    List<Category> replacementCategories,
   ) {
     final l10n = AppLocalizations.of(context)!;
     String? selectedNewCategoryId;
-    final otherCategories = replacementCategories;
+    final otherCategories =
+        ref.read(replacementCategoriesProvider(categoryToDel));
 
     if (otherCategories.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(l10n.errorNoOtherCategories),
-        ),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.errorNoOtherCategories)));
       return;
     }
 
@@ -178,9 +178,7 @@ class _CategoriesTab extends ConsumerWidget {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(
-                      l10n.categoryInUseMessage(categoryToDel.name),
-                    ),
+                    Text(l10n.categoryInUseMessage(categoryToDel.name)),
                     const SizedBox(height: 16),
                     DropdownButtonFormField<String>(
                       isExpanded: true,
@@ -189,7 +187,22 @@ class _CategoriesTab extends ConsumerWidget {
                           .map(
                             (c) => DropdownMenuItem(
                               value: c.id,
-                              child: Text(c.name),
+                              child: Row(
+                                children: [
+                                  CircleAvatar(
+                                    radius: 12,
+                                    backgroundColor:
+                                        _parseCategoryHexColor(c.color),
+                                    child: Icon(
+                                      CategoryIconPicker.iconDataForKey(c.icon),
+                                      size: 14,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Text(c.name),
+                                ],
+                              ),
                             ),
                           )
                           .toList(),
@@ -200,6 +213,7 @@ class _CategoriesTab extends ConsumerWidget {
                   ],
                 ),
               ),
+              actionsAlignment: MainAxisAlignment.center,
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(ctx),
@@ -242,12 +256,7 @@ class _CategoriesTab extends ConsumerWidget {
             final category = categories[index];
             return ListTile(
               leading: CircleAvatar(
-                backgroundColor: Color(
-                  int.parse(
-                    category.color.replaceFirst('#', 'ff'),
-                    radix: 16,
-                  ),
-                ),
+                backgroundColor: _parseCategoryHexColor(category.color),
                 child: Icon(
                   CategoryIconPicker.iconDataForKey(category.icon),
                   color: Colors.white,
@@ -302,6 +311,7 @@ class _TagsTab extends ConsumerWidget {
           scrollable: true,
           title: Text(l10n.deleteTagTitle),
           content: Text(l10n.deleteTagConfirm(tag.name)),
+          actionsAlignment: MainAxisAlignment.center,
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(ctx, false),
@@ -335,11 +345,9 @@ class _TagsTab extends ConsumerWidget {
     final otherTags = allTags.where((t) => t.id != tagToDel.id).toList();
 
     if (otherTags.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(l10n.errorNoOtherTags),
-        ),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.errorNoOtherTags)));
       return;
     }
 
@@ -357,9 +365,7 @@ class _TagsTab extends ConsumerWidget {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(
-                      l10n.tagInUseMessage(tagToDel.name),
-                    ),
+                    Text(l10n.tagInUseMessage(tagToDel.name)),
                     const SizedBox(height: 16),
                     DropdownButtonFormField<String>(
                       isExpanded: true,
@@ -379,6 +385,7 @@ class _TagsTab extends ConsumerWidget {
                   ],
                 ),
               ),
+              actionsAlignment: MainAxisAlignment.center,
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(ctx),
@@ -449,7 +456,11 @@ class CategoryDialog extends StatefulWidget {
   final WidgetRef ref;
   const CategoryDialog({super.key, this.category, required this.ref});
 
-  static Future<String?> show(BuildContext context, WidgetRef ref, {Category? category}) {
+  static Future<String?> show(
+    BuildContext context,
+    WidgetRef ref, {
+    Category? category,
+  }) {
     return showModalBottomSheet<String>(
       context: context,
       isScrollControlled: true,
@@ -473,6 +484,21 @@ class CategoryDialogState extends State<CategoryDialog> {
     '#E91E63',
     '#9C27B0',
     '#FF5722',
+    '#00BCD4',
+    '#009688',
+    '#8BC34A',
+    '#CDDC39',
+    '#FF9800',
+    '#F44336',
+    '#795548',
+    '#607D8B',
+    '#673AB7',
+    '#3F51B5',
+    '#EC407A',
+    '#26A69A',
+    '#D4E157',
+    '#FF7043',
+    '#8D6E63',
   ];
 
   @override
@@ -515,20 +541,32 @@ class CategoryDialogState extends State<CategoryDialog> {
               ),
             ),
             const SizedBox(height: 16),
-            Wrap(
-              spacing: 8,
+            GridView.count(
+              crossAxisCount: 7,
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              mainAxisSpacing: 8,
+              crossAxisSpacing: 8,
               children: _colors.map((colorHex) {
-                final color = Color(
-                  int.parse(colorHex.replaceFirst('#', 'ff'), radix: 16),
-                );
+                final color = _parseCategoryHexColor(colorHex);
                 final isSelected = _selectedColor == colorHex;
                 return GestureDetector(
                   onTap: () => setState(() => _selectedColor = colorHex),
-                  child: CircleAvatar(
-                    backgroundColor: color,
-                    child: isSelected
-                        ? const Icon(Icons.check, color: Colors.white)
-                        : null,
+                  child: Center(
+                    child: SizedBox(
+                      width: 28,
+                      height: 28,
+                      child: CircleAvatar(
+                        backgroundColor: color,
+                        child: isSelected
+                            ? const Icon(
+                                Icons.check,
+                                color: Colors.white,
+                                size: 16,
+                              )
+                            : null,
+                      ),
+                    ),
                   ),
                 );
               }).toList(),
@@ -573,7 +611,9 @@ class CategoryDialogState extends State<CategoryDialog> {
                       modifiedAt: DateTime.now(),
                     ),
                   );
-                  if (context.mounted) Navigator.pop(context, widget.category!.id);
+                  if (context.mounted) {
+                    Navigator.pop(context, widget.category!.id);
+                  }
                 }
               },
               child: Text(l10n.btnSave),

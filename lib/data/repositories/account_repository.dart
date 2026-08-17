@@ -127,9 +127,7 @@ class AccountRepository implements IAccountRepository {
 
       // Cascade: soft-delete all non-deleted transactions for this account.
       await (_db.update(_db.transactions)
-            ..where(
-              (t) => t.accountId.equals(id) & t.isDeleted.equals(false),
-            ))
+            ..where((t) => t.accountId.equals(id) & t.isDeleted.equals(false)))
           .write(
         db.TransactionsCompanion(
           isDeleted: const Value(true),
@@ -155,7 +153,9 @@ class AccountRepository implements IAccountRepository {
   Future<void> hardDeleteAccount(String id) async {
     await _db.transaction(() async {
       // First remove all transactions belonging to this account.
-      await (_db.delete(_db.transactions)..where((t) => t.accountId.equals(id)))
+      await (_db.delete(
+        _db.transactions,
+      )..where((t) => t.accountId.equals(id)))
           .go();
 
       // Then remove the account itself.

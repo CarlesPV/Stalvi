@@ -64,10 +64,7 @@ class StatisticsDao extends DatabaseAccessor<AppDatabase>
     ''');
 
     final query = selectOnly(transactions).join([
-      innerJoin(
-        accounts,
-        accounts.id.equalsExp(transactions.accountId),
-      ),
+      innerJoin(accounts, accounts.id.equalsExp(transactions.accountId)),
     ])
       ..where(
         transactions.isDeleted.equals(false) & accounts.isDeleted.equals(false),
@@ -121,10 +118,7 @@ class StatisticsDao extends DatabaseAccessor<AppDatabase>
     ''');
 
     final query = selectOnly(transactions).join([
-      innerJoin(
-        accounts,
-        accounts.id.equalsExp(transactions.accountId),
-      ),
+      innerJoin(accounts, accounts.id.equalsExp(transactions.accountId)),
     ])
       ..where(queryConditions)
       ..addColumns([incomeSumExpr, expenseSumExpr]);
@@ -176,10 +170,7 @@ class StatisticsDao extends DatabaseAccessor<AppDatabase>
     ''');
 
     final query = selectOnly(transactions).join([
-      innerJoin(
-        accounts,
-        accounts.id.equalsExp(transactions.accountId),
-      ),
+      innerJoin(accounts, accounts.id.equalsExp(transactions.accountId)),
     ])
       ..where(queryConditions)
       ..addColumns([incomeSumExpr, expenseSumExpr]);
@@ -218,10 +209,7 @@ class StatisticsDao extends DatabaseAccessor<AppDatabase>
         categories,
         categories.id.equalsExp(transactions.categoryId),
       ),
-      innerJoin(
-        accounts,
-        accounts.id.equalsExp(transactions.accountId),
-      ),
+      innerJoin(accounts, accounts.id.equalsExp(transactions.accountId)),
     ])
       ..where(queryConditions)
       ..addColumns([
@@ -232,7 +220,9 @@ class StatisticsDao extends DatabaseAccessor<AppDatabase>
         sumExpr,
       ])
       ..groupBy([categories.id])
-      ..orderBy([OrderingTerm(expression: sumExpr, mode: OrderingMode.desc)]);
+      ..orderBy([
+        OrderingTerm(expression: sumExpr, mode: OrderingMode.desc),
+      ]);
 
     return query.watch().map((results) {
       return results.map((row) {
@@ -274,10 +264,7 @@ class StatisticsDao extends DatabaseAccessor<AppDatabase>
         categories,
         categories.id.equalsExp(transactions.categoryId),
       ),
-      innerJoin(
-        accounts,
-        accounts.id.equalsExp(transactions.accountId),
-      ),
+      innerJoin(accounts, accounts.id.equalsExp(transactions.accountId)),
     ])
       ..where(queryConditions)
       ..addColumns([
@@ -288,7 +275,9 @@ class StatisticsDao extends DatabaseAccessor<AppDatabase>
         sumExpr,
       ])
       ..groupBy([categories.id])
-      ..orderBy([OrderingTerm(expression: sumExpr, mode: OrderingMode.desc)]);
+      ..orderBy([
+        OrderingTerm(expression: sumExpr, mode: OrderingMode.desc),
+      ]);
 
     final results = await query.get();
 
@@ -319,10 +308,7 @@ class StatisticsDao extends DatabaseAccessor<AppDatabase>
     }
 
     final query = select(transactions).join([
-      innerJoin(
-        accounts,
-        accounts.id.equalsExp(transactions.accountId),
-      ),
+      innerJoin(accounts, accounts.id.equalsExp(transactions.accountId)),
     ])
       ..where(queryConditions);
 
@@ -349,14 +335,8 @@ class StatisticsDao extends DatabaseAccessor<AppDatabase>
     }
 
     final query = select(transactions).join([
-      innerJoin(
-        categories,
-        categories.id.equalsExp(transactions.categoryId),
-      ),
-      innerJoin(
-        accounts,
-        accounts.id.equalsExp(transactions.accountId),
-      ),
+      innerJoin(categories, categories.id.equalsExp(transactions.categoryId)),
+      innerJoin(accounts, accounts.id.equalsExp(transactions.accountId)),
     ])
       ..where(queryConditions);
 

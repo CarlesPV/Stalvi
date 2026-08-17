@@ -86,7 +86,7 @@ class AddTransactionState {
 }
 
 /// Form state controller that manages form input fields, performs validation,
-/// and executes [AddTransactionUseCase] using the clean architecture boundaries.
+/// and executes [AddTransactionUseCase].
 @riverpod
 class AddTransactionNotifier extends _$AddTransactionNotifier {
   @override
@@ -157,8 +157,9 @@ class AddTransactionNotifier extends _$AddTransactionNotifier {
         categoryId: () => null, // Reset selected category as its type changes
         toAccountIdFn: () => null, // Clear destination account if type changes
         errors: const {}, // Completely clear form errors
-        submissionStatus:
-            const AsyncData<void>(null), // Reset submission status
+        submissionStatus: const AsyncData<void>(
+          null,
+        ), // Reset submission status
       );
     }
   }
@@ -286,10 +287,7 @@ class AddTransactionNotifier extends _$AddTransactionNotifier {
       state = state.copyWith(
         errors: validationErrors,
         submissionStatus: AsyncValue.error(
-          ValidationException(
-            message: message,
-            code: firstCode,
-          ),
+          ValidationException(message: message, code: firstCode),
           StackTrace.current,
         ),
       );
@@ -327,6 +325,7 @@ class AddTransactionNotifier extends _$AddTransactionNotifier {
                   ? state.toAccountId
                   : null,
           categoryId: state.categoryId,
+          tagId: state.tagId,
           notes: trimmedNotes.isEmpty ? null : trimmedNotes,
           currency: state.currency,
         ),

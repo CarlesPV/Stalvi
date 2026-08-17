@@ -14,9 +14,7 @@ void main() {
     mockSecureStorage = MockSecureStorageManager();
   });
 
-  ProviderContainer createContainer({
-    List overrides = const [],
-  }) {
+  ProviderContainer createContainer({List overrides = const []}) {
     final container = ProviderContainer(
       overrides: [
         secureStorageProvider.overrideWithValue(mockSecureStorage),
@@ -28,27 +26,31 @@ void main() {
   }
 
   group('LocaleNotifier Unit Tests', () {
-    test('defaults to system locale or en when secure storage is empty',
-        () async {
-      when(() => mockSecureStorage.getUserLocale())
-          .thenAnswer((_) async => null);
+    test(
+      'defaults to system locale or en when secure storage is empty',
+      () async {
+        when(
+          () => mockSecureStorage.getUserLocale(),
+        ).thenAnswer((_) async => null);
 
-      final container = createContainer();
+        final container = createContainer();
 
-      // Initially it should return a valid locale (system locale or fallback 'en')
-      final initialLocale = container.read(localeProvider);
-      expect(initialLocale, isA<Locale>());
+        // Initially it should return a valid locale (system locale or fallback 'en')
+        final initialLocale = container.read(localeProvider);
+        expect(initialLocale, isA<Locale>());
 
-      // Let the microtasks / async loads finish
-      await Future.delayed(const Duration(milliseconds: 10));
+        // Let the microtasks / async loads finish
+        await Future.delayed(const Duration(milliseconds: 10));
 
-      final currentLocale = container.read(localeProvider);
-      expect(currentLocale.languageCode, anyOf('en', 'es', 'ca'));
-    });
+        final currentLocale = container.read(localeProvider);
+        expect(currentLocale.languageCode, anyOf('en', 'es', 'ca'));
+      },
+    );
 
     test('loads persisted locale from secure storage if present', () async {
-      when(() => mockSecureStorage.getUserLocale())
-          .thenAnswer((_) async => 'es');
+      when(
+        () => mockSecureStorage.getUserLocale(),
+      ).thenAnswer((_) async => 'es');
 
       final container = createContainer();
 
@@ -63,10 +65,12 @@ void main() {
     });
 
     test('setLocale updates state and persists to secure storage', () async {
-      when(() => mockSecureStorage.getUserLocale())
-          .thenAnswer((_) async => null);
-      when(() => mockSecureStorage.setUserLocale('ca'))
-          .thenAnswer((_) async {});
+      when(
+        () => mockSecureStorage.getUserLocale(),
+      ).thenAnswer((_) async => null);
+      when(
+        () => mockSecureStorage.setUserLocale('ca'),
+      ).thenAnswer((_) async {});
 
       final container = createContainer();
 
@@ -80,8 +84,9 @@ void main() {
     });
 
     test('setLocale rejects unsupported languages', () async {
-      when(() => mockSecureStorage.getUserLocale())
-          .thenAnswer((_) async => 'en');
+      when(
+        () => mockSecureStorage.getUserLocale(),
+      ).thenAnswer((_) async => 'en');
 
       final container = createContainer();
 

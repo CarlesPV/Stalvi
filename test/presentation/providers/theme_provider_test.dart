@@ -15,9 +15,7 @@ void main() {
     mockSecureStorage = MockSecureStorageManager();
   });
 
-  ProviderContainer createContainer({
-    List overrides = const [],
-  }) {
+  ProviderContainer createContainer({List overrides = const []}) {
     final container = ProviderContainer(
       overrides: [
         secureStorageProvider.overrideWithValue(mockSecureStorage),
@@ -30,8 +28,9 @@ void main() {
 
   group('ThemeNotifier Unit Tests', () {
     test('defaults to ThemeMode.system when secure storage is empty', () async {
-      when(() => mockSecureStorage.getThemeMode())
-          .thenAnswer((_) async => null);
+      when(
+        () => mockSecureStorage.getThemeMode(),
+      ).thenAnswer((_) async => null);
 
       final container = createContainer();
 
@@ -47,8 +46,9 @@ void main() {
     });
 
     test('loads persisted theme mode from secure storage if present', () async {
-      when(() => mockSecureStorage.getThemeMode())
-          .thenAnswer((_) async => 'dark');
+      when(
+        () => mockSecureStorage.getThemeMode(),
+      ).thenAnswer((_) async => 'dark');
 
       final container = createContainer();
 
@@ -63,10 +63,12 @@ void main() {
     });
 
     test('setThemeMode updates state and persists to secure storage', () async {
-      when(() => mockSecureStorage.getThemeMode())
-          .thenAnswer((_) async => null);
-      when(() => mockSecureStorage.setThemeMode('light'))
-          .thenAnswer((_) async {});
+      when(
+        () => mockSecureStorage.getThemeMode(),
+      ).thenAnswer((_) async => null);
+      when(
+        () => mockSecureStorage.setThemeMode('light'),
+      ).thenAnswer((_) async {});
 
       final container = createContainer();
 

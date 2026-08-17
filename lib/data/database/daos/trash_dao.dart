@@ -6,6 +6,7 @@ import '../tables/category_table.dart';
 import '../tables/savings_goal_table.dart';
 import '../tables/transaction_table.dart';
 import '../tables/automatic_transaction_table.dart';
+import '../tables/tag_table.dart';
 import 'package:stalvi/domain/entities/trash_item.dart';
 
 part 'trash_dao.g.dart';
@@ -18,6 +19,7 @@ part 'trash_dao.g.dart';
     Budgets,
     SavingsGoals,
     AutomaticTransactions,
+    Tags,
   ],
 )
 class TrashDao extends DatabaseAccessor<AppDatabase> with _$TrashDaoMixin {
@@ -29,8 +31,9 @@ class TrashDao extends DatabaseAccessor<AppDatabase> with _$TrashDaoMixin {
     final items = <TrashItem>[];
 
     // Transactions
-    final transactionRows = await (select(transactions)
-          ..where((t) => t.isDeleted.equals(true)))
+    final transactionRows = await (select(
+      transactions,
+    )..where((t) => t.isDeleted.equals(true)))
         .get();
     final seenTransfers = <String>{};
     for (final t in transactionRows) {
@@ -58,8 +61,9 @@ class TrashDao extends DatabaseAccessor<AppDatabase> with _$TrashDaoMixin {
     }
 
     // Categories
-    final categoryRows = await (select(categories)
-          ..where((c) => c.isDeleted.equals(true)))
+    final categoryRows = await (select(
+      categories,
+    )..where((c) => c.isDeleted.equals(true)))
         .get();
     for (final c in categoryRows) {
       items.add(
@@ -69,13 +73,19 @@ class TrashDao extends DatabaseAccessor<AppDatabase> with _$TrashDaoMixin {
           type: TrashItemType.category,
           daysRemaining: 30 - now.difference(c.modifiedAt).inDays,
           deletedAt: c.modifiedAt,
+          metadata: {
+            'icon': c.icon,
+            'color': c.color,
+          },
         ),
       );
     }
 
     // Accounts
-    final accountRows =
-        await (select(accounts)..where((a) => a.isDeleted.equals(true))).get();
+    final accountRows = await (select(
+      accounts,
+    )..where((a) => a.isDeleted.equals(true)))
+        .get();
     for (final a in accountRows) {
       items.add(
         TrashItem(
@@ -84,13 +94,19 @@ class TrashDao extends DatabaseAccessor<AppDatabase> with _$TrashDaoMixin {
           type: TrashItemType.account,
           daysRemaining: 30 - now.difference(a.modifiedAt).inDays,
           deletedAt: a.modifiedAt,
+          metadata: {
+            'icon': a.icon,
+            'color': a.color,
+          },
         ),
       );
     }
 
     // Budgets
-    final budgetRows =
-        await (select(budgets)..where((b) => b.isDeleted.equals(true))).get();
+    final budgetRows = await (select(
+      budgets,
+    )..where((b) => b.isDeleted.equals(true)))
+        .get();
     for (final b in budgetRows) {
       items.add(
         TrashItem(
@@ -105,8 +121,9 @@ class TrashDao extends DatabaseAccessor<AppDatabase> with _$TrashDaoMixin {
     }
 
     // Savings Goals
-    final goalRows = await (select(savingsGoals)
-          ..where((s) => s.isDeleted.equals(true)))
+    final goalRows = await (select(
+      savingsGoals,
+    )..where((s) => s.isDeleted.equals(true)))
         .get();
     for (final s in goalRows) {
       items.add(
@@ -117,13 +134,18 @@ class TrashDao extends DatabaseAccessor<AppDatabase> with _$TrashDaoMixin {
           daysRemaining:
               30 - now.difference(s.deletedAt ?? s.modifiedAt).inDays,
           deletedAt: s.deletedAt ?? s.modifiedAt,
+          metadata: {
+            'icon': s.icon,
+            'color': s.color,
+          },
         ),
       );
     }
 
     // Automatic Transactions
-    final autoTxnRows = await (select(automaticTransactions)
-          ..where((a) => a.isDeleted.equals(true)))
+    final autoTxnRows = await (select(
+      automaticTransactions,
+    )..where((a) => a.isDeleted.equals(true)))
         .get();
     for (final a in autoTxnRows) {
       items.add(
@@ -133,6 +155,23 @@ class TrashDao extends DatabaseAccessor<AppDatabase> with _$TrashDaoMixin {
           type: TrashItemType.automaticTransaction,
           daysRemaining: 30 - now.difference(a.deletedAt ?? a.createdAt).inDays,
           deletedAt: a.deletedAt ?? a.createdAt,
+        ),
+      );
+    }
+
+    // Tags
+    final tagRows = await (select(
+      tags,
+    )..where((t) => t.isDeleted.equals(true)))
+        .get();
+    for (final t in tagRows) {
+      items.add(
+        TrashItem(
+          id: t.id,
+          name: t.name,
+          type: TrashItemType.tag,
+          daysRemaining: 30 - now.difference(t.modifiedAt).inDays,
+          deletedAt: t.modifiedAt,
         ),
       );
     }
@@ -154,10 +193,9 @@ class TrashDao extends DatabaseAccessor<AppDatabase> with _$TrashDaoMixin {
         budgets,
         savingsGoals,
         automaticTransactions,
+        tags,
       },
-    ).watch().asyncMap(
-          (_) => getTrashItems(),
-        );
+    ).watch().asyncMap((_) => getTrashItems());
   }
 
   /// Restores a soft-deleted item by setting its isDeleted to false and updating modifiedAt.
@@ -167,12 +205,14 @@ class TrashDao extends DatabaseAccessor<AppDatabase> with _$TrashDaoMixin {
     switch (type) {
       case TrashItemType.transaction:
         await transaction(() async {
-          final txn = await (select(transactions)
-                ..where((t) => t.id.equals(id)))
+          final txn = await (select(
+            transactions,
+          )..where((t) => t.id.equals(id)))
               .getSingleOrNull();
           if (txn != null && txn.isDeleted) {
-            final accountRow = await (select(accounts)
-                  ..where((a) => a.id.equals(txn.accountId)))
+            final accountRow = await (select(
+              accounts,
+            )..where((a) => a.id.equals(txn.accountId)))
                 .getSingleOrNull();
             if (accountRow != null) {
               final double delta = txn.amount / 100.0;
@@ -182,7 +222,9 @@ class TrashDao extends DatabaseAccessor<AppDatabase> with _$TrashDaoMixin {
               } else {
                 newBalance = accountRow.initialBalance - delta;
               }
-              await (update(accounts)..where((a) => a.id.equals(txn.accountId)))
+              await (update(
+                accounts,
+              )..where((a) => a.id.equals(txn.accountId)))
                   .write(
                 AccountsCompanion(
                   initialBalance: Value(newBalance),
@@ -232,12 +274,22 @@ class TrashDao extends DatabaseAccessor<AppDatabase> with _$TrashDaoMixin {
         );
         break;
       case TrashItemType.automaticTransaction:
-        await (update(automaticTransactions)..where((a) => a.id.equals(id)))
+        await (update(
+          automaticTransactions,
+        )..where((a) => a.id.equals(id)))
             .write(
           const AutomaticTransactionsCompanion(
             isDeleted: Value(false),
             isActive: Value(true),
             deletedAt: Value(null),
+          ),
+        );
+        break;
+      case TrashItemType.tag:
+        await (update(tags)..where((t) => t.id.equals(id))).write(
+          TagsCompanion(
+            isDeleted: const Value(false),
+            modifiedAt: Value(now),
           ),
         );
         break;
@@ -263,8 +315,13 @@ class TrashDao extends DatabaseAccessor<AppDatabase> with _$TrashDaoMixin {
         await (delete(savingsGoals)..where((s) => s.id.equals(id))).go();
         break;
       case TrashItemType.automaticTransaction:
-        await (delete(automaticTransactions)..where((a) => a.id.equals(id)))
+        await (delete(
+          automaticTransactions,
+        )..where((a) => a.id.equals(id)))
             .go();
+        break;
+      case TrashItemType.tag:
+        await (delete(tags)..where((t) => t.id.equals(id))).go();
         break;
     }
   }
@@ -317,6 +374,14 @@ class TrashDao extends DatabaseAccessor<AppDatabase> with _$TrashDaoMixin {
               (a) =>
                   a.isDeleted.equals(true) &
                   a.deletedAt.isSmallerThanValue(threshold),
+            ))
+          .go();
+
+      await (delete(tags)
+            ..where(
+              (t) =>
+                  t.isDeleted.equals(true) &
+                  t.modifiedAt.isSmallerThanValue(threshold),
             ))
           .go();
     });

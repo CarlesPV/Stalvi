@@ -34,6 +34,7 @@ class BiometricAuthService {
     required String unknownErrorMessage,
     String? signInTitle,
     String? cancelButton,
+    String? signInHint,
   }) async {
     try {
       return await _localAuth.authenticate(
@@ -42,10 +43,9 @@ class BiometricAuthService {
           AndroidAuthMessages(
             signInTitle: signInTitle,
             cancelButton: cancelButton,
+            signInHint: signInHint ?? '',
           ),
-          IOSAuthMessages(
-            cancelButton: cancelButton,
-          ),
+          IOSAuthMessages(cancelButton: cancelButton),
         ],
         biometricOnly: true,
         persistAcrossBackgrounding: true,

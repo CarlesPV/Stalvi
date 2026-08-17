@@ -19,89 +19,93 @@ void main() {
     await db.close();
   });
 
-  test('getTrashItems returns only soft-deleted items sorted by daysRemaining',
-      () async {
-    const uuid = Uuid();
-    final now = DateTime.fromMillisecondsSinceEpoch(
-      (DateTime.now().millisecondsSinceEpoch ~/ 1000) * 1000,
-    );
-    final userId = uuid.v4();
+  test(
+    'getTrashItems returns only soft-deleted items sorted by daysRemaining',
+    () async {
+      const uuid = Uuid();
+      final now = DateTime.fromMillisecondsSinceEpoch(
+        (DateTime.now().millisecondsSinceEpoch ~/ 1000) * 1000,
+      );
+      final userId = uuid.v4();
 
-    await db.into(db.profiles).insert(
-          ProfilesCompanion.insert(
-            id: userId,
-            name: 'Test',
-            username: 'test',
-            password: '',
-            defaultCurrency: const Value('EUR'),
-            createdAt: now,
-            modifiedAt: now,
-          ),
-        );
+      await db.into(db.profiles).insert(
+            ProfilesCompanion.insert(
+              id: userId,
+              name: 'Test',
+              username: 'test',
+              password: '',
+              defaultCurrency: const Value('EUR'),
+              createdAt: now,
+              modifiedAt: now,
+            ),
+          );
 
-    // Active item
-    await db.into(db.accounts).insert(
-          AccountsCompanion.insert(
-            id: uuid.v4(),
-            userId: userId,
-            name: 'Active Account',
-            type: AccountType.cash,
-            initialBalance: 0,
-            currency: 'EUR',
-            color: 'red',
-            icon: 'icon',
-            isDefault: const Value(false),
-            isDeleted: const Value(false),
-            createdAt: now,
-            modifiedAt: now,
-          ),
-        );
+      // Active item
+      await db.into(db.accounts).insert(
+            AccountsCompanion.insert(
+              id: uuid.v4(),
+              userId: userId,
+              name: 'Active Account',
+              type: AccountType.cash,
+              initialBalance: 0,
+              currency: 'EUR',
+              color: 'red',
+              icon: 'icon',
+              isDefault: const Value(false),
+              isDeleted: const Value(false),
+              createdAt: now,
+              modifiedAt: now,
+            ),
+          );
 
-    // Trash items
-    final t1Id = uuid.v4();
-    await db.into(db.categories).insert(
-          CategoriesCompanion.insert(
-            id: t1Id,
-            name: 'Deleted Category',
-            icon: 'icon',
-            color: 'color',
-            isDeleted: const Value(true),
-            createdAt: now,
-            modifiedAt:
-                now.subtract(const Duration(days: 10)), // 20 days remaining
-          ),
-        );
+      // Trash items
+      final t1Id = uuid.v4();
+      await db.into(db.categories).insert(
+            CategoriesCompanion.insert(
+              id: t1Id,
+              name: 'Deleted Category',
+              icon: 'icon',
+              color: 'color',
+              isDeleted: const Value(true),
+              createdAt: now,
+              modifiedAt: now.subtract(
+                const Duration(days: 10),
+              ), // 20 days remaining
+            ),
+          );
 
-    final t2Id = uuid.v4();
-    await db.into(db.accounts).insert(
-          AccountsCompanion.insert(
-            id: t2Id,
-            userId: userId,
-            name: 'Deleted Account',
-            type: AccountType.bank,
-            initialBalance: 0,
-            currency: 'EUR',
-            color: 'blue',
-            icon: 'icon',
-            isDefault: const Value(false),
-            isDeleted: const Value(true),
-            createdAt: now,
-            modifiedAt:
-                now.subtract(const Duration(days: 20)), // 10 days remaining
-          ),
-        );
+      final t2Id = uuid.v4();
+      await db.into(db.accounts).insert(
+            AccountsCompanion.insert(
+              id: t2Id,
+              userId: userId,
+              name: 'Deleted Account',
+              type: AccountType.bank,
+              initialBalance: 0,
+              currency: 'EUR',
+              color: 'blue',
+              icon: 'icon',
+              isDefault: const Value(false),
+              isDeleted: const Value(true),
+              createdAt: now,
+              modifiedAt: now.subtract(
+                const Duration(days: 20),
+              ), // 10 days remaining
+            ),
+          );
 
-    final items = await db.trashDao.getTrashItems();
+      final items = await db.trashDao.getTrashItems();
 
-    expect(items.length, 2);
-    // T2 should be first since it has fewer days remaining (10 < 20)
-    expect(items[0].id, t2Id);
-    expect(items[0].daysRemaining, 10);
-    expect(items[0].deletedAt, now.subtract(const Duration(days: 20)));
-    expect(items[1].id, t1Id);
-    expect(items[1].daysRemaining, 20);
-    expect(items[1].deletedAt, now.subtract(const Duration(days: 10)));
-  });
+      expect(items.length, 2);
+      // T2 should be first since it has fewer days remaining (10 < 20)
+      expect(items[0].id, t2Id);
+      expect(items[0].daysRemaining, 10);
+      expect(items[0].deletedAt, now.subtract(const Duration(days: 20)));
+      expect(items[1].id, t1Id);
+      expect(items[1].daysRemaining, 20);
+      expect(items[1].deletedAt, now.subtract(const Duration(days: 10)));
+    },
+  );
 
   test('restoreItem sets isDeleted to false', () async {
     const uuid = Uuid();
@@ -122,8 +126,9 @@ void main() {
 
     await db.trashDao.restoreItem(id, TrashItemType.category);
 
-    final category = await (db.select(db.categories)
-          ..where((c) => c.id.equals(id)))
+    final category = await (db.select(
+      db.categories,
+    )..where((c) => c.id.equals(id)))
         .getSingle();
     expect(category.isDeleted, false);
   });
@@ -147,8 +152,9 @@ void main() {
 
     await db.trashDao.deleteItemPermanently(id, TrashItemType.category);
 
-    final category = await (db.select(db.categories)
-          ..where((c) => c.id.equals(id)))
+    final category = await (db.select(
+      db.categories,
+    )..where((c) => c.id.equals(id)))
         .getSingleOrNull();
     expect(category, isNull);
   });
@@ -203,13 +209,15 @@ void main() {
 
     await db.trashDao.restoreItem(transactionId, TrashItemType.transaction);
 
-    final account = await (db.select(db.accounts)
-          ..where((a) => a.id.equals(accountId)))
+    final account = await (db.select(
+      db.accounts,
+    )..where((a) => a.id.equals(accountId)))
         .getSingle();
     expect(account.initialBalance, 70.0);
 
-    final txn = await (db.select(db.transactions)
-          ..where((t) => t.id.equals(transactionId)))
+    final txn = await (db.select(
+      db.transactions,
+    )..where((t) => t.id.equals(transactionId)))
         .getSingle();
     expect(txn.isDeleted, false);
   });

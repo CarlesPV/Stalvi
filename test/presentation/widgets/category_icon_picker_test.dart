@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:stalvi/core/utils/icon_helper.dart';
 import 'package:stalvi/presentation/widgets/category_icon_picker.dart';
 
 void main() {
@@ -29,12 +30,8 @@ void main() {
   // Test 1 – Correct number of icons rendered
   // ---------------------------------------------------------------------------
 
-  testWidgets('renders exactly 128 icon cells', (tester) async {
-    await tester.pumpWidget(
-      buildPicker(
-        onIconSelected: (_) {},
-      ),
-    );
+  testWidgets('renders exactly 180 icon cells', (tester) async {
+    await tester.pumpWidget(buildPicker(onIconSelected: (_) {}));
 
     // Every icon cell is wrapped in an InkWell whose key is
     // ValueKey('iconPicker_<name>'). Count them.
@@ -42,25 +39,24 @@ void main() {
         .map((e) => find.byKey(ValueKey('iconPicker_${e.key}')))
         .toList();
 
-    expect(keys.length, 128);
+    expect(keys.length, 180);
 
-    // The picker must contain exactly 128 unique entries (no duplicates).
+    // The picker must contain exactly 180 unique entries (no duplicates).
     final uniqueKeys = CategoryIconPicker.icons.map((e) => e.key).toSet();
-    expect(uniqueKeys.length, 128);
+    expect(uniqueKeys.length, 180);
   });
 
   // ---------------------------------------------------------------------------
   // Test 2 – Tapping an icon calls onIconSelected with the correct key
   // ---------------------------------------------------------------------------
 
-  testWidgets('tapping an icon invokes onIconSelected with correct key',
-      (tester) async {
+  testWidgets('tapping an icon invokes onIconSelected with correct key', (
+    tester,
+  ) async {
     String? tappedKey;
 
     await tester.pumpWidget(
-      buildPicker(
-        onIconSelected: (key) => tappedKey = key,
-      ),
+      buildPicker(onIconSelected: (key) => tappedKey = key),
     );
 
     // Tap the first icon in the list.
@@ -78,15 +74,13 @@ void main() {
   // Test 3 – Selected icon shows selection indicator
   // ---------------------------------------------------------------------------
 
-  testWidgets('selected icon cell has primary-colored border / background',
-      (tester) async {
+  testWidgets('selected icon cell has primary-colored border / background', (
+    tester,
+  ) async {
     const selected = 'savings';
 
     await tester.pumpWidget(
-      buildPicker(
-        selectedIcon: selected,
-        onIconSelected: (_) {},
-      ),
+      buildPicker(selectedIcon: selected, onIconSelected: (_) {}),
     );
 
     // The selected cell is an AnimatedContainer with a non-transparent color.
@@ -115,8 +109,9 @@ void main() {
   // Test 4 – No icon highlighted when selectedIcon is null
   // ---------------------------------------------------------------------------
 
-  testWidgets('no icon is highlighted when selectedIcon is null',
-      (tester) async {
+  testWidgets('no icon is highlighted when selectedIcon is null', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       buildPicker(
         onIconSelected: (_) {},
@@ -125,8 +120,9 @@ void main() {
     );
 
     // All AnimatedContainers should have a transparent background.
-    final allContainers =
-        tester.widgetList<AnimatedContainer>(find.byType(AnimatedContainer));
+    final allContainers = tester.widgetList<AnimatedContainer>(
+      find.byType(AnimatedContainer),
+    );
 
     for (final container in allContainers) {
       final decoration = container.decoration as BoxDecoration?;
@@ -161,9 +157,19 @@ void main() {
   test('iconDataForKey falls back to Icons.category for unknown keys', () {
     expect(
       CategoryIconPicker.iconDataForKey('__unknown_key__'),
-      Icons.category,
+      Icons.category_rounded,
     );
   });
 
-  // ---------------------------------------------------------------------------
+  test('getIconData resolves all category icon keys without fallback', () {
+    for (final entry in CategoryIconPicker.icons) {
+      if (entry.key == 'category') continue;
+      final icon = getIconData(entry.key);
+      expect(
+        icon,
+        isNot(equals(Icons.category_rounded)),
+        reason: 'Key "${entry.key}" should be explicitly mapped in getIconData',
+      );
+    }
+  });
 }

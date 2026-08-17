@@ -2,10 +2,7 @@ class PeriodSummary {
   final int totalIncome;
   final int totalExpense;
 
-  const PeriodSummary({
-    required this.totalIncome,
-    required this.totalExpense,
-  });
+  const PeriodSummary({required this.totalIncome, required this.totalExpense});
 
   @override
   bool operator ==(Object other) =>

@@ -86,18 +86,16 @@ class AccountDao extends DatabaseAccessor<AppDatabase> with _$AccountDaoMixin {
 
       // 3. Set is_default = true on the target account.
       await (update(accounts)..where((a) => a.id.equals(accountId))).write(
-        AccountsCompanion(
-          isDefault: const Value(true),
-          modifiedAt: Value(now),
-        ),
+        AccountsCompanion(isDefault: const Value(true), modifiedAt: Value(now)),
       );
     });
   }
 
   /// Adjusts the initial balance of an account. Can be positive or negative.
   Future<void> adjustBalance(String accountId, double amountDelta) async {
-    final account = await (select(accounts)
-          ..where((a) => a.id.equals(accountId)))
+    final account = await (select(
+      accounts,
+    )..where((a) => a.id.equals(accountId)))
         .getSingleOrNull();
 
     if (account == null) {

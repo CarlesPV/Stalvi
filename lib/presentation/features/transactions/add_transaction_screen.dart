@@ -89,8 +89,9 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
             if (prev is AsyncLoading) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content:
-                      Text(AppLocalizations.of(context)!.txnSuccessCreated),
+                  content: Text(
+                    AppLocalizations.of(context)!.txnSuccessCreated,
+                  ),
                   backgroundColor: Colors.green,
                   behavior: SnackBarBehavior.floating,
                 ),
@@ -153,10 +154,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
     final tags = tagsAsync.value ?? [];
     final selectedTag = state.tagId == null
         ? null
-        : tags.firstWhere(
-            (t) => t.id == state.tagId,
-            orElse: () => tags.first,
-          );
+        : tags.firstWhere((t) => t.id == state.tagId, orElse: () => tags.first);
 
     final isLoading = state.submissionStatus.isLoading;
 
@@ -187,8 +185,9 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                   height: 54,
                   padding: const EdgeInsets.all(4),
                   decoration: BoxDecoration(
-                    color: colorScheme.surfaceContainerHighest
-                        .withValues(alpha: 0.5),
+                    color: colorScheme.surfaceContainerHighest.withValues(
+                      alpha: 0.5,
+                    ),
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Row(
@@ -299,8 +298,9 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                     return SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       child: ConstrainedBox(
-                        constraints:
-                            BoxConstraints(minWidth: constraints.maxWidth),
+                        constraints: BoxConstraints(
+                          minWidth: constraints.maxWidth,
+                        ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.baseline,
@@ -328,12 +328,15 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                                   fontWeight: FontWeight.w800,
                                   letterSpacing: -1.0,
                                 ),
-                                textAlign: TextAlign.center,
+                                textAlign: TextAlign.left,
                                 decoration: InputDecoration(
-                                  hintText: AppLocalizations.of(context)!
+                                  hintText: AppLocalizations.of(
+                                    context,
+                                  )!
                                       .hintAmountZero,
-                                  hintStyle:
-                                      const TextStyle(color: Colors.grey),
+                                  hintStyle: const TextStyle(
+                                    color: Colors.grey,
+                                  ),
                                   border: InputBorder.none,
                                   contentPadding: EdgeInsets.zero,
                                 ),
@@ -370,8 +373,9 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                 // ── Selectors Card ────────────────────────────────────────────
                 Container(
                   decoration: BoxDecoration(
-                    color: colorScheme.surfaceContainerHighest
-                        .withValues(alpha: 0.3),
+                    color: colorScheme.surfaceContainerHighest.withValues(
+                      alpha: 0.3,
+                    ),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
                       color: colorScheme.outline.withValues(alpha: 0.08),
@@ -436,7 +440,9 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                           iconColor: selectedToAccount != null
                               ? _parseHexColor(selectedToAccount.color)
                               : (selectedToSavingsGoal != null
-                                  ? _parseHexColor(selectedToSavingsGoal.color)
+                                  ? _parseHexColor(
+                                      selectedToSavingsGoal.color,
+                                    )
                                   : colorScheme.onSurfaceVariant),
                           onTap: () => _showAccountSelector(
                             context,
@@ -648,8 +654,9 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                         "${AppLocalizations.of(context)!.labelNotesHint} ${AppLocalizations.of(context)!.optionalPlaceholder}",
                     hintStyle: const TextStyle(color: Colors.grey),
                     filled: true,
-                    fillColor: colorScheme.surfaceContainerHighest
-                        .withValues(alpha: 0.2),
+                    fillColor: colorScheme.surfaceContainerHighest.withValues(
+                      alpha: 0.2,
+                    ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16),
                       borderSide: BorderSide(
@@ -684,8 +691,9 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                           vertical: 12,
                         ),
                         decoration: BoxDecoration(
-                          color:
-                              colorScheme.errorContainer.withValues(alpha: 0.2),
+                          color: colorScheme.errorContainer.withValues(
+                            alpha: 0.2,
+                          ),
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
                             color: colorScheme.error.withValues(alpha: 0.35),
@@ -701,10 +709,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                             const SizedBox(width: 10),
                             Expanded(
                               child: Text(
-                                _getLocalizedError(
-                                  context,
-                                  error,
-                                ),
+                                _getLocalizedError(context, error),
                                 style: theme.textTheme.bodySmall?.copyWith(
                                   color: colorScheme.error,
                                 ),
@@ -741,8 +746,9 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                           height: 24,
                           child: CircularProgressIndicator(
                             strokeWidth: 2.5,
-                            valueColor:
-                                AlwaysStoppedAnimation<Color>(Colors.white),
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              Colors.white,
+                            ),
                           ),
                         )
                       : Text(
@@ -818,8 +824,9 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                         decoration: BoxDecoration(
                           color: isSelected
                               ? accColor.withValues(alpha: 0.08)
-                              : colorScheme.surfaceContainerHighest
-                                  .withValues(alpha: 0.2),
+                              : colorScheme.surfaceContainerHighest.withValues(
+                                  alpha: 0.2,
+                                ),
                           borderRadius: BorderRadius.circular(14),
                           border: Border.all(
                             color: isSelected
@@ -879,8 +886,9 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                         decoration: BoxDecoration(
                           color: isSelected
                               ? goalColor.withValues(alpha: 0.08)
-                              : colorScheme.surfaceContainerHighest
-                                  .withValues(alpha: 0.2),
+                              : colorScheme.surfaceContainerHighest.withValues(
+                                  alpha: 0.2,
+                                ),
                           borderRadius: BorderRadius.circular(14),
                           border: Border.all(
                             color: isSelected
@@ -946,6 +954,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
     // Filter categories: match transaction type (income vs expense)
     final filteredCategories = categories.where((c) {
       if (c.associatedType == null) return true; // neutral category
+
       if (type == TransactionType.income &&
           c.associatedType == CategoryType.income) {
         return true;
@@ -999,8 +1008,14 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                           color: Colors.transparent,
                           child: ListTile(
                             leading: CircleAvatar(
-                              backgroundColor: colorScheme.primary.withValues(alpha: 0.12),
-                              child: Icon(Icons.add_rounded, color: colorScheme.primary, size: 20),
+                              backgroundColor: colorScheme.primary.withValues(
+                                alpha: 0.12,
+                              ),
+                              child: Icon(
+                                Icons.add_rounded,
+                                color: colorScheme.primary,
+                                size: 20,
+                              ),
                             ),
                             title: Text(
                               AppLocalizations.of(context)!.createNewCategory,
@@ -1011,7 +1026,10 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                             ),
                             onTap: () async {
                               Navigator.of(context).pop();
-                              final newId = await CategoryDialog.show(context, ref);
+                              final newId = await CategoryDialog.show(
+                                context,
+                                ref,
+                              );
                               if (newId != null) {
                                 ref
                                     .read(addTransactionProvider.notifier)
@@ -1034,8 +1052,9 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                       decoration: BoxDecoration(
                         color: isSelected
                             ? catColor.withValues(alpha: 0.08)
-                            : colorScheme.surfaceContainerHighest
-                                .withValues(alpha: 0.2),
+                            : colorScheme.surfaceContainerHighest.withValues(
+                                alpha: 0.2,
+                              ),
                         borderRadius: BorderRadius.circular(14),
                         border: Border.all(
                           color: isSelected
@@ -1057,7 +1076,10 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                             ),
                           ),
                           trailing: isSelected
-                              ? Icon(Icons.check_circle_rounded, color: catColor)
+                              ? Icon(
+                                  Icons.check_circle_rounded,
+                                  color: catColor,
+                                )
                               : null,
                           onTap: () {
                             ref
@@ -1155,8 +1177,9 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                       decoration: BoxDecoration(
                         color: isSelected
                             ? colorScheme.primary.withValues(alpha: 0.08)
-                            : colorScheme.surfaceContainerHighest
-                                .withValues(alpha: 0.2),
+                            : colorScheme.surfaceContainerHighest.withValues(
+                                alpha: 0.2,
+                              ),
                         borderRadius: BorderRadius.circular(14),
                         border: Border.all(
                           color: isSelected
@@ -1166,8 +1189,9 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                       ),
                       child: ListTile(
                         leading: CircleAvatar(
-                          backgroundColor:
-                              colorScheme.primary.withValues(alpha: 0.12),
+                          backgroundColor: colorScheme.primary.withValues(
+                            alpha: 0.12,
+                          ),
                           child: Text(
                             CurrencyFormatter.getCurrencySymbol(code),
                             style: TextStyle(
@@ -1236,7 +1260,8 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
               Flexible(
                 child: ListView.builder(
                   shrinkWrap: true,
-                  itemCount: tags.length + 2, // +1 for "Create New", +1 for "None"
+                  itemCount:
+                      tags.length + 2, // +1 for "Create New", +1 for "None"
                   itemBuilder: (context, index) {
                     if (index == 0) {
                       return Container(
@@ -1252,8 +1277,14 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                           color: Colors.transparent,
                           child: ListTile(
                             leading: CircleAvatar(
-                              backgroundColor: colorScheme.tertiary.withValues(alpha: 0.12),
-                              child: Icon(Icons.add_rounded, color: colorScheme.tertiary, size: 20),
+                              backgroundColor: colorScheme.tertiary.withValues(
+                                alpha: 0.12,
+                              ),
+                              child: Icon(
+                                Icons.add_rounded,
+                                color: colorScheme.tertiary,
+                                size: 20,
+                              ),
                             ),
                             title: Text(
                               AppLocalizations.of(context)!.createNewLabel,
@@ -1291,8 +1322,9 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                       decoration: BoxDecoration(
                         color: isSelected
                             ? colorScheme.tertiary.withValues(alpha: 0.08)
-                            : colorScheme.surfaceContainerHighest
-                                .withValues(alpha: 0.2),
+                            : colorScheme.surfaceContainerHighest.withValues(
+                                alpha: 0.2,
+                              ),
                         borderRadius: BorderRadius.circular(14),
                         border: Border.all(
                           color: isSelected
@@ -1304,8 +1336,9 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                         color: Colors.transparent,
                         child: ListTile(
                           leading: CircleAvatar(
-                            backgroundColor:
-                                colorScheme.tertiary.withValues(alpha: 0.12),
+                            backgroundColor: colorScheme.tertiary.withValues(
+                              alpha: 0.12,
+                            ),
                             child: Icon(
                               isNone
                                   ? Icons.block_rounded

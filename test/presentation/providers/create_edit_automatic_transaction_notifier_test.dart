@@ -79,8 +79,9 @@ void main() {
     mockCreateUseCase = MockCreateAutomaticTransactionUseCase();
     mockUpdateUseCase = MockUpdateAutomaticTransactionUseCase();
     mockSecureStorageManager = MockSecureStorageManager();
-    when(() => mockSecureStorageManager.getUserLocale())
-        .thenAnswer((_) async => 'en');
+    when(
+      () => mockSecureStorageManager.getUserLocale(),
+    ).thenAnswer((_) async => 'en');
   });
 
   tearDown(() {
@@ -90,14 +91,18 @@ void main() {
   void buildContainer({List<Account>? accounts, Profile? profile}) {
     container = ProviderContainer(
       overrides: [
-        createAutomaticTransactionUseCaseProvider
-            .overrideWithValue(mockCreateUseCase),
-        updateAutomaticTransactionUseCaseProvider
-            .overrideWithValue(mockUpdateUseCase),
-        accountsListProvider
-            .overrideWith((ref) => Stream.value(accounts ?? [testAccount])),
-        categoriesListProvider
-            .overrideWith((ref) => Stream.value([testCategory])),
+        createAutomaticTransactionUseCaseProvider.overrideWithValue(
+          mockCreateUseCase,
+        ),
+        updateAutomaticTransactionUseCaseProvider.overrideWithValue(
+          mockUpdateUseCase,
+        ),
+        accountsListProvider.overrideWith(
+          (ref) => Stream.value(accounts ?? [testAccount]),
+        ),
+        categoriesListProvider.overrideWith(
+          (ref) => Stream.value([testCategory]),
+        ),
         defaultProfileProvider.overrideWith((ref) => profile ?? testProfile),
         secureStorageProvider.overrideWith((ref) => mockSecureStorageManager),
       ],
@@ -107,8 +112,9 @@ void main() {
   group('CreateEditAutomaticTransactionNotifier State Management', () {
     test('initializes with default state values including null labelId', () {
       buildContainer(accounts: []);
-      final state =
-          container.read(createEditAutomaticTransactionProvider(null));
+      final state = container.read(
+        createEditAutomaticTransactionProvider(null),
+      );
 
       expect(state.name, '');
       expect(state.amountText, '');
@@ -122,56 +128,72 @@ void main() {
       expect(state.submissionStatus, const AsyncData<void>(null));
     });
 
-    test('initializes with transaction values including labelId when editing', () {
-      buildContainer();
-      final txn = AutomaticTransaction(
-        id: 'txn_1',
-        name: 'Rent',
-        amount: 50000,
-        currency: 'USD',
-        type: TransactionType.expense,
-        accountId: 'acc_1',
-        categoryId: 'cat_1',
-        labelId: 'label_123',
-        notes: 'Monthly rent',
-        recurrenceDays: 14,
-        nextExecutionDate: DateTime.now(),
-        createdAt: DateTime.now(),
-      );
+    test(
+      'initializes with transaction values including labelId when editing',
+      () {
+        buildContainer();
+        final txn = AutomaticTransaction(
+          id: 'txn_1',
+          name: 'Rent',
+          amount: 50000,
+          currency: 'USD',
+          type: TransactionType.expense,
+          accountId: 'acc_1',
+          categoryId: 'cat_1',
+          labelId: 'label_123',
+          notes: 'Monthly rent',
+          recurrenceDays: 14,
+          nextExecutionDate: DateTime.now(),
+          createdAt: DateTime.now(),
+        );
 
-      final state = container.read(createEditAutomaticTransactionProvider(txn));
+        final state = container.read(
+          createEditAutomaticTransactionProvider(txn),
+        );
 
-      expect(state.id, 'txn_1');
-      expect(state.name, 'Rent');
-      expect(state.amountText, '500.0');
-      expect(state.currency, 'USD');
-      expect(state.accountId, 'acc_1');
-      expect(state.categoryId, 'cat_1');
-      expect(state.labelId, 'label_123');
-      expect(state.notes, 'Monthly rent');
-      expect(state.recurrenceDays, 14);
-    });
+        expect(state.id, 'txn_1');
+        expect(state.name, 'Rent');
+        expect(state.amountText, '500.0');
+        expect(state.currency, 'USD');
+        expect(state.accountId, 'acc_1');
+        expect(state.categoryId, 'cat_1');
+        expect(state.labelId, 'label_123');
+        expect(state.notes, 'Monthly rent');
+        expect(state.recurrenceDays, 14);
+      },
+    );
 
     test('updateLabel updates labelId in state', () {
       buildContainer();
-      final notifier =
-          container.read(createEditAutomaticTransactionProvider(null).notifier);
+      final notifier = container.read(
+        createEditAutomaticTransactionProvider(null).notifier,
+      );
 
-      expect(container.read(createEditAutomaticTransactionProvider(null)).labelId, isNull);
+      expect(
+        container.read(createEditAutomaticTransactionProvider(null)).labelId,
+        isNull,
+      );
 
       notifier.updateLabel('tag_99');
-      expect(container.read(createEditAutomaticTransactionProvider(null)).labelId, 'tag_99');
+      expect(
+        container.read(createEditAutomaticTransactionProvider(null)).labelId,
+        'tag_99',
+      );
 
       notifier.updateLabel(null);
-      expect(container.read(createEditAutomaticTransactionProvider(null)).labelId, isNull);
+      expect(
+        container.read(createEditAutomaticTransactionProvider(null)).labelId,
+        isNull,
+      );
     });
   });
 
   group('CreateEditAutomaticTransactionNotifier Validation', () {
     test('submit returns false when name is missing', () async {
       buildContainer();
-      final notifier =
-          container.read(createEditAutomaticTransactionProvider(null).notifier);
+      final notifier = container.read(
+        createEditAutomaticTransactionProvider(null).notifier,
+      );
 
       notifier.updateName('');
       notifier.updateAmount('10.0');
@@ -181,17 +203,18 @@ void main() {
       final success = await notifier.submit();
       expect(success, isFalse);
 
-      final state =
-          container.read(createEditAutomaticTransactionProvider(null));
+      final state = container.read(
+        createEditAutomaticTransactionProvider(null),
+      );
       expect(state.errors.containsKey('name'), isTrue);
       expect(state.errors['name'], 'NAME_REQUIRED');
     });
 
-    test('submit succeeds and passes labelId to create use case',
-        () async {
+    test('submit succeeds and passes labelId to create use case', () async {
       buildContainer();
-      final notifier =
-          container.read(createEditAutomaticTransactionProvider(null).notifier);
+      final notifier = container.read(
+        createEditAutomaticTransactionProvider(null).notifier,
+      );
 
       notifier.updateName('Spotify');
       notifier.updateAmount('9.99');
@@ -201,8 +224,9 @@ void main() {
       notifier.updateCurrency('EUR');
       notifier.updateRecurrence(RecurrenceType.intervalDays, 30);
 
-      when(() => mockCreateUseCase.execute(any()))
-          .thenAnswer((_) async => FakeAutomaticTransaction());
+      when(
+        () => mockCreateUseCase.execute(any()),
+      ).thenAnswer((_) async => FakeAutomaticTransaction());
 
       final success = await notifier.submit();
 
@@ -216,42 +240,46 @@ void main() {
       expect(captured.recurrenceDays, 30);
     });
 
-    test('submit calls update use case when editing existing transaction',
-        () async {
-      buildContainer();
-      final txn = AutomaticTransaction(
-        id: 'txn_1',
-        name: 'Rent',
-        amount: 50000,
-        currency: 'USD',
-        type: TransactionType.expense,
-        accountId: 'acc_1',
-        categoryId: 'cat_1',
-        labelId: 'label_home',
-        notes: '',
-        recurrenceDays: 30,
-        nextExecutionDate: DateTime.now(),
-        createdAt: DateTime.now(),
-      );
+    test(
+      'submit calls update use case when editing existing transaction',
+      () async {
+        buildContainer();
+        final txn = AutomaticTransaction(
+          id: 'txn_1',
+          name: 'Rent',
+          amount: 50000,
+          currency: 'USD',
+          type: TransactionType.expense,
+          accountId: 'acc_1',
+          categoryId: 'cat_1',
+          labelId: 'label_home',
+          notes: '',
+          recurrenceDays: 30,
+          nextExecutionDate: DateTime.now(),
+          createdAt: DateTime.now(),
+        );
 
-      final notifier =
-          container.read(createEditAutomaticTransactionProvider(txn).notifier);
+        final notifier = container.read(
+          createEditAutomaticTransactionProvider(txn).notifier,
+        );
 
-      notifier.updateAmount('550.0'); // changed amount
+        notifier.updateAmount('550.0'); // changed amount
 
-      when(() => mockUpdateUseCase.execute(any()))
-          .thenAnswer((_) async => FakeAutomaticTransaction());
+        when(
+          () => mockUpdateUseCase.execute(any()),
+        ).thenAnswer((_) async => FakeAutomaticTransaction());
 
-      final success = await notifier.submit();
+        final success = await notifier.submit();
 
-      expect(success, isTrue);
-      final captured = verify(() => mockUpdateUseCase.execute(captureAny()))
-          .captured
-          .first as AutomaticTransaction;
-      expect(captured.id, 'txn_1');
-      expect(captured.amount, 55000);
-      expect(captured.labelId, 'label_home');
-      verifyNever(() => mockCreateUseCase.execute(any()));
-    });
+        expect(success, isTrue);
+        final captured = verify(() => mockUpdateUseCase.execute(captureAny()))
+            .captured
+            .first as AutomaticTransaction;
+        expect(captured.id, 'txn_1');
+        expect(captured.amount, 55000);
+        expect(captured.labelId, 'label_home');
+        verifyNever(() => mockCreateUseCase.execute(any()));
+      },
+    );
   });
 }

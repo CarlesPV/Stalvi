@@ -53,8 +53,9 @@ class CreateBudgetUseCase {
       );
     }
 
-    final category =
-        await _categoryRepository.getCategoryById(params.categoryId);
+    final category = await _categoryRepository.getCategoryById(
+      params.categoryId,
+    );
     if (category == null) {
       throw NotFoundException(
         message: 'Category with id "${params.categoryId}" not found',
@@ -83,8 +84,9 @@ class CreateBudgetUseCase {
     await _updateBudgetProgressUseCase.execute(categoryId: params.categoryId);
 
     // Fetch the updated budget to return
-    final updatedBudgets =
-        await _budgetRepository.getBudgetsByCategoryId(params.categoryId);
+    final updatedBudgets = await _budgetRepository.getBudgetsByCategoryId(
+      params.categoryId,
+    );
     final updatedBudget = updatedBudgets.firstWhere(
       (b) => b.id == params.id,
       orElse: () => budget,

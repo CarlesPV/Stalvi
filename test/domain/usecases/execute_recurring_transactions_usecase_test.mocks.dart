@@ -274,6 +274,15 @@ class MockITransactionRepository extends _i1.Mock
       ) as _i9.Future<List<_i3.Transaction>>);
 
   @override
+  _i9.Future<bool> hasAnyTransactions(String? accountId) => (super.noSuchMethod(
+        Invocation.method(
+          #hasAnyTransactions,
+          [accountId],
+        ),
+        returnValue: _i9.Future<bool>.value(false),
+      ) as _i9.Future<bool>);
+
+  @override
   _i9.Future<_i3.Transaction> updateTransaction(_i3.Transaction? transaction) =>
       (super.noSuchMethod(
         Invocation.method(

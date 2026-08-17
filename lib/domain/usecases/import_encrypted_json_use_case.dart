@@ -17,10 +17,7 @@ class ImportEncryptedJsonUseCase {
   ///
   /// Throws a [ValidationException] if [password] is empty.
   /// Throws an [AppException] subclass on decrypt or DB write failure.
-  Future<void> call(
-    List<int> fileBytes, {
-    required String password,
-  }) async {
+  Future<void> call(List<int> fileBytes, {required String password}) async {
     if (password.isEmpty) {
       throw const ValidationException(
         message: 'A password is required to restore a backup',

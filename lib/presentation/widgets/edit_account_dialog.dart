@@ -137,6 +137,22 @@ class _EditAccountDialogState extends ConsumerState<EditAccountDialog> {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
+    setState(() => _isLoading = true);
+    bool hasTransactions = false;
+    try {
+      hasTransactions = await ref
+          .read(transactionRepositoryProvider)
+          .hasAnyTransactions(widget.account.id);
+    } catch (e) {
+      // Ignore: default to standard warning
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
+
+    if (!mounted) return;
+
     String? dialogError;
     bool isDeleting = false;
 
@@ -166,7 +182,9 @@ class _EditAccountDialogState extends ConsumerState<EditAccountDialog> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Text(
-                    l10n.deleteAllDataWarning,
+                    hasTransactions
+                        ? l10n.deleteAccountWithTransactionsWarning
+                        : l10n.deleteAllDataWarning,
                   ),
                   if (dialogError != null) ...[
                     const SizedBox(height: 16),
@@ -180,6 +198,7 @@ class _EditAccountDialogState extends ConsumerState<EditAccountDialog> {
                   ],
                 ],
               ),
+              actionsAlignment: MainAxisAlignment.center,
               actions: [
                 TextButton(
                   onPressed: isDeleting
@@ -227,8 +246,10 @@ class _EditAccountDialogState extends ConsumerState<EditAccountDialog> {
                                       Text(l10n.warning),
                                     ],
                                   ),
-                                  content:
-                                      Text(l10n.accountInUseByAutoTxMessage),
+                                  content: Text(
+                                    l10n.accountInUseByAutoTxMessage,
+                                  ),
+                                  actionsAlignment: MainAxisAlignment.center,
                                   actions: [
                                     TextButton(
                                       onPressed: () => Navigator.of(ctx).pop(),
@@ -248,6 +269,13 @@ class _EditAccountDialogState extends ConsumerState<EditAccountDialog> {
                                 if (e.code == 'LAST_ACCOUNT') {
                                   dialogError =
                                       l10n.errorCannotDeleteLastAccount;
+                                } else if (e.code ==
+                                    'DEFAULT_ACCOUNT_DELETION') {
+                                  dialogError =
+                                      l10n.errorCannotDeleteDefaultAccount;
+                                } else if (e.code == 'NO_DEFAULT_ACCOUNT') {
+                                  dialogError =
+                                      l10n.errorNoDefaultAccountForReassignment;
                                 } else {
                                   dialogError = e.message;
                                 }
@@ -257,8 +285,10 @@ class _EditAccountDialogState extends ConsumerState<EditAccountDialog> {
                             if (dialogContext.mounted) {
                               setDialogState(() {
                                 isDeleting = false;
-                                dialogError =
-                                    e.toString().replaceAll('Exception: ', '');
+                                dialogError = e.toString().replaceAll(
+                                      'Exception: ',
+                                      '',
+                                    );
                               });
                             }
                           }
@@ -305,8 +335,12 @@ class _EditAccountDialogState extends ConsumerState<EditAccountDialog> {
       color: colorScheme.surface,
       borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
       child: Container(
-        padding:
-            EdgeInsets.fromLTRB(24, 12, 24, 24 + mediaQuery.viewInsets.bottom),
+        padding: EdgeInsets.fromLTRB(
+          24,
+          12,
+          24,
+          24 + mediaQuery.viewInsets.bottom,
+        ),
         child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -349,8 +383,10 @@ class _EditAccountDialogState extends ConsumerState<EditAccountDialog> {
 
               if (_errorMessage != null) ...[
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
                   decoration: BoxDecoration(
                     color: colorScheme.errorContainer,
                     borderRadius: BorderRadius.circular(16),
@@ -401,8 +437,9 @@ class _EditAccountDialogState extends ConsumerState<EditAccountDialog> {
                 ),
                 readOnly: true,
                 enabled: false,
-                keyboardType:
-                    const TextInputType.numberWithOptions(decimal: true),
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
                 decoration: InputDecoration(
                   labelText: l10n.createAccountInitialBalanceLabel,
                   hintText: l10n.hintAmountZero,
@@ -592,8 +629,10 @@ class _EditAccountDialogState extends ConsumerState<EditAccountDialog> {
                 ),
               ),
               const SizedBox(height: 10),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
+              Wrap(
+                alignment: WrapAlignment.spaceAround,
+                spacing: 8,
+                runSpacing: 8,
                 children: _icons.map((item) {
                   final name = item['name'] as String;
                   final icon = item['icon'] as IconData;
@@ -608,8 +647,9 @@ class _EditAccountDialogState extends ConsumerState<EditAccountDialog> {
                       decoration: BoxDecoration(
                         color: isSelected
                             ? activeColor.withValues(alpha: 0.12)
-                            : colorScheme.surfaceContainerHighest
-                                .withValues(alpha: 0.3),
+                            : colorScheme.surfaceContainerHighest.withValues(
+                                alpha: 0.3,
+                              ),
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
                           color: isSelected ? activeColor : Colors.transparent,
@@ -637,9 +677,8 @@ class _EditAccountDialogState extends ConsumerState<EditAccountDialog> {
                       context: context,
                       builder: (ctx) => AlertDialog(
                         title: Text(l10n.warning),
-                        content: Text(
-                          l10n.replaceDefaultAccountConfirm,
-                        ),
+                        content: Text(l10n.replaceDefaultAccountConfirm),
+                        actionsAlignment: MainAxisAlignment.center,
                         actions: [
                           TextButton(
                             onPressed: () => Navigator.pop(ctx, false),
@@ -670,6 +709,7 @@ class _EditAccountDialogState extends ConsumerState<EditAccountDialog> {
 
               // Save / Cancel button
               Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Expanded(
                     child: OutlinedButton(

@@ -77,9 +77,7 @@ class CreateProfileUseCase {
 
     final trimmedName = params.name.trim();
     if (trimmedName.isEmpty) {
-      throw const ValidationException(
-        message: 'Name cannot be empty.',
-      );
+      throw const ValidationException(message: 'Name cannot be empty.');
     }
     if (trimmedName.length > 25) {
       throw const ValidationException(
@@ -87,16 +85,12 @@ class CreateProfileUseCase {
       );
     }
     if (InputSanitizer.containsEmoji(params.name)) {
-      throw const ValidationException(
-        message: 'Name cannot contain emojis.',
-      );
+      throw const ValidationException(message: 'Name cannot contain emojis.');
     }
 
     final trimmedUsername = params.username.trim();
     if (trimmedUsername.isEmpty) {
-      throw const ValidationException(
-        message: 'Username cannot be empty.',
-      );
+      throw const ValidationException(message: 'Username cannot be empty.');
     }
     if (trimmedUsername.length > 25) {
       throw const ValidationException(

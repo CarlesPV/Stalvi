@@ -36,7 +36,9 @@ class TagRepository implements ITagRepository {
   @override
   Future<Tag> updateTag(Tag tag) async {
     final dbTag = tag.toDb();
-    await (_db.update(_db.tags)..where((t) => t.id.equals(tag.id)))
+    await (_db.update(
+      _db.tags,
+    )..where((t) => t.id.equals(tag.id)))
         .write(dbTag.toCompanion(false));
     return tag;
   }
@@ -44,9 +46,7 @@ class TagRepository implements ITagRepository {
   @override
   Future<void> deleteTag(String id) async {
     await (_db.update(_db.tags)..where((t) => t.id.equals(id))).write(
-      const db.TagsCompanion(
-        isDeleted: Value(true),
-      ),
+      const db.TagsCompanion(isDeleted: Value(true)),
     );
   }
 

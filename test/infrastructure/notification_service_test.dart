@@ -84,21 +84,24 @@ void main() {
     });
 
     test('Formats goal reached payload correctly for all languages', () {
-      final en =
-          NotificationService.formatGoalReachedNotification(languageCode: 'en');
+      final en = NotificationService.formatGoalReachedNotification(
+        languageCode: 'en',
+      );
       expect(en.title, equals('Savings Goal Reached'));
       expect(
         en.body,
         equals('Congratulations! You have reached your savings goal.'),
       );
 
-      final es =
-          NotificationService.formatGoalReachedNotification(languageCode: 'es');
+      final es = NotificationService.formatGoalReachedNotification(
+        languageCode: 'es',
+      );
       expect(es.title, equals('Meta de ahorro alcanzada'));
       expect(es.body, equals('¡Felicidades! Has alcanzado tu meta de ahorro.'));
 
-      final ca =
-          NotificationService.formatGoalReachedNotification(languageCode: 'ca');
+      final ca = NotificationService.formatGoalReachedNotification(
+        languageCode: 'ca',
+      );
       expect(ca.title, equals('Objectiu d\'estalvi assolit'));
       expect(
         ca.body,
@@ -118,85 +121,67 @@ void main() {
     });
 
     test(
-        'showAutomaticTransactionNotification calls plugin show method with correct arguments',
-        () async {
-      when(
-        mockPlugin.show(
-          any,
-          any,
-          any,
-          any,
-        ),
-      ).thenAnswer((_) async {});
+      'showAutomaticTransactionNotification calls plugin show method with correct arguments',
+      () async {
+        when(mockPlugin.show(any, any, any, any)).thenAnswer((_) async {});
 
-      await service.showAutomaticTransactionNotification(
-        transactionName: 'Gym Membership',
-        languageCode: 'es',
-        notificationId: 12345,
-      );
+        await service.showAutomaticTransactionNotification(
+          transactionName: 'Gym Membership',
+          languageCode: 'es',
+          notificationId: 12345,
+        );
 
-      verify(
-        mockPlugin.show(
-          12345,
-          'Transacción automática creada',
-          'La transacción Gym Membership se ha completado con éxito.',
-          any,
-        ),
-      ).called(1);
-    });
+        verify(
+          mockPlugin.show(
+            12345,
+            'Transacción automática creada',
+            'La transacción Gym Membership se ha completado con éxito.',
+            any,
+          ),
+        ).called(1);
+      },
+    );
 
     test(
-        'showBudgetExceededNotification calls plugin show method with correct arguments',
-        () async {
-      when(
-        mockPlugin.show(
-          any,
-          any,
-          any,
-          any,
-        ),
-      ).thenAnswer((_) async {});
+      'showBudgetExceededNotification calls plugin show method with correct arguments',
+      () async {
+        when(mockPlugin.show(any, any, any, any)).thenAnswer((_) async {});
 
-      await service.showBudgetExceededNotification(
-        languageCode: 'es',
-        notificationId: 9999,
-      );
+        await service.showBudgetExceededNotification(
+          languageCode: 'es',
+          notificationId: 9999,
+        );
 
-      verify(
-        mockPlugin.show(
-          9999,
-          'Presupuesto superado',
-          'Has superado el límite de tu presupuesto.',
-          any,
-        ),
-      ).called(1);
-    });
+        verify(
+          mockPlugin.show(
+            9999,
+            'Presupuesto superado',
+            'Has superado el límite de tu presupuesto.',
+            any,
+          ),
+        ).called(1);
+      },
+    );
 
     test(
-        'showGoalReachedNotification calls plugin show method with correct arguments',
-        () async {
-      when(
-        mockPlugin.show(
-          any,
-          any,
-          any,
-          any,
-        ),
-      ).thenAnswer((_) async {});
+      'showGoalReachedNotification calls plugin show method with correct arguments',
+      () async {
+        when(mockPlugin.show(any, any, any, any)).thenAnswer((_) async {});
 
-      await service.showGoalReachedNotification(
-        languageCode: 'ca',
-        notificationId: 8888,
-      );
+        await service.showGoalReachedNotification(
+          languageCode: 'ca',
+          notificationId: 8888,
+        );
 
-      verify(
-        mockPlugin.show(
-          8888,
-          'Objectiu d\'estalvi assolit',
-          'Felicitats! Heu assolit el vostre objectiu d\'estalvi.',
-          any,
-        ),
-      ).called(1);
-    });
+        verify(
+          mockPlugin.show(
+            8888,
+            'Objectiu d\'estalvi assolit',
+            'Felicitats! Heu assolit el vostre objectiu d\'estalvi.',
+            any,
+          ),
+        ).called(1);
+      },
+    );
   });
 }

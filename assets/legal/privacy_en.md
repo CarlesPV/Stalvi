@@ -1,6 +1,6 @@
 # Privacy Policy
 
-**Effective Date:** July 25, 2026
+**Effective Date:** August 17, 2026
 
 ## 1. Introduction
 Welcome to **Stalvi** ("we", "our", or "the Application"). Stalvi is a local-first, privacy-by-design personal financial management application. We are committed to protecting your privacy and ensuring your financial data remains confidential, secure, and under your exclusive control.

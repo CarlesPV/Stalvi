@@ -101,8 +101,9 @@ void main() {
       expect(result, equals('Every 14 days'));
     });
 
-    testWidgets('formats specificDayOfMonth correctly',
-        (WidgetTester tester) async {
+    testWidgets('formats specificDayOfMonth correctly', (
+      WidgetTester tester,
+    ) async {
       String? result;
       final txn = baseTransaction.copyWith(
         recurrenceType: RecurrenceType.specificDayOfMonth,

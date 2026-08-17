@@ -76,39 +76,43 @@ void main() {
 
       await dao.setDefaultAccount('acc1');
 
-      final account = await (database.select(database.accounts)
-            ..where((a) => a.id.equals('acc1')))
+      final account = await (database.select(
+        database.accounts,
+      )..where((a) => a.id.equals('acc1')))
           .getSingleOrNull();
       expect(account, isNotNull);
       expect(account!.isDefault, isTrue);
     });
 
     test(
-        'clears previous default before setting a new one (exclusive invariant)',
-        () async {
-      await _seedProfile(database, 'user1');
-      // acc1 starts as the default.
-      await _insertAccount(
-        database,
-        id: 'acc1',
-        userId: 'user1',
-        isDefault: true,
-      );
-      await _insertAccount(database, id: 'acc2', userId: 'user1');
+      'clears previous default before setting a new one (exclusive invariant)',
+      () async {
+        await _seedProfile(database, 'user1');
+        // acc1 starts as the default.
+        await _insertAccount(
+          database,
+          id: 'acc1',
+          userId: 'user1',
+          isDefault: true,
+        );
+        await _insertAccount(database, id: 'acc2', userId: 'user1');
 
-      // Switch default to acc2.
-      await dao.setDefaultAccount('acc2');
+        // Switch default to acc2.
+        await dao.setDefaultAccount('acc2');
 
-      final acc1 = await (database.select(database.accounts)
-            ..where((a) => a.id.equals('acc1')))
-          .getSingleOrNull();
-      final acc2 = await (database.select(database.accounts)
-            ..where((a) => a.id.equals('acc2')))
-          .getSingleOrNull();
+        final acc1 = await (database.select(
+          database.accounts,
+        )..where((a) => a.id.equals('acc1')))
+            .getSingleOrNull();
+        final acc2 = await (database.select(
+          database.accounts,
+        )..where((a) => a.id.equals('acc2')))
+            .getSingleOrNull();
 
-      expect(acc1!.isDefault, isFalse, reason: 'old default must be cleared');
-      expect(acc2!.isDefault, isTrue, reason: 'new target must be set');
-    });
+        expect(acc1!.isDefault, isFalse, reason: 'old default must be cleared');
+        expect(acc2!.isDefault, isTrue, reason: 'new target must be set');
+      },
+    );
 
     test('only one account is default when multiple accounts exist', () async {
       await _seedProfile(database, 'user1');
@@ -118,8 +122,9 @@ void main() {
 
       await dao.setDefaultAccount('acc2');
 
-      final all = await (database.select(database.accounts)
-            ..where((a) => a.userId.equals('user1')))
+      final all = await (database.select(
+        database.accounts,
+      )..where((a) => a.userId.equals('user1')))
           .get();
       final defaults = all.where((a) => a.isDefault).toList();
       expect(defaults.length, 1);
@@ -141,8 +146,9 @@ void main() {
       await _insertAccount(database, id: 'acc_u1b', userId: 'user1');
       await dao.setDefaultAccount('acc_u1b');
 
-      final u2Account = await (database.select(database.accounts)
-            ..where((a) => a.id.equals('acc_u2')))
+      final u2Account = await (database.select(
+        database.accounts,
+      )..where((a) => a.id.equals('acc_u2')))
           .getSingleOrNull();
       // user2's account was never set as default – it should still be false.
       expect(u2Account!.isDefault, isFalse);
@@ -155,24 +161,27 @@ void main() {
       );
     });
 
-    test('re-setting the already-default account leaves it as default',
-        () async {
-      await _seedProfile(database, 'user1');
-      await _insertAccount(
-        database,
-        id: 'acc1',
-        userId: 'user1',
-        isDefault: true,
-      );
+    test(
+      're-setting the already-default account leaves it as default',
+      () async {
+        await _seedProfile(database, 'user1');
+        await _insertAccount(
+          database,
+          id: 'acc1',
+          userId: 'user1',
+          isDefault: true,
+        );
 
-      // Setting acc1 as default again should be a no-op for the flag value.
-      await dao.setDefaultAccount('acc1');
+        // Setting acc1 as default again should be a no-op for the flag value.
+        await dao.setDefaultAccount('acc1');
 
-      final acc1 = await (database.select(database.accounts)
-            ..where((a) => a.id.equals('acc1')))
-          .getSingleOrNull();
-      expect(acc1!.isDefault, isTrue);
-    });
+        final acc1 = await (database.select(
+          database.accounts,
+        )..where((a) => a.id.equals('acc1')))
+            .getSingleOrNull();
+        expect(acc1!.isDefault, isTrue);
+      },
+    );
   });
 
   // ── getDefaultAccount ───────────────────────────────────────────────────────
@@ -201,21 +210,23 @@ void main() {
       expect(result!.id, 'acc1');
     });
 
-    test('returns null for a different user even if one account is default',
-        () async {
-      await _seedProfile(database, 'user1');
-      await _seedProfile(database, 'user2');
-      await _insertAccount(
-        database,
-        id: 'acc1',
-        userId: 'user1',
-        isDefault: true,
-      );
+    test(
+      'returns null for a different user even if one account is default',
+      () async {
+        await _seedProfile(database, 'user1');
+        await _seedProfile(database, 'user2');
+        await _insertAccount(
+          database,
+          id: 'acc1',
+          userId: 'user1',
+          isDefault: true,
+        );
 
-      // user2 has no accounts – should get null.
-      final result = await dao.getDefaultAccount('user2');
-      expect(result, isNull);
-    });
+        // user2 has no accounts – should get null.
+        final result = await dao.getDefaultAccount('user2');
+        expect(result, isNull);
+      },
+    );
 
     test('ignores soft-deleted default accounts', () async {
       await _seedProfile(database, 'user1');

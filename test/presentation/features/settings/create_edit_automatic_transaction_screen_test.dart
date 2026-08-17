@@ -91,15 +91,17 @@ void main() {
   Widget createTestableWidget({AutomaticTransaction? transaction}) {
     return ProviderScope(
       overrides: [
-        createAutomaticTransactionUseCaseProvider
-            .overrideWithValue(mockCreateUseCase),
-        updateAutomaticTransactionUseCaseProvider
-            .overrideWithValue(mockUpdateUseCase),
+        createAutomaticTransactionUseCaseProvider.overrideWithValue(
+          mockCreateUseCase,
+        ),
+        updateAutomaticTransactionUseCaseProvider.overrideWithValue(
+          mockUpdateUseCase,
+        ),
         accountsListProvider.overrideWith((ref) => Stream.value([testAccount])),
-        categoriesListProvider
-            .overrideWith((ref) => Stream.value([testCategory])),
-        tagsListProvider
-            .overrideWith((ref) async => [testTag]),
+        categoriesListProvider.overrideWith(
+          (ref) => Stream.value([testCategory]),
+        ),
+        tagsListProvider.overrideWith((ref) async => [testTag]),
         defaultProfileProvider.overrideWith((ref) => testProfile),
         secureStorageProvider.overrideWithValue(mockSecureStorage),
       ],
@@ -114,8 +116,9 @@ void main() {
     );
   }
 
-  testWidgets('shows validation errors when saving empty form',
-      (WidgetTester tester) async {
+  testWidgets('shows validation errors when saving empty form', (
+    WidgetTester tester,
+  ) async {
     tester.view.physicalSize = const Size(1080, 2400);
     tester.view.devicePixelRatio = 3.0;
     addTearDown(tester.view.resetPhysicalSize);
@@ -145,8 +148,9 @@ void main() {
     ); // Depends on actual l10n.errorCategoryRequired
   });
 
-  testWidgets('clears validation error when valid name is entered',
-      (WidgetTester tester) async {
+  testWidgets('clears validation error when valid name is entered', (
+    WidgetTester tester,
+  ) async {
     tester.view.physicalSize = const Size(1080, 2400);
     tester.view.devicePixelRatio = 3.0;
     addTearDown(tester.view.resetPhysicalSize);
@@ -178,8 +182,9 @@ void main() {
     expect(find.text('Name is required'), findsNothing);
   });
 
-  testWidgets('displays validation error for negative amount',
-      (WidgetTester tester) async {
+  testWidgets('displays validation error for negative amount', (
+    WidgetTester tester,
+  ) async {
     tester.view.physicalSize = const Size(1080, 2400);
     tester.view.devicePixelRatio = 3.0;
     addTearDown(tester.view.resetPhysicalSize);
@@ -212,126 +217,142 @@ void main() {
   });
 
   testWidgets(
-      'recurrence selector sheet renders without overflow on small screens',
-      (WidgetTester tester) async {
-    tester.view.physicalSize = const Size(320, 480);
-    tester.view.devicePixelRatio = 1.0;
-    addTearDown(tester.view.resetPhysicalSize);
-    addTearDown(tester.view.resetDevicePixelRatio);
+    'recurrence selector sheet renders without overflow on small screens',
+    (WidgetTester tester) async {
+      tester.view.physicalSize = const Size(320, 480);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
 
-    await tester.pumpWidget(createTestableWidget());
-    await tester.pumpAndSettle();
+      await tester.pumpWidget(createTestableWidget());
+      await tester.pumpAndSettle();
 
-    final recurrenceTile = find.text('Recurrence');
-    await tester.scrollUntilVisible(
-      recurrenceTile,
-      50,
-      scrollable: find.byType(Scrollable).first,
-    );
-    await tester.tap(recurrenceTile);
-    await tester.pumpAndSettle();
+      final recurrenceTile = find.text('Recurrence');
+      await tester.scrollUntilVisible(
+        recurrenceTile,
+        50,
+        scrollable: find.byType(Scrollable).first,
+      );
+      await tester.tap(recurrenceTile);
+      await tester.pumpAndSettle();
 
-    expect(find.text('Select Recurrence'), findsOneWidget);
-  });
-
-  testWidgets(
-      'shows validation error for invalid custom recurrence day directly below field',
-      (WidgetTester tester) async {
-    tester.view.physicalSize = const Size(1080, 2400);
-    tester.view.devicePixelRatio = 3.0;
-    addTearDown(tester.view.resetPhysicalSize);
-    addTearDown(tester.view.resetDevicePixelRatio);
-
-    await tester.pumpWidget(createTestableWidget());
-    await tester.pumpAndSettle();
-
-    // Open recurrence selector
-    final recurrenceTile = find.text('Recurrence');
-    await tester.scrollUntilVisible(
-      recurrenceTile,
-      50,
-      scrollable: find.byType(Scrollable).first,
-    );
-    await tester.tap(recurrenceTile);
-    await tester.pumpAndSettle();
-
-    // Tap Day of month radio
-    final dayOfMonthRadio = find.text('Day X of month');
-    await tester.tap(dayOfMonthRadio);
-    await tester.pumpAndSettle();
-
-    // Enter invalid day like 32
-    final customTextField = find.byType(TextField).last;
-    await tester.enterText(customTextField, '32');
-    await tester.pumpAndSettle();
-
-    // Tap apply
-    final applyButton = find.text('Apply');
-    await tester.tap(applyButton);
-    await tester.pumpAndSettle();
-
-    // The validation error should appear
-    expect(find.text('Invalid day of month (must be 1-31)'), findsOneWidget);
-  });
+      expect(find.text('Select Recurrence'), findsOneWidget);
+    },
+  );
 
   testWidgets(
-      'CreateEditAutomaticTransactionScreen places Label field immediately below Category field',
-      (WidgetTester tester) async {
-    tester.view.physicalSize = const Size(1080, 2400);
-    tester.view.devicePixelRatio = 3.0;
-    addTearDown(tester.view.resetPhysicalSize);
-    addTearDown(tester.view.resetDevicePixelRatio);
+    'shows validation error for invalid custom recurrence day directly below field',
+    (WidgetTester tester) async {
+      tester.view.physicalSize = const Size(1080, 2400);
+      tester.view.devicePixelRatio = 3.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
 
-    await tester.pumpWidget(createTestableWidget());
-    await tester.pumpAndSettle();
+      await tester.pumpWidget(createTestableWidget());
+      await tester.pumpAndSettle();
 
-    final categoryTile = find.text('Category');
-    final tagTile = find.text('Tag (Optional)');
-    final currencyTile = find.text('Currency');
-    final recurrenceTile = find.text('Recurrence');
+      // Open recurrence selector
+      final recurrenceTile = find.text('Recurrence');
+      await tester.scrollUntilVisible(
+        recurrenceTile,
+        50,
+        scrollable: find.byType(Scrollable).first,
+      );
+      await tester.tap(recurrenceTile);
+      await tester.pumpAndSettle();
 
-    expect(categoryTile, findsOneWidget);
-    expect(tagTile, findsOneWidget);
-    expect(currencyTile, findsOneWidget);
-    expect(recurrenceTile, findsOneWidget);
+      // Tap Day of month radio
+      final dayOfMonthRadio = find.text('Day X of month');
+      await tester.tap(dayOfMonthRadio);
+      await tester.pumpAndSettle();
 
-    final categoryY = tester.getTopLeft(categoryTile).dy;
-    final tagY = tester.getTopLeft(tagTile).dy;
-    final currencyY = tester.getTopLeft(currencyTile).dy;
-    final recurrenceY = tester.getTopLeft(recurrenceTile).dy;
+      // Enter invalid day like 32
+      final customTextField = find.byType(TextField).last;
+      await tester.enterText(customTextField, '32');
+      await tester.pumpAndSettle();
 
-    expect(categoryY < tagY, isTrue, reason: 'Label/Tag field must be below Category field');
-    expect(tagY < currencyY, isTrue, reason: 'Label/Tag field must be above Currency field');
-    expect(currencyY < recurrenceY, isTrue, reason: 'Currency field must be above Recurrence field');
-  });
+      // Tap apply
+      final applyButton = find.text('Apply');
+      await tester.tap(applyButton);
+      await tester.pumpAndSettle();
+
+      // The validation error should appear
+      expect(find.text('Invalid day of month (must be 1-31)'), findsOneWidget);
+    },
+  );
 
   testWidgets(
-      'selecting a label in CreateEditAutomaticTransactionScreen updates the form state tile',
-      (WidgetTester tester) async {
-    tester.view.physicalSize = const Size(1080, 2400);
-    tester.view.devicePixelRatio = 3.0;
-    addTearDown(tester.view.resetPhysicalSize);
-    addTearDown(tester.view.resetDevicePixelRatio);
+    'CreateEditAutomaticTransactionScreen places Label field immediately below Category field',
+    (WidgetTester tester) async {
+      tester.view.physicalSize = const Size(1080, 2400);
+      tester.view.devicePixelRatio = 3.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
 
-    await tester.pumpWidget(createTestableWidget());
-    await tester.pumpAndSettle();
+      await tester.pumpWidget(createTestableWidget());
+      await tester.pumpAndSettle();
 
-    final tagTile = find.text('Tag (Optional)');
-    await tester.scrollUntilVisible(
-      tagTile,
-      50,
-      scrollable: find.byType(Scrollable).first,
-    );
-    await tester.tap(tagTile);
-    await tester.pumpAndSettle();
+      final categoryTile = find.text('Category');
+      final tagTile = find.text('Tag (Optional)');
+      final currencyTile = find.text('Currency');
+      final recurrenceTile = find.text('Recurrence');
 
-    expect(find.text('Select Tag'), findsOneWidget);
-    final tagOption = find.text('Subscriptions');
-    expect(tagOption, findsOneWidget);
+      expect(categoryTile, findsOneWidget);
+      expect(tagTile, findsOneWidget);
+      expect(currencyTile, findsOneWidget);
+      expect(recurrenceTile, findsOneWidget);
 
-    await tester.tap(tagOption);
-    await tester.pumpAndSettle();
+      final categoryY = tester.getTopLeft(categoryTile).dy;
+      final tagY = tester.getTopLeft(tagTile).dy;
+      final currencyY = tester.getTopLeft(currencyTile).dy;
+      final recurrenceY = tester.getTopLeft(recurrenceTile).dy;
 
-    expect(find.text('Subscriptions'), findsOneWidget);
-  });
+      expect(
+        categoryY < tagY,
+        isTrue,
+        reason: 'Label/Tag field must be below Category field',
+      );
+      expect(
+        tagY < currencyY,
+        isTrue,
+        reason: 'Label/Tag field must be above Currency field',
+      );
+      expect(
+        currencyY < recurrenceY,
+        isTrue,
+        reason: 'Currency field must be above Recurrence field',
+      );
+    },
+  );
+
+  testWidgets(
+    'selecting a label in CreateEditAutomaticTransactionScreen updates the form state tile',
+    (WidgetTester tester) async {
+      tester.view.physicalSize = const Size(1080, 2400);
+      tester.view.devicePixelRatio = 3.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      await tester.pumpWidget(createTestableWidget());
+      await tester.pumpAndSettle();
+
+      final tagTile = find.text('Tag (Optional)');
+      await tester.scrollUntilVisible(
+        tagTile,
+        50,
+        scrollable: find.byType(Scrollable).first,
+      );
+      await tester.tap(tagTile);
+      await tester.pumpAndSettle();
+
+      expect(find.text('Select Tag'), findsOneWidget);
+      final tagOption = find.text('Subscriptions');
+      expect(tagOption, findsOneWidget);
+
+      await tester.tap(tagOption);
+      await tester.pumpAndSettle();
+
+      expect(find.text('Subscriptions'), findsOneWidget);
+    },
+  );
 }

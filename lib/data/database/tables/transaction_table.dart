@@ -2,12 +2,9 @@ import 'package:drift/drift.dart';
 import 'account_table.dart';
 import 'category_table.dart';
 import 'savings_goal_table.dart';
+import 'tag_table.dart';
 
-enum TransactionType {
-  income,
-  expense,
-  transfer,
-}
+enum TransactionType { income, expense, transfer }
 
 @DataClassName('Transaction')
 class Transactions extends Table {
@@ -20,6 +17,8 @@ class Transactions extends Table {
       text().named('account_id').references(Accounts, #id)();
   TextColumn get categoryId =>
       text().named('category_id').nullable().references(Categories, #id)();
+  TextColumn get tagId =>
+      text().named('tag_id').nullable().references(Tags, #id)();
   TextColumn get savingsGoalId => text()
       .named('savings_goal_id')
       .nullable()

@@ -141,8 +141,9 @@ void main() {
         budgetsStreamProvider.overrideWith((ref) => budgetsStream),
         savingsGoalsStreamProvider.overrideWith((ref) => savingsGoalsStream),
         categoriesListProvider.overrideWith((ref) => categoriesStream),
-        currencyFormatterProvider
-            .overrideWith((ref) => CurrencyFormatter(currencyCode: 'EUR')),
+        currencyFormatterProvider.overrideWith(
+          (ref) => CurrencyFormatter(currencyCode: 'EUR'),
+        ),
         accountsListProvider.overrideWith((ref) => Stream.value([testAccount])),
         defaultProfileProvider.overrideWith((ref) => testProfile),
       ],
@@ -163,8 +164,9 @@ void main() {
   }
 
   group('BudgetsAndGoalsScreen Tests', () {
-    testWidgets('renders loading state when streams are loading',
-        (WidgetTester tester) async {
+    testWidgets('renders loading state when streams are loading', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         createTestWidget(
           budgetsStream: const NeverStream<List<Budget>>(),
@@ -177,8 +179,9 @@ void main() {
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
     });
 
-    testWidgets('renders error state when streams fail',
-        (WidgetTester tester) async {
+    testWidgets('renders error state when streams fail', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         createTestWidget(
           budgetsStream: Stream<List<Budget>>.error(Exception('Db error')),
@@ -193,8 +196,9 @@ void main() {
       expect(find.text('Failed to load budgets.'), findsOneWidget);
     });
 
-    testWidgets('renders empty state when lists are empty',
-        (WidgetTester tester) async {
+    testWidgets('renders empty state when lists are empty', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         createTestWidget(
           budgetsStream: Stream.value(<Budget>[]),
@@ -229,120 +233,125 @@ void main() {
     });
 
     testWidgets(
-        'renders budgets correctly with progress bars and remaining calculations',
-        (WidgetTester tester) async {
-      await tester.pumpWidget(
-        createTestWidget(
-          budgetsStream: Stream.value([testBudgetNormal, testBudgetExceeded]),
-          savingsGoalsStream: Stream.value([testSavingsGoal]),
-          categoriesStream: Stream.value([testCategory]),
-        ),
-      );
+      'renders budgets correctly with progress bars and remaining calculations',
+      (WidgetTester tester) async {
+        await tester.pumpWidget(
+          createTestWidget(
+            budgetsStream: Stream.value([testBudgetNormal, testBudgetExceeded]),
+            savingsGoalsStream: Stream.value([testSavingsGoal]),
+            categoriesStream: Stream.value([testCategory]),
+          ),
+        );
 
-      await tester.pumpAndSettle();
+        await tester.pumpAndSettle();
 
-      // Check Category names
-      expect(
-        find.text('Food & Dining'),
-        findsWidgets,
-      ); // Should find two occurrences because we have two budgets with the same category
+        // Check Category names
+        expect(
+          find.text('Food & Dining'),
+          findsWidgets,
+        ); // Should find two occurrences because we have two budgets with the same category
 
-      // Budget 1 (Normal): Spent €80.00 of €200.00 (progress: 40%) -> remaining: €120.00
-      final b1Spent = CurrencyFormatter().format(80.0);
-      final b1Target = CurrencyFormatter().format(200.0);
-      final b1Remaining = CurrencyFormatter().format(120.0);
-      expect(find.text('$b1Spent of $b1Target'), findsOneWidget);
-      expect(find.text('$b1Remaining remaining'), findsOneWidget);
-      expect(find.text('40%'), findsOneWidget);
+        // Budget 1 (Normal): Spent €80.00 of €200.00 (progress: 40%) -> remaining: €120.00
+        final b1Spent = CurrencyFormatter().format(80.0);
+        final b1Target = CurrencyFormatter().format(200.0);
+        final b1Remaining = CurrencyFormatter().format(120.0);
+        expect(find.text('$b1Spent of $b1Target'), findsOneWidget);
+        expect(find.text('$b1Remaining remaining'), findsOneWidget);
+        expect(find.text('40%'), findsOneWidget);
 
-      // Budget 2 (Exceeded): Spent €120.00 of €100.00 (progress: 120%) -> overspent: €20.00
-      final b2Spent = CurrencyFormatter().format(120.0);
-      final b2Target = CurrencyFormatter().format(100.0);
-      final b2Overspent = CurrencyFormatter().format(20.0);
-      expect(find.text('$b2Spent of $b2Target'), findsOneWidget);
-      expect(find.text('$b2Overspent overspent'), findsOneWidget);
-      expect(find.text('120%'), findsOneWidget);
+        // Budget 2 (Exceeded): Spent €120.00 of €100.00 (progress: 120%) -> overspent: €20.00
+        final b2Spent = CurrencyFormatter().format(120.0);
+        final b2Target = CurrencyFormatter().format(100.0);
+        final b2Overspent = CurrencyFormatter().format(20.0);
+        expect(find.text('$b2Spent of $b2Target'), findsOneWidget);
+        expect(find.text('$b2Overspent overspent'), findsOneWidget);
+        expect(find.text('120%'), findsOneWidget);
 
-      // Verify progress bars are rendered
-      expect(find.byType(ProgressBarWidget), findsNWidgets(2));
-    });
-
-    testWidgets(
-        'renders savings goals correctly with custom color/icon and achievements',
-        (WidgetTester tester) async {
-      await tester.pumpWidget(
-        createTestWidget(
-          budgetsStream: Stream.value([testBudgetNormal]),
-          savingsGoalsStream: Stream.value([testSavingsGoal]),
-          categoriesStream: Stream.value([testCategory]),
-        ),
-      );
-
-      await tester.pumpAndSettle();
-
-      // Switch to Savings Goals tab
-      await tester.tap(find.text('Savings Goals'));
-      await tester.pumpAndSettle();
-
-      // Check Savings Goal Details
-      expect(find.text('New Electric Car'), findsOneWidget);
-      final sgSaved = CurrencyFormatter().format(15000.0);
-      final sgTarget = CurrencyFormatter().format(30000.0);
-      expect(find.text('$sgSaved saved of $sgTarget'), findsOneWidget);
-      expect(find.text('50%'), findsOneWidget);
-      final targetDateStr =
-          DateFormat.yMMMd('en_US').format(testSavingsGoal.targetDate!);
-      expect(find.text('Target date: $targetDateStr'), findsOneWidget);
-
-      // Check the icon is rendered
-      expect(find.byIcon(Icons.directions_car_rounded), findsOneWidget);
-
-      // Verify progress bar is rendered
-      expect(find.byType(ProgressBarWidget), findsOneWidget);
-    });
+        // Verify progress bars are rendered
+        expect(find.byType(ProgressBarWidget), findsNWidgets(2));
+      },
+    );
 
     testWidgets(
-        'shows Add Budget bottom sheet when FAB is tapped on Budgets tab',
-        (WidgetTester tester) async {
-      await tester.pumpWidget(
-        createTestWidget(
-          budgetsStream: Stream.value([testBudgetNormal]),
-          savingsGoalsStream: Stream.value([testSavingsGoal]),
-          categoriesStream: Stream.value([testCategory]),
-        ),
-      );
+      'renders savings goals correctly with custom color/icon and achievements',
+      (WidgetTester tester) async {
+        await tester.pumpWidget(
+          createTestWidget(
+            budgetsStream: Stream.value([testBudgetNormal]),
+            savingsGoalsStream: Stream.value([testSavingsGoal]),
+            categoriesStream: Stream.value([testCategory]),
+          ),
+        );
 
-      await tester.pumpAndSettle();
+        await tester.pumpAndSettle();
 
-      expect(find.byType(FloatingActionButton), findsOneWidget);
-      await tester.tap(find.byType(FloatingActionButton));
-      await tester.pumpAndSettle();
+        // Switch to Savings Goals tab
+        await tester.tap(find.text('Savings Goals'));
+        await tester.pumpAndSettle();
 
-      expect(find.text('Add Budget'), findsOneWidget);
-    });
+        // Check Savings Goal Details
+        expect(find.text('New Electric Car'), findsOneWidget);
+        final sgSaved = CurrencyFormatter().format(15000.0);
+        final sgTarget = CurrencyFormatter().format(30000.0);
+        expect(find.text('$sgSaved saved of $sgTarget'), findsOneWidget);
+        expect(find.text('50%'), findsOneWidget);
+        final targetDateStr = DateFormat.yMMMd(
+          'en_US',
+        ).format(testSavingsGoal.targetDate!);
+        expect(find.text('Target date: $targetDateStr'), findsOneWidget);
+
+        // Check the icon is rendered
+        expect(find.byIcon(Icons.directions_car_rounded), findsOneWidget);
+
+        // Verify progress bar is rendered
+        expect(find.byType(ProgressBarWidget), findsOneWidget);
+      },
+    );
 
     testWidgets(
-        'shows Add Savings Goal bottom sheet when FAB is tapped on Savings Goals tab',
-        (WidgetTester tester) async {
-      await tester.pumpWidget(
-        createTestWidget(
-          budgetsStream: Stream.value([testBudgetNormal]),
-          savingsGoalsStream: Stream.value([testSavingsGoal]),
-          categoriesStream: Stream.value([testCategory]),
-        ),
-      );
+      'shows Add Budget bottom sheet when FAB is tapped on Budgets tab',
+      (WidgetTester tester) async {
+        await tester.pumpWidget(
+          createTestWidget(
+            budgetsStream: Stream.value([testBudgetNormal]),
+            savingsGoalsStream: Stream.value([testSavingsGoal]),
+            categoriesStream: Stream.value([testCategory]),
+          ),
+        );
 
-      await tester.pumpAndSettle();
+        await tester.pumpAndSettle();
 
-      // Switch to Savings Goals tab
-      await tester.tap(find.text('Savings Goals'));
-      await tester.pumpAndSettle();
+        expect(find.byType(FloatingActionButton), findsOneWidget);
+        await tester.tap(find.byType(FloatingActionButton));
+        await tester.pumpAndSettle();
 
-      expect(find.byType(FloatingActionButton), findsOneWidget);
-      await tester.tap(find.byType(FloatingActionButton));
-      await tester.pumpAndSettle();
+        expect(find.text('Add Budget'), findsOneWidget);
+      },
+    );
 
-      expect(find.text('Add Savings Goal'), findsOneWidget);
-    });
+    testWidgets(
+      'shows Add Savings Goal bottom sheet when FAB is tapped on Savings Goals tab',
+      (WidgetTester tester) async {
+        await tester.pumpWidget(
+          createTestWidget(
+            budgetsStream: Stream.value([testBudgetNormal]),
+            savingsGoalsStream: Stream.value([testSavingsGoal]),
+            categoriesStream: Stream.value([testCategory]),
+          ),
+        );
+
+        await tester.pumpAndSettle();
+
+        // Switch to Savings Goals tab
+        await tester.tap(find.text('Savings Goals'));
+        await tester.pumpAndSettle();
+
+        expect(find.byType(FloatingActionButton), findsOneWidget);
+        await tester.tap(find.byType(FloatingActionButton));
+        await tester.pumpAndSettle();
+
+        expect(find.text('Add Savings Goal'), findsOneWidget);
+      },
+    );
   });
 }

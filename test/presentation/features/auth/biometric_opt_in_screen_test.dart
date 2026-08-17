@@ -23,14 +23,18 @@ void main() {
     mockBiometricAuth = MockBiometricAuthService();
 
     when(() => mockSecureStorage.getUserLocale()).thenAnswer((_) async => 'en');
-    when(() => mockSecureStorage.isBiometricsEnabled())
-        .thenAnswer((_) async => false);
-    when(() => mockSecureStorage.hasBiometricsChoice())
-        .thenAnswer((_) async => true);
-    when(() => mockBiometricAuth.isBiometricAvailable())
-        .thenAnswer((_) async => true);
-    when(() => mockBiometricAuth.isBiometricsEnabled())
-        .thenAnswer((_) async => false);
+    when(
+      () => mockSecureStorage.isBiometricsEnabled(),
+    ).thenAnswer((_) async => false);
+    when(
+      () => mockSecureStorage.hasBiometricsChoice(),
+    ).thenAnswer((_) async => true);
+    when(
+      () => mockBiometricAuth.isBiometricAvailable(),
+    ).thenAnswer((_) async => true);
+    when(
+      () => mockBiometricAuth.isBiometricsEnabled(),
+    ).thenAnswer((_) async => false);
   });
 
   Widget buildTestApp({required ProviderContainer container}) {
@@ -52,98 +56,104 @@ void main() {
 
   group('BiometricOptInScreen Tests', () {
     testWidgets(
-        'renders all visual elements: title, subtitle, enable and skip buttons',
-        (WidgetTester tester) async {
-      final container = ProviderContainer(
-        overrides: [
-          secureStorageProvider.overrideWithValue(mockSecureStorage),
-          biometricAuthServiceProvider.overrideWithValue(mockBiometricAuth),
-        ],
-      );
-      addTearDown(container.dispose);
+      'renders all visual elements: title, subtitle, enable and skip buttons',
+      (WidgetTester tester) async {
+        final container = ProviderContainer(
+          overrides: [
+            secureStorageProvider.overrideWithValue(mockSecureStorage),
+            biometricAuthServiceProvider.overrideWithValue(mockBiometricAuth),
+          ],
+        );
+        addTearDown(container.dispose);
 
-      await tester.pumpWidget(buildTestApp(container: container));
-      await tester.pump();
+        await tester.pumpWidget(buildTestApp(container: container));
+        await tester.pump();
 
-      // Verify texts are rendered
-      expect(find.text('Enable Biometric Login'), findsOneWidget);
-      expect(
-        find.text(
-          'Use Fingerprint or FaceID to quickly and securely access your Stalvi account in the future.',
-        ),
-        findsOneWidget,
-      );
-      expect(find.text('Enable Biometrics'), findsOneWidget);
-      expect(find.text('Skip for Now'), findsOneWidget);
-      expect(find.byIcon(Icons.fingerprint_rounded), findsOneWidget);
-      container.dispose();
-    });
+        // Verify texts are rendered
+        expect(find.text('Enable Biometric Login'), findsOneWidget);
+        expect(
+          find.text(
+            'Use Fingerprint or FaceID to quickly and securely access your Stalvi account in the future.',
+          ),
+          findsOneWidget,
+        );
+        expect(find.text('Enable Biometrics'), findsOneWidget);
+        expect(find.text('Skip for Now'), findsOneWidget);
+        expect(find.byIcon(Icons.fingerprint_rounded), findsOneWidget);
+        container.dispose();
+      },
+    );
 
     testWidgets(
-        'clicking Enable Biometrics triggers authentication setup and enables it',
-        (WidgetTester tester) async {
-      when(
-        () => mockBiometricAuth.authenticate(
-          localizedReason: any(named: 'localizedReason'),
-          lockedOutMessage: any(named: 'lockedOutMessage'),
-          authFailedMessage: any(named: 'authFailedMessage'),
-          unknownErrorMessage: any(named: 'unknownErrorMessage'),
-          signInTitle: any(named: 'signInTitle'),
-          cancelButton: any(named: 'cancelButton'),
-        ),
-      ).thenAnswer((_) async => true);
-      when(() => mockBiometricAuth.enableBiometrics())
-          .thenAnswer((_) async => {});
+      'clicking Enable Biometrics triggers authentication setup and enables it',
+      (WidgetTester tester) async {
+        when(
+          () => mockBiometricAuth.authenticate(
+            localizedReason: any(named: 'localizedReason'),
+            lockedOutMessage: any(named: 'lockedOutMessage'),
+            authFailedMessage: any(named: 'authFailedMessage'),
+            unknownErrorMessage: any(named: 'unknownErrorMessage'),
+            signInTitle: any(named: 'signInTitle'),
+            cancelButton: any(named: 'cancelButton'),
+          ),
+        ).thenAnswer((_) async => true);
+        when(
+          () => mockBiometricAuth.enableBiometrics(),
+        ).thenAnswer((_) async => {});
 
-      final container = ProviderContainer(
-        overrides: [
-          secureStorageProvider.overrideWithValue(mockSecureStorage),
-          biometricAuthServiceProvider.overrideWithValue(mockBiometricAuth),
-        ],
-      );
-      addTearDown(container.dispose);
+        final container = ProviderContainer(
+          overrides: [
+            secureStorageProvider.overrideWithValue(mockSecureStorage),
+            biometricAuthServiceProvider.overrideWithValue(mockBiometricAuth),
+          ],
+        );
+        addTearDown(container.dispose);
 
-      await tester.pumpWidget(buildTestApp(container: container));
-      await tester.pump();
+        await tester.pumpWidget(buildTestApp(container: container));
+        await tester.pump();
 
-      await tester.tap(find.text('Enable Biometrics'));
-      await tester.pump();
+        await tester.tap(find.text('Enable Biometrics'));
+        await tester.pump();
 
-      verify(
-        () => mockBiometricAuth.authenticate(
-          localizedReason: any(named: 'localizedReason'),
-          lockedOutMessage: any(named: 'lockedOutMessage'),
-          authFailedMessage: any(named: 'authFailedMessage'),
-          unknownErrorMessage: any(named: 'unknownErrorMessage'),
-          signInTitle: any(named: 'signInTitle'),
-          cancelButton: any(named: 'cancelButton'),
-        ),
-      ).called(1);
-      verify(() => mockBiometricAuth.enableBiometrics()).called(1);
-      container.dispose();
-    });
+        verify(
+          () => mockBiometricAuth.authenticate(
+            localizedReason: any(named: 'localizedReason'),
+            lockedOutMessage: any(named: 'lockedOutMessage'),
+            authFailedMessage: any(named: 'authFailedMessage'),
+            unknownErrorMessage: any(named: 'unknownErrorMessage'),
+            signInTitle: any(named: 'signInTitle'),
+            cancelButton: any(named: 'cancelButton'),
+          ),
+        ).called(1);
+        verify(() => mockBiometricAuth.enableBiometrics()).called(1);
+        container.dispose();
+      },
+    );
 
-    testWidgets('clicking Skip for Now disables biometrics and completes flow',
-        (WidgetTester tester) async {
-      when(() => mockBiometricAuth.disableBiometrics())
-          .thenAnswer((_) async => {});
+    testWidgets(
+      'clicking Skip for Now disables biometrics and completes flow',
+      (WidgetTester tester) async {
+        when(
+          () => mockBiometricAuth.disableBiometrics(),
+        ).thenAnswer((_) async => {});
 
-      final container = ProviderContainer(
-        overrides: [
-          secureStorageProvider.overrideWithValue(mockSecureStorage),
-          biometricAuthServiceProvider.overrideWithValue(mockBiometricAuth),
-        ],
-      );
-      addTearDown(container.dispose);
+        final container = ProviderContainer(
+          overrides: [
+            secureStorageProvider.overrideWithValue(mockSecureStorage),
+            biometricAuthServiceProvider.overrideWithValue(mockBiometricAuth),
+          ],
+        );
+        addTearDown(container.dispose);
 
-      await tester.pumpWidget(buildTestApp(container: container));
-      await tester.pump();
+        await tester.pumpWidget(buildTestApp(container: container));
+        await tester.pump();
 
-      await tester.tap(find.text('Skip for Now'));
-      await tester.pump();
+        await tester.tap(find.text('Skip for Now'));
+        await tester.pump();
 
-      verify(() => mockBiometricAuth.disableBiometrics()).called(1);
-      container.dispose();
-    });
+        verify(() => mockBiometricAuth.disableBiometrics()).called(1);
+        container.dispose();
+      },
+    );
   });
 }

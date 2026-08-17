@@ -58,10 +58,7 @@ class BudgetsAndGoalsScreen extends ConsumerWidget {
           ),
         ),
         body: const TabBarView(
-          children: [
-            _BudgetsTabBody(),
-            _SavingsGoalsTabBody(),
-          ],
+          children: [_BudgetsTabBody(), _SavingsGoalsTabBody()],
         ),
         floatingActionButton: Builder(
           builder: (context) {
@@ -94,9 +91,7 @@ class _BudgetsTabBody extends ConsumerWidget {
     final categoriesAsync = ref.watch(categoriesListProvider);
 
     return budgetsAsync.when(
-      loading: () => const Center(
-        child: CircularProgressIndicator(),
-      ),
+      loading: () => const Center(child: CircularProgressIndicator()),
       error: (err, _) => _ErrorStateWidget(
         message: AppLocalizations.of(context)!.failedLoadBudgets,
         errorDetails: err.toString(),
@@ -141,10 +136,7 @@ class _BudgetCard extends ConsumerWidget {
   final Budget budget;
   final Category category;
 
-  const _BudgetCard({
-    required this.budget,
-    required this.category,
-  });
+  const _BudgetCard({required this.budget, required this.category});
 
   Color _parseHexColor(String hexString) {
     final buffer = StringBuffer();
@@ -184,14 +176,22 @@ class _BudgetCard extends ConsumerWidget {
     }
     final currencyToShow = budgetAccount?.currency ?? formatter.currencyCode;
 
-    final spentStr =
-        formatter.format(spentDouble, currencyCode: currencyToShow);
-    final targetStr =
-        formatter.format(targetDouble, currencyCode: currencyToShow);
-    final remainingStr =
-        formatter.format(remainingDouble.abs(), currencyCode: currencyToShow);
-    final progressStr =
-        CurrencyFormatter.formatPercentage(progress, decimalDigits: 0);
+    final spentStr = formatter.format(
+      spentDouble,
+      currencyCode: currencyToShow,
+    );
+    final targetStr = formatter.format(
+      targetDouble,
+      currencyCode: currencyToShow,
+    );
+    final remainingStr = formatter.format(
+      remainingDouble.abs(),
+      currencyCode: currencyToShow,
+    );
+    final progressStr = CurrencyFormatter.formatPercentage(
+      progress,
+      decimalDigits: 0,
+    );
 
     final isOverspent = budget.currentAmount > budget.targetAmount;
     final statusText = isOverspent
@@ -275,7 +275,9 @@ class _BudgetCard extends ConsumerWidget {
                   children: [
                     Expanded(
                       child: Text(
-                        AppLocalizations.of(context)!
+                        AppLocalizations.of(
+                          context,
+                        )!
                             .budgetSpentOf(spentStr, targetStr),
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: colorScheme.onSurfaceVariant,
@@ -318,9 +320,7 @@ class _SavingsGoalsTabBody extends ConsumerWidget {
     final savingsGoalsAsync = ref.watch(savingsGoalsStreamProvider);
 
     return savingsGoalsAsync.when(
-      loading: () => const Center(
-        child: CircularProgressIndicator(),
-      ),
+      loading: () => const Center(child: CircularProgressIndicator()),
       error: (err, _) => _ErrorStateWidget(
         message: AppLocalizations.of(context)!.failedLoadSavingsGoals,
         errorDetails: err.toString(),
@@ -380,15 +380,20 @@ class _SavingsGoalCard extends ConsumerWidget {
     final formatter = ref.watch(currencyFormatterProvider);
 
     final savedStr = formatter.format(savedDouble, currencyCode: goal.currency);
-    final targetStr =
-        formatter.format(targetDouble, currencyCode: goal.currency);
-    final progressStr =
-        CurrencyFormatter.formatPercentage(progress, decimalDigits: 0);
+    final targetStr = formatter.format(
+      targetDouble,
+      currencyCode: goal.currency,
+    );
+    final progressStr = CurrencyFormatter.formatPercentage(
+      progress,
+      decimalDigits: 0,
+    );
 
     final targetDateStr = goal.targetDate != null
         ? AppLocalizations.of(context)!.savingsTargetDate(
-            DateFormat.yMMMd(Localizations.localeOf(context).toString())
-                .format(goal.targetDate!),
+            DateFormat.yMMMd(
+              Localizations.localeOf(context).toString(),
+            ).format(goal.targetDate!),
           )
         : AppLocalizations.of(context)!.savingsNoTargetDate;
 
@@ -463,7 +468,9 @@ class _SavingsGoalCard extends ConsumerWidget {
                   children: [
                     Expanded(
                       child: Text(
-                        AppLocalizations.of(context)!
+                        AppLocalizations.of(
+                          context,
+                        )!
                             .savingsSavedOf(savedStr, targetStr),
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: colorScheme.onSurfaceVariant,
@@ -504,10 +511,7 @@ class _ErrorStateWidget extends StatelessWidget {
   final String message;
   final String errorDetails;
 
-  const _ErrorStateWidget({
-    required this.message,
-    required this.errorDetails,
-  });
+  const _ErrorStateWidget({required this.message, required this.errorDetails});
 
   @override
   Widget build(BuildContext context) {
@@ -521,8 +525,7 @@ class _ErrorStateWidget extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              width: 80,
-              height: 80,
+              padding: const EdgeInsets.all(21),
               decoration: BoxDecoration(
                 color: colorScheme.error.withValues(alpha: 0.1),
                 shape: BoxShape.circle,

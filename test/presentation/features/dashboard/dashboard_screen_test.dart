@@ -115,14 +115,18 @@ void main() {
     mockBiometricAuth = MockBiometricAuthService();
 
     when(() => mockSecureStorage.getUserLocale()).thenAnswer((_) async => 'en');
-    when(() => mockSecureStorage.isBiometricsEnabled())
-        .thenAnswer((_) async => false);
-    when(() => mockSecureStorage.hasBiometricsChoice())
-        .thenAnswer((_) async => true);
-    when(() => mockBiometricAuth.isBiometricAvailable())
-        .thenAnswer((_) async => false);
-    when(() => mockBiometricAuth.isBiometricsEnabled())
-        .thenAnswer((_) async => false);
+    when(
+      () => mockSecureStorage.isBiometricsEnabled(),
+    ).thenAnswer((_) async => false);
+    when(
+      () => mockSecureStorage.hasBiometricsChoice(),
+    ).thenAnswer((_) async => true);
+    when(
+      () => mockBiometricAuth.isBiometricAvailable(),
+    ).thenAnswer((_) async => false);
+    when(
+      () => mockBiometricAuth.isBiometricsEnabled(),
+    ).thenAnswer((_) async => false);
   });
 
   final testAccount = Account(
@@ -183,10 +187,7 @@ void main() {
         defaultProfileProvider.overrideWith((ref) => mockProfile),
         periodSummaryProvider.overrideWith(
           (ref) => const AsyncData(
-            PeriodSummary(
-              totalIncome: 500000,
-              totalExpense: 200000,
-            ),
+            PeriodSummary(totalIncome: 500000, totalExpense: 200000),
           ),
         ),
         categoriesListProvider.overrideWith((ref) => Stream.value([])),
@@ -224,196 +225,203 @@ void main() {
 
   group('DashboardScreen Widget Tests', () {
     testWidgets(
-        'renders empty state in Overview tab when transactions list is empty',
-        (WidgetTester tester) async {
-      await tester.pumpWidget(
-        createTestWidget(
-          transactionsStream: Stream.value(<Transaction>[]),
-          accountsStream: Stream.value([testAccount]),
-        ),
-      );
+      'renders empty state in Overview tab when transactions list is empty',
+      (WidgetTester tester) async {
+        await tester.pumpWidget(
+          createTestWidget(
+            transactionsStream: Stream.value(<Transaction>[]),
+            accountsStream: Stream.value([testAccount]),
+          ),
+        );
 
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 200));
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 200));
 
-      // Overview tab is index 0 by default. It displays recent transactions empty state.
-      expect(find.byType(EmptyStateWidget), findsOneWidget);
-      expect(find.text('No transactions yet'), findsOneWidget);
-      expect(
-        find.text(
-          'Add your first income or expense to see it here and start tracking.',
-        ),
-        findsOneWidget,
-      );
-    });
-
-    testWidgets(
-        'renders empty state in Transactions tab when transactions list is empty',
-        (WidgetTester tester) async {
-      await tester.pumpWidget(
-        createTestWidget(
-          transactionsStream: Stream.value(<Transaction>[]),
-          accountsStream: Stream.value([testAccount]),
-        ),
-      );
-
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 200));
-
-      // Tap on the Transactions navigation destination (second tab)
-      // Since 'Transactions' label is also used elsewhere, we target the NavigationDestination label.
-      await tester.tap(find.text('Transactions'));
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 200));
-
-      expect(find.byType(EmptyStateWidget), findsOneWidget);
-      expect(find.text('No transactions yet'), findsOneWidget);
-    });
+        // Overview tab is index 0 by default. It displays recent transactions empty state.
+        expect(find.byType(EmptyStateWidget), findsOneWidget);
+        expect(find.text('No transactions yet'), findsOneWidget);
+        expect(
+          find.text(
+            'Add your first income or expense to see it here and start tracking.',
+          ),
+          findsOneWidget,
+        );
+      },
+    );
 
     testWidgets(
-        'renders empty state in Accounts tab when accounts list is empty',
-        (WidgetTester tester) async {
-      await tester.pumpWidget(
-        createTestWidget(
-          transactionsStream: Stream.value([testTransaction]),
-          accountsStream: Stream.value(<Account>[]),
-        ),
-      );
+      'renders empty state in Transactions tab when transactions list is empty',
+      (WidgetTester tester) async {
+        await tester.pumpWidget(
+          createTestWidget(
+            transactionsStream: Stream.value(<Transaction>[]),
+            accountsStream: Stream.value([testAccount]),
+          ),
+        );
 
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 200));
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 200));
 
-      // Tap on the Accounts tab
-      await tester.tap(find.text('Accounts'));
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 200));
+        // Tap on the Transactions navigation destination (second tab)
+        // Since 'Transactions' label is also used elsewhere, we target the NavigationDestination label.
+        await tester.tap(find.text('Transactions'));
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 200));
 
-      expect(find.byType(EmptyStateWidget), findsOneWidget);
-      expect(find.text('No accounts yet'), findsOneWidget);
-      expect(
-        find.text(
-          'Create an account or wallet to start managing your assets and tracking transactions.',
-        ),
-        findsOneWidget,
-      );
-    });
+        expect(find.byType(EmptyStateWidget), findsOneWidget);
+        expect(find.text('No transactions yet'), findsOneWidget);
+      },
+    );
 
     testWidgets(
-        'renders lists of transactions and accounts when data is available',
-        (WidgetTester tester) async {
-      await tester.pumpWidget(
-        createTestWidget(
-          transactionsStream: Stream.value([testTransaction]),
-          accountsStream: Stream.value([testAccount]),
-        ),
-      );
+      'renders empty state in Accounts tab when accounts list is empty',
+      (WidgetTester tester) async {
+        await tester.pumpWidget(
+          createTestWidget(
+            transactionsStream: Stream.value([testTransaction]),
+            accountsStream: Stream.value(<Account>[]),
+          ),
+        );
 
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 200));
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 200));
 
-      // Overview Tab is default. Verify transaction item notes exist.
-      expect(find.text('Dinner with friends'), findsOneWidget);
-      expect(find.byType(EmptyStateWidget), findsNothing);
+        // Tap on the Accounts tab
+        await tester.tap(find.text('Accounts'));
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 200));
 
-      // Tap Transactions tab
-      await tester.tap(find.text('Transactions'));
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 200));
-      expect(find.text('Dinner with friends'), findsOneWidget);
-      expect(find.byType(EmptyStateWidget), findsNothing);
-
-      // Tap Accounts tab
-      await tester.tap(find.text('Accounts'));
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 200));
-      expect(find.text('Cash Wallet'), findsOneWidget);
-      expect(find.text('CASH'), findsOneWidget);
-      expect(find.text('Default'), findsOneWidget);
-      expect(find.byType(EmptyStateWidget), findsNothing);
-    });
+        expect(find.byType(EmptyStateWidget), findsOneWidget);
+        expect(find.text('No accounts yet'), findsOneWidget);
+        expect(
+          find.text(
+            'Create an account or wallet to start managing your assets and tracking transactions.',
+          ),
+          findsOneWidget,
+        );
+      },
+    );
 
     testWidgets(
-        'renders Settings tiles with Data Management in correct order and navigates',
-        (WidgetTester tester) async {
-      await tester.pumpWidget(
-        createTestWidget(
-          transactionsStream: Stream.value([testTransaction]),
-          accountsStream: Stream.value([testAccount]),
-        ),
-      );
+      'renders lists of transactions and accounts when data is available',
+      (WidgetTester tester) async {
+        await tester.pumpWidget(
+          createTestWidget(
+            transactionsStream: Stream.value([testTransaction]),
+            accountsStream: Stream.value([testAccount]),
+          ),
+        );
 
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 200));
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 200));
 
-      // Tap on Settings tab
-      await tester.tap(find.text('Settings'));
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 200));
+        // Overview Tab is default. Verify transaction item notes exist.
+        expect(find.text('Dinner with friends'), findsOneWidget);
+        expect(find.byType(EmptyStateWidget), findsNothing);
 
-      // Expect to see all settings items
-      final budgetsFinder = find.text('Budgets & Goals');
-      final catTagsFinder = find.text('Categories & Tags');
-      final profileSettingsFinder = find.text('Profile & Security');
-      final dataManagementFinder = find.text('Data Management');
-      final recycleBinFinder = find.text('Recycle Bin');
+        // Tap Transactions tab
+        await tester.tap(find.text('Transactions'));
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 200));
+        expect(find.text('Dinner with friends'), findsOneWidget);
+        expect(find.byType(EmptyStateWidget), findsNothing);
 
-      expect(budgetsFinder, findsOneWidget);
-      expect(catTagsFinder, findsOneWidget);
-      expect(profileSettingsFinder, findsOneWidget);
-      expect(dataManagementFinder, findsOneWidget);
-      expect(recycleBinFinder, findsOneWidget);
-
-      // Verify the order of items in the list view by checking their Y coordinate
-      final budgetsY = tester.getCenter(budgetsFinder).dy;
-      final catTagsY = tester.getCenter(catTagsFinder).dy;
-      final profileY = tester.getCenter(profileSettingsFinder).dy;
-      final dataManagementY = tester.getCenter(dataManagementFinder).dy;
-      final recycleBinY = tester.getCenter(recycleBinFinder).dy;
-
-      expect(budgetsY < catTagsY, true);
-      expect(catTagsY < profileY, true);
-      expect(profileY < dataManagementY, true);
-      expect(dataManagementY < recycleBinY, true);
-
-      // Tap on Data Management and verify it navigates to DataManagementScreen
-      await tester.tap(dataManagementFinder);
-      await tester.pumpAndSettle();
-
-      expect(find.byType(DataManagementScreen), findsOneWidget);
-    });
+        // Tap Accounts tab
+        await tester.tap(find.text('Accounts'));
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 200));
+        expect(find.text('Cash Wallet'), findsOneWidget);
+        expect(find.text('CASH'), findsOneWidget);
+        expect(find.text('Default'), findsOneWidget);
+        expect(find.byType(EmptyStateWidget), findsNothing);
+      },
+    );
 
     testWidgets(
-        'obfuscates amounts by default on loading, and reveals them when eye icon is tapped',
-        (WidgetTester tester) async {
-      await tester.pumpWidget(
-        createTestWidget(
-          transactionsStream: Stream.value([testTransaction]),
-          accountsStream: Stream.value([testAccount]),
-        ),
-      );
+      'renders Settings tiles with Data Management in correct order and navigates',
+      (WidgetTester tester) async {
+        await tester.pumpWidget(
+          createTestWidget(
+            transactionsStream: Stream.value([testTransaction]),
+            accountsStream: Stream.value([testAccount]),
+          ),
+        );
 
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 200));
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 200));
 
-      // 1. Verify that the obfuscation string is shown by default
-      expect(find.text('***'), findsWidgets);
+        // Tap on Settings tab
+        await tester.tap(find.text('Settings'));
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 200));
 
-      // Verify that the actual amount (e.g. 500.00) is NOT visible yet
-      expect(find.textContaining('500.00'), findsNothing);
+        // Expect to see all settings items
+        final budgetsFinder = find.text('Budgets & Goals');
+        final catTagsFinder = find.text('Categories & Tags');
+        final profileSettingsFinder = find.text('Profile & Security');
+        final dataManagementFinder = find.text('Import & Export Data');
+        final recycleBinFinder = find.text('Recycle Bin');
 
-      // 2. Find the eye icon button and tap it to toggle discreet mode
-      final eyeButton = find.byKey(const ValueKey('discreetModeIconButton'));
-      expect(eyeButton, findsOneWidget);
-      await tester.tap(eyeButton);
-      await tester.pump();
+        expect(budgetsFinder, findsOneWidget);
+        expect(catTagsFinder, findsOneWidget);
+        expect(profileSettingsFinder, findsOneWidget);
+        expect(dataManagementFinder, findsOneWidget);
+        expect(recycleBinFinder, findsOneWidget);
 
-      // 3. Verify that the obfuscated string is gone, and the actual values are visible
-      expect(find.text('***'), findsNothing);
-      expect(find.textContaining('500.00'), findsOneWidget);
-    });
+        // Verify the order of items in the list view by checking their Y coordinate
+        final budgetsY = tester.getCenter(budgetsFinder).dy;
+        final catTagsY = tester.getCenter(catTagsFinder).dy;
+        final profileY = tester.getCenter(profileSettingsFinder).dy;
+        final dataManagementY = tester.getCenter(dataManagementFinder).dy;
+        final recycleBinY = tester.getCenter(recycleBinFinder).dy;
 
-    testWidgets('Tapping FAB on Overview tab opens AddTransactionScreen',
-        (WidgetTester tester) async {
+        expect(budgetsY < catTagsY, true);
+        expect(catTagsY < profileY, true);
+        expect(profileY < dataManagementY, true);
+        expect(dataManagementY < recycleBinY, true);
+
+        // Tap on Data Management and verify it navigates to DataManagementScreen
+        await tester.tap(dataManagementFinder);
+        await tester.pumpAndSettle();
+
+        expect(find.byType(DataManagementScreen), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      'obfuscates amounts by default on loading, and reveals them when eye icon is tapped',
+      (WidgetTester tester) async {
+        await tester.pumpWidget(
+          createTestWidget(
+            transactionsStream: Stream.value([testTransaction]),
+            accountsStream: Stream.value([testAccount]),
+          ),
+        );
+
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 200));
+
+        // 1. Verify that the obfuscation string is shown by default
+        expect(find.text('***'), findsWidgets);
+
+        // Verify that the actual amount (e.g. 500.00) is NOT visible yet
+        expect(find.textContaining('500.00'), findsNothing);
+
+        // 2. Find the eye icon button and tap it to toggle discreet mode
+        final eyeButton = find.byKey(const ValueKey('discreetModeIconButton'));
+        expect(eyeButton, findsOneWidget);
+        await tester.tap(eyeButton);
+        await tester.pump();
+
+        // 3. Verify that the obfuscated string is gone, and the actual values are visible
+        expect(find.text('***'), findsNothing);
+        expect(find.textContaining('500.00'), findsOneWidget);
+      },
+    );
+
+    testWidgets('Tapping FAB on Overview tab opens AddTransactionScreen', (
+      WidgetTester tester,
+    ) async {
       await tester.binding.setSurfaceSize(const Size(1080, 2400));
       addTearDown(() => tester.binding.setSurfaceSize(null));
 
@@ -439,8 +447,9 @@ void main() {
       expect(find.byType(AddTransactionScreen), findsOneWidget);
     });
 
-    testWidgets('Tapping FAB on Accounts tab opens CreateAccountDialog',
-        (WidgetTester tester) async {
+    testWidgets('Tapping FAB on Accounts tab opens CreateAccountDialog', (
+      WidgetTester tester,
+    ) async {
       await tester.binding.setSurfaceSize(const Size(1080, 2400));
       addTearDown(() => tester.binding.setSurfaceSize(null));
 
@@ -476,104 +485,112 @@ void main() {
     });
 
     testWidgets(
-        'Tapping transaction item opens TransactionDetailsDialog and tapping Delete button triggers soft delete',
-        (WidgetTester tester) async {
-      await tester.binding.setSurfaceSize(const Size(1080, 2400));
-      addTearDown(() => tester.binding.setSurfaceSize(null));
+      'Tapping transaction item opens TransactionDetailsDialog and tapping Delete button triggers soft delete',
+      (WidgetTester tester) async {
+        await tester.binding.setSurfaceSize(const Size(1080, 2400));
+        addTearDown(() => tester.binding.setSurfaceSize(null));
 
-      final mockTxnRepo = MockTransactionRepository();
-      when(() => mockTxnRepo.deleteTransaction(any())).thenAnswer((_) async {});
+        final mockTxnRepo = MockTransactionRepository();
+        when(
+          () => mockTxnRepo.deleteTransaction(any()),
+        ).thenAnswer((_) async {});
 
-      await tester.pumpWidget(
-        createTestWidget(
-          transactionsStream: Stream.value([testTransaction]),
-          accountsStream: Stream.value([testAccount]),
-          transactionRepo: mockTxnRepo,
-        ),
-      );
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 200));
+        await tester.pumpWidget(
+          createTestWidget(
+            transactionsStream: Stream.value([testTransaction]),
+            accountsStream: Stream.value([testAccount]),
+            transactionRepo: mockTxnRepo,
+          ),
+        );
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 200));
 
-      // Find by key to be extremely precise
-      final txnItem =
-          find.byKey(ValueKey('recent_transaction_${testTransaction.id}'));
-      expect(txnItem, findsOneWidget);
+        // Find by key to be extremely precise
+        final txnItem = find.byKey(
+          ValueKey('recent_transaction_${testTransaction.id}'),
+        );
+        expect(txnItem, findsOneWidget);
 
-      await tester.ensureVisible(txnItem);
-      await tester.pump(const Duration(milliseconds: 100));
-
-      // Tap on the transaction item to open Details bottom sheet
-      await tester.tap(txnItem);
-      await tester.pump();
-      for (int i = 0; i < 5; i++) {
+        await tester.ensureVisible(txnItem);
         await tester.pump(const Duration(milliseconds: 100));
-      }
 
-      // Verify dialog details are showing
-      expect(find.byType(TransactionDetailsDialog), findsOneWidget);
+        // Tap on the transaction item to open Details bottom sheet
+        await tester.tap(txnItem);
+        await tester.pump();
+        for (int i = 0; i < 5; i++) {
+          await tester.pump(const Duration(milliseconds: 100));
+        }
 
-      // Find the Delete button inside dialog and tap it
-      final deleteBtn = find.byKey(const ValueKey('deleteTransactionButton'));
-      expect(deleteBtn, findsOneWidget);
-      await tester.tap(deleteBtn);
-      await tester.pump();
-      for (int i = 0; i < 5; i++) {
-        await tester.pump(const Duration(milliseconds: 100));
-      }
+        // Verify dialog details are showing
+        expect(find.byType(TransactionDetailsDialog), findsOneWidget);
 
-      // Verify confirm delete dialog is shown
-      expect(find.text('Delete Transaction?'), findsOneWidget);
+        // Find the Delete button inside dialog and tap it
+        final deleteBtn = find.byKey(const ValueKey('deleteTransactionButton'));
+        expect(deleteBtn, findsOneWidget);
+        await tester.tap(deleteBtn);
+        await tester.pump();
+        for (int i = 0; i < 5; i++) {
+          await tester.pump(const Duration(milliseconds: 100));
+        }
 
-      // Tap on confirm Delete button
-      final confirmDeleteBtn =
-          find.byKey(const ValueKey('confirmDeleteButton'));
-      expect(confirmDeleteBtn, findsOneWidget);
-      await tester.tap(confirmDeleteBtn);
-      await tester.pump();
-      for (int i = 0; i < 5; i++) {
-        await tester.pump(const Duration(milliseconds: 100));
-      }
+        // Verify confirm delete dialog is shown
+        expect(find.text('Delete Transaction?'), findsOneWidget);
 
-      // Verify that deleteTransaction was called on mock repository
-      verify(() => mockTxnRepo.deleteTransaction(testTransaction.id)).called(1);
-    });
+        // Tap on confirm Delete button
+        final confirmDeleteBtn = find.byKey(
+          const ValueKey('confirmDeleteButton'),
+        );
+        expect(confirmDeleteBtn, findsOneWidget);
+        await tester.tap(confirmDeleteBtn);
+        await tester.pump();
+        for (int i = 0; i < 5; i++) {
+          await tester.pump(const Duration(milliseconds: 100));
+        }
+
+        // Verify that deleteTransaction was called on mock repository
+        verify(
+          () => mockTxnRepo.deleteTransaction(testTransaction.id),
+        ).called(1);
+      },
+    );
 
     testWidgets(
-        'renders Statistics summary on Accounts tab and clicking View Details navigates to StatisticsScreen',
-        (WidgetTester tester) async {
-      await tester.binding.setSurfaceSize(const Size(1080, 2400));
-      addTearDown(() => tester.binding.setSurfaceSize(null));
+      'renders Statistics summary on Accounts tab and clicking View Details navigates to StatisticsScreen',
+      (WidgetTester tester) async {
+        await tester.binding.setSurfaceSize(const Size(1080, 2400));
+        addTearDown(() => tester.binding.setSurfaceSize(null));
 
-      await tester.pumpWidget(
-        createTestWidget(
-          transactionsStream: Stream.value([testTransaction]),
-          accountsStream: Stream.value([testAccount]),
-        ),
-      );
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 200));
+        await tester.pumpWidget(
+          createTestWidget(
+            transactionsStream: Stream.value([testTransaction]),
+            accountsStream: Stream.value([testAccount]),
+          ),
+        );
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 200));
 
-      // Tap Accounts tab
-      await tester.tap(find.text('Accounts'));
-      await tester.pump();
-      for (int i = 0; i < 5; i++) {
-        await tester.pump(const Duration(milliseconds: 100));
-      }
+        // Tap Accounts tab
+        await tester.tap(find.text('Accounts'));
+        await tester.pump();
+        for (int i = 0; i < 5; i++) {
+          await tester.pump(const Duration(milliseconds: 100));
+        }
 
-      // Verify Statistics header is shown on Accounts tab
-      expect(find.text('Statistics'), findsOneWidget); // Statistics header
+        // Verify Statistics header is shown on Accounts tab
+        expect(find.text('Statistics'), findsOneWidget); // Statistics header
 
-      // Tap View Details button to navigate to StatisticsScreen
-      final viewDetailsBtn = find.text('View Details');
-      expect(viewDetailsBtn, findsOneWidget);
-      await tester.tap(viewDetailsBtn);
-      await tester.pump();
-      for (int i = 0; i < 5; i++) {
-        await tester.pump(const Duration(milliseconds: 100));
-      }
+        // Tap View Details button to navigate to StatisticsScreen
+        final viewDetailsBtn = find.text('View Details');
+        expect(viewDetailsBtn, findsOneWidget);
+        await tester.tap(viewDetailsBtn);
+        await tester.pump();
+        for (int i = 0; i < 5; i++) {
+          await tester.pump(const Duration(milliseconds: 100));
+        }
 
-      // Verify that StatisticsScreen is opened
-      expect(find.byType(StatisticsScreen), findsOneWidget);
-    });
+        // Verify that StatisticsScreen is opened
+        expect(find.byType(StatisticsScreen), findsOneWidget);
+      },
+    );
   });
 }

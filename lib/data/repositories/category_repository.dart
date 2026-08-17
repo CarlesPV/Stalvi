@@ -52,9 +52,7 @@ class CategoryRepository implements ICategoryRepository {
   @override
   Future<void> deleteCategory(String id) async {
     await (_db.update(_db.categories)..where((c) => c.id.equals(id))).write(
-      const db.CategoriesCompanion(
-        isDeleted: Value(true),
-      ),
+      const db.CategoriesCompanion(isDeleted: Value(true)),
     );
   }
 

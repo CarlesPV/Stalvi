@@ -81,8 +81,9 @@ void main() {
   );
 
   test('calculates budget progress with currency conversion', () async {
-    when(() => mockBudgetRepo.getBudgetsByCategoryId('cat1'))
-        .thenAnswer((_) async => [testBudget]);
+    when(
+      () => mockBudgetRepo.getBudgetsByCategoryId('cat1'),
+    ).thenAnswer((_) async => [testBudget]);
 
     final tx1 = Transaction(
       id: 'tx1',
@@ -108,14 +109,17 @@ void main() {
       modifiedAt: DateTime.now(),
     );
 
-    when(() => mockTransactionRepo.watchFilteredTransactions(any()))
-        .thenAnswer((_) => Stream.value([tx1, tx2]));
+    when(
+      () => mockTransactionRepo.watchFilteredTransactions(any()),
+    ).thenAnswer((_) => Stream.value([tx1, tx2]));
 
-    when(() => mockAccountRepo.getAccountById('acc1'))
-        .thenAnswer((_) async => testAccount);
+    when(
+      () => mockAccountRepo.getAccountById('acc1'),
+    ).thenAnswer((_) async => testAccount);
 
-    when(() => mockExchangeRateRepo.getLocalRates(baseCurrency: 'USD'))
-        .thenAnswer(
+    when(
+      () => mockExchangeRateRepo.getLocalRates(baseCurrency: 'USD'),
+    ).thenAnswer(
       (_) async => ExchangeRate(
         baseCurrency: 'USD',
         date: DateTime.now(),
@@ -137,8 +141,9 @@ void main() {
 
   test('recalculates budget correctly when a transaction is deleted', () async {
     final currentBudget = testBudget.copyWith(currentAmount: 3500);
-    when(() => mockBudgetRepo.getBudgetsByCategoryId('cat1'))
-        .thenAnswer((_) async => [currentBudget]);
+    when(
+      () => mockBudgetRepo.getBudgetsByCategoryId('cat1'),
+    ).thenAnswer((_) async => [currentBudget]);
 
     final tx1 = Transaction(
       id: 'tx1',
@@ -153,14 +158,17 @@ void main() {
     );
 
     // Simulate tx2 being deleted by having watchFilteredTransactions return only tx1
-    when(() => mockTransactionRepo.watchFilteredTransactions(any()))
-        .thenAnswer((_) => Stream.value([tx1]));
+    when(
+      () => mockTransactionRepo.watchFilteredTransactions(any()),
+    ).thenAnswer((_) => Stream.value([tx1]));
 
-    when(() => mockAccountRepo.getAccountById('acc1'))
-        .thenAnswer((_) async => testAccount);
+    when(
+      () => mockAccountRepo.getAccountById('acc1'),
+    ).thenAnswer((_) async => testAccount);
 
-    when(() => mockExchangeRateRepo.getLocalRates(baseCurrency: 'USD'))
-        .thenAnswer(
+    when(
+      () => mockExchangeRateRepo.getLocalRates(baseCurrency: 'USD'),
+    ).thenAnswer(
       (_) async => ExchangeRate(
         baseCurrency: 'USD',
         date: DateTime.now(),

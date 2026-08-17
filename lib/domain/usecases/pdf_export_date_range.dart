@@ -1,4 +1,1 @@
-enum PdfExportDateRange {
-  currentMonth,
-  last30Days,
-}
+enum PdfExportDateRange { currentMonth, last30Days }

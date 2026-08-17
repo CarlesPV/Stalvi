@@ -27,20 +27,26 @@ void main() {
     const newPin = '5678';
     final oldPinHash = hashPin(oldPin);
 
-    when(() => mockSecureStorageManager.getPinHash())
-        .thenAnswer((_) async => oldPinHash);
-    when(() => mockSecureStorageManager.savePinHash(any()))
-        .thenAnswer((_) async => {});
-    when(() => mockSecureStorageManager.savePinLength(any()))
-        .thenAnswer((_) async => {});
+    when(
+      () => mockSecureStorageManager.getPinHash(),
+    ).thenAnswer((_) async => oldPinHash);
+    when(
+      () => mockSecureStorageManager.savePinHash(any()),
+    ).thenAnswer((_) async => {});
+    when(
+      () => mockSecureStorageManager.savePinLength(any()),
+    ).thenAnswer((_) async => {});
 
-    await useCase
-        .execute(const UpdateCredentialsParams(oldPin: oldPin, newPin: newPin));
+    await useCase.execute(
+      const UpdateCredentialsParams(oldPin: oldPin, newPin: newPin),
+    );
 
-    verify(() => mockSecureStorageManager.savePinHash(hashPin(newPin)))
-        .called(1);
-    verify(() => mockSecureStorageManager.savePinLength(newPin.length))
-        .called(1);
+    verify(
+      () => mockSecureStorageManager.savePinHash(hashPin(newPin)),
+    ).called(1);
+    verify(
+      () => mockSecureStorageManager.savePinLength(newPin.length),
+    ).called(1);
   });
 
   test('should throw ValidationException when old PIN is incorrect', () async {
@@ -49,8 +55,9 @@ void main() {
     const newPin = '5678';
     final oldPinHash = hashPin(oldPin);
 
-    when(() => mockSecureStorageManager.getPinHash())
-        .thenAnswer((_) async => oldPinHash);
+    when(
+      () => mockSecureStorageManager.getPinHash(),
+    ).thenAnswer((_) async => oldPinHash);
 
     expect(
       () => useCase.execute(
@@ -65,8 +72,9 @@ void main() {
     const newPin = '123'; // < 4 digits
     final oldPinHash = hashPin(oldPin);
 
-    when(() => mockSecureStorageManager.getPinHash())
-        .thenAnswer((_) async => oldPinHash);
+    when(
+      () => mockSecureStorageManager.getPinHash(),
+    ).thenAnswer((_) async => oldPinHash);
 
     expect(
       () => useCase.execute(

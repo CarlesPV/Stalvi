@@ -32,17 +32,13 @@ class AutomaticTransactionsScreen extends ConsumerWidget {
     final categories = categoriesAsync.value ?? [];
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.settingsAutomaticTransactions),
-      ),
+      appBar: AppBar(title: Text(l10n.settingsAutomaticTransactions)),
       body: transactionsAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, st) => Center(child: Text('${l10n.unexpectedError}: $e')),
         data: (transactions) {
           if (transactions.isEmpty) {
-            return Center(
-              child: Text(l10n.noDataAvailable),
-            );
+            return Center(child: Text(l10n.noDataAvailable));
           }
           return ListView.builder(
             itemCount: transactions.length,
@@ -69,8 +65,9 @@ class AutomaticTransactionsScreen extends ConsumerWidget {
 
               return Card(
                 elevation: 0,
-                color:
-                    colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+                color: colorScheme.surfaceContainerHighest.withValues(
+                  alpha: 0.3,
+                ),
                 margin: const EdgeInsets.only(bottom: 12),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
@@ -105,8 +102,6 @@ class AutomaticTransactionsScreen extends ConsumerWidget {
                                 style: theme.textTheme.titleMedium?.copyWith(
                                   fontWeight: FontWeight.w700,
                                 ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
                               ),
                               const SizedBox(height: 4),
                               Row(
@@ -152,6 +147,7 @@ class AutomaticTransactionsScreen extends ConsumerWidget {
                                     content: Text(
                                       l10n.deleteTransactionConfirmation,
                                     ),
+                                    actionsAlignment: MainAxisAlignment.center,
                                     actions: [
                                       TextButton(
                                         onPressed: () =>

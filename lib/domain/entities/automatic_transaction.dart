@@ -119,8 +119,11 @@ class AutomaticTransaction {
         return _advanceByYears(fromDate, 1, fromDate.month, fromDate.day);
 
       case RecurrenceType.specificDayOfMonth:
-        final lastDayThisMonth =
-            DateTime(fromDate.year, fromDate.month + 1, 0).day;
+        final lastDayThisMonth = DateTime(
+          fromDate.year,
+          fromDate.month + 1,
+          0,
+        ).day;
         final targetDayThisMonth = recurrenceDays.clamp(1, lastDayThisMonth);
         if (fromDate.day < targetDayThisMonth) {
           return DateTime(
@@ -143,11 +146,7 @@ class AutomaticTransaction {
   /// targeting [targetDay], clamped to the last day of the resulting month.
   ///
   /// The time-of-day component from [from] is preserved.
-  static DateTime _advanceByMonths(
-    DateTime from,
-    int months,
-    int targetDay,
-  ) {
+  static DateTime _advanceByMonths(DateTime from, int months, int targetDay) {
     int newMonth = from.month + months;
     int newYear = from.year;
     while (newMonth > 12) {

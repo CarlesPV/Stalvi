@@ -4,11 +4,7 @@ abstract class AppException implements Exception {
   final String? code;
   final dynamic details;
 
-  const AppException({
-    required this.message,
-    this.code,
-    this.details,
-  });
+  const AppException({required this.message, this.code, this.details});
 
   @override
   String toString() {
@@ -20,11 +16,7 @@ abstract class AppException implements Exception {
 
 /// Exception thrown during database operations (e.g., query errors, decryption failures).
 class DatabaseException extends AppException {
-  const DatabaseException({
-    required super.message,
-    super.code,
-    super.details,
-  });
+  const DatabaseException({required super.message, super.code, super.details});
 }
 
 /// Exception thrown when data/input validation fails.
@@ -38,47 +30,27 @@ class ValidationException extends AppException {
 
 /// Exception thrown during authentication or authorization processes.
 class AuthException extends AppException {
-  const AuthException({
-    required super.message,
-    super.code,
-    super.details,
-  });
+  const AuthException({required super.message, super.code, super.details});
 }
 
 /// Exception thrown during network communication or API integrations (e.g., exchange rates).
 class NetworkException extends AppException {
-  const NetworkException({
-    required super.message,
-    super.code,
-    super.details,
-  });
+  const NetworkException({required super.message, super.code, super.details});
 }
 
 /// Exception thrown when a requested resource/record is not found.
 class NotFoundException extends AppException {
-  const NotFoundException({
-    required super.message,
-    super.code,
-    super.details,
-  });
+  const NotFoundException({required super.message, super.code, super.details});
 }
 
 /// Exception thrown when an export operation fails.
 class ExportException extends AppException {
-  const ExportException({
-    required super.message,
-    super.code,
-    super.details,
-  });
+  const ExportException({required super.message, super.code, super.details});
 }
 
 /// Exception thrown when a backup import/restore operation fails.
 class ImportException extends AppException {
-  const ImportException({
-    required super.message,
-    super.code,
-    super.details,
-  });
+  const ImportException({required super.message, super.code, super.details});
 }
 
 /// Exception thrown when trying to delete a category that is in use by an automatic transaction.

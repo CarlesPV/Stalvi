@@ -41,83 +41,85 @@ void main() {
     );
   });
 
-  test('should return a list of CategoryStatistic with converted currency',
-      () async {
-    // Arrange
-    final startDate = DateTime(2023, 1, 1);
-    final endDate = DateTime(2023, 1, 31);
+  test(
+    'should return a list of CategoryStatistic with converted currency',
+    () async {
+      // Arrange
+      final startDate = DateTime(2023, 1, 1);
+      final endDate = DateTime(2023, 1, 31);
 
-    final transactions = [
-      Transaction(
-        id: '1',
-        amount: 10000, // 100.00 USD
-        date: startDate,
+      final transactions = [
+        Transaction(
+          id: '1',
+          amount: 10000, // 100.00 USD
+          date: startDate,
+          type: TransactionType.expense,
+          accountId: 'a1',
+          categoryId: 'cat1',
+          originalCurrency: 'USD',
+          createdAt: startDate,
+          modifiedAt: startDate,
+        ),
+        Transaction(
+          id: '2',
+          amount: 5000, // 50.00 EUR
+          date: startDate,
+          type: TransactionType.expense,
+          accountId: 'a1',
+          categoryId: 'cat1',
+          originalCurrency: 'EUR',
+          createdAt: startDate,
+          modifiedAt: startDate,
+        ),
+      ];
+
+      when(
+        () => mockTransactionRepository.watchFilteredTransactions(any()),
+      ).thenAnswer((_) => Stream.value(transactions));
+
+      final categories = [
+        Category(
+          id: 'cat1',
+          name: 'Food',
+          icon: 'food_icon',
+          color: '#FF0000',
+          createdAt: startDate,
+          modifiedAt: startDate,
+        ),
+      ];
+
+      when(
+        () => mockCategoryRepository.watchAllCategories(),
+      ).thenAnswer((_) => Stream.value(categories));
+
+      final ratesMap = {'USD': 0.00666666, 'EUR': 0.00625};
+
+      when(
+        () => mockExchangeRateRepository.getLocalRates(baseCurrency: 'JPY'),
+      ).thenAnswer(
+        (_) async => ExchangeRate(
+          baseCurrency: 'JPY',
+          date: DateTime.now(),
+          rates: ratesMap,
+        ),
+      );
+
+      // Act
+      final result = await useCase.execute(
+        startDate: startDate,
+        endDate: endDate,
+        targetCurrency: 'JPY',
         type: TransactionType.expense,
-        accountId: 'a1',
-        categoryId: 'cat1',
-        originalCurrency: 'USD',
-        createdAt: startDate,
-        modifiedAt: startDate,
-      ),
-      Transaction(
-        id: '2',
-        amount: 5000, // 50.00 EUR
-        date: startDate,
-        type: TransactionType.expense,
-        accountId: 'a1',
-        categoryId: 'cat1',
-        originalCurrency: 'EUR',
-        createdAt: startDate,
-        modifiedAt: startDate,
-      ),
-    ];
+      );
 
-    when(() => mockTransactionRepository.watchFilteredTransactions(any()))
-        .thenAnswer((_) => Stream.value(transactions));
+      // Assert
+      // 100 USD = 100 / 0.00666666 = 15000 JPY (1500001.5 cents)
+      // 50 EUR = 50 / 0.00625 = 8000 JPY (800000 cents)
+      // Total for cat1 = 2300002 cents
 
-    final categories = [
-      Category(
-        id: 'cat1',
-        name: 'Food',
-        icon: 'food_icon',
-        color: '#FF0000',
-        createdAt: startDate,
-        modifiedAt: startDate,
-      ),
-    ];
-
-    when(() => mockCategoryRepository.watchAllCategories())
-        .thenAnswer((_) => Stream.value(categories));
-
-    final ratesMap = {
-      'USD': 0.00666666,
-      'EUR': 0.00625,
-    };
-
-    when(() => mockExchangeRateRepository.getLocalRates(baseCurrency: 'JPY'))
-        .thenAnswer(
-      (_) async => ExchangeRate(
-        baseCurrency: 'JPY',
-        date: DateTime.now(),
-        rates: ratesMap,
-      ),
-    );
-
-    // Act
-    final result = await useCase.execute(
-      startDate: startDate,
-      endDate: endDate,
-      targetCurrency: 'JPY',
-      type: TransactionType.expense,
-    );
-
-    // Assert
-    // 100 USD = 100 / 0.00666666 = 15000 JPY (1500001.5 cents)
-    // 50 EUR = 50 / 0.00625 = 8000 JPY (800000 cents)
-    // Total for cat1 = 2300002 cents
-
-    expect(result.length, 1);
-    expect(result.first.categoryId, 'cat1');
-    expect(result.first.totalAmount, 2300002);
-  });
+      expect(result.length, 1);
+      expect(result.first.categoryId, 'cat1');
+      expect(result.first.totalAmount, 2300002);
+    },
+  );
 }

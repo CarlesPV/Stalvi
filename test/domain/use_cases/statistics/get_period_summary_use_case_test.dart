@@ -35,87 +35,86 @@ void main() {
   });
 
   test(
-      'should calculate correct PeriodSummary given transactions in USD, EUR, GBP to JPY',
-      () async {
-    // Arrange
-    final startDate = DateTime(2023, 1, 1);
-    final endDate = DateTime(2023, 1, 31);
+    'should calculate correct PeriodSummary given transactions in USD, EUR, GBP to JPY',
+    () async {
+      // Arrange
+      final startDate = DateTime(2023, 1, 1);
+      final endDate = DateTime(2023, 1, 31);
 
-    // Transactions:
-    // 1. 100 USD Income
-    // 2. 50 EUR Expense
-    // 3. 20 GBP Income
-    final transactions = [
-      Transaction(
-        id: '1',
-        amount: 10000, // 100.00
-        date: startDate,
-        type: TransactionType.income,
-        accountId: 'a1',
-        originalCurrency: 'USD',
-        createdAt: startDate,
-        modifiedAt: startDate,
-      ),
-      Transaction(
-        id: '2',
-        amount: 5000, // 50.00
-        date: startDate,
-        type: TransactionType.expense,
-        accountId: 'a1',
-        originalCurrency: 'EUR',
-        createdAt: startDate,
-        modifiedAt: startDate,
-      ),
-      Transaction(
-        id: '3',
-        amount: 2000, // 20.00
-        date: startDate,
-        type: TransactionType.income,
-        accountId: 'a1',
-        originalCurrency: 'GBP',
-        createdAt: startDate,
-        modifiedAt: startDate,
-      ),
-    ];
+      // Transactions:
+      // 1. 100 USD Income
+      // 2. 50 EUR Expense
+      // 3. 20 GBP Income
+      final transactions = [
+        Transaction(
+          id: '1',
+          amount: 10000, // 100.00
+          date: startDate,
+          type: TransactionType.income,
+          accountId: 'a1',
+          originalCurrency: 'USD',
+          createdAt: startDate,
+          modifiedAt: startDate,
+        ),
+        Transaction(
+          id: '2',
+          amount: 5000, // 50.00
+          date: startDate,
+          type: TransactionType.expense,
+          accountId: 'a1',
+          originalCurrency: 'EUR',
+          createdAt: startDate,
+          modifiedAt: startDate,
+        ),
+        Transaction(
+          id: '3',
+          amount: 2000, // 20.00
+          date: startDate,
+          type: TransactionType.income,
+          accountId: 'a1',
+          originalCurrency: 'GBP',
+          createdAt: startDate,
+          modifiedAt: startDate,
+        ),
+      ];
 
-    when(() => mockTransactionRepository.watchFilteredTransactions(any()))
-        .thenAnswer((_) => Stream.value(transactions));
+      when(
+        () => mockTransactionRepository.watchFilteredTransactions(any()),
+      ).thenAnswer((_) => Stream.value(transactions));
 
-    // Rates base=JPY
-    // Let's say:
-    // 1 JPY = 0.0067 USD -> 1 USD = 150 JPY => rate is 0.006666
-    // 1 JPY = 0.0062 EUR -> 1 EUR = 160 JPY => rate is 0.00625
-    // 1 JPY = 0.0053 GBP -> 1 GBP = 190 JPY => rate is 0.005263
-    final ratesMap = {
-      'USD': 0.00666666,
-      'EUR': 0.00625,
-      'GBP': 0.00526315,
-    };
+      // Rates base=JPY
+      // Let's say:
+      // 1 JPY = 0.0067 USD -> 1 USD = 150 JPY => rate is 0.006666
+      // 1 JPY = 0.0062 EUR -> 1 EUR = 160 JPY => rate is 0.00625
+      // 1 JPY = 0.0053 GBP -> 1 GBP = 190 JPY => rate is 0.005263
+      final ratesMap = {'USD': 0.00666666, 'EUR': 0.00625, 'GBP': 0.00526315};
 
-    when(() => mockExchangeRateRepository.getLocalRates(baseCurrency: 'JPY'))
-        .thenAnswer(
-      (_) async => ExchangeRate(
-        baseCurrency: 'JPY',
-        date: DateTime.now(),
-        rates: ratesMap,
-      ),
-    );
+      when(
+        () => mockExchangeRateRepository.getLocalRates(baseCurrency: 'JPY'),
+      ).thenAnswer(
+        (_) async => ExchangeRate(
+          baseCurrency: 'JPY',
+          date: DateTime.now(),
+          rates: ratesMap,
+        ),
+      );
 
-    // Act
-    final result = await useCase.execute(
-      startDate: startDate,
-      endDate: endDate,
-      targetCurrency: 'JPY',
-    );
+      // Act
+      final result = await useCase.execute(
+        startDate: startDate,
+        endDate: endDate,
+        targetCurrency: 'JPY',
+      );
 
-    // Assert
-    // Income: 100 USD = 100 / 0.00666666 = 15000 JPY (cents: 1500001.5 -> 1500002 roughly)
-    // Income: 20 GBP = 20 / 0.00526315 = 3800 JPY (cents: 380000.5)
-    // Total Income = 1880002 cents
+      // Assert
+      // Income: 100 USD = 100 / 0.00666666 = 15000 JPY (cents: 1500001.5 -> 1500002 roughly)
+      // Income: 20 GBP = 20 / 0.00526315 = 3800 JPY (cents: 380000.5)
+      // Total Income = 1880002 cents
 
-    // Expense: 50 EUR = 50 / 0.00625 = 8000 JPY (cents: 800000)
+      // Expense: 50 EUR = 50 / 0.00625 = 8000 JPY (cents: 800000)
 
-    expect(result.totalIncome, 1880002);
-    expect(result.totalExpense, 800000);
-  });
+      expect(result.totalIncome, 1880002);
+      expect(result.totalExpense, 800000);
+    },
+  );
 }

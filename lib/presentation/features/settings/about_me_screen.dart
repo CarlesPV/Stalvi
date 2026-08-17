@@ -66,9 +66,7 @@ class _AboutMeScreenState extends ConsumerState<AboutMeScreen> {
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.aboutMe),
-      ),
+      appBar: AppBar(title: Text(l10n.aboutMe)),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : SafeArea(

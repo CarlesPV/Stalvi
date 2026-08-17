@@ -31,8 +31,9 @@ class DeleteAccountUseCase {
     // Check for linked automatic transactions
     final automaticTransactions =
         await _automaticTransactionRepository.getAllAutomaticTransactions();
-    final hasLinkedAutomaticTxns =
-        automaticTransactions.any((t) => t.accountId == accountId);
+    final hasLinkedAutomaticTxns = automaticTransactions.any(
+      (t) => t.accountId == accountId,
+    );
     if (hasLinkedAutomaticTxns) {
       throw const AccountInUseByAutomaticTransactionException(
         message:
@@ -42,8 +43,9 @@ class DeleteAccountUseCase {
     }
 
     // 2. Fetch the default account for the user.
-    final defaultAccount =
-        await _accountRepository.getDefaultAccount(account.userId);
+    final defaultAccount = await _accountRepository.getDefaultAccount(
+      account.userId,
+    );
     if (defaultAccount == null) {
       throw const ValidationException(
         message:

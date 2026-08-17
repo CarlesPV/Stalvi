@@ -38,6 +38,7 @@ class AddTransactionParams {
   final String? destinationSavingsGoalId;
 
   final String? categoryId;
+  final String? tagId;
   final String? notes;
   final String? currency;
 
@@ -50,6 +51,7 @@ class AddTransactionParams {
     this.destinationAccountId,
     this.destinationSavingsGoalId,
     this.categoryId,
+    this.tagId,
     this.notes,
     this.currency,
   });
@@ -162,8 +164,9 @@ class AddTransactionUseCase {
             code: 'SAME_ACCOUNT_TRANSFER',
           );
         }
-        destinationAccount = await _accountRepository
-            .getAccountById(params.destinationAccountId!);
+        destinationAccount = await _accountRepository.getAccountById(
+          params.destinationAccountId!,
+        );
         if (destinationAccount == null) {
           throw NotFoundException(
             message:
@@ -172,8 +175,9 @@ class AddTransactionUseCase {
           );
         }
       } else if (params.destinationSavingsGoalId != null) {
-        destinationGoal = await _savingsGoalRepository
-            .getSavingsGoalById(params.destinationSavingsGoalId!);
+        destinationGoal = await _savingsGoalRepository.getSavingsGoalById(
+          params.destinationSavingsGoalId!,
+        );
         if (destinationGoal == null) {
           throw NotFoundException(
             message:
@@ -308,6 +312,7 @@ class AddTransactionUseCase {
           type: TransactionType.transfer,
           accountId: params.accountId,
           categoryId: params.categoryId,
+          tagId: params.tagId,
           savingsGoalId: params.destinationSavingsGoalId,
           notes: sanitizedNotes,
           originalCurrency: originalCurrency,
@@ -318,8 +323,9 @@ class AddTransactionUseCase {
           modifiedAt: now,
         );
 
-        final savedTxn =
-            await _transactionRepository.createTransaction(originTxn);
+        final savedTxn = await _transactionRepository.createTransaction(
+          originTxn,
+        );
 
         int goalAmount = convertedAmount ?? params.amount;
         final newGoalAmount = destinationGoal.currentAmount + goalAmount;
@@ -335,8 +341,9 @@ class AddTransactionUseCase {
         if (savedTxn.type == TransactionType.expense) {
           await _updateBudgetProgressUseCase.execute(transaction: savedTxn);
         }
-        final thresholds =
-            await _financialThresholdService.evaluateThresholds([savedTxn]);
+        final thresholds = await _financialThresholdService.evaluateThresholds([
+          savedTxn,
+        ]);
         await _handleThresholdNotifications(thresholds);
         return savedTxn;
       }
@@ -353,6 +360,7 @@ class AddTransactionUseCase {
         type: TransactionType.transfer,
         accountId: params.accountId,
         categoryId: params.categoryId,
+        tagId: params.tagId,
         notes: sanitizedNotes,
         originalCurrency: originalCurrency,
         convertedAmount: convertedAmount,
@@ -370,6 +378,7 @@ class AddTransactionUseCase {
         type: TransactionType.transfer,
         accountId: params.destinationAccountId!,
         categoryId: params.categoryId,
+        tagId: params.tagId,
         notes: sanitizedNotes,
         originalCurrency: destinationAccount!.currency,
         convertedAmount: destConvertedAmount,
@@ -384,8 +393,10 @@ class AddTransactionUseCase {
         originTransaction: originTxn,
         destinationTransaction: destinationTxn,
       );
-      final thresholds = await _financialThresholdService
-          .evaluateThresholds([pair.origin, pair.destination]);
+      final thresholds = await _financialThresholdService.evaluateThresholds([
+        pair.origin,
+        pair.destination,
+      ]);
       await _handleThresholdNotifications(thresholds);
       return pair.origin;
     }
@@ -398,6 +409,7 @@ class AddTransactionUseCase {
       type: params.type,
       accountId: params.accountId,
       categoryId: params.categoryId,
+      tagId: params.tagId,
       notes: sanitizedNotes,
       originalCurrency: originalCurrency,
       convertedAmount: convertedAmount,
@@ -407,13 +419,15 @@ class AddTransactionUseCase {
       modifiedAt: now,
     );
 
-    final savedTxn =
-        await _transactionRepository.createTransaction(transaction);
+    final savedTxn = await _transactionRepository.createTransaction(
+      transaction,
+    );
     if (savedTxn.type == TransactionType.expense) {
       await _updateBudgetProgressUseCase.execute(transaction: savedTxn);
     }
-    final thresholds =
-        await _financialThresholdService.evaluateThresholds([savedTxn]);
+    final thresholds = await _financialThresholdService.evaluateThresholds([
+      savedTxn,
+    ]);
     await _handleThresholdNotifications(thresholds);
     return savedTxn;
   }

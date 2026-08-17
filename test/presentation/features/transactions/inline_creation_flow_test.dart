@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-
 import 'package:stalvi/core/theme/app_theme.dart';
 import 'package:stalvi/core/l10n/app_localizations.dart';
 import 'package:stalvi/domain/entities/category.dart';
@@ -14,23 +13,23 @@ import 'package:stalvi/presentation/providers/repository_providers.dart';
 
 class FakeCategoryRepository implements ICategoryRepository {
   final List<Category> _categories = [];
-  
+
   @override
   Stream<List<Category>> watchAllCategories() async* {
     yield _categories;
   }
-  
+
   @override
   Future<Category> createCategory(Category category) async {
     _categories.add(category);
     return category;
   }
-  
+
   @override
   Future<Category> updateCategory(Category category) async {
     return category;
   }
-  
+
   @override
   Future<void> deleteCategory(String id) async {}
 
@@ -46,22 +45,22 @@ class FakeCategoryRepository implements ICategoryRepository {
 
 class FakeTagRepository implements ITagRepository {
   final List<Tag> _tags = [];
-  
+
   Stream<List<Tag>> watchAllTags() async* {
     yield _tags;
   }
-  
+
   @override
   Future<Tag> createTag(Tag tag) async {
     _tags.add(tag);
     return tag;
   }
-  
+
   @override
   Future<Tag> updateTag(Tag tag) async {
     return tag;
   }
-  
+
   @override
   Future<void> deleteTag(String id) async {}
 
@@ -76,7 +75,9 @@ class FakeTagRepository implements ITagRepository {
 }
 
 void main() {
-  testWidgets('Inline Category and Tag creation flow in Add Transaction', (WidgetTester tester) async {
+  testWidgets('Inline Category and Tag creation flow in Add Transaction', (
+    WidgetTester tester,
+  ) async {
     // Provide a large enough screen
     tester.view.physicalSize = const Size(1080, 2400);
     tester.view.devicePixelRatio = 3.0;
@@ -86,7 +87,9 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
-          categoryRepositoryProvider.overrideWithValue(FakeCategoryRepository()),
+          categoryRepositoryProvider.overrideWithValue(
+            FakeCategoryRepository(),
+          ),
           tagRepositoryProvider.overrideWithValue(FakeTagRepository()),
         ],
         child: MaterialApp(
@@ -111,7 +114,10 @@ void main() {
     await tester.pumpAndSettle();
 
     // Enter name
-    await tester.enterText(find.byType(TextField).last, 'New Integration Category');
+    await tester.enterText(
+      find.byType(TextField).last,
+      'New Integration Category',
+    );
     await tester.pumpAndSettle();
 
     // Save

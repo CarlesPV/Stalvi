@@ -12,8 +12,9 @@ import 'repository_providers.dart';
 // ─── Use-case providers ───────────────────────────────────────────────────────
 
 /// Provides the [GetPeriodSummaryUseCase], wired to [transactionRepositoryProvider] and [exchangeRateRepositoryProvider].
-final getPeriodSummaryUseCaseProvider =
-    Provider<GetPeriodSummaryUseCase>((ref) {
+final getPeriodSummaryUseCaseProvider = Provider<GetPeriodSummaryUseCase>((
+  ref,
+) {
   return GetPeriodSummaryUseCase(
     ref.watch(transactionRepositoryProvider),
     ref.watch(exchangeRateRepositoryProvider),
@@ -21,8 +22,9 @@ final getPeriodSummaryUseCaseProvider =
 });
 
 /// Provides the [GetTopCategoriesUseCase], wired to [transactionRepositoryProvider], [categoryRepositoryProvider], and [exchangeRateRepositoryProvider].
-final getTopCategoriesUseCaseProvider =
-    Provider<GetTopCategoriesUseCase>((ref) {
+final getTopCategoriesUseCaseProvider = Provider<GetTopCategoriesUseCase>((
+  ref,
+) {
   return GetTopCategoriesUseCase(
     ref.watch(transactionRepositoryProvider),
     ref.watch(categoryRepositoryProvider),
@@ -138,10 +140,7 @@ class StatisticsFilterNotifier extends Notifier<StatisticsFilter> {
 
   /// Switches to one of the named presets and recomputes the date range.
   void setPreset(StatisticsDatePreset preset) {
-    state = state.copyWith(
-      dateRange: preset.toDateTimeRange(),
-      preset: preset,
-    );
+    state = state.copyWith(dateRange: preset.toDateTimeRange(), preset: preset);
   }
 
   /// Applies a free-form date range (triggered by the calendar picker).
@@ -169,8 +168,9 @@ final statisticsFilterProvider =
 /// Watches the current filter and emits a real-time [PeriodSummary] for the
 /// active date range. Backed by a Drift stream so any transaction insert /
 /// update / delete inside the period triggers a fresh emission automatically.
-final periodSummaryProvider =
-    Provider.autoDispose<AsyncValue<PeriodSummary>>((ref) {
+final periodSummaryProvider = Provider.autoDispose<AsyncValue<PeriodSummary>>((
+  ref,
+) {
   final filter = ref.watch(statisticsFilterProvider);
   final targetCurrency = ref.watch(statisticsCurrencyProvider);
 
@@ -234,7 +234,10 @@ final dashboardPeriodSummaryProvider =
     return const AsyncLoading();
   }
   if (transactionsAsync.hasError) {
-    return AsyncError(transactionsAsync.error!, transactionsAsync.stackTrace!);
+    return AsyncError(
+      transactionsAsync.error!,
+      transactionsAsync.stackTrace!,
+    );
   }
 
   final transactions = transactionsAsync.value!;
@@ -303,9 +306,10 @@ List<CategoryStatistic> _calculateTopCategories(
 
   final result = <CategoryStatistic>[];
   for (final entry in categorySums.entries) {
-    final cat = categories
-        .cast<dynamic>()
-        .firstWhere((c) => c.id == entry.key, orElse: () => null);
+    final cat = categories.cast<dynamic>().firstWhere(
+          (c) => c.id == entry.key,
+          orElse: () => null,
+        );
     if (cat == null) continue;
     result.add(
       CategoryStatistic(
@@ -337,7 +341,10 @@ final topExpenseCategoriesProvider =
     return const AsyncLoading();
   }
   if (transactionsAsync.hasError) {
-    return AsyncError(transactionsAsync.error!, transactionsAsync.stackTrace!);
+    return AsyncError(
+      transactionsAsync.error!,
+      transactionsAsync.stackTrace!,
+    );
   }
   if (categoriesAsync.hasError) {
     return AsyncError(categoriesAsync.error!, categoriesAsync.stackTrace!);
@@ -371,7 +378,10 @@ final topIncomeCategoriesProvider =
     return const AsyncLoading();
   }
   if (transactionsAsync.hasError) {
-    return AsyncError(transactionsAsync.error!, transactionsAsync.stackTrace!);
+    return AsyncError(
+      transactionsAsync.error!,
+      transactionsAsync.stackTrace!,
+    );
   }
   if (categoriesAsync.hasError) {
     return AsyncError(categoriesAsync.error!, categoriesAsync.stackTrace!);

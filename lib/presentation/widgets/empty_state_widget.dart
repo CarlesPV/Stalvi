@@ -55,8 +55,7 @@ class EmptyStateWidget extends StatelessWidget {
           children: [
             // Decorative Graphic/Icon Container
             Container(
-              width: 96,
-              height: 96,
+              padding: const EdgeInsets.all(28),
               decoration: BoxDecoration(
                 color: colorScheme.primary.withValues(alpha: 0.05),
                 shape: BoxShape.circle,
@@ -65,9 +64,7 @@ class EmptyStateWidget extends StatelessWidget {
                   width: 1.5,
                 ),
               ),
-              child: Center(
-                child: _buildGraphic(colorScheme),
-              ),
+              child: Center(child: _buildGraphic(colorScheme)),
             ),
             const SizedBox(height: 28),
 
@@ -135,11 +132,7 @@ class EmptyStateWidget extends StatelessWidget {
     final displayIcon =
         icon ?? (svgAssetPath == null ? Icons.info_outline_rounded : null);
     if (displayIcon != null) {
-      return Icon(
-        displayIcon,
-        size: 38,
-        color: colorScheme.primary,
-      );
+      return Icon(displayIcon, size: 38, color: colorScheme.primary);
     } else if (svgAssetPath != null) {
       return Image.asset(
         svgAssetPath!,

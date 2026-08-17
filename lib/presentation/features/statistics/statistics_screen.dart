@@ -12,6 +12,8 @@ import 'package:stalvi/domain/entities/period_summary.dart';
 import '../../providers/repository_providers.dart';
 import '../../providers/statistics_providers.dart';
 import '../../widgets/empty_state_widget.dart';
+import '../settings/data_management_screen.dart';
+import 'package:stalvi/core/utils/icon_helper.dart';
 
 // ─── Main Screen ──────────────────────────────────────────────────────────────
 
@@ -108,12 +110,25 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
           onPressed: () => Navigator.of(context).pop(),
         ),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.file_download_outlined),
+            tooltip: AppLocalizations.of(context)!.btnExport,
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const DataManagementScreen(),
+                ),
+              );
+            },
+          ),
           Padding(
             padding: const EdgeInsets.only(right: 8),
             child: IconButton(
               icon: const Icon(Icons.date_range_rounded),
-              tooltip:
-                  AppLocalizations.of(context)!.statisticsTooltipCustomRange,
+              tooltip: AppLocalizations.of(
+                context,
+              )!
+                  .statisticsTooltipCustomRange,
               onPressed: () => _pickCustomRange(context),
             ),
           ),
@@ -134,16 +149,19 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
                 data: (accounts) {
                   if (accounts.isEmpty) return const SizedBox.shrink();
                   return Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 8,
+                    ),
                     child: Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 16,
                         vertical: 4,
                       ),
                       decoration: BoxDecoration(
-                        color: colorScheme.surfaceContainerHighest
-                            .withValues(alpha: 0.5),
+                        color: colorScheme.surfaceContainerHighest.withValues(
+                          alpha: 0.5,
+                        ),
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(
                           color: colorScheme.outline.withValues(alpha: 0.1),
@@ -174,12 +192,14 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
                                 value: acc.id,
                                 child: Row(
                                   children: [
-                                    Container(
-                                      width: 12,
-                                      height: 12,
-                                      decoration: BoxDecoration(
-                                        color: _parseHexColor(acc.color),
-                                        shape: BoxShape.circle,
+                                    CircleAvatar(
+                                      radius: 12,
+                                      backgroundColor:
+                                          _parseHexColor(acc.color),
+                                      child: Icon(
+                                        getIconData(acc.icon),
+                                        size: 14,
+                                        color: Colors.white,
                                       ),
                                     ),
                                     const SizedBox(width: 8),
@@ -211,9 +231,7 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
             ),
 
             // ── Filter chips ─────────────────────────────────────────────
-            SliverToBoxAdapter(
-              child: _FilterChipsRow(currentFilter: filter),
-            ),
+            SliverToBoxAdapter(child: _FilterChipsRow(currentFilter: filter)),
 
             // ── Period header ─────────────────────────────────────────────
             SliverToBoxAdapter(
@@ -229,7 +247,9 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
                     child: EmptyStateWidget(
                       icon: Icons.bar_chart_rounded,
                       title: AppLocalizations.of(context)!.noDataAvailable,
-                      subtitle: AppLocalizations.of(context)!
+                      subtitle: AppLocalizations.of(
+                        context,
+                      )!
                           .statisticsNoDataSubtitle,
                     ),
                   ),
@@ -237,9 +257,7 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
               )
             else ...[
               // ── Income vs. Expense summary ────────────────────────────────
-              SliverToBoxAdapter(
-                child: _SummarySection(shimmer: _shimmer),
-              ),
+              SliverToBoxAdapter(child: _SummarySection(shimmer: _shimmer)),
 
               // ── Top Expense Categories ─────────────────────────────────────
               SliverToBoxAdapter(
@@ -248,10 +266,14 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
                   shimmer: _shimmer,
                   categoriesAsync: ref.watch(topExpenseCategoriesProvider),
                   title: AppLocalizations.of(context)!.statisticsTopSpending,
-                  subtitle:
-                      AppLocalizations.of(context)!.statisticsWhereMoneyGoes,
-                  emptyLabel:
-                      AppLocalizations.of(context)!.statisticsNoExpenses,
+                  subtitle: AppLocalizations.of(
+                    context,
+                  )!
+                      .statisticsWhereMoneyGoes,
+                  emptyLabel: AppLocalizations.of(
+                    context,
+                  )!
+                      .statisticsNoExpenses,
                   accentColor: context.financialColors.negative,
                 ),
               ),
@@ -263,8 +285,10 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
                   shimmer: _shimmer,
                   categoriesAsync: ref.watch(topIncomeCategoriesProvider),
                   title: AppLocalizations.of(context)!.statisticsTopIncome,
-                  subtitle:
-                      AppLocalizations.of(context)!.statisticsWhatYouEarned,
+                  subtitle: AppLocalizations.of(
+                    context,
+                  )!
+                      .statisticsWhatYouEarned,
                   emptyLabel: AppLocalizations.of(context)!.statisticsNoIncome,
                   accentColor: context.financialColors.positive,
                 ),
@@ -290,9 +314,7 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
         end: filter.dateRange.end,
       ),
       builder: (ctx, child) => Theme(
-        data: Theme.of(ctx).copyWith(
-          colorScheme: Theme.of(ctx).colorScheme,
-        ),
+        data: Theme.of(ctx).copyWith(colorScheme: Theme.of(ctx).colorScheme),
         child: child!,
       ),
     );
@@ -496,9 +518,7 @@ class _NetBalanceCard extends ConsumerWidget {
           ],
         ),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: accentColor.withValues(alpha: 0.25),
-        ),
+        border: Border.all(color: accentColor.withValues(alpha: 0.25)),
       ),
       child: Row(
         children: [
@@ -590,9 +610,7 @@ class _SummaryCard extends ConsumerWidget {
       decoration: BoxDecoration(
         color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(
-          color: colorScheme.outline.withValues(alpha: 0.1),
-        ),
+        border: Border.all(color: colorScheme.outline.withValues(alpha: 0.1)),
       ),
       child: Row(
         children: [
@@ -665,8 +683,9 @@ class _SummaryCardSkeleton extends StatelessWidget {
               width: 36,
               height: 36,
               decoration: BoxDecoration(
-                color:
-                    accentColor.withValues(alpha: 0.07 + 0.07 * shimmer.value),
+                color: accentColor.withValues(
+                  alpha: 0.07 + 0.07 * shimmer.value,
+                ),
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
@@ -789,8 +808,10 @@ class _CategoryChartSectionState extends State<_CategoryChartSection> {
                 return EmptyStateWidget(
                   icon: Icons.pie_chart_outline_rounded,
                   title: widget.emptyLabel,
-                  subtitle:
-                      AppLocalizations.of(context)!.statisticsNoDataSubtitle,
+                  subtitle: AppLocalizations.of(
+                    context,
+                  )!
+                      .statisticsNoDataSubtitle,
                 );
               }
               return _PieChartWithLegend(
@@ -880,15 +901,13 @@ class _PieChartWithLegend extends ConsumerWidget {
       decoration: BoxDecoration(
         color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.35),
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(
-          color: colorScheme.outline.withValues(alpha: 0.08),
-        ),
+        border: Border.all(color: colorScheme.outline.withValues(alpha: 0.08)),
       ),
       child: Column(
         children: [
           // Pie chart
-          SizedBox(
-            height: 200,
+          AspectRatio(
+            aspectRatio: 1.5,
             child: PieChart(
               PieChartData(
                 sections: sections,
@@ -921,75 +940,71 @@ class _PieChartWithLegend extends ConsumerWidget {
           const SizedBox(height: 16),
 
           // Legend list
-          ...List.generate(
-            math.min(displayCategories.length, 6),
-            (i) {
-              final cat = displayCategories[i];
-              final ratio = total > 0 ? cat.totalAmount / total : 0.0;
-              final catColor = _parseHexColor(cat.categoryColor);
-              final isTouched = i == touchedIndex;
+          ...List.generate(math.min(displayCategories.length, 6), (i) {
+            final cat = displayCategories[i];
+            final ratio = total > 0 ? cat.totalAmount / total : 0.0;
+            final catColor = _parseHexColor(cat.categoryColor);
+            final isTouched = i == touchedIndex;
 
-              return GestureDetector(
-                onTap: () => onTouch(isTouched ? -1 : i),
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 150),
-                  margin: const EdgeInsets.only(bottom: 8),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 8,
-                  ),
-                  decoration: BoxDecoration(
-                    color: isTouched
-                        ? catColor.withValues(alpha: 0.1)
-                        : Colors.transparent,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 12,
-                        height: 12,
-                        decoration: BoxDecoration(
-                          color: catColor,
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: Text(
-                          cat.categoryName,
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: colorScheme.onSurface,
-                            fontWeight:
-                                isTouched ? FontWeight.w700 : FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                      Text(
-                        '${(ratio * 100).toStringAsFixed(1)}%',
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: colorScheme.onSurfaceVariant,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Text(
-                        ref.watch(currencyFormatterProvider).format(
-                              cat.totalAmount / 100.0,
-                              currencyCode:
-                                  ref.watch(statisticsCurrencyProvider),
-                            ),
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: catColor,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ],
-                  ),
+            return GestureDetector(
+              onTap: () => onTouch(isTouched ? -1 : i),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 150),
+                margin: const EdgeInsets.only(bottom: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
                 ),
-              );
-            },
-          ),
+                decoration: BoxDecoration(
+                  color: isTouched
+                      ? catColor.withValues(alpha: 0.1)
+                      : Colors.transparent,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 12,
+                      height: 12,
+                      decoration: BoxDecoration(
+                        color: catColor,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Text(
+                        cat.categoryName,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: colorScheme.onSurface,
+                          fontWeight:
+                              isTouched ? FontWeight.w700 : FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                    Text(
+                      '${(ratio * 100).toStringAsFixed(1)}%',
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: colorScheme.onSurfaceVariant,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Text(
+                      ref.watch(currencyFormatterProvider).format(
+                            cat.totalAmount / 100.0,
+                            currencyCode: ref.watch(statisticsCurrencyProvider),
+                          ),
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: catColor,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }),
           if (otherTotal > 0) ...[
             const SizedBox(height: 4),
             Row(
@@ -1005,7 +1020,9 @@ class _PieChartWithLegend extends ConsumerWidget {
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(
-                    AppLocalizations.of(context)!
+                    AppLocalizations.of(
+                      context,
+                    )!
                         .statisticsOtherCategories(categories.length - 6),
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: colorScheme.onSurfaceVariant,
@@ -1125,53 +1142,55 @@ class _ChartSkeleton extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
-    return Container(
-      height: 260,
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.35),
-        borderRadius: BorderRadius.circular(24),
-      ),
-      child: Column(
-        children: [
-          // Circle shimmer
-          AnimatedBuilder(
-            animation: shimmer,
-            builder: (_, __) => Container(
-              width: 160,
-              height: 160,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Color.lerp(
-                  colorScheme.onSurface.withValues(alpha: 0.05),
-                  colorScheme.onSurface.withValues(alpha: 0.1),
-                  shimmer.value,
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(height: 16),
-          // Legend skeletons
-          ...List.generate(2, (i) {
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 8),
-              child: AnimatedBuilder(
-                animation: shimmer,
-                builder: (_, __) => Container(
-                  height: 12,
-                  decoration: BoxDecoration(
-                    color: Color.lerp(
-                      colorScheme.onSurface.withValues(alpha: 0.05),
-                      colorScheme.onSurface.withValues(alpha: 0.10),
-                      shimmer.value,
-                    ),
-                    borderRadius: BorderRadius.circular(4),
+    return AspectRatio(
+      aspectRatio: 1.2,
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.35),
+          borderRadius: BorderRadius.circular(24),
+        ),
+        child: Column(
+          children: [
+            // Circle shimmer
+            AnimatedBuilder(
+              animation: shimmer,
+              builder: (_, __) => Container(
+                width: 160,
+                height: 160,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Color.lerp(
+                    colorScheme.onSurface.withValues(alpha: 0.05),
+                    colorScheme.onSurface.withValues(alpha: 0.1),
+                    shimmer.value,
                   ),
                 ),
               ),
-            );
-          }),
-        ],
+            ),
+            const SizedBox(height: 16),
+            // Legend skeletons
+            ...List.generate(2, (i) {
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: AnimatedBuilder(
+                  animation: shimmer,
+                  builder: (_, __) => Container(
+                    height: 12,
+                    decoration: BoxDecoration(
+                      color: Color.lerp(
+                        colorScheme.onSurface.withValues(alpha: 0.05),
+                        colorScheme.onSurface.withValues(alpha: 0.10),
+                        shimmer.value,
+                      ),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
+                ),
+              );
+            }),
+          ],
+        ),
       ),
     );
   }
@@ -1196,11 +1215,7 @@ class _InlineError extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Icon(
-            Icons.error_outline_rounded,
-            color: colorScheme.error,
-            size: 20,
-          ),
+          Icon(Icons.error_outline_rounded, color: colorScheme.error, size: 20),
           const SizedBox(width: 10),
           Expanded(
             child: Text(

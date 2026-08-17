@@ -1,5 +1,6 @@
 // ignore_for_file: non_const_argument_for_const_parameter
 import 'package:flutter/material.dart';
+import 'package:stalvi/core/utils/icon_helper.dart';
 
 /// A grid picker that displays 128 unique Material Icons relevant to finances,
 /// lifestyle, housing, transport, health, and more.
@@ -37,6 +38,8 @@ class CategoryIconPicker extends StatelessWidget {
     MapEntry('monetization_on', Icons.monetization_on),
     MapEntry('trending_up', Icons.trending_up),
     MapEntry('trending_down', Icons.trending_down),
+    MapEntry('show_chart', Icons.show_chart),
+    MapEntry('replay', Icons.replay),
 
     // ── Shopping & Retail ────────────────────────────────────────────────────
     MapEntry('shopping_cart', Icons.shopping_cart),
@@ -167,6 +170,70 @@ class CategoryIconPicker extends StatelessWidget {
     MapEntry('bookmark', Icons.bookmark),
     MapEntry('label', Icons.label),
     MapEntry('tag', Icons.tag),
+
+    // ── Travel, Aviation & Navigation ─────────────────────────────────────────
+    MapEntry('flight_takeoff', Icons.flight_takeoff),
+    MapEntry('flight_land', Icons.flight_land),
+    MapEntry('commute', Icons.commute),
+    MapEntry('subway', Icons.subway),
+    MapEntry('electric_car', Icons.electric_car),
+    MapEntry('motorcycle', Icons.motorcycle),
+    MapEntry('map', Icons.map),
+    MapEntry('explore', Icons.explore),
+    MapEntry('navigation', Icons.navigation),
+
+    // ── Commerce, Retail & Deals ─────────────────────────────────────────────
+    MapEntry('card_membership', Icons.card_membership),
+    MapEntry('store', Icons.store),
+    MapEntry('local_offer', Icons.local_offer),
+
+    // ── Technology, Power & Utilities ────────────────────────────────────────
+    MapEntry('power', Icons.power),
+    MapEntry('electric_bolt', Icons.electric_bolt),
+    MapEntry('router', Icons.router),
+    MapEntry('devices', Icons.devices),
+    MapEntry('cloud', Icons.cloud),
+    MapEntry('solar_power', Icons.solar_power),
+
+    // ── Dining, Beverages & Gastronomy ───────────────────────────────────────
+    MapEntry('local_bar', Icons.local_bar),
+    MapEntry('liquor', Icons.liquor),
+    MapEntry('ramen_dining', Icons.ramen_dining),
+    MapEntry('takeout_dining', Icons.takeout_dining),
+    MapEntry('wine_bar', Icons.wine_bar),
+    MapEntry('coffee', Icons.coffee),
+    MapEntry('soup_kitchen', Icons.soup_kitchen),
+
+    // ── Entertainment, Arts & Sports ─────────────────────────────────────────
+    MapEntry('camera_alt', Icons.camera_alt),
+    MapEntry('palette', Icons.palette),
+    MapEntry('stadium', Icons.stadium),
+    MapEntry('music_video', Icons.music_video),
+    MapEntry('sports_motorsports', Icons.sports_motorsports),
+    MapEntry('sports_golf', Icons.sports_golf),
+    MapEntry('sports_baseball', Icons.sports_baseball),
+    MapEntry('sports_football', Icons.sports_football),
+    MapEntry('pool', Icons.pool),
+
+    // ── Services, Security & Maintenance ─────────────────────────────────────
+    MapEntry('family_restroom', Icons.family_restroom),
+    MapEntry('content_cut', Icons.content_cut),
+    MapEntry('dry_cleaning', Icons.dry_cleaning),
+    MapEntry('security', Icons.security),
+    MapEntry('shield', Icons.shield),
+    MapEntry('workspace_premium', Icons.workspace_premium),
+    MapEntry('pest_control', Icons.pest_control),
+    MapEntry('roofing', Icons.roofing),
+    MapEntry('deck', Icons.deck),
+
+    // ── Education, Time & General Life ───────────────────────────────────────
+    MapEntry('school_outlined', Icons.school_outlined),
+    MapEntry('event', Icons.event),
+    MapEntry('alarm', Icons.alarm),
+    MapEntry('watch', Icons.watch),
+    MapEntry('interests', Icons.interests),
+    MapEntry('newspaper', Icons.newspaper),
+    MapEntry('print', Icons.print),
   ];
 
   // ---------------------------------------------------------------------------
@@ -225,14 +292,12 @@ class CategoryIconPicker extends StatelessWidget {
   }
 
   /// Returns the [IconData] for a stored string key, falling back to
-  /// [Icons.category] if the key is not found.
+  /// [Icons.category_rounded] via [getIconData] if the key is not in [icons].
   static IconData iconDataForKey(String key) {
     for (final entry in icons) {
       if (entry.key == key) return entry.value;
     }
 
-    // Fallback
-
-    return Icons.category;
+    return getIconData(key);
   }
 }

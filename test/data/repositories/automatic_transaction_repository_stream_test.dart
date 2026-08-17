@@ -19,9 +19,9 @@ class _WatchFacade {
   _WatchFacade(this.dao);
 
   Stream<List<AutomaticTransaction>> watch() {
-    return dao
-        .watchAllAutomaticTransactions()
-        .map((e) => e.map(AutomaticTransactionMapper.fromEntity).toList());
+    return dao.watchAllAutomaticTransactions().map(
+          (e) => e.map(AutomaticTransactionMapper.fromEntity).toList(),
+        );
   }
 }
 
@@ -70,8 +70,9 @@ void main() {
 
   group('AutomaticTransactionRepository — watchAllAutomaticTransactions', () {
     test('emits mapped domain entities when DAO stream emits', () async {
-      when(() => mockDao.watchAllAutomaticTransactions())
-          .thenAnswer((_) => Stream.value([_entity()]));
+      when(
+        () => mockDao.watchAllAutomaticTransactions(),
+      ).thenAnswer((_) => Stream.value([_entity()]));
 
       final result = await facade.watch().first;
 
@@ -83,8 +84,9 @@ void main() {
     });
 
     test('emits empty list when table is empty', () async {
-      when(() => mockDao.watchAllAutomaticTransactions())
-          .thenAnswer((_) => Stream.value([]));
+      when(
+        () => mockDao.watchAllAutomaticTransactions(),
+      ).thenAnswer((_) => Stream.value([]));
 
       final result = await facade.watch().first;
 
@@ -101,8 +103,9 @@ void main() {
         deletedAt: DateTime(2024, 5, 1),
       );
 
-      when(() => mockDao.watchAllAutomaticTransactions())
-          .thenAnswer((_) => Stream.value([active, deleted]));
+      when(
+        () => mockDao.watchAllAutomaticTransactions(),
+      ).thenAnswer((_) => Stream.value([active, deleted]));
 
       // Simulate what the StreamProvider does: filter isDeleted == false
       final result = await facade
@@ -141,8 +144,9 @@ void main() {
         recurrenceDays: 30,
       );
 
-      when(() => mockDao.watchAllAutomaticTransactions())
-          .thenAnswer((_) => Stream.value([income]));
+      when(
+        () => mockDao.watchAllAutomaticTransactions(),
+      ).thenAnswer((_) => Stream.value([income]));
 
       final result = await facade.watch().first;
 

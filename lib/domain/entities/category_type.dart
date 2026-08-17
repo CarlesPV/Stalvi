@@ -1,4 +1,1 @@
-enum CategoryType {
-  income,
-  expense,
-}
+enum CategoryType { income, expense }

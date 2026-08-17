@@ -113,12 +113,15 @@ void main() {
   }) {
     final now = DateTime.now();
     when(() => l10n.destination_account).thenReturn('Destination Account');
-    when(() => profileRepository.getFirstProfile())
-        .thenAnswer((_) async => profile);
-    when(() => accountRepository.getAccountsByUserId(any()))
-        .thenAnswer((_) async => accounts);
-    when(() => categoryRepository.getAllCategories())
-        .thenAnswer((_) async => []);
+    when(
+      () => profileRepository.getFirstProfile(),
+    ).thenAnswer((_) async => profile);
+    when(
+      () => accountRepository.getAccountsByUserId(any()),
+    ).thenAnswer((_) async => accounts);
+    when(
+      () => categoryRepository.getAllCategories(),
+    ).thenAnswer((_) async => []);
     when(
       () => getPeriodSummaryUseCase.execute(
         startDate: any(named: 'startDate'),
@@ -136,10 +139,12 @@ void main() {
         type: any(named: 'type'),
       ),
     ).thenAnswer((_) async => []);
-    when(() => transactionRepository.watchAllTransactions())
-        .thenAnswer((_) => Stream.value(transactions));
-    when(() => transactionRepository.watchRawTransactions())
-        .thenAnswer((_) => Stream.value(transactions));
+    when(
+      () => transactionRepository.watchAllTransactions(),
+    ).thenAnswer((_) => Stream.value(transactions));
+    when(
+      () => transactionRepository.watchRawTransactions(),
+    ).thenAnswer((_) => Stream.value(transactions));
     when(
       () => exchangeRateRepository.getLatestRates(
         baseCurrency: any(named: 'baseCurrency'),
@@ -148,8 +153,9 @@ void main() {
       (_) async => ExchangeRate(baseCurrency: 'EUR', date: now, rates: {}),
     );
     when(() => budgetRepository.getBudgets()).thenAnswer((_) async => budgets);
-    when(() => savingsGoalRepository.getSavingsGoals())
-        .thenAnswer((_) async => savingsGoals);
+    when(
+      () => savingsGoalRepository.getSavingsGoals(),
+    ).thenAnswer((_) async => savingsGoals);
     when(
       () => exportService.generateMonthlyPdf(
         any(),
@@ -179,228 +185,231 @@ void main() {
   }
 
   test(
-      'passes correct defaultCurrency and transferDestinations to generateMonthlyPdf',
-      () async {
-    final now = DateTime(2023, 10, 15);
-    final profile = Profile(
-      id: 'user1',
-      name: 'User',
-      username: 'user',
-      password: 'pwd',
-      defaultCurrency: 'GBP',
-      createdAt: now,
-      modifiedAt: now,
-    );
+    'passes correct defaultCurrency and transferDestinations to generateMonthlyPdf',
+    () async {
+      final now = DateTime(2023, 10, 15);
+      final profile = Profile(
+        id: 'user1',
+        name: 'User',
+        username: 'user',
+        password: 'pwd',
+        defaultCurrency: 'GBP',
+        createdAt: now,
+        modifiedAt: now,
+      );
 
-    final account1 = Account(
-      id: 'acc1',
-      userId: 'user1',
-      name: 'Bank',
-      type: AccountType.bank,
-      initialBalance: 0,
-      currency: 'EUR',
-      color: '#000000',
-      icon: 'bank',
-      isDefault: true,
-      isDeleted: false,
-      createdAt: now,
-      modifiedAt: now,
-    );
+      final account1 = Account(
+        id: 'acc1',
+        userId: 'user1',
+        name: 'Bank',
+        type: AccountType.bank,
+        initialBalance: 0,
+        currency: 'EUR',
+        color: '#000000',
+        icon: 'bank',
+        isDefault: true,
+        isDeleted: false,
+        createdAt: now,
+        modifiedAt: now,
+      );
 
-    final account2 = Account(
-      id: 'acc2',
-      userId: 'user1',
-      name: 'Wallet',
-      type: AccountType.cash,
-      initialBalance: 0,
-      currency: 'EUR',
-      color: '#FFFFFF',
-      icon: 'wallet',
-      isDefault: false,
-      isDeleted: false,
-      createdAt: now,
-      modifiedAt: now,
-    );
+      final account2 = Account(
+        id: 'acc2',
+        userId: 'user1',
+        name: 'Wallet',
+        type: AccountType.cash,
+        initialBalance: 0,
+        currency: 'EUR',
+        color: '#FFFFFF',
+        icon: 'wallet',
+        isDefault: false,
+        isDeleted: false,
+        createdAt: now,
+        modifiedAt: now,
+      );
 
-    final tx1 = Transaction(
-      id: 'tx1',
-      amount: -1000,
-      date: now,
-      type: TransactionType.transfer,
-      accountId: 'acc1',
-      originalCurrency: 'EUR',
-      createdAt: now,
-      modifiedAt: now,
-      transferId: 'trans1',
-    );
+      final tx1 = Transaction(
+        id: 'tx1',
+        amount: -1000,
+        date: now,
+        type: TransactionType.transfer,
+        accountId: 'acc1',
+        originalCurrency: 'EUR',
+        createdAt: now,
+        modifiedAt: now,
+        transferId: 'trans1',
+      );
 
-    final tx2 = Transaction(
-      id: 'tx2',
-      amount: 1000,
-      date: now,
-      type: TransactionType.transfer,
-      accountId: 'acc2',
-      originalCurrency: 'EUR',
-      createdAt: now,
-      modifiedAt: now,
-      transferId: 'trans1',
-    );
+      final tx2 = Transaction(
+        id: 'tx2',
+        amount: 1000,
+        date: now,
+        type: TransactionType.transfer,
+        accountId: 'acc2',
+        originalCurrency: 'EUR',
+        createdAt: now,
+        modifiedAt: now,
+        transferId: 'trans1',
+      );
 
-    stubCommonMocks(
-      profile: profile,
-      accounts: [account1, account2],
-      transactions: [tx1, tx2],
-    );
+      stubCommonMocks(
+        profile: profile,
+        accounts: [account1, account2],
+        transactions: [tx1, tx2],
+      );
 
-    await usecase(targetCurrency: 'EUR', forceNow: now);
+      await usecase(targetCurrency: 'EUR', forceNow: now);
 
-    final result = verify(
-      () => exportService.generateMonthlyPdf(
-        any(),
-        summary: any(named: 'summary'),
-        month: any(named: 'month'),
-        l10n: any(named: 'l10n'),
-        accounts: any(named: 'accounts'),
-        categories: any(named: 'categories'),
-        topExpenseCategories: any(named: 'topExpenseCategories'),
-        topIncomeCategories: any(named: 'topIncomeCategories'),
-        defaultCurrency: captureAny(named: 'defaultCurrency'),
-        transferDestinations: captureAny(named: 'transferDestinations'),
-        budgets: any(named: 'budgets'),
-        budgetCategoryNames: any(named: 'budgetCategoryNames'),
-        budgetCurrencies: any(named: 'budgetCurrencies'),
-        savingsGoals: any(named: 'savingsGoals'),
-        customMonthLabel: any(named: 'customMonthLabel'),
-        userName: any(named: 'userName'),
-      ),
-    );
+      final result = verify(
+        () => exportService.generateMonthlyPdf(
+          any(),
+          summary: any(named: 'summary'),
+          month: any(named: 'month'),
+          l10n: any(named: 'l10n'),
+          accounts: any(named: 'accounts'),
+          categories: any(named: 'categories'),
+          topExpenseCategories: any(named: 'topExpenseCategories'),
+          topIncomeCategories: any(named: 'topIncomeCategories'),
+          defaultCurrency: captureAny(named: 'defaultCurrency'),
+          transferDestinations: captureAny(named: 'transferDestinations'),
+          budgets: any(named: 'budgets'),
+          budgetCategoryNames: any(named: 'budgetCategoryNames'),
+          budgetCurrencies: any(named: 'budgetCurrencies'),
+          savingsGoals: any(named: 'savingsGoals'),
+          customMonthLabel: any(named: 'customMonthLabel'),
+          userName: any(named: 'userName'),
+        ),
+      );
 
-    expect(result.captured[0], 'GBP');
-    expect(result.captured[1], {
-      'tx1': 'Bank -> Wallet',
-      'tx2': 'Wallet -> Bank',
-    });
-  });
+      expect(result.captured[0], 'GBP');
+      expect(result.captured[1], {
+        'tx1': 'Bank -> Wallet',
+        'tx2': 'Wallet -> Bank',
+      });
+    },
+  );
 
-  test('passes correct Spanish destinationAccount to generateMonthlyPdf',
-      () async {
-    final now = DateTime(2023, 10, 15);
-    final profile = Profile(
-      id: 'user1',
-      name: 'User',
-      username: 'user',
-      password: 'pwd',
-      defaultCurrency: 'GBP',
-      createdAt: now,
-      modifiedAt: now,
-    );
+  test(
+    'passes correct Spanish destinationAccount to generateMonthlyPdf',
+    () async {
+      final now = DateTime(2023, 10, 15);
+      final profile = Profile(
+        id: 'user1',
+        name: 'User',
+        username: 'user',
+        password: 'pwd',
+        defaultCurrency: 'GBP',
+        createdAt: now,
+        modifiedAt: now,
+      );
 
-    final account1 = Account(
-      id: 'acc1',
-      userId: 'user1',
-      name: 'Bank',
-      type: AccountType.bank,
-      initialBalance: 0,
-      currency: 'EUR',
-      color: '#000000',
-      icon: 'bank',
-      isDefault: true,
-      isDeleted: false,
-      createdAt: now,
-      modifiedAt: now,
-    );
+      final account1 = Account(
+        id: 'acc1',
+        userId: 'user1',
+        name: 'Bank',
+        type: AccountType.bank,
+        initialBalance: 0,
+        currency: 'EUR',
+        color: '#000000',
+        icon: 'bank',
+        isDefault: true,
+        isDeleted: false,
+        createdAt: now,
+        modifiedAt: now,
+      );
 
-    final account2 = Account(
-      id: 'acc2',
-      userId: 'user1',
-      name: 'Wallet',
-      type: AccountType.cash,
-      initialBalance: 0,
-      currency: 'EUR',
-      color: '#FFFFFF',
-      icon: 'wallet',
-      isDefault: false,
-      isDeleted: false,
-      createdAt: now,
-      modifiedAt: now,
-    );
+      final account2 = Account(
+        id: 'acc2',
+        userId: 'user1',
+        name: 'Wallet',
+        type: AccountType.cash,
+        initialBalance: 0,
+        currency: 'EUR',
+        color: '#FFFFFF',
+        icon: 'wallet',
+        isDefault: false,
+        isDeleted: false,
+        createdAt: now,
+        modifiedAt: now,
+      );
 
-    final tx1 = Transaction(
-      id: 'tx1',
-      amount: -1000,
-      date: now,
-      type: TransactionType.transfer,
-      accountId: 'acc1',
-      originalCurrency: 'EUR',
-      createdAt: now,
-      modifiedAt: now,
-      transferId: 'trans1',
-    );
+      final tx1 = Transaction(
+        id: 'tx1',
+        amount: -1000,
+        date: now,
+        type: TransactionType.transfer,
+        accountId: 'acc1',
+        originalCurrency: 'EUR',
+        createdAt: now,
+        modifiedAt: now,
+        transferId: 'trans1',
+      );
 
-    final tx2 = Transaction(
-      id: 'tx2',
-      amount: 1000,
-      date: now,
-      type: TransactionType.transfer,
-      accountId: 'acc2',
-      originalCurrency: 'EUR',
-      createdAt: now,
-      modifiedAt: now,
-      transferId: 'trans1',
-    );
+      final tx2 = Transaction(
+        id: 'tx2',
+        amount: 1000,
+        date: now,
+        type: TransactionType.transfer,
+        accountId: 'acc2',
+        originalCurrency: 'EUR',
+        createdAt: now,
+        modifiedAt: now,
+        transferId: 'trans1',
+      );
 
-    final esL10n = MockAppLocalizations();
-    when(() => esL10n.destination_account).thenReturn('Cuenta de destino');
+      final esL10n = MockAppLocalizations();
+      when(() => esL10n.destination_account).thenReturn('Cuenta de destino');
 
-    final esUsecase = ExportMonthlyPdfUseCase(
-      profileRepository: profileRepository,
-      accountRepository: accountRepository,
-      categoryRepository: categoryRepository,
-      transactionRepository: transactionRepository,
-      exchangeRateRepository: exchangeRateRepository,
-      getPeriodSummaryUseCase: getPeriodSummaryUseCase,
-      getTopCategoriesUseCase: getTopCategoriesUseCase,
-      budgetRepository: budgetRepository,
-      savingsGoalRepository: savingsGoalRepository,
-      exportService: exportService,
-      l10n: esL10n,
-    );
+      final esUsecase = ExportMonthlyPdfUseCase(
+        profileRepository: profileRepository,
+        accountRepository: accountRepository,
+        categoryRepository: categoryRepository,
+        transactionRepository: transactionRepository,
+        exchangeRateRepository: exchangeRateRepository,
+        getPeriodSummaryUseCase: getPeriodSummaryUseCase,
+        getTopCategoriesUseCase: getTopCategoriesUseCase,
+        budgetRepository: budgetRepository,
+        savingsGoalRepository: savingsGoalRepository,
+        exportService: exportService,
+        l10n: esL10n,
+      );
 
-    stubCommonMocks(
-      profile: profile,
-      accounts: [account1, account2],
-      transactions: [tx1, tx2],
-    );
+      stubCommonMocks(
+        profile: profile,
+        accounts: [account1, account2],
+        transactions: [tx1, tx2],
+      );
 
-    await esUsecase(targetCurrency: 'EUR', forceNow: now);
+      await esUsecase(targetCurrency: 'EUR', forceNow: now);
 
-    final result = verify(
-      () => exportService.generateMonthlyPdf(
-        any(),
-        summary: any(named: 'summary'),
-        month: any(named: 'month'),
-        l10n: captureAny(named: 'l10n'),
-        accounts: any(named: 'accounts'),
-        categories: any(named: 'categories'),
-        topExpenseCategories: any(named: 'topExpenseCategories'),
-        topIncomeCategories: any(named: 'topIncomeCategories'),
-        defaultCurrency: any(named: 'defaultCurrency'),
-        transferDestinations: captureAny(named: 'transferDestinations'),
-        budgets: any(named: 'budgets'),
-        budgetCategoryNames: any(named: 'budgetCategoryNames'),
-        budgetCurrencies: any(named: 'budgetCurrencies'),
-        savingsGoals: any(named: 'savingsGoals'),
-        customMonthLabel: any(named: 'customMonthLabel'),
-        userName: any(named: 'userName'),
-      ),
-    );
+      final result = verify(
+        () => exportService.generateMonthlyPdf(
+          any(),
+          summary: any(named: 'summary'),
+          month: any(named: 'month'),
+          l10n: captureAny(named: 'l10n'),
+          accounts: any(named: 'accounts'),
+          categories: any(named: 'categories'),
+          topExpenseCategories: any(named: 'topExpenseCategories'),
+          topIncomeCategories: any(named: 'topIncomeCategories'),
+          defaultCurrency: any(named: 'defaultCurrency'),
+          transferDestinations: captureAny(named: 'transferDestinations'),
+          budgets: any(named: 'budgets'),
+          budgetCategoryNames: any(named: 'budgetCategoryNames'),
+          budgetCurrencies: any(named: 'budgetCurrencies'),
+          savingsGoals: any(named: 'savingsGoals'),
+          customMonthLabel: any(named: 'customMonthLabel'),
+          userName: any(named: 'userName'),
+        ),
+      );
 
-    expect(result.captured[0], esL10n);
-    expect(result.captured[1], {
-      'tx1': 'Bank -> Wallet',
-      'tx2': 'Wallet -> Bank',
-    });
-  });
+      expect(result.captured[0], esL10n);
+      expect(result.captured[1], {
+        'tx1': 'Bank -> Wallet',
+        'tx2': 'Wallet -> Bank',
+      });
+    },
+  );
 
   group('Budget and SavingsGoal data passed to generateMonthlyPdf', () {
     late Profile baseProfile;
@@ -433,134 +442,138 @@ void main() {
       );
     });
 
-    test('only active budgets (non-deleted) are passed to the service',
-        () async {
-      final now = DateTime(2023, 10, 15);
-      final activeBudget = Budget(
-        id: 'b1',
-        accountId: 'acc1',
-        categoryId: 'cat1',
-        targetAmount: 10000,
-        currentAmount: 5000,
-        startDate: DateTime(2023, 10, 1),
-        endDate: DateTime(2023, 10, 31),
-        createdAt: now,
-        modifiedAt: now,
-        isDeleted: false,
-      );
-      final deletedBudget = Budget(
-        id: 'b2',
-        accountId: 'acc1',
-        categoryId: 'cat2',
-        targetAmount: 20000,
-        currentAmount: 0,
-        startDate: DateTime(2023, 10, 1),
-        endDate: DateTime(2023, 10, 31),
-        createdAt: now,
-        modifiedAt: now,
-        isDeleted: true,
-      );
+    test(
+      'only active budgets (non-deleted) are passed to the service',
+      () async {
+        final now = DateTime(2023, 10, 15);
+        final activeBudget = Budget(
+          id: 'b1',
+          accountId: 'acc1',
+          categoryId: 'cat1',
+          targetAmount: 10000,
+          currentAmount: 5000,
+          startDate: DateTime(2023, 10, 1),
+          endDate: DateTime(2023, 10, 31),
+          createdAt: now,
+          modifiedAt: now,
+          isDeleted: false,
+        );
+        final deletedBudget = Budget(
+          id: 'b2',
+          accountId: 'acc1',
+          categoryId: 'cat2',
+          targetAmount: 20000,
+          currentAmount: 0,
+          startDate: DateTime(2023, 10, 1),
+          endDate: DateTime(2023, 10, 31),
+          createdAt: now,
+          modifiedAt: now,
+          isDeleted: true,
+        );
 
-      stubCommonMocks(
-        profile: baseProfile,
-        accounts: [baseAccount],
-        transactions: [],
-        budgets: [activeBudget, deletedBudget],
-        savingsGoals: [],
-      );
+        stubCommonMocks(
+          profile: baseProfile,
+          accounts: [baseAccount],
+          transactions: [],
+          budgets: [activeBudget, deletedBudget],
+          savingsGoals: [],
+        );
 
-      await usecase(targetCurrency: 'EUR', forceNow: now);
+        await usecase(targetCurrency: 'EUR', forceNow: now);
 
-      final captured = verify(
-        () => exportService.generateMonthlyPdf(
-          any(),
-          summary: any(named: 'summary'),
-          month: any(named: 'month'),
-          l10n: any(named: 'l10n'),
-          accounts: any(named: 'accounts'),
-          categories: any(named: 'categories'),
-          topExpenseCategories: any(named: 'topExpenseCategories'),
-          topIncomeCategories: any(named: 'topIncomeCategories'),
-          defaultCurrency: any(named: 'defaultCurrency'),
-          transferDestinations: any(named: 'transferDestinations'),
-          budgets: captureAny(named: 'budgets'),
-          budgetCategoryNames: any(named: 'budgetCategoryNames'),
-          budgetCurrencies: any(named: 'budgetCurrencies'),
-          savingsGoals: any(named: 'savingsGoals'),
-          customMonthLabel: any(named: 'customMonthLabel'),
-          userName: any(named: 'userName'),
-        ),
-      ).captured;
+        final captured = verify(
+          () => exportService.generateMonthlyPdf(
+            any(),
+            summary: any(named: 'summary'),
+            month: any(named: 'month'),
+            l10n: any(named: 'l10n'),
+            accounts: any(named: 'accounts'),
+            categories: any(named: 'categories'),
+            topExpenseCategories: any(named: 'topExpenseCategories'),
+            topIncomeCategories: any(named: 'topIncomeCategories'),
+            defaultCurrency: any(named: 'defaultCurrency'),
+            transferDestinations: any(named: 'transferDestinations'),
+            budgets: captureAny(named: 'budgets'),
+            budgetCategoryNames: any(named: 'budgetCategoryNames'),
+            budgetCurrencies: any(named: 'budgetCurrencies'),
+            savingsGoals: any(named: 'savingsGoals'),
+            customMonthLabel: any(named: 'customMonthLabel'),
+            userName: any(named: 'userName'),
+          ),
+        ).captured;
 
-      final passedBudgets = captured[0] as List<Budget>;
-      expect(passedBudgets.length, 1);
-      expect(passedBudgets.first.id, 'b1');
-    });
+        final passedBudgets = captured[0] as List<Budget>;
+        expect(passedBudgets.length, 1);
+        expect(passedBudgets.first.id, 'b1');
+      },
+    );
 
-    test('only active savings goals (non-deleted) are passed to the service',
-        () async {
-      final now = DateTime(2023, 10, 15);
-      final activeGoal = SavingsGoal(
-        id: 'sg1',
-        name: 'Vacation',
-        targetAmount: 50000,
-        currentAmount: 25000,
-        currency: 'EUR',
-        color: '#FF5722',
-        icon: 'beach',
-        createdAt: now,
-        modifiedAt: now,
-        isDeleted: false,
-      );
-      final deletedGoal = SavingsGoal(
-        id: 'sg2',
-        name: 'Old Goal',
-        targetAmount: 10000,
-        currentAmount: 0,
-        currency: 'EUR',
-        color: '#9E9E9E',
-        icon: 'trash',
-        createdAt: now,
-        modifiedAt: now,
-        isDeleted: true,
-      );
+    test(
+      'only active savings goals (non-deleted) are passed to the service',
+      () async {
+        final now = DateTime(2023, 10, 15);
+        final activeGoal = SavingsGoal(
+          id: 'sg1',
+          name: 'Vacation',
+          targetAmount: 50000,
+          currentAmount: 25000,
+          currency: 'EUR',
+          color: '#FF5722',
+          icon: 'beach',
+          createdAt: now,
+          modifiedAt: now,
+          isDeleted: false,
+        );
+        final deletedGoal = SavingsGoal(
+          id: 'sg2',
+          name: 'Old Goal',
+          targetAmount: 10000,
+          currentAmount: 0,
+          currency: 'EUR',
+          color: '#9E9E9E',
+          icon: 'trash',
+          createdAt: now,
+          modifiedAt: now,
+          isDeleted: true,
+        );
 
-      stubCommonMocks(
-        profile: baseProfile,
-        accounts: [baseAccount],
-        transactions: [],
-        budgets: [],
-        savingsGoals: [activeGoal, deletedGoal],
-      );
+        stubCommonMocks(
+          profile: baseProfile,
+          accounts: [baseAccount],
+          transactions: [],
+          budgets: [],
+          savingsGoals: [activeGoal, deletedGoal],
+        );
 
-      await usecase(targetCurrency: 'EUR', forceNow: now);
+        await usecase(targetCurrency: 'EUR', forceNow: now);
 
-      final captured = verify(
-        () => exportService.generateMonthlyPdf(
-          any(),
-          summary: any(named: 'summary'),
-          month: any(named: 'month'),
-          l10n: any(named: 'l10n'),
-          accounts: any(named: 'accounts'),
-          categories: any(named: 'categories'),
-          topExpenseCategories: any(named: 'topExpenseCategories'),
-          topIncomeCategories: any(named: 'topIncomeCategories'),
-          defaultCurrency: any(named: 'defaultCurrency'),
-          transferDestinations: any(named: 'transferDestinations'),
-          budgets: any(named: 'budgets'),
-          budgetCategoryNames: any(named: 'budgetCategoryNames'),
-          budgetCurrencies: any(named: 'budgetCurrencies'),
-          savingsGoals: captureAny(named: 'savingsGoals'),
-          customMonthLabel: any(named: 'customMonthLabel'),
-          userName: any(named: 'userName'),
-        ),
-      ).captured;
+        final captured = verify(
+          () => exportService.generateMonthlyPdf(
+            any(),
+            summary: any(named: 'summary'),
+            month: any(named: 'month'),
+            l10n: any(named: 'l10n'),
+            accounts: any(named: 'accounts'),
+            categories: any(named: 'categories'),
+            topExpenseCategories: any(named: 'topExpenseCategories'),
+            topIncomeCategories: any(named: 'topIncomeCategories'),
+            defaultCurrency: any(named: 'defaultCurrency'),
+            transferDestinations: any(named: 'transferDestinations'),
+            budgets: any(named: 'budgets'),
+            budgetCategoryNames: any(named: 'budgetCategoryNames'),
+            budgetCurrencies: any(named: 'budgetCurrencies'),
+            savingsGoals: captureAny(named: 'savingsGoals'),
+            customMonthLabel: any(named: 'customMonthLabel'),
+            userName: any(named: 'userName'),
+          ),
+        ).captured;
 
-      final passedGoals = captured[0] as List<SavingsGoal>;
-      expect(passedGoals.length, 1);
-      expect(passedGoals.first.id, 'sg1');
-      expect(passedGoals.first.name, 'Vacation');
-    });
+        final passedGoals = captured[0] as List<SavingsGoal>;
+        expect(passedGoals.length, 1);
+        expect(passedGoals.first.id, 'sg1');
+        expect(passedGoals.first.name, 'Vacation');
+      },
+    );
 
     test('budgetCategoryNames map is correctly built from categories',
         () async {
@@ -579,14 +592,17 @@ void main() {
       );
 
       when(() => l10n.destination_account).thenReturn('Destination Account');
-      when(() => profileRepository.getFirstProfile())
-          .thenAnswer((_) async => baseProfile);
-      when(() => accountRepository.getAccountsByUserId(any()))
-          .thenAnswer((_) async => [baseAccount]);
+      when(
+        () => profileRepository.getFirstProfile(),
+      ).thenAnswer((_) async => baseProfile);
+      when(
+        () => accountRepository.getAccountsByUserId(any()),
+      ).thenAnswer((_) async => [baseAccount]);
 
       // Return a category with id cat1, name Food
-      when(() => categoryRepository.getAllCategories())
-          .thenAnswer((_) async => []);
+      when(
+        () => categoryRepository.getAllCategories(),
+      ).thenAnswer((_) async => []);
       when(
         () => getPeriodSummaryUseCase.execute(
           startDate: any(named: 'startDate'),
@@ -604,10 +620,12 @@ void main() {
           type: any(named: 'type'),
         ),
       ).thenAnswer((_) async => []);
-      when(() => transactionRepository.watchAllTransactions())
-          .thenAnswer((_) => Stream.value([]));
-      when(() => transactionRepository.watchRawTransactions())
-          .thenAnswer((_) => Stream.value([]));
+      when(
+        () => transactionRepository.watchAllTransactions(),
+      ).thenAnswer((_) => Stream.value([]));
+      when(
+        () => transactionRepository.watchRawTransactions(),
+      ).thenAnswer((_) => Stream.value([]));
       when(
         () => exchangeRateRepository.getLatestRates(
           baseCurrency: any(named: 'baseCurrency'),
@@ -615,10 +633,12 @@ void main() {
       ).thenAnswer(
         (_) async => ExchangeRate(baseCurrency: 'EUR', date: now, rates: {}),
       );
-      when(() => budgetRepository.getBudgets())
-          .thenAnswer((_) async => [budget]);
-      when(() => savingsGoalRepository.getSavingsGoals())
-          .thenAnswer((_) async => []);
+      when(
+        () => budgetRepository.getBudgets(),
+      ).thenAnswer((_) async => [budget]);
+      when(
+        () => savingsGoalRepository.getSavingsGoals(),
+      ).thenAnswer((_) async => []);
       when(
         () => exportService.generateMonthlyPdf(
           any(),
@@ -674,44 +694,46 @@ void main() {
       expect(categoryNames['cat1'], 'cat1');
     });
 
-    test('empty budgets and savings goals produce empty lists in service call',
-        () async {
-      final now = DateTime(2023, 10, 15);
+    test(
+      'empty budgets and savings goals produce empty lists in service call',
+      () async {
+        final now = DateTime(2023, 10, 15);
 
-      stubCommonMocks(
-        profile: baseProfile,
-        accounts: [baseAccount],
-        transactions: [],
-        budgets: [],
-        savingsGoals: [],
-      );
+        stubCommonMocks(
+          profile: baseProfile,
+          accounts: [baseAccount],
+          transactions: [],
+          budgets: [],
+          savingsGoals: [],
+        );
 
-      await usecase(targetCurrency: 'EUR', forceNow: now);
+        await usecase(targetCurrency: 'EUR', forceNow: now);
 
-      final captured = verify(
-        () => exportService.generateMonthlyPdf(
-          any(),
-          summary: any(named: 'summary'),
-          month: any(named: 'month'),
-          l10n: any(named: 'l10n'),
-          accounts: any(named: 'accounts'),
-          categories: any(named: 'categories'),
-          topExpenseCategories: any(named: 'topExpenseCategories'),
-          topIncomeCategories: any(named: 'topIncomeCategories'),
-          defaultCurrency: any(named: 'defaultCurrency'),
-          transferDestinations: any(named: 'transferDestinations'),
-          budgets: captureAny(named: 'budgets'),
-          budgetCategoryNames: any(named: 'budgetCategoryNames'),
-          budgetCurrencies: any(named: 'budgetCurrencies'),
-          savingsGoals: captureAny(named: 'savingsGoals'),
-          customMonthLabel: any(named: 'customMonthLabel'),
-          userName: any(named: 'userName'),
-        ),
-      ).captured;
+        final captured = verify(
+          () => exportService.generateMonthlyPdf(
+            any(),
+            summary: any(named: 'summary'),
+            month: any(named: 'month'),
+            l10n: any(named: 'l10n'),
+            accounts: any(named: 'accounts'),
+            categories: any(named: 'categories'),
+            topExpenseCategories: any(named: 'topExpenseCategories'),
+            topIncomeCategories: any(named: 'topIncomeCategories'),
+            defaultCurrency: any(named: 'defaultCurrency'),
+            transferDestinations: any(named: 'transferDestinations'),
+            budgets: captureAny(named: 'budgets'),
+            budgetCategoryNames: any(named: 'budgetCategoryNames'),
+            budgetCurrencies: any(named: 'budgetCurrencies'),
+            savingsGoals: captureAny(named: 'savingsGoals'),
+            customMonthLabel: any(named: 'customMonthLabel'),
+            userName: any(named: 'userName'),
+          ),
+        ).captured;
 
-      expect(captured[0] as List<Budget>, isEmpty);
-      expect(captured[1] as List<SavingsGoal>, isEmpty);
-    });
+        expect(captured[0] as List<Budget>, isEmpty);
+        expect(captured[1] as List<SavingsGoal>, isEmpty);
+      },
+    );
   });
 
   group('PdfExportDateRange logic', () {
@@ -742,11 +764,7 @@ void main() {
         modifiedAt: now,
       );
 
-      stubCommonMocks(
-        profile: profile,
-        accounts: [account1],
-        transactions: [],
-      );
+      stubCommonMocks(profile: profile, accounts: [account1], transactions: []);
 
       await usecase(
         targetCurrency: 'EUR',

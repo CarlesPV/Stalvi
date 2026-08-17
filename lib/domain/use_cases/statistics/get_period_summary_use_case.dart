@@ -39,8 +39,11 @@ class GetPeriodSummaryUseCase {
     double totalExpense = 0;
 
     for (final tx in transactions) {
-      double amount =
-          CurrencyConverter.convertAmount(tx, targetCurrency, rates);
+      double amount = CurrencyConverter.convertAmount(
+        tx,
+        targetCurrency,
+        rates,
+      );
 
       if (tx.type == TransactionType.income) {
         totalIncome += amount;

@@ -51,8 +51,9 @@ void main() {
         isDefault: true,
       );
 
-      when(() => mockAccountRepository.getAccountById(existingAccount.id))
-          .thenAnswer((_) async => existingAccount);
+      when(
+        () => mockAccountRepository.getAccountById(existingAccount.id),
+      ).thenAnswer((_) async => existingAccount);
       when(() => mockAccountRepository.updateAccount(any())).thenAnswer(
         (invocation) async => invocation.positionalArguments[0] as Account,
       );
@@ -68,8 +69,9 @@ void main() {
       // Immutable fields must remain unchanged
       expect(result.initialBalance, existingAccount.initialBalance);
       expect(result.currency, existingAccount.currency);
-      verify(() => mockAccountRepository.getAccountById(existingAccount.id))
-          .called(1);
+      verify(
+        () => mockAccountRepository.getAccountById(existingAccount.id),
+      ).called(1);
       verify(() => mockAccountRepository.updateAccount(any())).called(1);
     });
 
@@ -110,8 +112,9 @@ void main() {
         isDefault: true,
       );
 
-      when(() => mockAccountRepository.getAccountById(existingAccount.id))
-          .thenAnswer((_) async => null);
+      when(
+        () => mockAccountRepository.getAccountById(existingAccount.id),
+      ).thenAnswer((_) async => null);
 
       // Act & Assert
       expect(
@@ -124,8 +127,9 @@ void main() {
           ),
         ),
       );
-      verify(() => mockAccountRepository.getAccountById(existingAccount.id))
-          .called(1);
+      verify(
+        () => mockAccountRepository.getAccountById(existingAccount.id),
+      ).called(1);
       verifyNever(() => mockAccountRepository.updateAccount(any()));
     });
   });

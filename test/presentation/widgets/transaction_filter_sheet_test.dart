@@ -151,8 +151,9 @@ void main() {
       expect(find.text('Cancel'), findsOneWidget);
     });
 
-    testWidgets('shows Clear All button disabled when filters are empty',
-        (tester) async {
+    testWidgets('shows Clear All button disabled when filters are empty', (
+      tester,
+    ) async {
       // No active filters → Clear All button disabled (null onPressed).
       await tester.pumpWidget(_wrap(const TransactionFilterSheet()));
       await tester.pump();
@@ -163,8 +164,9 @@ void main() {
       expect(textButton.onPressed, isNull);
     });
 
-    testWidgets('shows Clear All button enabled when filters are active',
-        (tester) async {
+    testWidgets('shows Clear All button enabled when filters are active', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         _wrap(
           const TransactionFilterSheet(),
@@ -185,8 +187,9 @@ void main() {
       await tester.pumpWidget(_wrap(const TransactionFilterSheet()));
       await tester.pump();
 
-      final incomeChipContainer =
-          find.byKey(const ValueKey('filterTypeIncome'));
+      final incomeChipContainer = find.byKey(
+        const ValueKey('filterTypeIncome'),
+      );
       expect(incomeChipContainer, findsOneWidget);
 
       await tester.tap(incomeChipContainer);
@@ -212,8 +215,9 @@ void main() {
       );
       await tester.pump();
 
-      final incomeChipContainer =
-          find.byKey(const ValueKey('filterTypeIncome'));
+      final incomeChipContainer = find.byKey(
+        const ValueKey('filterTypeIncome'),
+      );
       final allChipContainer = find.byKey(const ValueKey('filterTypeAll'));
 
       FilterChip getChip(Finder container) => tester.widget<FilterChip>(
@@ -235,8 +239,9 @@ void main() {
       await tester.pumpWidget(_wrap(const TransactionFilterSheet()));
       await tester.pump();
 
-      final transferContainer =
-          find.byKey(const ValueKey('filterTypeTransfer'));
+      final transferContainer = find.byKey(
+        const ValueKey('filterTypeTransfer'),
+      );
       expect(transferContainer, findsOneWidget);
 
       await tester.tap(transferContainer);
@@ -361,8 +366,9 @@ void main() {
       expect(find.byKey(const ValueKey('filterMaxAmount')), findsOneWidget);
     });
 
-    testWidgets('entering min amount value updates the text field',
-        (tester) async {
+    testWidgets('entering min amount value updates the text field', (
+      tester,
+    ) async {
       await tester.pumpWidget(_wrap(const TransactionFilterSheet()));
       await tester.pump();
 
@@ -374,8 +380,9 @@ void main() {
       expect(find.text('50.00'), findsOneWidget);
     });
 
-    testWidgets('entering max amount value updates the text field',
-        (tester) async {
+    testWidgets('entering max amount value updates the text field', (
+      tester,
+    ) async {
       await tester.pumpWidget(_wrap(const TransactionFilterSheet()));
       await tester.pump();
 
@@ -388,39 +395,42 @@ void main() {
     });
 
     testWidgets(
-        'pre-populated min amount from initial filter shows in text field',
-        (tester) async {
-      // 5000 cents = 50.00.
-      await tester.pumpWidget(
-        _wrap(
-          const TransactionFilterSheet(),
-          initialFilter: const TransactionFilter(minAmountCents: 5000),
-        ),
-      );
-      await tester.pump();
+      'pre-populated min amount from initial filter shows in text field',
+      (tester) async {
+        // 5000 cents = 50.00.
+        await tester.pumpWidget(
+          _wrap(
+            const TransactionFilterSheet(),
+            initialFilter: const TransactionFilter(minAmountCents: 5000),
+          ),
+        );
+        await tester.pump();
 
-      expect(find.text('50.00'), findsOneWidget);
-    });
+        expect(find.text('50.00'), findsOneWidget);
+      },
+    );
 
     testWidgets(
-        'pre-populated max amount from initial filter shows in text field',
-        (tester) async {
-      // 20000 cents = 200.00.
-      await tester.pumpWidget(
-        _wrap(
-          const TransactionFilterSheet(),
-          initialFilter: const TransactionFilter(maxAmountCents: 20000),
-        ),
-      );
-      await tester.pump();
+      'pre-populated max amount from initial filter shows in text field',
+      (tester) async {
+        // 20000 cents = 200.00.
+        await tester.pumpWidget(
+          _wrap(
+            const TransactionFilterSheet(),
+            initialFilter: const TransactionFilter(maxAmountCents: 20000),
+          ),
+        );
+        await tester.pump();
 
-      expect(find.text('200.00'), findsOneWidget);
-    });
+        expect(find.text('200.00'), findsOneWidget);
+      },
+    );
 
     // ── Date range picker ──────────────────────────────────────────────────────
 
-    testWidgets('date range tile shows placeholder when no date is selected',
-        (tester) async {
+    testWidgets('date range tile shows placeholder when no date is selected', (
+      tester,
+    ) async {
       await tester.pumpWidget(_wrap(const TransactionFilterSheet()));
       await tester.pump();
 
@@ -433,8 +443,9 @@ void main() {
 
     // ── Active filter count badge ──────────────────────────────────────────────
 
-    testWidgets('shows active filter count when filters are set',
-        (tester) async {
+    testWidgets('shows active filter count when filters are set', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         _wrap(
           const TransactionFilterSheet(),
@@ -450,8 +461,9 @@ void main() {
       expect(find.textContaining('2 active'), findsOneWidget);
     });
 
-    testWidgets('does not show active filter badge when filter is empty',
-        (tester) async {
+    testWidgets('does not show active filter badge when filter is empty', (
+      tester,
+    ) async {
       await tester.pumpWidget(_wrap(const TransactionFilterSheet()));
       await tester.pump();
 
@@ -484,8 +496,9 @@ void main() {
       await tester.pumpWidget(_wrap(const TransactionFilterSheet()));
       await tester.pump();
 
-      await tester
-          .ensureVisible(find.byKey(const ValueKey('filterApplyButton')));
+      await tester.ensureVisible(
+        find.byKey(const ValueKey('filterApplyButton')),
+      );
       await tester.tap(find.byKey(const ValueKey('filterApplyButton')));
       await tester.pumpAndSettle();
       // No exception means success.
@@ -506,8 +519,9 @@ void main() {
             find.descendant(of: container, matching: find.byType(FilterChip)),
           );
 
-      final incomeChipContainer =
-          find.byKey(const ValueKey('filterTypeIncome'));
+      final incomeChipContainer = find.byKey(
+        const ValueKey('filterTypeIncome'),
+      );
       // Income chip should be selected initially.
       expect(getChip(incomeChipContainer).selected, isTrue);
 
@@ -522,8 +536,9 @@ void main() {
       expect(getChip(incomeChipContainer).selected, isFalse);
     });
 
-    testWidgets('tapping Clear All empties the amount text fields',
-        (tester) async {
+    testWidgets('tapping Clear All empties the amount text fields', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         _wrap(
           const TransactionFilterSheet(),
@@ -548,8 +563,9 @@ void main() {
       expect(find.text('50.00'), findsNothing);
     });
 
-    testWidgets('tapping Clear All hides the active filter badge',
-        (tester) async {
+    testWidgets('tapping Clear All hides the active filter badge', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         _wrap(
           const TransactionFilterSheet(),

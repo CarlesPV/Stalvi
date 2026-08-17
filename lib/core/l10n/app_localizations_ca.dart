@@ -112,7 +112,7 @@ class AppLocalizationsCa extends AppLocalizations {
   String get optionalPlaceholder => '(Opcional)';
 
   @override
-  String get privacyPolicy => 'Política de privadesa';
+  String get privacyPolicy => 'Política de Privadesa';
 
   @override
   String get recurrenceUtcWarning => 'L\'hora de referència és UTC+2';
@@ -130,7 +130,7 @@ class AppLocalizationsCa extends AppLocalizations {
   String get targetDate => 'Data Objectiu';
 
   @override
-  String get termsAndConditions => 'Termes i condicions';
+  String get termsAndConditions => 'Termes i Condicions';
 
   @override
   String get tryAgain => 'Torna-ho a provar';
@@ -190,9 +190,6 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get authProcessing => 'Processant l\'autenticació de seguretat…';
-
-  @override
-  String get authProtectedBy => 'Protegit per la biometria del dispositiu';
 
   @override
   String get authSetupAcceptAnd => ' i la ';
@@ -265,6 +262,10 @@ class AppLocalizationsCa extends AppLocalizations {
   @override
   String get accountInUseByAutoTxMessage =>
       'Aquest compte no es pot eliminar perquè està vinculat a transaccions automàtiques actives.';
+
+  @override
+  String get deleteAccountWithTransactionsWarning =>
+      'Aquest compte té transaccions associades. Eliminar-lo també eliminarà totes les seves transaccions.';
 
   @override
   String get accountTypeBank => 'Banc';
@@ -966,7 +967,7 @@ class AppLocalizationsCa extends AppLocalizations {
   String get settingsAutomaticTransactions => 'Transaccions Automàtiques';
 
   @override
-  String get settingsDataManagement => 'Gestió de Dades';
+  String get settingsDataManagement => 'Importar i Exportar Dades';
 
   @override
   String get settingsLanguage => 'Idioma';
@@ -1026,7 +1027,7 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get authSetupValidationErrorTerms =>
-      'Heu d\'acceptar els Termes i Condicions i la Política de Privacitat per continuar.';
+      'Heu d\'acceptar els Termes i Condicions i la Política de Privadesa per continuar.';
 
   @override
   String get authSetupValidationErrorUsername =>
@@ -1175,4 +1176,12 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get errorLoadingContent => 'Error en carregar el contingut.';
+
+  @override
+  String get errorCannotDeleteDefaultAccount =>
+      'No es pot eliminar el compte predeterminat. Si us plau, assigneu un altre compte com a predeterminat primer.';
+
+  @override
+  String get errorNoDefaultAccountForReassignment =>
+      'No es pot eliminar el compte perquè no hi ha cap compte predeterminat per a la reassignació.';
 }

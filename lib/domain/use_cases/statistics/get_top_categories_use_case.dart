@@ -40,8 +40,11 @@ class GetTopCategoriesUseCase {
     for (final tx in transactions) {
       if (tx.categoryId == null) continue;
 
-      double amount =
-          CurrencyConverter.convertAmount(tx, targetCurrency, rates);
+      double amount = CurrencyConverter.convertAmount(
+        tx,
+        targetCurrency,
+        rates,
+      );
 
       categoryTotals[tx.categoryId!] =
           (categoryTotals[tx.categoryId!] ?? 0) + amount;

@@ -401,6 +401,55 @@
   - [x] Unify the category selector UI/UX for standard transactions with recurring transactions.
   - [x] Achieve 100% test pass rate across 548 unit, widget, and integration tests, clean static analysis (`0` warnings/errors on `flutter analyze`), and update project documentation.
 
+- [x] **Phase 57: Play Store Build Optimization & R8 Code/Resource Shrinking**
+  - [x] Refine ProGuard rules (`android/app/proguard-rules.pro`) by removing overly broad `-keep` rules for Flutter embedding and AndroidX libraries, allowing R8 to perform deep tree-shaking using library consumer rules.
+  - [x] Configure `resourceConfigurations += setOf("en", "es", "ca")` in `android/app/build.gradle.kts` to strip unused localization resources from external dependencies.
+  - [x] Explicitly enable R8 full mode (`android.enableR8.fullMode=true`) in `android/gradle.properties`.
+  - [x] Build and verify release App Bundle (`app-release.aab`) with 100% build health and zero runtime crashes.
+
+- [x] **Phase 58: PIN Lockout Timer Update & Transaction Amount Field Cursor Alignment**
+  - [x] Convert `_PinLockoutContent` in `auth_screen.dart` to a `StatefulWidget` with an internal periodic timer to dynamically update the 30-second countdown on the lockout screen.
+  - [x] Adjust text alignment to `TextAlign.left` in the amount entry field for both standard transactions (`add_transaction_screen.dart`) and automatic transactions (`create_edit_automatic_transaction_screen.dart`).
+  - [x] Ensure text cursor is positioned at the left side immediately following the currency symbol for clearer input UX.
+  - [x] Verify static analysis (`0` issues) and 100% test pass rate across all unit and widget tests.
+
+- [x] **Phase 59: Data Export Navigation, Asset Expansion, Legal Docs & Default Categories**
+  - [x] Integrate export navigation in statistics view.
+  - [x] Expand category colors (15) and icons (50), plus 4 new savings goals icons.
+  - [x] Update Legal Documents (ToS and Privacy Policy) with robust liability exemptions in EN, ES, CA.
+  - [x] Update database seeding logic for new default categories (Pet, Personal Care, Sport, Sale, Refund, Investment).
+  - [x] Ensure CI/CD workflows run securely and flawlessly with 100% test pass rate.
+
+- [x] **Phase 60: Full Tags/Labels Integration & Category Deletion Polish** (Referred to as Phase 59 in active task)
+  - [x] Restored and integrated tags/labels functionality for standard transactions (Database, Domain, UI, Filters, Exports).
+  - [x] Enhanced category deletion workflow by adding icon and color support to the re-assignment selector.
+  - [x] Fixed all UI layout deprecations and ensured 100% test passing rate.
+  - [x] Verified full i18n localization keys completeness for CA, ES, and EN.
+
+- [x] **Phase 61: Category Reassignment Logic & PDF Export Polish**
+  - [x] Removed the 'both' category type from domain entities, enums, and DB schemas.
+  - [x] Updated default category seeding so the "Investment" category is created as a custom user category (null associatedType).
+  - [x] Refined category deletion reassignment filtering logic (Income shows Income + Custom, Expense shows Expense + Custom, Custom shows All).
+  - [x] Enhanced PDF export table alignment by centering the Transaction Type, Account, Category, and Tag columns.
+  - [x] Verified 100% test suite pass rate, 0 static analysis warnings, and full key parity across EN, ES, and CA translation files.
+
+- [x] **Phase 62: Selectors UX Polish (Icons & Colors)**
+  - [x] Updated Account and Tag dropdown selectors in `TransactionFilterSheet` to display CircleAvatars containing their respective colors and icons, matching the Category selector visual design.
+  - [x] Enhanced the Account selector in `StatisticsScreen` to visually incorporate the account icon inside its color-coded CircleAvatar.
+  - [x] Verified static analysis with 0 errors, 0 warnings, and 0 infos (`flutter analyze`), ensuring 100% test suite pass rate.
+
+- [x] **Phase 63: Production Documentation Overhaul**
+  - [x] Complete rewrite of the project `README.md`.
+  - [x] Verified documentation covers clean architecture, local-first strategy, multi-language, and encryption.
+  - [x] Finalized roadmap for production readiness.
+
+- [x] **Phase 64: Final QA & UI/UX Polish**
+  - [x] Implemented Tag soft-delete functionality to prevent orphaned tags in transactions.
+  - [x] Added restoration fallbacks for transactions when their original categories or accounts are deleted.
+  - [x] Enhanced account deletion warnings to explicitly notify users about cascading transaction deletions.
+  - [x] Completed sweeping UI polish, ensuring dialogs and bottom sheets are correctly centered and prevent overflow.
+  - [x] Verified 100% test suite pass rate (558 tests) and zero static analysis warnings.
+
 ---
 
 ## Post-Launch / Maintenance

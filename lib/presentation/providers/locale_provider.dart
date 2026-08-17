@@ -62,8 +62,9 @@ class LocaleNotifier extends Notifier<Locale> {
       if (dbAsync.hasValue) {
         try {
           final profile = await ref.read(defaultProfileProvider.future);
-          final initializeUseCase =
-              ref.read(initializeDefaultDataUseCaseProvider);
+          final initializeUseCase = ref.read(
+            initializeDefaultDataUseCaseProvider,
+          );
           await initializeUseCase.execute(
             userId: profile.id,
             locale: newLocale.languageCode,
@@ -81,5 +82,6 @@ class LocaleNotifier extends Notifier<Locale> {
 }
 
 /// Global provider for the active [Locale].
-final localeProvider =
-    NotifierProvider<LocaleNotifier, Locale>(LocaleNotifier.new);
+final localeProvider = NotifierProvider<LocaleNotifier, Locale>(
+  LocaleNotifier.new,
+);

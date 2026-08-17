@@ -44,58 +44,71 @@ void main() {
   }
 
   group('AccountRepository Tests', () {
-    test('createAccount saves account and getAccountById retrieves it',
-        () async {
-      final id = uuid.v4();
-      final account = buildTestAccount(id: id);
+    test(
+      'createAccount saves account and getAccountById retrieves it',
+      () async {
+        final id = uuid.v4();
+        final account = buildTestAccount(id: id);
 
-      await repository.createAccount(account);
-      final retrieved = await repository.getAccountById(id);
+        await repository.createAccount(account);
+        final retrieved = await repository.getAccountById(id);
 
-      expect(retrieved, isNotNull);
-      expect(retrieved!.id, id);
-      expect(retrieved.name, 'Test Account');
-      expect(retrieved.type, AccountType.savings);
-      expect(retrieved.initialBalance, 1200.0);
-    });
+        expect(retrieved, isNotNull);
+        expect(retrieved!.id, id);
+        expect(retrieved.name, 'Test Account');
+        expect(retrieved.type, AccountType.savings);
+        expect(retrieved.initialBalance, 1200.0);
+      },
+    );
 
     test(
-        'getAccountsByUserId returns only non-deleted accounts for specific user',
-        () async {
-      const user1 = 'user-1';
-      const user2 = 'user-2';
+      'getAccountsByUserId returns only non-deleted accounts for specific user',
+      () async {
+        const user1 = 'user-1';
+        const user2 = 'user-2';
 
-      final acc1 = buildTestAccount(id: uuid.v4(), name: 'Acc 1')
-          .copyWith(userId: user1);
-      final acc2 = buildTestAccount(id: uuid.v4(), name: 'Acc 2')
-          .copyWith(userId: user1);
-      final accDeleted =
-          buildTestAccount(id: uuid.v4(), name: 'Deleted Acc', isDeleted: true)
-              .copyWith(userId: user1);
-      final accOther = buildTestAccount(id: uuid.v4(), name: 'Acc Other')
-          .copyWith(userId: user2);
+        final acc1 = buildTestAccount(
+          id: uuid.v4(),
+          name: 'Acc 1',
+        ).copyWith(userId: user1);
+        final acc2 = buildTestAccount(
+          id: uuid.v4(),
+          name: 'Acc 2',
+        ).copyWith(userId: user1);
+        final accDeleted = buildTestAccount(
+          id: uuid.v4(),
+          name: 'Deleted Acc',
+          isDeleted: true,
+        ).copyWith(userId: user1);
+        final accOther = buildTestAccount(
+          id: uuid.v4(),
+          name: 'Acc Other',
+        ).copyWith(userId: user2);
 
-      await repository.createAccount(acc1);
-      await repository.createAccount(acc2);
-      await repository.createAccount(accDeleted);
-      await repository.createAccount(accOther);
+        await repository.createAccount(acc1);
+        await repository.createAccount(acc2);
+        await repository.createAccount(accDeleted);
+        await repository.createAccount(accOther);
 
-      final list = await repository.getAccountsByUserId(user1);
+        final list = await repository.getAccountsByUserId(user1);
 
-      expect(list.length, 2);
-      final names = list.map((a) => a.name).toList();
-      expect(names, containsAll(['Acc 1', 'Acc 2']));
-      expect(names, isNot(contains('Deleted Acc')));
-      expect(names, isNot(contains('Acc Other')));
-    });
+        expect(list.length, 2);
+        final names = list.map((a) => a.name).toList();
+        expect(names, containsAll(['Acc 1', 'Acc 2']));
+        expect(names, isNot(contains('Deleted Acc')));
+        expect(names, isNot(contains('Acc Other')));
+      },
+    );
 
     test('updateAccount correctly modifies database fields', () async {
       final id = uuid.v4();
       final account = buildTestAccount(id: id, name: 'Original Name');
       await repository.createAccount(account);
 
-      final updated =
-          account.copyWith(name: 'Updated Name', initialBalance: 5000.0);
+      final updated = account.copyWith(
+        name: 'Updated Name',
+        initialBalance: 5000.0,
+      );
       await repository.updateAccount(updated);
 
       final retrieved = await repository.getAccountById(id);
@@ -108,8 +121,10 @@ void main() {
       final id = uuid.v4();
       final account = buildTestAccount(id: id, name: 'Active Acc');
       final anotherId = uuid.v4();
-      final anotherAccount =
-          buildTestAccount(id: anotherId, name: 'Another Acc');
+      final anotherAccount = buildTestAccount(
+        id: anotherId,
+        name: 'Another Acc',
+      );
 
       await repository.createAccount(account);
       await repository.createAccount(anotherAccount);

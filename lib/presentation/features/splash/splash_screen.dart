@@ -65,10 +65,8 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     );
 
     // Wordmark: slides up from below, fades in
-    _wordmarkSlide = Tween<Offset>(
-      begin: const Offset(0, 0.7),
-      end: Offset.zero,
-    ).animate(
+    _wordmarkSlide =
+        Tween<Offset>(begin: const Offset(0, 0.7), end: Offset.zero).animate(
       CurvedAnimation(
         parent: _controller,
         curve: const Interval(0.48, 0.88, curve: Curves.easeOutCubic),
@@ -139,10 +137,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
       PageRouteBuilder(
         pageBuilder: (_, __, ___) => const AuthScreen(),
         transitionsBuilder: (_, animation, __, child) => FadeTransition(
-          opacity: CurvedAnimation(
-            parent: animation,
-            curve: Curves.easeInOut,
-          ),
+          opacity: CurvedAnimation(parent: animation, curve: Curves.easeInOut),
           child: child,
         ),
         transitionDuration: const Duration(milliseconds: 500),
@@ -375,8 +370,7 @@ class _ErrorBody extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              width: 72,
-              height: 72,
+              padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: colorScheme.errorContainer,
                 borderRadius: BorderRadius.circular(22),
@@ -410,9 +404,7 @@ class _ErrorBody extends StatelessWidget {
               onPressed: onRetry,
               icon: const Icon(Icons.refresh_rounded, size: 18),
               label: Text(AppLocalizations.of(context)!.tryAgain),
-              style: FilledButton.styleFrom(
-                minimumSize: const Size(180, 50),
-              ),
+              style: FilledButton.styleFrom(minimumSize: const Size(180, 50)),
             ),
           ],
         ),

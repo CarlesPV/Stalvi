@@ -192,9 +192,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get authProcessing => 'Processing security authentication…';
 
   @override
-  String get authProtectedBy => 'Protected by device biometrics';
-
-  @override
   String get authSetupAcceptAnd => ' and the ';
 
   @override
@@ -264,6 +261,10 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get accountInUseByAutoTxMessage =>
       'This account cannot be deleted because it is linked to active automatic transactions.';
+
+  @override
+  String get deleteAccountWithTransactionsWarning =>
+      'This account has associated transactions. Deleting it will also delete all its transactions.';
 
   @override
   String get accountTypeBank => 'Bank';
@@ -961,7 +962,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsAutomaticTransactions => 'Automatic Transactions';
 
   @override
-  String get settingsDataManagement => 'Data Management';
+  String get settingsDataManagement => 'Import & Export Data';
 
   @override
   String get settingsLanguage => 'Language';
@@ -1159,4 +1160,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get errorLoadingContent => 'Error loading content.';
+
+  @override
+  String get errorCannotDeleteDefaultAccount =>
+      'Cannot delete the default account. Please set another account as default first.';
+
+  @override
+  String get errorNoDefaultAccountForReassignment =>
+      'Cannot delete account because no default account exists for reassignment.';
 }

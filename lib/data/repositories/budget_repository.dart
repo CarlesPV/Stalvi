@@ -16,9 +16,9 @@ class BudgetRepository implements IBudgetRepository {
 
   @override
   Stream<List<Budget>> watchBudgets() {
-    return _db.budgetDao
-        .watchBudgets()
-        .map((rows) => rows.map(BudgetMapper.fromDataClass).toList());
+    return _db.budgetDao.watchBudgets().map(
+          (rows) => rows.map(BudgetMapper.fromDataClass).toList(),
+        );
   }
 
   @override

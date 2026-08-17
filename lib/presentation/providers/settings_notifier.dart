@@ -3,11 +3,7 @@ import 'package:stalvi/domain/repositories/i_settings_repository.dart';
 import 'package:stalvi/infrastructure/services/notification_service.dart';
 import 'repository_providers.dart';
 
-enum NotificationToggleResult {
-  success,
-  denied,
-  permanentlyDenied,
-}
+enum NotificationToggleResult { success, denied, permanentlyDenied }
 
 /// A [Notifier] that manages the push notifications toggle state.
 ///
@@ -92,5 +88,6 @@ class SettingsNotifier extends Notifier<bool> {
 }
 
 /// Global provider for application settings (push notifications toggle).
-final settingsNotifierProvider =
-    NotifierProvider<SettingsNotifier, bool>(SettingsNotifier.new);
+final settingsNotifierProvider = NotifierProvider<SettingsNotifier, bool>(
+  SettingsNotifier.new,
+);

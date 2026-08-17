@@ -6,8 +6,9 @@ import 'package:stalvi/main.dart';
 import 'package:stalvi/presentation/providers/app_startup_provider.dart';
 
 void main() {
-  testWidgets('StalviApp renders without crashing',
-      (WidgetTester tester) async {
+  testWidgets('StalviApp renders without crashing', (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [

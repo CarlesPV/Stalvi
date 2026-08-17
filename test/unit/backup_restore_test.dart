@@ -66,8 +66,10 @@ void main() {
     await db.customStatement('PRAGMA foreign_keys = ON');
 
     final exportService = ExportServiceImpl();
-    final importService =
-        ImportServiceImpl(database: db, exportService: exportService);
+    final importService = ImportServiceImpl(
+      database: db,
+      exportService: exportService,
+    );
 
     // Seed a profile
     await db.delete(db.profiles).go();
@@ -126,6 +128,7 @@ void main() {
       type: t_type.TransactionType.expense,
       accountId: 'a1',
       categoryId: 'c1',
+      tagId: 'tg1',
       originalCurrency: 'USD',
       createdAt: now,
       modifiedAt: now,
@@ -212,6 +215,7 @@ void main() {
     expect(transactions.length, 1);
     expect(transactions.first.amount, 5000);
     expect(transactions.first.categoryId, 'c1');
+    expect(transactions.first.tagId, 'tg1');
     expect(transactions.first.accountId, 'a1');
 
     final budgets = await db.select(db.budgets).get();

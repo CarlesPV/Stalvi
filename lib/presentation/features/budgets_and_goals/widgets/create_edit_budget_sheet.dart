@@ -195,8 +195,12 @@ class _CreateEditBudgetSheetState extends ConsumerState<CreateEditBudgetSheet> {
       color: colorScheme.surface,
       borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
       child: Container(
-        padding:
-            EdgeInsets.fromLTRB(24, 12, 24, 24 + mediaQuery.viewInsets.bottom),
+        padding: EdgeInsets.fromLTRB(
+          24,
+          12,
+          24,
+          24 + mediaQuery.viewInsets.bottom,
+        ),
         child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -226,8 +230,10 @@ class _CreateEditBudgetSheetState extends ConsumerState<CreateEditBudgetSheet> {
                   ),
                   if (isEditing)
                     IconButton(
-                      icon:
-                          Icon(Icons.delete_outline, color: colorScheme.error),
+                      icon: Icon(
+                        Icons.delete_outline,
+                        color: colorScheme.error,
+                      ),
                       onPressed: isLoading ? null : _delete,
                     ),
                 ],
@@ -236,8 +242,9 @@ class _CreateEditBudgetSheetState extends ConsumerState<CreateEditBudgetSheet> {
               TextField(
                 controller: _amountController,
                 enabled: !isEditing,
-                keyboardType:
-                    const TextInputType.numberWithOptions(decimal: true),
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
                 decoration: InputDecoration(
                   labelText: l10n.targetAmount,
                   border: OutlineInputBorder(
@@ -255,8 +262,9 @@ class _CreateEditBudgetSheetState extends ConsumerState<CreateEditBudgetSheet> {
                       ? Icon(
                           Icons.lock_outline_rounded,
                           size: 18,
-                          color: colorScheme.onSurfaceVariant
-                              .withValues(alpha: 0.5),
+                          color: colorScheme.onSurfaceVariant.withValues(
+                            alpha: 0.5,
+                          ),
                         )
                       : null,
                 ),
@@ -281,8 +289,9 @@ class _CreateEditBudgetSheetState extends ConsumerState<CreateEditBudgetSheet> {
                       ? Icon(
                           Icons.lock_outline_rounded,
                           size: 18,
-                          color: colorScheme.onSurfaceVariant
-                              .withValues(alpha: 0.5),
+                          color: colorScheme.onSurfaceVariant.withValues(
+                            alpha: 0.5,
+                          ),
                         )
                       : null,
                 ),
@@ -368,8 +377,9 @@ class _CreateEditBudgetSheetState extends ConsumerState<CreateEditBudgetSheet> {
                           ? OutlineInputBorder(
                               borderRadius: BorderRadius.circular(16),
                               borderSide: BorderSide(
-                                color:
-                                    colorScheme.outline.withValues(alpha: 0.3),
+                                color: colorScheme.outline.withValues(
+                                  alpha: 0.3,
+                                ),
                               ),
                             )
                           : null,
@@ -377,8 +387,9 @@ class _CreateEditBudgetSheetState extends ConsumerState<CreateEditBudgetSheet> {
                           ? Icon(
                               Icons.lock_outline_rounded,
                               size: 18,
-                              color: colorScheme.onSurfaceVariant
-                                  .withValues(alpha: 0.5),
+                              color: colorScheme.onSurfaceVariant.withValues(
+                                alpha: 0.5,
+                              ),
                             )
                           : null,
                     ),
@@ -451,8 +462,9 @@ class _CreateEditBudgetSheetState extends ConsumerState<CreateEditBudgetSheet> {
                           ? OutlineInputBorder(
                               borderRadius: BorderRadius.circular(16),
                               borderSide: BorderSide(
-                                color:
-                                    colorScheme.outline.withValues(alpha: 0.3),
+                                color: colorScheme.outline.withValues(
+                                  alpha: 0.3,
+                                ),
                               ),
                             )
                           : null,
@@ -460,8 +472,9 @@ class _CreateEditBudgetSheetState extends ConsumerState<CreateEditBudgetSheet> {
                           ? Icon(
                               Icons.lock_outline_rounded,
                               size: 18,
-                              color: colorScheme.onSurfaceVariant
-                                  .withValues(alpha: 0.5),
+                              color: colorScheme.onSurfaceVariant.withValues(
+                                alpha: 0.5,
+                              ),
                             )
                           : null,
                     ),
@@ -537,8 +550,9 @@ class _CreateEditBudgetSheetState extends ConsumerState<CreateEditBudgetSheet> {
                         vertical: 10,
                       ),
                       decoration: BoxDecoration(
-                        color:
-                            colorScheme.errorContainer.withValues(alpha: 0.2),
+                        color: colorScheme.errorContainer.withValues(
+                          alpha: 0.2,
+                        ),
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
                           color: colorScheme.error.withValues(alpha: 0.35),
@@ -555,6 +569,8 @@ class _CreateEditBudgetSheetState extends ConsumerState<CreateEditBudgetSheet> {
                           Expanded(
                             child: Text(
                               _validationError!,
+                              maxLines: null,
+                              overflow: TextOverflow.visible,
                               style: theme.textTheme.bodySmall?.copyWith(
                                 color: colorScheme.error,
                               ),
@@ -568,6 +584,7 @@ class _CreateEditBudgetSheetState extends ConsumerState<CreateEditBudgetSheet> {
                 const SizedBox(height: 16),
               ],
               Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Expanded(
                     child: OutlinedButton(

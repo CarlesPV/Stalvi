@@ -175,8 +175,9 @@ class _PinVerificationSheetState extends ConsumerState<PinVerificationSheet> {
               const SizedBox(height: 12),
               Text(
                 l10n.authLockedTitle,
-                style: theme.textTheme.bodyMedium
-                    ?.copyWith(color: colorScheme.error),
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: colorScheme.error,
+                ),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 12),
@@ -197,8 +198,11 @@ class _PinVerificationSheetState extends ConsumerState<PinVerificationSheet> {
               if (_errorText != null)
                 Text(
                   _errorText!,
-                  style: theme.textTheme.bodySmall
-                      ?.copyWith(color: colorScheme.error),
+                  maxLines: null,
+                  overflow: TextOverflow.visible,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: colorScheme.error,
+                  ),
                   textAlign: TextAlign.center,
                 ),
               const SizedBox(height: 8),

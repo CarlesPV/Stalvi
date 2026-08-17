@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui';
 
 import 'package:flutter/gestures.dart';
@@ -62,10 +63,9 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
 
     // Determine if biometrics are available to show the icon on the dialpad
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref
-          .read(authNotifierProvider.notifier)
-          .isBiometricAvailable()
-          .then((available) {
+      ref.read(authNotifierProvider.notifier).isBiometricAvailable().then((
+        available,
+      ) {
         if (mounted) {
           setState(() {
             _biometricsAvailable = available;
@@ -108,10 +108,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
       PageRouteBuilder(
         pageBuilder: (_, __, ___) => const DashboardScreen(),
         transitionsBuilder: (_, animation, __, child) => FadeTransition(
-          opacity: CurvedAnimation(
-            parent: animation,
-            curve: Curves.easeInOut,
-          ),
+          opacity: CurvedAnimation(parent: animation, curve: Curves.easeInOut),
           child: child,
         ),
         transitionDuration: const Duration(milliseconds: 500),
@@ -127,10 +124,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
       PageRouteBuilder(
         pageBuilder: (_, __, ___) => const BiometricOptInScreen(),
         transitionsBuilder: (_, animation, __, child) => FadeTransition(
-          opacity: CurvedAnimation(
-            parent: animation,
-            curve: Curves.easeInOut,
-          ),
+          opacity: CurvedAnimation(parent: animation, curve: Curves.easeInOut),
           child: child,
         ),
         transitionDuration: const Duration(milliseconds: 500),
@@ -249,15 +243,6 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
                       },
                     ),
                   ),
-                  const SizedBox(height: 24),
-                  Text(
-                    l10n.authProtectedBy,
-                    style: theme.textTheme.labelSmall?.copyWith(
-                      color:
-                          colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
-                      letterSpacing: 0.4,
-                    ),
-                  ),
                 ],
               ),
             ),
@@ -367,8 +352,9 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
               decoration: BoxDecoration(
                 color: colorScheme.errorContainer.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(8),
-                border:
-                    Border.all(color: colorScheme.error.withValues(alpha: 0.3)),
+                border: Border.all(
+                  color: colorScheme.error.withValues(alpha: 0.3),
+                ),
               ),
               child: Row(
                 children: [
@@ -377,8 +363,11 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
                   Expanded(
                     child: Text(
                       error,
-                      style: theme.textTheme.bodySmall
-                          ?.copyWith(color: colorScheme.error),
+                      maxLines: null,
+                      overflow: TextOverflow.visible,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: colorScheme.error,
+                      ),
                     ),
                   ),
                 ],
@@ -402,8 +391,10 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
             decoration: InputDecoration(
               filled: true,
               fillColor: colorScheme.surfaceContainerLow.withValues(alpha: 0.6),
-              contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 12,
+              ),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide(
@@ -466,8 +457,10 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
             decoration: InputDecoration(
               filled: true,
               fillColor: colorScheme.surfaceContainerLow.withValues(alpha: 0.6),
-              contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 12,
+              ),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide(
@@ -575,8 +568,9 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
               prefixIcon: const Icon(Icons.person_outline),
               filled: true,
               fillColor: colorScheme.surfaceContainerLow.withValues(alpha: 0.6),
-              border:
-                  OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
               counterText: '',
             ),
             validator: (val) {
@@ -608,8 +602,9 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
               prefixIcon: const Icon(Icons.alternate_email),
               filled: true,
               fillColor: colorScheme.surfaceContainerLow.withValues(alpha: 0.6),
-              border:
-                  OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
               counterText: '',
             ),
             validator: (val) {
@@ -643,8 +638,9 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
               prefixIcon: const Icon(Icons.lock_outline),
               filled: true,
               fillColor: colorScheme.surfaceContainerLow.withValues(alpha: 0.6),
-              border:
-                  OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
               counterText: '',
             ),
             validator: (val) {
@@ -675,8 +671,9 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
               prefixIcon: const Icon(Icons.lock_outline),
               filled: true,
               fillColor: colorScheme.surfaceContainerLow.withValues(alpha: 0.6),
-              border:
-                  OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
               counterText: '',
             ),
             validator: (val) {
@@ -738,8 +735,9 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
                                           opacity: animation,
                                           child: child,
                                         ),
-                                        transitionDuration:
-                                            const Duration(milliseconds: 300),
+                                        transitionDuration: const Duration(
+                                          milliseconds: 300,
+                                        ),
                                       ),
                                     );
                                   },
@@ -766,8 +764,9 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
                                           opacity: animation,
                                           child: child,
                                         ),
-                                        transitionDuration:
-                                            const Duration(milliseconds: 300),
+                                        transitionDuration: const Duration(
+                                          milliseconds: 300,
+                                        ),
                                       ),
                                     );
                                   },
@@ -783,8 +782,11 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
                       padding: const EdgeInsets.only(left: 12, top: 4),
                       child: Text(
                         formFieldState.errorText ?? '',
-                        style: theme.textTheme.bodySmall
-                            ?.copyWith(color: colorScheme.error),
+                        maxLines: null,
+                        overflow: TextOverflow.visible,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: colorScheme.error,
+                        ),
                       ),
                     ),
                 ],
@@ -820,8 +822,10 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
               ),
               child: Text(
                 l10n.authSetupCreateButton,
-                style:
-                    const TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
+                style: const TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 16,
+                ),
               ),
             ),
           ),
@@ -887,8 +891,9 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
             ),
             child: Text(
               error,
-              style:
-                  theme.textTheme.bodySmall?.copyWith(color: colorScheme.error),
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: colorScheme.error,
+              ),
               textAlign: TextAlign.center,
             ),
           ),
@@ -979,6 +984,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
                     builder: (context) => AlertDialog(
                       title: Text(l10n.authBiometricOptInTitle),
                       content: Text(l10n.authBiometricOptInSubtitle),
+                      actionsAlignment: MainAxisAlignment.center,
                       actions: [
                         TextButton(
                           onPressed: () => Navigator.of(context).pop(),
@@ -1012,10 +1018,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
       );
     }
 
-    return const AspectRatio(
-      aspectRatio: 1.5,
-      child: SizedBox(),
-    );
+    return const AspectRatio(aspectRatio: 1.5, child: SizedBox());
   }
 
   Widget _backspaceKey(ColorScheme colorScheme) {
@@ -1217,10 +1220,7 @@ class _LockedOutContent extends StatelessWidget {
   final ColorScheme colorScheme;
   final ThemeData theme;
 
-  const _LockedOutContent({
-    required this.colorScheme,
-    required this.theme,
-  });
+  const _LockedOutContent({required this.colorScheme, required this.theme});
 
   @override
   Widget build(BuildContext context) {
@@ -1235,11 +1235,7 @@ class _LockedOutContent extends StatelessWidget {
             shape: BoxShape.circle,
             color: Colors.redAccent,
           ),
-          child: const Icon(
-            Icons.lock_rounded,
-            size: 32,
-            color: Colors.white,
-          ),
+          child: const Icon(Icons.lock_rounded, size: 32, color: Colors.white),
         ),
         const SizedBox(height: 20),
         Text(
@@ -1268,11 +1264,7 @@ class _LockedOutContent extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(
-                Icons.shield_rounded,
-                size: 14,
-                color: colorScheme.error,
-              ),
+              Icon(Icons.shield_rounded, size: 14, color: colorScheme.error),
               const SizedBox(width: 6),
               Text(
                 l10n.authLockoutActive,
@@ -1291,7 +1283,7 @@ class _LockedOutContent extends StatelessWidget {
 
 // ─── PIN Brute-force Lockout Content (with countdown timer) ──────────────────
 
-class _PinLockoutContent extends StatelessWidget {
+class _PinLockoutContent extends StatefulWidget {
   final ColorScheme colorScheme;
   final ThemeData theme;
   final int secondsRemaining;
@@ -1303,9 +1295,40 @@ class _PinLockoutContent extends StatelessWidget {
   });
 
   @override
+  State<_PinLockoutContent> createState() => _PinLockoutContentState();
+}
+
+class _PinLockoutContentState extends State<_PinLockoutContent> {
+  late int secondsRemaining;
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    secondsRemaining = widget.secondsRemaining;
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (secondsRemaining > 0) {
+        setState(() {
+          secondsRemaining--;
+        });
+      } else {
+        timer.cancel();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final isCountingDown = secondsRemaining > 0;
+    final colorScheme = widget.colorScheme;
+    final theme = widget.theme;
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -1322,11 +1345,7 @@ class _PinLockoutContent extends StatelessWidget {
               width: 2,
             ),
           ),
-          child: Icon(
-            Icons.timer_rounded,
-            size: 32,
-            color: colorScheme.error,
-          ),
+          child: Icon(Icons.timer_rounded, size: 32, color: colorScheme.error),
         ),
         const SizedBox(height: 20),
         Text(

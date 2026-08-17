@@ -1,23 +1,11 @@
-# Phase 56: CI/CD Stabilization and Domain Refinement
+# Phase 63: Production Readiness, UI Polish & Documentation Overhaul
 
-## Context
-Project: Stalvi (Financial Control App)
-Architecture: Clean Architecture, Riverpod, Drift (SQLCipher)
-Current Phase Status: Completed
-
-## Objectives
-- Resolve the Android Build failure in CI related to `workmanager_android` and the Kotlin Gradle Plugin (KGP).
-- Refactor the transaction creation/edit domain rules to completely remove the default "Uncategorized" (Sin categoría) option.
-- Unify the category selector UI/logic for standard transactions to match the recurring/automatic transactions selector.
-- Ensure 100% success rate on all unit tests, integration tests, and GitHub Actions (CI workflows).
-- Maintain robust localization across the 3 supported languages.
+## Objective
+Ensure Stalvi is production-ready by guaranteeing a fully responsive UI with no text truncations, eliminating all technical debt (unused code/assets), finalizing legal compliance in all 3 languages, achieving a 100% CI pass rate, and overhauling all project documentation.
 
 ## Tasks
-- [x] **Task 1: DevOps & Build Stabilization**
-  - Update `workmanager` and Gradle/Kotlin configurations to fix the `cannot find symbol class WorkmanagerPlugin` error.
-- [x] **Task 2: Business Logic & UI Refactor**
-  - Remove "Uncategorized" category logic.
-  - Update Riverpod providers and UI so standard transactions use the exact same category selector as recurring ones.
-- [x] **Task 3: Testing & Documentation**
-  - Run all tests and workflows to verify everything passes without warnings/errors.
-  - Update `roadmap.md`, `README.md`, and this `active-task.md` document upon success.
+- [ ] **1. UI Responsiveness & Readability:** Audit all screens and widgets. Eliminate any `RenderFlex` overflows. Ensure all text, buttons, and error messages are fully readable across all screen widths. Remove text truncation (ellipses) and use flexible layouts (`Wrap`, `Expanded`, `Flexible`, `SingleChildScrollView`).
+- [ ] **2. Codebase Cleanup:** Analyze the project to remove unused imports, dead code, outdated comments, unused widgets, and orphaned translation keys across the 3 supported languages.
+- [ ] **3. Legal Terms Finalization:** Review and finalize the Terms & Conditions and Privacy Policy. Ensure they are accurate, accessible within the app, and perfectly translated into the 3 supported languages.
+- [ ] **4. CI/CD & Tests Validation:** Execute and fix all unit, widget, and integration tests. Ensure `flutter analyze` returns exactly 0 issues (no errors, warnings, or infos). Guarantee the CI/CD workflow passes perfectly.
+- [ ] **5. Documentation Overhaul:** Write a completely new and comprehensive `README.md`. Update `roadmap.md` and `roadmap-summary.md` to reflect the completion of Phase 63 and the exact current state of the app.

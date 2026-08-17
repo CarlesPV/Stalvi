@@ -13,8 +13,9 @@ class ExchangeRateDao extends DatabaseAccessor<AppDatabase>
   ExchangeRateDao(super.db);
 
   Future<ExchangeRate?> getRates(String baseCurrency) async {
-    final entity = await (select(exchangeRates)
-          ..where((t) => t.baseCurrency.equals(baseCurrency)))
+    final entity = await (select(
+      exchangeRates,
+    )..where((t) => t.baseCurrency.equals(baseCurrency)))
         .getSingleOrNull();
 
     if (entity == null) return null;
@@ -23,8 +24,9 @@ class ExchangeRateDao extends DatabaseAccessor<AppDatabase>
     return ExchangeRate(
       baseCurrency: entity.baseCurrency,
       date: entity.date,
-      rates: ratesMap
-          .map((key, value) => MapEntry(key, (value as num).toDouble())),
+      rates: ratesMap.map(
+        (key, value) => MapEntry(key, (value as num).toDouble()),
+      ),
     );
   }
 

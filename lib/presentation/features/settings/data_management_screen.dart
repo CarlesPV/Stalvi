@@ -131,6 +131,7 @@ class _DataManagementScreenState extends ConsumerState<DataManagementScreen> {
                   ],
                 ),
               ),
+              actionsAlignment: MainAxisAlignment.center,
               actions: [
                 TextButton(
                   onPressed: () => Navigator.of(ctx).pop(null),
@@ -205,6 +206,7 @@ class _DataManagementScreenState extends ConsumerState<DataManagementScreen> {
                   ),
                 ],
               ),
+              actionsAlignment: MainAxisAlignment.center,
               actions: [
                 TextButton(
                   onPressed: () => Navigator.of(ctx).pop(null),
@@ -307,14 +309,11 @@ class _DataManagementScreenState extends ConsumerState<DataManagementScreen> {
               color: Theme.of(context).colorScheme.error,
             ),
             const SizedBox(width: 8),
-            Expanded(
-              child: Text(
-                l10n.importConfirmTitle,
-              ),
-            ),
+            Expanded(child: Text(l10n.importConfirmTitle)),
           ],
         ),
         content: Text(l10n.importConfirmMessage),
+        actionsAlignment: MainAxisAlignment.center,
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
@@ -333,8 +332,11 @@ class _DataManagementScreenState extends ConsumerState<DataManagementScreen> {
 
     if (confirmed != true || !context.mounted) return;
 
-    final pickerResult = await FilePickerPlatform.instance
-        .pickFiles(type: FileType.any, allowMultiple: false, withData: true);
+    final pickerResult = await FilePickerPlatform.instance.pickFiles(
+      type: FileType.any,
+      allowMultiple: false,
+      withData: true,
+    );
     if (pickerResult == null || pickerResult.files.isEmpty) return;
     final fileBytes = await pickerResult.files.first.readAsBytes();
     if (!context.mounted) return;

@@ -112,7 +112,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get optionalPlaceholder => '(Opcional)';
 
   @override
-  String get privacyPolicy => 'Política de privacidad';
+  String get privacyPolicy => 'Política de Privacidad';
 
   @override
   String get recurrenceUtcWarning => 'La hora de referencia es UTC+2';
@@ -130,7 +130,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get targetDate => 'Fecha Objetivo';
 
   @override
-  String get termsAndConditions => 'Términos y condiciones';
+  String get termsAndConditions => 'Términos y Condiciones';
 
   @override
   String get tryAgain => 'Intentar de nuevo';
@@ -190,9 +190,6 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get authProcessing => 'Procesando autenticación de seguridad…';
-
-  @override
-  String get authProtectedBy => 'Protegido por la biometría del dispositivo';
 
   @override
   String get authSetupAcceptAnd => ' y la ';
@@ -265,6 +262,10 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get accountInUseByAutoTxMessage =>
       'Esta cuenta no se puede eliminar porque está vinculada a transacciones automáticas activas.';
+
+  @override
+  String get deleteAccountWithTransactionsWarning =>
+      'Esta cuenta tiene transacciones asociadas. Eliminarla también eliminará todas sus transacciones.';
 
   @override
   String get accountTypeBank => 'Banco';
@@ -966,7 +967,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get settingsAutomaticTransactions => 'Transacciones Automáticas';
 
   @override
-  String get settingsDataManagement => 'Gestión de Datos';
+  String get settingsDataManagement => 'Importar y Exportar Datos';
 
   @override
   String get settingsLanguage => 'Idioma';
@@ -1175,4 +1176,12 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get errorLoadingContent => 'Error al cargar el contenido.';
+
+  @override
+  String get errorCannotDeleteDefaultAccount =>
+      'No se puede eliminar la cuenta predeterminada. Por favor, asigne otra cuenta como predeterminada primero.';
+
+  @override
+  String get errorNoDefaultAccountForReassignment =>
+      'No se puede eliminar la cuenta porque no existe una cuenta predeterminada para la reasignación.';
 }

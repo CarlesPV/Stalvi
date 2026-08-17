@@ -62,17 +62,20 @@ void main() {
 
   group('CreateBudgetUseCase', () {
     test('should successfully create budget', () async {
-      when(() => mockCategoryRepo.getCategoryById(any()))
-          .thenAnswer((_) async => validCategory);
-      when(() => mockBudgetRepo.createBudget(any()))
-          .thenAnswer((inv) async => inv.positionalArguments[0] as Budget);
+      when(
+        () => mockCategoryRepo.getCategoryById(any()),
+      ).thenAnswer((_) async => validCategory);
+      when(
+        () => mockBudgetRepo.createBudget(any()),
+      ).thenAnswer((inv) async => inv.positionalArguments[0] as Budget);
       when(
         () => mockUpdateBudgetProgressUseCase.execute(
           categoryId: any(named: 'categoryId'),
         ),
       ).thenAnswer((_) async {});
-      when(() => mockBudgetRepo.getBudgetsByCategoryId(any()))
-          .thenAnswer((_) async => []);
+      when(
+        () => mockBudgetRepo.getBudgetsByCategoryId(any()),
+      ).thenAnswer((_) async => []);
 
       final result = await usecase.execute(validParams);
 
@@ -95,36 +98,45 @@ void main() {
       await expectLater(
         () => call,
         throwsA(
-          isA<ValidationException>()
-              .having((e) => e.code, 'code', 'INVALID_AMOUNT'),
+          isA<ValidationException>().having(
+            (e) => e.code,
+            'code',
+            'INVALID_AMOUNT',
+          ),
         ),
       );
     });
 
-    test('should throw validation error when end date is before start date',
-        () async {
-      final params = CreateBudgetParams(
-        id: 'budget_1',
-        accountId: 'account_1',
-        categoryId: 'cat_1',
-        targetAmount: 50000,
-        startDate: now,
-        endDate: now.subtract(const Duration(days: 1)),
-      );
+    test(
+      'should throw validation error when end date is before start date',
+      () async {
+        final params = CreateBudgetParams(
+          id: 'budget_1',
+          accountId: 'account_1',
+          categoryId: 'cat_1',
+          targetAmount: 50000,
+          startDate: now,
+          endDate: now.subtract(const Duration(days: 1)),
+        );
 
-      final call = usecase.execute(params);
-      await expectLater(
-        () => call,
-        throwsA(
-          isA<ValidationException>()
-              .having((e) => e.code, 'code', 'INVALID_DATES'),
-        ),
-      );
-    });
+        final call = usecase.execute(params);
+        await expectLater(
+          () => call,
+          throwsA(
+            isA<ValidationException>().having(
+              (e) => e.code,
+              'code',
+              'INVALID_DATES',
+            ),
+          ),
+        );
+      },
+    );
 
     test('should throw not found error when category does not exist', () async {
-      when(() => mockCategoryRepo.getCategoryById(any()))
-          .thenAnswer((_) async => null);
+      when(
+        () => mockCategoryRepo.getCategoryById(any()),
+      ).thenAnswer((_) async => null);
 
       final call = usecase.execute(validParams);
       await expectLater(() => call, throwsA(isA<NotFoundException>()));
