@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:stalvi/core/l10n/app_localizations.dart';
 import 'package:stalvi/domain/entities/budget.dart';
@@ -245,6 +246,11 @@ class _CreateEditBudgetSheetState extends ConsumerState<CreateEditBudgetSheet> {
                 keyboardType: const TextInputType.numberWithOptions(
                   decimal: true,
                 ),
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(
+                    RegExp(r'^\d{0,13}([.,]\d{0,2})?'),
+                  ),
+                ],
                 decoration: InputDecoration(
                   labelText: l10n.targetAmount,
                   border: OutlineInputBorder(

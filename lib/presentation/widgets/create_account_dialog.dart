@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:stalvi/domain/entities/account_type.dart';
 import 'package:stalvi/domain/usecases/create_account_usecase.dart';
@@ -209,6 +210,7 @@ class _CreateAccountDialogState extends ConsumerState<CreateAccountDialog> {
               TextField(
                 key: const ValueKey('createAccountNameField'),
                 controller: _nameController,
+                maxLength: 31,
                 decoration: InputDecoration(
                   labelText: l10n.createAccountNameLabel,
                   hintText: l10n.createAccountNameHint,
@@ -227,6 +229,11 @@ class _CreateAccountDialogState extends ConsumerState<CreateAccountDialog> {
                 keyboardType: const TextInputType.numberWithOptions(
                   decimal: true,
                 ),
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(
+                    RegExp(r'^\d{0,13}([.,]\d{0,2})?'),
+                  ),
+                ],
                 decoration: InputDecoration(
                   labelText: l10n.createAccountInitialBalanceLabel,
                   hintText: l10n.hintAmountZero,

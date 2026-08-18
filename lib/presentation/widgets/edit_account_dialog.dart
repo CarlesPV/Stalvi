@@ -419,6 +419,7 @@ class _EditAccountDialogState extends ConsumerState<EditAccountDialog> {
               // Account Name field
               TextField(
                 controller: _nameController,
+                maxLength: 31,
                 decoration: InputDecoration(
                   labelText: l10n.createAccountNameLabel,
                   hintText: l10n.createAccountNameHint,

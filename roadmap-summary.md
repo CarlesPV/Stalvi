@@ -833,7 +833,21 @@ This document lists the completed phases of the Stalvi development roadmap, prov
 * **Verification:**
   - Verified 100% test suite pass rate (558 tests passed) and zero static analysis warnings (`flutter analyze`).
 
+### Phase 65: Global Input Limits, Special Characters Support & Backup Profile Persistence
+* **Completion Date:** August 18, 2026
+* **Objective:** Standardize global input limits, permit international accented characters and diacritics, persist username in backup archives, and enforce responsive text scaling without truncation or overflow.
+* **Accomplishments:**
+  - **Input Limits & Formatters:** Standardized limits across all inputs (Money: 13 digits + 2 decimals, Names/Usernames: 25 characters, Tags/Accounts/Categories/Savings Goals: 31 characters, Transaction Notes: 63 characters).
+  - **Special Characters & Accents Support:** Updated `InputSanitizer.containsEmoji` to permit all Unicode letters (`\p{L}`), combining diacritical marks (`\p{M}`: á, à, ä, â, é, è, ë, ê, í, ì, ï, î, ó, ò, ö, ô, ú, ù, ü, û, ý, ÿ, ñ, ç), Catalan punt volat (`·`), apostrophes, at-signs (`@`), and common punctuation while rejecting emojis and injection tags.
+  - **Backup Username Persistence:** Updated `IExportService`, `ExportServiceImpl`, `ExportEncryptedJsonUseCase`, and `ImportServiceImpl` to serialize and restore `username` alongside `name` in encrypted `.kbak` backups.
+  - **Character Counters:** Enabled visible character counters on all standard text inputs while keeping PIN inputs exempt.
+  - [x] **Responsive Display:** Wrapped account titles, category/tag labels, transaction notes, budget/goal progress descriptions, and recycle bin items/dialogs in responsive scale-down widgets (`FittedBox(fit: BoxFit.scaleDown)`), preventing overflow on narrow screens without omitting content.
+  - **Navigation Bar Text Scale Clamping:** Wrapped `NavigationBar` in `MediaQuery.withClampedTextScaling` and customized `NavigationBarThemeData` font styling to prevent system font scale settings from breaking icon alignments.
+* **Verification:**
+  - Verified clean static analysis with 0 issues and 100% automated test suite pass rate.
+
 ## Recent Updates
+- Completed Phase 65 (Global Input Limits, Special Characters Support & Backup Profile Persistence), establishing standardized length limits and formatters for money, names, entities, and notes, enabling character counters, allowing accented letters/diacritics/special characters, preserving username in backup exports/imports, and adding responsive FittedBox safeguards and navigation bar text scale clamping.
 - Completed Phase 64 (Final QA & UI/UX Polish), implementing tag soft-delete logic, restoration fallbacks, enhanced account deletion warnings, and UI/UX polish, ensuring a 100% test pass rate and clean static analysis.
 - Completed Phase 63 (Production Documentation Overhaul), rewriting the README.md and verifying all architecture and feature documentation.
 - Completed Phase 62 (Selectors UX Polish (Icons & Colors)), updating account and tag selectors in filters and statistics screens to display their respective colors and icons.

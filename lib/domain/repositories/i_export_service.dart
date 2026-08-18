@@ -44,6 +44,7 @@ abstract class IExportService {
     required List<AutomaticTransaction> automaticTransactions,
     required String password,
     required String userName,
+    String? username,
   });
 
   Future<String> decryptJsonPayload(

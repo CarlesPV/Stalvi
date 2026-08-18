@@ -421,6 +421,7 @@ void main() {
           automaticTransactions: const [],
           password: password,
           userName: 'User 1',
+          username: 'user_one',
         );
 
         // Act – manually unpack envelope and decrypt
@@ -443,6 +444,8 @@ void main() {
 
         // Assert
         expect(payload['version'], equals(3));
+        expect(payload['user_name'], equals('User 1'));
+        expect(payload['username'], equals('user_one'));
         expect(payload['transactions'], isA<List>());
         final firstTx =
             (payload['transactions'] as List).first as Map<String, dynamic>;

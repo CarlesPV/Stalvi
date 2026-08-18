@@ -1,10 +1,14 @@
 class InputSanitizer {
-  /// Returns true if [input] contains emojis or prohibited special characters/code.
-  /// Standard letters (including accents/tildes: á, é, í, ó, ú, ñ, ç, etc.), numbers,
-  /// spaces, dots, hyphens, and underscores are permitted.
+  /// Returns true if [input] contains emojis or prohibited characters/code.
+  /// Standard letters (including all Unicode letters \p{L} and combining diacritical marks \p{M}:
+  /// á, à, ä, â, é, è, ë, ê, í, ì, ï, î, ó, ò, ö, ô, ú, ù, ü, û, ñ, ç, ·, etc.), numbers (\p{N}),
+  /// spaces (\s), and standard word/text punctuation (._-@'’·/()&,;:!¡?¿"«»#%*+) are permitted.
   static bool containsEmoji(String input) {
     if (input.isEmpty) return false;
-    final invalidRegex = RegExp(r'[^\p{L}\p{N}\s._\-]', unicode: true);
+    final invalidRegex = RegExp(
+      r'''[^\p{L}\p{M}\p{N}\s._\-@'’·/()&,;:!¡?¿"«»#%*+]''',
+      unicode: true,
+    );
     return invalidRegex.hasMatch(input);
   }
 

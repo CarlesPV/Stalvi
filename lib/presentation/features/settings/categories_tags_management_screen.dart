@@ -262,7 +262,11 @@ class _CategoriesTab extends ConsumerWidget {
                   color: Colors.white,
                 ),
               ),
-              title: Text(category.name),
+              title: FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerLeft,
+                child: Text(category.name),
+              ),
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -427,7 +431,11 @@ class _TagsTab extends ConsumerWidget {
             final tag = tags[index];
             return ListTile(
               leading: const CircleAvatar(child: Icon(Icons.tag)),
-              title: Text(tag.name),
+              title: FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerLeft,
+                child: Text(tag.name),
+              ),
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -535,6 +543,7 @@ class CategoryDialogState extends State<CategoryDialog> {
             const SizedBox(height: 16),
             TextField(
               controller: _nameController,
+              maxLength: 31,
               decoration: InputDecoration(
                 labelText: l10n.labelCategoryName,
                 border: const OutlineInputBorder(),
@@ -675,6 +684,7 @@ class TagDialogState extends State<TagDialog> {
             const SizedBox(height: 16),
             TextField(
               controller: _nameController,
+              maxLength: 31,
               decoration: InputDecoration(
                 labelText: l10n.labelTagName,
                 border: const OutlineInputBorder(),

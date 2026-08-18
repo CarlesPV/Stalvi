@@ -38,7 +38,6 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
             maxLength: 25,
             decoration: InputDecoration(
               hintText: l10n.usernameLabel,
-              counterText: '',
             ),
             autofocus: true,
           ),

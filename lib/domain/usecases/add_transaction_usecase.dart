@@ -296,8 +296,8 @@ class AddTransactionUseCase {
     String? sanitizedNotes;
     if (params.notes != null) {
       sanitizedNotes = InputSanitizer.sanitizeToPlainText(params.notes!);
-      if (sanitizedNotes.length > 20) {
-        sanitizedNotes = sanitizedNotes.substring(0, 20);
+      if (sanitizedNotes.length > 63) {
+        sanitizedNotes = sanitizedNotes.substring(0, 63);
       }
     }
 

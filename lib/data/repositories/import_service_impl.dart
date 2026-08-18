@@ -145,11 +145,28 @@ class ImportServiceImpl implements IImportService {
             .getSingleOrNull();
         final currentUserId = currentProfile?.id;
 
-        if (currentProfile != null && data['user_name'] is String) {
-          final updatedName = data['user_name'] as String;
-          await (_database.update(_database.profiles)
-                ..where((t) => t.id.equals(currentProfile.id)))
-              .write(db.ProfilesCompanion(name: Value(updatedName)));
+        if (currentProfile != null) {
+          final updatedName =
+              data['user_name'] is String ? data['user_name'] as String : null;
+          final updatedUsername = data['username'] is String
+              ? data['username'] as String
+              : (data['user_name_handle'] is String
+                  ? data['user_name_handle'] as String
+                  : null);
+
+          final companion = db.ProfilesCompanion(
+            name:
+                updatedName != null ? Value(updatedName) : const Value.absent(),
+            username: updatedUsername != null
+                ? Value(updatedUsername)
+                : const Value.absent(),
+          );
+
+          if (companion.name.present || companion.username.present) {
+            await (_database.update(_database.profiles)
+                  ..where((t) => t.id.equals(currentProfile.id)))
+                .write(companion);
+          }
         }
 
         // Insert Accounts

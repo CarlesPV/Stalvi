@@ -20,9 +20,11 @@ Individuals who want complete control over their personal finances without relyi
 - **Multi-Currency:** Selection of default currency during profile creation and automatic daily exchange rate updates mapping back to the user-defined base currency.
 - **Security:** PIN/Biometric lock, background UI blurring, and discreet mode (hidden balances). Post-registration biometric opt-in prompt without requiring password/PIN re-entry.
 - **Legal Compliance:** Separate visual access to Terms & Conditions and Privacy Policy documents, fully localized in the active language of the app, available both during registration and within settings.
-- **Data Portability:** Secure export and import functionalities (CSV, Excel, PDF, JSON), with full Unicode font support in PDF exports to guarantee accurate rendering of all currency symbols without placeholder characters.
+- **Data Portability:** Secure export and import functionalities (CSV, Excel, PDF, JSON), preserving and restoring user profiles (including usernames) and full Unicode font support in PDF exports to guarantee accurate rendering of all currency symbols without placeholder characters.
+- **Standardized Input Constraints & Formatters:** Robust length limits and formatters (Money: 13 digits + 2 decimals; Names/Usernames: 25 characters; Tags/Accounts/Categories/Savings Goals: 31 characters; Notes: 63 characters) with visible character counters, permitting full Unicode accented letters, combining marks, Catalan punt volat, apostrophes, and standard punctuation.
 
 ## 5. Non-Functional Requirements
 - **Platforms:** iOS and Android (via Flutter).
 - **Performance:** Instantaneous database queries utilizing SQLite aggregate functions. Reliable first-time account initialization and login.
 - **Localization:** 100% localization in English, Spanish, and Catalan, covering all user-interface text, buttons, errors, default category names, and default account titles.
+- **Responsive Layout & Text Scaling:** Defensive UI design preventing text overflow without truncation or content omission, employing proportional text scaling and clamped navigation bar font scaling.

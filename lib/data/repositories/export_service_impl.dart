@@ -175,6 +175,7 @@ class ExportServiceImpl implements IExportService {
     required List<AutomaticTransaction> automaticTransactions,
     required String password,
     required String userName,
+    String? username,
   }) async {
     if (password.isEmpty) {
       throw const ExportException(
@@ -188,6 +189,7 @@ class ExportServiceImpl implements IExportService {
         'exportedAt': DateTime.now().toIso8601String(),
         'version': 3,
         'user_name': userName,
+        if (username != null && username.isNotEmpty) 'username': username,
         'accounts': accounts.map(_accountToMap).toList(),
         'categories': categories.map(_categoryToMap).toList(),
         'tags': tags.map(_tagToMap).toList(),

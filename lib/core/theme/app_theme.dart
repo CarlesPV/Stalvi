@@ -100,6 +100,22 @@ class AppTheme {
       inputDecorationTheme: const InputDecorationTheme(
         errorMaxLines: 10,
       ),
+      navigationBarTheme: NavigationBarThemeData(
+        labelTextStyle: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return const TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
+              overflow: TextOverflow.ellipsis,
+            );
+          }
+          return const TextStyle(
+            fontSize: 11,
+            fontWeight: FontWeight.w500,
+            overflow: TextOverflow.ellipsis,
+          );
+        }),
+      ),
       extensions: const [
         FinancialColors(positive: mintGreenLight, negative: coralRedLight),
       ],
@@ -149,6 +165,22 @@ class AppTheme {
       ),
       inputDecorationTheme: const InputDecorationTheme(
         errorMaxLines: 10,
+      ),
+      navigationBarTheme: NavigationBarThemeData(
+        labelTextStyle: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return const TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
+              overflow: TextOverflow.ellipsis,
+            );
+          }
+          return const TextStyle(
+            fontSize: 11,
+            fontWeight: FontWeight.w500,
+            overflow: TextOverflow.ellipsis,
+          );
+        }),
       ),
       extensions: const [
         FinancialColors(positive: mintGreenDark, negative: coralRedDark),
