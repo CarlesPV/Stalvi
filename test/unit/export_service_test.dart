@@ -9,6 +9,7 @@ import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 import 'package:stalvi/core/errors/app_exceptions.dart';
 import 'package:stalvi/data/repositories/export_service_impl.dart';
 import 'package:stalvi/domain/entities/account.dart';
+import 'package:stalvi/domain/entities/account_type.dart';
 import 'package:stalvi/domain/entities/category.dart';
 import 'package:stalvi/domain/entities/period_summary.dart';
 import 'package:stalvi/domain/entities/tag.dart';
@@ -72,6 +73,7 @@ Transaction _makeTransaction({
   String? tagId,
   String? notes = 'Groceries',
   String currency = 'EUR',
+  String? transferId,
 }) {
   final now = DateTime(2025, 6, 15, 10, 30);
   return Transaction(
@@ -86,6 +88,7 @@ Transaction _makeTransaction({
     originalCurrency: currency,
     createdAt: now,
     modifiedAt: now,
+    transferId: transferId,
   );
 }
 
@@ -142,7 +145,28 @@ void main() {
     );
 
     test(
-      'CSV output has a header row as the first line with exchange_rate_snapshot and transfer_id',
+      'CSV output starts with UTF-8 BOM (0xEF, 0xBB, 0xBF)',
+      () async {
+        // Arrange
+        final tx = _makeTransaction();
+
+        // Act
+        final result = await service.generateCsv(
+          [tx],
+          accounts: _emptyAccounts,
+          categories: _emptyCategories,
+        );
+
+        // Assert – UTF-8 BOM
+        expect(result.bytes.length, greaterThanOrEqualTo(3));
+        expect(result.bytes[0], equals(0xEF));
+        expect(result.bytes[1], equals(0xBB));
+        expect(result.bytes[2], equals(0xBF));
+      },
+    );
+
+    test(
+      'CSV output has a header row delimited by semicolon with source_account and destination_account',
       () async {
         // Arrange
         final tx = _makeTransaction();
@@ -163,6 +187,9 @@ void main() {
         expect(lines.first, contains('Amount'));
         expect(lines.first, contains('exchange_rate_snapshot'));
         expect(lines.first, contains('transfer_id'));
+        expect(lines.first, contains('source_account'));
+        expect(lines.first, contains('destination_account'));
+        expect(lines.first, contains(';'));
       },
     );
 
@@ -223,9 +250,10 @@ void main() {
       expect(lines.length, equals(4));
     });
 
-    test('fields containing commas are wrapped in double quotes', () async {
-      // Arrange — notes field contains a comma
-      final tx = _makeTransaction(notes: 'Coffee, Cake');
+    test('fields containing semicolons or commas are wrapped in double quotes',
+        () async {
+      // Arrange — notes field contains a semicolon and comma
+      final tx = _makeTransaction(notes: 'Coffee; Cake, Juice');
 
       // Act
       final result = await service.generateCsv(
@@ -236,7 +264,7 @@ void main() {
       final csvString = utf8.decode(result.bytes);
 
       // Assert
-      expect(csvString, contains('"Coffee, Cake"'));
+      expect(csvString, contains('"Coffee; Cake, Juice"'));
     });
 
     test('fields containing double-quotes escape them', () async {
@@ -267,10 +295,10 @@ void main() {
       );
       final csvString = utf8.decode(result.bytes);
 
-      // Assert: data row should still parse (no exception) and contain commas
-      // for the empty optional fields. We check the transaction id is present
-      // indirectly via the date/type being present.
+      // Assert: data row should still parse (no exception) and contain semicolons
+      // for the empty optional fields.
       expect(csvString, isNotEmpty);
+      expect(csvString, contains(';'));
     });
 
     test('empty transaction list produces only a header row', () async {
@@ -311,6 +339,69 @@ void main() {
 
       // Assert
       expect(csvString, contains('Personal'));
+    });
+
+    test('populates source_account and destination_account for transfers',
+        () async {
+      // Arrange
+      final acc1 = Account(
+        id: 'acc-1',
+        userId: 'user-1',
+        name: 'Main Bank',
+        type: AccountType.bank,
+        initialBalance: 0,
+        currency: 'EUR',
+        color: '#000000',
+        icon: 'bank',
+        isDefault: true,
+        isDeleted: false,
+        createdAt: DateTime(2025, 1, 1),
+        modifiedAt: DateTime(2025, 1, 1),
+      );
+      final acc2 = Account(
+        id: 'acc-2',
+        userId: 'user-1',
+        name: 'Savings',
+        type: AccountType.savings,
+        initialBalance: 0,
+        currency: 'EUR',
+        color: '#FFFFFF',
+        icon: 'savings',
+        isDefault: false,
+        isDeleted: false,
+        createdAt: DateTime(2025, 1, 1),
+        modifiedAt: DateTime(2025, 1, 1),
+      );
+
+      final txOrigin = _makeTransaction(
+        id: 'tx-origin',
+        accountId: 'acc-1',
+        amount: -5000,
+        type: TransactionType.transfer,
+        transferId: 'transfer-123',
+      );
+      final txDest = _makeTransaction(
+        id: 'tx-dest',
+        accountId: 'acc-2',
+        amount: 5000,
+        type: TransactionType.transfer,
+        transferId: 'transfer-123',
+      );
+
+      // Act
+      final result = await service.generateCsv(
+        [txOrigin],
+        accounts: [acc1, acc2],
+        categories: _emptyCategories,
+        allRawTransactions: [txOrigin, txDest],
+      );
+      final csvString = utf8.decode(result.bytes);
+      final lines = csvString.split('\n').where((l) => l.isNotEmpty).toList();
+
+      // Assert
+      expect(lines.length, equals(2));
+      final dataRow = lines[1];
+      expect(dataRow, contains('Main Bank;Savings'));
     });
   });
 

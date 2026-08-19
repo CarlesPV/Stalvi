@@ -82,7 +82,7 @@ class AppLocalizationsCa extends AppLocalizations {
   String get getStarted => 'Començar';
 
   @override
-  String get labelAmount => 'QUANTITAT';
+  String get labelAmount => 'Quantitat';
 
   @override
   String get labelCurrency => 'Moneda';

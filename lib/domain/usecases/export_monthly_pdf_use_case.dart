@@ -159,7 +159,8 @@ class ExportMonthlyPdfUseCase {
           final otherAccountName =
               accountMap[otherLeg.accountId] ?? otherLeg.accountId;
 
-          transferDestinations[tx.id] = '$thisAccountName -> $otherAccountName';
+          transferDestinations[tx.id] =
+              '$thisAccountName\n↓\n$otherAccountName';
         }
       }
     }

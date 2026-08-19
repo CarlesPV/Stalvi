@@ -181,6 +181,25 @@ class _EditAccountDialogState extends ConsumerState<EditAccountDialog> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
+                  if (hasTransactions) ...[
+                    Center(
+                      child: Container(
+                        margin: const EdgeInsets.only(bottom: 16),
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: colorScheme.errorContainer.withValues(
+                            alpha: 0.4,
+                          ),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.receipt_long,
+                          color: colorScheme.error,
+                          size: 32,
+                        ),
+                      ),
+                    ),
+                  ],
                   Text(
                     hasTransactions
                         ? l10n.deleteAccountWithTransactionsWarning

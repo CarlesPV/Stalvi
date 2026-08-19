@@ -841,12 +841,28 @@ This document lists the completed phases of the Stalvi development roadmap, prov
   - **Special Characters & Accents Support:** Updated `InputSanitizer.containsEmoji` to permit all Unicode letters (`\p{L}`), combining diacritical marks (`\p{M}`: á, à, ä, â, é, è, ë, ê, í, ì, ï, î, ó, ò, ö, ô, ú, ù, ü, û, ý, ÿ, ñ, ç), Catalan punt volat (`·`), apostrophes, at-signs (`@`), and common punctuation while rejecting emojis and injection tags.
   - **Backup Username Persistence:** Updated `IExportService`, `ExportServiceImpl`, `ExportEncryptedJsonUseCase`, and `ImportServiceImpl` to serialize and restore `username` alongside `name` in encrypted `.kbak` backups.
   - **Character Counters:** Enabled visible character counters on all standard text inputs while keeping PIN inputs exempt.
-  - [x] **Responsive Display:** Wrapped account titles, category/tag labels, transaction notes, budget/goal progress descriptions, and recycle bin items/dialogs in responsive scale-down widgets (`FittedBox(fit: BoxFit.scaleDown)`), preventing overflow on narrow screens without omitting content.
+  - **Responsive Display:** Wrapped account titles, category/tag labels, transaction notes, budget/goal progress descriptions, and recycle bin items/dialogs in responsive scale-down widgets (`FittedBox(fit: BoxFit.scaleDown)`), preventing overflow on narrow screens without omitting content.
   - **Navigation Bar Text Scale Clamping:** Wrapped `NavigationBar` in `MediaQuery.withClampedTextScaling` and customized `NavigationBarThemeData` font styling to prevent system font scale settings from breaking icon alignments.
 * **Verification:**
   - Verified clean static analysis with 0 issues and 100% automated test suite pass rate.
 
+### Phase 66: Enhanced Data Exports & UI Deletion Safeguards
+* **Completion Date:** August 19, 2026
+* **Objective:** Upgrade CSV export compatibility for Microsoft Excel (UTF-8 BOM, semicolon delimiter, and explicit transfer columns), enhance PDF monthly report visualization with multi-line centered transfer routes and colored type badges, add transaction icon indicators in account deletion dialogs, and standardize `labelAmount` to sentence case.
+* **Accomplishments:**
+  - **UTF-8 BOM Header:** Embedded UTF-8 BOM (`\uFEFF` / `0xEF, 0xBB, 0xBF`) at the beginning of CSV exports to ensure Microsoft Excel and third-party spreadsheet editors recognize special characters, accents, and currency symbols automatically.
+  - **Semicolon CSV Delimiter:** Standardized the CSV separator from comma to semicolon (`;`), with updated RFC-compliant escaping for cells containing semicolons, commas, quotes, and newlines.
+  - **Explicit Transfer Columns in CSV:** Added `source_account` and `destination_account` columns to CSV exports, querying raw transaction records to resolve and display origin and destination account names directly.
+  - **Multi-line Centered Transfer Layout in PDF:** Formatted transfer transactions in the PDF monthly report account column across multiple lines (`$thisAccountName\n↓\n$otherAccountName`) with centered text alignment and Roboto font compatibility.
+  - **Visual Type Badges in PDF:** Implemented visual color-coded badges for Income (soft green background with dark green bold text) and Expense (soft red background with dark red bold text) in the PDF transaction table, preserving neutral unstyled text for Transfers.
+  - [x] **Account Deletion Transaction Indicator & Active Checks:** Added dynamic icon support to the account deletion dialog in `EditAccountDialog`, showing `Icons.receipt_long` (the recycle bin transaction symbol) whenever an account has linked transactions, and fixed `hasAnyTransactions` in `TransactionRepository` to only query active transactions (`isDeleted = false`), ignoring trashed/soft-deleted records.
+  - **Sentence Case Amount Label:** Updated `labelAmount` across EN ("Amount"), ES ("Cantidad"), and CA ("Quantitat") to sentence case rather than all uppercase.
+* **Verification:**
+  - 100% clean static analysis (`flutter analyze` and `dart analyze` with 0 issues).
+  - 100% automated test suite pass rate across 562 unit, widget, and integration tests.
+
 ## Recent Updates
+- Completed Phase 66 (Enhanced Data Exports & UI Deletion Safeguards), adding UTF-8 BOM, semicolon delimiter, and `source_account`/`destination_account` to CSV exports, multi-line centered transfer formatting in PDF exports, color-coded type badges for Income and Expense, transaction icon and active transaction filtering (`isDeleted = false`) in account deletion dialogs, and sentence-case `labelAmount` localization.
 - Completed Phase 65 (Global Input Limits, Special Characters Support & Backup Profile Persistence), establishing standardized length limits and formatters for money, names, entities, and notes, enabling character counters, allowing accented letters/diacritics/special characters, preserving username in backup exports/imports, and adding responsive FittedBox safeguards and navigation bar text scale clamping.
 - Completed Phase 64 (Final QA & UI/UX Polish), implementing tag soft-delete logic, restoration fallbacks, enhanced account deletion warnings, and UI/UX polish, ensuring a 100% test pass rate and clean static analysis.
 - Completed Phase 63 (Production Documentation Overhaul), rewriting the README.md and verifying all architecture and feature documentation.

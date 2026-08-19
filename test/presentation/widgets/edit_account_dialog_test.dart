@@ -96,6 +96,8 @@ void main() {
         ),
         findsOneWidget,
       );
+      expect(find.byIcon(Icons.warning_amber_rounded), findsOneWidget);
+      expect(find.byIcon(Icons.receipt_long), findsOneWidget);
       expect(find.text('Cancel'), findsWidgets);
       expect(find.text('Delete'), findsWidgets);
     });
@@ -119,6 +121,8 @@ void main() {
         ),
         findsOneWidget,
       );
+      expect(find.byIcon(Icons.warning_amber_rounded), findsOneWidget);
+      expect(find.byIcon(Icons.receipt_long), findsNothing);
     });
   });
 }

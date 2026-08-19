@@ -32,6 +32,7 @@ abstract class IExportService {
     List<Account> accounts = const [],
     List<Category> categories = const [],
     List<Tag> tags = const [],
+    List<Transaction> allRawTransactions = const [],
   });
 
   Future<ExportResult> generateEncryptedJson({

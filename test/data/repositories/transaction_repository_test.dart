@@ -261,4 +261,60 @@ void main() {
       expect(dest.initialBalance, 50.0);
     },
   );
+
+  group('hasAnyTransactions', () {
+    test(
+      'returns false when account has no transactions',
+      () async {
+        final result = await repository.hasAnyTransactions('empty_acc');
+        expect(result, isFalse);
+      },
+    );
+
+    test(
+      'returns true when account has active transactions and false after soft delete',
+      () async {
+        // 1. Seed Account
+        await db.into(db.accounts).insert(
+              AccountsCompanion.insert(
+                id: 'acc_test_del',
+                userId: 'user_1',
+                name: 'Test Acc',
+                type: AccountType.bank,
+                initialBalance: 0.0,
+                currency: 'EUR',
+                color: '#000',
+                icon: 'bank',
+                createdAt: DateTime.now(),
+                modifiedAt: DateTime.now(),
+              ),
+            );
+
+        // 2. Insert active transaction
+        final tx = domain.Transaction(
+          id: 'tx_test_del',
+          amount: 1000,
+          date: DateTime.now(),
+          type: domain.TransactionType.expense,
+          accountId: 'acc_test_del',
+          originalCurrency: 'EUR',
+          convertedAmount: 1000,
+          exchangeRate: 1.0,
+          exchangeRateSnapshot: '{}',
+          createdAt: DateTime.now(),
+          modifiedAt: DateTime.now(),
+        );
+        await repository.createTransaction(tx);
+
+        // Expect hasAnyTransactions is true
+        expect(await repository.hasAnyTransactions('acc_test_del'), isTrue);
+
+        // 3. Soft-delete the transaction (moves to trash)
+        await repository.deleteTransaction('tx_test_del');
+
+        // Expect hasAnyTransactions is now false because it only counts active transactions
+        expect(await repository.hasAnyTransactions('acc_test_del'), isFalse);
+      },
+    );
+  });
 }

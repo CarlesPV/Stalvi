@@ -24,7 +24,7 @@
   "deleteAllDataWarning": "Estàs segur que vols esborrar totes les dades? Això no es pot desfer.",
   "endDate": "Data de Fi",
   "getStarted": "Començar",
-  "labelAmount": "QUANTITAT",
+  "labelAmount": "Quantitat",
   "labelCurrency": "Moneda",
   "labelDate": "Data",
   "labelIcon": "Icona",

@@ -459,6 +459,16 @@
   - [x] Added text scale clamping (`MediaQuery.withClampedTextScaling`) and customized `NavigationBarThemeData` to prevent system accessibility font scaling from misaligning navigation icons.
   - [x] Verified clean static analysis and updated project documentation.
 
+- [x] **Phase 66: Enhanced Data Exports & UI Deletion Safeguards**
+  - [x] **UTF-8 BOM Prefix:** Prepended UTF-8 BOM (`\uFEFF` / `0xEF, 0xBB, 0xBF`) to exported CSV files, guaranteeing seamless encoding detection in Microsoft Excel on Windows without character corruption.
+  - [x] **Semicolon CSV Delimiter:** Standardized CSV export delimiter to semicolon (`;`) with RFC-compliant quote escaping for commas, semicolons, quotes, and newlines.
+  - [x] **Explicit Transfer Columns in CSV:** Added `source_account` and `destination_account` columns in CSV exports to explicitly display origin and destination account names for transfer operations.
+  - [x] **Multi-line Centered Transfer Layout in PDF:** Formatted transfer transactions in the PDF monthly report account column as `$thisAccountName\n↓\n$otherAccountName` with centered alignment and Roboto font compatibility.
+  - [x] **Visual Type Badges in PDF:** Implemented visual color-coded badges for Income (green) and Expense (red) in the PDF transaction table, preserving neutral styling for Transfers.
+  - [x] **Account Deletion Transaction Icon & Active Checks:** Added dynamic icon feedback (`Icons.receipt_long`) in the account deletion confirmation dialog and fixed `hasAnyTransactions` to filter exclusively for active non-deleted transactions (`isDeleted = false`), properly ignoring trashed items.
+  - [x] **LabelAmount Sentence Case:** Standardized `labelAmount` across English ("Amount"), Spanish ("Cantidad"), and Catalan ("Quantitat") to sentence case rather than all uppercase.
+  - [x] **QA & Verification:** Maintained 100% test suite pass rate (562 tests) and zero static analyzer issues (`flutter analyze`).
+
 ---
 
 ## Post-Launch / Maintenance

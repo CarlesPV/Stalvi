@@ -147,7 +147,9 @@ class TransactionRepository implements ITransactionRepository {
   Future<bool> hasAnyTransactions(String accountId) async {
     try {
       final query = _db.select(_db.transactions)
-        ..where((t) => t.accountId.equals(accountId))
+        ..where(
+          (t) => t.accountId.equals(accountId) & t.isDeleted.equals(false),
+        )
         ..limit(1);
       final rows = await query.get();
       return rows.isNotEmpty;

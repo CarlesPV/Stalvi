@@ -99,6 +99,7 @@ class ExportServiceImpl implements IExportService {
     List<Account> accounts = const [],
     List<Category> categories = const [],
     List<Tag> tags = const [],
+    List<Transaction> allRawTransactions = const [],
   }) async {
     try {
       final buffer = StringBuffer();
@@ -107,12 +108,48 @@ class ExportServiceImpl implements IExportService {
       final tagMap = {for (final t in tags) t.id: t.name};
 
       buffer.writeln(
-        'Date,Type,Account,Category,Label,Amount,Currency,Notes,converted_amount,exchange_rate,exchange_rate_snapshot,id,created_at,modified_at,transfer_id',
+        'Date;Type;Account;Category;Label;Amount;Currency;Notes;converted_amount;exchange_rate;exchange_rate_snapshot;id;created_at;modified_at;transfer_id;source_account;destination_account',
       );
 
       final dateFormat = DateFormat('yyyy-MM-dd');
 
       for (final tx in transactions) {
+        String sourceAccount = '';
+        String destinationAccount = '';
+
+        if (tx.type == TransactionType.transfer) {
+          final thisAccountName = accountMap[tx.accountId] ?? tx.accountId;
+          if (tx.transferId != null) {
+            final otherLeg = allRawTransactions.firstWhere(
+              (t) => t.transferId == tx.transferId && t.id != tx.id,
+              orElse: () => tx,
+            );
+            if (otherLeg.id != tx.id) {
+              final otherAccountName =
+                  accountMap[otherLeg.accountId] ?? otherLeg.accountId;
+              if (tx.amount < 0) {
+                sourceAccount = thisAccountName;
+                destinationAccount = otherAccountName;
+              } else {
+                sourceAccount = otherAccountName;
+                destinationAccount = thisAccountName;
+              }
+            } else {
+              if (tx.amount < 0) {
+                sourceAccount = thisAccountName;
+              } else {
+                destinationAccount = thisAccountName;
+              }
+            }
+          } else {
+            if (tx.amount < 0) {
+              sourceAccount = thisAccountName;
+            } else {
+              destinationAccount = thisAccountName;
+            }
+          }
+        }
+
         buffer.writeln(
           [
             _csvField(dateFormat.format(tx.date)),
@@ -140,11 +177,14 @@ class ExportServiceImpl implements IExportService {
             _csvField(tx.createdAt.toIso8601String()),
             _csvField(tx.modifiedAt.toIso8601String()),
             _csvField(tx.transferId ?? ''),
-          ].join(','),
+            _csvField(sourceAccount),
+            _csvField(destinationAccount),
+          ].join(';'),
         );
       }
 
-      final bytes = utf8.encode(buffer.toString());
+      // UTF-8 BOM (\uFEFF) for Excel compatibility with accents, currency symbols and diacritics
+      final bytes = utf8.encode('\uFEFF${buffer.toString()}');
       final filename =
           'Stalvi_Table_${DateFormat('yyyyMMdd_HHmmss').format(DateTime.now())}.csv';
       final savedPath = await _saveFile(bytes, filename);
@@ -433,6 +473,60 @@ class ExportServiceImpl implements IExportService {
                 6: pw.Alignment.center,
                 7: pw.Alignment.centerLeft,
               },
+              cellBuilder: (col, data, row) {
+                // Column 1 is the Type column: style Income in green and Expense in red, Transfer is unchanged
+                if (col == 1 && data is String) {
+                  if (data == l10n.income(1)) {
+                    return pw.Container(
+                      padding: const pw.EdgeInsets.symmetric(
+                        horizontal: 4,
+                        vertical: 1.5,
+                      ),
+                      decoration: const pw.BoxDecoration(
+                        color: PdfColors.green50,
+                        borderRadius: pw.BorderRadius.all(
+                          pw.Radius.circular(3),
+                        ),
+                      ),
+                      child: pw.Text(
+                        data,
+                        style: pw.TextStyle(
+                          color: PdfColors.green800,
+                          fontSize: 7.5,
+                          fontWeight: pw.FontWeight.bold,
+                        ),
+                      ),
+                    );
+                  } else if (data == l10n.expense(1)) {
+                    return pw.Container(
+                      padding: const pw.EdgeInsets.symmetric(
+                        horizontal: 4,
+                        vertical: 1.5,
+                      ),
+                      decoration: const pw.BoxDecoration(
+                        color: PdfColors.red50,
+                        borderRadius: pw.BorderRadius.all(
+                          pw.Radius.circular(3),
+                        ),
+                      ),
+                      child: pw.Text(
+                        data,
+                        style: pw.TextStyle(
+                          color: PdfColors.red800,
+                          fontSize: 7.5,
+                          fontWeight: pw.FontWeight.bold,
+                        ),
+                      ),
+                    );
+                  }
+                  // Transfer is NOT changed (neutral / standard text)
+                  return pw.Text(
+                    data,
+                    style: const pw.TextStyle(fontSize: 8),
+                  );
+                }
+                return null;
+              },
               data: transactions.map((tx) {
                 // For transfers: show "Origin → Destination" in the account column
                 String accountCell;
@@ -549,7 +643,8 @@ class ExportServiceImpl implements IExportService {
   }
 
   static String _csvField(String value) {
-    if (value.contains(',') ||
+    if (value.contains(';') ||
+        value.contains(',') ||
         value.contains('"') ||
         value.contains('\n') ||
         value.contains('\r')) {
