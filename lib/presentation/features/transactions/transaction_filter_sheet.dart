@@ -563,7 +563,7 @@ class _TransactionFilterSheetState
                     ),
                     inputFormatters: [
                       FilteringTextInputFormatter.allow(
-                        RegExp(r'^\d*\.?\d{0,2}'),
+                        RegExp(r'^\d{0,13}([.,]\d{0,2})?'),
                       ),
                     ],
                     decoration: InputDecoration(
@@ -593,7 +593,7 @@ class _TransactionFilterSheetState
                     ),
                     inputFormatters: [
                       FilteringTextInputFormatter.allow(
-                        RegExp(r'^\d*\.?\d{0,2}'),
+                        RegExp(r'^\d{0,13}([.,]\d{0,2})?'),
                       ),
                     ],
                     decoration: InputDecoration(

@@ -24,7 +24,7 @@
   "deleteAllDataWarning": "¿Estás seguro de que quieres borrar todos los datos? Esto no se puede deshacer.",
   "endDate": "Fecha de Fin",
   "getStarted": "Empezar",
-  "labelAmount": "CANTIDAD",
+  "labelAmount": "Cantidad",
   "labelCurrency": "Moneda",
   "labelDate": "Fecha",
   "labelIcon": "Icono",

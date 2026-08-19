@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:stalvi/core/errors/app_exceptions.dart';
 import 'package:stalvi/core/l10n/app_localizations.dart';
@@ -320,6 +321,11 @@ class _CreateEditAutomaticTransactionScreenState
                                     const TextInputType.numberWithOptions(
                                   decimal: true,
                                 ),
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.allow(
+                                    RegExp(r'^\d{0,13}([.,]\d{0,2})?'),
+                                  ),
+                                ],
                                 style: theme.textTheme.displayLarge?.copyWith(
                                   color: activeColor,
                                   fontWeight: FontWeight.w800,
@@ -367,6 +373,7 @@ class _CreateEditAutomaticTransactionScreenState
                 const SizedBox(height: 32),
                 TextField(
                   controller: _nameController,
+                  maxLength: 31,
                   decoration: InputDecoration(
                     labelText: l10n.autoTxTemplateNameLabel,
                     border: OutlineInputBorder(
@@ -527,7 +534,7 @@ class _CreateEditAutomaticTransactionScreenState
                 TextField(
                   controller: _notesController,
                   maxLines: 3,
-                  maxLength: 23,
+                  maxLength: 63,
                   style: theme.textTheme.bodyMedium,
                   decoration: InputDecoration(
                     labelText: "${l10n.labelNotes} ${l10n.optionalPlaceholder}",

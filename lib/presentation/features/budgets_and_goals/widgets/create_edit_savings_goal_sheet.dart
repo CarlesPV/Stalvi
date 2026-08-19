@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:stalvi/core/l10n/app_localizations.dart';
 import 'package:stalvi/domain/entities/savings_goal.dart';
@@ -224,6 +225,7 @@ class _CreateEditSavingsGoalSheetState
               TextField(
                 controller: _nameController,
                 enabled: !isEditing,
+                maxLength: 31,
                 decoration: InputDecoration(
                   labelText: l10n.goalName,
                   border: OutlineInputBorder(
@@ -255,6 +257,11 @@ class _CreateEditSavingsGoalSheetState
                 keyboardType: const TextInputType.numberWithOptions(
                   decimal: true,
                 ),
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(
+                    RegExp(r'^\d{0,13}([.,]\d{0,2})?'),
+                  ),
+                ],
                 decoration: InputDecoration(
                   labelText: l10n.targetAmount,
                   border: OutlineInputBorder(

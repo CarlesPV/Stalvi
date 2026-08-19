@@ -61,12 +61,15 @@ class ExportTransactionsCsvUseCase {
 
     final transactions =
         await _transactionRepository.watchAllTransactions().first;
+    final allRawTransactions =
+        await _transactionRepository.watchRawTransactions().first;
 
     return _exportService.generateCsv(
       transactions,
       accounts: accounts,
       categories: categories,
       tags: tags,
+      allRawTransactions: allRawTransactions,
     );
   }
 }

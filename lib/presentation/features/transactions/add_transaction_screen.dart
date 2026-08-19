@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:stalvi/core/errors/app_exceptions.dart';
@@ -323,6 +324,11 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                                     const TextInputType.numberWithOptions(
                                   decimal: true,
                                 ),
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.allow(
+                                    RegExp(r'^\d{0,13}([.,]\d{0,2})?'),
+                                  ),
+                                ],
                                 style: theme.textTheme.displayLarge?.copyWith(
                                   color: activeColor,
                                   fontWeight: FontWeight.w800,
@@ -643,7 +649,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                 TextField(
                   controller: _notesController,
                   maxLines: 3,
-                  maxLength: 23,
+                  maxLength: 63,
                   style: theme.textTheme.bodyMedium,
                   decoration: InputDecoration(
                     labelText:

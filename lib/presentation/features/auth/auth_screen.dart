@@ -571,7 +571,6 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
-              counterText: '',
             ),
             validator: (val) {
               if (val == null || val.trim().isEmpty) {
@@ -605,7 +604,6 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
-              counterText: '',
             ),
             validator: (val) {
               if (val == null || val.trim().isEmpty) {

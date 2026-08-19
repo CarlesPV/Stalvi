@@ -153,12 +153,22 @@ class _TrashItemTile extends ConsumerWidget {
         backgroundColor: getAvatarColor(),
         child: Icon(getDisplayIcon(), color: getIconColor()),
       ),
-      title: Text(
-        getFormattedTitle(),
+      title: FittedBox(
+        fit: BoxFit.scaleDown,
+        alignment: Alignment.centerLeft,
+        child: Text(
+          getFormattedTitle(),
+        ),
       ),
-      subtitle: Text(
-        '${l10n.recycleBinDaysRemaining(remainingDays)} • ${getTypeLabel()}',
-        style: TextStyle(color: remainingDays <= 3 ? Colors.red : Colors.grey),
+      subtitle: FittedBox(
+        fit: BoxFit.scaleDown,
+        alignment: Alignment.centerLeft,
+        child: Text(
+          '${l10n.recycleBinDaysRemaining(remainingDays)} • ${getTypeLabel()}',
+          style: TextStyle(
+            color: remainingDays <= 3 ? Colors.red : Colors.grey,
+          ),
+        ),
       ),
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
@@ -186,7 +196,10 @@ class _TrashItemTile extends ConsumerWidget {
                   actions: [
                     TextButton(
                       onPressed: () => Navigator.pop(ctx),
-                      child: Text(l10n.btnCancel),
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text(l10n.btnCancel),
+                      ),
                     ),
                     TextButton(
                       onPressed: () {
@@ -199,7 +212,10 @@ class _TrashItemTile extends ConsumerWidget {
                         );
                       },
                       style: TextButton.styleFrom(foregroundColor: Colors.red),
-                      child: Text(l10n.btnDelete),
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text(l10n.btnDelete),
+                      ),
                     ),
                   ],
                 ),

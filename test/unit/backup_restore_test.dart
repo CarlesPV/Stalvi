@@ -180,6 +180,7 @@ void main() {
       automaticTransactions: [autoTx],
       password: 'mypassword',
       userName: 'Restored User Name',
+      username: 'restored_username',
     );
 
     // Wipe and Import
@@ -192,6 +193,7 @@ void main() {
     final profiles = await db.select(db.profiles).get();
     expect(profiles.length, 1);
     expect(profiles.first.name, 'Restored User Name');
+    expect(profiles.first.username, 'restored_username');
 
     final accounts = await db.select(db.accounts).get();
     final categories = await db.select(db.categories).get();

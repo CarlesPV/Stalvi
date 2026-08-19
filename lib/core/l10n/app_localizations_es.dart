@@ -82,7 +82,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get getStarted => 'Empezar';
 
   @override
-  String get labelAmount => 'CANTIDAD';
+  String get labelAmount => 'Cantidad';
 
   @override
   String get labelCurrency => 'Moneda';

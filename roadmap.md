@@ -450,15 +450,34 @@
   - [x] Completed sweeping UI polish, ensuring dialogs and bottom sheets are correctly centered and prevent overflow.
   - [x] Verified 100% test suite pass rate (558 tests) and zero static analysis warnings.
 
+- [x] **Phase 65: Global Input Limits, Special Characters Support & Backup Profile Persistence**
+  - [x] Enforced global field length constraints and formatters: Money (13 digits + 2 decimals), Names/Usernames (25 characters), Tags/Accounts/Categories/Savings Goals (31 characters), and Transaction Notes (63 characters).
+  - [x] Expanded text input character sanitization to fully permit accented letters (á, à, ä, â, é, è, ë, ê, í, ì, ï, î, ó, ò, ö, ô, ú, ù, ü, û, ý, ÿ, ñ, ç), combining diacritical marks (`\p{M}`), Catalan punt volat (`·`), apostrophes, at-signs (`@`), and standard punctuation while strictly filtering emojis and dangerous injection tags.
+  - [x] Added `username` export and restoration in encrypted backup archives (`.kbak`), ensuring profile usernames are preserved and restored alongside profile names.
+  - [x] Enabled visible character counters on all standard text input fields while keeping the PIN inputs exempt.
+  - [x] Integrated responsive text scaling safeguards (`FittedBox` scale-down without truncation or overflow) across account cards, transaction items, budget/goal progress cards, category/tag list tiles, and recycle bin item tiles.
+  - [x] Added text scale clamping (`MediaQuery.withClampedTextScaling`) and customized `NavigationBarThemeData` to prevent system accessibility font scaling from misaligning navigation icons.
+  - [x] Verified clean static analysis and updated project documentation.
+
+- [x] **Phase 66: Enhanced Data Exports & UI Deletion Safeguards**
+  - [x] **UTF-8 BOM Prefix:** Prepended UTF-8 BOM (`\uFEFF` / `0xEF, 0xBB, 0xBF`) to exported CSV files, guaranteeing seamless encoding detection in Microsoft Excel on Windows without character corruption.
+  - [x] **Semicolon CSV Delimiter:** Standardized CSV export delimiter to semicolon (`;`) with RFC-compliant quote escaping for commas, semicolons, quotes, and newlines.
+  - [x] **Explicit Transfer Columns in CSV:** Added `source_account` and `destination_account` columns in CSV exports to explicitly display origin and destination account names for transfer operations.
+  - [x] **Multi-line Centered Transfer Layout in PDF:** Formatted transfer transactions in the PDF monthly report account column as `$thisAccountName\n↓\n$otherAccountName` with centered alignment and Roboto font compatibility.
+  - [x] **Visual Type Badges in PDF:** Implemented visual color-coded badges for Income (green) and Expense (red) in the PDF transaction table, preserving neutral styling for Transfers.
+  - [x] **Account Deletion Transaction Icon & Active Checks:** Added dynamic icon feedback (`Icons.receipt_long`) in the account deletion confirmation dialog and fixed `hasAnyTransactions` to filter exclusively for active non-deleted transactions (`isDeleted = false`), properly ignoring trashed items.
+  - [x] **LabelAmount Sentence Case:** Standardized `labelAmount` across English ("Amount"), Spanish ("Cantidad"), and Catalan ("Quantitat") to sentence case rather than all uppercase.
+  - [x] **QA & Verification:** Maintained 100% test suite pass rate (562 tests) and zero static analyzer issues (`flutter analyze`).
+
 ---
 
 ## Post-Launch / Maintenance
 
 Future ideas, enhancements, and post-release maintenance goals:
-- [ ] **Cloud-Encrypted WebDAV / Drive Backup Sync:** Optional opt-in sync to user's private WebDAV server or Google Drive / iCloud keeping zero-telemetry and end-to-end user encryption.
-- [ ] **Custom Category Icon & Color Creator:** Allow users to define custom icons and palette colors for categories and accounts.
-- [ ] **Advanced Financial Forecasting & AI Insights:** Localized predictive analytics for projected monthly balances and spending pattern anomalies based on historical movements.
-- [ ] **Interactive CSV Import Wizard:** Column mapping interface allowing users to import transactions from external banking CSV files.
-- [ ] **Wearable Companion App:** Apple Watch and Wear OS glance widgets for quick expense entry and daily balance previews.
+- [ ] **Zero-Knowledge Cloud & Automated Backup Sync:** Periodic automated local `.kbak` backups with optional opt-in sync to user's private Google Drive, iCloud, or WebDAV (Nextcloud) preserving zero-telemetry with client-side AES-256 encryption.
+- [ ] **Historical Period Comparisons:** Comparative bar and trend charts comparing month-over-month (MoM) and year-over-year (YoY) income, expenses, and savings rates.
+- [ ] **Encrypted Receipt & Invoice Photo Attachments:** Secure capture and local storage of compressed receipt/invoice images linked directly to transactions with AES-256 encryption at rest.
+- [ ] **Multiple Local Profiles & Isolated Workspaces:** Ability to switch between multiple independent local accounts/spaces (e.g., Personal, Business/Freelance, Family/Household) protected by distinct PIN codes and biometric profiles on the same device.
+- [ ] **Comprehensive Accessibility (a11y) & Screen Reader Compliance:** Full TalkBack (Android) and VoiceOver (iOS) semantic tree annotations, dynamic auditory descriptions for financial charts, screen-reader balance announcements, and WCAG AAA high-contrast accessibility mode for visually impaired users.
 
 

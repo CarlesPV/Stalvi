@@ -241,10 +241,13 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen>
           _SettingsSkeletonTab(shimmer: _shimmer),
         ],
       ),
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: _selectedIndex,
-        onDestinationSelected: (i) => setState(() => _selectedIndex = i),
-        destinations: destinations,
+      bottomNavigationBar: MediaQuery.withClampedTextScaling(
+        maxScaleFactor: 1.0,
+        child: NavigationBar(
+          selectedIndex: _selectedIndex,
+          onDestinationSelected: (i) => setState(() => _selectedIndex = i),
+          destinations: destinations,
+        ),
       ),
       floatingActionButton: _selectedIndex == 3
           ? null
@@ -830,11 +833,15 @@ class _AccountItem extends ConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    account.name,
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.w700,
-                      color: colorScheme.onSurface,
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      account.name,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.w700,
+                        color: colorScheme.onSurface,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -993,26 +1000,30 @@ class _TransactionItem extends ConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    transaction.notes?.isNotEmpty == true
-                        ? transaction.notes!
-                        : (transaction.type == TransactionType.transfer
-                            ? AppLocalizations.of(
-                                context,
-                              )!
-                                .filterSheetTransferType
-                            : (isIncome
-                                ? AppLocalizations.of(
-                                    context,
-                                  )!
-                                    .fallbackIncome
-                                : AppLocalizations.of(
-                                    context,
-                                  )!
-                                    .fallbackExpense)),
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.w700,
-                      color: colorScheme.onSurface,
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      transaction.notes?.isNotEmpty == true
+                          ? transaction.notes!
+                          : (transaction.type == TransactionType.transfer
+                              ? AppLocalizations.of(
+                                  context,
+                                )!
+                                  .filterSheetTransferType
+                              : (isIncome
+                                  ? AppLocalizations.of(
+                                      context,
+                                    )!
+                                      .fallbackIncome
+                                  : AppLocalizations.of(
+                                      context,
+                                    )!
+                                      .fallbackExpense)),
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.w700,
+                        color: colorScheme.onSurface,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -1028,11 +1039,15 @@ class _TransactionItem extends ConsumerWidget {
             ),
             const SizedBox(width: 12),
             Flexible(
-              child: Text(
-                amountStr,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.w800,
-                  color: color,
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerRight,
+                child: Text(
+                  amountStr,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.w800,
+                    color: color,
+                  ),
                 ),
               ),
             ),

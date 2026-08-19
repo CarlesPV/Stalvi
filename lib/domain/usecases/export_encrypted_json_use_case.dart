@@ -93,6 +93,7 @@ class ExportEncryptedJsonUseCase {
       automaticTransactions: automaticTransactions,
       password: password,
       userName: profile.name,
+      username: profile.username,
     );
   }
 }

@@ -247,7 +247,7 @@ abstract class AppLocalizations {
   /// No description provided for @labelAmount.
   ///
   /// In en, this message translates to:
-  /// **'AMOUNT'**
+  /// **'Amount'**
   String get labelAmount;
 
   /// No description provided for @labelCurrency.

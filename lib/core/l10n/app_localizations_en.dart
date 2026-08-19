@@ -82,7 +82,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get getStarted => 'Get Started';
 
   @override
-  String get labelAmount => 'AMOUNT';
+  String get labelAmount => 'Amount';
 
   @override
   String get labelCurrency => 'Currency';

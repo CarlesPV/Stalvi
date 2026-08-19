@@ -47,17 +47,26 @@ void main() {
 
   group('InputSanitizer.containsEmoji', () {
     test(
-      'detects emojis and special characters correctly while accepting accents',
+      'detects emojis and special characters correctly while accepting accents and diacritics',
       () {
         expect(InputSanitizer.containsEmoji('Carles'), false);
         expect(InputSanitizer.containsEmoji('Carles Peña'), false);
         expect(InputSanitizer.containsEmoji('María-José.1'), false);
         expect(InputSanitizer.containsEmoji('Françoise_Lluís'), false);
+        expect(InputSanitizer.containsEmoji('L\'Estalvi d\'Or'), false);
+        expect(InputSanitizer.containsEmoji('intel·ligent'), false);
+        expect(InputSanitizer.containsEmoji('Gérard & Müller (2026)'), false);
+        expect(
+          InputSanitizer.containsEmoji(
+            'à, ä, á, â, é, è, ë, ê, í, ï, ó, ò, ö, ô, ú, ù, ü, ñ, ç',
+          ),
+          false,
+        );
+        expect(InputSanitizer.containsEmoji('User@Name'), false);
         expect(InputSanitizer.containsEmoji('Carles 😀'), true);
         expect(InputSanitizer.containsEmoji('🚀 User'), true);
         expect(InputSanitizer.containsEmoji('Test ❤️'), true);
         expect(InputSanitizer.containsEmoji('<script>'), true);
-        expect(InputSanitizer.containsEmoji('User@Name'), true);
         expect(InputSanitizer.containsEmoji(''), false);
       },
     );

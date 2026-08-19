@@ -235,11 +235,15 @@ class _BudgetCard extends ConsumerWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            category.name,
-                            style: theme.textTheme.bodyMedium?.copyWith(
-                              fontWeight: FontWeight.w700,
-                              color: colorScheme.onSurface,
+                          FittedBox(
+                            fit: BoxFit.scaleDown,
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              category.name,
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                fontWeight: FontWeight.w700,
+                                color: colorScheme.onSurface,
+                              ),
                             ),
                           ),
                           const SizedBox(height: 2),
@@ -256,13 +260,16 @@ class _BudgetCard extends ConsumerWidget {
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text(
-                          progressStr,
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            fontWeight: FontWeight.w800,
-                            color: isOverspent
-                                ? financialColors.negative
-                                : colorScheme.onSurface,
+                        FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(
+                            progressStr,
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.w800,
+                              color: isOverspent
+                                  ? financialColors.negative
+                                  : colorScheme.onSurface,
+                            ),
                           ),
                         ),
                       ],
@@ -428,11 +435,15 @@ class _SavingsGoalCard extends ConsumerWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            goal.name,
-                            style: theme.textTheme.bodyMedium?.copyWith(
-                              fontWeight: FontWeight.w700,
-                              color: colorScheme.onSurface,
+                          FittedBox(
+                            fit: BoxFit.scaleDown,
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              goal.name,
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                fontWeight: FontWeight.w700,
+                                color: colorScheme.onSurface,
+                              ),
                             ),
                           ),
                           const SizedBox(height: 2),
@@ -449,13 +460,16 @@ class _SavingsGoalCard extends ConsumerWidget {
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text(
-                          progressStr,
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            fontWeight: FontWeight.w800,
-                            color: progress >= 1.0
-                                ? financialColors.positive
-                                : colorScheme.onSurface,
+                        FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(
+                            progressStr,
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.w800,
+                              color: progress >= 1.0
+                                  ? financialColors.positive
+                                  : colorScheme.onSurface,
+                            ),
                           ),
                         ),
                       ],

@@ -24,7 +24,7 @@
   "deleteAllDataWarning": "Are you sure you want to delete all data? This cannot be undone.",
   "endDate": "End Date",
   "getStarted": "Get Started",
-  "labelAmount": "AMOUNT",
+  "labelAmount": "Amount",
   "labelCurrency": "Currency",
   "labelDate": "Date",
   "labelIcon": "Icon",

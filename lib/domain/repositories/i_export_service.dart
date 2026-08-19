@@ -32,6 +32,7 @@ abstract class IExportService {
     List<Account> accounts = const [],
     List<Category> categories = const [],
     List<Tag> tags = const [],
+    List<Transaction> allRawTransactions = const [],
   });
 
   Future<ExportResult> generateEncryptedJson({
@@ -44,6 +45,7 @@ abstract class IExportService {
     required List<AutomaticTransaction> automaticTransactions,
     required String password,
     required String userName,
+    String? username,
   });
 
   Future<String> decryptJsonPayload(
