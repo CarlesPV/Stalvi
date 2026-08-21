@@ -1,8 +1,15 @@
 class PeriodSummary {
   final int totalIncome;
   final int totalExpense;
+  final int totalTransfersIn;
+  final int totalTransfersOut;
 
-  const PeriodSummary({required this.totalIncome, required this.totalExpense});
+  const PeriodSummary({
+    required this.totalIncome,
+    required this.totalExpense,
+    this.totalTransfersIn = 0,
+    this.totalTransfersOut = 0,
+  });
 
   @override
   bool operator ==(Object other) =>
@@ -10,8 +17,14 @@ class PeriodSummary {
       other is PeriodSummary &&
           runtimeType == other.runtimeType &&
           totalIncome == other.totalIncome &&
-          totalExpense == other.totalExpense;
+          totalExpense == other.totalExpense &&
+          totalTransfersIn == other.totalTransfersIn &&
+          totalTransfersOut == other.totalTransfersOut;
 
   @override
-  int get hashCode => totalIncome.hashCode ^ totalExpense.hashCode;
+  int get hashCode =>
+      totalIncome.hashCode ^
+      totalExpense.hashCode ^
+      totalTransfersIn.hashCode ^
+      totalTransfersOut.hashCode;
 }

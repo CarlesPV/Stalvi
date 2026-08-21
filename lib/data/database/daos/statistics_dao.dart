@@ -117,16 +117,39 @@ class StatisticsDao extends DatabaseAccessor<AppDatabase>
       )
     ''');
 
+    final transfersInSumExpr = CustomExpression<double>('''
+      SUM(
+        CASE WHEN transactions.type = ${TransactionType.transfer.index} AND transactions.id LIKE '%_dst' THEN 
+          (${convertedExpr.content})
+        ELSE 0 END
+      )
+    ''');
+
+    final transfersOutSumExpr = CustomExpression<double>('''
+      SUM(
+        CASE WHEN transactions.type = ${TransactionType.transfer.index} AND transactions.id NOT LIKE '%_dst' THEN 
+          (${convertedExpr.content})
+        ELSE 0 END
+      )
+    ''');
+
     final query = selectOnly(transactions).join([
       innerJoin(accounts, accounts.id.equalsExp(transactions.accountId)),
     ])
       ..where(queryConditions)
-      ..addColumns([incomeSumExpr, expenseSumExpr]);
+      ..addColumns([
+        incomeSumExpr,
+        expenseSumExpr,
+        transfersInSumExpr,
+        transfersOutSumExpr,
+      ]);
 
     return query.watchSingle().map((row) {
       return PeriodSummary(
         totalIncome: (row.read(incomeSumExpr) ?? 0.0).round(),
         totalExpense: (row.read(expenseSumExpr) ?? 0.0).round(),
+        totalTransfersIn: (row.read(transfersInSumExpr) ?? 0.0).round(),
+        totalTransfersOut: (row.read(transfersOutSumExpr) ?? 0.0).round(),
       );
     });
   }
@@ -169,16 +192,39 @@ class StatisticsDao extends DatabaseAccessor<AppDatabase>
       )
     ''');
 
+    final transfersInSumExpr = CustomExpression<double>('''
+      SUM(
+        CASE WHEN transactions.type = ${TransactionType.transfer.index} AND transactions.id LIKE '%_dst' THEN 
+          (${convertedExpr.content})
+        ELSE 0 END
+      )
+    ''');
+
+    final transfersOutSumExpr = CustomExpression<double>('''
+      SUM(
+        CASE WHEN transactions.type = ${TransactionType.transfer.index} AND transactions.id NOT LIKE '%_dst' THEN 
+          (${convertedExpr.content})
+        ELSE 0 END
+      )
+    ''');
+
     final query = selectOnly(transactions).join([
       innerJoin(accounts, accounts.id.equalsExp(transactions.accountId)),
     ])
       ..where(queryConditions)
-      ..addColumns([incomeSumExpr, expenseSumExpr]);
+      ..addColumns([
+        incomeSumExpr,
+        expenseSumExpr,
+        transfersInSumExpr,
+        transfersOutSumExpr,
+      ]);
 
     final result = await query.getSingle();
     return PeriodSummary(
       totalIncome: (result.read(incomeSumExpr) ?? 0.0).round(),
       totalExpense: (result.read(expenseSumExpr) ?? 0.0).round(),
+      totalTransfersIn: (result.read(transfersInSumExpr) ?? 0.0).round(),
+      totalTransfersOut: (result.read(transfersOutSumExpr) ?? 0.0).round(),
     );
   }
 

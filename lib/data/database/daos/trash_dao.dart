@@ -176,8 +176,8 @@ class TrashDao extends DatabaseAccessor<AppDatabase> with _$TrashDaoMixin {
       );
     }
 
-    // Sort items by days remaining (those expiring sooner first)
-    items.sort((a, b) => a.daysRemaining.compareTo(b.daysRemaining));
+    // Sort items by most recently deleted first (deletedAt descending)
+    items.sort((a, b) => b.deletedAt.compareTo(a.deletedAt));
 
     return items;
   }

@@ -243,10 +243,10 @@ SQL-based database aggregation is incapable of parsing dynamic JSON objects (spe
 
 ### Solution Applied
 1. **DAO Layer Refactoring**:
-   - Replaced custom aggregate database queries (`getPeriodSummary` and `getTopCategories`) in [statistics_dao.dart](file:///home/carlesp/Proyectos/Konta/lib/data/database/daos/statistics_dao.dart) with data-fetching methods: `getTransactionsForPeriod` and `getTransactionsWithCategoryForPeriod`.
+   - Replaced custom aggregate database queries (`getPeriodSummary` and `getTopCategories`) in [statistics_dao.dart](file:///home/carlesp/Proyectos/Stalvi/lib/data/database/daos/statistics_dao.dart) with data-fetching methods: `getTransactionsForPeriod` and `getTransactionsWithCategoryForPeriod`.
    - These methods retrieve the full list of matched `Transaction` and joined `TransactionWithCategory` records rather than raw SQL aggregate sums.
 2. **Repository Layer Aggregation**:
-   - Modified `StatisticsRepositoryImpl` in [statistics_repository_impl.dart](file:///home/carlesp/Proyectos/Konta/lib/data/repositories/statistics_repository_impl.dart) to parse the `exchangeRateSnapshot` JSON dictionary dynamically for each transaction.
+   - Modified `StatisticsRepositoryImpl` in [statistics_repository_impl.dart](file:///home/carlesp/Proyectos/Stalvi/lib/data/repositories/statistics_repository_impl.dart) to parse the `exchangeRateSnapshot` JSON dictionary dynamically for each transaction.
    - Performed the conversion from the transaction's `originalCurrency` to the active target currency (either the selected account's currency, or the user's default currency fallback) utilizing the transaction's historical rate snapshot.
    - Handled cases where the snapshot is missing, corrupt, or does not contain the target rate, falling back safely.
 3. **Tests Refactoring**:
@@ -326,3 +326,31 @@ SQL-based database aggregation is incapable of parsing dynamic JSON objects (spe
 ## 2026-07-01 - Hotfix: Drift Migration and Splash Screen Icon
 - **Database Bug:** Fixed a critical bug in `AppDatabase` `onUpgrade` where Drift's `createTable` (which automatically includes all columns in the latest schema) was immediately followed by `addColumn` calls in the same migration run, resulting in a duplicate column `OperationalError` causing full app crash. Refactored migration to track newly created tables using boolean flags and bypass duplicate column additions.
 - **UI Tweaks:** Changed the splash screen icon rendering in `splash_screen.dart` from `BoxFit.contain` to `BoxFit.cover` inside a rounded `ClipRRect` to ensure it completely fills the space and properly renders as a square with rounded borders.
+
+---
+
+## 2026-08-21 - Phase 67: Account Statistics Transfers & Cash Flow Integration
+
+### Problem Description
+When filtering statistics by a specific destination account, incoming transfers were missing (the destination leg of transfers did not appear in period summary calculations). As a result, money received via transfer into that account was omitted, leading to an inaccurate net balance and negative cash flow display.
+
+### Root Cause
+`periodSummaryProvider` in `statistics_providers.dart` was watching `transactionsStreamProvider` which delegates to `TransactionRepository.watchAllTransactions()`. `watchAllTransactions()` is specifically intended for deduplicated transaction lists, and drops mirror transfer rows (`*_dst`). Consequently, when filtering by the destination account ID, the destination leg was already filtered out before reaching `periodSummaryProvider`.
+
+### Solutions Applied
+1. **Raw Transaction Streams in Statistics**:
+   - Refactored `periodSummaryProvider`, `dashboardPeriodSummaryProvider`, and top categories providers to watch `rawTransactionsStreamProvider` (which invokes `watchRawTransactions()`), ensuring all transaction legs are available for accurate account-specific filtering.
+2. **PeriodSummary Domain & DAO Extensions**:
+   - Added `totalTransfersIn` and `totalTransfersOut` fields to the `PeriodSummary` entity.
+   - Updated `GetPeriodSummaryUseCase` and `StatisticsDao` (with SQLite `CASE WHEN` aggregation) to compute transfers in and out.
+3. **Accurate Cash Flow Net Balance**:
+   - Updated `_NetBalanceCard` in `StatisticsScreen` to compute `(Income - Expense + Transfers In - Transfers Out)` when filtering by account.
+4. **Dedicated Transfers Section**:
+   - Added a responsive `_SummaryCard` for Transfers (`statisticsTransfers`) in `StatisticsScreen._SummarySection` displayed conditionally when an account filter is active.
+5. **Strict Surplus/Deficit Badge Logic**:
+   - Updated `_NetBalanceCard` to evaluate `net > 0` for Surplus (`▲ Surplus`) and `net < 0` for Deficit (`▼ Deficit`), rendering no badge when net balance equals zero.
+6. **Recycle Bin Chronological Sorting**:
+   - Updated `TrashDao.getTrashItems()` and `RecycleBinNotifier` to sort soft-deleted items strictly by `deletedAt` descending (`b.deletedAt.compareTo(a.deletedAt)`), ensuring the most recently deleted items appear first in the Recycle Bin.
+7. **Localization & Verification**:
+   - Added `statisticsTransfers` to `app_en.arb`, `app_es.arb`, and `app_ca.arb` and regenerated localizations.
+   - Added comprehensive unit and widget tests, ensuring 100% test pass rate across 569 tests and 0 static analysis issues.

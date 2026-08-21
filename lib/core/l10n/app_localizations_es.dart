@@ -783,6 +783,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get statisticsNetBalance => 'Balance neto';
 
   @override
+  String get statisticsTransfers => 'Transferencias';
+
+  @override
   String get statisticsNoDataSubtitle =>
       'Intenta añadir transacciones o cambiar el rango del filtro para ver tu desglose de categorías.';
 

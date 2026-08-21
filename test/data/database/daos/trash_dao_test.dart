@@ -20,7 +20,7 @@ void main() {
   });
 
   test(
-    'getTrashItems returns only soft-deleted items sorted by daysRemaining',
+    'getTrashItems returns only soft-deleted items sorted by deletedAt descending (most recently deleted first)',
     () async {
       const uuid = Uuid();
       final now = DateTime.fromMillisecondsSinceEpoch(
@@ -94,16 +94,49 @@ void main() {
             ),
           );
 
+      final t3Id = uuid.v4();
+      await db.into(db.tags).insert(
+            TagsCompanion.insert(
+              id: t3Id,
+              name: 'Deleted Tag',
+              isDeleted: const Value(true),
+              createdAt: now,
+              modifiedAt: now.subtract(
+                const Duration(hours: 5),
+              ),
+            ),
+          );
+
+      final t4Id = uuid.v4();
+      await db.into(db.tags).insert(
+            TagsCompanion.insert(
+              id: t4Id,
+              name: 'Recently Deleted Tag',
+              isDeleted: const Value(true),
+              createdAt: now,
+              modifiedAt: now.subtract(
+                const Duration(hours: 1),
+              ),
+            ),
+          );
+
       final items = await db.trashDao.getTrashItems();
 
-      expect(items.length, 2);
-      // T2 should be first since it has fewer days remaining (10 < 20)
-      expect(items[0].id, t2Id);
-      expect(items[0].daysRemaining, 10);
-      expect(items[0].deletedAt, now.subtract(const Duration(days: 20)));
-      expect(items[1].id, t1Id);
-      expect(items[1].daysRemaining, 20);
-      expect(items[1].deletedAt, now.subtract(const Duration(days: 10)));
+      expect(items.length, 4);
+      // T4 was deleted 1 hour ago (most recently deleted first)
+      expect(items[0].id, t4Id);
+      expect(items[0].deletedAt, now.subtract(const Duration(hours: 1)));
+      // T3 was deleted 5 hours ago
+      expect(items[1].id, t3Id);
+      expect(items[1].deletedAt, now.subtract(const Duration(hours: 5)));
+      // T1 was deleted 10 days ago
+      expect(items[2].id, t1Id);
+      expect(items[2].daysRemaining, 20);
+      expect(items[2].deletedAt, now.subtract(const Duration(days: 10)));
+      // T2 was deleted 20 days ago (oldest deleted last)
+      expect(items[3].id, t2Id);
+      expect(items[3].daysRemaining, 10);
+      expect(items[3].deletedAt, now.subtract(const Duration(days: 20)));
     },
   );
 

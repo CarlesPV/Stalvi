@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart' show DateTimeRange;
 import '../../entities/transaction_type.dart';
 import '../../entities/period_summary.dart';
 import '../../repositories/i_transaction_repository.dart';
@@ -24,12 +23,8 @@ class GetPeriodSummaryUseCase {
     final effectiveEnd = endDate ?? now;
     final effectiveStart = startDate ?? now.subtract(const Duration(days: 30));
 
-    final filter = TransactionQueryFilter(
-      dateRange: DateTimeRange(start: effectiveStart, end: effectiveEnd),
-      accountId: accountId,
-    );
     final transactions =
-        await _transactionRepository.watchFilteredTransactions(filter).first;
+        await _transactionRepository.watchRawTransactions().first;
 
     final rates = await _exchangeRateRepository.getLocalRates(
       baseCurrency: targetCurrency,
@@ -37,8 +32,15 @@ class GetPeriodSummaryUseCase {
 
     double totalIncome = 0;
     double totalExpense = 0;
+    double totalTransfersIn = 0;
+    double totalTransfersOut = 0;
 
     for (final tx in transactions) {
+      if (accountId != null && tx.accountId != accountId) continue;
+      if (tx.date.isBefore(effectiveStart) || tx.date.isAfter(effectiveEnd)) {
+        continue;
+      }
+
       double amount = CurrencyConverter.convertAmount(
         tx,
         targetCurrency,
@@ -49,12 +51,21 @@ class GetPeriodSummaryUseCase {
         totalIncome += amount;
       } else if (tx.type == TransactionType.expense) {
         totalExpense += amount;
+      } else if (tx.type == TransactionType.transfer) {
+        bool isOrigin = !tx.id.endsWith('_dst');
+        if (isOrigin) {
+          totalTransfersOut += amount;
+        } else {
+          totalTransfersIn += amount;
+        }
       }
     }
 
     return PeriodSummary(
       totalIncome: totalIncome.round(),
       totalExpense: totalExpense.round(),
+      totalTransfersIn: totalTransfersIn.round(),
+      totalTransfersOut: totalTransfersOut.round(),
     );
   }
 }
