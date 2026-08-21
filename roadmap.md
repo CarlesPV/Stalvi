@@ -469,6 +469,16 @@
   - [x] **LabelAmount Sentence Case:** Standardized `labelAmount` across English ("Amount"), Spanish ("Cantidad"), and Catalan ("Quantitat") to sentence case rather than all uppercase.
   - [x] **QA & Verification:** Maintained 100% test suite pass rate (562 tests) and zero static analyzer issues (`flutter analyze`).
 
+- [x] **Phase 67: Account Statistics Transfers, Cash Flow Integration & Recycle Bin Chronological Sorting**
+  - [x] **PeriodSummary Domain & DAO Extensions:** Added `totalTransfersIn` and `totalTransfersOut` properties to the `PeriodSummary` entity and updated `GetPeriodSummaryUseCase` and `StatisticsDao` (with dedicated SQLite `CASE WHEN` aggregation expressions) to calculate transfer inflows and outflows.
+  - [x] **Raw Transaction Stream in Statistics Providers:** Updated `periodSummaryProvider`, `dashboardPeriodSummaryProvider`, and top categories providers in `statistics_providers.dart` to watch `rawTransactionsStreamProvider` instead of `transactionsStreamProvider`. This ensures that destination legs (`*_dst`) of transfers on destination accounts are fully preserved and accounted for in account statistics.
+  - [x] **Accurate Cash Flow Net Balance:** Updated `_NetBalanceCard` in `StatisticsScreen` so that filtering by a specific account accurately factors in incoming and outgoing transfers (`Income - Expense + Transfers In - Transfers Out`).
+  - [x] **Strict Surplus/Deficit Badge Rendering:** Refactored `_NetBalanceCard` badge logic to only show Surplus when net > 0, Deficit when net < 0, and omit badge rendering when net balance is strictly zero.
+  - [x] **Transfers UI Section:** Implemented a new `_SummaryCard` for Transfers (`statisticsTransfers`) rendered dynamically below the Income/Expenses cards and above category charts when an account is selected.
+  - [x] **Recycle Bin Chronological Sorting:** Updated `TrashDao.getTrashItems()` and `RecycleBinNotifier` to sort soft-deleted items strictly by `deletedAt` descending (`b.deletedAt.compareTo(a.deletedAt)`), ensuring the most recently deleted items appear first in the Recycle Bin with sub-day precision.
+  - [x] **Trilingual Localization:** Added and synchronized `statisticsTransfers` across `app_en.arb`, `app_es.arb`, and `app_ca.arb` and regenerated localizations with `flutter gen-l10n`.
+  - [x] **Automated Testing & Static Analysis:** Added unit and widget tests covering destination, origin, global transfer statistics calculations, zero-balance badge behavior, and millisecond-precise most-recently-deleted trash sorting, achieving 100% test suite pass rate across 569 tests and 0 static analysis issues on `flutter analyze`.
+
 ---
 
 ## Post-Launch / Maintenance

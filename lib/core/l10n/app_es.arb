@@ -243,6 +243,7 @@
   "settingsStatistics": "Estadísticas",
   "statisticsDeficit": "Déficit",
   "statisticsNetBalance": "Balance neto",
+  "statisticsTransfers": "Transferencias",
   "statisticsNoDataSubtitle": "Intenta añadir transacciones o cambiar el rango del filtro para ver tu desglose de categorías.",
   "statisticsNoExpenses": "No se registraron gastos en este período.",
   "statisticsNoIncome": "No se registraron ingresos en este período.",

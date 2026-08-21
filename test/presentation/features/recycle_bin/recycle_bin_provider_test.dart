@@ -81,6 +81,50 @@ void main() {
       },
     );
 
+    test(
+      'sorts items by deletedAt descending (most recently deleted first)',
+      () async {
+        final now = DateTime.now();
+        final itemRecent = TrashItem(
+          id: 'recent',
+          name: 'Recent',
+          type: TrashItemType.transaction,
+          daysRemaining: 30,
+          deletedAt: now.subtract(const Duration(hours: 1)),
+        );
+        final itemOld = TrashItem(
+          id: 'old',
+          name: 'Old',
+          type: TrashItemType.account,
+          daysRemaining: 10,
+          deletedAt: now.subtract(const Duration(days: 20)),
+        );
+
+        final streamController = StreamController<List<TrashItem>>();
+        when(
+          () => mockTrashUsecases.watchTrashItems(),
+        ).thenAnswer((_) => streamController.stream);
+
+        final container = createContainer();
+        final sub = container.listen(recycleBinProvider, (_, __) {});
+
+        // Emit unordered items (old first, recent second)
+        streamController.add([itemOld, itemRecent]);
+        await Future.delayed(Duration.zero);
+
+        final state = container.read(recycleBinProvider);
+        expect(state, isA<AsyncData<List<TrashItem>>>());
+
+        final loadedItems = state.value!;
+        expect(loadedItems.length, 2);
+        expect(loadedItems[0].id, 'recent');
+        expect(loadedItems[1].id, 'old');
+
+        sub.close();
+        streamController.close();
+      },
+    );
+
     test('restoreItem delegates to usecase', () async {
       when(
         () => mockTrashUsecases.watchTrashItems(),

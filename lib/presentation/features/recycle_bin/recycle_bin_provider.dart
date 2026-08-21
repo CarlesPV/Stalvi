@@ -26,7 +26,8 @@ class RecycleBinNotifier extends _$RecycleBinNotifier {
             deletedAt: item.deletedAt,
             metadata: item.metadata,
           );
-        }).toList();
+        }).toList()
+          ..sort((a, b) => b.deletedAt.compareTo(a.deletedAt));
         state = AsyncValue.data(updatedItems);
       },
       onError: (e, st) {

@@ -113,12 +113,17 @@ Widget _buildTestWidget({
   required AsyncValue<PeriodSummary> summaryState,
   required AsyncValue<List<CategoryStatistic>> expenseCatState,
   required AsyncValue<List<CategoryStatistic>> incomeCatState,
+  StatisticsFilter? filterState,
 }) {
   return ProviderScope(
     overrides: [
       periodSummaryProvider.overrideWith((ref) => summaryState),
       topExpenseCategoriesProvider.overrideWith((ref) => expenseCatState),
       topIncomeCategoriesProvider.overrideWith((ref) => incomeCatState),
+      if (filterState != null)
+        statisticsFilterProvider.overrideWith(
+          () => _TestStatisticsFilterNotifier(filterState),
+        ),
     ],
     child: MaterialApp(
       theme: AppTheme.lightTheme,
@@ -134,6 +139,14 @@ Widget _buildTestWidget({
       home: const StatisticsScreen(),
     ),
   );
+}
+
+class _TestStatisticsFilterNotifier extends StatisticsFilterNotifier {
+  final StatisticsFilter initial;
+  _TestStatisticsFilterNotifier(this.initial);
+
+  @override
+  StatisticsFilter build() => initial;
 }
 
 // ─── Tests ────────────────────────────────────────────────────────────────────
@@ -312,6 +325,29 @@ void main() {
       expect(find.text('▼ Deficit'), findsOneWidget);
     });
 
+    testWidgets(
+      'does not display Surplus or Deficit badge when net balance is zero',
+      (WidgetTester tester) async {
+        const zeroSummary = PeriodSummary(
+          totalIncome: 100000, // €1,000
+          totalExpense: 100000, // €1,000
+        );
+
+        await tester.pumpWidget(
+          _buildTestWidget(
+            summaryState: const AsyncData(zeroSummary),
+            expenseCatState: AsyncData(_fakeExpenseCategories),
+            incomeCatState: AsyncData(_fakeIncomeCategories),
+          ),
+        );
+
+        await tester.pump();
+
+        expect(find.text('▲ Surplus'), findsNothing);
+        expect(find.text('▼ Deficit'), findsNothing);
+      },
+    );
+
     // ── Filter chips ─────────────────────────────────────────────────────────
 
     testWidgets('renders all preset filter chips', (WidgetTester tester) async {
@@ -398,6 +434,59 @@ void main() {
         await tester.pumpAndSettle();
 
         expect(find.byType(DataManagementScreen), findsOneWidget);
+      },
+    );
+
+    // ── Transfers Section ────────────────────────────────────────────────────
+
+    testWidgets(
+      'does NOT render Transfers card when accountId is null (All accounts)',
+      (WidgetTester tester) async {
+        await tester.pumpWidget(
+          _buildTestWidget(
+            summaryState: const AsyncData(_fakeSummary),
+            expenseCatState: AsyncData(_fakeExpenseCategories),
+            incomeCatState: AsyncData(_fakeIncomeCategories),
+          ),
+        );
+
+        await tester.pump();
+
+        expect(find.text('Transfers'), findsNothing);
+      },
+    );
+
+    testWidgets(
+      'renders Transfers card when accountId is selected',
+      (WidgetTester tester) async {
+        final now = DateTime.now();
+        const accountSummary = PeriodSummary(
+          totalIncome: 0,
+          totalExpense: 15000,
+          totalTransfersIn: 20000,
+          totalTransfersOut: 0,
+        );
+
+        await tester.pumpWidget(
+          _buildTestWidget(
+            summaryState: const AsyncData(accountSummary),
+            expenseCatState: const AsyncData(<CategoryStatistic>[]),
+            incomeCatState: const AsyncData(<CategoryStatistic>[]),
+            filterState: StatisticsFilter(
+              dateRange: DateTimeRange(
+                start: now.subtract(const Duration(days: 30)),
+                end: now,
+              ),
+              preset: StatisticsDatePreset.last30Days,
+              accountId: 'acc_dest',
+            ),
+          ),
+        );
+
+        await tester.pump();
+
+        expect(find.text('Transfers'), findsOneWidget);
+        expect(find.text('▲ Surplus'), findsOneWidget);
       },
     );
   });

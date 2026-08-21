@@ -243,6 +243,7 @@
   "settingsStatistics": "Estadístiques",
   "statisticsDeficit": "Dèficit",
   "statisticsNetBalance": "Balanç net",
+  "statisticsTransfers": "Transferències",
   "statisticsNoDataSubtitle": "Intenta afegir transaccions o canviar el rang del filtre per veure el teu desglossament de categories.",
   "statisticsNoExpenses": "No s'han registrat despeses en aquest període.",
   "statisticsNoIncome": "No s'han registrat ingressos en aquest període.",

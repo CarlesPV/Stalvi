@@ -482,6 +482,16 @@ class _SummarySection extends ConsumerWidget {
                 ),
               ],
             ),
+            if (ref.watch(statisticsFilterProvider).accountId != null) ...[
+              const SizedBox(height: 12),
+              _SummaryCard(
+                label: AppLocalizations.of(context)!.statisticsTransfers,
+                amount: (summary.totalTransfersIn - summary.totalTransfersOut) /
+                    100.0,
+                icon: Icons.sync_alt_rounded,
+                accentColor: Theme.of(context).colorScheme.secondary,
+              ),
+            ],
           ],
         ),
       ),
@@ -500,10 +510,16 @@ class _NetBalanceCard extends ConsumerWidget {
     final colorScheme = theme.colorScheme;
     final financialColors = context.financialColors;
 
-    final net = (summary.totalIncome - summary.totalExpense) / 100.0;
-    final isPositive = net >= 0;
-    final accentColor =
-        isPositive ? financialColors.positive : financialColors.negative;
+    final net = (summary.totalIncome -
+            summary.totalExpense +
+            summary.totalTransfersIn -
+            summary.totalTransfersOut) /
+        100.0;
+    final isSurplus = net > 0;
+    final isDeficit = net < 0;
+    final accentColor = isSurplus
+        ? financialColors.positive
+        : (isDeficit ? financialColors.negative : colorScheme.primary);
 
     return Container(
       width: double.infinity,
@@ -530,9 +546,9 @@ class _NetBalanceCard extends ConsumerWidget {
               borderRadius: BorderRadius.circular(14),
             ),
             child: Icon(
-              isPositive
-                  ? Icons.account_balance_wallet_rounded
-                  : Icons.warning_amber_rounded,
+              isDeficit
+                  ? Icons.warning_amber_rounded
+                  : Icons.account_balance_wallet_rounded,
               color: accentColor,
               size: 22,
             ),
@@ -565,22 +581,36 @@ class _NetBalanceCard extends ConsumerWidget {
               ],
             ),
           ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-            decoration: BoxDecoration(
-              color: accentColor.withValues(alpha: 0.12),
-              borderRadius: BorderRadius.circular(50),
-            ),
-            child: Text(
-              isPositive
-                  ? '▲ ${AppLocalizations.of(context)!.statisticsSurplus}'
-                  : '▼ ${AppLocalizations.of(context)!.statisticsDeficit}',
-              style: theme.textTheme.labelSmall?.copyWith(
-                color: accentColor,
-                fontWeight: FontWeight.w700,
+          if (isSurplus)
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              decoration: BoxDecoration(
+                color: accentColor.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(50),
+              ),
+              child: Text(
+                '▲ ${AppLocalizations.of(context)!.statisticsSurplus}',
+                style: theme.textTheme.labelSmall?.copyWith(
+                  color: accentColor,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            )
+          else if (isDeficit)
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              decoration: BoxDecoration(
+                color: accentColor.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(50),
+              ),
+              child: Text(
+                '▼ ${AppLocalizations.of(context)!.statisticsDeficit}',
+                style: theme.textTheme.labelSmall?.copyWith(
+                  color: accentColor,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
             ),
-          ),
         ],
       ),
     );

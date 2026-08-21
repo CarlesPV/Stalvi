@@ -174,7 +174,7 @@ final periodSummaryProvider = Provider.autoDispose<AsyncValue<PeriodSummary>>((
   final filter = ref.watch(statisticsFilterProvider);
   final targetCurrency = ref.watch(statisticsCurrencyProvider);
 
-  final transactionsAsync = ref.watch(transactionsStreamProvider);
+  final transactionsAsync = ref.watch(rawTransactionsStreamProvider);
   final ratesAsync = ref.watch(latestExchangeRatesProvider(targetCurrency));
 
   if (transactionsAsync.isLoading || ratesAsync.isLoading) {
@@ -189,6 +189,8 @@ final periodSummaryProvider = Provider.autoDispose<AsyncValue<PeriodSummary>>((
 
   double totalIncome = 0;
   double totalExpense = 0;
+  double totalTransfersIn = 0;
+  double totalTransfersOut = 0;
 
   final start = filter.dateRange.start;
   final end = filter.dateRange.end;
@@ -204,6 +206,13 @@ final periodSummaryProvider = Provider.autoDispose<AsyncValue<PeriodSummary>>((
       totalIncome += convertedAmount;
     } else if (tx.type == TransactionType.expense) {
       totalExpense += convertedAmount;
+    } else if (tx.type == TransactionType.transfer) {
+      bool isOrigin = !tx.id.endsWith('_dst');
+      if (isOrigin) {
+        totalTransfersOut += convertedAmount;
+      } else {
+        totalTransfersIn += convertedAmount;
+      }
     }
   }
 
@@ -211,6 +220,8 @@ final periodSummaryProvider = Provider.autoDispose<AsyncValue<PeriodSummary>>((
     PeriodSummary(
       totalIncome: (totalIncome * 100).round(),
       totalExpense: (totalExpense * 100).round(),
+      totalTransfersIn: (totalTransfersIn * 100).round(),
+      totalTransfersOut: (totalTransfersOut * 100).round(),
     ),
   );
 });
@@ -227,7 +238,7 @@ final dashboardPeriodSummaryProvider =
 
   final targetCurrency = profileAsync.value!.defaultCurrency;
 
-  final transactionsAsync = ref.watch(transactionsStreamProvider);
+  final transactionsAsync = ref.watch(rawTransactionsStreamProvider);
   final ratesAsync = ref.watch(latestExchangeRatesProvider(targetCurrency));
 
   if (transactionsAsync.isLoading || ratesAsync.isLoading) {
@@ -331,7 +342,7 @@ final topExpenseCategoriesProvider =
   final filter = ref.watch(statisticsFilterProvider);
   final targetCurrency = ref.watch(statisticsCurrencyProvider);
 
-  final transactionsAsync = ref.watch(transactionsStreamProvider);
+  final transactionsAsync = ref.watch(rawTransactionsStreamProvider);
   final categoriesAsync = ref.watch(categoriesListProvider);
   final ratesAsync = ref.watch(latestExchangeRatesProvider(targetCurrency));
 
@@ -368,7 +379,7 @@ final topIncomeCategoriesProvider =
   final filter = ref.watch(statisticsFilterProvider);
   final targetCurrency = ref.watch(statisticsCurrencyProvider);
 
-  final transactionsAsync = ref.watch(transactionsStreamProvider);
+  final transactionsAsync = ref.watch(rawTransactionsStreamProvider);
   final categoriesAsync = ref.watch(categoriesListProvider);
   final ratesAsync = ref.watch(latestExchangeRatesProvider(targetCurrency));
 

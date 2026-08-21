@@ -79,7 +79,7 @@ void main() {
       ];
 
       when(
-        () => mockTransactionRepository.watchFilteredTransactions(any()),
+        () => mockTransactionRepository.watchRawTransactions(),
       ).thenAnswer((_) => Stream.value(transactions));
 
       // Rates base=JPY

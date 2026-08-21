@@ -212,7 +212,7 @@ void main() {
       final container = ProviderContainer(
         overrides: [
           defaultProfileProvider.overrideWith((ref) => Future.value(profile)),
-          transactionsStreamProvider.overrideWith(
+          rawTransactionsStreamProvider.overrideWith(
             (ref) => Stream.value(transactions),
           ),
           exchangeRateRepositoryProvider.overrideWithValue(
@@ -237,6 +237,152 @@ void main() {
       sub.close();
     },
   );
+
+  group('periodSummaryProvider transfer tests', () {
+    final now = DateTime.now();
+    final transactions = [
+      Transaction(
+        id: 'tx_salary',
+        amount: 60000, // 600 EUR Income in Account A
+        date: now,
+        type: TransactionType.income,
+        accountId: 'acc_A',
+        originalCurrency: 'EUR',
+        createdAt: now,
+        modifiedAt: now,
+      ),
+      Transaction(
+        id: 'tx_transfer_1',
+        amount: 20000, // 200 EUR Transfer Out from Account A
+        date: now,
+        type: TransactionType.transfer,
+        accountId: 'acc_A',
+        originalCurrency: 'EUR',
+        createdAt: now,
+        modifiedAt: now,
+        transferId: 'tr_1',
+      ),
+      Transaction(
+        id: 'tx_transfer_1_dst',
+        amount: 20000, // 200 EUR Transfer In to Account B
+        date: now,
+        type: TransactionType.transfer,
+        accountId: 'acc_B',
+        originalCurrency: 'EUR',
+        createdAt: now,
+        modifiedAt: now,
+        transferId: 'tr_1',
+      ),
+      Transaction(
+        id: 'tx_expense_a',
+        amount: 10000, // 100 EUR Expense in Account A
+        date: now,
+        type: TransactionType.expense,
+        accountId: 'acc_A',
+        originalCurrency: 'EUR',
+        createdAt: now,
+        modifiedAt: now,
+      ),
+      Transaction(
+        id: 'tx_expense_b',
+        amount: 15000, // 150 EUR Expense in Account B
+        date: now,
+        type: TransactionType.expense,
+        accountId: 'acc_B',
+        originalCurrency: 'EUR',
+        createdAt: now,
+        modifiedAt: now,
+      ),
+    ];
+
+    test('calculates correct summary for Destination Account B', () async {
+      final container = ProviderContainer(
+        overrides: [
+          rawTransactionsStreamProvider.overrideWith(
+            (ref) => Stream.value(transactions),
+          ),
+          latestExchangeRatesProvider('EUR').overrideWith(
+            (ref) => Future.value(null),
+          ),
+        ],
+      );
+
+      container.read(statisticsFilterProvider.notifier).setAccountId('acc_B');
+
+      final sub = container.listen(periodSummaryProvider, (_, __) {});
+      await Future.delayed(const Duration(milliseconds: 50));
+
+      final state = container.read(periodSummaryProvider);
+      expect(state, isA<AsyncData<PeriodSummary>>());
+
+      final summary = state.value!;
+      expect(summary.totalIncome, 0); // No income in B
+      expect(summary.totalExpense, 15000); // 150 EUR in B
+      expect(summary.totalTransfersIn, 20000); // 200 EUR received in B
+      expect(summary.totalTransfersOut, 0);
+
+      sub.close();
+    });
+
+    test('calculates correct summary for Origin Account A', () async {
+      final container = ProviderContainer(
+        overrides: [
+          rawTransactionsStreamProvider.overrideWith(
+            (ref) => Stream.value(transactions),
+          ),
+          latestExchangeRatesProvider('EUR').overrideWith(
+            (ref) => Future.value(null),
+          ),
+        ],
+      );
+
+      container.read(statisticsFilterProvider.notifier).setAccountId('acc_A');
+
+      final sub = container.listen(periodSummaryProvider, (_, __) {});
+      await Future.delayed(const Duration(milliseconds: 50));
+
+      final state = container.read(periodSummaryProvider);
+      expect(state, isA<AsyncData<PeriodSummary>>());
+
+      final summary = state.value!;
+      expect(summary.totalIncome, 60000); // 600 EUR salary in A
+      expect(summary.totalExpense, 10000); // 100 EUR in A
+      expect(summary.totalTransfersIn, 0);
+      expect(
+        summary.totalTransfersOut,
+        20000,
+      ); // 200 EUR transferred out from A
+
+      sub.close();
+    });
+
+    test('calculates correct summary for All Accounts (Global view)', () async {
+      final container = ProviderContainer(
+        overrides: [
+          rawTransactionsStreamProvider.overrideWith(
+            (ref) => Stream.value(transactions),
+          ),
+          latestExchangeRatesProvider('EUR').overrideWith(
+            (ref) => Future.value(null),
+          ),
+        ],
+      );
+
+      final sub = container.listen(periodSummaryProvider, (_, __) {});
+      await Future.delayed(const Duration(milliseconds: 50));
+
+      final state = container.read(periodSummaryProvider);
+      expect(state, isA<AsyncData<PeriodSummary>>());
+
+      final summary = state.value!;
+      expect(summary.totalIncome, 60000);
+      expect(summary.totalExpense, 25000);
+      expect(summary.totalTransfersIn, 20000);
+      expect(summary.totalTransfersOut, 20000);
+
+      sub.close();
+    });
+  });
 }
 
 class MockExchangeRateRepository extends Mock

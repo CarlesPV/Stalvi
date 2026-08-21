@@ -1516,6 +1516,12 @@ abstract class AppLocalizations {
   /// **'Net Balance'**
   String get statisticsNetBalance;
 
+  /// No description provided for @statisticsTransfers.
+  ///
+  /// In en, this message translates to:
+  /// **'Transfers'**
+  String get statisticsTransfers;
+
   /// No description provided for @statisticsNoDataSubtitle.
   ///
   /// In en, this message translates to:

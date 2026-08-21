@@ -243,6 +243,7 @@
   "settingsStatistics": "Statistics",
   "statisticsDeficit": "Deficit",
   "statisticsNetBalance": "Net Balance",
+  "statisticsTransfers": "Transfers",
   "statisticsNoDataSubtitle": "Try adding transactions or changing the filter range to see your category breakdown.",
   "statisticsNoExpenses": "No expenses recorded in this period.",
   "statisticsNoIncome": "No income recorded in this period.",
