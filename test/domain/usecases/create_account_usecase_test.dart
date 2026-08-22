@@ -39,6 +39,8 @@ void main() {
       'should successfully create an account when all parameters are valid',
       () async {
         // Arrange
+        when(() => mockAccountRepository.getAccountsByUserId(any()))
+            .thenAnswer((_) async => [FakeAccount()]);
         when(() => mockAccountRepository.createAccount(any())).thenAnswer(
           (invocation) async => invocation.positionalArguments[0] as Account,
         );
@@ -52,6 +54,9 @@ void main() {
         expect(result.name, defaultParams.name);
         expect(result.initialBalance, defaultParams.initialBalance);
         verify(() => mockAccountRepository.createAccount(any())).called(1);
+        verify(
+          () => mockAccountRepository.getAccountsByUserId(defaultParams.userId),
+        ).called(1);
         verifyNoMoreInteractions(mockAccountRepository);
       },
     );
@@ -84,6 +89,8 @@ void main() {
       'should set isDeleted to false and createdAt/modifiedAt properly',
       () async {
         // Arrange
+        when(() => mockAccountRepository.getAccountsByUserId(any()))
+            .thenAnswer((_) async => [FakeAccount()]);
         when(() => mockAccountRepository.createAccount(any())).thenAnswer(
           (invocation) async => invocation.positionalArguments[0] as Account,
         );
@@ -101,6 +108,8 @@ void main() {
 
     test('should pass isDefault as true when requested', () async {
       // Arrange
+      when(() => mockAccountRepository.getAccountsByUserId(any()))
+          .thenAnswer((_) async => [FakeAccount()]);
       when(() => mockAccountRepository.createAccount(any())).thenAnswer(
         (invocation) async => invocation.positionalArguments[0] as Account,
       );
@@ -114,6 +123,33 @@ void main() {
         color: '#00FF00',
         icon: 'savings_icon',
         isDefault: true,
+      );
+
+      // Act
+      final result = await usecase.execute(params);
+
+      // Assert
+      expect(result.isDefault, true);
+    });
+
+    test('should force isDefault to true if there are no active accounts',
+        () async {
+      // Arrange
+      when(() => mockAccountRepository.getAccountsByUserId(any()))
+          .thenAnswer((_) async => []);
+      when(() => mockAccountRepository.createAccount(any())).thenAnswer(
+        (invocation) async => invocation.positionalArguments[0] as Account,
+      );
+      const params = CreateAccountParams(
+        id: 'test_id',
+        userId: 'user_1',
+        name: 'Main Savings',
+        type: AccountType.savings,
+        initialBalance: 1000.0,
+        currency: 'USD',
+        color: '#00FF00',
+        icon: 'savings_icon',
+        isDefault: false, // explicitly false
       );
 
       // Act

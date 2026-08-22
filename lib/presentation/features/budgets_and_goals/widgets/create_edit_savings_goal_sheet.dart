@@ -34,6 +34,8 @@ class _CreateEditSavingsGoalSheetState
     extends ConsumerState<CreateEditSavingsGoalSheet> {
   final _nameController = TextEditingController();
   final _amountController = TextEditingController();
+  final _nameFocusNode = FocusNode();
+  final _amountFocusNode = FocusNode();
   DateTime? _targetDate;
   String _selectedColor = '#4CAF50';
   String _selectedIcon = 'savings';
@@ -86,6 +88,8 @@ class _CreateEditSavingsGoalSheetState
   void dispose() {
     _nameController.dispose();
     _amountController.dispose();
+    _nameFocusNode.dispose();
+    _amountFocusNode.dispose();
     super.dispose();
   }
 
@@ -224,6 +228,10 @@ class _CreateEditSavingsGoalSheetState
               const SizedBox(height: 24),
               TextField(
                 controller: _nameController,
+                focusNode: _nameFocusNode,
+                textInputAction: TextInputAction.next,
+                onSubmitted: (_) =>
+                    FocusScope.of(context).requestFocus(_amountFocusNode),
                 enabled: !isEditing,
                 maxLength: 31,
                 decoration: InputDecoration(
@@ -253,6 +261,8 @@ class _CreateEditSavingsGoalSheetState
               const SizedBox(height: 16),
               TextField(
                 controller: _amountController,
+                focusNode: _amountFocusNode,
+                textInputAction: TextInputAction.done,
                 enabled: !isEditing,
                 keyboardType: const TextInputType.numberWithOptions(
                   decimal: true,

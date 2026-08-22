@@ -367,5 +367,6 @@
   "errorCouldNotLaunchUrl": "No se pudo abrir el enlace",
   "errorLoadingContent": "Error al cargar el contenido.",
   "errorCannotDeleteDefaultAccount": "No se puede eliminar la cuenta predeterminada. Por favor, asigne otra cuenta como predeterminada primero.",
-  "errorNoDefaultAccountForReassignment": "No se puede eliminar la cuenta porque no existe una cuenta predeterminada para la reasignación."
+  "errorNoDefaultAccountForReassignment": "No se puede eliminar la cuenta porque no existe una cuenta predeterminada para la reasignación.",
+  "errorDefaultAccountRequired": "Debes tener al menos una cuenta predeterminada."
 }

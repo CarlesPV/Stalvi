@@ -36,6 +36,9 @@ class _CreateEditAutomaticTransactionScreenState
   late final TextEditingController _amountController;
   late final TextEditingController _notesController;
   late final TextEditingController _customRecurrenceController;
+  final _amountFocusNode = FocusNode();
+  final _nameFocusNode = FocusNode();
+  final _notesFocusNode = FocusNode();
 
   @override
   void initState() {
@@ -72,6 +75,9 @@ class _CreateEditAutomaticTransactionScreenState
     _amountController.dispose();
     _notesController.dispose();
     _customRecurrenceController.dispose();
+    _amountFocusNode.dispose();
+    _nameFocusNode.dispose();
+    _notesFocusNode.dispose();
     super.dispose();
   }
 
@@ -317,6 +323,10 @@ class _CreateEditAutomaticTransactionScreenState
                             IntrinsicWidth(
                               child: TextField(
                                 controller: _amountController,
+                                focusNode: _amountFocusNode,
+                                textInputAction: TextInputAction.next,
+                                onSubmitted: (_) => FocusScope.of(context)
+                                    .requestFocus(_nameFocusNode),
                                 keyboardType:
                                     const TextInputType.numberWithOptions(
                                   decimal: true,
@@ -373,6 +383,10 @@ class _CreateEditAutomaticTransactionScreenState
                 const SizedBox(height: 32),
                 TextField(
                   controller: _nameController,
+                  focusNode: _nameFocusNode,
+                  textInputAction: TextInputAction.next,
+                  onSubmitted: (_) =>
+                      FocusScope.of(context).requestFocus(_notesFocusNode),
                   maxLength: 31,
                   decoration: InputDecoration(
                     labelText: l10n.autoTxTemplateNameLabel,
@@ -533,6 +547,18 @@ class _CreateEditAutomaticTransactionScreenState
                 const SizedBox(height: 24),
                 TextField(
                   controller: _notesController,
+                  focusNode: _notesFocusNode,
+                  textInputAction: TextInputAction.done,
+                  onSubmitted: (_) {
+                    final initialTxn = widget.transactionToEdit;
+                    ref
+                        .read(
+                          createEditAutomaticTransactionProvider(
+                            initialTxn,
+                          ).notifier,
+                        )
+                        .submit();
+                  },
                   maxLines: 3,
                   maxLength: 63,
                   style: theme.textTheme.bodyMedium,

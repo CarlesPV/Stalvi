@@ -367,5 +367,6 @@
   "errorCouldNotLaunchUrl": "No s'ha pogut obrir l'enllaç",
   "errorLoadingContent": "Error en carregar el contingut.",
   "errorCannotDeleteDefaultAccount": "No es pot eliminar el compte predeterminat. Si us plau, assigneu un altre compte com a predeterminat primer.",
-  "errorNoDefaultAccountForReassignment": "No es pot eliminar el compte perquè no hi ha cap compte predeterminat per a la reassignació."
+  "errorNoDefaultAccountForReassignment": "No es pot eliminar el compte perquè no hi ha cap compte predeterminat per a la reassignació.",
+  "errorDefaultAccountRequired": "Has de tenir almenys un compte predeterminat."
 }

@@ -91,7 +91,11 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
     final accountsAsync = ref.watch(accountsListProvider);
 
     final isEmpty = summaryAsync.when(
-      data: (s) => s.totalIncome == 0 && s.totalExpense == 0,
+      data: (s) =>
+          s.totalIncome == 0 &&
+          s.totalExpense == 0 &&
+          s.totalTransfersIn == 0 &&
+          s.totalTransfersOut == 0,
       loading: () => false,
       error: (_, __) => false,
     );

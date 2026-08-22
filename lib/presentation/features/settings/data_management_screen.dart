@@ -59,11 +59,13 @@ class _DataManagementScreenState extends ConsumerState<DataManagementScreen> {
     final l10n = AppLocalizations.of(context)!;
     final passController = TextEditingController();
     final confirmController = TextEditingController();
+    final passFocusNode = FocusNode();
+    final confirmFocusNode = FocusNode();
     String? dialogError;
     bool obscurePass = true;
     bool obscureConfirm = true;
 
-    return showDialog<String>(
+    final result = await showDialog<String>(
       context: context,
       barrierDismissible: false,
       builder: (ctx) {
@@ -84,6 +86,10 @@ class _DataManagementScreenState extends ConsumerState<DataManagementScreen> {
                     const SizedBox(height: 16),
                     TextField(
                       controller: passController,
+                      focusNode: passFocusNode,
+                      textInputAction: TextInputAction.next,
+                      onSubmitted: (_) =>
+                          FocusScope.of(ctx).requestFocus(confirmFocusNode),
                       obscureText: obscurePass,
                       decoration: InputDecoration(
                         labelText: l10n.exportPasswordLabel,
@@ -102,6 +108,8 @@ class _DataManagementScreenState extends ConsumerState<DataManagementScreen> {
                     const SizedBox(height: 12),
                     TextField(
                       controller: confirmController,
+                      focusNode: confirmFocusNode,
+                      textInputAction: TextInputAction.done,
                       obscureText: obscureConfirm,
                       decoration: InputDecoration(
                         labelText: l10n.exportPasswordConfirmLabel,
@@ -163,14 +171,21 @@ class _DataManagementScreenState extends ConsumerState<DataManagementScreen> {
         );
       },
     );
+
+    passController.dispose();
+    confirmController.dispose();
+    passFocusNode.dispose();
+    confirmFocusNode.dispose();
+    return result;
   }
 
   Future<String?> _askImportPassword(BuildContext context) async {
     final l10n = AppLocalizations.of(context)!;
     final passController = TextEditingController();
+    final passFocusNode = FocusNode();
     bool obscure = true;
 
-    return showDialog<String>(
+    final result = await showDialog<String>(
       context: context,
       barrierDismissible: false,
       builder: (ctx) {
@@ -190,6 +205,8 @@ class _DataManagementScreenState extends ConsumerState<DataManagementScreen> {
                   const SizedBox(height: 16),
                   TextField(
                     controller: passController,
+                    focusNode: passFocusNode,
+                    textInputAction: TextInputAction.done,
                     obscureText: obscure,
                     autofocus: true,
                     decoration: InputDecoration(
@@ -222,6 +239,10 @@ class _DataManagementScreenState extends ConsumerState<DataManagementScreen> {
         );
       },
     );
+
+    passController.dispose();
+    passFocusNode.dispose();
+    return result;
   }
 
   void _showExportSuccess(

@@ -2223,6 +2223,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Cannot delete account because no default account exists for reassignment.'**
   String get errorNoDefaultAccountForReassignment;
+
+  /// No description provided for @errorDefaultAccountRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'You must have at least one default account.'**
+  String get errorDefaultAccountRequired;
 }
 
 class _AppLocalizationsDelegate

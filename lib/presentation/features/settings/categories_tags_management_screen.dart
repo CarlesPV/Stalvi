@@ -483,6 +483,7 @@ class CategoryDialog extends StatefulWidget {
 
 class CategoryDialogState extends State<CategoryDialog> {
   final _nameController = TextEditingController();
+  final _nameFocusNode = FocusNode();
   String _selectedColor = '#2196F3';
   String _selectedIcon = 'category';
   final List<String> _colors = [
@@ -510,6 +511,13 @@ class CategoryDialogState extends State<CategoryDialog> {
   ];
 
   @override
+  void dispose() {
+    _nameController.dispose();
+    _nameFocusNode.dispose();
+    super.dispose();
+  }
+
+  @override
   void initState() {
     super.initState();
     if (widget.category != null) {
@@ -517,6 +525,37 @@ class CategoryDialogState extends State<CategoryDialog> {
       _selectedColor = widget.category!.color;
       _selectedIcon =
           widget.category!.icon.isNotEmpty ? widget.category!.icon : 'category';
+    }
+  }
+
+  Future<void> _submit() async {
+    if (_nameController.text.trim().isEmpty) return;
+    final repo = widget.ref.read(categoryRepositoryProvider);
+    if (widget.category == null) {
+      final newId = const Uuid().v4();
+      await repo.createCategory(
+        Category(
+          id: newId,
+          name: _nameController.text.trim(),
+          icon: _selectedIcon,
+          color: _selectedColor,
+          createdAt: DateTime.now(),
+          modifiedAt: DateTime.now(),
+        ),
+      );
+      if (mounted) Navigator.pop(context, newId);
+    } else {
+      await repo.updateCategory(
+        widget.category!.copyWith(
+          name: _nameController.text.trim(),
+          icon: _selectedIcon,
+          color: _selectedColor,
+          modifiedAt: DateTime.now(),
+        ),
+      );
+      if (mounted) {
+        Navigator.pop(context, widget.category!.id);
+      }
     }
   }
 
@@ -543,6 +582,8 @@ class CategoryDialogState extends State<CategoryDialog> {
             const SizedBox(height: 16),
             TextField(
               controller: _nameController,
+              focusNode: _nameFocusNode,
+              textInputAction: TextInputAction.done,
               maxLength: 31,
               decoration: InputDecoration(
                 labelText: l10n.labelCategoryName,
@@ -595,36 +636,7 @@ class CategoryDialogState extends State<CategoryDialog> {
             ),
             const SizedBox(height: 24),
             ElevatedButton(
-              onPressed: () async {
-                if (_nameController.text.trim().isEmpty) return;
-                final repo = widget.ref.read(categoryRepositoryProvider);
-                if (widget.category == null) {
-                  final newId = const Uuid().v4();
-                  await repo.createCategory(
-                    Category(
-                      id: newId,
-                      name: _nameController.text.trim(),
-                      icon: _selectedIcon,
-                      color: _selectedColor,
-                      createdAt: DateTime.now(),
-                      modifiedAt: DateTime.now(),
-                    ),
-                  );
-                  if (context.mounted) Navigator.pop(context, newId);
-                } else {
-                  await repo.updateCategory(
-                    widget.category!.copyWith(
-                      name: _nameController.text.trim(),
-                      icon: _selectedIcon,
-                      color: _selectedColor,
-                      modifiedAt: DateTime.now(),
-                    ),
-                  );
-                  if (context.mounted) {
-                    Navigator.pop(context, widget.category!.id);
-                  }
-                }
-              },
+              onPressed: _submit,
               child: Text(l10n.btnSave),
             ),
           ],
@@ -654,12 +666,47 @@ class TagDialog extends StatefulWidget {
 
 class TagDialogState extends State<TagDialog> {
   final _nameController = TextEditingController();
+  final _nameFocusNode = FocusNode();
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _nameFocusNode.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
     super.initState();
     if (widget.tag != null) {
       _nameController.text = widget.tag!.name;
+    }
+  }
+
+  Future<void> _submit() async {
+    if (_nameController.text.trim().isEmpty) return;
+    final repo = widget.ref.read(tagRepositoryProvider);
+    if (widget.tag == null) {
+      final newId = const Uuid().v4();
+      await repo.createTag(
+        Tag(
+          id: newId,
+          name: _nameController.text.trim(),
+          createdAt: DateTime.now(),
+          modifiedAt: DateTime.now(),
+        ),
+      );
+      widget.ref.invalidate(tagsListProvider);
+      if (mounted) Navigator.pop(context, newId);
+    } else {
+      await repo.updateTag(
+        widget.tag!.copyWith(
+          name: _nameController.text.trim(),
+          modifiedAt: DateTime.now(),
+        ),
+      );
+      widget.ref.invalidate(tagsListProvider);
+      if (mounted) Navigator.pop(context, widget.tag!.id);
     }
   }
 
@@ -684,6 +731,8 @@ class TagDialogState extends State<TagDialog> {
             const SizedBox(height: 16),
             TextField(
               controller: _nameController,
+              focusNode: _nameFocusNode,
+              textInputAction: TextInputAction.done,
               maxLength: 31,
               decoration: InputDecoration(
                 labelText: l10n.labelTagName,
@@ -692,32 +741,7 @@ class TagDialogState extends State<TagDialog> {
             ),
             const SizedBox(height: 24),
             ElevatedButton(
-              onPressed: () async {
-                if (_nameController.text.trim().isEmpty) return;
-                final repo = widget.ref.read(tagRepositoryProvider);
-                if (widget.tag == null) {
-                  final newId = const Uuid().v4();
-                  await repo.createTag(
-                    Tag(
-                      id: newId,
-                      name: _nameController.text.trim(),
-                      createdAt: DateTime.now(),
-                      modifiedAt: DateTime.now(),
-                    ),
-                  );
-                  widget.ref.invalidate(tagsListProvider);
-                  if (context.mounted) Navigator.pop(context, newId);
-                } else {
-                  await repo.updateTag(
-                    widget.tag!.copyWith(
-                      name: _nameController.text.trim(),
-                      modifiedAt: DateTime.now(),
-                    ),
-                  );
-                  widget.ref.invalidate(tagsListProvider);
-                  if (context.mounted) Navigator.pop(context, widget.tag!.id);
-                }
-              },
+              onPressed: _submit,
               child: Text(l10n.btnSave),
             ),
           ],

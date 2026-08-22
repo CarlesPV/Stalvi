@@ -1187,4 +1187,8 @@ class AppLocalizationsCa extends AppLocalizations {
   @override
   String get errorNoDefaultAccountForReassignment =>
       'No es pot eliminar el compte perquè no hi ha cap compte predeterminat per a la reassignació.';
+
+  @override
+  String get errorDefaultAccountRequired =>
+      'Has de tenir almenys un compte predeterminat.';
 }

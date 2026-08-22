@@ -36,6 +36,7 @@ class CreateEditBudgetSheet extends ConsumerStatefulWidget {
 
 class _CreateEditBudgetSheetState extends ConsumerState<CreateEditBudgetSheet> {
   final _amountController = TextEditingController();
+  final _amountFocusNode = FocusNode();
   String? _selectedCategoryId;
   String? _selectedAccountId;
   String _selectedCurrency = 'EUR';
@@ -68,6 +69,7 @@ class _CreateEditBudgetSheetState extends ConsumerState<CreateEditBudgetSheet> {
   @override
   void dispose() {
     _amountController.dispose();
+    _amountFocusNode.dispose();
     super.dispose();
   }
 
@@ -242,6 +244,8 @@ class _CreateEditBudgetSheetState extends ConsumerState<CreateEditBudgetSheet> {
               const SizedBox(height: 24),
               TextField(
                 controller: _amountController,
+                focusNode: _amountFocusNode,
+                textInputAction: TextInputAction.done,
                 enabled: !isEditing,
                 keyboardType: const TextInputType.numberWithOptions(
                   decimal: true,

@@ -46,6 +46,10 @@ class CreateAccountUseCase {
 
     final now = DateTime.now();
 
+    final activeAccounts = await _repository.getAccountsByUserId(params.userId);
+    final forceDefault = activeAccounts.isEmpty;
+    final isDefault = forceDefault ? true : params.isDefault;
+
     final account = Account(
       id: params.id,
       userId: params.userId,
@@ -55,7 +59,7 @@ class CreateAccountUseCase {
       currency: params.currency,
       color: params.color,
       icon: params.icon,
-      isDefault: params.isDefault,
+      isDefault: isDefault,
       isDeleted: false,
       createdAt: now,
       modifiedAt: now,

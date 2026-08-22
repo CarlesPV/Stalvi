@@ -28,6 +28,8 @@ class CreateAccountDialog extends ConsumerStatefulWidget {
 class _CreateAccountDialogState extends ConsumerState<CreateAccountDialog> {
   final _nameController = TextEditingController();
   final _balanceController = TextEditingController();
+  final _nameFocusNode = FocusNode();
+  final _balanceFocusNode = FocusNode();
 
   AccountType _selectedType = AccountType.bank;
   String _selectedCurrency = 'EUR';
@@ -58,6 +60,8 @@ class _CreateAccountDialogState extends ConsumerState<CreateAccountDialog> {
   void dispose() {
     _nameController.dispose();
     _balanceController.dispose();
+    _nameFocusNode.dispose();
+    _balanceFocusNode.dispose();
     super.dispose();
   }
 
@@ -210,6 +214,10 @@ class _CreateAccountDialogState extends ConsumerState<CreateAccountDialog> {
               TextField(
                 key: const ValueKey('createAccountNameField'),
                 controller: _nameController,
+                focusNode: _nameFocusNode,
+                textInputAction: TextInputAction.next,
+                onSubmitted: (_) =>
+                    FocusScope.of(context).requestFocus(_balanceFocusNode),
                 maxLength: 31,
                 decoration: InputDecoration(
                   labelText: l10n.createAccountNameLabel,
@@ -226,6 +234,8 @@ class _CreateAccountDialogState extends ConsumerState<CreateAccountDialog> {
               TextField(
                 key: const ValueKey('createAccountBalanceField'),
                 controller: _balanceController,
+                focusNode: _balanceFocusNode,
+                textInputAction: TextInputAction.done,
                 keyboardType: const TextInputType.numberWithOptions(
                   decimal: true,
                 ),

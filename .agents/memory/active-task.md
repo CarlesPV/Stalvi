@@ -1,14 +1,12 @@
-# Phase 67: Account Statistics Transfers, Cash Flow Integration & Recycle Bin Chronological Sorting
+# Phase 68: Statistics Transfers, Default Account Constraints & Form UX Improvements
 
 ## Objective
-Enhance account-level financial statistics to include transfer inflows and outflows using raw transaction streams, recalculate cash flow net balance, add a dedicated Transfers summary card, enforce strict surplus/deficit badge rendering, order the recycle bin chronologically by most recently deleted first (`deletedAt` descending), and maintain full trilingual parity across English, Spanish, and Catalan.
+Ensure that statistics filtering by account correctly displays transfer data. Enforce strict domain constraints to guarantee the app always has exactly one active default account. Improve User Experience across all forms (screens and popups) by configuring the keyboard to automatically jump to the next input field upon pressing 'Enter' or 'Next'. Ensure 100% test coverage and trilingual localization parity.
 
 ## Tasks
-- [x] **1. Raw Transaction Streams in Statistics:** Watched `rawTransactionsStreamProvider` across `periodSummaryProvider`, `dashboardPeriodSummaryProvider`, and top categories providers to prevent premature transfer deduplication on destination accounts.
-- [x] **2. Cash Flow & Transfers Domain/DAO:** Extended `PeriodSummary` entity and `StatisticsDao` with `totalTransfersIn` and `totalTransfersOut` SQLite aggregation fields, and updated `_NetBalanceCard` to compute accurate cash flow (`Income - Expense + Transfers In - Transfers Out`).
-- [x] **3. Strict Surplus/Deficit Badges:** Render `▲ Surplus` strictly when `net > 0`, `▼ Deficit` strictly when `net < 0`, and omit badges when `net == 0`.
-- [x] **4. Dedicated Transfers UI Card:** Implemented a new `_SummaryCard` for Transfers (`statisticsTransfers`) displayed conditionally when an account filter is active.
-- [x] **5. Recycle Bin Chronological Sorting:** Updated `TrashDao.getTrashItems()` and `RecycleBinNotifier` to sort soft-deleted items by most recently deleted first (`b.deletedAt.compareTo(a.deletedAt)`).
-- [x] **6. Trilingual Localization:** Synchronized `statisticsTransfers` across `app_en.arb`, `app_es.arb`, and `app_ca.arb` and regenerated localization classes (`flutter gen-l10n`).
-- [x] **7. Tests & Static Analysis:** Added unit and widget tests for origin/destination transfer stats, zero-balance badges, and recycle bin sorting. All 569 tests passing with 0 `flutter analyze` issues.
-- [x] **8. Documentation & Memory:** Updated `roadmap.md`, `roadmap-summary.md`, `docs/resolved-issues-june-2026.md`, `.agents/context/roadmap-summary.md`, and `.agents/memory/active-task.md`.
+- [x] **1. Fix Statistics Account Filtering:** Updated `isEmpty` check in `statistics_screen.dart` to include transfers.
+- [x] **2. Enforce Default Account Constraints:** Updated `UpdateAccountUseCase` to throw `DEFAULT_ACCOUNT_REQUIRED` and `CreateAccountUseCase` to force `isDefault = true` for the first account.
+- [x] **3. UI & Localization Updates:** Added `errorDefaultAccountRequired` to `.arb` files and handled the error in `edit_account_dialog.dart`.
+- [x] **4. Form UX - Keyboard Focus Navigation:** Update `TextField` and `TextFormField` widgets across the app (`add_transaction_screen`, `create_account_dialog`, `edit_account_dialog`, `create_edit_budget_sheet`, `create_edit_savings_goal_sheet`, `create_edit_automatic_transaction_screen`, `categories_tags_management_screen`, `data_management_screen`, etc.) to use `textInputAction: TextInputAction.next` (and `done` for the final field). Implement `FocusNode` state and `onSubmitted` logic so the keyboard jumps to the next logical field automatically and closes on the last one without triggering premature confirmation.
+- [x] **5. Testing:** Verify form submissions and focus jumps don't break existing widget tests. Ensure `flutter test` and `flutter analyze` pass.
+- [x] **6. Documentation & Memory:** Update `roadmap.md`, `roadmap-summary.md`, and `.agents/memory/active-task.md` upon successful completion.

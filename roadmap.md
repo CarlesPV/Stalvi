@@ -479,6 +479,13 @@
   - [x] **Trilingual Localization:** Added and synchronized `statisticsTransfers` across `app_en.arb`, `app_es.arb`, and `app_ca.arb` and regenerated localizations with `flutter gen-l10n`.
   - [x] **Automated Testing & Static Analysis:** Added unit and widget tests covering destination, origin, global transfer statistics calculations, zero-balance badge behavior, and millisecond-precise most-recently-deleted trash sorting, achieving 100% test suite pass rate across 569 tests and 0 static analysis issues on `flutter analyze`.
 
+- [x] **Phase 68: Statistics Transfers, Default Account Constraints & Form UX Improvements**
+  - [x] **Statistics Account Filtering Empty State Fix:** Updated the `isEmpty` determination logic in `statistics_screen.dart` to check `summary.totalTransfersIn > 0 || summary.totalTransfersOut > 0`, ensuring accounts with only transfer movements display statistics cards rather than an empty state.
+  - [x] **Default Account Business Rules & Constraints:** Updated `UpdateAccountUseCase` to throw `ValidationException(code: 'DEFAULT_ACCOUNT_REQUIRED')` when attempting to disable the `isDefault` flag on an existing default account. Updated `CreateAccountUseCase` to automatically force `isDefault = true` when creating an account if no active (non-deleted) accounts exist.
+  - [x] **UI Validation & Trilingual Parity:** Added localized string `errorDefaultAccountRequired` across English (`app_en.arb`), Spanish (`app_es.arb`), and Catalan (`app_ca.arb`), handling the validation exception seamlessly in `EditAccountDialog`.
+  - [x] **Form UX & Keyboard Focus Navigation:** Configured `textInputAction` (`TextInputAction.next` and `TextInputAction.done`) along with `FocusNode`s and `onSubmitted` handlers across all dialogs, bottom sheets, and forms (`add_transaction_screen`, `create_account_dialog`, `edit_account_dialog`, `create_edit_budget_sheet`, `create_edit_savings_goal_sheet`, `create_edit_automatic_transaction_screen`, `categories_tags_management_screen`, `data_management_screen`) to enable seamless auto-focus jumping between fields while closing gracefully on the final field without premature submission.
+  - [x] **Comprehensive Testing & Verification:** Added and updated unit and widget tests for `periodSummaryProvider`, `UpdateAccountUseCase`, and `CreateAccountUseCase`, achieving 100% test pass rate across 572 tests and 0 warnings/errors on `flutter analyze`.
+
 ---
 
 ## Post-Launch / Maintenance
