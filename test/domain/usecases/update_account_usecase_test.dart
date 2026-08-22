@@ -132,5 +132,39 @@ void main() {
       ).called(1);
       verifyNever(() => mockAccountRepository.updateAccount(any()));
     });
+
+    test(
+        'should throw ValidationException with DEFAULT_ACCOUNT_REQUIRED when attempting to unset default account',
+        () async {
+      // Arrange
+      final params = UpdateAccountParams(
+        id: existingAccount.id,
+        name: 'Updated Wallet',
+        type: AccountType.bank,
+        color: '#FFFFFF',
+        icon: 'bank',
+        isDefault: false,
+      );
+
+      when(
+        () => mockAccountRepository.getAccountById(existingAccount.id),
+      ).thenAnswer((_) async => existingAccount);
+
+      // Act & Assert
+      expect(
+        () => useCase.execute(params),
+        throwsA(
+          isA<ValidationException>().having(
+            (e) => e.code,
+            'code',
+            'DEFAULT_ACCOUNT_REQUIRED',
+          ),
+        ),
+      );
+      verify(
+        () => mockAccountRepository.getAccountById(existingAccount.id),
+      ).called(1);
+      verifyNever(() => mockAccountRepository.updateAccount(any()));
+    });
   });
 }

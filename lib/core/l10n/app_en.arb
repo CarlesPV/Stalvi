@@ -367,5 +367,6 @@
   "errorCouldNotLaunchUrl": "Could not launch URL",
   "errorLoadingContent": "Error loading content.",
   "errorCannotDeleteDefaultAccount": "Cannot delete the default account. Please set another account as default first.",
-  "errorNoDefaultAccountForReassignment": "Cannot delete account because no default account exists for reassignment."
+  "errorNoDefaultAccountForReassignment": "Cannot delete account because no default account exists for reassignment.",
+  "errorDefaultAccountRequired": "You must have at least one default account."
 }

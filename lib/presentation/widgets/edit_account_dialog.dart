@@ -28,6 +28,7 @@ class EditAccountDialog extends ConsumerStatefulWidget {
 
 class _EditAccountDialogState extends ConsumerState<EditAccountDialog> {
   late final TextEditingController _nameController;
+  final _nameFocusNode = FocusNode();
 
   late AccountType _selectedType;
   late String _selectedColor;
@@ -36,6 +37,7 @@ class _EditAccountDialogState extends ConsumerState<EditAccountDialog> {
   late bool _isDefault;
   String? _errorMessage;
   String? _nameError;
+  String? _defaultAccountError;
 
   final List<String> _colors = [
     '#2196F3', // Blue
@@ -66,6 +68,7 @@ class _EditAccountDialogState extends ConsumerState<EditAccountDialog> {
   @override
   void dispose() {
     _nameController.dispose();
+    _nameFocusNode.dispose();
     super.dispose();
   }
 
@@ -82,6 +85,7 @@ class _EditAccountDialogState extends ConsumerState<EditAccountDialog> {
     setState(() {
       _errorMessage = null;
       _nameError = null;
+      _defaultAccountError = null;
     });
 
     final l10n = AppLocalizations.of(context)!;
@@ -114,6 +118,8 @@ class _EditAccountDialogState extends ConsumerState<EditAccountDialog> {
         setState(() {
           if (e.code == 'INVALID_NAME') {
             _errorMessage = l10n.createAccountErrorName;
+          } else if (e.code == 'DEFAULT_ACCOUNT_REQUIRED') {
+            _defaultAccountError = l10n.errorDefaultAccountRequired;
           } else {
             _errorMessage = e.message;
           }
@@ -438,6 +444,8 @@ class _EditAccountDialogState extends ConsumerState<EditAccountDialog> {
               // Account Name field
               TextField(
                 controller: _nameController,
+                focusNode: _nameFocusNode,
+                textInputAction: TextInputAction.done,
                 maxLength: 31,
                 decoration: InputDecoration(
                   labelText: l10n.createAccountNameLabel,
@@ -718,14 +726,31 @@ class _EditAccountDialogState extends ConsumerState<EditAccountDialog> {
                       ),
                     );
                     if (confirm == true) {
-                      setState(() => _isDefault = true);
+                      setState(() {
+                        _isDefault = true;
+                        _defaultAccountError = null;
+                      });
                     }
                   } else {
-                    setState(() => _isDefault = false);
+                    setState(() {
+                      _isDefault = false;
+                      _defaultAccountError = null;
+                    });
                   }
                 },
               ),
-              const SizedBox(height: 36),
+              if (_defaultAccountError != null)
+                Padding(
+                  padding:
+                      const EdgeInsets.only(left: 16, right: 16, bottom: 8),
+                  child: Text(
+                    _defaultAccountError!,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: colorScheme.error,
+                    ),
+                  ),
+                ),
+              const SizedBox(height: 28),
 
               // Save / Cancel button
               Row(

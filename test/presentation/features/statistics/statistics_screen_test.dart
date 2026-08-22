@@ -489,5 +489,40 @@ void main() {
         expect(find.text('▲ Surplus'), findsOneWidget);
       },
     );
+    testWidgets(
+      'does not show global empty state when only transfers exist',
+      (WidgetTester tester) async {
+        final now = DateTime.now();
+        const transferOnlySummary = PeriodSummary(
+          totalIncome: 0,
+          totalExpense: 0,
+          totalTransfersIn: 20000,
+          totalTransfersOut: 0,
+        );
+
+        await tester.pumpWidget(
+          _buildTestWidget(
+            summaryState: const AsyncData(transferOnlySummary),
+            expenseCatState: const AsyncData(<CategoryStatistic>[]),
+            incomeCatState: const AsyncData(<CategoryStatistic>[]),
+            filterState: StatisticsFilter(
+              dateRange: DateTimeRange(
+                start: now.subtract(const Duration(days: 30)),
+                end: now,
+              ),
+              preset: StatisticsDatePreset.last30Days,
+              accountId: 'acc_dest',
+            ),
+          ),
+        );
+
+        await tester.pump();
+
+        expect(find.text('Net Balance'), findsOneWidget);
+        expect(find.text('Transfers'), findsOneWidget);
+        // "No data available." is the fallback title for the empty state widget.
+        expect(find.text('No data available.'), findsNothing);
+      },
+    );
   });
 }

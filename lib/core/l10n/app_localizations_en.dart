@@ -1171,4 +1171,8 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get errorNoDefaultAccountForReassignment =>
       'Cannot delete account because no default account exists for reassignment.';
+
+  @override
+  String get errorDefaultAccountRequired =>
+      'You must have at least one default account.';
 }

@@ -1187,4 +1187,8 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get errorNoDefaultAccountForReassignment =>
       'No se puede eliminar la cuenta porque no existe una cuenta predeterminada para la reasignación.';
+
+  @override
+  String get errorDefaultAccountRequired =>
+      'Debes tener al menos una cuenta predeterminada.';
 }

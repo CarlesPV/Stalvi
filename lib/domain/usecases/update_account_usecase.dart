@@ -56,6 +56,13 @@ class UpdateAccountUseCase {
       );
     }
 
+    if (existing.isDefault && !params.isDefault) {
+      throw const ValidationException(
+        message: 'You must have at least one default account.',
+        code: 'DEFAULT_ACCOUNT_REQUIRED',
+      );
+    }
+
     final updated = existing.copyWith(
       name: params.name.trim(),
       type: params.type,

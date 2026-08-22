@@ -32,6 +32,8 @@ class AddTransactionScreen extends ConsumerStatefulWidget {
 class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
   final _amountController = TextEditingController();
   final _notesController = TextEditingController();
+  final _amountFocusNode = FocusNode();
+  final _notesFocusNode = FocusNode();
 
   @override
   void initState() {
@@ -53,6 +55,8 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
   void dispose() {
     _amountController.dispose();
     _notesController.dispose();
+    _amountFocusNode.dispose();
+    _notesFocusNode.dispose();
     super.dispose();
   }
 
@@ -320,6 +324,10 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                             IntrinsicWidth(
                               child: TextField(
                                 controller: _amountController,
+                                focusNode: _amountFocusNode,
+                                textInputAction: TextInputAction.next,
+                                onSubmitted: (_) => FocusScope.of(context)
+                                    .requestFocus(_notesFocusNode),
                                 keyboardType:
                                     const TextInputType.numberWithOptions(
                                   decimal: true,
@@ -648,6 +656,10 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                 // ── Notes Text Field ──────────────────────────────────────────
                 TextField(
                   controller: _notesController,
+                  focusNode: _notesFocusNode,
+                  textInputAction: TextInputAction.done,
+                  onSubmitted: (_) =>
+                      ref.read(addTransactionProvider.notifier).submit(),
                   maxLines: 3,
                   maxLength: 63,
                   style: theme.textTheme.bodyMedium,
