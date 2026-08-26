@@ -63,7 +63,7 @@ class TransactionDetailsDialog extends ConsumerWidget {
     );
 
     final color = isTransfer
-        ? Colors.blue
+        ? colorScheme.onSurface
         : (isIncome ? financialColors.positive : financialColors.negative);
 
     final typeIcon = isTransfer

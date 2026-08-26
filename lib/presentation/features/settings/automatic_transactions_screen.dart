@@ -48,11 +48,14 @@ class AutomaticTransactionsScreen extends ConsumerWidget {
               final category =
                   categories.where((c) => c.id == txn.categoryId).firstOrNull;
 
+              final isTransfer = txn.type == TransactionType.transfer;
               final isExpense = txn.type == TransactionType.expense;
-              final amountColor = isExpense
-                  ? financialColors.negative
-                  : financialColors.positive;
-              final amountPrefix = isExpense ? '-' : '+';
+              final amountColor = isTransfer
+                  ? colorScheme.onSurface
+                  : (isExpense
+                      ? financialColors.negative
+                      : financialColors.positive);
+              final amountPrefix = isTransfer ? '' : (isExpense ? '-' : '+');
               final amountText =
                   '$amountPrefix${CurrencyFormatter(currencyCode: txn.currency).format(txn.amount / 100)}';
 

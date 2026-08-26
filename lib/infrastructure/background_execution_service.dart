@@ -82,7 +82,7 @@ class BackgroundExecutionService implements BackgroundSyncService {
     await Workmanager().registerPeriodicTask(
       _periodicTaskUniqueName,
       executeRecurringTransactionsTask,
-      frequency: const Duration(hours: 4),
+      frequency: const Duration(hours: 12),
       existingWorkPolicy: ExistingPeriodicWorkPolicy.replace,
       constraints: constraints,
     );

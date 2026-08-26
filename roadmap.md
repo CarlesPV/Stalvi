@@ -486,6 +486,12 @@
   - [x] **Form UX & Keyboard Focus Navigation:** Configured `textInputAction` (`TextInputAction.next` and `TextInputAction.done`) along with `FocusNode`s and `onSubmitted` handlers across all dialogs, bottom sheets, and forms (`add_transaction_screen`, `create_account_dialog`, `edit_account_dialog`, `create_edit_budget_sheet`, `create_edit_savings_goal_sheet`, `create_edit_automatic_transaction_screen`, `categories_tags_management_screen`, `data_management_screen`) to enable seamless auto-focus jumping between fields while closing gracefully on the final field without premature submission.
   - [x] **Comprehensive Testing & Verification:** Added and updated unit and widget tests for `periodSummaryProvider`, `UpdateAccountUseCase`, and `CreateAccountUseCase`, achieving 100% test pass rate across 572 tests and 0 warnings/errors on `flutter analyze`.
 
+- [x] **Phase 69: Semantic Visuals, PDF Fixes & Background Optimization**
+  - [x] Refactored transaction amount colors in the UI to display transfers in black (neutral) instead of red/green.
+  - [x] Optimized WorkManager background execution trigger from 4h to 12h for better battery efficiency.
+  - [x] Fixed PDF export net balance styling to render in black when the total is exactly 0.
+  - [x] Maintained 100% test pass rate and 0 static analysis warnings.
+
 ---
 
 ## Post-Launch / Maintenance

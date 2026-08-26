@@ -890,7 +890,20 @@ This document lists the completed phases of the Stalvi development roadmap, prov
   - 100% clean static analysis (`flutter analyze` with 0 issues).
   - 100% automated test suite pass rate across 572 unit, widget, and integration tests.
 
+### Phase 69: Semantic Visuals, PDF Fixes & Background Optimization
+* **Completion Date:** August 26, 2026
+* **Objective:** Refactor transaction amount colors in the UI to display transfers in neutral/black instead of red/green, optimize the WorkManager background execution trigger frequency from 4 hours to 12 hours for better battery efficiency, fix PDF export net balance styling to render in black when the total is exactly 0, and maintain 100% test pass rate and 0 static analysis warnings.
+* **Accomplishments:**
+  - **Semantic Color Coding for Transfers:** Refactored transaction amount styling in `_TransactionItem` (Dashboard), `automatic_transactions_screen.dart`, and `transaction_details_dialog.dart` so that transfer amounts render in `colorScheme.onSurface` (neutral/black) rather than positive green or negative red, visually reinforcing their zero net impact on net worth.
+  - **WorkManager Battery Optimization:** Adjusted the background worker periodic execution interval in `background_execution_service.dart` from 4 hours to 12 hours, preserving device battery life while ensuring reliable evaluation of recurring transactions and exchange rate synchronization.
+  - **PDF Net Balance Styling Fix:** Updated `export_service_impl.dart` so that when `(totalIncome - totalExpense) == 0`, the net balance text color in the PDF report uses `PdfColors.black` instead of green or red.
+  - **QA & Verification:** Achieved 100% test suite pass rate across 572 tests and 0 static analysis issues on `flutter analyze`.
+* **Verification:**
+  - 100% clean static analysis (`flutter analyze` with 0 issues).
+  - 100% automated test suite pass rate across 572 unit, widget, and integration tests.
+
 ## Recent Updates
+- Completed Phase 69 (Semantic Visuals, PDF Fixes & Background Optimization), refactoring transaction amount colors in the UI to render transfers in neutral/black instead of red/green, optimizing WorkManager background execution trigger interval from 4 hours to 12 hours for improved battery efficiency, fixing PDF export net balance styling to render in black when total is exactly 0, and maintaining 100% test pass rate across 572 tests and 0 static analysis warnings.
 - Completed Phase 68 (Statistics Transfers, Default Account Constraints & Form UX Improvements), fixing statistics empty state for accounts with only transfers, enforcing domain validation to always require an active default account in creation and updates, adding localized `errorDefaultAccountRequired` in EN, ES, and CA, configuring seamless keyboard focus navigation across all modal and screen forms (including backup export password dialogs) without premature submission, and achieving a 100% test pass rate across 572 tests and 0 static analyzer issues.
 - Completed Phase 67 (Account Statistics Transfers, Cash Flow Integration & Recycle Bin Chronological Sorting), resolving destination transfer visibility in account statistics using raw transaction streams, adding `totalTransfersIn`/`totalTransfersOut` to `PeriodSummary` and `StatisticsDao`, recalculating net balance for account cash flow, enforcing strict surplus (>0) / deficit (<0) badge logic, adding a dedicated "Transfers" card to the UI, ordering recycle bin items chronologically by most recently deleted first (`deletedAt` descending), synchronizing ARB translations (EN, ES, CA), and achieving a 100% test pass rate across 569 tests.
 - Completed Phase 66 (Enhanced Data Exports & UI Deletion Safeguards), adding UTF-8 BOM, semicolon delimiter, and `source_account`/`destination_account` to CSV exports, multi-line centered transfer formatting in PDF exports, color-coded type badges for Income and Expense, transaction icon and active transaction filtering (`isDeleted = false`) in account deletion dialogs, and sentence-case `labelAmount` localization.

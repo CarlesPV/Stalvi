@@ -420,9 +420,11 @@ class ExportServiceImpl implements IExportService {
                   _pdfSummaryItem(
                     l10n.statisticsNetBalance,
                     '$symbol ${_centsToDecimal(summary.totalIncome - summary.totalExpense, l10n.localeName)} $defaultCurrency',
-                    summary.totalIncome >= summary.totalExpense
-                        ? PdfColors.green800
-                        : PdfColors.red800,
+                    (summary.totalIncome - summary.totalExpense) == 0
+                        ? PdfColors.black
+                        : (summary.totalIncome - summary.totalExpense) > 0
+                            ? PdfColors.green800
+                            : PdfColors.red800,
                   ),
                 ],
               ),

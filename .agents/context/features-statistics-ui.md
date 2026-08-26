@@ -9,7 +9,9 @@
 ## 2. User Experience (UX) Principles
 * **Anti-Blank Page Syndrome:** Always show default data or highly illustrative empty states (e.g., "Looks like you have no expenses yet! Tap '+' to log your morning coffee").
 * **Discreet Mode:** Include a prominent but subtle toggle (e.g., an eye icon) on the main dashboard to mask all global balances (`**** €`).
+* **Semantic Movement Colors:** Income is rendered in pastel green (`financialColors.positive`), Expense in pastel red (`financialColors.negative`), and Transfers in neutral text color (`colorScheme.onSurface` / black) across all listings and details to reflect zero net impact on net worth.
 * **Frictionless Entry:** The "Add Movement" FAB (Floating Action Button) must be accessible from almost anywhere. The input form should prioritize the numeric keypad.
+* **Seamless Keyboard Navigation:** All input forms configure `TextInputAction.next` / `TextInputAction.done` and focus nodes to allow smooth jumping between fields without premature form submission.
 * **Read-Only Padlock Indicators:** Appends visual padlock icons trailing strictly read-only/non-editable fields (excluding date fields) on the Budgets, Savings Goals, and Accounts/Wallets detail/edit sheets to indicate immutability.
 
 ## 3. Screen Flows

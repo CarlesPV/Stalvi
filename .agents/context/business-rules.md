@@ -30,12 +30,18 @@
 * **Acceptance Criteria:**
   * Transfer movements require both a source and destination account.
   * Transfers are strictly excluded from "Total Expense" and "Total Income" calculations.
+  * Transfer amounts are displayed in neutral/black (`colorScheme.onSurface`) in transaction lists and details to reflect zero net impact on net worth.
 
 **User Story 2.2:** As a user, I want to delete a transaction safely so I can recover it if I make a mistake.
 * **Acceptance Criteria:**
   * Deleting a transaction sets `is_deleted` to true (Soft Delete).
   * Soft-deleted items disappear from charts and balances.
   * Items in the Trash are permanently purged only after 30 days.
+
+**User Story 2.3: Automatic Background Processing:** As a user, I want scheduled recurring transactions and exchange rates processed automatically in the background with minimal battery impact.
+* **Acceptance Criteria:**
+  * Background periodic processing is scheduled every 12 hours via WorkManager.
+  * Recurring transactions and daily exchange rates are evaluated safely offline-first.
 
 ## Epic 3: Privacy & Security
 **User Story 3.1:** As a privacy-conscious user, I want my financial data protected when I switch apps.

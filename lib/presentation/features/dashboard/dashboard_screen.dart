@@ -940,8 +940,9 @@ class _TransactionItem extends ConsumerWidget {
       currencyCode: transaction.originalCurrency,
       showSign: !isTransfer,
     );
-    final color =
-        isIncome ? financialColors.positive : financialColors.negative;
+    final color = isTransfer
+        ? colorScheme.onSurface
+        : (isIncome ? financialColors.positive : financialColors.negative);
 
     final categories = ref.watch(categoriesListProvider).value ?? [];
     Category? category;
