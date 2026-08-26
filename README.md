@@ -16,6 +16,12 @@ Stalvi bridges the gap between premium design aesthetics and absolute privacy. B
 
 Designed with strict **Clean Architecture** principles, the project ensures isolated testing, maintainable modular layers, and high-performance queries directly at the SQLite level using robust database aggregation with Drift.
 
+## 📸 Screenshots
+
+| Dashboard | Transactions | Analytics | Settings |
+| :---: | :---: | :---: | :---: |
+| ![Dashboard](assets/screenshots/01_dashboard.png) | ![Transactions](assets/screenshots/02_transactions.png) | ![Analytics](assets/screenshots/03_analytics.png) | ![Settings](assets/screenshots/04_settings.png) |
+
 ## ✨ Features
 
 - **Local-First & Zero-Telemetry**: Your data belongs to you. No data is sent to external servers.
