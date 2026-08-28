@@ -1,8 +1,6 @@
 include: package:flutter_lints/flutter.yaml
 
 analyzer:
-  plugins:
-    - riverpod_lint
   exclude:
     - "**/*.g.dart"
     - "**/*.freezed.dart"
