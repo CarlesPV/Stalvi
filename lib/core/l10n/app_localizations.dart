@@ -160,6 +160,12 @@ abstract class AppLocalizations {
   /// **'Save'**
   String get btnSave;
 
+  /// No description provided for @btnSelect.
+  ///
+  /// In en, this message translates to:
+  /// **'Select'**
+  String get btnSelect;
+
   /// No description provided for @btnViewDetails.
   ///
   /// In en, this message translates to:
@@ -1665,6 +1671,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Last 30 Days'**
   String get exportPdfLast30Days;
+
+  /// No description provided for @exportPdfSelectMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Month'**
+  String get exportPdfSelectMonth;
 
   /// No description provided for @exportSavedTo.
   ///

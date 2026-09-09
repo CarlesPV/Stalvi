@@ -73,6 +73,7 @@ class ExportMonthlyPdfUseCase {
     PdfExportDateRange dateRange = PdfExportDateRange.currentMonth,
     DateTime? forceNow,
     String? customMonthLabel,
+    DateTime? selectedMonth,
   }) async {
     final now = forceNow ?? DateTime.now();
     DateTime startDate;
@@ -82,6 +83,19 @@ class ExportMonthlyPdfUseCase {
     if (dateRange == PdfExportDateRange.last30Days) {
       startDate = now.subtract(const Duration(days: 30));
       endDate = now;
+    } else if (dateRange == PdfExportDateRange.selectMonth &&
+        selectedMonth != null) {
+      targetMonth = selectedMonth;
+      startDate = DateTime(selectedMonth.year, selectedMonth.month, 1);
+      endDate = DateTime(
+        selectedMonth.year,
+        selectedMonth.month + 1,
+        0,
+        23,
+        59,
+        59,
+        999,
+      );
     } else {
       startDate = DateTime(now.year, now.month, 1);
       endDate = DateTime(now.year, now.month + 1, 0, 23, 59, 59);

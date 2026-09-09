@@ -30,7 +30,9 @@ class CategoryRepository implements ICategoryRepository {
       ..where((c) => c.isDeleted.equals(false))
       ..orderBy([(c) => OrderingTerm(expression: c.name)]);
     final rows = await query.get();
-    return rows.map((r) => r.toDomain()).toList();
+    final list = rows.map((r) => r.toDomain()).toList();
+    list.sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
+    return list;
   }
 
   @override
@@ -38,7 +40,11 @@ class CategoryRepository implements ICategoryRepository {
     final query = _db.select(_db.categories)
       ..where((c) => c.isDeleted.equals(false))
       ..orderBy([(c) => OrderingTerm(expression: c.name)]);
-    return query.watch().map((rows) => rows.map((r) => r.toDomain()).toList());
+    return query.watch().map((rows) {
+      final list = rows.map((r) => r.toDomain()).toList();
+      list.sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
+      return list;
+    });
   }
 
   @override

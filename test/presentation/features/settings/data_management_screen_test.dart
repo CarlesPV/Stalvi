@@ -7,6 +7,7 @@ import 'package:stalvi/core/l10n/app_localizations.dart';
 import 'package:stalvi/domain/entities/profile.dart';
 import 'package:stalvi/domain/repositories/i_profile_repository.dart';
 import 'package:stalvi/presentation/features/settings/data_management_screen.dart';
+import 'package:stalvi/presentation/widgets/month_year_picker_dialog.dart';
 import 'package:stalvi/presentation/providers/repository_providers.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:stalvi/infrastructure/services/biometric_auth_service.dart';
@@ -200,6 +201,35 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Enter Backup Password'), findsOneWidget);
+    },
+  );
+
+  testWidgets(
+    'Export monthly PDF shows bottom sheet with Select Month option and opens dialog',
+    (WidgetTester tester) async {
+      await tester.pumpWidget(createTestableWidget());
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Export Monthly Report (PDF)'));
+      await tester.pumpAndSettle();
+
+      // Verify all 3 options are displayed in bottom sheet
+      expect(find.text('Current Month'), findsOneWidget);
+      expect(find.text('Last 30 Days'), findsOneWidget);
+      expect(find.text('Select Month'), findsOneWidget);
+
+      // Tap 'Select Month'
+      await tester.tap(find.text('Select Month'));
+      await tester.pumpAndSettle();
+
+      // Verify MonthYearPickerDialog is displayed
+      expect(find.byType(MonthYearPickerDialog), findsOneWidget);
+
+      // Dismiss dialog
+      await tester.tap(find.text('Cancel'));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(MonthYearPickerDialog), findsNothing);
     },
   );
 }

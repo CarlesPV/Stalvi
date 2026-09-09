@@ -7,6 +7,7 @@ import 'package:open_filex/open_filex.dart';
 import 'package:stalvi/core/l10n/app_localizations.dart';
 import 'package:stalvi/infrastructure/services/biometric_auth_service.dart';
 import 'package:stalvi/domain/usecases/pdf_export_date_range.dart';
+import '../../widgets/month_year_picker_dialog.dart';
 import 'profile_settings_controller.dart';
 import 'pin_verification_sheet.dart';
 
@@ -439,12 +440,27 @@ class _DataManagementScreenState extends ConsumerState<DataManagementScreen> {
               title: Text(l10n.exportPdfLast30Days),
               onTap: () => Navigator.of(ctx).pop(PdfExportDateRange.last30Days),
             ),
+            ListTile(
+              leading: const Icon(Icons.calendar_month_rounded),
+              title: Text(l10n.exportPdfSelectMonth),
+              onTap: () =>
+                  Navigator.of(ctx).pop(PdfExportDateRange.selectMonth),
+            ),
           ],
         ),
       ),
     );
 
     if (selectedRange == null || !context.mounted) return;
+
+    DateTime? pickedDate;
+    if (selectedRange == PdfExportDateRange.selectMonth) {
+      pickedDate = await showDialog<DateTime>(
+        context: context,
+        builder: (ctx) => const MonthYearPickerDialog(),
+      );
+      if (pickedDate == null || !context.mounted) return;
+    }
 
     try {
       final result = await ref
@@ -454,10 +470,10 @@ class _DataManagementScreenState extends ConsumerState<DataManagementScreen> {
             customMonthLabel: selectedRange == PdfExportDateRange.last30Days
                 ? l10n.pdfExportLast30Days
                 : null,
+            selectedMonth: pickedDate,
           );
       if (!context.mounted) return;
 
-      if (!context.mounted) return;
       _showExportSuccess(
         context,
         result.filePath,

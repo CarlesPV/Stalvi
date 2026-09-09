@@ -492,6 +492,13 @@
   - [x] Fixed PDF export net balance styling to render in black when the total is exactly 0.
   - [x] Maintained 100% test pass rate and 0 static analysis warnings.
 
+- [x] **Phase 70: Case-Insensitive Sorting & Historical PDF Month Export**
+  - [x] Refactored `CategoryRepository` and `TagRepository` to sort entries case-insensitively across futures and streams.
+  - [x] Added `selectMonth` to `PdfExportDateRange` and updated `ExportMonthlyPdfUseCase` and `ProfileSettingsController` to support arbitrary historical months.
+  - [x] Built Material 3 `MonthYearPickerDialog` bounded between 2021 and current date with localized month names.
+  - [x] Integrated Month/Year picker into `DataManagementScreen` PDF export modal bottom sheet.
+  - [x] Maintained 100% test pass rate (584 tests) and zero static analysis warnings.
+
 ---
 
 ## Post-Launch / Maintenance
@@ -502,5 +509,3 @@ Future ideas, enhancements, and post-release maintenance goals:
 - [ ] **Encrypted Receipt & Invoice Photo Attachments:** Secure capture and local storage of compressed receipt/invoice images linked directly to transactions with AES-256 encryption at rest.
 - [ ] **Multiple Local Profiles & Isolated Workspaces:** Ability to switch between multiple independent local accounts/spaces (e.g., Personal, Business/Freelance, Family/Household) protected by distinct PIN codes and biometric profiles on the same device.
 - [ ] **Comprehensive Accessibility (a11y) & Screen Reader Compliance:** Full TalkBack (Android) and VoiceOver (iOS) semantic tree annotations, dynamic auditory descriptions for financial charts, screen-reader balance announcements, and WCAG AAA high-contrast accessibility mode for visually impaired users.
-
-

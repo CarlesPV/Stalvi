@@ -796,5 +796,79 @@ void main() {
       result.called(1);
       expect(result.captured.first, 'Last 30 Days Translated');
     });
+
+    test(
+        'selectMonth correctly calculates startDate and endDate based on selectedMonth',
+        () async {
+      final now = DateTime(2023, 10, 15);
+      final selected = DateTime(2023, 5, 10);
+      final profile = Profile(
+        id: 'user1',
+        name: 'User',
+        username: 'user',
+        password: 'pwd',
+        defaultCurrency: 'EUR',
+        createdAt: now,
+        modifiedAt: now,
+      );
+
+      final account1 = Account(
+        id: 'acc1',
+        userId: 'user1',
+        name: 'Bank',
+        type: AccountType.bank,
+        initialBalance: 0,
+        currency: 'EUR',
+        color: '#000000',
+        icon: 'bank',
+        isDefault: true,
+        isDeleted: false,
+        createdAt: now,
+        modifiedAt: now,
+      );
+
+      stubCommonMocks(profile: profile, accounts: [account1], transactions: []);
+
+      await usecase(
+        targetCurrency: 'EUR',
+        dateRange: PdfExportDateRange.selectMonth,
+        forceNow: now,
+        selectedMonth: selected,
+        customMonthLabel: 'May 2023',
+      );
+
+      final result = verify(
+        () => exportService.generateMonthlyPdf(
+          any(),
+          summary: any(named: 'summary'),
+          month: captureAny(named: 'month'),
+          l10n: any(named: 'l10n'),
+          accounts: any(named: 'accounts'),
+          categories: any(named: 'categories'),
+          topExpenseCategories: any(named: 'topExpenseCategories'),
+          topIncomeCategories: any(named: 'topIncomeCategories'),
+          defaultCurrency: any(named: 'defaultCurrency'),
+          transferDestinations: any(named: 'transferDestinations'),
+          budgets: any(named: 'budgets'),
+          budgetCategoryNames: any(named: 'budgetCategoryNames'),
+          budgetCurrencies: any(named: 'budgetCurrencies'),
+          savingsGoals: any(named: 'savingsGoals'),
+          customMonthLabel: captureAny(named: 'customMonthLabel'),
+          userName: any(named: 'userName'),
+        ),
+      );
+      result.called(1);
+
+      expect(result.captured[0], selected);
+      expect(result.captured[1], 'May 2023');
+
+      verify(
+        () => getPeriodSummaryUseCase.execute(
+          startDate: DateTime(2023, 5, 1),
+          endDate: DateTime(2023, 6, 0, 23, 59, 59, 999),
+          targetCurrency: 'EUR',
+        ),
+      ).called(1);
+    });
   });
 }

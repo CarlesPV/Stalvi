@@ -299,6 +299,7 @@ class ProfileSettingsController extends _$ProfileSettingsController {
   Future<ExportResult> exportMonthlyPdf({
     required PdfExportDateRange dateRange,
     String? customMonthLabel,
+    DateTime? selectedMonth,
   }) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
@@ -308,6 +309,7 @@ class ProfileSettingsController extends _$ProfileSettingsController {
         targetCurrency: currency,
         dateRange: dateRange,
         customMonthLabel: customMonthLabel,
+        selectedMonth: selectedMonth,
       );
       if (!ref.mounted) return result;
       state = state.copyWith(isLoading: false);

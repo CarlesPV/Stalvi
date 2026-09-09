@@ -39,6 +39,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get btnSave => 'Guardar';
 
   @override
+  String get btnSelect => 'Seleccionar';
+
+  @override
   String get btnViewDetails => 'Ver detalles';
 
   @override
@@ -865,6 +868,9 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get exportPdfLast30Days => 'Últimos 30 días';
+
+  @override
+  String get exportPdfSelectMonth => 'Seleccionar mes';
 
   @override
   String exportSavedTo(Object filePath) {
