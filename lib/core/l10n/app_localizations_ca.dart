@@ -39,6 +39,9 @@ class AppLocalizationsCa extends AppLocalizations {
   String get btnSave => 'Desar';
 
   @override
+  String get btnSelect => 'Seleccionar';
+
+  @override
   String get btnViewDetails => 'Veure detalls';
 
   @override
@@ -867,6 +870,9 @@ class AppLocalizationsCa extends AppLocalizations {
   String get exportPdfLast30Days => 'Últims 30 Dies';
 
   @override
+  String get exportPdfSelectMonth => 'Seleccionar mes';
+
+  @override
   String exportSavedTo(Object filePath) {
     return 'Desat a $filePath';
   }
@@ -1191,4 +1197,41 @@ class AppLocalizationsCa extends AppLocalizations {
   @override
   String get errorDefaultAccountRequired =>
       'Has de tenir almenys un compte predeterminat.';
+
+  @override
+  String get widgetIncomeTitle => 'Ingressos';
+
+  @override
+  String get widgetExpenseTitle => 'Despeses';
+
+  @override
+  String get a11yAddTransaction => 'Afegir nova transacció';
+
+  @override
+  String get a11yDoubleTapToEdit => 'Toca dues vegades per editar';
+
+  @override
+  String get a11yDoubleTapToViewDetails =>
+      'Toca dues vegades per veure detalls';
+
+  @override
+  String get a11yExpense => 'Despesa';
+
+  @override
+  String get a11yIncome => 'Ingrés';
+
+  @override
+  String get a11yTransfer => 'Transferència';
+
+  @override
+  String get a11yTransactionDetails => 'Detalls de la transacció';
+
+  @override
+  String get a11ySelectCategory => 'Seleccionar categoria';
+
+  @override
+  String get a11ySelectAccount => 'Seleccionar compte';
+
+  @override
+  String get a11ySelectDate => 'Seleccionar data';
 }

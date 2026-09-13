@@ -160,6 +160,12 @@ The application strictly follows **Clean Architecture** to separate concerns and
 * **Calendar View:** Monthly calendar layout for transactions.
 * **Automated Summaries:** Automatic generation of weekly and monthly summaries.
 
+#### 5.6. Home Screen Widgets & System Integration
+* **Native Widgets:** 2x1 horizontal glanceable home screen widgets on Android (RemoteViews) and iOS (WidgetKit/SwiftUI).
+* **Live Aggregations:** Displays rolling 30-day income and expenses converted to the user's default currency.
+* **Auto-Sync:** Synchronized reactively via `WidgetUpdateService` upon transaction mutations, currency updates, or locale changes.
+* **OS Polish:** Full Dark Mode support, direct tap-to-open routing to the app, compact typography, and realistic OS preview providers.
+
 ---
 
 ### 6. Security Protocol

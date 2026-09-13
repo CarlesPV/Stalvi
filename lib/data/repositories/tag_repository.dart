@@ -30,7 +30,9 @@ class TagRepository implements ITagRepository {
       ..where((t) => t.isDeleted.equals(false))
       ..orderBy([(t) => OrderingTerm(expression: t.name)]);
     final rows = await query.get();
-    return rows.map((r) => r.toDomain()).toList();
+    final list = rows.map((r) => r.toDomain()).toList();
+    list.sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
+    return list;
   }
 
   @override

@@ -1,5 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mocktail/mocktail.dart';
+import 'package:stalvi/application/services/widget_update_service.dart';
 import 'package:stalvi/core/errors/app_exceptions.dart';
 import 'package:stalvi/domain/entities/profile.dart';
 import 'package:stalvi/domain/repositories/i_profile_repository.dart';
@@ -9,6 +11,8 @@ import 'package:stalvi/presentation/providers/repository_providers.dart';
 import 'package:stalvi/presentation/providers/statistics_providers.dart';
 import 'package:stalvi/presentation/providers/settings_notifier.dart';
 import 'package:stalvi/domain/entities/period_summary.dart';
+
+class MockWidgetUpdateService extends Mock implements WidgetUpdateService {}
 
 class FakeProfileRepository implements IProfileRepository {
   Profile _profile = Profile(
@@ -58,15 +62,23 @@ class FakeUpdateCredentialsUseCase implements UpdateCredentialsUseCase {
 void main() {
   late FakeProfileRepository fakeProfileRepository;
   late FakeUpdateCredentialsUseCase fakeUpdateCredentialsUseCase;
+  late MockWidgetUpdateService mockWidgetUpdateService;
   late ProviderContainer container;
 
   setUp(() {
     fakeProfileRepository = FakeProfileRepository();
     fakeUpdateCredentialsUseCase = FakeUpdateCredentialsUseCase();
+    mockWidgetUpdateService = MockWidgetUpdateService();
+    when(
+      () => mockWidgetUpdateService.updateWidgetData(
+        locale: any(named: 'locale'),
+      ),
+    ).thenAnswer((_) async {});
 
     container = ProviderContainer(
       overrides: [
         profileRepositoryProvider.overrideWithValue(fakeProfileRepository),
+        widgetUpdateServiceProvider.overrideWithValue(mockWidgetUpdateService),
         updateCredentialsUseCaseProvider.overrideWithValue(
           fakeUpdateCredentialsUseCase,
         ),
@@ -281,6 +293,8 @@ void main() {
         final testContainer = ProviderContainer(
           overrides: [
             profileRepositoryProvider.overrideWithValue(fakeProfileRepository),
+            widgetUpdateServiceProvider
+                .overrideWithValue(mockWidgetUpdateService),
             updateCredentialsUseCaseProvider.overrideWithValue(
               fakeUpdateCredentialsUseCase,
             ),
@@ -323,6 +337,7 @@ void main() {
         // The profile should be updated
         final state = testContainer.read(profileSettingsControllerProvider);
         expect(state.profile?.defaultCurrency, 'USD');
+        verify(() => mockWidgetUpdateService.updateWidgetData()).called(1);
 
         // Since they were invalidated and not listened to, they are disposed.
         // Reading them again will trigger a new build.

@@ -28,6 +28,8 @@ Designed with strict **Clean Architecture** principles, the project ensures isol
 - **Robust Encryption**: SQLite database file is encrypted utilizing **SQLCipher (AES-256)**.
 - **Multi-Currency**: Comprehensive multi-currency support with offline historical exchange rates.
 - **Trilingual Support**: Fully localized in English (🇬🇧), Spanish (🇪🇸), and Catalan (🏴).
+- **Home Screen Widget**: 2x1 horizontal native home screen widget for Android and iOS displaying 30-day income and expenses in your default currency, updated in real time.
+- **Comprehensive Accessibility (a11y)**: Compliant with TalkBack and VoiceOver screen readers via semantic tree annotations, dynamic balance announcements, and accessible form controls.
 - **Categories & Tags**: Explicitly categorize movements and use optional tags/labels for multi-dimensional filtering.
 - **Automated Transactions**: Built-in engine to generate scheduled recurring transactions with UTC+2 precision.
 - **Budgets & Savings Goals**: Set monthly limits and track your financial targets dynamically.
@@ -38,11 +40,12 @@ Designed with strict **Clean Architecture** principles, the project ensures isol
 ## 🛠️ Tech Stack 
 
 - **Core Framework**: Flutter (Dart)
-- **Architecture**: Clean Architecture (Presentation, Domain, Data)
+- **Architecture**: Clean Architecture (Presentation, Domain, Data, Application)
 - **State Management**: Riverpod (`flutter_riverpod`, `riverpod_generator`)
 - **Database / ORM**: Drift (`drift`) + SQLite
 - **Encryption**: SQLCipher (`sqlcipher_flutter_libs`)
 - **Security**: `flutter_secure_storage`, `local_auth`
+- **Home Widgets**: `home_widget` (Android AppWidgetProvider / iOS WidgetKit)
 - **Background Sync**: `workmanager`
 - **Charts**: `fl_chart`
 

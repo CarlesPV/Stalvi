@@ -7,6 +7,7 @@ import 'repository_providers.dart';
 import 'statistics_providers.dart';
 import 'locale_provider.dart';
 import 'package:stalvi/core/l10n/app_localizations.dart';
+import 'package:stalvi/application/services/widget_update_service.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'add_transaction_notifier.g.dart';
@@ -337,6 +338,10 @@ class AddTransactionNotifier extends _$AddTransactionNotifier {
       ref.invalidate(periodSummaryProvider);
       ref.invalidate(topExpenseCategoriesProvider);
       ref.invalidate(topIncomeCategoriesProvider);
+
+      try {
+        await ref.read(widgetUpdateServiceProvider).updateWidgetData();
+      } catch (_) {}
 
       state = state.copyWith(submissionStatus: const AsyncValue.data(null));
       return true;

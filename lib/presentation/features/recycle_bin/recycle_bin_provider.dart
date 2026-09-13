@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:stalvi/domain/entities/trash_item.dart';
 import '../../providers/repository_providers.dart';
+import '../../../application/services/widget_update_service.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'recycle_bin_provider.g.dart';
@@ -45,6 +46,9 @@ class RecycleBinNotifier extends _$RecycleBinNotifier {
   Future<void> restoreItem(String id, TrashItemType type) async {
     try {
       await ref.read(trashUsecasesProvider).restoreItem(id, type);
+      try {
+        await ref.read(widgetUpdateServiceProvider).updateWidgetData();
+      } catch (_) {}
     } catch (e, st) {
       state = AsyncValue.error(e, st);
     }
@@ -53,6 +57,9 @@ class RecycleBinNotifier extends _$RecycleBinNotifier {
   Future<void> deleteItemPermanently(String id, TrashItemType type) async {
     try {
       await ref.read(trashUsecasesProvider).deleteItemPermanently(id, type);
+      try {
+        await ref.read(widgetUpdateServiceProvider).updateWidgetData();
+      } catch (_) {}
     } catch (e, st) {
       state = AsyncValue.error(e, st);
     }
@@ -61,6 +68,9 @@ class RecycleBinNotifier extends _$RecycleBinNotifier {
   Future<void> emptyTrash() async {
     try {
       await ref.read(trashUsecasesProvider).emptyTrash();
+      try {
+        await ref.read(widgetUpdateServiceProvider).updateWidgetData();
+      } catch (_) {}
     } catch (e, st) {
       state = AsyncValue.error(e, st);
     }

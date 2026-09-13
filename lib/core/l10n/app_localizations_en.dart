@@ -39,6 +39,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get btnSave => 'Save';
 
   @override
+  String get btnSelect => 'Select';
+
+  @override
   String get btnViewDetails => 'View Details';
 
   @override
@@ -863,6 +866,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get exportPdfLast30Days => 'Last 30 Days';
 
   @override
+  String get exportPdfSelectMonth => 'Select Month';
+
+  @override
   String exportSavedTo(Object filePath) {
     return 'Saved to $filePath';
   }
@@ -1175,4 +1181,40 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get errorDefaultAccountRequired =>
       'You must have at least one default account.';
+
+  @override
+  String get widgetIncomeTitle => 'Income';
+
+  @override
+  String get widgetExpenseTitle => 'Expenses';
+
+  @override
+  String get a11yAddTransaction => 'Add new transaction';
+
+  @override
+  String get a11yDoubleTapToEdit => 'Double tap to edit';
+
+  @override
+  String get a11yDoubleTapToViewDetails => 'Double tap to view details';
+
+  @override
+  String get a11yExpense => 'Expense';
+
+  @override
+  String get a11yIncome => 'Income';
+
+  @override
+  String get a11yTransfer => 'Transfer';
+
+  @override
+  String get a11yTransactionDetails => 'Transaction details';
+
+  @override
+  String get a11ySelectCategory => 'Select category';
+
+  @override
+  String get a11ySelectAccount => 'Select account';
+
+  @override
+  String get a11ySelectDate => 'Select date';
 }

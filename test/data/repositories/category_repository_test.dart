@@ -81,6 +81,29 @@ void main() {
       },
     );
 
+    test(
+        'getAllCategories sorts categories alphabetically and case-insensitively',
+        () async {
+      final dbCategories = await repository.getAllCategories();
+      for (final cat in dbCategories) {
+        await repository.deleteCategoryPermanently(cat.id);
+      }
+
+      await repository
+          .createCategory(buildTestCategory(id: uuid.v4(), name: 'Zebra'));
+      await repository
+          .createCategory(buildTestCategory(id: uuid.v4(), name: 'abril'));
+      await repository
+          .createCategory(buildTestCategory(id: uuid.v4(), name: 'Árbol'));
+      await repository
+          .createCategory(buildTestCategory(id: uuid.v4(), name: 'apple'));
+
+      final list = await repository.getAllCategories();
+      final names = list.map((c) => c.name).toList();
+
+      expect(names, ['abril', 'apple', 'Zebra', 'Árbol']);
+    });
+
     test('updateCategory correctly modifies database fields', () async {
       final id = uuid.v4();
       final category = buildTestCategory(id: id, name: 'Original Category');

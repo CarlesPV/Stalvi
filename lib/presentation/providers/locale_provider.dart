@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:stalvi/core/security/secure_storage_manager.dart';
 import 'repository_providers.dart';
 import 'app_startup_provider.dart';
+import 'package:stalvi/application/services/widget_update_service.dart';
 
 /// Provider for the [SecureStorageManager] dependencies.
 /// This is exposed as a separate provider to allow mocking during tests.
@@ -71,6 +72,12 @@ class LocaleNotifier extends Notifier<Locale> {
           );
           // Invalidate tagsListProvider so the UI re-fetches tag names in the new language
           ref.invalidate(tagsListProvider);
+
+          try {
+            await ref
+                .read(widgetUpdateServiceProvider)
+                .updateWidgetData(locale: newLocale);
+          } catch (_) {}
         } catch (_) {
           // Safe to ignore if profile not setup yet
         }

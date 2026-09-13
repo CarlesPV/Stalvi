@@ -1,16 +1,11 @@
-# Phase 69: Semantic Visuals, PDF Fixes & Background Optimization
+# Phase 72: Home Screen Widget Polish & Project Housekeeping
 
 ## Objective
-Refine the semantic color coding of transactions across the UI and PDF exports (setting transfers and zero-balances to a neutral color) and optimize the background task trigger frequency to preserve device battery.
-
-## Current Context
-- The app uses `financialColors.positive` (green) and `financialColors.negative` (red). Transfers should use `colorScheme.onSurface` (neutral/black) to reflect zero impact on net worth.
-- Background automatic transactions are evaluated every 4 hours via `WorkManager`.
-- The PDF export incorrectly colors a `0` balance as positive (green).
+Refine the native 2x1 Home Screen widgets (Android and iOS) to support Dark Mode, launch the Stalvi app when tapped, display the app icon at the top center, and reduce text sizes. Add realistic widget previews for the OS widget gallery. Finally, perform project-wide housekeeping (clean up unused files/comments) and ensure all tests and CI workflows pass.
 
 ## Tasks
-- [x] 1. Update `_TransactionItem` (Dashboard), `automatic_transactions_screen.dart`, and `transaction_details_dialog.dart` so that Transfer amounts render in `colorScheme.onSurface` instead of red/green.
-- [x] 2. Update `background_execution_service.dart` to change the WorkManager frequency from 4 hours to 12 hours.
-- [x] 3. Update `export_service_impl.dart` so that if `(totalIncome - totalExpense) == 0`, the net balance text color in the PDF uses `PdfColors.black` instead of green or red.
-- [x] 4. Run `flutter analyze --fatal-infos --fatal-warnings` and `flutter test` to ensure 0 regressions.
-- [x] 5. Update `roadmap.md` by adding Phase 69 to the completed list, update documentation, and clear this active task.
+- [x] 1. **Android Widget:** Update XML layouts for Dark Mode support, reduce text size, add the Stalvi icon at the top center, set up a `PendingIntent` to open `MainActivity` on tap, and configure a realistic preview in the `appwidget-provider`.
+- [x] 2. **iOS Widget:** Update `StalviWidget.swift` (WidgetKit) for dynamic color schemes (Dark Mode), reduce font size, add the app icon image at the top, configure `.widgetURL` to open the app, and update the `PreviewProvider`.
+- [x] 3. **Housekeeping:** Sweep the project for dead code, unused imports, and obsolete comments.
+- [x] 4. **Validation:** Run `flutter analyze --fatal-infos --fatal-warnings`, `flutter test`, and confirm CI passes. 
+- [x] 5. **Documentation:** Update `roadmap.md` and `roadmap-summary.md` to mark Phase 72 as completed.

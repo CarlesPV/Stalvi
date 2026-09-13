@@ -902,7 +902,22 @@ This document lists the completed phases of the Stalvi development roadmap, prov
   - 100% clean static analysis (`flutter analyze` with 0 issues).
   - 100% automated test suite pass rate across 572 unit, widget, and integration tests.
 
+### Phase 70: Case-Insensitive Sorting & Historical PDF Month Export
+* **Completion Date:** September 9, 2026
+* **Objective:** Ensure all categories and tags are consistently sorted alphabetically across the app while strictly ignoring case sensitivity, and empower users to export PDF reports for any arbitrary historical month (from 2021 up to current system date) preventing future date selections.
+* **Accomplishments:**
+  - **Case-Insensitive Category & Tag Sorting:** Refactored `CategoryRepository` and `TagRepository` to map database rows and apply Dart-side `.sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()))`, guaranteeing case-insensitive ordering across all futures and reactive streams.
+  - **Trilingual Localization:** Added `exportPdfSelectMonth` and `btnSelect` across `app_en.arb`, `app_es.arb`, and `app_ca.arb` and regenerated localizations with `flutter gen-l10n`.
+  - **Historical PDF Date Range:** Updated `PdfExportDateRange` enum with `selectMonth`, and updated `ExportMonthlyPdfUseCase` and `ProfileSettingsController` to accept and process an optional `selectedMonth` parameter.
+  - **Month/Year Picker Dialog:** Built a custom Material 3 `MonthYearPickerDialog` bounded between 2021 and current system date with localized month names.
+  - **Data Management UI Integration:** Integrated the Month/Year picker into `DataManagementScreen` PDF export bottom sheet as a third option alongside current month and last 30 days.
+  - **QA & Verification:** Added unit and widget tests for repository case-insensitive sorting, `ExportMonthlyPdfUseCase`, and `MonthYearPickerDialog`, achieving 100% test suite pass rate (584 tests) and 0 static analysis warnings.
+* **Verification:**
+  - 100% clean static analysis (`flutter analyze` with 0 issues).
+  - 100% automated test suite pass rate across 584 unit, widget, and integration tests.
+
 ## Recent Updates
+- Completed Phase 70 (Case-Insensitive Sorting & Historical PDF Month Export), refactoring CategoryRepository and TagRepository for case-insensitive alphabetical sorting across futures and streams, expanding PDF exports with arbitrary historical month selection bounded between 2021 and the current date via a Material 3 MonthYearPickerDialog, synchronizing ARB translations (EN, ES, CA), and maintaining 100% test pass rate across 584 tests and 0 static analyzer issues.
 - Completed Phase 69 (Semantic Visuals, PDF Fixes & Background Optimization), refactoring transaction amount colors in the UI to render transfers in neutral/black instead of red/green, optimizing WorkManager background execution trigger interval from 4 hours to 12 hours for improved battery efficiency, fixing PDF export net balance styling to render in black when total is exactly 0, and maintaining 100% test pass rate across 572 tests and 0 static analysis warnings.
 - Completed Phase 68 (Statistics Transfers, Default Account Constraints & Form UX Improvements), fixing statistics empty state for accounts with only transfers, enforcing domain validation to always require an active default account in creation and updates, adding localized `errorDefaultAccountRequired` in EN, ES, and CA, configuring seamless keyboard focus navigation across all modal and screen forms (including backup export password dialogs) without premature submission, and achieving a 100% test pass rate across 572 tests and 0 static analyzer issues.
 - Completed Phase 67 (Account Statistics Transfers, Cash Flow Integration & Recycle Bin Chronological Sorting), resolving destination transfer visibility in account statistics using raw transaction streams, adding `totalTransfersIn`/`totalTransfersOut` to `PeriodSummary` and `StatisticsDao`, recalculating net balance for account cash flow, enforcing strict surplus (>0) / deficit (<0) badge logic, adding a dedicated "Transfers" card to the UI, ordering recycle bin items chronologically by most recently deleted first (`deletedAt` descending), synchronizing ARB translations (EN, ES, CA), and achieving a 100% test pass rate across 569 tests.

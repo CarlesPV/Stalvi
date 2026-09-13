@@ -7,6 +7,7 @@ import 'package:stalvi/domain/usecases/pdf_export_date_range.dart';
 import '../../providers/repository_providers.dart';
 import '../../providers/statistics_providers.dart';
 import '../../providers/settings_notifier.dart';
+import '../../../application/services/widget_update_service.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'profile_settings_controller.g.dart';
@@ -129,6 +130,11 @@ class ProfileSettingsController extends _$ProfileSettingsController {
       ref.invalidate(topExpenseCategoriesProvider);
       ref.invalidate(topIncomeCategoriesProvider);
       ref.invalidate(globalBalanceProvider);
+
+      try {
+        await ref.read(widgetUpdateServiceProvider).updateWidgetData();
+      } catch (_) {}
+
       if (!ref.mounted) return;
       state = state.copyWith(profile: updatedProfile, isLoading: false);
     } catch (e) {
@@ -299,6 +305,7 @@ class ProfileSettingsController extends _$ProfileSettingsController {
   Future<ExportResult> exportMonthlyPdf({
     required PdfExportDateRange dateRange,
     String? customMonthLabel,
+    DateTime? selectedMonth,
   }) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
@@ -308,6 +315,7 @@ class ProfileSettingsController extends _$ProfileSettingsController {
         targetCurrency: currency,
         dateRange: dateRange,
         customMonthLabel: customMonthLabel,
+        selectedMonth: selectedMonth,
       );
       if (!ref.mounted) return result;
       state = state.copyWith(isLoading: false);
