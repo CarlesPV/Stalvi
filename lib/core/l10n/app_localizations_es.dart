@@ -1197,4 +1197,40 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get errorDefaultAccountRequired =>
       'Debes tener al menos una cuenta predeterminada.';
+
+  @override
+  String get widgetIncomeTitle => 'Ingresos';
+
+  @override
+  String get widgetExpenseTitle => 'Gastos';
+
+  @override
+  String get a11yAddTransaction => 'Añadir nueva transacción';
+
+  @override
+  String get a11yDoubleTapToEdit => 'Toca dos veces para editar';
+
+  @override
+  String get a11yDoubleTapToViewDetails => 'Toca dos veces para ver detalles';
+
+  @override
+  String get a11yExpense => 'Gasto';
+
+  @override
+  String get a11yIncome => 'Ingreso';
+
+  @override
+  String get a11yTransfer => 'Transferencia';
+
+  @override
+  String get a11yTransactionDetails => 'Detalles de la transacción';
+
+  @override
+  String get a11ySelectCategory => 'Seleccionar categoría';
+
+  @override
+  String get a11ySelectAccount => 'Seleccionar cuenta';
+
+  @override
+  String get a11ySelectDate => 'Seleccionar fecha';
 }

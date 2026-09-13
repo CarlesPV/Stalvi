@@ -2241,6 +2241,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'You must have at least one default account.'**
   String get errorDefaultAccountRequired;
+
+  /// No description provided for @widgetIncomeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Income'**
+  String get widgetIncomeTitle;
+
+  /// No description provided for @widgetExpenseTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Expenses'**
+  String get widgetExpenseTitle;
+
+  /// No description provided for @a11yAddTransaction.
+  ///
+  /// In en, this message translates to:
+  /// **'Add new transaction'**
+  String get a11yAddTransaction;
+
+  /// No description provided for @a11yDoubleTapToEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Double tap to edit'**
+  String get a11yDoubleTapToEdit;
+
+  /// No description provided for @a11yDoubleTapToViewDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Double tap to view details'**
+  String get a11yDoubleTapToViewDetails;
+
+  /// No description provided for @a11yExpense.
+  ///
+  /// In en, this message translates to:
+  /// **'Expense'**
+  String get a11yExpense;
+
+  /// No description provided for @a11yIncome.
+  ///
+  /// In en, this message translates to:
+  /// **'Income'**
+  String get a11yIncome;
+
+  /// No description provided for @a11yTransfer.
+  ///
+  /// In en, this message translates to:
+  /// **'Transfer'**
+  String get a11yTransfer;
+
+  /// No description provided for @a11yTransactionDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Transaction details'**
+  String get a11yTransactionDetails;
+
+  /// No description provided for @a11ySelectCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Select category'**
+  String get a11ySelectCategory;
+
+  /// No description provided for @a11ySelectAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Select account'**
+  String get a11ySelectAccount;
+
+  /// No description provided for @a11ySelectDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Select date'**
+  String get a11ySelectDate;
 }
 
 class _AppLocalizationsDelegate

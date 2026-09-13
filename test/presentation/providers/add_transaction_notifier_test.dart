@@ -10,11 +10,14 @@ import 'package:stalvi/domain/entities/profile.dart';
 import 'package:stalvi/domain/entities/transaction.dart';
 import 'package:stalvi/domain/entities/transaction_type.dart';
 import 'package:stalvi/domain/usecases/add_transaction_usecase.dart';
+import 'package:stalvi/application/services/widget_update_service.dart';
 import 'package:stalvi/presentation/providers/add_transaction_notifier.dart';
 import 'package:stalvi/presentation/providers/repository_providers.dart';
 
 // Mocks & Fakes
 class MockAddTransactionUseCase extends Mock implements AddTransactionUseCase {}
+
+class MockWidgetUpdateService extends Mock implements WidgetUpdateService {}
 
 class FakeAddTransactionParams extends Fake implements AddTransactionParams {}
 
@@ -24,6 +27,7 @@ void main() {
   });
 
   late MockAddTransactionUseCase mockUseCase;
+  late MockWidgetUpdateService mockWidgetUpdateService;
   late ProviderContainer container;
 
   final testAccount = Account(
@@ -64,6 +68,12 @@ void main() {
 
   setUp(() {
     mockUseCase = MockAddTransactionUseCase();
+    mockWidgetUpdateService = MockWidgetUpdateService();
+    when(
+      () => mockWidgetUpdateService.updateWidgetData(
+        locale: any(named: 'locale'),
+      ),
+    ).thenAnswer((_) async {});
   });
 
   tearDown(() {
@@ -74,6 +84,7 @@ void main() {
     container = ProviderContainer(
       overrides: [
         addTransactionUseCaseProvider.overrideWithValue(mockUseCase),
+        widgetUpdateServiceProvider.overrideWithValue(mockWidgetUpdateService),
         accountsListProvider.overrideWith(
           (ref) => Stream.value(accounts ?? [testAccount]),
         ),
@@ -339,6 +350,7 @@ void main() {
         expect(captured.categoryId, testCategory.id);
         expect(captured.notes, 'Weekly grocery'); // Trimmed notes
         expect(captured.currency, 'EUR');
+        verify(() => mockWidgetUpdateService.updateWidgetData()).called(1);
       },
     );
 
@@ -363,6 +375,7 @@ void main() {
       final finalState = container.read(addTransactionProvider);
       expect(finalState.submissionStatus.hasError, isTrue);
       expect(finalState.submissionStatus.error, testException);
+      verifyNever(() => mockWidgetUpdateService.updateWidgetData());
     });
 
     test(

@@ -370,5 +370,17 @@
   "errorLoadingContent": "Error en carregar el contingut.",
   "errorCannotDeleteDefaultAccount": "No es pot eliminar el compte predeterminat. Si us plau, assigneu un altre compte com a predeterminat primer.",
   "errorNoDefaultAccountForReassignment": "No es pot eliminar el compte perquè no hi ha cap compte predeterminat per a la reassignació.",
-  "errorDefaultAccountRequired": "Has de tenir almenys un compte predeterminat."
+  "errorDefaultAccountRequired": "Has de tenir almenys un compte predeterminat.",
+  "widgetIncomeTitle": "Ingressos",
+  "widgetExpenseTitle": "Despeses",
+  "a11yAddTransaction": "Afegir nova transacció",
+  "a11yDoubleTapToEdit": "Toca dues vegades per editar",
+  "a11yDoubleTapToViewDetails": "Toca dues vegades per veure detalls",
+  "a11yExpense": "Despesa",
+  "a11yIncome": "Ingrés",
+  "a11yTransfer": "Transferència",
+  "a11yTransactionDetails": "Detalls de la transacció",
+  "a11ySelectCategory": "Seleccionar categoria",
+  "a11ySelectAccount": "Seleccionar compte",
+  "a11ySelectDate": "Seleccionar data"
 }

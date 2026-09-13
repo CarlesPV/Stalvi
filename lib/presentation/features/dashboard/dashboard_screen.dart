@@ -252,6 +252,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen>
       floatingActionButton: _selectedIndex == 3
           ? null
           : FloatingActionButton(
+              tooltip: _selectedIndex == 2
+                  ? l10n.createAccountTitle
+                  : l10n.a11yAddTransaction,
               onPressed: () {
                 if (_selectedIndex == 2) {
                   CreateAccountDialog.show(context);
@@ -803,105 +806,113 @@ class _AccountItem extends ConsumerWidget {
       error: (_, __) => 'Error',
     );
 
-    return GestureDetector(
-      onTap: () => EditAccountDialog.show(context, account),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-        decoration: BoxDecoration(
-          color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
-          borderRadius: BorderRadius.circular(14),
-          border: account.isDefault
-              ? Border.all(
-                  color: colorScheme.primary.withValues(alpha: 0.4),
-                  width: 1.5,
-                )
-              : null,
-        ),
-        child: Row(
-          children: [
-            Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: accColor.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Icon(accIcon, color: accColor, size: 20),
+    return MergeSemantics(
+      child: Semantics(
+        button: true,
+        hint: AppLocalizations.of(context)!.a11yDoubleTapToEdit,
+        child: GestureDetector(
+          onTap: () => EditAccountDialog.show(context, account),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+            decoration: BoxDecoration(
+              color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+              borderRadius: BorderRadius.circular(14),
+              border: account.isDefault
+                  ? Border.all(
+                      color: colorScheme.primary.withValues(alpha: 0.4),
+                      width: 1.5,
+                    )
+                  : null,
             ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  FittedBox(
-                    fit: BoxFit.scaleDown,
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      account.name,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.w700,
-                        color: colorScheme.onSurface,
-                      ),
-                    ),
+            child: Row(
+              children: [
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: accColor.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    _getLocalizedAccountType(
-                      context,
-                      account.type,
-                    ).toUpperCase(),
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: colorScheme.onSurfaceVariant,
-                      fontSize: 11,
-                    ),
+                  child: ExcludeSemantics(
+                    child: Icon(accIcon, color: accColor, size: 20),
                   ),
-                ],
-              ),
-            ),
-            const SizedBox(width: 12),
-            Flexible(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  FittedBox(
-                    fit: BoxFit.scaleDown,
-                    child: Text(
-                      balanceStr,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.w800,
-                        color: colorScheme.onSurface,
-                      ),
-                    ),
-                  ),
-                  if (account.isDefault) ...[
-                    const SizedBox(height: 4),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 6,
-                        vertical: 2,
-                      ),
-                      decoration: BoxDecoration(
-                        color: colorScheme.primary.withValues(alpha: 0.12),
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: FittedBox(
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      FittedBox(
                         fit: BoxFit.scaleDown,
+                        alignment: Alignment.centerLeft,
                         child: Text(
-                          AppLocalizations.of(context)!.defaultAccountLabel,
-                          style: theme.textTheme.labelSmall?.copyWith(
-                            color: colorScheme.primary,
-                            fontSize: 9,
-                            fontWeight: FontWeight.bold,
+                          account.name,
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.w700,
+                            color: colorScheme.onSurface,
                           ),
                         ),
                       ),
-                    ),
-                  ],
-                ],
-              ),
+                      const SizedBox(height: 4),
+                      Text(
+                        _getLocalizedAccountType(
+                          context,
+                          account.type,
+                        ).toUpperCase(),
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: colorScheme.onSurfaceVariant,
+                          fontSize: 11,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Flexible(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text(
+                          balanceStr,
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.w800,
+                            color: colorScheme.onSurface,
+                          ),
+                        ),
+                      ),
+                      if (account.isDefault) ...[
+                        const SizedBox(height: 4),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 6,
+                            vertical: 2,
+                          ),
+                          decoration: BoxDecoration(
+                            color: colorScheme.primary.withValues(alpha: 0.12),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(
+                              AppLocalizations.of(context)!.defaultAccountLabel,
+                              style: theme.textTheme.labelSmall?.copyWith(
+                                color: colorScheme.primary,
+                                fontSize: 9,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
@@ -974,85 +985,93 @@ class _TransactionItem extends ConsumerWidget {
       Localizations.localeOf(context).toString(),
     ).format(transaction.date);
 
-    return InkWell(
-      onTap: () {
-        TransactionDetailsDialog.show(context, transaction);
-      },
-      borderRadius: BorderRadius.circular(14),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-        decoration: BoxDecoration(
-          color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+    return MergeSemantics(
+      child: Semantics(
+        button: true,
+        hint: AppLocalizations.of(context)!.a11yDoubleTapToViewDetails,
+        child: InkWell(
+          onTap: () {
+            TransactionDetailsDialog.show(context, transaction);
+          },
           borderRadius: BorderRadius.circular(14),
-        ),
-        child: Row(
-          children: [
-            Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: iconColor.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Icon(icon, color: iconColor, size: 20),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+            decoration: BoxDecoration(
+              color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+              borderRadius: BorderRadius.circular(14),
             ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  FittedBox(
-                    fit: BoxFit.scaleDown,
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      transaction.notes?.isNotEmpty == true
-                          ? transaction.notes!
-                          : (transaction.type == TransactionType.transfer
-                              ? AppLocalizations.of(
-                                  context,
-                                )!
-                                  .filterSheetTransferType
-                              : (isIncome
+            child: Row(
+              children: [
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: iconColor.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: ExcludeSemantics(
+                    child: Icon(icon, color: iconColor, size: 20),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      FittedBox(
+                        fit: BoxFit.scaleDown,
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          transaction.notes?.isNotEmpty == true
+                              ? transaction.notes!
+                              : (transaction.type == TransactionType.transfer
                                   ? AppLocalizations.of(
                                       context,
                                     )!
-                                      .fallbackIncome
-                                  : AppLocalizations.of(
-                                      context,
-                                    )!
-                                      .fallbackExpense)),
+                                      .filterSheetTransferType
+                                  : (isIncome
+                                      ? AppLocalizations.of(
+                                          context,
+                                        )!
+                                          .fallbackIncome
+                                      : AppLocalizations.of(
+                                          context,
+                                        )!
+                                          .fallbackExpense)),
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.w700,
+                            color: colorScheme.onSurface,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        dateStr,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: colorScheme.onSurfaceVariant,
+                          fontSize: 11,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Flexible(
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerRight,
+                    child: Text(
+                      amountStr,
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.w700,
-                        color: colorScheme.onSurface,
+                        fontWeight: FontWeight.w800,
+                        color: color,
                       ),
                     ),
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    dateStr,
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: colorScheme.onSurfaceVariant,
-                      fontSize: 11,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(width: 12),
-            Flexible(
-              child: FittedBox(
-                fit: BoxFit.scaleDown,
-                alignment: Alignment.centerRight,
-                child: Text(
-                  amountStr,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.w800,
-                    color: color,
-                  ),
                 ),
-              ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
@@ -1445,177 +1464,179 @@ class _BalanceCard extends ConsumerWidget {
     final isDiscreet = ref.watch(discreetModeProvider);
     final accountsAsync = ref.watch(accountsListProvider);
 
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            colorScheme.primary,
-            colorScheme.primary.withValues(alpha: 0.75),
-          ],
-        ),
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(
-            color: colorScheme.primary.withValues(alpha: 0.32),
-            blurRadius: 24,
-            offset: const Offset(0, 10),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Text(
-                  AppLocalizations.of(context)!.balanceTotal,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: colorScheme.onPrimary.withValues(alpha: 0.75),
-                    fontWeight: FontWeight.w500,
-                    letterSpacing: 0.2,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 8),
-              Padding(
-                padding: const EdgeInsets.only(left: 8.0),
-                child: IconButton(
-                  key: const ValueKey('discreetModeIconButton'),
-                  iconSize: 32.0,
-                  padding: const EdgeInsets.all(8.0),
-                  constraints: const BoxConstraints(),
-                  icon: Icon(
-                    isDiscreet ? Icons.visibility_off : Icons.visibility,
-                    color: colorScheme.onPrimary.withValues(alpha: 0.85),
-                    size: 32.0,
-                  ),
-                  onPressed: () {
-                    ref.read(discreetModeProvider.notifier).toggle();
-                  },
-                ),
-              ),
+    return MergeSemantics(
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              colorScheme.primary,
+              colorScheme.primary.withValues(alpha: 0.75),
             ],
           ),
-          const SizedBox(height: 14),
-          accountsAsync.when(
-            loading: () => AnimatedBuilder(
-              animation: shimmer,
-              builder: (_, __) => Container(
-                width: 170,
-                height: 34,
-                decoration: BoxDecoration(
-                  color: colorScheme.onPrimary.withValues(
-                    alpha: 0.18 + 0.12 * shimmer.value,
-                  ),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              ),
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: [
+            BoxShadow(
+              color: colorScheme.primary.withValues(alpha: 0.32),
+              blurRadius: 24,
+              offset: const Offset(0, 10),
             ),
-            error: (_, __) => Text(
-              '--',
-              style: theme.textTheme.headlineMedium?.copyWith(
-                color: colorScheme.onPrimary,
-                fontWeight: FontWeight.w800,
-              ),
-            ),
-            data: (accounts) {
-              final globalBalanceAsync = ref.watch(globalBalanceProvider);
-              return globalBalanceAsync.when(
-                loading: () => AnimatedBuilder(
-                  animation: shimmer,
-                  builder: (_, __) => Container(
-                    width: 170,
-                    height: 34,
-                    decoration: BoxDecoration(
-                      color: colorScheme.onPrimary.withValues(
-                        alpha: 0.18 + 0.12 * shimmer.value,
-                      ),
-                      borderRadius: BorderRadius.circular(8),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Text(
+                    AppLocalizations.of(context)!.balanceTotal,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: colorScheme.onPrimary.withValues(alpha: 0.75),
+                      fontWeight: FontWeight.w500,
+                      letterSpacing: 0.2,
                     ),
                   ),
                 ),
-                error: (_, __) => Text(
-                  '--',
-                  style: theme.textTheme.headlineMedium?.copyWith(
-                    color: colorScheme.onPrimary,
-                    fontWeight: FontWeight.w800,
+                const SizedBox(width: 8),
+                Padding(
+                  padding: const EdgeInsets.only(left: 8.0),
+                  child: IconButton(
+                    key: const ValueKey('discreetModeIconButton'),
+                    iconSize: 32.0,
+                    padding: const EdgeInsets.all(8.0),
+                    constraints: const BoxConstraints(),
+                    icon: Icon(
+                      isDiscreet ? Icons.visibility_off : Icons.visibility,
+                      color: colorScheme.onPrimary.withValues(alpha: 0.85),
+                      size: 32.0,
+                    ),
+                    onPressed: () {
+                      ref.read(discreetModeProvider.notifier).toggle();
+                    },
                   ),
                 ),
-                data: (totalBalance) {
-                  final profile = ref.watch(defaultProfileProvider).value;
-                  final currency = profile?.defaultCurrency ?? 'EUR';
-                  final formatter = ref.watch(currencyFormatterProvider);
-                  final balanceStr = formatter.format(
-                    totalBalance,
-                    currencyCode: currency,
-                  );
-                  return FittedBox(
-                    fit: BoxFit.scaleDown,
-                    alignment: Alignment.centerLeft,
-                    child: ObfuscatedText(
-                      balanceStr,
-                      style: theme.textTheme.headlineMedium?.copyWith(
-                        color: colorScheme.onPrimary,
-                        fontWeight: FontWeight.w800,
-                        letterSpacing: -0.5,
+              ],
+            ),
+            const SizedBox(height: 14),
+            accountsAsync.when(
+              loading: () => AnimatedBuilder(
+                animation: shimmer,
+                builder: (_, __) => Container(
+                  width: 170,
+                  height: 34,
+                  decoration: BoxDecoration(
+                    color: colorScheme.onPrimary.withValues(
+                      alpha: 0.18 + 0.12 * shimmer.value,
+                    ),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+              ),
+              error: (_, __) => Text(
+                '--',
+                style: theme.textTheme.headlineMedium?.copyWith(
+                  color: colorScheme.onPrimary,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+              data: (accounts) {
+                final globalBalanceAsync = ref.watch(globalBalanceProvider);
+                return globalBalanceAsync.when(
+                  loading: () => AnimatedBuilder(
+                    animation: shimmer,
+                    builder: (_, __) => Container(
+                      width: 170,
+                      height: 34,
+                      decoration: BoxDecoration(
+                        color: colorScheme.onPrimary.withValues(
+                          alpha: 0.18 + 0.12 * shimmer.value,
+                        ),
+                        borderRadius: BorderRadius.circular(8),
                       ),
                     ),
-                  );
-                },
-              );
-            },
-          ),
-          const SizedBox(height: 10),
-          accountsAsync.when(
-            loading: () => AnimatedBuilder(
-              animation: shimmer,
-              builder: (_, __) => Container(
-                width: 110,
-                height: 15,
-                decoration: BoxDecoration(
-                  color: colorScheme.onPrimary.withValues(
-                    alpha: 0.12 + 0.08 * shimmer.value,
                   ),
-                  borderRadius: BorderRadius.circular(4),
+                  error: (_, __) => Text(
+                    '--',
+                    style: theme.textTheme.headlineMedium?.copyWith(
+                      color: colorScheme.onPrimary,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  data: (totalBalance) {
+                    final profile = ref.watch(defaultProfileProvider).value;
+                    final currency = profile?.defaultCurrency ?? 'EUR';
+                    final formatter = ref.watch(currencyFormatterProvider);
+                    final balanceStr = formatter.format(
+                      totalBalance,
+                      currencyCode: currency,
+                    );
+                    return FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: Alignment.centerLeft,
+                      child: ObfuscatedText(
+                        balanceStr,
+                        style: theme.textTheme.headlineMedium?.copyWith(
+                          color: colorScheme.onPrimary,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: -0.5,
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
+            const SizedBox(height: 10),
+            accountsAsync.when(
+              loading: () => AnimatedBuilder(
+                animation: shimmer,
+                builder: (_, __) => Container(
+                  width: 110,
+                  height: 15,
+                  decoration: BoxDecoration(
+                    color: colorScheme.onPrimary.withValues(
+                      alpha: 0.12 + 0.08 * shimmer.value,
+                    ),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ),
+              ),
+              error: (_, __) => const SizedBox(height: 15),
+              data: (accounts) {
+                return Text(
+                  AppLocalizations.of(
+                    context,
+                  )!
+                      .acrossAccountsCount(accounts.length),
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: colorScheme.onPrimary.withValues(alpha: 0.75),
+                    fontWeight: FontWeight.w500,
+                  ),
+                );
+              },
+            ),
+            const SizedBox(height: 20),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              decoration: BoxDecoration(
+                color: colorScheme.onPrimary.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(50),
+              ),
+              child: Text(
+                AppLocalizations.of(context)!.presetLast30Days,
+                style: theme.textTheme.labelSmall?.copyWith(
+                  color: colorScheme.onPrimary.withValues(alpha: 0.85),
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             ),
-            error: (_, __) => const SizedBox(height: 15),
-            data: (accounts) {
-              return Text(
-                AppLocalizations.of(
-                  context,
-                )!
-                    .acrossAccountsCount(accounts.length),
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: colorScheme.onPrimary.withValues(alpha: 0.75),
-                  fontWeight: FontWeight.w500,
-                ),
-              );
-            },
-          ),
-          const SizedBox(height: 20),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-            decoration: BoxDecoration(
-              color: colorScheme.onPrimary.withValues(alpha: 0.15),
-              borderRadius: BorderRadius.circular(50),
-            ),
-            child: Text(
-              AppLocalizations.of(context)!.presetLast30Days,
-              style: theme.textTheme.labelSmall?.copyWith(
-                color: colorScheme.onPrimary.withValues(alpha: 0.85),
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

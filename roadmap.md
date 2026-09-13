@@ -497,7 +497,13 @@
   - [x] Added `selectMonth` to `PdfExportDateRange` and updated `ExportMonthlyPdfUseCase` and `ProfileSettingsController` to support arbitrary historical months.
   - [x] Built Material 3 `MonthYearPickerDialog` bounded between 2021 and current date with localized month names.
   - [x] Integrated Month/Year picker into `DataManagementScreen` PDF export modal bottom sheet.
-  - [x] Maintained 100% test pass rate (584 tests) and zero static analysis warnings.
+- [x] **Phase 71: Home Screen Widget & Comprehensive Accessibility (a11y)**
+  - [x] Integrated `home_widget` package and implemented native 2x1 horizontal home screen widgets on Android (`StalviWidgetProvider` with XML layout) and iOS (`StalviWidget` via WidgetKit & SwiftUI).
+  - [x] Created `WidgetUpdateService` in the Application layer to aggregate 30-day income and expenses in the user's default currency (with multi-currency conversion) and sync formatted amounts and localized labels to native widget storage.
+  - [x] Integrated `WidgetUpdateService` into Riverpod state notifiers, triggering automatic native widget updates on transaction creation, deletion, recycle bin restorations/purges, default currency changes, locale switches, and app startup.
+  - [x] Implemented semantic accessibility (`Semantics`, `MergeSemantics`, `ExcludeSemantics`) across Dashboard summary cards, account tiles, transaction items, form dialogs, and navigation elements.
+  - [x] Added screen-reader and widget translation keys across English (`app_en.arb`), Spanish (`app_es.arb`), and Catalan (`app_ca.arb`).
+  - [x] Maintained 100% test pass rate across 595 tests and 0 static analysis warnings with `--fatal-infos --fatal-warnings`.
 
 ---
 
@@ -508,4 +514,4 @@ Future ideas, enhancements, and post-release maintenance goals:
 - [ ] **Historical Period Comparisons:** Comparative bar and trend charts comparing month-over-month (MoM) and year-over-year (YoY) income, expenses, and savings rates.
 - [ ] **Encrypted Receipt & Invoice Photo Attachments:** Secure capture and local storage of compressed receipt/invoice images linked directly to transactions with AES-256 encryption at rest.
 - [ ] **Multiple Local Profiles & Isolated Workspaces:** Ability to switch between multiple independent local accounts/spaces (e.g., Personal, Business/Freelance, Family/Household) protected by distinct PIN codes and biometric profiles on the same device.
-- [ ] **Comprehensive Accessibility (a11y) & Screen Reader Compliance:** Full TalkBack (Android) and VoiceOver (iOS) semantic tree annotations, dynamic auditory descriptions for financial charts, screen-reader balance announcements, and WCAG AAA high-contrast accessibility mode for visually impaired users.
+- [x] **Comprehensive Accessibility (a11y) & Screen Reader Compliance:** Full TalkBack (Android) and VoiceOver (iOS) semantic tree annotations, dynamic auditory descriptions for financial charts, screen-reader balance announcements, and WCAG AAA high-contrast accessibility mode for visually impaired users.

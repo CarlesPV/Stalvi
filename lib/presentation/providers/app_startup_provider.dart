@@ -5,6 +5,7 @@ import 'package:stalvi/domain/usecases/sync_exchange_rates_usecase.dart';
 import 'package:stalvi/infrastructure/services/notification_service.dart';
 import 'locale_provider.dart';
 import 'repository_providers.dart';
+import 'package:stalvi/application/services/widget_update_service.dart';
 
 /// Provides the singleton [AppDatabase] instance.
 ///
@@ -71,5 +72,10 @@ final appStartupProvider = FutureProvider<void>((ref) async {
     );
     // Note: this deliberately runs without awaiting it to avoid blocking startup
     syncRatesUseCase.execute(baseCurrency: profile.defaultCurrency);
+  } catch (_) {}
+
+  // Update native home widget data on app startup
+  try {
+    await ref.read(widgetUpdateServiceProvider).updateWidgetData();
   } catch (_) {}
 });
