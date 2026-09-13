@@ -931,7 +931,22 @@ This document lists the completed phases of the Stalvi development roadmap, prov
   - 100% automated test suite pass rate across 595 unit, widget, and integration tests.
   - Verified Android APK build (`flutter build apk --debug`) compiles successfully.
 
+### Phase 72: Widget UI Polish & Housekeeping
+* **Completion Date:** September 13, 2026
+* **Objective:** Polish native 2x1 Home Screen widgets across Android and iOS with dark mode support, app icon display, reduced text sizes, tap-to-open functionality, and realistic OS previews, followed by codebase housekeeping and validation.
+* **Accomplishments:**
+  - **Dark Mode Support:** Configured adaptive background and text colors (`?android:colorBackground` and `?android:textColorPrimary` on Android; `Color(UIColor.systemBackground)` on iOS) ensuring high legibility and contrast across light and dark system themes.
+  - **Visual & Layout Refinements:** Centered the Stalvi launcher icon at the top of the widget and adjusted typography sizing (Android: 12sp titles, 18sp amounts; iOS: caption2 titles, headline amounts) for better proportions and glanceability.
+  - **Tap-to-Open Integration:** Wired `PendingIntent` launching `MainActivity` on Android and SwiftUI `.widgetURL(URL(string: "stalvi://home"))` on iOS for seamless one-tap navigation directly into the Stalvi app.
+  - **Realistic Widget Previews:** Configured `android:previewLayout="@layout/widget_layout"` in `widget_info.xml` and added `StalviWidget_Previews` with realistic sample entries (`1,200 €` income, `450 €` expenses) for the OS widget selection gallery.
+  - **Housekeeping & Verification:** Verified complete cleanliness across `lib/` and `test/`, confirmed 0 issues on `flutter analyze --fatal-infos --fatal-warnings`, 100% pass rate on `flutter test` (595 tests), and verified successful debug Android APK compilation.
+* **Verification:**
+  - 100% clean static analysis (`flutter analyze --fatal-infos --fatal-warnings` with 0 issues).
+  - 100% automated test suite pass rate across 595 unit, widget, and integration tests.
+  - Verified Android APK build (`flutter build apk --debug`) compiles successfully.
+
 ## Recent Updates
+- Completed Phase 72 (Widget UI Polish & Housekeeping), refining native 2x1 widgets for Android and iOS with Dark Mode adaptation, centered app icon, tap-to-open routing, optimized typography, and gallery preview providers, achieving 0 static analysis issues and 100% pass rate across 595 tests.
 - Completed Phase 71 (Home Screen Widget & Comprehensive Accessibility (a11y)), implementing native 2x1 home screen widgets on Android (Glance/RemoteViews) and iOS (WidgetKit/SwiftUI) displaying 30-day income and expenses in the default currency, creating `WidgetUpdateService` with automatic sync across transaction mutations and currency changes, adding semantic tree accessibility annotations (`Semantics`, `MergeSemantics`, `ExcludeSemantics`) across all UI screens, synchronizing translations in EN, ES, and CA, and achieving a 100% test pass rate across 595 tests and 0 static analyzer issues.
 - Completed Phase 70 (Case-Insensitive Sorting & Historical PDF Month Export), refactoring CategoryRepository and TagRepository for case-insensitive alphabetical sorting across futures and streams, expanding PDF exports with arbitrary historical month selection bounded between 2021 and the current date via a Material 3 MonthYearPickerDialog, synchronizing ARB translations (EN, ES, CA), and maintaining 100% test pass rate across 584 tests and 0 static analyzer issues.
 - Completed Phase 69 (Semantic Visuals, PDF Fixes & Background Optimization), refactoring transaction amount colors in the UI to render transfers in neutral/black instead of red/green, optimizing WorkManager background execution trigger interval from 4 hours to 12 hours for improved battery efficiency, fixing PDF export net balance styling to render in black when total is exactly 0, and maintaining 100% test pass rate across 572 tests and 0 static analysis warnings.

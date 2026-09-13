@@ -1,56 +1,73 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal"
-    android:background="#FFFFFF"
-    android:padding="16dp"
-    android:id="@+id/widget_root"
-    android:baselineAligned="false">
+    android:orientation="vertical"
+    android:background="?android:colorBackground"
+    android:padding="8dp"
+    android:id="@+id/widget_root">
+
+    <ImageView
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:src="@drawable/splash_icon"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="4dp" />
 
     <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
         android:layout_weight="1"
-        android:orientation="vertical"
-        android:gravity="center">
-        <TextView
-            android:id="@+id/widget_income_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Income"
-            android:textColor="#333333"
-            android:textSize="14sp" />
-        <TextView
-            android:id="@+id/widget_income_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="-"
-            android:textColor="#4CAF50"
-            android:textSize="20sp"
-            android:textStyle="bold" />
-    </LinearLayout>
+        android:orientation="horizontal"
+        android:baselineAligned="false">
 
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:orientation="vertical"
-        android:gravity="center">
-        <TextView
-            android:id="@+id/widget_expense_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Expenses"
-            android:textColor="#333333"
-            android:textSize="14sp" />
-        <TextView
-            android:id="@+id/widget_expense_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="-"
-            android:textColor="#F44336"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
+            <TextView
+                android:id="@+id/widget_income_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Income"
+                android:textColor="?android:textColorPrimary"
+                android:textSize="11sp" />
+            <TextView
+                android:id="@+id/widget_income_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="-"
+                tools:text="$2,450.00"
+                android:textColor="#4CAF50"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
+            <TextView
+                android:id="@+id/widget_expense_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Expenses"
+                android:textColor="?android:textColorPrimary"
+                android:textSize="11sp" />
+            <TextView
+                android:id="@+id/widget_expense_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="-"
+                tools:text="$1,230.50"
+                android:textColor="#F44336"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+        </LinearLayout>
     </LinearLayout>
 
 </LinearLayout>

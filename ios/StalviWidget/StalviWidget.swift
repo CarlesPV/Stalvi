@@ -3,11 +3,11 @@ import SwiftUI
 
 struct Provider: TimelineProvider {
     func placeholder(in context: Context) -> SimpleEntry {
-        SimpleEntry(date: Date(), incomeText: "0.00", expenseText: "0.00", incomeTitle: "Income", expenseTitle: "Expenses")
+        SimpleEntry(date: Date(), incomeText: "2,450.50 €", expenseText: "1,120.00 €", incomeTitle: "Monthly Income", expenseTitle: "Monthly Expenses")
     }
 
     func getSnapshot(in context: Context, completion: @escaping (SimpleEntry) -> ()) {
-        let entry = SimpleEntry(date: Date(), incomeText: "0.00", expenseText: "0.00", incomeTitle: "Income", expenseTitle: "Expenses")
+        let entry = SimpleEntry(date: Date(), incomeText: "2,450.50 €", expenseText: "1,120.00 €", incomeTitle: "Monthly Income", expenseTitle: "Monthly Expenses")
         completion(entry)
     }
 
@@ -39,32 +39,46 @@ struct SimpleEntry: TimelineEntry {
 
 struct StalviWidgetEntryView : View {
     var entry: Provider.Entry
+    @Environment(\.colorScheme) var colorScheme
 
     var body: some View {
-        HStack {
-            VStack {
-                Text(entry.incomeTitle)
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-                Text(entry.incomeText)
-                    .font(.title2)
-                    .bold()
-                    .foregroundColor(.green)
-            }
-            .frame(maxWidth: .infinity)
+        ZStack {
+            Color(UIColor.systemBackground)
+                .edgesIgnoringSafeArea(.all)
             
-            VStack {
-                Text(entry.expenseTitle)
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-                Text(entry.expenseText)
-                    .font(.title2)
-                    .bold()
-                    .foregroundColor(.red)
+            VStack(spacing: 8) {
+                Image("SplashIcon")
+                    .resizable()
+                    .frame(width: 28, height: 28)
+                    .cornerRadius(4)
+                
+                HStack {
+                    VStack {
+                        Text(entry.incomeTitle)
+                            .font(.caption2)
+                            .foregroundColor(.secondary)
+                        Text(entry.incomeText)
+                            .font(.footnote)
+                            .bold()
+                            .foregroundColor(.green)
+                    }
+                    .frame(maxWidth: .infinity)
+                    
+                    VStack {
+                        Text(entry.expenseTitle)
+                            .font(.caption2)
+                            .foregroundColor(.secondary)
+                        Text(entry.expenseText)
+                            .font(.footnote)
+                            .bold()
+                            .foregroundColor(.red)
+                    }
+                    .frame(maxWidth: .infinity)
+                }
             }
-            .frame(maxWidth: .infinity)
+            .padding()
         }
-        .padding()
+        .widgetURL(URL(string: "stalvi://home"))
     }
 }
 
@@ -79,5 +93,12 @@ struct StalviWidget: Widget {
         .configurationDisplayName("Stalvi Widget")
         .description("Shows Income and Expenses.")
         .supportedFamilies([.systemMedium])
+    }
+}
+
+struct StalviWidget_Previews: PreviewProvider {
+    static var previews: some View {
+        StalviWidgetEntryView(entry: SimpleEntry(date: Date(), incomeText: "2,450.50 €", expenseText: "1,120.00 €", incomeTitle: "Monthly Income", expenseTitle: "Monthly Expenses"))
+            .previewContext(WidgetPreviewContext(family: .systemMedium))
     }
 }

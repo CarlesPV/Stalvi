@@ -505,6 +505,14 @@
   - [x] Added screen-reader and widget translation keys across English (`app_en.arb`), Spanish (`app_es.arb`), and Catalan (`app_ca.arb`).
   - [x] Maintained 100% test pass rate across 595 tests and 0 static analysis warnings with `--fatal-infos --fatal-warnings`.
 
+- [x] **Phase 72: Widget UI Polish & Housekeeping**
+  - [x] Refined native 2x1 Home Screen widgets for Android and iOS with dynamic Dark Mode support and responsive colors (`?android:colorBackground`, `?android:textColorPrimary`, SwiftUI `Color(UIColor.systemBackground)`).
+  - [x] Added centered Stalvi launcher app icon and reduced typography sizes (12sp/18sp Android, caption2/headline iOS) for enhanced glanceability and balance.
+  - [x] Configured native tap actions via `PendingIntent` (Android) and `.widgetURL` (iOS) to launch `MainActivity` / Stalvi home view directly from the widget.
+  - [x] Added realistic widget previews in `widget_info.xml` (`android:previewLayout`) and `StalviWidget_Previews` (`PreviewProvider`).
+  - [x] Conducted project-wide housekeeping across `lib/` and `test/`, removing dead code and unused statements.
+  - [x] Maintained 100% test pass rate across 595 tests and 0 static analysis warnings with `--fatal-infos --fatal-warnings`.
+
 ---
 
 ## Post-Launch / Maintenance
