@@ -59,15 +59,21 @@ class _CategoriesTagsManagementScreenState
         controller: _tabController,
         children: const [_CategoriesTab(), _TagsTab()],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          if (_tabController.index == 0) {
-            _showAddCategory();
-          } else {
-            _showAddTag();
-          }
+      floatingActionButton: ListenableBuilder(
+        listenable: _tabController,
+        builder: (context, child) {
+          return FloatingActionButton(
+            tooltip: _tabController.index == 0 ? l10n.addCategory : l10n.addTag,
+            onPressed: () {
+              if (_tabController.index == 0) {
+                _showAddCategory();
+              } else {
+                _showAddTag();
+              }
+            },
+            child: const Icon(Icons.add),
+          );
         },
-        child: const Icon(Icons.add),
       ),
     );
   }
@@ -272,11 +278,13 @@ class _CategoriesTab extends ConsumerWidget {
                 children: [
                   IconButton(
                     icon: const Icon(Icons.edit),
+                    tooltip: l10n.a11yEditItem(category.name),
                     onPressed: () =>
                         CategoryDialog.show(context, ref, category: category),
                   ),
                   IconButton(
                     icon: const Icon(Icons.delete, color: Colors.red),
+                    tooltip: l10n.a11yDeleteItem(category.name),
                     onPressed: () =>
                         _confirmDelete(context, ref, category, categories),
                   ),
@@ -286,7 +294,11 @@ class _CategoriesTab extends ConsumerWidget {
           },
         );
       },
-      loading: () => const Center(child: CircularProgressIndicator()),
+      loading: () => Center(
+        child: CircularProgressIndicator(
+          semanticsLabel: l10n.a11yLoading,
+        ),
+      ),
       error: (e, st) => Center(child: Text('${l10n.unexpectedError}: $e')),
     );
   }
@@ -441,10 +453,12 @@ class _TagsTab extends ConsumerWidget {
                 children: [
                   IconButton(
                     icon: const Icon(Icons.edit),
+                    tooltip: l10n.a11yEditItem(tag.name),
                     onPressed: () => TagDialog.show(context, ref, tag: tag),
                   ),
                   IconButton(
                     icon: const Icon(Icons.delete, color: Colors.red),
+                    tooltip: l10n.a11yDeleteItem(tag.name),
                     onPressed: () => _confirmDelete(context, ref, tag, tags),
                   ),
                 ],
@@ -453,7 +467,11 @@ class _TagsTab extends ConsumerWidget {
           },
         );
       },
-      loading: () => const Center(child: CircularProgressIndicator()),
+      loading: () => Center(
+        child: CircularProgressIndicator(
+          semanticsLabel: l10n.a11yLoading,
+        ),
+      ),
       error: (e, st) => Center(child: Text('${l10n.unexpectedError}: $e')),
     );
   }
@@ -581,6 +599,7 @@ class CategoryDialogState extends State<CategoryDialog> {
             ),
             const SizedBox(height: 16),
             TextField(
+              autofocus: true,
               controller: _nameController,
               focusNode: _nameFocusNode,
               textInputAction: TextInputAction.done,
@@ -600,21 +619,27 @@ class CategoryDialogState extends State<CategoryDialog> {
               children: _colors.map((colorHex) {
                 final color = _parseCategoryHexColor(colorHex);
                 final isSelected = _selectedColor == colorHex;
-                return GestureDetector(
-                  onTap: () => setState(() => _selectedColor = colorHex),
-                  child: Center(
-                    child: SizedBox(
-                      width: 28,
-                      height: 28,
-                      child: CircleAvatar(
-                        backgroundColor: color,
-                        child: isSelected
-                            ? const Icon(
-                                Icons.check,
-                                color: Colors.white,
-                                size: 16,
-                              )
-                            : null,
+                return Semantics(
+                  button: true,
+                  selected: isSelected,
+                  label:
+                      CategoryIconPicker.localizedColorName(context, colorHex),
+                  child: GestureDetector(
+                    onTap: () => setState(() => _selectedColor = colorHex),
+                    child: Center(
+                      child: SizedBox(
+                        width: 28,
+                        height: 28,
+                        child: CircleAvatar(
+                          backgroundColor: color,
+                          child: isSelected
+                              ? const Icon(
+                                  Icons.check,
+                                  color: Colors.white,
+                                  size: 16,
+                                )
+                              : null,
+                        ),
                       ),
                     ),
                   ),
@@ -730,6 +755,7 @@ class TagDialogState extends State<TagDialog> {
             ),
             const SizedBox(height: 16),
             TextField(
+              autofocus: true,
               controller: _nameController,
               focusNode: _nameFocusNode,
               textInputAction: TextInputAction.done,

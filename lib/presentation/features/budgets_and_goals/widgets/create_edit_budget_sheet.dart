@@ -210,12 +210,15 @@ class _CreateEditBudgetSheetState extends ConsumerState<CreateEditBudgetSheet> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Center(
-                child: Container(
-                  width: 48,
-                  height: 5,
-                  decoration: BoxDecoration(
-                    color: colorScheme.onSurfaceVariant.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(10),
+                child: ExcludeSemantics(
+                  child: Container(
+                    width: 48,
+                    height: 5,
+                    decoration: BoxDecoration(
+                      color:
+                          colorScheme.onSurfaceVariant.withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                   ),
                 ),
               ),
@@ -447,7 +450,11 @@ class _CreateEditBudgetSheetState extends ConsumerState<CreateEditBudgetSheet> {
                           },
                   );
                 },
-                loading: () => const Center(child: CircularProgressIndicator()),
+                loading: () => Center(
+                  child: CircularProgressIndicator(
+                    semanticsLabel: l10n.a11yLoading,
+                  ),
+                ),
                 error: (e, st) => Text(l10n.unexpectedError),
               ),
               const SizedBox(height: 16),
@@ -511,7 +518,11 @@ class _CreateEditBudgetSheetState extends ConsumerState<CreateEditBudgetSheet> {
                           },
                   );
                 },
-                loading: () => const Center(child: CircularProgressIndicator()),
+                loading: () => Center(
+                  child: CircularProgressIndicator(
+                    semanticsLabel: l10n.a11yLoading,
+                  ),
+                ),
                 error: (e, st) => Text(l10n.unexpectedError),
               ),
               const SizedBox(height: 16),
@@ -625,10 +636,11 @@ class _CreateEditBudgetSheetState extends ConsumerState<CreateEditBudgetSheet> {
                           ),
                         ),
                         child: isLoading
-                            ? const SizedBox(
+                            ? SizedBox(
                                 width: 24,
                                 height: 24,
                                 child: CircularProgressIndicator(
+                                  semanticsLabel: l10n.a11yLoading,
                                   color: Colors.white,
                                   strokeWidth: 2,
                                 ),

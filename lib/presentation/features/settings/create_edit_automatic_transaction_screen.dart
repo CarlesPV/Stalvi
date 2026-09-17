@@ -191,6 +191,7 @@ class _CreateEditAutomaticTransactionScreenState
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
+          tooltip: MaterialLocalizations.of(context).backButtonTooltip,
           onPressed: isLoading ? null : () => Navigator.of(context).pop(),
         ),
       ),
@@ -214,34 +215,39 @@ class _CreateEditAutomaticTransactionScreenState
                   child: Row(
                     children: [
                       Expanded(
-                        child: GestureDetector(
-                          onTap: () {
-                            ref
-                                .read(
-                                  createEditAutomaticTransactionProvider(
-                                    initialTxn,
-                                  ).notifier,
-                                )
-                                .updateType(TransactionType.expense);
-                          },
-                          child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 200),
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              color: state.type == TransactionType.expense
-                                  ? financialColors.negative
-                                  : Colors.transparent,
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: FittedBox(
-                              fit: BoxFit.scaleDown,
-                              child: Text(
-                                l10n.expense(1),
-                                style: theme.textTheme.bodyMedium?.copyWith(
-                                  fontWeight: FontWeight.w700,
-                                  color: state.type == TransactionType.expense
-                                      ? colorScheme.onPrimary
-                                      : colorScheme.onSurfaceVariant,
+                        child: Semantics(
+                          button: true,
+                          selected: state.type == TransactionType.expense,
+                          label: l10n.expense(1),
+                          child: GestureDetector(
+                            onTap: () {
+                              ref
+                                  .read(
+                                    createEditAutomaticTransactionProvider(
+                                      initialTxn,
+                                    ).notifier,
+                                  )
+                                  .updateType(TransactionType.expense);
+                            },
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 200),
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                color: state.type == TransactionType.expense
+                                    ? financialColors.negative
+                                    : Colors.transparent,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: Text(
+                                  l10n.expense(1),
+                                  style: theme.textTheme.bodyMedium?.copyWith(
+                                    fontWeight: FontWeight.w700,
+                                    color: state.type == TransactionType.expense
+                                        ? colorScheme.onPrimary
+                                        : colorScheme.onSurfaceVariant,
+                                  ),
                                 ),
                               ),
                             ),
@@ -249,34 +255,39 @@ class _CreateEditAutomaticTransactionScreenState
                         ),
                       ),
                       Expanded(
-                        child: GestureDetector(
-                          onTap: () {
-                            ref
-                                .read(
-                                  createEditAutomaticTransactionProvider(
-                                    initialTxn,
-                                  ).notifier,
-                                )
-                                .updateType(TransactionType.income);
-                          },
-                          child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 200),
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              color: state.type == TransactionType.income
-                                  ? financialColors.positive
-                                  : Colors.transparent,
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: FittedBox(
-                              fit: BoxFit.scaleDown,
-                              child: Text(
-                                l10n.income(1),
-                                style: theme.textTheme.bodyMedium?.copyWith(
-                                  fontWeight: FontWeight.w700,
-                                  color: state.type == TransactionType.income
-                                      ? colorScheme.onPrimary
-                                      : colorScheme.onSurfaceVariant,
+                        child: Semantics(
+                          button: true,
+                          selected: state.type == TransactionType.income,
+                          label: l10n.income(1),
+                          child: GestureDetector(
+                            onTap: () {
+                              ref
+                                  .read(
+                                    createEditAutomaticTransactionProvider(
+                                      initialTxn,
+                                    ).notifier,
+                                  )
+                                  .updateType(TransactionType.income);
+                            },
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 200),
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                color: state.type == TransactionType.income
+                                    ? financialColors.positive
+                                    : Colors.transparent,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: Text(
+                                  l10n.income(1),
+                                  style: theme.textTheme.bodyMedium?.copyWith(
+                                    fontWeight: FontWeight.w700,
+                                    color: state.type == TransactionType.income
+                                        ? colorScheme.onPrimary
+                                        : colorScheme.onSurfaceVariant,
+                                  ),
                                 ),
                               ),
                             ),
@@ -660,14 +671,15 @@ class _CreateEditAutomaticTransactionScreenState
                     shadowColor: activeColor.withValues(alpha: 0.3),
                   ),
                   child: isLoading
-                      ? const SizedBox(
+                      ? SizedBox(
                           width: 24,
                           height: 24,
                           child: CircularProgressIndicator(
                             strokeWidth: 2.5,
-                            valueColor: AlwaysStoppedAnimation<Color>(
+                            valueColor: const AlwaysStoppedAnimation<Color>(
                               Colors.white,
                             ),
+                            semanticsLabel: l10n.a11yLoading,
                           ),
                         )
                       : FittedBox(
@@ -1541,49 +1553,55 @@ class _FormSelectorTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    return InkWell(
-      onTap: onTap,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: iconColor.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Icon(icon, size: 20, color: iconColor),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    label,
-                    style: theme.textTheme.labelMedium?.copyWith(
-                      color: colorScheme.onSurfaceVariant,
-                      fontWeight: FontWeight.w600,
-                    ),
+    return MergeSemantics(
+      child: Semantics(
+        button: true,
+        label: '$label, $value',
+        child: InkWell(
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: iconColor.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(10),
                   ),
-                  const SizedBox(height: 2),
-                  Text(
-                    value,
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.w700,
-                      color: colorScheme.onSurface,
-                    ),
+                  child: Icon(icon, size: 20, color: iconColor),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        label,
+                        style: theme.textTheme.labelMedium?.copyWith(
+                          color: colorScheme.onSurfaceVariant,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        value,
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.w700,
+                          color: colorScheme.onSurface,
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+                Icon(
+                  Icons.chevron_right_rounded,
+                  color: colorScheme.onSurfaceVariant,
+                  size: 20,
+                ),
+              ],
             ),
-            Icon(
-              Icons.chevron_right_rounded,
-              color: colorScheme.onSurfaceVariant,
-              size: 20,
-            ),
-          ],
+          ),
         ),
       ),
     );

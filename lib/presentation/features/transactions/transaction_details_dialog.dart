@@ -148,28 +148,36 @@ class TransactionDetailsDialog extends ConsumerWidget {
           children: [
             // Drag handle bar
             Center(
-              child: Container(
-                width: 48,
-                height: 5,
-                decoration: BoxDecoration(
-                  color: colorScheme.onSurfaceVariant.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(10),
+              child: ExcludeSemantics(
+                child: Container(
+                  width: 48,
+                  height: 5,
+                  decoration: BoxDecoration(
+                    color: colorScheme.onSurfaceVariant.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                 ),
               ),
             ),
             const SizedBox(height: 24),
 
             // Header title
-            Text(
-              isTransfer
-                  ? l10n.filterTransfer
-                  : (isIncome ? l10n.income(1) : l10n.expense(1)),
-              style: theme.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w800,
-                color: colorScheme.onSurfaceVariant,
-                letterSpacing: 0.5,
+            Focus(
+              autofocus: true,
+              child: Semantics(
+                header: true,
+                child: Text(
+                  isTransfer
+                      ? l10n.filterTransfer
+                      : (isIncome ? l10n.income(1) : l10n.expense(1)),
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w800,
+                    color: colorScheme.onSurfaceVariant,
+                    letterSpacing: 0.5,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
               ),
-              textAlign: TextAlign.center,
             ),
             const SizedBox(height: 16),
 
@@ -191,7 +199,9 @@ class TransactionDetailsDialog extends ConsumerWidget {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(typeIcon, color: color, size: 24),
+                    ExcludeSemantics(
+                      child: Icon(typeIcon, color: color, size: 24),
+                    ),
                     const SizedBox(width: 10),
                     Text(
                       amountStr,
@@ -411,13 +421,23 @@ class TransactionDetailsDialog extends ConsumerWidget {
           ),
           title: Row(
             children: [
-              Icon(
-                Icons.warning_amber_rounded,
-                color: colorScheme.error,
-                size: 28,
+              ExcludeSemantics(
+                child: Icon(
+                  Icons.warning_amber_rounded,
+                  color: colorScheme.error,
+                  size: 28,
+                ),
               ),
               const SizedBox(width: 12),
-              Expanded(child: Text(l10n.deleteTransactionTitle)),
+              Expanded(
+                child: Focus(
+                  autofocus: true,
+                  child: Semantics(
+                    header: true,
+                    child: Text(l10n.deleteTransactionTitle),
+                  ),
+                ),
+              ),
             ],
           ),
           content: Text(l10n.deleteTransactionConfirmation),

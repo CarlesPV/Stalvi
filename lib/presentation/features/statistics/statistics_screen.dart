@@ -40,7 +40,7 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
     _shimmerController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1100),
-    )..repeat(reverse: true);
+    );
 
     _shimmer = CurvedAnimation(
       parent: _shimmerController,
@@ -67,6 +67,19 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
       ref.read(topExpenseCategoriesProvider);
       ref.read(topIncomeCategoriesProvider);
     });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (MediaQuery.disableAnimationsOf(context)) {
+      _shimmerController.value = 1.0;
+      _shimmerController.stop();
+    } else {
+      if (!_shimmerController.isAnimating) {
+        _shimmerController.repeat(reverse: true);
+      }
+    }
   }
 
   @override
@@ -111,6 +124,7 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
+          tooltip: MaterialLocalizations.of(context).backButtonTooltip,
           onPressed: () => Navigator.of(context).pop(),
         ),
         actions: [
@@ -402,24 +416,26 @@ class _PeriodHeader extends StatelessWidget {
     final formatted =
         '${DateFormat.MMMd(locale).format(dateRange.start)} – ${DateFormat.yMMMd(locale).format(dateRange.end)}';
 
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 4, 20, 0),
-      child: Row(
-        children: [
-          Icon(
-            Icons.calendar_today_rounded,
-            size: 14,
-            color: colorScheme.onSurfaceVariant,
-          ),
-          const SizedBox(width: 6),
-          Text(
-            formatted,
-            style: theme.textTheme.bodySmall?.copyWith(
+    return MergeSemantics(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(20, 4, 20, 0),
+        child: Row(
+          children: [
+            Icon(
+              Icons.calendar_today_rounded,
+              size: 14,
               color: colorScheme.onSurfaceVariant,
-              fontWeight: FontWeight.w600,
             ),
-          ),
-        ],
+            const SizedBox(width: 6),
+            Text(
+              formatted,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: colorScheme.onSurfaceVariant,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -540,82 +556,88 @@ class _NetBalanceCard extends ConsumerWidget {
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: accentColor.withValues(alpha: 0.25)),
       ),
-      child: Row(
-        children: [
-          Container(
-            width: 44,
-            height: 44,
-            decoration: BoxDecoration(
-              color: accentColor.withValues(alpha: 0.15),
-              borderRadius: BorderRadius.circular(14),
-            ),
-            child: Icon(
-              isDeficit
-                  ? Icons.warning_amber_rounded
-                  : Icons.account_balance_wallet_rounded,
-              color: accentColor,
-              size: 22,
-            ),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  AppLocalizations.of(context)!.statisticsNetBalance,
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: colorScheme.onSurfaceVariant,
-                    fontWeight: FontWeight.w500,
-                  ),
+      child: MergeSemantics(
+        child: Row(
+          children: [
+            Container(
+              width: 44,
+              height: 44,
+              decoration: BoxDecoration(
+                color: accentColor.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: ExcludeSemantics(
+                child: Icon(
+                  isDeficit
+                      ? Icons.warning_amber_rounded
+                      : Icons.account_balance_wallet_rounded,
+                  color: accentColor,
+                  size: 22,
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  ref.watch(currencyFormatterProvider).format(
-                        net.abs(),
-                        currencyCode: ref.watch(statisticsCurrencyProvider),
-                        showSign: false,
-                      ),
-                  style: theme.textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.w800,
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    AppLocalizations.of(context)!.statisticsNetBalance,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: colorScheme.onSurfaceVariant,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    ref.watch(currencyFormatterProvider).format(
+                          net.abs(),
+                          currencyCode: ref.watch(statisticsCurrencyProvider),
+                          showSign: false,
+                        ),
+                    style: theme.textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.w800,
+                      color: accentColor,
+                      letterSpacing: -0.5,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (isSurplus)
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: accentColor.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(50),
+                ),
+                child: Text(
+                  '▲ ${AppLocalizations.of(context)!.statisticsSurplus}',
+                  style: theme.textTheme.labelSmall?.copyWith(
                     color: accentColor,
-                    letterSpacing: -0.5,
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
-              ],
-            ),
-          ),
-          if (isSurplus)
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-              decoration: BoxDecoration(
-                color: accentColor.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(50),
-              ),
-              child: Text(
-                '▲ ${AppLocalizations.of(context)!.statisticsSurplus}',
-                style: theme.textTheme.labelSmall?.copyWith(
-                  color: accentColor,
-                  fontWeight: FontWeight.w700,
+              )
+            else if (isDeficit)
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: accentColor.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(50),
+                ),
+                child: Text(
+                  '▼ ${AppLocalizations.of(context)!.statisticsDeficit}',
+                  style: theme.textTheme.labelSmall?.copyWith(
+                    color: accentColor,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
               ),
-            )
-          else if (isDeficit)
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-              decoration: BoxDecoration(
-                color: accentColor.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(50),
-              ),
-              child: Text(
-                '▼ ${AppLocalizations.of(context)!.statisticsDeficit}',
-                style: theme.textTheme.labelSmall?.copyWith(
-                  color: accentColor,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -639,51 +661,53 @@ class _SummaryCard extends ConsumerWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: colorScheme.outline.withValues(alpha: 0.1)),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 36,
-            height: 36,
-            decoration: BoxDecoration(
-              color: accentColor.withValues(alpha: 0.14),
-              borderRadius: BorderRadius.circular(12),
+    return MergeSemantics(
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(color: colorScheme.outline.withValues(alpha: 0.1)),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                color: accentColor.withValues(alpha: 0.14),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(icon, size: 20, color: accentColor),
             ),
-            child: Icon(icon, size: 20, color: accentColor),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  label,
-                  style: theme.textTheme.labelSmall?.copyWith(
-                    color: colorScheme.onSurfaceVariant,
-                    fontWeight: FontWeight.w500,
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    label,
+                    style: theme.textTheme.labelSmall?.copyWith(
+                      color: colorScheme.onSurfaceVariant,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  ref.watch(currencyFormatterProvider).format(
-                        amount,
-                        currencyCode: ref.watch(statisticsCurrencyProvider),
-                      ),
-                  style: theme.textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.w800,
-                    color: accentColor,
+                  const SizedBox(height: 2),
+                  Text(
+                    ref.watch(currencyFormatterProvider).format(
+                          amount,
+                          currencyCode: ref.watch(statisticsCurrencyProvider),
+                        ),
+                    style: theme.textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w800,
+                      color: accentColor,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -930,6 +954,31 @@ class _PieChartWithLegend extends ConsumerWidget {
       );
     }
 
+    final l10n = AppLocalizations.of(context)!;
+    final semanticsLabel = StringBuffer('${l10n.a11yChartTitle} ');
+    if (total > 0) {
+      if (displayCategories.isNotEmpty) {
+        final topCat = displayCategories[0];
+        final topRatio = (topCat.totalAmount / total * 100).toStringAsFixed(0);
+        semanticsLabel.write(
+          '${l10n.a11yChartTopCategory(topCat.categoryName, topRatio)} ',
+        );
+      }
+      if (displayCategories.length > 1) {
+        final secondCat = displayCategories[1];
+        final secondRatio =
+            (secondCat.totalAmount / total * 100).toStringAsFixed(0);
+        semanticsLabel.write(
+          '${l10n.a11yChartSecondCategory(secondCat.categoryName, secondRatio)} ',
+        );
+      }
+      if (otherTotal > 0 || displayCategories.length > 2) {
+        semanticsLabel.write(l10n.a11yChartOtherCategories);
+      }
+    } else {
+      semanticsLabel.write(l10n.a11yChartNoData);
+    }
+
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -940,22 +989,29 @@ class _PieChartWithLegend extends ConsumerWidget {
       child: Column(
         children: [
           // Pie chart
-          AspectRatio(
-            aspectRatio: 1.5,
-            child: PieChart(
-              PieChartData(
-                sections: sections,
-                centerSpaceRadius: 50,
-                sectionsSpace: 3,
-                pieTouchData: PieTouchData(
-                  touchCallback: (event, response) {
-                    if (event.isInterestedForInteractions &&
-                        response?.touchedSection != null) {
-                      onTouch(response!.touchedSection!.touchedSectionIndex);
-                    } else {
-                      onTouch(-1);
-                    }
-                  },
+          Semantics(
+            label: semanticsLabel.toString().trim(),
+            child: AspectRatio(
+              aspectRatio: 1.5,
+              child: ExcludeSemantics(
+                child: PieChart(
+                  PieChartData(
+                    sections: sections,
+                    centerSpaceRadius: 50,
+                    sectionsSpace: 3,
+                    pieTouchData: PieTouchData(
+                      touchCallback: (event, response) {
+                        if (event.isInterestedForInteractions &&
+                            response?.touchedSection != null) {
+                          onTouch(
+                            response!.touchedSection!.touchedSectionIndex,
+                          );
+                        } else {
+                          onTouch(-1);
+                        }
+                      },
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -980,61 +1036,69 @@ class _PieChartWithLegend extends ConsumerWidget {
             final catColor = _parseHexColor(cat.categoryColor);
             final isTouched = i == touchedIndex;
 
-            return GestureDetector(
-              onTap: () => onTouch(isTouched ? -1 : i),
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 150),
-                margin: const EdgeInsets.only(bottom: 8),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 8,
-                ),
-                decoration: BoxDecoration(
-                  color: isTouched
-                      ? catColor.withValues(alpha: 0.1)
-                      : Colors.transparent,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 12,
-                      height: 12,
-                      decoration: BoxDecoration(
-                        color: catColor,
-                        shape: BoxShape.circle,
-                      ),
+            return MergeSemantics(
+              child: Semantics(
+                button: true,
+                child: GestureDetector(
+                  onTap: () => onTouch(isTouched ? -1 : i),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 150),
+                    margin: const EdgeInsets.only(bottom: 8),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8,
                     ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Text(
-                        cat.categoryName,
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: colorScheme.onSurface,
-                          fontWeight:
-                              isTouched ? FontWeight.w700 : FontWeight.w500,
-                        ),
-                      ),
+                    decoration: BoxDecoration(
+                      color: isTouched
+                          ? catColor.withValues(alpha: 0.1)
+                          : Colors.transparent,
+                      borderRadius: BorderRadius.circular(10),
                     ),
-                    Text(
-                      '${(ratio * 100).toStringAsFixed(1)}%',
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: colorScheme.onSurfaceVariant,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Text(
-                      ref.watch(currencyFormatterProvider).format(
-                            cat.totalAmount / 100.0,
-                            currencyCode: ref.watch(statisticsCurrencyProvider),
+                    child: Row(
+                      children: [
+                        ExcludeSemantics(
+                          child: Container(
+                            width: 12,
+                            height: 12,
+                            decoration: BoxDecoration(
+                              color: catColor,
+                              shape: BoxShape.circle,
+                            ),
                           ),
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: catColor,
-                        fontWeight: FontWeight.w700,
-                      ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            cat.categoryName,
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: colorScheme.onSurface,
+                              fontWeight:
+                                  isTouched ? FontWeight.w700 : FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                        Text(
+                          '${(ratio * 100).toStringAsFixed(1)}%',
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: colorScheme.onSurfaceVariant,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Text(
+                          ref.watch(currencyFormatterProvider).format(
+                                cat.totalAmount / 100.0,
+                                currencyCode:
+                                    ref.watch(statisticsCurrencyProvider),
+                              ),
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: catColor,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
               ),
             );
@@ -1043,12 +1107,14 @@ class _PieChartWithLegend extends ConsumerWidget {
             const SizedBox(height: 4),
             Row(
               children: [
-                Container(
-                  width: 12,
-                  height: 12,
-                  decoration: BoxDecoration(
-                    color: colorScheme.onSurface.withValues(alpha: 0.25),
-                    shape: BoxShape.circle,
+                ExcludeSemantics(
+                  child: Container(
+                    width: 12,
+                    height: 12,
+                    decoration: BoxDecoration(
+                      color: colorScheme.onSurface.withValues(alpha: 0.25),
+                      shape: BoxShape.circle,
+                    ),
                   ),
                 ),
                 const SizedBox(width: 10),

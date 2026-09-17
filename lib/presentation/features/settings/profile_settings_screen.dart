@@ -278,26 +278,29 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                                   ),
                                   const SizedBox(width: 8),
                                   Expanded(
-                                    child: Text(
-                                      localError ??
-                                          ((state.error!.contains(
-                                                    'old_pin_incorrect',
-                                                  ) ||
-                                                  state.error!.contains(
-                                                    'Incorrect Old PIN.',
-                                                  ))
-                                              ? '${l10n.incorrectOldPin}\n${l10n.authPinAttemptsRemaining(6 - state.failedAttempts)}'
-                                              : (state.error!.contains(
-                                                        'maximum_pin_attempts',
-                                                      ) ||
-                                                      state.error!.contains(
-                                                        'Maximum PIN attempts',
-                                                      ))
-                                                  ? l10n.errorMaxPinAttempts
-                                                  : state.error!),
-                                      style: const TextStyle(
-                                        color: Colors.red,
-                                        fontWeight: FontWeight.bold,
+                                    child: Semantics(
+                                      liveRegion: true,
+                                      child: Text(
+                                        localError ??
+                                            ((state.error!.contains(
+                                                      'old_pin_incorrect',
+                                                    ) ||
+                                                    state.error!.contains(
+                                                      'Incorrect Old PIN.',
+                                                    ))
+                                                ? '${l10n.incorrectOldPin}\n${l10n.authPinAttemptsRemaining(6 - state.failedAttempts)}'
+                                                : (state.error!.contains(
+                                                          'maximum_pin_attempts',
+                                                        ) ||
+                                                        state.error!.contains(
+                                                          'Maximum PIN attempts',
+                                                        ))
+                                                    ? l10n.errorMaxPinAttempts
+                                                    : state.error!),
+                                        style: const TextStyle(
+                                          color: Colors.red,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -306,7 +309,9 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                             ),
                           const SizedBox(height: 24),
                           if (state.isLoading)
-                            const CircularProgressIndicator()
+                            CircularProgressIndicator(
+                              semanticsLabel: l10n.a11yLoading,
+                            )
                           else
                             ElevatedButton(
                               onPressed: currentController.text.length >= 4
@@ -603,7 +608,11 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
     return Scaffold(
       appBar: AppBar(title: Text(l10n.profileSettingsTitle)),
       body: state.isLoading && state.profile == null
-          ? const Center(child: CircularProgressIndicator())
+          ? Center(
+              child: CircularProgressIndicator(
+                semanticsLabel: l10n.a11yLoading,
+              ),
+            )
           : SafeArea(
               child: ListView(
                 padding: const EdgeInsets.all(24),

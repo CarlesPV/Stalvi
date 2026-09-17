@@ -2313,6 +2313,1488 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Select date'**
   String get a11ySelectDate;
+
+  /// No description provided for @a11yPinBackspace.
+  ///
+  /// In en, this message translates to:
+  /// **'Backspace'**
+  String get a11yPinBackspace;
+
+  /// No description provided for @a11yPinBiometric.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometric authentication'**
+  String get a11yPinBiometric;
+
+  /// No description provided for @a11yPinDigit.
+  ///
+  /// In en, this message translates to:
+  /// **'Digit {digit}'**
+  String a11yPinDigit(Object digit);
+
+  /// No description provided for @a11yPinProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} of {total} digits entered'**
+  String a11yPinProgress(Object count, Object total);
+
+  /// No description provided for @a11yEditCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit category'**
+  String get a11yEditCategory;
+
+  /// No description provided for @a11yDeleteCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete category'**
+  String get a11yDeleteCategory;
+
+  /// No description provided for @a11yStatisticsSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Statistics summary'**
+  String get a11yStatisticsSummary;
+
+  /// No description provided for @a11yBudgetProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Budget progress'**
+  String get a11yBudgetProgress;
+
+  /// No description provided for @a11yChartTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Statistics chart.'**
+  String get a11yChartTitle;
+
+  /// No description provided for @a11yChartTopCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Top category: {category} with {percent}%.'**
+  String a11yChartTopCategory(String category, String percent);
+
+  /// No description provided for @a11yChartSecondCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Second: {category} with {percent}%.'**
+  String a11yChartSecondCategory(String category, String percent);
+
+  /// No description provided for @a11yChartOtherCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'Other categories make up the rest.'**
+  String get a11yChartOtherCategories;
+
+  /// No description provided for @a11yChartNoData.
+  ///
+  /// In en, this message translates to:
+  /// **'No data available.'**
+  String get a11yChartNoData;
+
+  /// No description provided for @a11yDiscreetModeHidden.
+  ///
+  /// In en, this message translates to:
+  /// **'Balance hidden.'**
+  String get a11yDiscreetModeHidden;
+
+  /// No description provided for @a11yDiscreetModeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Double tap the visibility button to show.'**
+  String get a11yDiscreetModeHint;
+
+  /// No description provided for @a11yDiscreetModeToggleHide.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide balances (discreet mode)'**
+  String get a11yDiscreetModeToggleHide;
+
+  /// No description provided for @a11yDiscreetModeToggleShow.
+  ///
+  /// In en, this message translates to:
+  /// **'Show balances'**
+  String get a11yDiscreetModeToggleShow;
+
+  /// No description provided for @a11yRestoreItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore {item}'**
+  String a11yRestoreItem(String item);
+
+  /// No description provided for @a11yDeletePermanently.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete {item} permanently'**
+  String a11yDeletePermanently(String item);
+
+  /// No description provided for @a11yAcceptTerms.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept terms and privacy policy'**
+  String get a11yAcceptTerms;
+
+  /// No description provided for @a11yChartSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Statistics chart. {details}'**
+  String a11yChartSummary(String details);
+
+  /// No description provided for @a11yColorBlue.
+  ///
+  /// In en, this message translates to:
+  /// **'Blue'**
+  String get a11yColorBlue;
+
+  /// No description provided for @a11yColorGreen.
+  ///
+  /// In en, this message translates to:
+  /// **'Green'**
+  String get a11yColorGreen;
+
+  /// No description provided for @a11yColorAmber.
+  ///
+  /// In en, this message translates to:
+  /// **'Amber'**
+  String get a11yColorAmber;
+
+  /// No description provided for @a11yColorPink.
+  ///
+  /// In en, this message translates to:
+  /// **'Pink'**
+  String get a11yColorPink;
+
+  /// No description provided for @a11yColorPurple.
+  ///
+  /// In en, this message translates to:
+  /// **'Purple'**
+  String get a11yColorPurple;
+
+  /// No description provided for @a11yColorDeepOrange.
+  ///
+  /// In en, this message translates to:
+  /// **'Deep orange'**
+  String get a11yColorDeepOrange;
+
+  /// No description provided for @a11yColorCyan.
+  ///
+  /// In en, this message translates to:
+  /// **'Cyan'**
+  String get a11yColorCyan;
+
+  /// No description provided for @a11yColorTeal.
+  ///
+  /// In en, this message translates to:
+  /// **'Teal'**
+  String get a11yColorTeal;
+
+  /// No description provided for @a11yColorLightGreen.
+  ///
+  /// In en, this message translates to:
+  /// **'Light green'**
+  String get a11yColorLightGreen;
+
+  /// No description provided for @a11yColorLime.
+  ///
+  /// In en, this message translates to:
+  /// **'Lime'**
+  String get a11yColorLime;
+
+  /// No description provided for @a11yColorOrange.
+  ///
+  /// In en, this message translates to:
+  /// **'Orange'**
+  String get a11yColorOrange;
+
+  /// No description provided for @a11yColorRed.
+  ///
+  /// In en, this message translates to:
+  /// **'Red'**
+  String get a11yColorRed;
+
+  /// No description provided for @a11yColorBrown.
+  ///
+  /// In en, this message translates to:
+  /// **'Brown'**
+  String get a11yColorBrown;
+
+  /// No description provided for @a11yColorBlueGrey.
+  ///
+  /// In en, this message translates to:
+  /// **'Blue grey'**
+  String get a11yColorBlueGrey;
+
+  /// No description provided for @a11yColorDeepPurple.
+  ///
+  /// In en, this message translates to:
+  /// **'Deep purple'**
+  String get a11yColorDeepPurple;
+
+  /// No description provided for @a11yColorIndigo.
+  ///
+  /// In en, this message translates to:
+  /// **'Indigo'**
+  String get a11yColorIndigo;
+
+  /// No description provided for @a11yColorLightPink.
+  ///
+  /// In en, this message translates to:
+  /// **'Light pink'**
+  String get a11yColorLightPink;
+
+  /// No description provided for @a11yColorMint.
+  ///
+  /// In en, this message translates to:
+  /// **'Mint'**
+  String get a11yColorMint;
+
+  /// No description provided for @a11yColorLightLime.
+  ///
+  /// In en, this message translates to:
+  /// **'Light lime'**
+  String get a11yColorLightLime;
+
+  /// No description provided for @a11yColorCoral.
+  ///
+  /// In en, this message translates to:
+  /// **'Coral'**
+  String get a11yColorCoral;
+
+  /// No description provided for @a11yColorLightBrown.
+  ///
+  /// In en, this message translates to:
+  /// **'Light brown'**
+  String get a11yColorLightBrown;
+
+  /// No description provided for @a11yColorGrey.
+  ///
+  /// In en, this message translates to:
+  /// **'Grey'**
+  String get a11yColorGrey;
+
+  /// No description provided for @a11yColorYellow.
+  ///
+  /// In en, this message translates to:
+  /// **'Yellow'**
+  String get a11yColorYellow;
+
+  /// No description provided for @a11yColorLightBlue.
+  ///
+  /// In en, this message translates to:
+  /// **'Light blue'**
+  String get a11yColorLightBlue;
+
+  /// No description provided for @a11yColorBlack.
+  ///
+  /// In en, this message translates to:
+  /// **'Black'**
+  String get a11yColorBlack;
+
+  /// No description provided for @a11yColorWhite.
+  ///
+  /// In en, this message translates to:
+  /// **'White'**
+  String get a11yColorWhite;
+
+  /// No description provided for @a11yIconAccountBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'Bank'**
+  String get a11yIconAccountBalance;
+
+  /// No description provided for @a11yIconAccountBalanceWallet.
+  ///
+  /// In en, this message translates to:
+  /// **'Wallet'**
+  String get a11yIconAccountBalanceWallet;
+
+  /// No description provided for @a11yIconAttachMoney.
+  ///
+  /// In en, this message translates to:
+  /// **'Money'**
+  String get a11yIconAttachMoney;
+
+  /// No description provided for @a11yIconMoneyOff.
+  ///
+  /// In en, this message translates to:
+  /// **'No money'**
+  String get a11yIconMoneyOff;
+
+  /// No description provided for @a11yIconCreditCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Credit card'**
+  String get a11yIconCreditCard;
+
+  /// No description provided for @a11yIconSavings.
+  ///
+  /// In en, this message translates to:
+  /// **'Savings'**
+  String get a11yIconSavings;
+
+  /// No description provided for @a11yIconReceiptLong.
+  ///
+  /// In en, this message translates to:
+  /// **'Detailed receipt'**
+  String get a11yIconReceiptLong;
+
+  /// No description provided for @a11yIconReceipt.
+  ///
+  /// In en, this message translates to:
+  /// **'Receipt'**
+  String get a11yIconReceipt;
+
+  /// No description provided for @a11yIconRequestQuote.
+  ///
+  /// In en, this message translates to:
+  /// **'Invoice'**
+  String get a11yIconRequestQuote;
+
+  /// No description provided for @a11yIconPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid'**
+  String get a11yIconPaid;
+
+  /// No description provided for @a11yIconPriceCheck.
+  ///
+  /// In en, this message translates to:
+  /// **'Price check'**
+  String get a11yIconPriceCheck;
+
+  /// No description provided for @a11yIconPriceChange.
+  ///
+  /// In en, this message translates to:
+  /// **'Price change'**
+  String get a11yIconPriceChange;
+
+  /// No description provided for @a11yIconCurrencyExchange.
+  ///
+  /// In en, this message translates to:
+  /// **'Currency exchange'**
+  String get a11yIconCurrencyExchange;
+
+  /// No description provided for @a11yIconMonetizationOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Monetization'**
+  String get a11yIconMonetizationOn;
+
+  /// No description provided for @a11yIconTrendingUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Trending up'**
+  String get a11yIconTrendingUp;
+
+  /// No description provided for @a11yIconTrendingDown.
+  ///
+  /// In en, this message translates to:
+  /// **'Trending down'**
+  String get a11yIconTrendingDown;
+
+  /// No description provided for @a11yIconShowChart.
+  ///
+  /// In en, this message translates to:
+  /// **'Chart'**
+  String get a11yIconShowChart;
+
+  /// No description provided for @a11yIconReplay.
+  ///
+  /// In en, this message translates to:
+  /// **'Recurring'**
+  String get a11yIconReplay;
+
+  /// No description provided for @a11yIconShoppingCart.
+  ///
+  /// In en, this message translates to:
+  /// **'Shopping cart'**
+  String get a11yIconShoppingCart;
+
+  /// No description provided for @a11yIconShoppingBag.
+  ///
+  /// In en, this message translates to:
+  /// **'Shopping bag'**
+  String get a11yIconShoppingBag;
+
+  /// No description provided for @a11yIconLocalMall.
+  ///
+  /// In en, this message translates to:
+  /// **'Shopping mall'**
+  String get a11yIconLocalMall;
+
+  /// No description provided for @a11yIconStorefront.
+  ///
+  /// In en, this message translates to:
+  /// **'Storefront'**
+  String get a11yIconStorefront;
+
+  /// No description provided for @a11yIconRedeem.
+  ///
+  /// In en, this message translates to:
+  /// **'Gift reward'**
+  String get a11yIconRedeem;
+
+  /// No description provided for @a11yIconLoyalty.
+  ///
+  /// In en, this message translates to:
+  /// **'Loyalty card'**
+  String get a11yIconLoyalty;
+
+  /// No description provided for @a11yIconSell.
+  ///
+  /// In en, this message translates to:
+  /// **'Sale'**
+  String get a11yIconSell;
+
+  /// No description provided for @a11yIconDiscount.
+  ///
+  /// In en, this message translates to:
+  /// **'Discount'**
+  String get a11yIconDiscount;
+
+  /// No description provided for @a11yIconRestaurant.
+  ///
+  /// In en, this message translates to:
+  /// **'Restaurant'**
+  String get a11yIconRestaurant;
+
+  /// No description provided for @a11yIconLunchDining.
+  ///
+  /// In en, this message translates to:
+  /// **'Lunch'**
+  String get a11yIconLunchDining;
+
+  /// No description provided for @a11yIconDinnerDining.
+  ///
+  /// In en, this message translates to:
+  /// **'Dinner'**
+  String get a11yIconDinnerDining;
+
+  /// No description provided for @a11yIconLocalCafe.
+  ///
+  /// In en, this message translates to:
+  /// **'Cafe'**
+  String get a11yIconLocalCafe;
+
+  /// No description provided for @a11yIconFastfood.
+  ///
+  /// In en, this message translates to:
+  /// **'Fast food'**
+  String get a11yIconFastfood;
+
+  /// No description provided for @a11yIconBakeryDining.
+  ///
+  /// In en, this message translates to:
+  /// **'Bakery'**
+  String get a11yIconBakeryDining;
+
+  /// No description provided for @a11yIconIcecream.
+  ///
+  /// In en, this message translates to:
+  /// **'Ice cream'**
+  String get a11yIconIcecream;
+
+  /// No description provided for @a11yIconLocalGroceryStore.
+  ///
+  /// In en, this message translates to:
+  /// **'Supermarket'**
+  String get a11yIconLocalGroceryStore;
+
+  /// No description provided for @a11yIconHome.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get a11yIconHome;
+
+  /// No description provided for @a11yIconHouse.
+  ///
+  /// In en, this message translates to:
+  /// **'House'**
+  String get a11yIconHouse;
+
+  /// No description provided for @a11yIconApartment.
+  ///
+  /// In en, this message translates to:
+  /// **'Apartment'**
+  String get a11yIconApartment;
+
+  /// No description provided for @a11yIconCottage.
+  ///
+  /// In en, this message translates to:
+  /// **'Cottage'**
+  String get a11yIconCottage;
+
+  /// No description provided for @a11yIconBed.
+  ///
+  /// In en, this message translates to:
+  /// **'Bedroom'**
+  String get a11yIconBed;
+
+  /// No description provided for @a11yIconBathroom.
+  ///
+  /// In en, this message translates to:
+  /// **'Bathroom'**
+  String get a11yIconBathroom;
+
+  /// No description provided for @a11yIconKitchen.
+  ///
+  /// In en, this message translates to:
+  /// **'Kitchen'**
+  String get a11yIconKitchen;
+
+  /// No description provided for @a11yIconChair.
+  ///
+  /// In en, this message translates to:
+  /// **'Furniture'**
+  String get a11yIconChair;
+
+  /// No description provided for @a11yIconYard.
+  ///
+  /// In en, this message translates to:
+  /// **'Garden'**
+  String get a11yIconYard;
+
+  /// No description provided for @a11yIconGarage.
+  ///
+  /// In en, this message translates to:
+  /// **'Garage'**
+  String get a11yIconGarage;
+
+  /// No description provided for @a11yIconElectricalServices.
+  ///
+  /// In en, this message translates to:
+  /// **'Electrician'**
+  String get a11yIconElectricalServices;
+
+  /// No description provided for @a11yIconPlumbing.
+  ///
+  /// In en, this message translates to:
+  /// **'Plumbing'**
+  String get a11yIconPlumbing;
+
+  /// No description provided for @a11yIconDirectionsCar.
+  ///
+  /// In en, this message translates to:
+  /// **'Car'**
+  String get a11yIconDirectionsCar;
+
+  /// No description provided for @a11yIconLocalGasStation.
+  ///
+  /// In en, this message translates to:
+  /// **'Gas station'**
+  String get a11yIconLocalGasStation;
+
+  /// No description provided for @a11yIconCarRepair.
+  ///
+  /// In en, this message translates to:
+  /// **'Car repair'**
+  String get a11yIconCarRepair;
+
+  /// No description provided for @a11yIconDirectionsBus.
+  ///
+  /// In en, this message translates to:
+  /// **'Bus'**
+  String get a11yIconDirectionsBus;
+
+  /// No description provided for @a11yIconDirectionsSubway.
+  ///
+  /// In en, this message translates to:
+  /// **'Metro'**
+  String get a11yIconDirectionsSubway;
+
+  /// No description provided for @a11yIconDirectionsBike.
+  ///
+  /// In en, this message translates to:
+  /// **'Bicycle'**
+  String get a11yIconDirectionsBike;
+
+  /// No description provided for @a11yIconTwoWheeler.
+  ///
+  /// In en, this message translates to:
+  /// **'Motorbike'**
+  String get a11yIconTwoWheeler;
+
+  /// No description provided for @a11yIconFlight.
+  ///
+  /// In en, this message translates to:
+  /// **'Flight'**
+  String get a11yIconFlight;
+
+  /// No description provided for @a11yIconHotel.
+  ///
+  /// In en, this message translates to:
+  /// **'Hotel'**
+  String get a11yIconHotel;
+
+  /// No description provided for @a11yIconLocalTaxi.
+  ///
+  /// In en, this message translates to:
+  /// **'Taxi'**
+  String get a11yIconLocalTaxi;
+
+  /// No description provided for @a11yIconTrain.
+  ///
+  /// In en, this message translates to:
+  /// **'Train'**
+  String get a11yIconTrain;
+
+  /// No description provided for @a11yIconDirectionsBoat.
+  ///
+  /// In en, this message translates to:
+  /// **'Boat'**
+  String get a11yIconDirectionsBoat;
+
+  /// No description provided for @a11yIconEvStation.
+  ///
+  /// In en, this message translates to:
+  /// **'Electric vehicle charger'**
+  String get a11yIconEvStation;
+
+  /// No description provided for @a11yIconLocalParking.
+  ///
+  /// In en, this message translates to:
+  /// **'Parking'**
+  String get a11yIconLocalParking;
+
+  /// No description provided for @a11yIconToll.
+  ///
+  /// In en, this message translates to:
+  /// **'Toll'**
+  String get a11yIconToll;
+
+  /// No description provided for @a11yIconLuggage.
+  ///
+  /// In en, this message translates to:
+  /// **'Luggage'**
+  String get a11yIconLuggage;
+
+  /// No description provided for @a11yIconLocalHospital.
+  ///
+  /// In en, this message translates to:
+  /// **'Hospital'**
+  String get a11yIconLocalHospital;
+
+  /// No description provided for @a11yIconMedicalServices.
+  ///
+  /// In en, this message translates to:
+  /// **'Medical services'**
+  String get a11yIconMedicalServices;
+
+  /// No description provided for @a11yIconMedication.
+  ///
+  /// In en, this message translates to:
+  /// **'Medication'**
+  String get a11yIconMedication;
+
+  /// No description provided for @a11yIconHealing.
+  ///
+  /// In en, this message translates to:
+  /// **'First aid'**
+  String get a11yIconHealing;
+
+  /// No description provided for @a11yIconFitnessCenter.
+  ///
+  /// In en, this message translates to:
+  /// **'Gym'**
+  String get a11yIconFitnessCenter;
+
+  /// No description provided for @a11yIconSpa.
+  ///
+  /// In en, this message translates to:
+  /// **'Spa'**
+  String get a11yIconSpa;
+
+  /// No description provided for @a11yIconSelfImprovement.
+  ///
+  /// In en, this message translates to:
+  /// **'Self improvement'**
+  String get a11yIconSelfImprovement;
+
+  /// No description provided for @a11yIconPsychology.
+  ///
+  /// In en, this message translates to:
+  /// **'Psychology'**
+  String get a11yIconPsychology;
+
+  /// No description provided for @a11yIconLocalPharmacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Pharmacy'**
+  String get a11yIconLocalPharmacy;
+
+  /// No description provided for @a11yIconVaccines.
+  ///
+  /// In en, this message translates to:
+  /// **'Vaccine'**
+  String get a11yIconVaccines;
+
+  /// No description provided for @a11yIconHealthAndSafety.
+  ///
+  /// In en, this message translates to:
+  /// **'Health and safety'**
+  String get a11yIconHealthAndSafety;
+
+  /// No description provided for @a11yIconAccessibilityNew.
+  ///
+  /// In en, this message translates to:
+  /// **'Accessibility'**
+  String get a11yIconAccessibilityNew;
+
+  /// No description provided for @a11yIconSchool.
+  ///
+  /// In en, this message translates to:
+  /// **'School'**
+  String get a11yIconSchool;
+
+  /// No description provided for @a11yIconMenuBook.
+  ///
+  /// In en, this message translates to:
+  /// **'Book'**
+  String get a11yIconMenuBook;
+
+  /// No description provided for @a11yIconAutoStories.
+  ///
+  /// In en, this message translates to:
+  /// **'Reading'**
+  String get a11yIconAutoStories;
+
+  /// No description provided for @a11yIconScience.
+  ///
+  /// In en, this message translates to:
+  /// **'Science'**
+  String get a11yIconScience;
+
+  /// No description provided for @a11yIconCalculate.
+  ///
+  /// In en, this message translates to:
+  /// **'Accounting'**
+  String get a11yIconCalculate;
+
+  /// No description provided for @a11yIconLaptop.
+  ///
+  /// In en, this message translates to:
+  /// **'Laptop'**
+  String get a11yIconLaptop;
+
+  /// No description provided for @a11yIconWork.
+  ///
+  /// In en, this message translates to:
+  /// **'Work'**
+  String get a11yIconWork;
+
+  /// No description provided for @a11yIconBusinessCenter.
+  ///
+  /// In en, this message translates to:
+  /// **'Business'**
+  String get a11yIconBusinessCenter;
+
+  /// No description provided for @a11yIconCorporateFare.
+  ///
+  /// In en, this message translates to:
+  /// **'Company'**
+  String get a11yIconCorporateFare;
+
+  /// No description provided for @a11yIconBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Employment badge'**
+  String get a11yIconBadge;
+
+  /// No description provided for @a11yIconEngineering.
+  ///
+  /// In en, this message translates to:
+  /// **'Engineering'**
+  String get a11yIconEngineering;
+
+  /// No description provided for @a11yIconComputer.
+  ///
+  /// In en, this message translates to:
+  /// **'Computer'**
+  String get a11yIconComputer;
+
+  /// No description provided for @a11yIconMovie.
+  ///
+  /// In en, this message translates to:
+  /// **'Cinema'**
+  String get a11yIconMovie;
+
+  /// No description provided for @a11yIconTv.
+  ///
+  /// In en, this message translates to:
+  /// **'Television'**
+  String get a11yIconTv;
+
+  /// No description provided for @a11yIconMusicNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Music'**
+  String get a11yIconMusicNote;
+
+  /// No description provided for @a11yIconHeadphones.
+  ///
+  /// In en, this message translates to:
+  /// **'Audio'**
+  String get a11yIconHeadphones;
+
+  /// No description provided for @a11yIconSportsEsports.
+  ///
+  /// In en, this message translates to:
+  /// **'Video games'**
+  String get a11yIconSportsEsports;
+
+  /// No description provided for @a11yIconSportsSoccer.
+  ///
+  /// In en, this message translates to:
+  /// **'Football'**
+  String get a11yIconSportsSoccer;
+
+  /// No description provided for @a11yIconSportsBasketball.
+  ///
+  /// In en, this message translates to:
+  /// **'Basketball'**
+  String get a11yIconSportsBasketball;
+
+  /// No description provided for @a11yIconSportsTennis.
+  ///
+  /// In en, this message translates to:
+  /// **'Tennis'**
+  String get a11yIconSportsTennis;
+
+  /// No description provided for @a11yIconHiking.
+  ///
+  /// In en, this message translates to:
+  /// **'Hiking'**
+  String get a11yIconHiking;
+
+  /// No description provided for @a11yIconTerrain.
+  ///
+  /// In en, this message translates to:
+  /// **'Mountain'**
+  String get a11yIconTerrain;
+
+  /// No description provided for @a11yIconBeachAccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Beach'**
+  String get a11yIconBeachAccess;
+
+  /// No description provided for @a11yIconPark.
+  ///
+  /// In en, this message translates to:
+  /// **'Park'**
+  String get a11yIconPark;
+
+  /// No description provided for @a11yIconTheaterComedy.
+  ///
+  /// In en, this message translates to:
+  /// **'Theatre'**
+  String get a11yIconTheaterComedy;
+
+  /// No description provided for @a11yIconCasino.
+  ///
+  /// In en, this message translates to:
+  /// **'Casino'**
+  String get a11yIconCasino;
+
+  /// No description provided for @a11yIconSportsBar.
+  ///
+  /// In en, this message translates to:
+  /// **'Sports bar'**
+  String get a11yIconSportsBar;
+
+  /// No description provided for @a11yIconAttractions.
+  ///
+  /// In en, this message translates to:
+  /// **'Amusement park'**
+  String get a11yIconAttractions;
+
+  /// No description provided for @a11yIconBolt.
+  ///
+  /// In en, this message translates to:
+  /// **'Electricity'**
+  String get a11yIconBolt;
+
+  /// No description provided for @a11yIconWaterDrop.
+  ///
+  /// In en, this message translates to:
+  /// **'Water'**
+  String get a11yIconWaterDrop;
+
+  /// No description provided for @a11yIconWifi.
+  ///
+  /// In en, this message translates to:
+  /// **'Internet wifi'**
+  String get a11yIconWifi;
+
+  /// No description provided for @a11yIconPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone'**
+  String get a11yIconPhone;
+
+  /// No description provided for @a11yIconSmartphone.
+  ///
+  /// In en, this message translates to:
+  /// **'Mobile phone'**
+  String get a11yIconSmartphone;
+
+  /// No description provided for @a11yIconTvOutlined.
+  ///
+  /// In en, this message translates to:
+  /// **'Streaming subscription'**
+  String get a11yIconTvOutlined;
+
+  /// No description provided for @a11yIconRecycling.
+  ///
+  /// In en, this message translates to:
+  /// **'Recycling'**
+  String get a11yIconRecycling;
+
+  /// No description provided for @a11yIconLocalLaundryService.
+  ///
+  /// In en, this message translates to:
+  /// **'Laundry'**
+  String get a11yIconLocalLaundryService;
+
+  /// No description provided for @a11yIconCleaningServices.
+  ///
+  /// In en, this message translates to:
+  /// **'Cleaning'**
+  String get a11yIconCleaningServices;
+
+  /// No description provided for @a11yIconHandyman.
+  ///
+  /// In en, this message translates to:
+  /// **'Handyman'**
+  String get a11yIconHandyman;
+
+  /// No description provided for @a11yIconBuild.
+  ///
+  /// In en, this message translates to:
+  /// **'Tools'**
+  String get a11yIconBuild;
+
+  /// No description provided for @a11yIconConstruction.
+  ///
+  /// In en, this message translates to:
+  /// **'Construction'**
+  String get a11yIconConstruction;
+
+  /// No description provided for @a11yIconChildCare.
+  ///
+  /// In en, this message translates to:
+  /// **'Childcare'**
+  String get a11yIconChildCare;
+
+  /// No description provided for @a11yIconPets.
+  ///
+  /// In en, this message translates to:
+  /// **'Pets'**
+  String get a11yIconPets;
+
+  /// No description provided for @a11yIconStyle.
+  ///
+  /// In en, this message translates to:
+  /// **'Fashion'**
+  String get a11yIconStyle;
+
+  /// No description provided for @a11yIconFace.
+  ///
+  /// In en, this message translates to:
+  /// **'Beauty'**
+  String get a11yIconFace;
+
+  /// No description provided for @a11yIconVolunteerActivism.
+  ///
+  /// In en, this message translates to:
+  /// **'Donation'**
+  String get a11yIconVolunteerActivism;
+
+  /// No description provided for @a11yIconChurch.
+  ///
+  /// In en, this message translates to:
+  /// **'Place of worship'**
+  String get a11yIconChurch;
+
+  /// No description provided for @a11yIconCelebration.
+  ///
+  /// In en, this message translates to:
+  /// **'Party'**
+  String get a11yIconCelebration;
+
+  /// No description provided for @a11yIconCake.
+  ///
+  /// In en, this message translates to:
+  /// **'Birthday cake'**
+  String get a11yIconCake;
+
+  /// No description provided for @a11yIconCardGiftcard.
+  ///
+  /// In en, this message translates to:
+  /// **'Gift card'**
+  String get a11yIconCardGiftcard;
+
+  /// No description provided for @a11yIconCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'General category'**
+  String get a11yIconCategory;
+
+  /// No description provided for @a11yIconMoreHoriz.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get a11yIconMoreHoriz;
+
+  /// No description provided for @a11yIconStar.
+  ///
+  /// In en, this message translates to:
+  /// **'Favorite'**
+  String get a11yIconStar;
+
+  /// No description provided for @a11yIconFlag.
+  ///
+  /// In en, this message translates to:
+  /// **'Flag'**
+  String get a11yIconFlag;
+
+  /// No description provided for @a11yIconBookmark.
+  ///
+  /// In en, this message translates to:
+  /// **'Bookmark'**
+  String get a11yIconBookmark;
+
+  /// No description provided for @a11yIconLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Label'**
+  String get a11yIconLabel;
+
+  /// No description provided for @a11yIconTag.
+  ///
+  /// In en, this message translates to:
+  /// **'Tag'**
+  String get a11yIconTag;
+
+  /// No description provided for @a11yIconFlightTakeoff.
+  ///
+  /// In en, this message translates to:
+  /// **'Departure flight'**
+  String get a11yIconFlightTakeoff;
+
+  /// No description provided for @a11yIconFlightLand.
+  ///
+  /// In en, this message translates to:
+  /// **'Arrival flight'**
+  String get a11yIconFlightLand;
+
+  /// No description provided for @a11yIconCommute.
+  ///
+  /// In en, this message translates to:
+  /// **'Commute'**
+  String get a11yIconCommute;
+
+  /// No description provided for @a11yIconSubway.
+  ///
+  /// In en, this message translates to:
+  /// **'Subway train'**
+  String get a11yIconSubway;
+
+  /// No description provided for @a11yIconElectricCar.
+  ///
+  /// In en, this message translates to:
+  /// **'Electric car'**
+  String get a11yIconElectricCar;
+
+  /// No description provided for @a11yIconMotorcycle.
+  ///
+  /// In en, this message translates to:
+  /// **'Motorcycle'**
+  String get a11yIconMotorcycle;
+
+  /// No description provided for @a11yIconMap.
+  ///
+  /// In en, this message translates to:
+  /// **'Map'**
+  String get a11yIconMap;
+
+  /// No description provided for @a11yIconExplore.
+  ///
+  /// In en, this message translates to:
+  /// **'Exploration'**
+  String get a11yIconExplore;
+
+  /// No description provided for @a11yIconNavigation.
+  ///
+  /// In en, this message translates to:
+  /// **'Navigation'**
+  String get a11yIconNavigation;
+
+  /// No description provided for @a11yIconCardMembership.
+  ///
+  /// In en, this message translates to:
+  /// **'Membership card'**
+  String get a11yIconCardMembership;
+
+  /// No description provided for @a11yIconStore.
+  ///
+  /// In en, this message translates to:
+  /// **'Department store'**
+  String get a11yIconStore;
+
+  /// No description provided for @a11yIconLocalOffer.
+  ///
+  /// In en, this message translates to:
+  /// **'Special offer'**
+  String get a11yIconLocalOffer;
+
+  /// No description provided for @a11yIconPower.
+  ///
+  /// In en, this message translates to:
+  /// **'Power plug'**
+  String get a11yIconPower;
+
+  /// No description provided for @a11yIconElectricBolt.
+  ///
+  /// In en, this message translates to:
+  /// **'Energy'**
+  String get a11yIconElectricBolt;
+
+  /// No description provided for @a11yIconRouter.
+  ///
+  /// In en, this message translates to:
+  /// **'Router'**
+  String get a11yIconRouter;
+
+  /// No description provided for @a11yIconDevices.
+  ///
+  /// In en, this message translates to:
+  /// **'Electronic devices'**
+  String get a11yIconDevices;
+
+  /// No description provided for @a11yIconCloud.
+  ///
+  /// In en, this message translates to:
+  /// **'Cloud storage'**
+  String get a11yIconCloud;
+
+  /// No description provided for @a11yIconSolarPower.
+  ///
+  /// In en, this message translates to:
+  /// **'Solar power'**
+  String get a11yIconSolarPower;
+
+  /// No description provided for @a11yIconLocalBar.
+  ///
+  /// In en, this message translates to:
+  /// **'Bar'**
+  String get a11yIconLocalBar;
+
+  /// No description provided for @a11yIconLiquor.
+  ///
+  /// In en, this message translates to:
+  /// **'Liquor'**
+  String get a11yIconLiquor;
+
+  /// No description provided for @a11yIconRamenDining.
+  ///
+  /// In en, this message translates to:
+  /// **'Noodles'**
+  String get a11yIconRamenDining;
+
+  /// No description provided for @a11yIconTakeoutDining.
+  ///
+  /// In en, this message translates to:
+  /// **'Takeaway'**
+  String get a11yIconTakeoutDining;
+
+  /// No description provided for @a11yIconWineBar.
+  ///
+  /// In en, this message translates to:
+  /// **'Wine bar'**
+  String get a11yIconWineBar;
+
+  /// No description provided for @a11yIconCoffee.
+  ///
+  /// In en, this message translates to:
+  /// **'Coffee'**
+  String get a11yIconCoffee;
+
+  /// No description provided for @a11yIconSoupKitchen.
+  ///
+  /// In en, this message translates to:
+  /// **'Soup kitchen'**
+  String get a11yIconSoupKitchen;
+
+  /// No description provided for @a11yIconCameraAlt.
+  ///
+  /// In en, this message translates to:
+  /// **'Photography'**
+  String get a11yIconCameraAlt;
+
+  /// No description provided for @a11yIconPalette.
+  ///
+  /// In en, this message translates to:
+  /// **'Art'**
+  String get a11yIconPalette;
+
+  /// No description provided for @a11yIconStadium.
+  ///
+  /// In en, this message translates to:
+  /// **'Stadium'**
+  String get a11yIconStadium;
+
+  /// No description provided for @a11yIconMusicVideo.
+  ///
+  /// In en, this message translates to:
+  /// **'Music video'**
+  String get a11yIconMusicVideo;
+
+  /// No description provided for @a11yIconSportsMotorsports.
+  ///
+  /// In en, this message translates to:
+  /// **'Motorsports'**
+  String get a11yIconSportsMotorsports;
+
+  /// No description provided for @a11yIconSportsGolf.
+  ///
+  /// In en, this message translates to:
+  /// **'Golf'**
+  String get a11yIconSportsGolf;
+
+  /// No description provided for @a11yIconSportsBaseball.
+  ///
+  /// In en, this message translates to:
+  /// **'Baseball'**
+  String get a11yIconSportsBaseball;
+
+  /// No description provided for @a11yIconSportsFootball.
+  ///
+  /// In en, this message translates to:
+  /// **'American football'**
+  String get a11yIconSportsFootball;
+
+  /// No description provided for @a11yIconPool.
+  ///
+  /// In en, this message translates to:
+  /// **'Swimming pool'**
+  String get a11yIconPool;
+
+  /// No description provided for @a11yIconFamilyRestroom.
+  ///
+  /// In en, this message translates to:
+  /// **'Family care'**
+  String get a11yIconFamilyRestroom;
+
+  /// No description provided for @a11yIconContentCut.
+  ///
+  /// In en, this message translates to:
+  /// **'Hairdresser'**
+  String get a11yIconContentCut;
+
+  /// No description provided for @a11yIconDryCleaning.
+  ///
+  /// In en, this message translates to:
+  /// **'Dry cleaning'**
+  String get a11yIconDryCleaning;
+
+  /// No description provided for @a11yIconSecurity.
+  ///
+  /// In en, this message translates to:
+  /// **'Security'**
+  String get a11yIconSecurity;
+
+  /// No description provided for @a11yIconShield.
+  ///
+  /// In en, this message translates to:
+  /// **'Insurance shield'**
+  String get a11yIconShield;
+
+  /// No description provided for @a11yIconWorkspacePremium.
+  ///
+  /// In en, this message translates to:
+  /// **'Premium subscription'**
+  String get a11yIconWorkspacePremium;
+
+  /// No description provided for @a11yIconPestControl.
+  ///
+  /// In en, this message translates to:
+  /// **'Pest control'**
+  String get a11yIconPestControl;
+
+  /// No description provided for @a11yIconRoofing.
+  ///
+  /// In en, this message translates to:
+  /// **'Roofing repair'**
+  String get a11yIconRoofing;
+
+  /// No description provided for @a11yIconDeck.
+  ///
+  /// In en, this message translates to:
+  /// **'Terrace'**
+  String get a11yIconDeck;
+
+  /// No description provided for @a11yIconSchoolOutlined.
+  ///
+  /// In en, this message translates to:
+  /// **'Higher education'**
+  String get a11yIconSchoolOutlined;
+
+  /// No description provided for @a11yIconEvent.
+  ///
+  /// In en, this message translates to:
+  /// **'Calendar event'**
+  String get a11yIconEvent;
+
+  /// No description provided for @a11yIconAlarm.
+  ///
+  /// In en, this message translates to:
+  /// **'Alarm'**
+  String get a11yIconAlarm;
+
+  /// No description provided for @a11yIconWatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Watch'**
+  String get a11yIconWatch;
+
+  /// No description provided for @a11yIconInterests.
+  ///
+  /// In en, this message translates to:
+  /// **'Hobbies'**
+  String get a11yIconInterests;
+
+  /// No description provided for @a11yIconNewspaper.
+  ///
+  /// In en, this message translates to:
+  /// **'Newspaper press'**
+  String get a11yIconNewspaper;
+
+  /// No description provided for @a11yIconPrint.
+  ///
+  /// In en, this message translates to:
+  /// **'Printing'**
+  String get a11yIconPrint;
+
+  /// No description provided for @a11yEditItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit {name}'**
+  String a11yEditItem(String name);
+
+  /// No description provided for @a11yDeleteItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete {name}'**
+  String a11yDeleteItem(String name);
+
+  /// No description provided for @a11yEditName.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit {name}'**
+  String a11yEditName(String name);
+
+  /// No description provided for @a11yDeleteName.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete {name}'**
+  String a11yDeleteName(String name);
+
+  /// No description provided for @a11ySelectYear.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Year'**
+  String get a11ySelectYear;
+
+  /// No description provided for @a11ySelectMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Month'**
+  String get a11ySelectMonth;
+
+  /// No description provided for @selectYear.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Year'**
+  String get selectYear;
+
+  /// No description provided for @selectMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Month'**
+  String get selectMonth;
+
+  /// No description provided for @a11yProgressBar.
+  ///
+  /// In en, this message translates to:
+  /// **'Progress: {percentage} percent'**
+  String a11yProgressBar(String percentage);
+
+  /// No description provided for @a11yProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Progress: {percentage} percent'**
+  String a11yProgress(String percentage);
+
+  /// No description provided for @a11yProgressPercentage.
+  ///
+  /// In en, this message translates to:
+  /// **'Progress: {percentage} percent'**
+  String a11yProgressPercentage(String percentage);
+
+  /// No description provided for @a11yShowPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Show password'**
+  String get a11yShowPassword;
+
+  /// No description provided for @a11yHidePassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide password'**
+  String get a11yHidePassword;
+
+  /// No description provided for @a11ySelectedHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Currently selected'**
+  String get a11ySelectedHint;
+
+  /// No description provided for @a11yTapToSelect.
+  ///
+  /// In en, this message translates to:
+  /// **'Double tap to select'**
+  String get a11yTapToSelect;
+
+  /// No description provided for @addCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Add category'**
+  String get addCategory;
+
+  /// No description provided for @addTag.
+  ///
+  /// In en, this message translates to:
+  /// **'Add tag'**
+  String get addTag;
+
+  /// No description provided for @a11yPinLockoutRemaining.
+  ///
+  /// In en, this message translates to:
+  /// **'{seconds} seconds remaining until unlock'**
+  String a11yPinLockoutRemaining(int seconds);
+
+  /// No description provided for @a11yRecycleBinUrgent.
+  ///
+  /// In en, this message translates to:
+  /// **'Urgent: '**
+  String get a11yRecycleBinUrgent;
+
+  /// No description provided for @a11yLoading.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading'**
+  String get a11yLoading;
 }
 
 class _AppLocalizationsDelegate

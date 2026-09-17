@@ -101,28 +101,31 @@ class _MonthYearPickerDialogState extends State<MonthYearPickerDialog> {
                 ),
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: DropdownButtonHideUnderline(
-                child: DropdownButton<int>(
-                  key: const ValueKey('yearDropdown'),
-                  value: _selectedYear,
-                  isExpanded: true,
-                  items: years.map((year) {
-                    return DropdownMenuItem<int>(
-                      value: year,
-                      child: Text(year.toString()),
-                    );
-                  }).toList(),
-                  onChanged: (year) {
-                    if (year == null) return;
-                    setState(() {
-                      _selectedYear = year;
-                      final newMaxMonth =
-                          (_selectedYear == now.year) ? now.month : 12;
-                      if (_selectedMonth > newMaxMonth) {
-                        _selectedMonth = newMaxMonth;
-                      }
-                    });
-                  },
+              child: Semantics(
+                label: l10n.a11ySelectYear,
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<int>(
+                    key: const ValueKey('yearDropdown'),
+                    value: _selectedYear,
+                    isExpanded: true,
+                    items: years.map((year) {
+                      return DropdownMenuItem<int>(
+                        value: year,
+                        child: Text(year.toString()),
+                      );
+                    }).toList(),
+                    onChanged: (year) {
+                      if (year == null) return;
+                      setState(() {
+                        _selectedYear = year;
+                        final newMaxMonth =
+                            (_selectedYear == now.year) ? now.month : 12;
+                        if (_selectedMonth > newMaxMonth) {
+                          _selectedMonth = newMaxMonth;
+                        }
+                      });
+                    },
+                  ),
                 ),
               ),
             ),
@@ -138,31 +141,34 @@ class _MonthYearPickerDialogState extends State<MonthYearPickerDialog> {
                 ),
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: DropdownButtonHideUnderline(
-                child: DropdownButton<int>(
-                  key: const ValueKey('monthDropdown'),
-                  value: _selectedMonth,
-                  isExpanded: true,
-                  items: months.map((month) {
-                    final date = DateTime(2020, month);
-                    final name = monthFormat.format(date);
-                    final capitalized = name.isNotEmpty
-                        ? '${name[0].toUpperCase()}${name.substring(1)}'
-                        : name;
-                    return DropdownMenuItem<int>(
-                      value: month,
-                      child: Text(
-                        capitalized,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    );
-                  }).toList(),
-                  onChanged: (month) {
-                    if (month == null) return;
-                    setState(() {
-                      _selectedMonth = month;
-                    });
-                  },
+              child: Semantics(
+                label: l10n.a11ySelectMonth,
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<int>(
+                    key: const ValueKey('monthDropdown'),
+                    value: _selectedMonth,
+                    isExpanded: true,
+                    items: months.map((month) {
+                      final date = DateTime(2020, month);
+                      final name = monthFormat.format(date);
+                      final capitalized = name.isNotEmpty
+                          ? '${name[0].toUpperCase()}${name.substring(1)}'
+                          : name;
+                      return DropdownMenuItem<int>(
+                        value: month,
+                        child: Text(
+                          capitalized,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      );
+                    }).toList(),
+                    onChanged: (month) {
+                      if (month == null) return;
+                      setState(() {
+                        _selectedMonth = month;
+                      });
+                    },
+                  ),
                 ),
               ),
             ),

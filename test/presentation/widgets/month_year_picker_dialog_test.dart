@@ -207,4 +207,45 @@ void main() {
     expect(result!.year, 2024);
     expect(result!.month, 3);
   });
+
+  testWidgets('Dropdowns are wrapped in Semantics with correct labels', (
+    WidgetTester tester,
+  ) async {
+    final fixedNow = DateTime(2025, 6, 1);
+    await tester.pumpWidget(
+      createTestWidget(
+        now: fixedNow,
+        locale: const Locale('en'),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Open Dialog'));
+    await tester.pumpAndSettle();
+
+    final yearDropdownFinder = find.byKey(const ValueKey('yearDropdown'));
+    final monthDropdownFinder = find.byKey(const ValueKey('monthDropdown'));
+
+    expect(
+      find.ancestor(
+        of: yearDropdownFinder,
+        matching: find.byWidgetPredicate(
+          (widget) =>
+              widget is Semantics && widget.properties.label == 'Select Year',
+        ),
+      ),
+      findsWidgets,
+    );
+
+    expect(
+      find.ancestor(
+        of: monthDropdownFinder,
+        matching: find.byWidgetPredicate(
+          (widget) =>
+              widget is Semantics && widget.properties.label == 'Select Month',
+        ),
+      ),
+      findsWidgets,
+    );
+  });
 }

@@ -1,11 +1,14 @@
-# Phase 72: Home Screen Widget Polish & Project Housekeeping
+# Phase 77: 100% Accessibility, QA, and Testing
 
 ## Objective
-Refine the native 2x1 Home Screen widgets (Android and iOS) to support Dark Mode, launch the Stalvi app when tapped, display the app icon at the top center, and reduce text sizes. Add realistic widget previews for the OS widget gallery. Finally, perform project-wide housekeeping (clean up unused files/comments) and ensure all tests and CI workflows pass.
+Complete 100% screen reader accessibility (TalkBack on Android and VoiceOver on iOS) and comprehensive QA testing across the Stalvi application without altering visual appearance, styling, or business logic. Eliminate all remaining assistive technology gaps in settings navigation, segmented controls, form selectors, and decorative graphics, ensuring full trilingual localization support in English, Spanish, and Catalan with zero static analyzer issues.
 
 ## Tasks
-- [x] 1. **Android Widget:** Update XML layouts for Dark Mode support, reduce text size, add the Stalvi icon at the top center, set up a `PendingIntent` to open `MainActivity` on tap, and configure a realistic preview in the `appwidget-provider`.
-- [x] 2. **iOS Widget:** Update `StalviWidget.swift` (WidgetKit) for dynamic color schemes (Dark Mode), reduce font size, add the app icon image at the top, configure `.widgetURL` to open the app, and update the `PreviewProvider`.
-- [x] 3. **Housekeeping:** Sweep the project for dead code, unused imports, and obsolete comments.
-- [x] 4. **Validation:** Run `flutter analyze --fatal-infos --fatal-warnings`, `flutter test`, and confirm CI passes. 
-- [x] 5. **Documentation:** Update `roadmap.md` and `roadmap-summary.md` to mark Phase 72 as completed.
+- [x] 1. **Settings & Navigation Semantics:** Enrich Settings tab items and navigation tiles in `DashboardScreen` with explicit semantic labels, hints, and button semantics for TalkBack and VoiceOver.
+- [x] 2. **Automatic Transactions Accessibility:** Annotate custom segmented transaction type controls in `CreateEditAutomaticTransactionScreen` with `Semantics(button, selected)` and add back-button action tooltips.
+- [x] 3. **Form Selector Tile Semantics:** Wrap `_FormSelectorTile` with `MergeSemantics` and `Semantics(button: true, label: '$label, $value')` ensuring screen readers announce both the field label and its currently selected value.
+- [x] 4. **Decorative Graphics & Skeletons:** Wrap decorative graphics and illustrations in `EmptyStateWidget` and skeleton loading placeholders with `ExcludeSemantics` to keep the accessibility tree clutter-free.
+- [x] 5. **Live Regions & Progress Indicators:** Add `Semantics(liveRegion: true)` and localized `semanticsLabel` announcements to remaining progress indicators and dynamic feedback states.
+- [x] 6. **Trilingual Localization Parity:** Synchronize all screen reader strings, hints, and error announcements across English (`app_en.arb`), Spanish (`app_es.arb`), and Catalan (`app_ca.arb`).
+- [x] 7. **QA, Testing & Validation:** Run `flutter test` and `flutter analyze --fatal-infos --fatal-warnings` to confirm 100% test pass rate and 0 warnings.
+- [x] 8. **Documentation:** Update `roadmap.md` and `roadmap-summary.md` marking Phase 77 as completed.

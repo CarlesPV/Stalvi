@@ -86,6 +86,7 @@ class _DataManagementScreenState extends ConsumerState<DataManagementScreen> {
                     ),
                     const SizedBox(height: 16),
                     TextField(
+                      autofocus: true,
                       controller: passController,
                       focusNode: passFocusNode,
                       textInputAction: TextInputAction.next,
@@ -101,6 +102,9 @@ class _DataManagementScreenState extends ConsumerState<DataManagementScreen> {
                                 ? Icons.visibility_off
                                 : Icons.visibility,
                           ),
+                          tooltip: obscurePass
+                              ? l10n.a11yShowPassword
+                              : l10n.a11yHidePassword,
                           onPressed: () =>
                               setDialogState(() => obscurePass = !obscurePass),
                         ),
@@ -121,6 +125,9 @@ class _DataManagementScreenState extends ConsumerState<DataManagementScreen> {
                                 ? Icons.visibility_off
                                 : Icons.visibility,
                           ),
+                          tooltip: obscureConfirm
+                              ? l10n.a11yShowPassword
+                              : l10n.a11yHidePassword,
                           onPressed: () => setDialogState(
                             () => obscureConfirm = !obscureConfirm,
                           ),
@@ -217,6 +224,9 @@ class _DataManagementScreenState extends ConsumerState<DataManagementScreen> {
                         icon: Icon(
                           obscure ? Icons.visibility_off : Icons.visibility,
                         ),
+                        tooltip: obscure
+                            ? l10n.a11yShowPassword
+                            : l10n.a11yHidePassword,
                         onPressed: () =>
                             setDialogState(() => obscure = !obscure),
                       ),
@@ -326,12 +336,22 @@ class _DataManagementScreenState extends ConsumerState<DataManagementScreen> {
         scrollable: true,
         title: Row(
           children: [
-            Icon(
-              Icons.warning_amber_rounded,
-              color: Theme.of(context).colorScheme.error,
+            ExcludeSemantics(
+              child: Icon(
+                Icons.warning_amber_rounded,
+                color: Theme.of(context).colorScheme.error,
+              ),
             ),
             const SizedBox(width: 8),
-            Expanded(child: Text(l10n.importConfirmTitle)),
+            Expanded(
+              child: Focus(
+                autofocus: true,
+                child: Semantics(
+                  header: true,
+                  child: Text(l10n.importConfirmTitle),
+                ),
+              ),
+            ),
           ],
         ),
         content: Text(l10n.importConfirmMessage),
@@ -430,18 +450,24 @@ class _DataManagementScreenState extends ConsumerState<DataManagementScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             ListTile(
-              leading: const Icon(Icons.calendar_today_rounded),
+              leading: const ExcludeSemantics(
+                child: Icon(Icons.calendar_today_rounded),
+              ),
               title: Text(l10n.exportPdfCurrentMonth),
               onTap: () =>
                   Navigator.of(ctx).pop(PdfExportDateRange.currentMonth),
             ),
             ListTile(
-              leading: const Icon(Icons.history_rounded),
+              leading: const ExcludeSemantics(
+                child: Icon(Icons.history_rounded),
+              ),
               title: Text(l10n.exportPdfLast30Days),
               onTap: () => Navigator.of(ctx).pop(PdfExportDateRange.last30Days),
             ),
             ListTile(
-              leading: const Icon(Icons.calendar_month_rounded),
+              leading: const ExcludeSemantics(
+                child: Icon(Icons.calendar_month_rounded),
+              ),
               title: Text(l10n.exportPdfSelectMonth),
               onTap: () =>
                   Navigator.of(ctx).pop(PdfExportDateRange.selectMonth),
@@ -500,7 +526,11 @@ class _DataManagementScreenState extends ConsumerState<DataManagementScreen> {
     return Scaffold(
       appBar: AppBar(title: Text(l10n.settingsDataManagement)),
       body: state.isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? Center(
+              child: CircularProgressIndicator(
+                semanticsLabel: l10n.a11yLoading,
+              ),
+            )
           : ListView(
               padding: const EdgeInsets.all(24),
               children: [

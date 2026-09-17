@@ -44,6 +44,16 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     _kickoffSplash();
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (MediaQuery.disableAnimationsOf(context)) {
+      _controller.duration = Duration.zero;
+      _controller.value = 1.0;
+      _controller.stop();
+    }
+  }
+
   void _setupAnimations() {
     _controller = AnimationController(
       vsync: this,
@@ -291,6 +301,7 @@ class _SplashContent extends StatelessWidget {
                   width: 20,
                   height: 20,
                   child: CircularProgressIndicator(
+                    semanticsLabel: AppLocalizations.of(context)!.a11yLoading,
                     strokeWidth: 2,
                     valueColor: AlwaysStoppedAnimation<Color>(
                       colorScheme.primary.withValues(alpha: 0.45),
@@ -339,11 +350,13 @@ class _LogoBadge extends StatelessWidget {
         borderRadius: BorderRadius.circular(24),
         child: LayoutBuilder(
           builder: (context, constraints) {
-            return Image.asset(
-              'assets/icon/splash_icon.png',
-              fit: BoxFit.cover,
-              width: constraints.maxWidth,
-              height: constraints.maxHeight,
+            return ExcludeSemantics(
+              child: Image.asset(
+                'assets/icon/splash_icon.png',
+                fit: BoxFit.cover,
+                width: constraints.maxWidth,
+                height: constraints.maxHeight,
+              ),
             );
           },
         ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:stalvi/core/l10n/app_localizations.dart';
 import 'package:stalvi/core/utils/icon_helper.dart';
 import 'package:stalvi/presentation/widgets/category_icon_picker.dart';
 
@@ -13,8 +14,12 @@ void main() {
   Widget buildPicker({
     String? selectedIcon,
     required ValueChanged<String> onIconSelected,
+    Locale locale = const Locale('en'),
   }) {
     return MaterialApp(
+      locale: locale,
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
       home: Scaffold(
         body: SingleChildScrollView(
           child: CategoryIconPicker(
@@ -171,5 +176,110 @@ void main() {
         reason: 'Key "${entry.key}" should be explicitly mapped in getIconData',
       );
     }
+  });
+
+  // ---------------------------------------------------------------------------
+  // Test 8 – Localized semantic meanings for icons in EN, ES, CA
+  // ---------------------------------------------------------------------------
+
+  testWidgets('announces localized category meaning for icons in EN, ES, CA', (
+    tester,
+  ) async {
+    final handle = tester.ensureSemantics();
+
+    // EN: Bank and Credit card
+    await tester.pumpWidget(
+      buildPicker(onIconSelected: (_) {}, locale: const Locale('en')),
+    );
+    await tester.pumpAndSettle();
+    expect(find.bySemanticsLabel('Bank'), findsOneWidget);
+    expect(find.bySemanticsLabel('Credit card'), findsOneWidget);
+
+    // ES: Banco and Tarjeta de crédito
+    await tester.pumpWidget(
+      buildPicker(onIconSelected: (_) {}, locale: const Locale('es')),
+    );
+    await tester.pumpAndSettle();
+    expect(find.bySemanticsLabel('Banco'), findsOneWidget);
+    expect(find.bySemanticsLabel('Tarjeta de crédito'), findsOneWidget);
+
+    // CA: Banc and Targeta de crèdit
+    await tester.pumpWidget(
+      buildPicker(onIconSelected: (_) {}, locale: const Locale('ca')),
+    );
+    await tester.pumpAndSettle();
+    expect(find.bySemanticsLabel('Banc'), findsOneWidget);
+    expect(find.bySemanticsLabel('Targeta de crèdit'), findsOneWidget);
+
+    handle.dispose();
+  });
+
+  // ---------------------------------------------------------------------------
+  // Test 9 – Localized color names for screen readers
+  // ---------------------------------------------------------------------------
+
+  testWidgets(
+      'CategoryIconPicker.localizedColorName provides localized color names', (
+    tester,
+  ) async {
+    late BuildContext ctx;
+    await tester.pumpWidget(
+      MaterialApp(
+        locale: const Locale('en'),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: Builder(
+          builder: (c) {
+            ctx = c;
+            return const SizedBox.shrink();
+          },
+        ),
+      ),
+    );
+    expect(CategoryIconPicker.localizedColorName(ctx, '#2196F3'), 'Blue');
+    expect(CategoryIconPicker.localizedColorName(ctx, '#4CAF50'), 'Green');
+    expect(CategoryIconPicker.localizedColorName(ctx, '#03A9F4'), 'Light blue');
+    expect(CategoryIconPicker.localizedColorName(ctx, '#000000'), 'Black');
+    expect(CategoryIconPicker.localizedColorName(ctx, '#FFFFFF'), 'White');
+
+    // Spanish check
+    await tester.pumpWidget(
+      MaterialApp(
+        locale: const Locale('es'),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: Builder(
+          builder: (c) {
+            ctx = c;
+            return const SizedBox.shrink();
+          },
+        ),
+      ),
+    );
+    expect(CategoryIconPicker.localizedColorName(ctx, '#2196F3'), 'Azul');
+    expect(CategoryIconPicker.localizedColorName(ctx, '#4CAF50'), 'Verde');
+    expect(CategoryIconPicker.localizedColorName(ctx, '#03A9F4'), 'Azul claro');
+    expect(CategoryIconPicker.localizedColorName(ctx, '#000000'), 'Negro');
+    expect(CategoryIconPicker.localizedColorName(ctx, '#FFFFFF'), 'Blanco');
+
+    // Catalan check
+    await tester.pumpWidget(
+      MaterialApp(
+        locale: const Locale('ca'),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: Builder(
+          builder: (c) {
+            ctx = c;
+            return const SizedBox.shrink();
+          },
+        ),
+      ),
+    );
+    expect(CategoryIconPicker.localizedColorName(ctx, '#2196F3'), 'Blau');
+    expect(CategoryIconPicker.localizedColorName(ctx, '#4CAF50'), 'Verd');
+    expect(CategoryIconPicker.localizedColorName(ctx, '#03A9F4'), 'Blau clar');
+    expect(CategoryIconPicker.localizedColorName(ctx, '#000000'), 'Negre');
+    expect(CategoryIconPicker.localizedColorName(ctx, '#FFFFFF'), 'Blanc');
   });
 }

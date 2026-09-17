@@ -40,6 +40,7 @@ class TermsAndConditionsViewer extends StatelessWidget {
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
+          tooltip: MaterialLocalizations.of(context).backButtonTooltip,
           onPressed: () => Navigator.of(context).maybePop(),
         ),
       ),

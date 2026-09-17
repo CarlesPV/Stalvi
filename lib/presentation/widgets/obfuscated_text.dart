@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/discreet_mode_provider.dart';
+import 'package:stalvi/core/l10n/app_localizations.dart';
 
 /// A widget that displays text which can be obfuscated based on [discreetModeProvider].
 class ObfuscatedText extends ConsumerWidget {
@@ -35,9 +36,27 @@ class ObfuscatedText extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isDiscreet = ref.watch(discreetModeProvider);
+    final l10n = AppLocalizations.of(context);
+
+    if (isDiscreet) {
+      return Semantics(
+        label: l10n?.a11yDiscreetModeHidden ?? 'Saldo oculto.',
+        hint: l10n?.a11yDiscreetModeHint ??
+            'Toca dos veces en el botón de visibilidad para mostrar.',
+        child: ExcludeSemantics(
+          child: Text(
+            obfuscationString,
+            style: style,
+            overflow: overflow,
+            maxLines: maxLines,
+            softWrap: softWrap,
+          ),
+        ),
+      );
+    }
 
     return Text(
-      isDiscreet ? obfuscationString : text,
+      text,
       style: style,
       overflow: overflow,
       maxLines: maxLines,
