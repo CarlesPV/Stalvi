@@ -164,7 +164,8 @@ The application strictly follows **Clean Architecture** to separate concerns and
 * **Native Widgets:** 2x1 horizontal glanceable home screen widgets on Android (RemoteViews) and iOS (WidgetKit/SwiftUI).
 * **Live Aggregations:** Displays rolling 30-day income and expenses converted to the user's default currency.
 * **Auto-Sync:** Synchronized reactively via `WidgetUpdateService` upon transaction mutations, currency updates, or locale changes.
-* **OS Polish:** Full Dark Mode support, direct tap-to-open routing to the app, compact typography, and realistic OS preview providers.
+* **OS Polish & Dynamic Theming:** Full Light/Dark mode adaptation via native system attributes (`?android:attr/colorBackground`, `?android:attr/textColorPrimary`, and iOS 17+ `.containerBackground` with `UIColor.systemBackground`), 16dp rounded corners drawable (`widget_background.xml`), direct tap-to-open routing to the app, compact typography, and realistic OS preview providers.
+* **Trilingual Localization:** Localized income and expenses titles across English, Spanish, and Catalan.
 
 ---
 

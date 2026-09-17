@@ -561,6 +561,13 @@
   - [x] Completed trilingual accessibility coverage, synchronizing all screen reader strings, hints, and error announcements across English (`app_en.arb`), Spanish (`app_es.arb`), and Catalan (`app_ca.arb`).
   - [x] Verified full compliance with automated testing and static analysis, maintaining a 100% test pass rate and 0 warnings on `flutter analyze --fatal-infos --fatal-warnings`.
 
+- [x] **Phase 78: Home Widget UI Polish & System Theming**
+  - [x] Enhanced Android home screen widget background with a custom drawable (`widget_background.xml`) featuring 16dp rounded corners.
+  - [x] Implemented dynamic Android system theming (`?android:attr/colorBackground` and `?android:attr/textColorPrimary`) in `widget_layout.xml` for seamless Light/Dark mode adaptation.
+  - [x] Updated iOS `StalviWidget.swift` with `.containerBackground` for modern iOS 17+ compatibility using `UIColor.systemBackground` for native theme switching.
+  - [x] Verified trilingual localization for `widgetIncomeTitle` and `widgetExpenseTitle` across English (`app_en.arb`), Spanish (`app_es.arb`), and Catalan (`app_ca.arb`).
+  - [x] Verified full CI compliance with 0 static analysis warnings via `flutter analyze` and a 100% test pass rate across 622 tests with `flutter test`.
+
 ---
 
 ## Post-Launch / Maintenance

@@ -28,7 +28,7 @@ Designed with strict **Clean Architecture** principles, the project ensures isol
 - **Robust Encryption**: SQLite database file is encrypted utilizing **SQLCipher (AES-256)**.
 - **Multi-Currency**: Comprehensive multi-currency support with offline historical exchange rates.
 - **Trilingual Support**: Fully localized in English (🇬🇧), Spanish (🇪🇸), and Catalan (🏴).
-- **Home Screen Widget**: 2x1 horizontal native home screen widget for Android and iOS displaying 30-day income and expenses in your default currency, updated in real time.
+- **Home Screen Widget**: 2x1 horizontal native home screen widget for Android and iOS displaying 30-day income and expenses in your default currency with dynamic native Light/Dark mode system theming and real-time updates.
 - **100% Screen-Reader Accessible (A11y)**: Certified 100% accessible with TalkBack (Android) and VoiceOver (iOS) across all screens, dynamic text scaling without clamping, 48x48dp touch targets, WCAG color contrast compliance, live region announcements, and comprehensive auditory descriptions for charts and controls.
 - **Categories & Tags**: Explicitly categorize movements and use optional tags/labels for multi-dimensional filtering.
 - **Automated Transactions**: Built-in engine to generate scheduled recurring transactions with UTC+2 precision.

@@ -1021,7 +1021,21 @@ This document lists the completed phases of the Stalvi development roadmap, prov
   - 100% clean static analysis (`flutter analyze --fatal-infos --fatal-warnings` with 0 issues).
   - 100% automated test suite pass rate across unit, widget, and accessibility tests.
 
+### Phase 78: Home Widget UI Polish & System Theming
+* **Completion Date:** September 17, 2026
+* **Objective:** Enhance the native home screen widget's visual presentation and system integration across iOS and Android. Ensure the widget features clean, rounded corners (`16dp` on Android) and natively adapts its background and text colors based on the device's active theme (Light/Dark mode) without breaking the existing data hydration flow.
+* **Accomplishments:**
+  - **Android Widget Background:** Created a custom XML shape drawable (`widget_background.xml`) with `16dp` rounded corners and `?android:attr/colorBackground` solid fill.
+  - **Android Dynamic Theming:** Applied `?android:attr/colorBackground` and `?android:attr/textColorPrimary` to `widget_layout.xml` for seamless native Light/Dark mode transitions.
+  - **iOS Widget Styling:** Updated `StalviWidget.swift` with `.containerBackground` for modern iOS 17+ compatibility, using `UIColor.systemBackground` for smooth theme switching.
+  - **Trilingual Support Verification:** Confirmed `widgetIncomeTitle` and `widgetExpenseTitle` keys are correctly localized across English (`app_en.arb`), Spanish (`app_es.arb`), and Catalan (`app_ca.arb`).
+  - **Rigorous Testing & QA:** Verified 100% test pass rate across 622 tests and 0 static analysis issues (`flutter analyze --fatal-infos --fatal-warnings`).
+* **Verification:**
+  - 100% clean static analysis (`flutter analyze` with 0 issues).
+  - 100% automated test suite pass rate across 622 unit, widget, and accessibility tests.
+
 ## Recent Updates
+- Completed Phase 78 (Home Widget UI Polish & System Theming), polishing native 2x1 home screen widgets across Android and iOS with 16dp rounded corner drawable background, dynamic system theming (?android:attr/colorBackground and ?android:attr/textColorPrimary), iOS 17+ containerBackground with UIColor.systemBackground, verifying trilingual ARB localization (EN, ES, CA) for widget labels, and passing all 622 tests with 0 static analysis issues.
 - Completed Phase 77 (100% Accessibility, QA, and Testing), achieving certified 100% screen reader accessibility across Android (TalkBack) and iOS (VoiceOver), adding explicit semantic labels to Settings navigation tiles, annotating automatic transaction segmented controls, wrapping _FormSelectorTile with unified label/value announcements, excluding decorative empty-state graphics and skeletons, synchronizing trilingual localizations across EN, ES, and CA, and maintaining 100% test pass rate and 0 static analyzer issues.
 - Completed Phase 76 (Full Accessibility Compliance & QA Hardening), fixing critical MergeSemantics trapping in ProfileSettingsScreen and RecycleBinScreen, annotating all color and icon selectors with button/selected semantics, implementing modal autofocus across 17 dialogs and bottom sheets, adding liveRegion form validation error announcements, segmented control semantics, reduce motion support across all animations, excluding decorative icons, adding progress indicator labels, expanding trilingual a11y localizations, and maintaining 100% test pass rate across 622 tests and 0 static analyzer issues.
 - Completed Phase 75 (Comprehensive Screen Reader Retrofit & Form Semantics), eliminating fragmented screen reading on cards and list tiles with `MergeSemantics`, retrofitting `ProgressBarWidget` with localized percentage semantics, annotating all 180 category icons with localized meanings, excluding decorative icons, adding `liveRegion` error announcements, removing conflicting text field semantics, achieving 100% test pass rate across 616 tests and 0 static analyzer issues.

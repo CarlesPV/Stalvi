@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="?android:colorBackground"
+    android:background="@drawable/widget_background"
     android:padding="8dp"
     android:id="@+id/widget_root">
 
@@ -32,7 +32,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Income"
-                android:textColor="?android:textColorPrimary"
+                android:textColor="@color/widget_text_color"
                 android:textSize="11sp" />
             <TextView
                 android:id="@+id/widget_income_text"
@@ -56,7 +56,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Expenses"
-                android:textColor="?android:textColorPrimary"
+                android:textColor="@color/widget_text_color"
                 android:textSize="11sp" />
             <TextView
                 android:id="@+id/widget_expense_text"
