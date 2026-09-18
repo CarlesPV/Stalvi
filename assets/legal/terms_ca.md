@@ -1,6 +1,6 @@
 # Termes i Condicions d'Ús
 
-**Data d'entrada en vigor:** 17 d'agost de 2026
+**Data d'entrada en vigor:** 18 de setembre de 2026
 
 Llegeix detingudament aquests Termes i Condicions ("Termes", "Acord") abans de descarregar, instal·lar, accedir o utilitzar l'aplicació mòbil Stalvi (l'"Aplicació" o "App").
 
@@ -18,6 +18,7 @@ Stalvi és una eina de gestió financera personal centrada en la privadesa i dis
 ## 2. Arquitectura Local-First i Xifratge SQLCipher
 - **Emmagatzematge Exclusivament Local:** Stalvi funciona sota una estricta **arquitectura local (*local-first*)**. Tots els registres de transaccions, saldos de comptes, pressupostos, categories, resums de PIN i preferències s'emmagatzemen exclusivament al teu dispositiu. Stalvi no transmet, revalida, sincronitza, emmagatzema ni processa les teves dades financeres en servidors externs o serveis al núvol.
 - **Xifratge SQLCipher AES-256:** La base de dades SQLite subadjacent es xifra en repòs mitjançant **SQLCipher amb xifratge AES de 256 bits**. Les claus criptogràfiques estan protegides mitjançant interfícies d'emmagatzematge segur del sistema mantingudes per hardware natiu (Android KeyStore / iOS Keychain a través de `flutter_secure_storage`).
+- **Visualització de Resums en Widgets:** Els widgets natius de la pantalla d'inici o de bloqueig mostren resums financers agregats (ingressos i despeses acumulats dels darrers 30 dies) directament a la interfície del sistema operatiu sense requerir la introducció de PIN ni autenticació biomètrica de l'Aplicació. Si decideixes activar aquests widgets, assumeixes la responsabilitat exclusiva respecte a la visibilitat d'aquests resums enfront de tercers amb accés físic o visual al teu dispositiu.
 - **Sense Accés Remot ni Portes del Darrere:** Els desenvolupadors no tenen cap accés al teu dispositiu, al teu PIN, les teves claus de xifratge ni la teva base de dades.
 
 ---
@@ -54,7 +55,8 @@ ETS L'ÚNIC RESPONSIBLE DE VERIFICAR L'EXACTITUD DE TOTES LES TRANSACCIONS, CÀL
 ## 5. Responsabilitat de l'Usuari i Còpia de Seguretat de Dades
 - **PIN o Autenticació Biomètrica Oblidada:** Atès que totes les dades estan xifrades al dispositiu amb claus gestionades per les teves credencials locals, si oblides el teu PIN o perds l'accés biomètric, la teva base de dades serà inaccessible i il·legible. **Els desenvolupadors no poden restablir el teu PIN ni recuperar les teves dades xifrades.**
 - **Pèrdua o Dany del Dispositiu:** Si el teu dispositiu es perd, danya, roba, restableix de fàbrica o si desinstal·les l'App sense exportar prèviament una còpia de seguretat xifrada, les teves dades financeres es perdran permanentment.
-- **Responsabilitat de Còpia de Seguretat:** Ets l'únic responsable de realitzar còpies de seguretat periòdiques xifrades o exportacions CSV i transferir-les a un emmagatzematge extern segur.
+- **Responsabilitat de Còpia de Seguretat i Fitxers Exportats:** Ets l'únic responsable de realitzar còpies de seguretat periòdiques xifrades o exportacions (fitxers CSV o informes PDF) i transferir-les a un emmagatzematge extern segur. Quan generes i exportes fitxers CSV o informes PDF, aquests documents surten del contenidor xifrat de Stalvi; la seguretat, custòdia i confidencialitat d'aquests fitxers recau íntegrament sobre tu i les eines o plataformes de tercers que utilitzis per emmagatzemar-los o transmetre'ls.
+- **Paperera de Reciclatge i Purga Definitiva:** L'Aplicació proporciona una paperera de reciclatge temporal que conserva els elements eliminats durant 30 dies abans de la seva purga automàtica definitiva. És la teva responsabilitat verificar la paperera o restaurar registres abans que expiri aquest termini o abans d'executar un esborrat definitiu manual.
 
 ---
 

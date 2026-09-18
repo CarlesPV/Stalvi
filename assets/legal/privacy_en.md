@@ -1,6 +1,6 @@
 # Privacy Policy
 
-**Effective Date:** August 17, 2026
+**Effective Date:** September 18, 2026
 
 ## 1. Introduction
 Welcome to **Stalvi** ("we", "our", or "the Application"). Stalvi is a local-first, privacy-by-design personal financial management application. We are committed to protecting your privacy and ensuring your financial data remains confidential, secure, and under your exclusive control.
@@ -30,6 +30,7 @@ All data entered or generated within Stalvi—including financial transactions, 
 - **SQLCipher AES-256 Database Encryption:** The underlying SQLite database is encrypted at rest using **SQLCipher with AES-256 bit encryption**. Your financial data is unreadable without the cryptographic key.
 - **Hardware Security Key Management:** Cryptographic keys and access credentials are isolated and managed securely using the device's native KeyStore (Android) or Keychain (iOS) via secure system storage interfaces (`flutter_secure_storage`).
 - **Biometric & PIN Authentication:** Access to the Application is protected on-device by biometric mechanisms (Face ID, Touch ID, Fingerprint) or a user-defined Personal Identification Number (PIN).
+- **Local Summaries for Home Screen Widgets:** If you choose to enable and place Stalvi widgets on your device's home screen or lock screen (Android AppWidget or iOS WidgetKit), the Application stores a local, aggregated numerical summary of your total income and expenses for the past 30 days, calculated in your default currency, in the operating system's shared storage (`SharedPreferences` on Android, App Group-linked `UserDefaults` on iOS). This data resides exclusively on your physical device, contains no individual transaction details, account names, or personal notes, and is never transmitted to external servers.
 - **Absolute Data Isolation:** Because no data is transmitted to external servers, your information is protected against remote data breaches, server hacks, network sniffing, and corporate data mining.
 
 ---
@@ -68,8 +69,9 @@ Under GDPR and LOPDGDD, data subjects have rights regarding access, rectificatio
 ---
 
 ## 7. Data Retention & Permanent Deletion
-- **Data Export:** You can export your data at any time into standard formats (encrypted backup files or CSV spreadsheets) for personal backup or migration.
-- **Permanent Purge:** You can trigger a **"Delete All Data"** action in the Application settings. This permanently wipes all encrypted local database files and cached preferences from your device. Uninstallation of the Application also removes all local database files.
+- **Data Export:** You can export your data at any time into standard formats (encrypted backup files, structured PDF reports, or CSV spreadsheets) for personal backup or migration.
+- **Recycle Bin & Temporary Retention:** Transactions, accounts, or categories that you delete are moved to a local, encrypted recycle bin for a 30-day grace period to permit recovery. After this period, or upon manually emptying the recycle bin, these records are permanently and irreversibly purged from the database.
+- **Permanent Purge:** You can trigger a **"Delete All Data"** action in the Application settings. This permanently wipes all encrypted local database files, cached preferences, and widget cache data from your device. Uninstallation of the Application also removes all local database files and preferences.
 
 ---
 

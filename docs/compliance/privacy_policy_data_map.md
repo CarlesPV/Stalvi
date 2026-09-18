@@ -1,7 +1,7 @@
 # Privacy Policy & Data Map - Stalvi Mobile Application
 
-**Document Version:** 1.0.0  
-**Effective Date:** June 14, 2026  
+**Document Version:** 1.1.0  
+**Effective Date:** September 18, 2026  
 **Status:** Approved  
 
 This document provides a comprehensive mapping of data handling, storage mechanisms, encryption, and network communication in the Stalvi mobile application. It serves as the source of truth for store compliance, privacy policy disclosures, and security audits.
@@ -26,7 +26,9 @@ All application state and user data are categorized below, detailing their stora
 | **Financial Accounts** | Account names, balances, account types, currencies | Local Device Storage | Yes (SQLCipher) |
 | **Transactions** | Amounts, transaction dates, categories, tags, notes, payees | Local Device Storage | Yes (SQLCipher) |
 | **Budgets** | Budget limits, categories linked to budgets, budget periods | Local Device Storage | Yes (SQLCipher) |
+| **Recycle Bin (Trash)** | Soft-deleted accounts, categories, and transactions pending permanent purge (30-day retention) | Local Device Storage | Yes (SQLCipher) |
 | **Biometric State** | App lock preferences, passcode hash | Local Device Storage | Yes (Keychain / Keystore) |
+| **Home Screen Widget Cache** | Aggregated 30-day income and expense totals, localized metric labels | Local Device Storage (Android `SharedPreferences` / iOS App Group `UserDefaults`) | No (OS sandbox isolation; non-sensitive aggregated numeric totals only) |
 | **Exchange Rates** | Static currency exchange rates cached for offline use | Local Device Storage | No (Non-sensitive cache) |
 
 ---
@@ -34,7 +36,7 @@ All application state and user data are categorized below, detailing their stora
 ## 3. Data Storage & Encryption
 
 ### 3.1. Local Storage Engine (Drift + SQLCipher)
-All core user data (including profiles, accounts, transactions, and budgets) is stored on the physical device.
+All core user data (including profiles, accounts, transactions, budgets, and recycle bin items) is stored on the physical device.
 * **Storage Engine:** [Drift](https://drift.simonbinder.eu/) (formerly Moor), a reactive persistence library for Flutter.
 * **Encryption Technology:** **SQLCipher** (AES-256-CBC) compiled into the database driver. 
 * **Key Derivation:** PBKDF2 key derivation is applied to the raw key before it is used to encrypt/decrypt database pages.
@@ -43,6 +45,12 @@ All core user data (including profiles, accounts, transactions, and budgets) is 
 The encryption key for the local Drift database is generated randomly upon the first launch of the application. It is never exposed to the user or stored in plain text.
 * **iOS Integration:** The encryption key is saved in and retrieved from the **iOS Keychain**. This is backed by the Apple Secure Enclave and is not included in standard unencrypted backups.
 * **Android Integration:** The encryption key is stored using the **Android Keystore system**. Keys are stored in hardware-backed cryptographic providers when available, preventing extraction from the device.
+
+### 3.3. Native Widget Storage
+When the user adds a Stalvi widget to their home screen:
+* **Android:** Aggregated 30-day income and expense figures are saved into application-private `SharedPreferences`.
+* **iOS:** Figures are saved into the app group suite `group.com.peirov.stalvi` via `UserDefaults`.
+* **Data Minimization:** No personal identifiers, transaction payees, category notes, or account specifics are stored in widget storage.
 
 ---
 
@@ -63,8 +71,9 @@ The only network activity initiated by the app is query traffic to fetch live or
 
 ## 5. Data Deletion and Portability
 
-* **Application Uninstallation:** Uninstalling the Stalvi application from the device deletes the local database file as well as the database key stored in the iOS Keychain or Android Keystore. This permanently renders the data unrecoverable.
-* **Data Portability:** Users can trigger a manual export of their financial logs. This export is processed entirely locally on the device.
+* **Application Uninstallation:** Uninstalling the Stalvi application from the device deletes the local database file as well as the database key stored in the iOS Keychain or Android Keystore, plus all widget shared preferences. This permanently renders all data unrecoverable.
+* **Recycle Bin & Automatic Purge:** Deleted transactions, categories, and accounts are placed in an encrypted local recycle bin for 30 days before irreversible automated purge, allowing manual restoration or immediate permanent deletion by the user.
+* **Data Portability:** Users can trigger a manual export of their financial records (encrypted database backup, structured PDF reports, or CSV spreadsheets). This export is processed entirely locally on the device.
 
 ---
 

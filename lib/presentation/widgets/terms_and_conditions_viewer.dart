@@ -64,7 +64,7 @@ class TermsAndConditionsViewer extends StatelessWidget {
     if (lang == 'es') {
       return '''# Términos y Condiciones de Uso
 
-**Fecha de entrada en vigor:** 17 de agosto de 2026
+**Fecha de entrada en vigor:** 18 de septiembre de 2026
 
 Lea detenidamente estos Términos y Condiciones ("Términos", "Acuerdo") antes de descargar, instalar, acceder o utilizar la aplicación móvil Stalvi (la "Aplicación" o "App").
 
@@ -82,6 +82,7 @@ Stalvi es una herramienta de gestión financiera personal centrada en la privaci
 ## 2. Arquitectura Local-First y Cifrado SQLCipher
 - **Almacenamiento Exclusivamente Local:** Stalvi funciona bajo una estricta **arquitectura local (*local-first*)**. Todos los registros de transacciones, saldos de cuentas, presupuestos, categorías, resúmenes de PIN y preferencias se almacenan exclusivamente en su dispositivo. Stalvi no transmite, respalda, sincroniza, almacena ni procesa sus datos financieros en servidores externos o servicios en la nube.
 - **Cifrado SQLCipher AES-256:** La base de datos SQLite subyacente se cifra en reposo mediante **SQLCipher con cifrado AES de 256 bits**. Las claves criptográficas están protegidas mediante interfaces de almacenamiento seguro del sistema respaldadas por hardware nativo (Android KeyStore / iOS Keychain a través de `flutter_secure_storage`).
+- **Visualización de Resúmenes en Widgets:** Los widgets nativos de la pantalla de inicio o de bloqueo muestran resúmenes financieros agregados (ingresos y gastos acumulados de los últimos 30 días) directamente en la interfaz del sistema operativo sin requerir la introducción de PIN ni autenticación biométrica de la Aplicación. Si decide activar dichos widgets, usted asume la responsabilidad exclusiva respecto a la visibilidad de estos resúmenes frente a terceros con acceso físico o visual a su dispositivo.
 - **Sin Acceso Remoto ni Puertas Traseras:** Los desarrolladores no tienen ningún acceso a su dispositivo, a su PIN, a sus claves de cifrado ni a su base de datos.
 
 ---
@@ -118,7 +119,8 @@ USTED ES EL ÚNICO RESPONSABLE DE VERIFICAR LA EXACTITUD DE TODAS LAS TRANSACCIO
 ## 5. Responsabilidad del Usuario y Copia de Seguridad de Datos
 - **PIN o Autenticación Biométrica Olvidada:** Debido a que todos los datos están cifrados en el dispositivo con claves gestionadas por sus credenciales locales, si olvida su PIN o pierde el acceso biométrico, su base de datos será inaccesible e ilegible. **Los desarrolladores no pueden restablecer su PIN ni recuperar sus datos cifrados.**
 - **Pérdida o Daño del Dispositivo:** Si su dispositivo se pierde, daña, roba, restablece de fábrica o si desinstala la App sin exportar previamente una copia de seguridad cifrada, sus datos financieros se perderán permanentemente.
-- **Responsabilidad de Copia de Seguridad:** Usted es el único responsable de realizar copias de seguridad periódicas cifradas o exportaciones CSV y transferirlas a un almacenamiento externo seguro.
+- **Responsabilidad de Copia de Seguridad y Archivos Exportados:** Usted es el único responsable de realizar copias de seguridad periódicas cifradas o exportaciones (archivos CSV o informes PDF) y transferirlas a un almacenamiento externo seguro. Cuando usted genera y exporta archivos CSV o informes PDF, estos documentos salen del contenedor cifrado de Stalvi; la seguridad, custodia y confidencialidad de dichos ficheros recae íntegramente sobre usted y las herramientas o plataformas de terceros que utilice para almacenarlos o transmitirlos.
+- **Papelera de Reciclaje y Purga Definitiva:** La Aplicación proporciona una papelera de reciclaje temporal que conserva los elementos eliminados durante 30 días antes de su purga automática definitiva. Es su responsabilidad verificar la papelera o restaurar registros antes de que expire dicho plazo o antes de ejecutar un borrado definitivo manual.
 
 ---
 
@@ -172,7 +174,7 @@ Estos Términos y el uso de la Aplicación se regirán e interpretarán de confo
     } else if (lang == 'ca') {
       return '''# Termes i Condicions d'Ús
 
-**Data d'entrada en vigor:** 17 d'agost de 2026
+**Data d'entrada en vigor:** 18 de setembre de 2026
 
 Llegeix detingudament aquests Termes i Condicions ("Termes", "Acord") abans de descarregar, instal·lar, accedir o utilitzar l'aplicació mòbil Stalvi (l'"Aplicació" o "App").
 
@@ -190,6 +192,7 @@ Stalvi és una eina de gestió financera personal centrada en la privadesa i dis
 ## 2. Arquitectura Local-First i Xifratge SQLCipher
 - **Emmagatzematge Exclusivament Local:** Stalvi funciona sota una estricta **arquitectura local (*local-first*)**. Tots els registres de transaccions, saldos de comptes, pressupostos, categories, resums de PIN i preferències s'emmagatzemen exclusivament al teu dispositiu. Stalvi no transmet, revalida, sincronitza, emmagatzema ni processa les teves dades financeres en servidors externs o serveis al núvol.
 - **Xifratge SQLCipher AES-256:** La base de dades SQLite subadjacent es xifra en repòs mitjançant **SQLCipher amb xifratge AES de 256 bits**. Les claus criptogràfiques estan protegides mitjançant interfícies d'emmagatzematge segur del sistema mantingudes per hardware natiu (Android KeyStore / iOS Keychain a través de `flutter_secure_storage`).
+- **Visualització de Resums en Widgets:** Els widgets natius de la pantalla d'inici o de bloqueig mostren resums financers agregats (ingressos i despeses acumulats dels darrers 30 dies) directament a la interfície del sistema operatiu sense requerir la introducció de PIN ni autenticació biomètrica de l'Aplicació. Si decideixes activar aquests widgets, assumeixes la responsabilitat exclusiva respecte a la visibilitat d'aquests resums enfront de tercers amb accés físic o visual al teu dispositiu.
 - **Sense Accés Remot ni Portes del Darrere:** Els desenvolupadors no tenen cap accés al teu dispositiu, al teu PIN, les teves claus de xifratge ni la teva base de dades.
 
 ---
@@ -226,7 +229,8 @@ ETS L'ÚNIC RESPONSIBLE DE VERIFICAR L'EXACTITUD DE TOTES LES TRANSACCIONS, CÀL
 ## 5. Responsabilitat de l'Usuari i Còpia de Seguretat de Dades
 - **PIN o Autenticació Biomètrica Oblidada:** Atès que totes les dades estan xifrades al dispositiu amb claus gestionades per les teves credencials locals, si oblides el teu PIN o perds l'accés biomètric, la teva base de dades serà inaccessible i il·legible. **Els desenvolupadors no poden restablir el teu PIN ni recuperar les teves dades xifrades.**
 - **Pèrdua o Dany del Dispositiu:** Si el teu dispositiu es perd, danya, roba, restableix de fàbrica o si desinstal·les l'App sense exportar prèviament una còpia de seguretat xifrada, les teves dades financeres es perdran permanentment.
-- **Responsabilitat de Còpia de Seguretat:** Ets l'únic responsable de realitzar còpies de seguretat periòdiques xifrades o exportacions CSV i transferir-les a un emmagatzematge extern segur.
+- **Responsabilitat de Còpia de Seguretat i Fitxers Exportats:** Ets l'únic responsable de realitzar còpies de seguretat periòdiques xifrades o exportacions (fitxers CSV o informes PDF) i transferir-les a un emmagatzematge extern segur. Quan generes i exportes fitxers CSV o informes PDF, aquests documents surten del contenidor xifrat de Stalvi; la seguretat, custòdia i confidencialitat d'aquests fitxers recau íntegrament sobre tu i les eines o plataformes de tercers que utilitzis per emmagatzemar-los o transmetre'ls.
+- **Paperera de Reciclatge i Purga Definitiva:** L'Aplicació proporciona una paperera de reciclatge temporal que conserva els elements eliminats durant 30 dies abans de la seva purga automàtica definitiva. És la teva responsabilitat verificar la paperera o restaurar registres abans que expiri aquest termini o abans d'executar un esborrat definitiu manual.
 
 ---
 
@@ -280,7 +284,7 @@ Aquests Termes i l'ús de l'Aplicació es regiran i interpretaran de conformitat
     }
     return '''# Terms and Conditions of Use
 
-**Effective Date:** August 17, 2026
+**Effective Date:** September 18, 2026
 
 Please read these Terms and Conditions ("Terms", "Agreement") carefully before downloading, installing, accessing, or using the Stalvi mobile application (the "Application" or "App").
 
@@ -298,6 +302,7 @@ Stalvi is a privacy-focused, local-first personal financial management tool desi
 ## 2. Local-First Architecture & SQLCipher Encryption
 - **Local-Only Storage:** Stalvi operates on a strict **local-first architecture**. All transaction logs, account balances, budgets, categories, PIN hashes, and custom preferences are stored exclusively on your device. Stalvi does not transmit, back up, sync, store, or process your financial data on external servers or cloud services.
 - **SQLCipher AES-256 Encryption:** The underlying SQLite database is encrypted at rest using **SQLCipher with AES-256 bit encryption**. Cryptographic keys are protected using native hardware-backed secure storage interfaces (Android KeyStore / iOS Keychain via `flutter_secure_storage`).
+- **Widget Display Visibility:** Native home screen or lock screen widgets display aggregated financial summaries (total income and expenses for the past 30 days) directly on the operating system interface without requiring PIN entry or biometric authentication. By choosing to add and display these widgets, you accept sole responsibility for the visual exposure of such totals to anyone with physical or visual access to your device.
 - **No Remote Access or Backdoors:** The developers have zero access to your device, your PIN, your encryption keys, or your database.
 
 ---
@@ -334,7 +339,8 @@ YOU ARE SOLELY RESPONSIBLE FOR VERIFYING THE ACCURACY OF ALL TRANSACTIONS, CALCU
 ## 5. User Responsibility & Data Backup
 - **Forgotten PIN / Biometrics:** Because all data is encrypted on-device with keys managed by your device credentials, forgetting your PIN or losing biometric access will render your database unreadable. **The developers cannot reset your PIN or recover your encrypted data.**
 - **Device Loss or Corruption:** If your device is lost, damaged, stolen, factory reset, or if the App is uninstalled without exporting an encrypted backup file, your financial data is permanently lost.
-- **Backup Responsibility:** You are solely responsible for creating regular encrypted database backups or CSV exports and transferring them to secure off-device storage.
+- **Backup Responsibility & Exported Files:** You are solely responsible for creating regular encrypted database backups or exports (CSV files or PDF reports) and transferring them to secure off-device storage. When you generate and export CSV files or PDF reports, these documents leave Stalvi's encrypted sandbox; the security, custody, and confidentiality of these exported files rest entirely with you and the third-party applications or storage platforms you select.
+- **Recycle Bin & Permanent Purge:** The Application provides a local recycle bin that retains deleted items for a 30-day grace period prior to automatic permanent purge. You are responsible for inspecting the recycle bin and restoring any necessary data before this retention window closes or prior to triggering a manual permanent purge.
 
 ---
 
@@ -391,7 +397,7 @@ These Terms and your use of the Application shall be governed by and construed i
     if (lang == 'es') {
       return '''# Política de Privacidad
 
-**Fecha de entrada en vigor:** 17 de agosto de 2026
+**Fecha de entrada en vigor:** 18 de septiembre de 2026
 
 ## 1. Introducción
 Bienvenido a **Stalvi** ("nosotros", "nuestro" o "la Aplicación"). Stalvi es una aplicación de gestión de finanzas personales diseñada con arquitectura local (*local-first*) y bajo la filosofía de privacidad desde el diseño (*privacy-by-design*). Estamos firmemente comprometidos a proteger su privacidad y a garantizar que sus datos financieros permanezcan confidenciales, seguros y bajo su control exclusivo.
@@ -421,6 +427,7 @@ Todos los datos introducidos o generados dentro de Stalvi (incluidas transaccion
 - **Cifrado de Base de Datos SQLCipher AES-256:** La base de datos SQLite subyacente se cifra en reposo mediante **SQLCipher con cifrado AES de 256 bits**. Sus datos financieros resultan ilegibles sin la clave criptográfica.
 - **Gestión Segura de Claves en Hardware:** Las claves criptográficas y las credenciales de acceso se aíslan y gestionan de forma segura utilizando el KeyStore nativo del dispositivo (Android) o Keychain (iOS) a través de interfaces de almacenamiento seguro del sistema (`flutter_secure_storage`).
 - **Autenticación Biométrica y PIN:** El acceso a la Aplicación está protegido en el dispositivo mediante mecanismos biométricos (Face ID, Touch ID, huella dactilar) o un Número de Identificación Personal (PIN) definido por el usuario.
+- **Resúmenes Locales para Widgets de Pantalla de Inicio:** Si decide habilitar y colocar los widgets de Stalvi en la pantalla de inicio o de bloqueo de su dispositivo (Android AppWidget o iOS WidgetKit), la Aplicación almacena localmente un resumen numérico agregado de sus ingresos y gastos de los últimos 30 días, calculado en su divisa predeterminada, en el almacenamiento compartido del sistema operativo (`SharedPreferences` en Android, `UserDefaults` con App Group en iOS). Este almacenamiento reside exclusivamente en su dispositivo físico, no contiene detalles de transacciones individuales, nombres de cuentas ni notas personales, y no se transmite bajo ninguna circunstancia a servidores externos.
 - **Aislamiento Absoluto de Datos:** Puesto que ningún dato se transmite a servidores externos, su información está protegida frente a brechas de datos remotas, ataques a servidores, intercepciones de red y minería de datos corporativa.
 
 ---
@@ -459,8 +466,9 @@ Bajo el RGPD y la LOPDGDD, los interesados tienen derechos de acceso, rectificac
 ---
 
 ## 7. Retención y Eliminación Permanente de Datos
-- **Exportación de Datos:** Puede exportar sus datos en cualquier momento en formatos estándar (archivos de copia de seguridad cifrados o hojas de cálculo CSV) para su respaldo personal o migración.
-- **Borrado Permanente:** Puede activar la acción **"Eliminar Todos los Datos"** en la configuración de la Aplicación. Esto elimina de forma permanente todos los archivos de bases de datos locales cifradas y preferencias del dispositivo. La desinstalación de la Aplicación también elimina todos los archivos de bases de datos locales.
+- **Exportación de Datos:** Puede exportar sus datos en cualquier momento en formatos estándar (archivos de copia de seguridad cifrados, informes estructurados en PDF u hojas de cálculo CSV) para su respaldo personal o migración.
+- **Papelera de Reciclaje y Retención Temporal:** Las transacciones, cuentas o categorías eliminadas se trasladan a una papelera de reciclaje local protegida y cifrada durante un período de cortesía de hasta 30 días para permitir su recuperación en caso de error. Transcurrido dicho plazo, o si vacía manualmente la papelera de reciclaje, dichos registros se destruyen de forma permanente e irrecuperable de la base de datos.
+- **Borrado Permanente:** Puede activar la acción **"Eliminar Todos los Datos"** en la configuración de la Aplicación. Esto elimina de forma permanente todos los archivos de bases de datos locales cifradas, preferencias del dispositivo y datos en caché de widgets. La desinstalación de la Aplicación también elimina todos los archivos de bases de datos locales.
 
 ---
 
@@ -483,7 +491,7 @@ Para consultas sobre privacidad, contacte al desarrollador:
     } else if (lang == 'ca') {
       return '''# Política de Privadesa
 
-**Data d'entrada en vigor:** 17 d'agost de 2026
+**Data d'entrada en vigor:** 18 de setembre de 2026
 
 ## 1. Introducció
 Benvingut a **Stalvi** ("nosaltres", "nostre" o "l'Aplicació"). Stalvi és una aplicació de gestió de finances personals dissenyada amb arquitectura local (*local-first*) i sota la filosofia de privadesa des del disseny (*privacy-by-design*). Estem fermament compromesos a protegir la teva privadesa i a garantir que les teves dades financeres romanguin confidencials, segures i sota el teu control exclusiu.
@@ -513,6 +521,7 @@ Totes les dades introduïdes o generades dins de Stalvi (incloses transaccions f
 - **Xifratge de Base de Dades SQLCipher AES-256:** La base de dades SQLite subadjacent es xifra en repòs mitjançant **SQLCipher amb xifratge AES de 256 bits**. Les teves dades financeres resulten il·legibles sense la clau criptogràfica.
 - **Gestió Segura de Claus en Hardware:** Les claus criptogràfiques i les credencials d'accés s'aïllen i gestionen de forma segura utilitzant el KeyStore natiu del dispositiu (Android) o Keychain (iOS) a través d'interfícies d'emmagatzematge segur del sistema (`flutter_secure_storage`).
 - **Autenticació Biomètrica i PIN:** L'accés a l'Aplicació està protegit al dispositiu mitjançant mecanismes biomètrics (Face ID, Touch ID, empremta dactilar) o un Número d'Identificació Personal (PIN) definit per l'usuari.
+- **Resums Locals per a Widgets de Pantalla d'Inici:** Si decideixes habilitar i col·locar els widgets de Stalvi a la pantalla d'inici o de bloqueig del teu dispositiu (Android AppWidget o iOS WidgetKit), l'Aplicació emmagatzema de manera local un resum numèric agregat dels teus ingressos i despeses dels darrers 30 dies, calculat en la teva divisa predeterminada, a l'emmagatzematge compartit del sistema operatiu (`SharedPreferences` a Android, `UserDefaults` vinculat a App Group a iOS). Aquest emmagatzematge es troba exclusivament al teu dispositiu físic, no conté detalls de transaccions individuals, noms de comptes ni notes personals, i no es transmet sota cap circumstància a servidors externs.
 - **Aïllament Absolut de Dades:** Atès que cap dada es transmet a servidors externs, la teva informació està protegida enfront de bretxes de dades remotes, atacs a servidors, intercepcions de xarxa i mineria de dades corporativa.
 
 ---
@@ -551,8 +560,9 @@ Sota el RGPD i la LOPDGDD, els interessats tenen drets d'accés, rectificació, 
 ---
 
 ## 7. Retenció i Eliminació Permanent de Dades
-- **Exportació de Dades:** Pots exportar les teves dades en qualsevol moment en formats estàndard (fitxers de còpia de seguretat xifrats o fulls de càlcul CSV) per al teu suport personal o migració.
-- **Esborrat Permanent:** Pots activar l'acció **"Eliminar Totes les Dades"** a la configuració de l'Aplicació. Això elimina de forma permanent tots els fitxers de bases de dades locals xifrades i preferències del dispositiu. La desinstal·lació de l'Aplicació també elimina tots els fitxers de bases de dades locals.
+- **Exportació de Dades:** Pots exportar les teves dades en qualsevol moment en formats estàndard (fitxers de còpia de seguretat xifrats, informes estructurats en PDF o fulls de càlcul CSV) per al teu suport personal o migració.
+- **Paperera de Reciclatge i Retenció Temporal:** Les transaccions, comptes o categories que eliminis es traslladen a una paperera de reciclatge local protegida i xifrada durant un període de cortesia de fins a 30 dies per permetre la seva recuperació en cas d'error. Transcorregut aquest termini, o si buides manualment la paperera de reciclatge, aquests registres es destrueixen de forma permanent i irrecuperable de la base de dades.
+- **Esborrat Permanent:** Pots activar l'acció **"Eliminar Totes les Dades"** a la configuració de l'Aplicació. Això elimina de forma permanent tots els fitxers de bases de dades locals xifrades, preferències del dispositiu i dades en memòria cau de widgets. La desinstal·lació de l'Aplicació també elimina tots els fitxers de bases de dades locals.
 
 ---
 
@@ -575,7 +585,7 @@ Per a consultes sobre privadesa, contacta amb el desenvolupador:
     }
     return '''# Privacy Policy
 
-**Effective Date:** August 17, 2026
+**Effective Date:** September 18, 2026
 
 ## 1. Introduction
 Welcome to **Stalvi** ("we", "our", or "the Application"). Stalvi is a local-first, privacy-by-design personal financial management application. We are committed to protecting your privacy and ensuring your financial data remains confidential, secure, and under your exclusive control.
@@ -605,6 +615,7 @@ All data entered or generated within Stalvi—including financial transactions, 
 - **SQLCipher AES-256 Database Encryption:** The underlying SQLite database is encrypted at rest using **SQLCipher with AES-256 bit encryption**. Your financial data is unreadable without the cryptographic key.
 - **Hardware Security Key Management:** Cryptographic keys and access credentials are isolated and managed securely using the device's native KeyStore (Android) or Keychain (iOS) via secure system storage interfaces (`flutter_secure_storage`).
 - **Biometric & PIN Authentication:** Access to the Application is protected on-device by biometric mechanisms (Face ID, Touch ID, Fingerprint) or a user-defined Personal Identification Number (PIN).
+- **Local Summaries for Home Screen Widgets:** If you choose to enable and place Stalvi widgets on your device's home screen or lock screen (Android AppWidget or iOS WidgetKit), the Application stores a local, aggregated numerical summary of your total income and expenses for the past 30 days, calculated in your default currency, in the operating system's shared storage (`SharedPreferences` on Android, App Group-linked `UserDefaults` on iOS). This data resides exclusively on your physical device, contains no individual transaction details, account names, or personal notes, and is never transmitted to external servers.
 - **Absolute Data Isolation:** Because no data is transmitted to external servers, your information is protected against remote data breaches, server hacks, network sniffing, and corporate data mining.
 
 ---
@@ -643,8 +654,9 @@ Under GDPR and LOPDGDD, data subjects have rights regarding access, rectificatio
 ---
 
 ## 7. Data Retention & Permanent Deletion
-- **Data Export:** You can export your data at any time into standard formats (encrypted backup files or CSV spreadsheets) for personal backup or migration.
-- **Permanent Purge:** You can trigger a **"Delete All Data"** action in the Application settings. This permanently wipes all encrypted local database files and cached preferences from your device. Uninstallation of the Application also removes all local database files.
+- **Data Export:** You can export your data at any time into standard formats (encrypted backup files, structured PDF reports, or CSV spreadsheets) for personal backup or migration.
+- **Recycle Bin & Temporary Retention:** Transactions, accounts, or categories that you delete are moved to a local, encrypted recycle bin for a 30-day grace period to permit recovery. After this period, or upon manually emptying the recycle bin, these records are permanently and irreversibly purged from the database.
+- **Permanent Purge:** You can trigger a **"Delete All Data"** action in the Application settings. This permanently wipes all encrypted local database files, cached preferences, and widget cache data from your device. Uninstallation of the Application also removes all local database files and preferences.
 
 ---
 

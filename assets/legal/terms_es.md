@@ -1,6 +1,6 @@
 # Términos y Condiciones de Uso
 
-**Fecha de entrada en vigor:** 17 de agosto de 2026
+**Fecha de entrada en vigor:** 18 de septiembre de 2026
 
 Lea detenidamente estos Términos y Condiciones ("Términos", "Acuerdo") antes de descargar, instalar, acceder o utilizar la aplicación móvil Stalvi (la "Aplicación" o "App").
 
@@ -18,6 +18,7 @@ Stalvi es una herramienta de gestión financiera personal centrada en la privaci
 ## 2. Arquitectura Local-First y Cifrado SQLCipher
 - **Almacenamiento Exclusivamente Local:** Stalvi funciona bajo una estricta **arquitectura local (*local-first*)**. Todos los registros de transacciones, saldos de cuentas, presupuestos, categorías, resúmenes de PIN y preferencias se almacenan exclusivamente en su dispositivo. Stalvi no transmite, respalda, sincroniza, almacena ni procesa sus datos financieros en servidores externos o servicios en la nube.
 - **Cifrado SQLCipher AES-256:** La base de datos SQLite subyacente se cifra en reposo mediante **SQLCipher con cifrado AES de 256 bits**. Las claves criptográficas están protegidas mediante interfaces de almacenamiento seguro del sistema respaldadas por hardware nativo (Android KeyStore / iOS Keychain a través de `flutter_secure_storage`).
+- **Visualización de Resúmenes en Widgets:** Los widgets nativos de la pantalla de inicio o de bloqueo muestran resúmenes financieros agregados (ingresos y gastos acumulados de los últimos 30 días) directamente en la interfaz del sistema operativo sin requerir la introducción de PIN ni autenticación biométrica de la Aplicación. Si decide activar dichos widgets, usted asume la responsabilidad exclusiva respecto a la visibilidad de estos resúmenes frente a terceros con acceso físico o visual a su dispositivo.
 - **Sin Acceso Remoto ni Puertas Traseras:** Los desarrolladores no tienen ningún acceso a su dispositivo, a su PIN, a sus claves de cifrado ni a su base de datos.
 
 ---
@@ -54,7 +55,8 @@ USTED ES EL ÚNICO RESPONSABLE DE VERIFICAR LA EXACTITUD DE TODAS LAS TRANSACCIO
 ## 5. Responsabilidad del Usuario y Copia de Seguridad de Datos
 - **PIN o Autenticación Biométrica Olvidada:** Debido a que todos los datos están cifrados en el dispositivo con claves gestionadas por sus credenciales locales, si olvida su PIN o pierde el acceso biométrico, su base de datos será inaccesible e ilegible. **Los desarrolladores no pueden restablecer su PIN ni recuperar sus datos cifrados.**
 - **Pérdida o Daño del Dispositivo:** Si su dispositivo se pierde, daña, roba, restablece de fábrica o si desinstala la App sin exportar previamente una copia de seguridad cifrada, sus datos financieros se perderán permanentemente.
-- **Responsabilidad de Copia de Seguridad:** Usted es el único responsable de realizar copias de seguridad periódicas cifradas o exportaciones CSV y transferirlas a un almacenamiento externo seguro.
+- **Responsabilidad de Copia de Seguridad y Archivos Exportados:** Usted es el único responsable de realizar copias de seguridad periódicas cifradas o exportaciones (archivos CSV o informes PDF) y transferirlas a un almacenamiento externo seguro. Cuando usted genera y exporta archivos CSV o informes PDF, estos documentos salen del contenedor cifrado de Stalvi; la seguridad, custodia y confidencialidad de dichos ficheros recae íntegramente sobre usted y las herramientas o plataformas de terceros que utilice para almacenarlos o transmitirlos.
+- **Papelera de Reciclaje y Purga Definitiva:** La Aplicación proporciona una papelera de reciclaje temporal que conserva los elementos eliminados durante 30 días antes de su purga automática definitiva. Es su responsabilidad verificar la papelera o restaurar registros antes de que expire dicho plazo o antes de ejecutar un borrado definitivo manual.
 
 ---
 
