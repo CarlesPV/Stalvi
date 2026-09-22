@@ -5,6 +5,7 @@ import 'package:stalvi/domain/entities/account_type.dart';
 import 'package:stalvi/domain/usecases/create_account_usecase.dart';
 import '../providers/repository_providers.dart';
 import 'package:stalvi/core/l10n/app_localizations.dart';
+import 'category_icon_picker.dart';
 import 'package:uuid/uuid.dart';
 
 class CreateAccountDialog extends ConsumerStatefulWidget {
@@ -153,12 +154,19 @@ class _CreateAccountDialogState extends ConsumerState<CreateAccountDialog> {
             children: [
               // Drag handle
               Center(
-                child: Container(
-                  width: 48,
-                  height: 5,
-                  decoration: BoxDecoration(
-                    color: colorScheme.onSurfaceVariant.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(10),
+                child: Semantics(
+                  button: true,
+                  label: l10n.btnClose,
+                  onTapHint: l10n.btnClose,
+                  onTap: () => Navigator.of(context).pop(),
+                  child: Container(
+                    width: 48,
+                    height: 5,
+                    decoration: BoxDecoration(
+                      color:
+                          colorScheme.onSurfaceVariant.withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                   ),
                 ),
               ),
@@ -196,11 +204,14 @@ class _CreateAccountDialogState extends ConsumerState<CreateAccountDialog> {
                       ),
                       const SizedBox(width: 12),
                       Expanded(
-                        child: Text(
-                          _errorMessage!,
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            color: colorScheme.onErrorContainer,
-                            fontWeight: FontWeight.w500,
+                        child: Semantics(
+                          liveRegion: true,
+                          child: Text(
+                            _errorMessage!,
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: colorScheme.onErrorContainer,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                         ),
                       ),
@@ -212,6 +223,7 @@ class _CreateAccountDialogState extends ConsumerState<CreateAccountDialog> {
 
               // Account Name field
               TextField(
+                autofocus: true,
                 key: const ValueKey('createAccountNameField'),
                 controller: _nameController,
                 focusNode: _nameFocusNode,
@@ -300,12 +312,14 @@ class _CreateAccountDialogState extends ConsumerState<CreateAccountDialog> {
                       padding: const EdgeInsets.only(right: 8),
                       child: ChoiceChip(
                         showCheckmark: false,
-                        avatar: Icon(
-                          icon,
-                          size: 16,
-                          color: isSelected
-                              ? colorScheme.onPrimary
-                              : colorScheme.onSurface,
+                        avatar: ExcludeSemantics(
+                          child: Icon(
+                            icon,
+                            size: 16,
+                            color: isSelected
+                                ? colorScheme.onPrimary
+                                : colorScheme.onSurface,
+                          ),
                         ),
                         label: Text(
                           label,
@@ -366,37 +380,49 @@ class _CreateAccountDialogState extends ConsumerState<CreateAccountDialog> {
                   final color = _parseHexColor(colorHex);
                   final isSelected = _selectedColor == colorHex;
 
-                  return GestureDetector(
-                    onTap: () => setState(() => _selectedColor = colorHex),
-                    child: Container(
-                      width: 38,
-                      height: 38,
-                      decoration: BoxDecoration(
-                        color: color,
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: isSelected
-                              ? colorScheme.outline
-                              : Colors.transparent,
-                          width: 3,
+                  return Semantics(
+                    button: true,
+                    selected: isSelected,
+                    label: CategoryIconPicker.localizedColorName(
+                      context,
+                      colorHex,
+                    ),
+                    child: GestureDetector(
+                      onTap: () => setState(() => _selectedColor = colorHex),
+                      child: Container(
+                        padding: const EdgeInsets.all(5),
+                        color: Colors.transparent,
+                        child: Container(
+                          width: 38,
+                          height: 38,
+                          decoration: BoxDecoration(
+                            color: color,
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: isSelected
+                                  ? colorScheme.outline
+                                  : Colors.transparent,
+                              width: 3,
+                            ),
+                            boxShadow: isSelected
+                                ? [
+                                    BoxShadow(
+                                      color: color.withValues(alpha: 0.4),
+                                      blurRadius: 8,
+                                      spreadRadius: 1,
+                                    ),
+                                  ]
+                                : null,
+                          ),
+                          child: isSelected
+                              ? const Icon(
+                                  Icons.check,
+                                  color: Colors.white,
+                                  size: 18,
+                                )
+                              : null,
                         ),
-                        boxShadow: isSelected
-                            ? [
-                                BoxShadow(
-                                  color: color.withValues(alpha: 0.4),
-                                  blurRadius: 8,
-                                  spreadRadius: 1,
-                                ),
-                              ]
-                            : null,
                       ),
-                      child: isSelected
-                          ? const Icon(
-                              Icons.check,
-                              color: Colors.white,
-                              size: 18,
-                            )
-                          : null,
                     ),
                   );
                 }).toList(),
@@ -422,29 +448,35 @@ class _CreateAccountDialogState extends ConsumerState<CreateAccountDialog> {
                   final isSelected = _selectedIcon == name;
                   final activeColor = _parseHexColor(_selectedColor);
 
-                  return GestureDetector(
-                    onTap: () => setState(() => _selectedIcon = name),
-                    child: Container(
-                      width: 44,
-                      height: 44,
-                      decoration: BoxDecoration(
-                        color: isSelected
-                            ? activeColor.withValues(alpha: 0.12)
-                            : colorScheme.surfaceContainerHighest.withValues(
-                                alpha: 0.3,
-                              ),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: isSelected ? activeColor : Colors.transparent,
-                          width: 2,
+                  return Semantics(
+                    button: true,
+                    selected: isSelected,
+                    label: CategoryIconPicker.localizedIconName(context, name),
+                    child: GestureDetector(
+                      onTap: () => setState(() => _selectedIcon = name),
+                      child: Container(
+                        width: 44,
+                        height: 44,
+                        decoration: BoxDecoration(
+                          color: isSelected
+                              ? activeColor.withValues(alpha: 0.12)
+                              : colorScheme.surfaceContainerHighest.withValues(
+                                  alpha: 0.3,
+                                ),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color:
+                                isSelected ? activeColor : Colors.transparent,
+                            width: 2,
+                          ),
                         ),
-                      ),
-                      child: Icon(
-                        icon,
-                        color: isSelected
-                            ? activeColor
-                            : colorScheme.onSurfaceVariant,
-                        size: 22,
+                        child: Icon(
+                          icon,
+                          color: isSelected
+                              ? activeColor
+                              : colorScheme.onSurfaceVariant,
+                          size: 22,
+                        ),
                       ),
                     ),
                   );
@@ -465,16 +497,16 @@ class _CreateAccountDialogState extends ConsumerState<CreateAccountDialog> {
                         actions: [
                           TextButton(
                             onPressed: () => Navigator.pop(ctx, false),
-                            child: FittedBox(
-                              fit: BoxFit.scaleDown,
-                              child: Text(l10n.btnCancel),
+                            child: Text(
+                              l10n.btnCancel,
+                              textAlign: TextAlign.center,
                             ),
                           ),
                           FilledButton(
                             onPressed: () => Navigator.pop(ctx, true),
-                            child: FittedBox(
-                              fit: BoxFit.scaleDown,
-                              child: Text(l10n.btnContinue),
+                            child: Text(
+                              l10n.btnContinue,
+                              textAlign: TextAlign.center,
                             ),
                           ),
                         ],
@@ -507,15 +539,13 @@ class _CreateAccountDialogState extends ConsumerState<CreateAccountDialog> {
                           color: colorScheme.outline.withValues(alpha: 0.2),
                         ),
                       ),
-                      child: FittedBox(
-                        fit: BoxFit.scaleDown,
-                        child: Text(
-                          l10n.btnCancel,
-                          style: TextStyle(
-                            color: colorScheme.onSurfaceVariant,
-                            fontWeight: FontWeight.bold,
-                          ),
+                      child: Text(
+                        l10n.btnCancel,
+                        style: TextStyle(
+                          color: colorScheme.onSurfaceVariant,
+                          fontWeight: FontWeight.bold,
                         ),
+                        textAlign: TextAlign.center,
                       ),
                     ),
                   ),
@@ -533,22 +563,21 @@ class _CreateAccountDialogState extends ConsumerState<CreateAccountDialog> {
                         ),
                       ),
                       child: _isLoading
-                          ? const SizedBox(
+                          ? SizedBox(
                               width: 24,
                               height: 24,
                               child: CircularProgressIndicator(
                                 strokeWidth: 2,
                                 color: Colors.white,
+                                semanticsLabel: l10n.a11yLoading,
                               ),
                             )
-                          : FittedBox(
-                              fit: BoxFit.scaleDown,
-                              child: Text(
-                                l10n.btnSave,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                ),
+                          : Text(
+                              l10n.btnSave,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
                               ),
+                              textAlign: TextAlign.center,
                             ),
                     ),
                   ),

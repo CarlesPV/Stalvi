@@ -62,7 +62,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen>
     _shimmerController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1100),
-    )..repeat(reverse: true);
+    );
 
     _shimmer = CurvedAnimation(
       parent: _shimmerController,
@@ -74,6 +74,19 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen>
       _checkBiometricOptIn();
       _executeFallbackTransactions();
     });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (MediaQuery.disableAnimationsOf(context)) {
+      _shimmerController.value = 1.0;
+      _shimmerController.stop();
+    } else {
+      if (!_shimmerController.isAnimating) {
+        _shimmerController.repeat(reverse: true);
+      }
+    }
   }
 
   @override
@@ -136,12 +149,10 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen>
                 Navigator.of(context).pop();
                 await notifier.skipBiometricOptIn();
               },
-              child: FittedBox(
-                fit: BoxFit.scaleDown,
-                child: Text(
-                  l10n.authBiometricOptInSkip,
-                  style: TextStyle(color: colorScheme.onSurfaceVariant),
-                ),
+              child: Text(
+                l10n.authBiometricOptInSkip,
+                style: TextStyle(color: colorScheme.onSurfaceVariant),
+                textAlign: TextAlign.center,
               ),
             ),
             FilledButton(
@@ -149,9 +160,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen>
                 Navigator.of(context).pop();
                 await notifier.enableBiometricsOptIn();
               },
-              child: FittedBox(
-                fit: BoxFit.scaleDown,
-                child: Text(l10n.authBiometricOptInEnable),
+              child: Text(
+                l10n.authBiometricOptInEnable,
+                textAlign: TextAlign.center,
               ),
             ),
           ],
@@ -202,20 +213,22 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen>
         title: Row(
           children: [
             // Mini logo for context
-            ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: SizedBox(
-                width: 34,
-                height: 34,
-                child: LayoutBuilder(
-                  builder: (context, constraints) {
-                    return Image.asset(
-                      'assets/icon/app_icon.png',
-                      fit: BoxFit.contain,
-                      width: constraints.maxWidth,
-                      height: constraints.maxHeight,
-                    );
-                  },
+            ExcludeSemantics(
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: SizedBox(
+                  width: 34,
+                  height: 34,
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      return Image.asset(
+                        'assets/icon/app_icon.png',
+                        fit: BoxFit.contain,
+                        width: constraints.maxWidth,
+                        height: constraints.maxHeight,
+                      );
+                    },
+                  ),
                 ),
               ),
             ),
@@ -241,13 +254,10 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen>
           _SettingsSkeletonTab(shimmer: _shimmer),
         ],
       ),
-      bottomNavigationBar: MediaQuery.withClampedTextScaling(
-        maxScaleFactor: 1.0,
-        child: NavigationBar(
-          selectedIndex: _selectedIndex,
-          onDestinationSelected: (i) => setState(() => _selectedIndex = i),
-          destinations: destinations,
-        ),
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: _selectedIndex,
+        onDestinationSelected: (i) => setState(() => _selectedIndex = i),
+        destinations: destinations,
       ),
       floatingActionButton: _selectedIndex == 3
           ? null
@@ -518,17 +528,52 @@ class _TransactionsTabState extends ConsumerState<_TransactionsTab> {
                   ),
                   // Advanced filter button
                   const SizedBox(width: 8),
-                  Badge(
-                    isLabelVisible: activeFilter.isNotEmpty,
-                    backgroundColor: colorScheme.primary,
-                    child: IconButton.filledTonal(
-                      key: const ValueKey('advancedFilterButton'),
-                      icon: const Icon(Icons.tune_rounded),
-                      tooltip: l10n.filterSheetTitle,
-                      onPressed: () {
-                        TransactionFilterSheet.show(context);
-                      },
-                    ),
+                  Builder(
+                    builder: (context) {
+                      int activeFilterCount = 0;
+                      if (activeFilter.accountId != null) {
+                        activeFilterCount++;
+                      }
+                      if (activeFilter.type != null) {
+                        activeFilterCount++;
+                      }
+                      if (activeFilter.categoryId != null) {
+                        activeFilterCount++;
+                      }
+                      if (activeFilter.dateRange != null) {
+                        activeFilterCount++;
+                      }
+                      if (activeFilter.minAmountCents != null) {
+                        activeFilterCount++;
+                      }
+                      if (activeFilter.maxAmountCents != null) {
+                        activeFilterCount++;
+                      }
+                      if (activeFilter.tagId != null) {
+                        activeFilterCount++;
+                      }
+                      if (activeFilter.currency != null) {
+                        activeFilterCount++;
+                      }
+
+                      return Badge(
+                        isLabelVisible: activeFilter.isNotEmpty,
+                        backgroundColor: colorScheme.primary,
+                        child: Semantics(
+                          label: activeFilterCount > 0
+                              ? '${l10n.filterSheetTitle}, ${l10n.filterSheetActiveFilters(activeFilterCount)}'
+                              : l10n.filterSheetTitle,
+                          child: IconButton.filledTonal(
+                            key: const ValueKey('advancedFilterButton'),
+                            icon: const Icon(Icons.tune_rounded),
+                            tooltip: l10n.filterSheetTitle,
+                            onPressed: () {
+                              TransactionFilterSheet.show(context);
+                            },
+                          ),
+                        ),
+                      );
+                    },
                   ),
                 ],
               ),
@@ -1060,11 +1105,17 @@ class _TransactionItem extends ConsumerWidget {
                   child: FittedBox(
                     fit: BoxFit.scaleDown,
                     alignment: Alignment.centerRight,
-                    child: Text(
-                      amountStr,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.w800,
-                        color: color,
+                    child: Semantics(
+                      label:
+                          '${isIncome ? AppLocalizations.of(context)!.a11yIncome : (isTransfer ? AppLocalizations.of(context)!.a11yTransfer : AppLocalizations.of(context)!.a11yExpense)}, $amountStr',
+                      child: ExcludeSemantics(
+                        child: Text(
+                          amountStr,
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.w800,
+                            color: color,
+                          ),
+                        ),
                       ),
                     ),
                   ),
@@ -1120,41 +1171,46 @@ class _SettingsSkeletonTab extends ConsumerWidget {
               color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
               borderRadius: BorderRadius.circular(14),
             ),
-            child: InkWell(
-              borderRadius: BorderRadius.circular(14),
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => const BudgetsAndGoalsScreen(),
+            child: Semantics(
+              button: true,
+              label: AppLocalizations.of(context)!.settingsBudgetsGoals,
+              child: InkWell(
+                borderRadius: BorderRadius.circular(14),
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => const BudgetsAndGoalsScreen(),
+                    ),
+                  );
+                },
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.pie_chart_rounded,
+                        color: colorScheme.primary,
+                        size: 22,
+                      ),
+                      const SizedBox(width: 14),
+                      Expanded(
+                        child: Text(
+                          AppLocalizations.of(context)!.settingsBudgetsGoals,
+                          style:
+                              Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    fontWeight: FontWeight.w700,
+                                    color: colorScheme.onSurface,
+                                  ),
+                        ),
+                      ),
+                      Icon(
+                        Icons.chevron_right_rounded,
+                        color: colorScheme.onSurfaceVariant.withValues(
+                          alpha: 0.7,
+                        ),
+                      ),
+                    ],
                   ),
-                );
-              },
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.pie_chart_rounded,
-                      color: colorScheme.primary,
-                      size: 22,
-                    ),
-                    const SizedBox(width: 14),
-                    Expanded(
-                      child: Text(
-                        AppLocalizations.of(context)!.settingsBudgetsGoals,
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              fontWeight: FontWeight.w700,
-                              color: colorScheme.onSurface,
-                            ),
-                      ),
-                    ),
-                    Icon(
-                      Icons.chevron_right_rounded,
-                      color: colorScheme.onSurfaceVariant.withValues(
-                        alpha: 0.7,
-                      ),
-                    ),
-                  ],
                 ),
               ),
             ),
@@ -1168,42 +1224,47 @@ class _SettingsSkeletonTab extends ConsumerWidget {
               color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
               borderRadius: BorderRadius.circular(14),
             ),
-            child: InkWell(
-              borderRadius: BorderRadius.circular(14),
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) =>
-                        const CategoriesTagsManagementScreen(),
+            child: Semantics(
+              button: true,
+              label: AppLocalizations.of(context)!.categoriesAndTags,
+              child: InkWell(
+                borderRadius: BorderRadius.circular(14),
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          const CategoriesTagsManagementScreen(),
+                    ),
+                  );
+                },
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.category_rounded,
+                        color: colorScheme.tertiary,
+                        size: 22,
+                      ),
+                      const SizedBox(width: 14),
+                      Expanded(
+                        child: Text(
+                          AppLocalizations.of(context)!.categoriesAndTags,
+                          style:
+                              Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    fontWeight: FontWeight.w700,
+                                    color: colorScheme.onSurface,
+                                  ),
+                        ),
+                      ),
+                      Icon(
+                        Icons.chevron_right_rounded,
+                        color: colorScheme.onSurfaceVariant.withValues(
+                          alpha: 0.7,
+                        ),
+                      ),
+                    ],
                   ),
-                );
-              },
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.category_rounded,
-                      color: colorScheme.tertiary,
-                      size: 22,
-                    ),
-                    const SizedBox(width: 14),
-                    Expanded(
-                      child: Text(
-                        AppLocalizations.of(context)!.categoriesAndTags,
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              fontWeight: FontWeight.w700,
-                              color: colorScheme.onSurface,
-                            ),
-                      ),
-                    ),
-                    Icon(
-                      Icons.chevron_right_rounded,
-                      color: colorScheme.onSurfaceVariant.withValues(
-                        alpha: 0.7,
-                      ),
-                    ),
-                  ],
                 ),
               ),
             ),
@@ -1217,45 +1278,51 @@ class _SettingsSkeletonTab extends ConsumerWidget {
               color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
               borderRadius: BorderRadius.circular(14),
             ),
-            child: InkWell(
-              borderRadius: BorderRadius.circular(14),
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) =>
-                        const stalvi_auto.AutomaticTransactionsScreen(),
+            child: Semantics(
+              button: true,
+              label:
+                  AppLocalizations.of(context)!.settingsAutomaticTransactions,
+              child: InkWell(
+                borderRadius: BorderRadius.circular(14),
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          const stalvi_auto.AutomaticTransactionsScreen(),
+                    ),
+                  );
+                },
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.autorenew_rounded,
+                        color: colorScheme.primary,
+                        size: 22,
+                      ),
+                      const SizedBox(width: 14),
+                      Expanded(
+                        child: Text(
+                          AppLocalizations.of(
+                            context,
+                          )!
+                              .settingsAutomaticTransactions,
+                          style:
+                              Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    fontWeight: FontWeight.w700,
+                                    color: colorScheme.onSurface,
+                                  ),
+                        ),
+                      ),
+                      Icon(
+                        Icons.chevron_right_rounded,
+                        color: colorScheme.onSurfaceVariant.withValues(
+                          alpha: 0.7,
+                        ),
+                      ),
+                    ],
                   ),
-                );
-              },
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.autorenew_rounded,
-                      color: colorScheme.primary,
-                      size: 22,
-                    ),
-                    const SizedBox(width: 14),
-                    Expanded(
-                      child: Text(
-                        AppLocalizations.of(
-                          context,
-                        )!
-                            .settingsAutomaticTransactions,
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              fontWeight: FontWeight.w700,
-                              color: colorScheme.onSurface,
-                            ),
-                      ),
-                    ),
-                    Icon(
-                      Icons.chevron_right_rounded,
-                      color: colorScheme.onSurfaceVariant.withValues(
-                        alpha: 0.7,
-                      ),
-                    ),
-                  ],
                 ),
               ),
             ),
@@ -1269,41 +1336,46 @@ class _SettingsSkeletonTab extends ConsumerWidget {
               color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
               borderRadius: BorderRadius.circular(14),
             ),
-            child: InkWell(
-              borderRadius: BorderRadius.circular(14),
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => const ProfileSettingsScreen(),
+            child: Semantics(
+              button: true,
+              label: AppLocalizations.of(context)!.profileSettingsTitle,
+              child: InkWell(
+                borderRadius: BorderRadius.circular(14),
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => const ProfileSettingsScreen(),
+                    ),
+                  );
+                },
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.manage_accounts_rounded,
+                        color: colorScheme.primary,
+                        size: 22,
+                      ),
+                      const SizedBox(width: 14),
+                      Expanded(
+                        child: Text(
+                          AppLocalizations.of(context)!.profileSettingsTitle,
+                          style:
+                              Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    fontWeight: FontWeight.w700,
+                                    color: colorScheme.onSurface,
+                                  ),
+                        ),
+                      ),
+                      Icon(
+                        Icons.chevron_right_rounded,
+                        color: colorScheme.onSurfaceVariant.withValues(
+                          alpha: 0.7,
+                        ),
+                      ),
+                    ],
                   ),
-                );
-              },
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.manage_accounts_rounded,
-                      color: colorScheme.primary,
-                      size: 22,
-                    ),
-                    const SizedBox(width: 14),
-                    Expanded(
-                      child: Text(
-                        AppLocalizations.of(context)!.profileSettingsTitle,
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              fontWeight: FontWeight.w700,
-                              color: colorScheme.onSurface,
-                            ),
-                      ),
-                    ),
-                    Icon(
-                      Icons.chevron_right_rounded,
-                      color: colorScheme.onSurfaceVariant.withValues(
-                        alpha: 0.7,
-                      ),
-                    ),
-                  ],
                 ),
               ),
             ),
@@ -1317,41 +1389,46 @@ class _SettingsSkeletonTab extends ConsumerWidget {
               color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
               borderRadius: BorderRadius.circular(14),
             ),
-            child: InkWell(
-              borderRadius: BorderRadius.circular(14),
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => const DataManagementScreen(),
+            child: Semantics(
+              button: true,
+              label: AppLocalizations.of(context)!.settingsDataManagement,
+              child: InkWell(
+                borderRadius: BorderRadius.circular(14),
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => const DataManagementScreen(),
+                    ),
+                  );
+                },
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.storage_rounded,
+                        color: colorScheme.secondary,
+                        size: 22,
+                      ),
+                      const SizedBox(width: 14),
+                      Expanded(
+                        child: Text(
+                          AppLocalizations.of(context)!.settingsDataManagement,
+                          style:
+                              Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    fontWeight: FontWeight.w700,
+                                    color: colorScheme.onSurface,
+                                  ),
+                        ),
+                      ),
+                      Icon(
+                        Icons.chevron_right_rounded,
+                        color: colorScheme.onSurfaceVariant.withValues(
+                          alpha: 0.7,
+                        ),
+                      ),
+                    ],
                   ),
-                );
-              },
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.storage_rounded,
-                      color: colorScheme.secondary,
-                      size: 22,
-                    ),
-                    const SizedBox(width: 14),
-                    Expanded(
-                      child: Text(
-                        AppLocalizations.of(context)!.settingsDataManagement,
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              fontWeight: FontWeight.w700,
-                              color: colorScheme.onSurface,
-                            ),
-                      ),
-                    ),
-                    Icon(
-                      Icons.chevron_right_rounded,
-                      color: colorScheme.onSurfaceVariant.withValues(
-                        alpha: 0.7,
-                      ),
-                    ),
-                  ],
                 ),
               ),
             ),
@@ -1365,41 +1442,46 @@ class _SettingsSkeletonTab extends ConsumerWidget {
               color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
               borderRadius: BorderRadius.circular(14),
             ),
-            child: InkWell(
-              borderRadius: BorderRadius.circular(14),
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => const RecycleBinScreen(),
+            child: Semantics(
+              button: true,
+              label: AppLocalizations.of(context)!.recycleBinTitle,
+              child: InkWell(
+                borderRadius: BorderRadius.circular(14),
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => const RecycleBinScreen(),
+                    ),
+                  );
+                },
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.delete_outline_rounded,
+                        color: colorScheme.error,
+                        size: 22,
+                      ),
+                      const SizedBox(width: 14),
+                      Expanded(
+                        child: Text(
+                          AppLocalizations.of(context)!.recycleBinTitle,
+                          style:
+                              Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    fontWeight: FontWeight.w700,
+                                    color: colorScheme.onSurface,
+                                  ),
+                        ),
+                      ),
+                      Icon(
+                        Icons.chevron_right_rounded,
+                        color: colorScheme.onSurfaceVariant.withValues(
+                          alpha: 0.7,
+                        ),
+                      ),
+                    ],
                   ),
-                );
-              },
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.delete_outline_rounded,
-                      color: colorScheme.error,
-                      size: 22,
-                    ),
-                    const SizedBox(width: 14),
-                    Expanded(
-                      child: Text(
-                        AppLocalizations.of(context)!.recycleBinTitle,
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              fontWeight: FontWeight.w700,
-                              color: colorScheme.onSurface,
-                            ),
-                      ),
-                    ),
-                    Icon(
-                      Icons.chevron_right_rounded,
-                      color: colorScheme.onSurfaceVariant.withValues(
-                        alpha: 0.7,
-                      ),
-                    ),
-                  ],
                 ),
               ),
             ),
@@ -1464,36 +1546,37 @@ class _BalanceCard extends ConsumerWidget {
     final isDiscreet = ref.watch(discreetModeProvider);
     final accountsAsync = ref.watch(accountsListProvider);
 
-    return MergeSemantics(
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.all(24),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              colorScheme.primary,
-              colorScheme.primary.withValues(alpha: 0.75),
-            ],
-          ),
-          borderRadius: BorderRadius.circular(24),
-          boxShadow: [
-            BoxShadow(
-              color: colorScheme.primary.withValues(alpha: 0.32),
-              blurRadius: 24,
-              offset: const Offset(0, 10),
-            ),
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            colorScheme.primary,
+            colorScheme.primary.withValues(alpha: 0.75),
           ],
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Text(
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: colorScheme.primary.withValues(alpha: 0.32),
+            blurRadius: 24,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Expanded(
+            child: MergeSemantics(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
                     AppLocalizations.of(context)!.balanceTotal,
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: colorScheme.onPrimary.withValues(alpha: 0.75),
@@ -1501,142 +1584,154 @@ class _BalanceCard extends ConsumerWidget {
                       letterSpacing: 0.2,
                     ),
                   ),
-                ),
-                const SizedBox(width: 8),
-                Padding(
-                  padding: const EdgeInsets.only(left: 8.0),
-                  child: IconButton(
-                    key: const ValueKey('discreetModeIconButton'),
-                    iconSize: 32.0,
-                    padding: const EdgeInsets.all(8.0),
-                    constraints: const BoxConstraints(),
-                    icon: Icon(
-                      isDiscreet ? Icons.visibility_off : Icons.visibility,
-                      color: colorScheme.onPrimary.withValues(alpha: 0.85),
-                      size: 32.0,
+                  const SizedBox(height: 14),
+                  accountsAsync.when(
+                    loading: () => AnimatedBuilder(
+                      animation: shimmer,
+                      builder: (_, __) => Container(
+                        width: 170,
+                        height: 34,
+                        decoration: BoxDecoration(
+                          color: colorScheme.onPrimary.withValues(
+                            alpha: 0.18 + 0.12 * shimmer.value,
+                          ),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
                     ),
-                    onPressed: () {
-                      ref.read(discreetModeProvider.notifier).toggle();
+                    error: (_, __) => Text(
+                      '--',
+                      style: theme.textTheme.headlineMedium?.copyWith(
+                        color: colorScheme.onPrimary,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                    data: (accounts) {
+                      final globalBalanceAsync =
+                          ref.watch(globalBalanceProvider);
+                      return globalBalanceAsync.when(
+                        loading: () => AnimatedBuilder(
+                          animation: shimmer,
+                          builder: (_, __) => Container(
+                            width: 170,
+                            height: 34,
+                            decoration: BoxDecoration(
+                              color: colorScheme.onPrimary.withValues(
+                                alpha: 0.18 + 0.12 * shimmer.value,
+                              ),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                        ),
+                        error: (_, __) => Text(
+                          '--',
+                          style: theme.textTheme.headlineMedium?.copyWith(
+                            color: colorScheme.onPrimary,
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                        data: (totalBalance) {
+                          final profile =
+                              ref.watch(defaultProfileProvider).value;
+                          final currency = profile?.defaultCurrency ?? 'EUR';
+                          final formatter =
+                              ref.watch(currencyFormatterProvider);
+                          final balanceStr = formatter.format(
+                            totalBalance,
+                            currencyCode: currency,
+                          );
+                          return FittedBox(
+                            fit: BoxFit.scaleDown,
+                            alignment: Alignment.centerLeft,
+                            child: ObfuscatedText(
+                              balanceStr,
+                              style: theme.textTheme.headlineMedium?.copyWith(
+                                color: colorScheme.onPrimary,
+                                fontWeight: FontWeight.w800,
+                                letterSpacing: -0.5,
+                              ),
+                            ),
+                          );
+                        },
+                      );
                     },
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 14),
-            accountsAsync.when(
-              loading: () => AnimatedBuilder(
-                animation: shimmer,
-                builder: (_, __) => Container(
-                  width: 170,
-                  height: 34,
-                  decoration: BoxDecoration(
-                    color: colorScheme.onPrimary.withValues(
-                      alpha: 0.18 + 0.12 * shimmer.value,
-                    ),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-              ),
-              error: (_, __) => Text(
-                '--',
-                style: theme.textTheme.headlineMedium?.copyWith(
-                  color: colorScheme.onPrimary,
-                  fontWeight: FontWeight.w800,
-                ),
-              ),
-              data: (accounts) {
-                final globalBalanceAsync = ref.watch(globalBalanceProvider);
-                return globalBalanceAsync.when(
-                  loading: () => AnimatedBuilder(
-                    animation: shimmer,
-                    builder: (_, __) => Container(
-                      width: 170,
-                      height: 34,
-                      decoration: BoxDecoration(
-                        color: colorScheme.onPrimary.withValues(
-                          alpha: 0.18 + 0.12 * shimmer.value,
+                  const SizedBox(height: 10),
+                  accountsAsync.when(
+                    loading: () => AnimatedBuilder(
+                      animation: shimmer,
+                      builder: (_, __) => Container(
+                        width: 110,
+                        height: 15,
+                        decoration: BoxDecoration(
+                          color: colorScheme.onPrimary.withValues(
+                            alpha: 0.12 + 0.08 * shimmer.value,
+                          ),
+                          borderRadius: BorderRadius.circular(4),
                         ),
-                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    error: (_, __) => const SizedBox(height: 15),
+                    data: (accounts) {
+                      return Text(
+                        AppLocalizations.of(
+                          context,
+                        )!
+                            .acrossAccountsCount(accounts.length),
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: colorScheme.onPrimary.withValues(alpha: 0.75),
+                          fontWeight: FontWeight.w500,
+                        ),
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 20),
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: colorScheme.onPrimary.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(50),
+                    ),
+                    child: Text(
+                      AppLocalizations.of(context)!.presetLast30Days,
+                      style: theme.textTheme.labelSmall?.copyWith(
+                        color: colorScheme.onPrimary.withValues(alpha: 0.85),
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                   ),
-                  error: (_, __) => Text(
-                    '--',
-                    style: theme.textTheme.headlineMedium?.copyWith(
-                      color: colorScheme.onPrimary,
-                      fontWeight: FontWeight.w800,
-                    ),
-                  ),
-                  data: (totalBalance) {
-                    final profile = ref.watch(defaultProfileProvider).value;
-                    final currency = profile?.defaultCurrency ?? 'EUR';
-                    final formatter = ref.watch(currencyFormatterProvider);
-                    final balanceStr = formatter.format(
-                      totalBalance,
-                      currencyCode: currency,
-                    );
-                    return FittedBox(
-                      fit: BoxFit.scaleDown,
-                      alignment: Alignment.centerLeft,
-                      child: ObfuscatedText(
-                        balanceStr,
-                        style: theme.textTheme.headlineMedium?.copyWith(
-                          color: colorScheme.onPrimary,
-                          fontWeight: FontWeight.w800,
-                          letterSpacing: -0.5,
-                        ),
-                      ),
-                    );
-                  },
-                );
-              },
-            ),
-            const SizedBox(height: 10),
-            accountsAsync.when(
-              loading: () => AnimatedBuilder(
-                animation: shimmer,
-                builder: (_, __) => Container(
-                  width: 110,
-                  height: 15,
-                  decoration: BoxDecoration(
-                    color: colorScheme.onPrimary.withValues(
-                      alpha: 0.12 + 0.08 * shimmer.value,
-                    ),
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                ),
+                ],
               ),
-              error: (_, __) => const SizedBox(height: 15),
-              data: (accounts) {
-                return Text(
-                  AppLocalizations.of(
-                    context,
-                  )!
-                      .acrossAccountsCount(accounts.length),
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: colorScheme.onPrimary.withValues(alpha: 0.75),
-                    fontWeight: FontWeight.w500,
-                  ),
-                );
-              },
             ),
-            const SizedBox(height: 20),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-              decoration: BoxDecoration(
-                color: colorScheme.onPrimary.withValues(alpha: 0.15),
-                borderRadius: BorderRadius.circular(50),
-              ),
-              child: Text(
-                AppLocalizations.of(context)!.presetLast30Days,
-                style: theme.textTheme.labelSmall?.copyWith(
+          ),
+          const SizedBox(width: 8),
+          Padding(
+            padding: const EdgeInsets.only(left: 8.0),
+            child: Semantics(
+              label: isDiscreet
+                  ? AppLocalizations.of(context)!.a11yDiscreetModeToggleShow
+                  : AppLocalizations.of(context)!.a11yDiscreetModeToggleHide,
+              child: IconButton(
+                key: const ValueKey('discreetModeIconButton'),
+                tooltip: isDiscreet
+                    ? AppLocalizations.of(context)!.a11yDiscreetModeToggleShow
+                    : AppLocalizations.of(context)!.a11yDiscreetModeToggleHide,
+                iconSize: 32.0,
+                padding: const EdgeInsets.all(8.0),
+                constraints: const BoxConstraints(),
+                icon: Icon(
+                  isDiscreet ? Icons.visibility_off : Icons.visibility,
                   color: colorScheme.onPrimary.withValues(alpha: 0.85),
-                  fontWeight: FontWeight.w600,
+                  size: 32.0,
                 ),
+                onPressed: () {
+                  ref.read(discreetModeProvider.notifier).toggle();
+                },
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -1669,80 +1764,82 @@ class _StatCard extends ConsumerWidget {
     final currency = profile?.defaultCurrency ?? 'EUR';
     final formatter = ref.watch(currencyFormatterProvider);
 
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.6),
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(
-          color: colorScheme.outline.withValues(alpha: 0.12),
-          width: 1,
+    return MergeSemantics(
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.6),
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(
+            color: colorScheme.outline.withValues(alpha: 0.12),
+            width: 1,
+          ),
         ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                width: 32,
-                height: 32,
-                decoration: BoxDecoration(
-                  color: accentColor.withValues(alpha: 0.14),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Icon(icon, size: 18, color: accentColor),
-              ),
-              const Spacer(),
-              // Trend placeholder
-              const SizedBox(width: 36, height: 14),
-            ],
-          ),
-          const SizedBox(height: 14),
-          Text(
-            label,
-            style: theme.textTheme.labelMedium?.copyWith(
-              color: colorScheme.onSurfaceVariant,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          const SizedBox(height: 6),
-          summaryAsync.when(
-            loading: () => _SkeletonBlock(
-              shimmer: shimmer,
-              width: double.infinity,
-              height: 20,
-              borderRadius: 5,
-            ),
-            error: (_, __) => Text(
-              '--',
-              style: theme.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w800,
-                color: accentColor,
-              ),
-            ),
-            data: (summary) {
-              final amount =
-                  (isIncome ? summary.totalIncome : summary.totalExpense) /
-                      100.0;
-              final amountStr = formatter.format(
-                amount,
-                currencyCode: currency,
-              );
-              return FittedBox(
-                fit: BoxFit.scaleDown,
-                alignment: Alignment.centerLeft,
-                child: ObfuscatedText(
-                  amountStr,
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w800,
-                    color: accentColor,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  width: 32,
+                  height: 32,
+                  decoration: BoxDecoration(
+                    color: accentColor.withValues(alpha: 0.14),
+                    borderRadius: BorderRadius.circular(10),
                   ),
+                  child: Icon(icon, size: 18, color: accentColor),
                 ),
-              );
-            },
-          ),
-        ],
+                const Spacer(),
+                // Trend placeholder
+                const SizedBox(width: 36, height: 14),
+              ],
+            ),
+            const SizedBox(height: 14),
+            Text(
+              label,
+              style: theme.textTheme.labelMedium?.copyWith(
+                color: colorScheme.onSurfaceVariant,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            const SizedBox(height: 6),
+            summaryAsync.when(
+              loading: () => _SkeletonBlock(
+                shimmer: shimmer,
+                width: double.infinity,
+                height: 20,
+                borderRadius: 5,
+              ),
+              error: (_, __) => Text(
+                '--',
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w800,
+                  color: accentColor,
+                ),
+              ),
+              data: (summary) {
+                final amount =
+                    (isIncome ? summary.totalIncome : summary.totalExpense) /
+                        100.0;
+                final amountStr = formatter.format(
+                  amount,
+                  currencyCode: currency,
+                );
+                return FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerLeft,
+                  child: ObfuscatedText(
+                    amountStr,
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w800,
+                      color: accentColor,
+                    ),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -1760,52 +1857,54 @@ class _TransactionSkeleton extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-      decoration: BoxDecoration(
-        color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
-        borderRadius: BorderRadius.circular(14),
-      ),
-      child: Row(
-        children: [
-          // Category icon placeholder
-          _SkeletonBlock(
-            shimmer: shimmer,
-            width: 40,
-            height: 40,
-            borderRadius: 12,
-          ),
-          const SizedBox(width: 12),
-          // Description + date
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _SkeletonBlock(
-                  shimmer: shimmer,
-                  width: double.infinity,
-                  height: 14,
-                  borderRadius: 4,
-                ),
-                const SizedBox(height: 6),
-                _SkeletonBlock(
-                  shimmer: shimmer,
-                  width: 80,
-                  height: 11,
-                  borderRadius: 3,
-                ),
-              ],
+    return ExcludeSemantics(
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        decoration: BoxDecoration(
+          color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+          borderRadius: BorderRadius.circular(14),
+        ),
+        child: Row(
+          children: [
+            // Category icon placeholder
+            _SkeletonBlock(
+              shimmer: shimmer,
+              width: 40,
+              height: 40,
+              borderRadius: 12,
             ),
-          ),
-          const SizedBox(width: 12),
-          // Amount placeholder
-          _SkeletonBlock(
-            shimmer: shimmer,
-            width: 60,
-            height: 16,
-            borderRadius: 4,
-          ),
-        ],
+            const SizedBox(width: 12),
+            // Description + date
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _SkeletonBlock(
+                    shimmer: shimmer,
+                    width: double.infinity,
+                    height: 14,
+                    borderRadius: 4,
+                  ),
+                  const SizedBox(height: 6),
+                  _SkeletonBlock(
+                    shimmer: shimmer,
+                    width: 80,
+                    height: 11,
+                    borderRadius: 3,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 12),
+            // Amount placeholder
+            _SkeletonBlock(
+              shimmer: shimmer,
+              width: 60,
+              height: 16,
+              borderRadius: 4,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -1829,22 +1928,24 @@ class _SkeletonBlock extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
-    return AnimatedBuilder(
-      animation: shimmer,
-      builder: (_, __) {
-        return Container(
-          width: width,
-          height: height,
-          decoration: BoxDecoration(
-            color: Color.lerp(
-              colorScheme.onSurface.withValues(alpha: 0.07),
-              colorScheme.onSurface.withValues(alpha: 0.14),
-              shimmer.value,
+    return ExcludeSemantics(
+      child: AnimatedBuilder(
+        animation: shimmer,
+        builder: (_, __) {
+          return Container(
+            width: width,
+            height: height,
+            decoration: BoxDecoration(
+              color: Color.lerp(
+                colorScheme.onSurface.withValues(alpha: 0.07),
+                colorScheme.onSurface.withValues(alpha: 0.14),
+                shimmer.value,
+              ),
+              borderRadius: BorderRadius.circular(borderRadius),
             ),
-            borderRadius: BorderRadius.circular(borderRadius),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 }

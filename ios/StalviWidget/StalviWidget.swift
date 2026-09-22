@@ -42,43 +42,62 @@ struct StalviWidgetEntryView : View {
     @Environment(\.colorScheme) var colorScheme
 
     var body: some View {
-        ZStack {
-            Color(UIColor.systemBackground)
-                .edgesIgnoringSafeArea(.all)
+        VStack(spacing: 8) {
+            Image("SplashIcon")
+                .resizable()
+                .frame(width: 28, height: 28)
+                .cornerRadius(4)
             
-            VStack(spacing: 8) {
-                Image("SplashIcon")
-                    .resizable()
-                    .frame(width: 28, height: 28)
-                    .cornerRadius(4)
-                
-                HStack {
-                    VStack {
-                        Text(entry.incomeTitle)
-                            .font(.caption2)
-                            .foregroundColor(.secondary)
-                        Text(entry.incomeText)
-                            .font(.footnote)
-                            .bold()
-                            .foregroundColor(.green)
-                    }
-                    .frame(maxWidth: .infinity)
-                    
-                    VStack {
-                        Text(entry.expenseTitle)
-                            .font(.caption2)
-                            .foregroundColor(.secondary)
-                        Text(entry.expenseText)
-                            .font(.footnote)
-                            .bold()
-                            .foregroundColor(.red)
-                    }
-                    .frame(maxWidth: .infinity)
+            HStack {
+                VStack {
+                    Text(entry.incomeTitle)
+                        .font(.caption2)
+                        .foregroundColor(.secondary)
+                    Text(entry.incomeText)
+                        .font(.footnote)
+                        .bold()
+                        .foregroundColor(.green)
                 }
+                .frame(maxWidth: .infinity)
+                
+                VStack {
+                    Text(entry.expenseTitle)
+                        .font(.caption2)
+                        .foregroundColor(.secondary)
+                    Text(entry.expenseText)
+                        .font(.footnote)
+                        .bold()
+                        .foregroundColor(.red)
+                }
+                .frame(maxWidth: .infinity)
             }
-            .padding()
         }
+        .padding()
+        .applyWidgetBackground()
         .widgetURL(URL(string: "stalvi://home"))
+    }
+}
+
+extension View {
+    @ViewBuilder
+    func applyWidgetBackground() -> some View {
+        #if compiler(>=5.9)
+        if #available(iOS 17.0, *) {
+            self.containerBackground(for: .widget) {
+                Color(UIColor.systemBackground)
+            }
+        } else {
+            ZStack {
+                Color(UIColor.systemBackground).edgesIgnoringSafeArea(.all)
+                self
+            }
+        }
+        #else
+        ZStack {
+            Color(UIColor.systemBackground).edgesIgnoringSafeArea(.all)
+            self
+        }
+        #endif
     }
 }
 

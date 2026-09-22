@@ -54,17 +54,19 @@ class EmptyStateWidget extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             // Decorative Graphic/Icon Container
-            Container(
-              padding: const EdgeInsets.all(28),
-              decoration: BoxDecoration(
-                color: colorScheme.primary.withValues(alpha: 0.05),
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: colorScheme.primary.withValues(alpha: 0.08),
-                  width: 1.5,
+            ExcludeSemantics(
+              child: Container(
+                padding: const EdgeInsets.all(28),
+                decoration: BoxDecoration(
+                  color: colorScheme.primary.withValues(alpha: 0.05),
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: colorScheme.primary.withValues(alpha: 0.08),
+                    width: 1.5,
+                  ),
                 ),
+                child: Center(child: _buildGraphic(colorScheme)),
               ),
-              child: Center(child: _buildGraphic(colorScheme)),
             ),
             const SizedBox(height: 28),
 

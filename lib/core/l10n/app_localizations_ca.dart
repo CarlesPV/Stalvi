@@ -1234,4 +1234,777 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get a11ySelectDate => 'Seleccionar data';
+
+  @override
+  String get a11yPinBackspace => 'Esborrar';
+
+  @override
+  String get a11yPinBiometric => 'Autenticació biomètrica';
+
+  @override
+  String a11yPinDigit(Object digit) {
+    return 'Dígit $digit';
+  }
+
+  @override
+  String a11yPinProgress(Object count, Object total) {
+    return '$count de $total dígits introduïts';
+  }
+
+  @override
+  String get a11yEditCategory => 'Editar categoria';
+
+  @override
+  String get a11yDeleteCategory => 'Eliminar categoria';
+
+  @override
+  String get a11yStatisticsSummary => 'Resum d\'estadístiques';
+
+  @override
+  String get a11yBudgetProgress => 'Progrés del pressupost';
+
+  @override
+  String get a11yChartTitle => 'Gràfic d\'estadístiques.';
+
+  @override
+  String a11yChartTopCategory(String category, String percent) {
+    return 'Categoria principal: $category amb un $percent%.';
+  }
+
+  @override
+  String a11yChartSecondCategory(String category, String percent) {
+    return 'Segona: $category amb un $percent%.';
+  }
+
+  @override
+  String get a11yChartOtherCategories =>
+      'Altres categories completen la resta.';
+
+  @override
+  String get a11yChartNoData => 'No hi ha dades disponibles.';
+
+  @override
+  String get a11yDiscreetModeHidden => 'Saldo ocult.';
+
+  @override
+  String get a11yDiscreetModeHint =>
+      'Toca dues vegades el botó de visibilitat per mostrar-lo.';
+
+  @override
+  String get a11yDiscreetModeToggleHide => 'Ocultar saldos (mode discret)';
+
+  @override
+  String get a11yDiscreetModeToggleShow => 'Mostrar saldos';
+
+  @override
+  String a11yRestoreItem(String item) {
+    return 'Restaurar $item';
+  }
+
+  @override
+  String a11yDeletePermanently(String item) {
+    return 'Eliminar $item permanentment';
+  }
+
+  @override
+  String get a11yAcceptTerms => 'Acceptar termes i política de privacitat';
+
+  @override
+  String a11yChartSummary(String details) {
+    return 'Gràfic d\'estadístiques. $details';
+  }
+
+  @override
+  String get a11yColorBlue => 'Blau';
+
+  @override
+  String get a11yColorGreen => 'Verd';
+
+  @override
+  String get a11yColorAmber => 'Àmbre';
+
+  @override
+  String get a11yColorPink => 'Rosa';
+
+  @override
+  String get a11yColorPurple => 'Porpra';
+
+  @override
+  String get a11yColorDeepOrange => 'Taronja intens';
+
+  @override
+  String get a11yColorCyan => 'Cian';
+
+  @override
+  String get a11yColorTeal => 'Verd blavós';
+
+  @override
+  String get a11yColorLightGreen => 'Verd clar';
+
+  @override
+  String get a11yColorLime => 'Llima';
+
+  @override
+  String get a11yColorOrange => 'Taronja';
+
+  @override
+  String get a11yColorRed => 'Vermell';
+
+  @override
+  String get a11yColorBrown => 'Marró';
+
+  @override
+  String get a11yColorBlueGrey => 'Gris blavós';
+
+  @override
+  String get a11yColorDeepPurple => 'Porpra intens';
+
+  @override
+  String get a11yColorIndigo => 'Índigo';
+
+  @override
+  String get a11yColorLightPink => 'Rosa clar';
+
+  @override
+  String get a11yColorMint => 'Menta';
+
+  @override
+  String get a11yColorLightLime => 'Llima clar';
+
+  @override
+  String get a11yColorCoral => 'Coral';
+
+  @override
+  String get a11yColorLightBrown => 'Marró clar';
+
+  @override
+  String get a11yColorGrey => 'Gris';
+
+  @override
+  String get a11yColorYellow => 'Groc';
+
+  @override
+  String get a11yColorLightBlue => 'Blau clar';
+
+  @override
+  String get a11yColorBlack => 'Negre';
+
+  @override
+  String get a11yColorWhite => 'Blanc';
+
+  @override
+  String get a11yIconAccountBalance => 'Banc';
+
+  @override
+  String get a11yIconAccountBalanceWallet => 'Cartera';
+
+  @override
+  String get a11yIconAttachMoney => 'Diners';
+
+  @override
+  String get a11yIconMoneyOff => 'Sense diners';
+
+  @override
+  String get a11yIconCreditCard => 'Targeta de crèdit';
+
+  @override
+  String get a11yIconSavings => 'Estalvis';
+
+  @override
+  String get a11yIconReceiptLong => 'Rebut detallat';
+
+  @override
+  String get a11yIconReceipt => 'Rebut';
+
+  @override
+  String get a11yIconRequestQuote => 'Factura';
+
+  @override
+  String get a11yIconPaid => 'Pagat';
+
+  @override
+  String get a11yIconPriceCheck => 'Comprovació de preu';
+
+  @override
+  String get a11yIconPriceChange => 'Canvi de preu';
+
+  @override
+  String get a11yIconCurrencyExchange => 'Canvi de divises';
+
+  @override
+  String get a11yIconMonetizationOn => 'Monetització';
+
+  @override
+  String get a11yIconTrendingUp => 'Tendència a l\'alça';
+
+  @override
+  String get a11yIconTrendingDown => 'Tendència a la baixa';
+
+  @override
+  String get a11yIconShowChart => 'Gràfic';
+
+  @override
+  String get a11yIconReplay => 'Recurrent';
+
+  @override
+  String get a11yIconShoppingCart => 'Carret de la compra';
+
+  @override
+  String get a11yIconShoppingBag => 'Bossa de la compra';
+
+  @override
+  String get a11yIconLocalMall => 'Centre comercial';
+
+  @override
+  String get a11yIconStorefront => 'Botiga';
+
+  @override
+  String get a11yIconRedeem => 'Recompensa';
+
+  @override
+  String get a11yIconLoyalty => 'Targeta de fidelitat';
+
+  @override
+  String get a11yIconSell => 'Venda';
+
+  @override
+  String get a11yIconDiscount => 'Descompte';
+
+  @override
+  String get a11yIconRestaurant => 'Restaurant';
+
+  @override
+  String get a11yIconLunchDining => 'Dinar';
+
+  @override
+  String get a11yIconDinnerDining => 'Sopar';
+
+  @override
+  String get a11yIconLocalCafe => 'Cafeteria';
+
+  @override
+  String get a11yIconFastfood => 'Menjar ràpid';
+
+  @override
+  String get a11yIconBakeryDining => 'Forn de pa';
+
+  @override
+  String get a11yIconIcecream => 'Gelat';
+
+  @override
+  String get a11yIconLocalGroceryStore => 'Supermercat';
+
+  @override
+  String get a11yIconHome => 'Casa';
+
+  @override
+  String get a11yIconHouse => 'Habitatge';
+
+  @override
+  String get a11yIconApartment => 'Pis o apartament';
+
+  @override
+  String get a11yIconCottage => 'Casa de camp';
+
+  @override
+  String get a11yIconBed => 'Dormitori';
+
+  @override
+  String get a11yIconBathroom => 'Bany';
+
+  @override
+  String get a11yIconKitchen => 'Cuina';
+
+  @override
+  String get a11yIconChair => 'Mobles';
+
+  @override
+  String get a11yIconYard => 'Jardí';
+
+  @override
+  String get a11yIconGarage => 'Garatge';
+
+  @override
+  String get a11yIconElectricalServices => 'Electricitat';
+
+  @override
+  String get a11yIconPlumbing => 'Lampisteria';
+
+  @override
+  String get a11yIconDirectionsCar => 'Cotxe';
+
+  @override
+  String get a11yIconLocalGasStation => 'Benzinera';
+
+  @override
+  String get a11yIconCarRepair => 'Taller mecànic';
+
+  @override
+  String get a11yIconDirectionsBus => 'Autobús';
+
+  @override
+  String get a11yIconDirectionsSubway => 'Metro';
+
+  @override
+  String get a11yIconDirectionsBike => 'Bicicleta';
+
+  @override
+  String get a11yIconTwoWheeler => 'Motocicleta';
+
+  @override
+  String get a11yIconFlight => 'Vol';
+
+  @override
+  String get a11yIconHotel => 'Hotel';
+
+  @override
+  String get a11yIconLocalTaxi => 'Taxi';
+
+  @override
+  String get a11yIconTrain => 'Tren';
+
+  @override
+  String get a11yIconDirectionsBoat => 'Vaixell';
+
+  @override
+  String get a11yIconEvStation => 'Carregador de vehicle elèctric';
+
+  @override
+  String get a11yIconLocalParking => 'Aparcament';
+
+  @override
+  String get a11yIconToll => 'Peatge';
+
+  @override
+  String get a11yIconLuggage => 'Equipatge';
+
+  @override
+  String get a11yIconLocalHospital => 'Hospital';
+
+  @override
+  String get a11yIconMedicalServices => 'Serveis mèdics';
+
+  @override
+  String get a11yIconMedication => 'Medicaments';
+
+  @override
+  String get a11yIconHealing => 'Primers auxilis';
+
+  @override
+  String get a11yIconFitnessCenter => 'Gimnàs';
+
+  @override
+  String get a11yIconSpa => 'Balneari';
+
+  @override
+  String get a11yIconSelfImprovement => 'Benestar';
+
+  @override
+  String get a11yIconPsychology => 'Psicologia';
+
+  @override
+  String get a11yIconLocalPharmacy => 'Farmàcia';
+
+  @override
+  String get a11yIconVaccines => 'Vacunes';
+
+  @override
+  String get a11yIconHealthAndSafety => 'Salut i seguretat';
+
+  @override
+  String get a11yIconAccessibilityNew => 'Accessibilitat';
+
+  @override
+  String get a11yIconSchool => 'Escola';
+
+  @override
+  String get a11yIconMenuBook => 'Llibre';
+
+  @override
+  String get a11yIconAutoStories => 'Lectura';
+
+  @override
+  String get a11yIconScience => 'Ciència';
+
+  @override
+  String get a11yIconCalculate => 'Comptabilitat';
+
+  @override
+  String get a11yIconLaptop => 'Portàtil';
+
+  @override
+  String get a11yIconWork => 'Feina';
+
+  @override
+  String get a11yIconBusinessCenter => 'Negocis';
+
+  @override
+  String get a11yIconCorporateFare => 'Empresa';
+
+  @override
+  String get a11yIconBadge => 'Acreditació';
+
+  @override
+  String get a11yIconEngineering => 'Enginyeria';
+
+  @override
+  String get a11yIconComputer => 'Ordinador';
+
+  @override
+  String get a11yIconMovie => 'Cinema';
+
+  @override
+  String get a11yIconTv => 'Televisió';
+
+  @override
+  String get a11yIconMusicNote => 'Música';
+
+  @override
+  String get a11yIconHeadphones => 'Auriculars';
+
+  @override
+  String get a11yIconSportsEsports => 'Videojocs';
+
+  @override
+  String get a11yIconSportsSoccer => 'Futbol';
+
+  @override
+  String get a11yIconSportsBasketball => 'Bàsquet';
+
+  @override
+  String get a11yIconSportsTennis => 'Tennis';
+
+  @override
+  String get a11yIconHiking => 'Senderisme';
+
+  @override
+  String get a11yIconTerrain => 'Muntanya';
+
+  @override
+  String get a11yIconBeachAccess => 'Platja';
+
+  @override
+  String get a11yIconPark => 'Parc';
+
+  @override
+  String get a11yIconTheaterComedy => 'Teatre';
+
+  @override
+  String get a11yIconCasino => 'Casino';
+
+  @override
+  String get a11yIconSportsBar => 'Bar d\'esports';
+
+  @override
+  String get a11yIconAttractions => 'Parc d\'atraccions';
+
+  @override
+  String get a11yIconBolt => 'Electricitat';
+
+  @override
+  String get a11yIconWaterDrop => 'Aigua';
+
+  @override
+  String get a11yIconWifi => 'Wifi';
+
+  @override
+  String get a11yIconPhone => 'Telèfon';
+
+  @override
+  String get a11yIconSmartphone => 'Mòbil';
+
+  @override
+  String get a11yIconTvOutlined => 'Subscripció de reproducció en continu';
+
+  @override
+  String get a11yIconRecycling => 'Reciclatge';
+
+  @override
+  String get a11yIconLocalLaundryService => 'Bugaderia';
+
+  @override
+  String get a11yIconCleaningServices => 'Neteja';
+
+  @override
+  String get a11yIconHandyman => 'Manteniment';
+
+  @override
+  String get a11yIconBuild => 'Eines';
+
+  @override
+  String get a11yIconConstruction => 'Obres';
+
+  @override
+  String get a11yIconChildCare => 'Cura de nens';
+
+  @override
+  String get a11yIconPets => 'Mascotes';
+
+  @override
+  String get a11yIconStyle => 'Moda';
+
+  @override
+  String get a11yIconFace => 'Cura facial';
+
+  @override
+  String get a11yIconVolunteerActivism => 'Donació';
+
+  @override
+  String get a11yIconChurch => 'Culte';
+
+  @override
+  String get a11yIconCelebration => 'Festa';
+
+  @override
+  String get a11yIconCake => 'Pastís d\'aniversari';
+
+  @override
+  String get a11yIconCardGiftcard => 'Targeta regal';
+
+  @override
+  String get a11yIconCategory => 'Categoria general';
+
+  @override
+  String get a11yIconMoreHoriz => 'Altres';
+
+  @override
+  String get a11yIconStar => 'Preferit';
+
+  @override
+  String get a11yIconFlag => 'Marca';
+
+  @override
+  String get a11yIconBookmark => 'Marcador';
+
+  @override
+  String get a11yIconLabel => 'Etiqueta';
+
+  @override
+  String get a11yIconTag => 'Identificador';
+
+  @override
+  String get a11yIconFlightTakeoff => 'Sortida de vol';
+
+  @override
+  String get a11yIconFlightLand => 'Arribada de vol';
+
+  @override
+  String get a11yIconCommute => 'Desplaçament diari';
+
+  @override
+  String get a11yIconSubway => 'Tren de rodalies';
+
+  @override
+  String get a11yIconElectricCar => 'Cotxe elèctric';
+
+  @override
+  String get a11yIconMotorcycle => 'Moto';
+
+  @override
+  String get a11yIconMap => 'Mapa';
+
+  @override
+  String get a11yIconExplore => 'Exploració';
+
+  @override
+  String get a11yIconNavigation => 'Navegació GPS';
+
+  @override
+  String get a11yIconCardMembership => 'Membresia';
+
+  @override
+  String get a11yIconStore => 'Gran magatzem';
+
+  @override
+  String get a11yIconLocalOffer => 'Oferta';
+
+  @override
+  String get a11yIconPower => 'Endoll';
+
+  @override
+  String get a11yIconElectricBolt => 'Consum elèctric';
+
+  @override
+  String get a11yIconRouter => 'Encaminador de xarxa';
+
+  @override
+  String get a11yIconDevices => 'Dispositius electrònics';
+
+  @override
+  String get a11yIconCloud => 'Emmagatzematge al núvol';
+
+  @override
+  String get a11yIconSolarPower => 'Energia solar';
+
+  @override
+  String get a11yIconLocalBar => 'Bar de copes';
+
+  @override
+  String get a11yIconLiquor => 'Begudes alcohòliques';
+
+  @override
+  String get a11yIconRamenDining => 'Plats asiàtics';
+
+  @override
+  String get a11yIconTakeoutDining => 'Menjar per emportar';
+
+  @override
+  String get a11yIconWineBar => 'Vinoteca';
+
+  @override
+  String get a11yIconCoffee => 'Cafè';
+
+  @override
+  String get a11yIconSoupKitchen => 'Menjador';
+
+  @override
+  String get a11yIconCameraAlt => 'Fotografia';
+
+  @override
+  String get a11yIconPalette => 'Art i disseny';
+
+  @override
+  String get a11yIconStadium => 'Estadi esportiu';
+
+  @override
+  String get a11yIconMusicVideo => 'Videoclip';
+
+  @override
+  String get a11yIconSportsMotorsports => 'Esports de motor';
+
+  @override
+  String get a11yIconSportsGolf => 'Golf';
+
+  @override
+  String get a11yIconSportsBaseball => 'Beisbol';
+
+  @override
+  String get a11yIconSportsFootball => 'Futbol americà';
+
+  @override
+  String get a11yIconPool => 'Piscina';
+
+  @override
+  String get a11yIconFamilyRestroom => 'Cura familiar';
+
+  @override
+  String get a11yIconContentCut => 'Perruqueria';
+
+  @override
+  String get a11yIconDryCleaning => 'Tintoreria';
+
+  @override
+  String get a11yIconSecurity => 'Seguretat';
+
+  @override
+  String get a11yIconShield => 'Assegurances';
+
+  @override
+  String get a11yIconWorkspacePremium => 'Servei prèmium';
+
+  @override
+  String get a11yIconPestControl => 'Control de plagues';
+
+  @override
+  String get a11yIconRoofing => 'Reparació de teulades';
+
+  @override
+  String get a11yIconDeck => 'Terrassa';
+
+  @override
+  String get a11yIconSchoolOutlined => 'Educació superior';
+
+  @override
+  String get a11yIconEvent => 'Esdeveniment al calendari';
+
+  @override
+  String get a11yIconAlarm => 'Alarma';
+
+  @override
+  String get a11yIconWatch => 'Rellotge';
+
+  @override
+  String get a11yIconInterests => 'Aficions i interessos';
+
+  @override
+  String get a11yIconNewspaper => 'Premsa i periòdics';
+
+  @override
+  String get a11yIconPrint => 'Impressió i copisteria';
+
+  @override
+  String a11yEditItem(String name) {
+    return 'Editar $name';
+  }
+
+  @override
+  String a11yDeleteItem(String name) {
+    return 'Eliminar $name';
+  }
+
+  @override
+  String a11yEditName(String name) {
+    return 'Editar $name';
+  }
+
+  @override
+  String a11yDeleteName(String name) {
+    return 'Eliminar $name';
+  }
+
+  @override
+  String get a11ySelectYear => 'Seleccionar any';
+
+  @override
+  String get a11ySelectMonth => 'Seleccionar mes';
+
+  @override
+  String get selectYear => 'Seleccionar any';
+
+  @override
+  String get selectMonth => 'Seleccionar mes';
+
+  @override
+  String a11yProgressBar(String percentage) {
+    return 'Progrés: $percentage per cent';
+  }
+
+  @override
+  String a11yProgress(String percentage) {
+    return 'Progrés: $percentage per cent';
+  }
+
+  @override
+  String a11yProgressPercentage(String percentage) {
+    return 'Progrés: $percentage per cent';
+  }
+
+  @override
+  String get a11yShowPassword => 'Mostra la contrasenya';
+
+  @override
+  String get a11yHidePassword => 'Amaga la contrasenya';
+
+  @override
+  String get a11ySelectedHint => 'Seleccionat actualment';
+
+  @override
+  String get a11yTapToSelect => 'Prem dues vegades per seleccionar';
+
+  @override
+  String get addCategory => 'Afegir categoria';
+
+  @override
+  String get addTag => 'Afegir etiqueta';
+
+  @override
+  String a11yPinLockoutRemaining(int seconds) {
+    return '$seconds segons restants per desbloquejar';
+  }
+
+  @override
+  String get a11yRecycleBinUrgent => 'Urgent: ';
+
+  @override
+  String get a11yLoading => 'Carregant';
 }

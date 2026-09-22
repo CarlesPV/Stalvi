@@ -1,6 +1,6 @@
 # Política de Privacidad
 
-**Fecha de entrada en vigor:** 17 de agosto de 2026
+**Fecha de entrada en vigor:** 18 de septiembre de 2026
 
 ## 1. Introducción
 Bienvenido a **Stalvi** ("nosotros", "nuestro" o "la Aplicación"). Stalvi es una aplicación de gestión de finanzas personales diseñada con arquitectura local (*local-first*) y bajo la filosofía de privacidad desde el diseño (*privacy-by-design*). Estamos firmemente comprometidos a proteger su privacidad y a garantizar que sus datos financieros permanezcan confidenciales, seguros y bajo su control exclusivo.
@@ -30,6 +30,7 @@ Todos los datos introducidos o generados dentro de Stalvi (incluidas transaccion
 - **Cifrado de Base de Datos SQLCipher AES-256:** La base de datos SQLite subyacente se cifra en reposo mediante **SQLCipher con cifrado AES de 256 bits**. Sus datos financieros resultan ilegibles sin la clave criptográfica.
 - **Gestión Segura de Claves en Hardware:** Las claves criptográficas y las credenciales de acceso se aíslan y gestionan de forma segura utilizando el KeyStore nativo del dispositivo (Android) o Keychain (iOS) a través de interfaces de almacenamiento seguro del sistema (`flutter_secure_storage`).
 - **Autenticación Biométrica y PIN:** El acceso a la Aplicación está protegido en el dispositivo mediante mecanismos biométricos (Face ID, Touch ID, huella dactilar) o un Número de Identificación Personal (PIN) definido por el usuario.
+- **Resúmenes Locales para Widgets de Pantalla de Inicio:** Si decide habilitar y colocar los widgets de Stalvi en la pantalla de inicio o de bloqueo de su dispositivo (Android AppWidget o iOS WidgetKit), la Aplicación almacena localmente un resumen numérico agregado de sus ingresos y gastos de los últimos 30 días, calculado en su divisa predeterminada, en el almacenamiento compartido del sistema operativo (`SharedPreferences` en Android, `UserDefaults` con App Group en iOS). Este almacenamiento reside exclusivamente en su dispositivo físico, no contiene detalles de transacciones individuales, nombres de cuentas ni notas personales, y no se transmite bajo ninguna circunstancia a servidores externos.
 - **Aislamiento Absoluto de Datos:** Puesto que ningún dato se transmite a servidores externos, su información está protegida frente a brechas de datos remotas, ataques a servidores, intercepciones de red y minería de datos corporativa.
 
 ---
@@ -68,8 +69,9 @@ Bajo el RGPD y la LOPDGDD, los interesados tienen derechos de acceso, rectificac
 ---
 
 ## 7. Retención y Eliminación Permanente de Datos
-- **Exportación de Datos:** Puede exportar sus datos en cualquier momento en formatos estándar (archivos de copia de seguridad cifrados o hojas de cálculo CSV) para su respaldo personal o migración.
-- **Borrado Permanente:** Puede activar la acción **"Eliminar Todos los Datos"** en la configuración de la Aplicación. Esto elimina de forma permanente todos los archivos de bases de datos locales cifradas y preferencias del dispositivo. La desinstalación de la Aplicación también elimina todos los archivos de bases de datos locales.
+- **Exportación de Datos:** Puede exportar sus datos en cualquier momento en formatos estándar (archivos de copia de seguridad cifrados, informes estructurados en PDF u hojas de cálculo CSV) para su respaldo personal o migración.
+- **Papelera de Reciclaje y Retención Temporal:** Las transacciones, cuentas o categorías eliminadas se trasladan a una papelera de reciclaje local protegida y cifrada durante un período de cortesía de hasta 30 días para permitir su recuperación en caso de error. Transcurrido dicho plazo, o si vacía manualmente la papelera de reciclaje, dichos registros se destruyen de forma permanente e irrecuperable de la base de datos.
+- **Borrado Permanente:** Puede activar la acción **"Eliminar Todos los Datos"** en la configuración de la Aplicación. Esto elimina de forma permanente todos los archivos de bases de datos locales cifradas, preferencias del dispositivo y datos en caché de widgets. La desinstalación de la Aplicación también elimina todos los archivos de bases de datos locales.
 
 ---
 

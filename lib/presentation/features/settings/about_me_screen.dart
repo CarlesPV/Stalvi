@@ -68,7 +68,11 @@ class _AboutMeScreenState extends ConsumerState<AboutMeScreen> {
     return Scaffold(
       appBar: AppBar(title: Text(l10n.aboutMe)),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? Center(
+              child: CircularProgressIndicator(
+                semanticsLabel: l10n.a11yLoading,
+              ),
+            )
           : SafeArea(
               child: Column(
                 children: [

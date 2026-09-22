@@ -513,6 +513,61 @@
   - [x] Conducted project-wide housekeeping across `lib/` and `test/`, removing dead code and unused statements.
   - [x] Maintained 100% test pass rate across 595 tests and 0 static analysis warnings with `--fatal-infos --fatal-warnings`.
 
+- [x] **Phase 73: 100% Comprehensive Accessibility (a11y) & QA Stabilization**
+  - [x] Removed text scale blocking (`maxScaleFactor: 1.0`) and replaced restrictive `FittedBox` wrappers with flexible wrapping to fully support high system font scaling.
+  - [x] Enforced minimum 48x48dp touch targets and added descriptive tooltips to all interactive `IconButton`s and actions.
+  - [x] Annotated custom PIN dials (`AuthScreen`, `PinVerificationSheet`) with granular `Semantics` announcing keystrokes and entered digit progress.
+  - [x] Added semantic labels and descriptions for data visualizations, including `PieChart` summaries in `StatisticsScreen` and progress bars in `BudgetsAndGoalsScreen`.
+  - [x] Polished WCAG color contrast ratios (`mintGreenLight`, `coralRedLight`) meeting 4.5:1 standards on light backgrounds.
+  - [x] Added localized accessibility translations across English (`app_en.arb`), Spanish (`app_es.arb`), and Catalan (`app_ca.arb`).
+  - [x] Maintained 100% test pass rate across 597 tests and 0 static analysis warnings with `--fatal-infos --fatal-warnings`.
+
+- [x] **Phase 74: 100% Screen Reader Accessibility & QA**
+  - [x] Unlocked full screen reader support (TalkBack on Android, VoiceOver on iOS) across all core navigation flows and financial screens.
+  - [x] Eliminated navigation blockers in Onboarding & Authentication (`AuthScreen`): transformed legal agreement checkbox and `RichText` links into accessible semantic toggles and buttons; enriched PIN pads with clear key feedback and live auditory status.
+  - [x] Fixed discreet mode balance obfuscation: removed obstructive `MergeSemantics` in `_TotalBalanceCard` and provided clear TalkBack/VoiceOver hints and states in `ObfuscatedText` for masked balances.
+  - [x] Added semantic labels and descriptions for custom interactive selectors and financial widgets: localized accessibility labels for 128 category icons, preset colors, account cards, and wrapped charts (`PieChart`) in `ExcludeSemantics` with alternative verbal summaries in `StatisticsScreen`.
+  - [x] Integrated tactile `HapticFeedback` on critical user interactions (PIN entry, category selection, deletion actions).
+  - [x] Synchronized complete trilingual a11y translations across English (`app_en.arb`), Spanish (`app_es.arb`), and Catalan (`app_ca.arb`).
+  - [x] Verified 100% test pass rate across 603 unit, widget, and accessibility tests and achieved 0 static analysis warnings with `flutter analyze --fatal-infos --fatal-warnings`.
+
+- [x] **Phase 75: Comprehensive Screen Reader Retrofit & Form Semantics**
+  - [x] Eliminated fragmented screen reading on complex cards and list tiles by wrapping `_SummaryCard` and `_PeriodHeader` (`StatisticsScreen`), `_TrashItemTile` (`RecycleBinScreen`), and profile settings list tiles (`ProfileSettingsScreen`) with `MergeSemantics`.
+  - [x] Retrofitted purely visual data indicators with rich semantics: wrapped `ProgressBarWidget` in `Semantics(value: ..., label: ...)` conveying exact progress percentages and purposes across English, Spanish, and Catalan.
+  - [x] Enriched icon pickers and choice chips: wrapped all 180 category icons in `category_icon_picker.dart` with localized semantic meanings (`a11yIcon...`) and wrapped decorative account avatars in `create_account_dialog.dart` with `ExcludeSemantics`.
+  - [x] Streamlined form inputs and dynamic error notifications: wrapped inline form validation errors in `create_edit_budget_sheet.dart` and `pin_verification_sheet.dart` with `Semantics(liveRegion: true)` and removed conflicting `Semantics(value: ...)` from `TextField` in `add_transaction_screen.dart` to preserve native cursor navigation.
+  - [x] Added contextual, accessible tooltips for management actions across `DataManagementScreen`, `CategoriesTagsManagementScreen`, `AutomaticTransactionsScreen`, and `BudgetsAndGoalsScreen`.
+  - [x] Added dedicated widget tests for `ProgressBarWidget` and updated `CategoryIconPicker` tests verifying localized semantic labels.
+  - [x] Maintained 100% test pass rate across 616 tests and 0 static analysis warnings with `flutter analyze --fatal-infos --fatal-warnings`.
+
+- [x] **Phase 76: Full Accessibility Compliance & QA Hardening**
+  - [x] Fixed critical `MergeSemantics` misuses in `ProfileSettingsScreen` (DropdownButton trapping) and `RecycleBinScreen` (action button trapping) that blocked TalkBack/VoiceOver interaction.
+  - [x] Added full `Semantics(button, selected, label)` annotations to all color palette and icon selector `GestureDetector` widgets across `create_edit_savings_goal_sheet.dart`, `categories_tags_management_screen.dart`, `create_account_dialog.dart`, and `edit_account_dialog.dart`.
+  - [x] Implemented modal focus management (`autofocus: true` / `Semantics(focused: true)`) across all 17 `showModalBottomSheet` and `showDialog` instances for immediate screen reader focus transfer.
+  - [x] Wrapped all inline form validation errors with `Semantics(liveRegion: true)` for automatic TalkBack/VoiceOver error announcements.
+  - [x] Annotated custom segmented transaction type selectors (Expense/Income/Transfer) with `Semantics(button, selected)` and localized hints.
+  - [x] Added `MediaQuery.disableAnimationsOf(context)` checks to all animation controllers (splash, shimmer, pulse, progress bar) respecting user's Reduce Motion system setting.
+  - [x] Wrapped ~20 decorative icons with `ExcludeSemantics` and added `semanticsLabel` to all ~15 `CircularProgressIndicator` instances.
+  - [x] Added localized color names, urgency hints, PIN lockout timer announcements, and transaction type semantic labels across English, Spanish, and Catalan.
+  - [x] Added dedicated accessibility compliance widget tests (color selectors, MergeSemantics boundaries, LiveRegion, segmented controls).
+  - [x] Maintained 100% test pass rate across 622 tests and 0 static analysis warnings with `flutter analyze --fatal-infos --fatal-warnings`.
+
+- [x] **Phase 77: 100% Accessibility, QA, and Testing**
+  - [x] Enriched Settings tab items and navigation tiles in `DashboardScreen` with explicit semantic labels, hints, and button semantics for TalkBack and VoiceOver.
+  - [x] Annotated custom segmented transaction type controls in `CreateEditAutomaticTransactionScreen` with `Semantics(button, selected)` and added back-button action tooltips.
+  - [x] Wrapped `_FormSelectorTile` with `MergeSemantics` and `Semantics(button: true, label: '$label, $value')` ensuring screen readers announce both the field label and its currently selected value.
+  - [x] Wrapped decorative graphics and illustrations in `EmptyStateWidget` and skeleton loading placeholders with `ExcludeSemantics` to keep the accessibility tree clutter-free.
+  - [x] Added `Semantics(liveRegion: true)` and localized `semanticsLabel` announcements to remaining progress indicators and dynamic feedback states.
+  - [x] Completed trilingual accessibility coverage, synchronizing all screen reader strings, hints, and error announcements across English (`app_en.arb`), Spanish (`app_es.arb`), and Catalan (`app_ca.arb`).
+  - [x] Verified full compliance with automated testing and static analysis, maintaining a 100% test pass rate and 0 warnings on `flutter analyze --fatal-infos --fatal-warnings`.
+
+- [x] **Phase 78: Home Widget UI Polish & System Theming**
+  - [x] Enhanced Android home screen widget background with a custom drawable (`widget_background.xml`) featuring 16dp rounded corners.
+  - [x] Implemented dynamic Android system theming (`?android:attr/colorBackground` and `?android:attr/textColorPrimary`) in `widget_layout.xml` for seamless Light/Dark mode adaptation.
+  - [x] Updated iOS `StalviWidget.swift` with `.containerBackground` for modern iOS 17+ compatibility using `UIColor.systemBackground` for native theme switching.
+  - [x] Verified trilingual localization for `widgetIncomeTitle` and `widgetExpenseTitle` across English (`app_en.arb`), Spanish (`app_es.arb`), and Catalan (`app_ca.arb`).
+  - [x] Verified full CI compliance with 0 static analysis warnings via `flutter analyze` and a 100% test pass rate across 622 tests with `flutter test`.
+
 ---
 
 ## Post-Launch / Maintenance

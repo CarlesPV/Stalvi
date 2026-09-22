@@ -1,6 +1,6 @@
 # Política de Privadesa
 
-**Data d'entrada en vigor:** 17 d'agost de 2026
+**Data d'entrada en vigor:** 18 de setembre de 2026
 
 ## 1. Introducció
 Benvingut a **Stalvi** ("nosaltres", "nostre" o "l'Aplicació"). Stalvi és una aplicació de gestió de finances personals dissenyada amb arquitectura local (*local-first*) i sota la filosofia de privadesa des del disseny (*privacy-by-design*). Estem fermament compromesos a protegir la teva privadesa i a garantir que les teves dades financeres romanguin confidencials, segures i sota el teu control exclusiu.
@@ -30,6 +30,7 @@ Totes les dades introduïdes o generades dins de Stalvi (incloses transaccions f
 - **Xifratge de Base de Dades SQLCipher AES-256:** La base de dades SQLite subadjacent es xifra en repòs mitjançant **SQLCipher amb xifratge AES de 256 bits**. Les teves dades financeres resulten il·legibles sense la clau criptogràfica.
 - **Gestió Segura de Claus en Hardware:** Les claus criptogràfiques i les credencials d'accés s'aïllen i gestionen de forma segura utilitzant el KeyStore natiu del dispositiu (Android) o Keychain (iOS) a través d'interfícies d'emmagatzematge segur del sistema (`flutter_secure_storage`).
 - **Autenticació Biomètrica i PIN:** L'accés a l'Aplicació està protegit al dispositiu mitjançant mecanismes biomètrics (Face ID, Touch ID, empremta dactilar) o un Número d'Identificació Personal (PIN) definit per l'usuari.
+- **Resums Locals per a Widgets de Pantalla d'Inici:** Si decideixes habilitar i col·locar els widgets de Stalvi a la pantalla d'inici o de bloqueig del teu dispositiu (Android AppWidget o iOS WidgetKit), l'Aplicació emmagatzema de manera local un resum numèric agregat dels teus ingressos i despeses dels darrers 30 dies, calculat en la teva divisa predeterminada, a l'emmagatzematge compartit del sistema operatiu (`SharedPreferences` a Android, `UserDefaults` vinculat a App Group a iOS). Aquest emmagatzematge es troba exclusivament al teu dispositiu físic, no conté detalls de transaccions individuals, noms de comptes ni notes personals, i no es transmet sota cap circumstància a servidors externs.
 - **Aïllament Absolut de Dades:** Atès que cap dada es transmet a servidors externs, la teva informació està protegida enfront de bretxes de dades remotes, atacs a servidors, intercepcions de xarxa i mineria de dades corporativa.
 
 ---
@@ -68,8 +69,9 @@ Sota el RGPD i la LOPDGDD, els interessats tenen drets d'accés, rectificació, 
 ---
 
 ## 7. Retenció i Eliminació Permanent de Dades
-- **Exportació de Dades:** Pots exportar les teves dades en qualsevol moment en formats estàndard (fitxers de còpia de seguretat xifrats o fulls de càlcul CSV) per al teu suport personal o migració.
-- **Esborrat Permanent:** Pots activar l'acció **"Eliminar Totes les Dades"** a la configuració de l'Aplicació. Això elimina de forma permanent tots els fitxers de bases de dades locals xifrades i preferències del dispositiu. La desinstal·lació de l'Aplicació també elimina tots els fitxers de bases de dades locals.
+- **Exportació de Dades:** Pots exportar les teves dades en qualsevol moment en formats estàndard (fitxers de còpia de seguretat xifrats, informes estructurats en PDF o fulls de càlcul CSV) per al teu suport personal o migració.
+- **Paperera de Reciclatge i Retenció Temporal:** Les transaccions, comptes o categories que eliminis es traslladen a una paperera de reciclatge local protegida i xifrada durant un període de cortesia de fins a 30 dies per permetre la seva recuperació en cas d'error. Transcorregut aquest termini, o si buides manualment la paperera de reciclatge, aquests registres es destrueixen de forma permanent i irrecuperable de la base de dades.
+- **Esborrat Permanent:** Pots activar l'acció **"Eliminar Totes les Dades"** a la configuració de l'Aplicació. Això elimina de forma permanent tots els fitxers de bases de dades locals xifrades, preferències del dispositiu i dades en memòria cau de widgets. La desinstal·lació de l'Aplicació també elimina tots els fitxers de bases de dades locals.
 
 ---
 

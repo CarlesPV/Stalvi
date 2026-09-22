@@ -30,7 +30,11 @@ class RecycleBinScreen extends ConsumerWidget {
             },
           );
         },
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => Center(
+          child: CircularProgressIndicator(
+            semanticsLabel: l10n.a11yLoading,
+          ),
+        ),
         error: (err, st) =>
             Center(child: Text('${l10n.unexpectedError}: $err')),
       ),
@@ -149,24 +153,34 @@ class _TrashItemTile extends ConsumerWidget {
     }
 
     return ListTile(
-      leading: CircleAvatar(
-        backgroundColor: getAvatarColor(),
-        child: Icon(getDisplayIcon(), color: getIconColor()),
-      ),
-      title: FittedBox(
-        fit: BoxFit.scaleDown,
-        alignment: Alignment.centerLeft,
-        child: Text(
-          getFormattedTitle(),
+      leading: ExcludeSemantics(
+        child: CircleAvatar(
+          backgroundColor: getAvatarColor(),
+          child: Icon(getDisplayIcon(), color: getIconColor()),
         ),
       ),
-      subtitle: FittedBox(
-        fit: BoxFit.scaleDown,
-        alignment: Alignment.centerLeft,
-        child: Text(
-          '${l10n.recycleBinDaysRemaining(remainingDays)} • ${getTypeLabel()}',
-          style: TextStyle(
-            color: remainingDays <= 3 ? Colors.red : Colors.grey,
+      title: Semantics(
+        label:
+            '${remainingDays <= 3 ? l10n.a11yRecycleBinUrgent : ''}${getFormattedTitle()}, ${l10n.recycleBinDaysRemaining(remainingDays)}, ${getTypeLabel()}',
+        child: ExcludeSemantics(
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
+            child: Text(
+              getFormattedTitle(),
+            ),
+          ),
+        ),
+      ),
+      subtitle: ExcludeSemantics(
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          alignment: Alignment.centerLeft,
+          child: Text(
+            '${l10n.recycleBinDaysRemaining(remainingDays)} • ${getTypeLabel()}',
+            style: TextStyle(
+              color: remainingDays <= 3 ? Colors.red : Colors.grey,
+            ),
           ),
         ),
       ),
@@ -175,7 +189,7 @@ class _TrashItemTile extends ConsumerWidget {
         children: [
           IconButton(
             icon: const Icon(Icons.restore, color: Colors.green),
-            tooltip: l10n.recycleBinRestoreTooltip,
+            tooltip: '${l10n.recycleBinRestoreTooltip} ${getFormattedTitle()}',
             onPressed: () {
               notifier.restoreItem(item.id, item.type);
               ScaffoldMessenger.of(context).showSnackBar(
@@ -185,7 +199,7 @@ class _TrashItemTile extends ConsumerWidget {
           ),
           IconButton(
             icon: const Icon(Icons.delete_forever, color: Colors.red),
-            tooltip: l10n.recycleBinDeleteTooltip,
+            tooltip: '${l10n.recycleBinDeleteTooltip} ${getFormattedTitle()}',
             onPressed: () {
               showDialog(
                 context: context,

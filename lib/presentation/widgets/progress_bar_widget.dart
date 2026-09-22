@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:stalvi/core/l10n/app_localizations.dart';
 import 'package:stalvi/core/theme/app_theme.dart';
 
 /// A reusable visual progress bar widget designed with Stalvi brand aesthetics.
@@ -18,6 +19,7 @@ class ProgressBarWidget extends StatelessWidget {
   final Color? activeColor;
   final Color? backgroundColor;
   final double height;
+  final String? semanticLabel;
 
   const ProgressBarWidget({
     super.key,
@@ -26,6 +28,7 @@ class ProgressBarWidget extends StatelessWidget {
     this.activeColor,
     this.backgroundColor,
     this.height = 8.0,
+    this.semanticLabel,
   });
 
   @override
@@ -39,6 +42,13 @@ class ProgressBarWidget extends StatelessWidget {
         targetAmount > 0 ? currentAmount / targetAmount : 0.0;
     final double clampedProgress = progress.clamp(0.0, 1.0);
 
+    final l10n = AppLocalizations.of(context);
+    final int percentage = targetAmount > 0 ? (progress * 100).round() : 0;
+    final String semanticLabelText = semanticLabel != null
+        ? '$semanticLabel, ${l10n?.a11yProgressBar('$percentage') ?? 'Progress: $percentage percent'}'
+        : (l10n?.a11yProgressBar('$percentage') ??
+            'Progress: $percentage percent');
+
     // Determine colors
     final isExceeded = currentAmount > targetAmount;
     final Color resolvedActiveColor = isExceeded
@@ -47,6 +57,8 @@ class ProgressBarWidget extends StatelessWidget {
 
     final Color resolvedBgColor = backgroundColor ??
         colorScheme.surfaceContainerHighest.withValues(alpha: 0.6);
+
+    final disableAnimations = MediaQuery.disableAnimationsOf(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -63,31 +75,37 @@ class ProgressBarWidget extends StatelessWidget {
             builder: (context, constraints) {
               return Stack(
                 children: [
-                  TweenAnimationBuilder<double>(
-                    tween: Tween<double>(begin: 0.0, end: clampedProgress),
-                    duration: const Duration(milliseconds: 600),
-                    curve: Curves.easeOutCubic,
-                    builder: (context, animatedValue, child) {
-                      return FractionallySizedBox(
-                        widthFactor: animatedValue,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: resolvedActiveColor,
-                            borderRadius: BorderRadius.circular(height / 2),
-                            boxShadow: [
-                              if (animatedValue > 0.02)
-                                BoxShadow(
-                                  color: resolvedActiveColor.withValues(
-                                    alpha: 0.25,
+                  Semantics(
+                    value: '$percentage%',
+                    label: semanticLabelText,
+                    child: TweenAnimationBuilder<double>(
+                      tween: Tween<double>(begin: 0.0, end: clampedProgress),
+                      duration: disableAnimations
+                          ? Duration.zero
+                          : const Duration(milliseconds: 600),
+                      curve: Curves.easeOutCubic,
+                      builder: (context, animatedValue, child) {
+                        return FractionallySizedBox(
+                          widthFactor: animatedValue,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: resolvedActiveColor,
+                              borderRadius: BorderRadius.circular(height / 2),
+                              boxShadow: [
+                                if (animatedValue > 0.02)
+                                  BoxShadow(
+                                    color: resolvedActiveColor.withValues(
+                                      alpha: 0.25,
+                                    ),
+                                    blurRadius: 4,
+                                    offset: const Offset(0, 1),
                                   ),
-                                  blurRadius: 4,
-                                  offset: const Offset(0, 1),
-                                ),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
-                      );
-                    },
+                        );
+                      },
+                    ),
                   ),
                 ],
               );

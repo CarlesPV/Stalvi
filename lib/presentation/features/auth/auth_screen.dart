@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'dart:ui';
 
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:stalvi/core/errors/app_exceptions.dart';
 import 'package:stalvi/core/l10n/app_localizations.dart';
@@ -55,7 +55,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
     _pulseController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1600),
-    )..repeat(reverse: true);
+    );
 
     _pulseScale = Tween<double>(begin: 0.90, end: 1.0).animate(
       CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
@@ -74,6 +74,17 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
       });
       _loadPinLength();
     });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (MediaQuery.disableAnimationsOf(context)) {
+      _pulseController.value = 1.0;
+      _pulseController.stop();
+    } else {
+      if (!_pulseController.isAnimating) _pulseController.repeat(reverse: true);
+    }
   }
 
   Future<void> _loadPinLength() async {
@@ -140,8 +151,15 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
 
     // React to authentication state changes
     ref.listen<AsyncValue<AuthStatus>>(authNotifierProvider, (_, next) {
+      if (next.hasError && !next.isLoading) {
+        HapticFeedback.heavyImpact();
+      }
       next.whenOrNull(
         data: (status) {
+          if (status == AuthStatus.pinLockedOut ||
+              status == AuthStatus.lockedOut) {
+            HapticFeedback.heavyImpact();
+          }
           if (status == AuthStatus.authenticated) {
             _navigateToDashboard();
             return;
@@ -694,80 +712,109 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
                 children: [
                   Row(
                     children: [
-                      Checkbox(
-                        value: _acceptTerms,
-                        activeColor: colorScheme.primary,
-                        onChanged: (checked) {
-                          setState(() {
-                            _acceptTerms = checked ?? false;
-                          });
-                          formFieldState.didChange(checked);
-                        },
+                      Semantics(
+                        label: l10n.a11yAcceptTerms,
+                        child: Checkbox(
+                          value: _acceptTerms,
+                          activeColor: colorScheme.primary,
+                          onChanged: (checked) {
+                            setState(() {
+                              _acceptTerms = checked ?? false;
+                            });
+                            formFieldState.didChange(checked);
+                          },
+                        ),
                       ),
                       Expanded(
-                        child: RichText(
-                          text: TextSpan(
+                        child: Text.rich(
+                          TextSpan(
                             style: theme.textTheme.bodyMedium?.copyWith(
                               color: colorScheme.onSurface,
                             ),
                             children: [
                               TextSpan(text: l10n.authSetupAcceptPrefix),
-                              TextSpan(
-                                text: l10n.termsAndConditions,
-                                style: TextStyle(
-                                  color: colorScheme.primary,
-                                  fontWeight: FontWeight.bold,
-                                  decoration: TextDecoration.underline,
-                                ),
-                                recognizer: TapGestureRecognizer()
-                                  ..onTap = () {
-                                    Navigator.of(context).push(
-                                      PageRouteBuilder(
-                                        pageBuilder: (_, animation, __) =>
-                                            const TermsAndConditionsViewer(
-                                          showPrivacyPolicy: false,
+                              WidgetSpan(
+                                alignment: PlaceholderAlignment.baseline,
+                                baseline: TextBaseline.alphabetic,
+                                child: Semantics(
+                                  button: true,
+                                  label: l10n.termsAndConditions,
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      Navigator.of(context).push(
+                                        PageRouteBuilder(
+                                          pageBuilder: (_, animation, __) =>
+                                              const TermsAndConditionsViewer(
+                                            showPrivacyPolicy: false,
+                                          ),
+                                          transitionsBuilder:
+                                              (_, animation, __, child) =>
+                                                  FadeTransition(
+                                            opacity: animation,
+                                            child: child,
+                                          ),
+                                          transitionDuration: const Duration(
+                                            milliseconds: 300,
+                                          ),
                                         ),
-                                        transitionsBuilder:
-                                            (_, animation, __, child) =>
-                                                FadeTransition(
-                                          opacity: animation,
-                                          child: child,
-                                        ),
-                                        transitionDuration: const Duration(
-                                          milliseconds: 300,
-                                        ),
+                                      );
+                                    },
+                                    child: Text(
+                                      l10n.termsAndConditions,
+                                      style: TextStyle(
+                                        color: colorScheme.primary,
+                                        fontWeight: FontWeight.bold,
+                                        decoration: TextDecoration.underline,
+                                        fontSize: theme
+                                            .textTheme.bodyMedium?.fontSize,
+                                        fontFamily: theme
+                                            .textTheme.bodyMedium?.fontFamily,
                                       ),
-                                    );
-                                  },
+                                    ),
+                                  ),
+                                ),
                               ),
                               TextSpan(text: l10n.authSetupAcceptAnd),
-                              TextSpan(
-                                text: l10n.privacyPolicy,
-                                style: TextStyle(
-                                  color: colorScheme.primary,
-                                  fontWeight: FontWeight.bold,
-                                  decoration: TextDecoration.underline,
-                                ),
-                                recognizer: TapGestureRecognizer()
-                                  ..onTap = () {
-                                    Navigator.of(context).push(
-                                      PageRouteBuilder(
-                                        pageBuilder: (_, animation, __) =>
-                                            const TermsAndConditionsViewer(
-                                          showPrivacyPolicy: true,
+                              WidgetSpan(
+                                alignment: PlaceholderAlignment.baseline,
+                                baseline: TextBaseline.alphabetic,
+                                child: Semantics(
+                                  button: true,
+                                  label: l10n.privacyPolicy,
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      Navigator.of(context).push(
+                                        PageRouteBuilder(
+                                          pageBuilder: (_, animation, __) =>
+                                              const TermsAndConditionsViewer(
+                                            showPrivacyPolicy: true,
+                                          ),
+                                          transitionsBuilder:
+                                              (_, animation, __, child) =>
+                                                  FadeTransition(
+                                            opacity: animation,
+                                            child: child,
+                                          ),
+                                          transitionDuration: const Duration(
+                                            milliseconds: 300,
+                                          ),
                                         ),
-                                        transitionsBuilder:
-                                            (_, animation, __, child) =>
-                                                FadeTransition(
-                                          opacity: animation,
-                                          child: child,
-                                        ),
-                                        transitionDuration: const Duration(
-                                          milliseconds: 300,
-                                        ),
+                                      );
+                                    },
+                                    child: Text(
+                                      l10n.privacyPolicy,
+                                      style: TextStyle(
+                                        color: colorScheme.primary,
+                                        fontWeight: FontWeight.bold,
+                                        decoration: TextDecoration.underline,
+                                        fontSize: theme
+                                            .textTheme.bodyMedium?.fontSize,
+                                        fontFamily: theme
+                                            .textTheme.bodyMedium?.fontFamily,
                                       ),
-                                    );
-                                  },
+                                    ),
+                                  ),
+                                ),
                               ),
                             ],
                           ),
@@ -810,6 +857,8 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
                         acceptTerms: _acceptTerms,
                         defaultCurrency: _selectedCurrency,
                       );
+                } else {
+                  HapticFeedback.heavyImpact();
                 }
               },
               style: FilledButton.styleFrom(
@@ -855,28 +904,32 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
         const SizedBox(height: 20),
 
         // Display Dots for Entered PIN digits (dynamic length)
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: List.generate(_requiredPinLength, (index) {
-            final isFilled = index < _enteredPin.length;
-            return Container(
-              margin: const EdgeInsets.symmetric(horizontal: 8),
-              width: 16,
-              height: 16,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: isFilled
-                    ? colorScheme.primary
-                    : colorScheme.primary.withValues(alpha: 0.12),
-                border: Border.all(
+        Semantics(
+          liveRegion: true,
+          label: l10n.a11yPinProgress(_enteredPin.length, _requiredPinLength),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: List.generate(_requiredPinLength, (index) {
+              final isFilled = index < _enteredPin.length;
+              return Container(
+                margin: const EdgeInsets.symmetric(horizontal: 8),
+                width: 16,
+                height: 16,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
                   color: isFilled
                       ? colorScheme.primary
-                      : colorScheme.outlineVariant.withValues(alpha: 0.6),
-                  width: 1.5,
+                      : colorScheme.primary.withValues(alpha: 0.12),
+                  border: Border.all(
+                    color: isFilled
+                        ? colorScheme.primary
+                        : colorScheme.outlineVariant.withValues(alpha: 0.6),
+                    width: 1.5,
+                  ),
                 ),
-              ),
-            );
-          }),
+              );
+            }),
+          ),
         ),
         const SizedBox(height: 24),
 
@@ -925,29 +978,35 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
       aspectRatio: 1.5,
       child: Container(
         margin: const EdgeInsets.all(6),
-        child: InkWell(
-          onTap: () {
-            if (_enteredPin.length < _requiredPinLength) {
-              setState(() {
-                if (ref.read(authNotifierProvider).hasError) {
-                  ref.read(authNotifierProvider.notifier).resetStatus();
-                }
-                _enteredPin += digit;
-              });
+        constraints: const BoxConstraints(minHeight: 48, minWidth: 48),
+        child: Semantics(
+          button: true,
+          label: AppLocalizations.of(context)!.a11yPinDigit(digit),
+          child: InkWell(
+            onTap: () {
+              HapticFeedback.lightImpact();
+              if (_enteredPin.length < _requiredPinLength) {
+                setState(() {
+                  if (ref.read(authNotifierProvider).hasError) {
+                    ref.read(authNotifierProvider.notifier).resetStatus();
+                  }
+                  _enteredPin += digit;
+                });
 
-              // Auto-submit if PIN hits required length
-              if (_enteredPin.length == _requiredPinLength) {
-                _submitPin();
+                // Auto-submit if PIN hits required length
+                if (_enteredPin.length == _requiredPinLength) {
+                  _submitPin();
+                }
               }
-            }
-          },
-          borderRadius: BorderRadius.circular(16),
-          child: Center(
-            child: Text(
-              digit,
-              style: theme.textTheme.headlineMedium?.copyWith(
-                fontWeight: FontWeight.w600,
-                color: colorScheme.onSurface,
+            },
+            borderRadius: BorderRadius.circular(16),
+            child: Center(
+              child: Text(
+                digit,
+                style: theme.textTheme.headlineMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: colorScheme.onSurface,
+                ),
               ),
             ),
           ),
@@ -964,52 +1023,58 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
           margin: const EdgeInsets.all(6),
           child: ScaleTransition(
             scale: _pulseScale,
-            child: IconButton(
-              icon: Icon(
-                Icons.fingerprint_rounded,
-                size: 36,
-                color: colorScheme.primary,
+            child: Semantics(
+              button: true,
+              label: AppLocalizations.of(context)!.a11yPinBiometric,
+              child: IconButton(
+                icon: Icon(
+                  Icons.fingerprint_rounded,
+                  size: 36,
+                  color: colorScheme.primary,
+                ),
+                onPressed: () async {
+                  ref.read(authNotifierProvider.notifier).resetStatus();
+                  final biometricService =
+                      ref.read(biometricAuthServiceProvider);
+                  final isEnabled =
+                      await biometricService.isBiometricsEnabled();
+                  if (!isEnabled) {
+                    if (!mounted) return;
+                    final l10n = AppLocalizations.of(context)!;
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: Text(l10n.authBiometricOptInTitle),
+                        content: Text(l10n.authBiometricOptInSubtitle),
+                        actionsAlignment: MainAxisAlignment.center,
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.of(context).pop(),
+                            child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text(l10n.authBiometricOptInSkip),
+                            ),
+                          ),
+                          FilledButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                              ref
+                                  .read(authNotifierProvider.notifier)
+                                  .enableBiometricsOptIn();
+                            },
+                            child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text(l10n.authBiometricOptInEnable),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  } else {
+                    ref.read(authNotifierProvider.notifier).authenticate();
+                  }
+                },
               ),
-              onPressed: () async {
-                ref.read(authNotifierProvider.notifier).resetStatus();
-                final biometricService = ref.read(biometricAuthServiceProvider);
-                final isEnabled = await biometricService.isBiometricsEnabled();
-                if (!isEnabled) {
-                  if (!mounted) return;
-                  final l10n = AppLocalizations.of(context)!;
-                  showDialog(
-                    context: context,
-                    builder: (context) => AlertDialog(
-                      title: Text(l10n.authBiometricOptInTitle),
-                      content: Text(l10n.authBiometricOptInSubtitle),
-                      actionsAlignment: MainAxisAlignment.center,
-                      actions: [
-                        TextButton(
-                          onPressed: () => Navigator.of(context).pop(),
-                          child: FittedBox(
-                            fit: BoxFit.scaleDown,
-                            child: Text(l10n.authBiometricOptInSkip),
-                          ),
-                        ),
-                        FilledButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                            ref
-                                .read(authNotifierProvider.notifier)
-                                .enableBiometricsOptIn();
-                          },
-                          child: FittedBox(
-                            fit: BoxFit.scaleDown,
-                            child: Text(l10n.authBiometricOptInEnable),
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                } else {
-                  ref.read(authNotifierProvider.notifier).authenticate();
-                }
-              },
             ),
           ),
         ),
@@ -1024,32 +1089,37 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
       aspectRatio: 1.5,
       child: Container(
         margin: const EdgeInsets.all(6),
-        child: IconButton(
-          icon: Icon(
-            Icons.backspace_outlined,
-            size: 24,
-            color: colorScheme.onSurfaceVariant,
+        child: Semantics(
+          button: true,
+          label: AppLocalizations.of(context)!.a11yPinBackspace,
+          child: IconButton(
+            icon: Icon(
+              Icons.backspace_outlined,
+              size: 24,
+              color: colorScheme.onSurfaceVariant,
+            ),
+            onPressed: () {
+              if (_enteredPin.isNotEmpty) {
+                setState(() {
+                  if (ref.read(authNotifierProvider).hasError) {
+                    ref.read(authNotifierProvider.notifier).resetStatus();
+                  }
+                  _enteredPin =
+                      _enteredPin.substring(0, _enteredPin.length - 1);
+                });
+              }
+            },
+            onLongPress: () {
+              if (_enteredPin.isNotEmpty) {
+                setState(() {
+                  if (ref.read(authNotifierProvider).hasError) {
+                    ref.read(authNotifierProvider.notifier).resetStatus();
+                  }
+                  _enteredPin = '';
+                });
+              }
+            },
           ),
-          onPressed: () {
-            if (_enteredPin.isNotEmpty) {
-              setState(() {
-                if (ref.read(authNotifierProvider).hasError) {
-                  ref.read(authNotifierProvider.notifier).resetStatus();
-                }
-                _enteredPin = _enteredPin.substring(0, _enteredPin.length - 1);
-              });
-            }
-          },
-          onLongPress: () {
-            if (_enteredPin.isNotEmpty) {
-              setState(() {
-                if (ref.read(authNotifierProvider).hasError) {
-                  ref.read(authNotifierProvider.notifier).resetStatus();
-                }
-                _enteredPin = '';
-              });
-            }
-          },
         ),
       ),
     );
@@ -1155,11 +1225,13 @@ class _BrandHeader extends StatelessWidget {
             borderRadius: BorderRadius.circular(16),
             child: LayoutBuilder(
               builder: (context, constraints) {
-                return Image.asset(
-                  'assets/icon/app_icon.png',
-                  fit: BoxFit.contain,
-                  width: constraints.maxWidth,
-                  height: constraints.maxHeight,
+                return ExcludeSemantics(
+                  child: Image.asset(
+                    'assets/icon/app_icon.png',
+                    fit: BoxFit.contain,
+                    width: constraints.maxWidth,
+                    height: constraints.maxHeight,
+                  ),
                 );
               },
             ),
@@ -1197,6 +1269,7 @@ class _SpinnerContent extends StatelessWidget {
             width: 32,
             height: 32,
             child: CircularProgressIndicator(
+              semanticsLabel: l10n.a11yLoading,
               strokeWidth: 2.5,
               valueColor: AlwaysStoppedAnimation<Color>(colorScheme.primary),
             ),
@@ -1233,7 +1306,9 @@ class _LockedOutContent extends StatelessWidget {
             shape: BoxShape.circle,
             color: Colors.redAccent,
           ),
-          child: const Icon(Icons.lock_rounded, size: 32, color: Colors.white),
+          child: const ExcludeSemantics(
+            child: Icon(Icons.lock_rounded, size: 32, color: Colors.white),
+          ),
         ),
         const SizedBox(height: 20),
         Text(
@@ -1262,7 +1337,13 @@ class _LockedOutContent extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.shield_rounded, size: 14, color: colorScheme.error),
+              ExcludeSemantics(
+                child: Icon(
+                  Icons.shield_rounded,
+                  size: 14,
+                  color: colorScheme.error,
+                ),
+              ),
               const SizedBox(width: 6),
               Text(
                 l10n.authLockoutActive,
@@ -1343,7 +1424,10 @@ class _PinLockoutContentState extends State<_PinLockoutContent> {
               width: 2,
             ),
           ),
-          child: Icon(Icons.timer_rounded, size: 32, color: colorScheme.error),
+          child: ExcludeSemantics(
+            child:
+                Icon(Icons.timer_rounded, size: 32, color: colorScheme.error),
+          ),
         ),
         const SizedBox(height: 20),
         Text(
@@ -1373,17 +1457,22 @@ class _PinLockoutContentState extends State<_PinLockoutContent> {
               fit: StackFit.expand,
               children: [
                 CircularProgressIndicator(
+                  semanticsLabel: l10n.a11yLoading,
                   value: secondsRemaining / 30,
                   strokeWidth: 5,
                   backgroundColor: colorScheme.error.withValues(alpha: 0.12),
                   valueColor: AlwaysStoppedAnimation<Color>(colorScheme.error),
                 ),
                 Center(
-                  child: Text(
-                    '$secondsRemaining',
-                    style: theme.textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.w800,
-                      color: colorScheme.error,
+                  child: Semantics(
+                    liveRegion: true,
+                    label: l10n.a11yPinLockoutRemaining(secondsRemaining),
+                    child: Text(
+                      '$secondsRemaining',
+                      style: theme.textTheme.headlineSmall?.copyWith(
+                        fontWeight: FontWeight.w800,
+                        color: colorScheme.error,
+                      ),
                     ),
                   ),
                 ),
@@ -1407,10 +1496,12 @@ class _PinLockoutContentState extends State<_PinLockoutContent> {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(
-                  Icons.check_circle_rounded,
-                  size: 14,
-                  color: colorScheme.primary,
+                ExcludeSemantics(
+                  child: Icon(
+                    Icons.check_circle_rounded,
+                    size: 14,
+                    color: colorScheme.primary,
+                  ),
                 ),
                 const SizedBox(width: 6),
                 Text(

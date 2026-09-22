@@ -26,11 +26,22 @@ class _BiometricOptInScreenState extends ConsumerState<BiometricOptInScreen>
     _pulseController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1600),
-    )..repeat(reverse: true);
+    );
 
     _pulseScale = Tween<double>(begin: 0.92, end: 1.0).animate(
       CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
     );
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (MediaQuery.disableAnimationsOf(context)) {
+      _pulseController.value = 1.0;
+      _pulseController.stop();
+    } else {
+      if (!_pulseController.isAnimating) _pulseController.repeat(reverse: true);
+    }
   }
 
   @override
@@ -222,10 +233,12 @@ class _BiometricBadge extends StatelessWidget {
             ),
           ],
         ),
-        child: Icon(
-          Icons.fingerprint_rounded,
-          size: 56,
-          color: colorScheme.primary,
+        child: ExcludeSemantics(
+          child: Icon(
+            Icons.fingerprint_rounded,
+            size: 56,
+            color: colorScheme.primary,
+          ),
         ),
       ),
     );
@@ -256,10 +269,12 @@ class _BrandHeader extends StatelessWidget {
               ),
             ],
           ),
-          child: Icon(
-            Icons.account_balance_wallet_rounded,
-            size: 30,
-            color: colorScheme.onPrimary,
+          child: ExcludeSemantics(
+            child: Icon(
+              Icons.account_balance_wallet_rounded,
+              size: 30,
+              color: colorScheme.onPrimary,
+            ),
           ),
         ),
         const SizedBox(height: 12),
@@ -329,6 +344,7 @@ class _SpinnerContent extends StatelessWidget {
             width: 32,
             height: 32,
             child: CircularProgressIndicator(
+              semanticsLabel: l10n.a11yLoading,
               strokeWidth: 2.5,
               valueColor: AlwaysStoppedAnimation<Color>(colorScheme.primary),
             ),

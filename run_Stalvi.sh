@@ -27,7 +27,8 @@ if [ "$BUILD" = true ] || [ "$CLEAN" = true ]; then
   dart run build_runner build
 fi
 
-echo "✨ Formateando y analizando..."
+echo "✨ Aplicando correcciones automáticas y formateando..."
+dart fix --apply
 dart format .
 flutter analyze --fatal-warnings --fatal-infos
 

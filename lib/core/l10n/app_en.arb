@@ -382,5 +382,349 @@
   "a11yTransactionDetails": "Transaction details",
   "a11ySelectCategory": "Select category",
   "a11ySelectAccount": "Select account",
-  "a11ySelectDate": "Select date"
+  "a11ySelectDate": "Select date",
+  "a11yPinBackspace": "Backspace",
+  "a11yPinBiometric": "Biometric authentication",
+  "a11yPinDigit": "Digit {digit}",
+  "a11yPinProgress": "{count} of {total} digits entered",
+  "a11yEditCategory": "Edit category",
+  "a11yDeleteCategory": "Delete category",
+  "a11yStatisticsSummary": "Statistics summary",
+  "a11yBudgetProgress": "Budget progress",
+  "a11yChartTitle": "Statistics chart.",
+  "a11yChartTopCategory": "Top category: {category} with {percent}%.",
+  "@a11yChartTopCategory": {
+    "placeholders": {
+      "category": {
+        "type": "String"
+      },
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "a11yChartSecondCategory": "Second: {category} with {percent}%.",
+  "@a11yChartSecondCategory": {
+    "placeholders": {
+      "category": {
+        "type": "String"
+      },
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "a11yChartOtherCategories": "Other categories make up the rest.",
+  "a11yChartNoData": "No data available.",
+  "a11yDiscreetModeHidden": "Balance hidden.",
+  "a11yDiscreetModeHint": "Double tap the visibility button to show.",
+  "a11yDiscreetModeToggleHide": "Hide balances (discreet mode)",
+  "a11yDiscreetModeToggleShow": "Show balances",
+  "a11yRestoreItem": "Restore {item}",
+  "@a11yRestoreItem": {
+    "placeholders": {
+      "item": {
+        "type": "String"
+      }
+    }
+  },
+  "a11yDeletePermanently": "Delete {item} permanently",
+  "@a11yDeletePermanently": {
+    "placeholders": {
+      "item": {
+        "type": "String"
+      }
+    }
+  },
+  "a11yAcceptTerms": "Accept terms and privacy policy",
+  "a11yChartSummary": "Statistics chart. {details}",
+  "@a11yChartSummary": {
+    "placeholders": {
+      "details": {
+        "type": "String"
+      }
+    }
+  },
+  "a11yColorBlue": "Blue",
+  "a11yColorGreen": "Green",
+  "a11yColorAmber": "Amber",
+  "a11yColorPink": "Pink",
+  "a11yColorPurple": "Purple",
+  "a11yColorDeepOrange": "Deep orange",
+  "a11yColorCyan": "Cyan",
+  "a11yColorTeal": "Teal",
+  "a11yColorLightGreen": "Light green",
+  "a11yColorLime": "Lime",
+  "a11yColorOrange": "Orange",
+  "a11yColorRed": "Red",
+  "a11yColorBrown": "Brown",
+  "a11yColorBlueGrey": "Blue grey",
+  "a11yColorDeepPurple": "Deep purple",
+  "a11yColorIndigo": "Indigo",
+  "a11yColorLightPink": "Light pink",
+  "a11yColorMint": "Mint",
+  "a11yColorLightLime": "Light lime",
+  "a11yColorCoral": "Coral",
+  "a11yColorLightBrown": "Light brown",
+  "a11yColorGrey": "Grey",
+  "a11yColorYellow": "Yellow",
+  "a11yColorLightBlue": "Light blue",
+  "a11yColorBlack": "Black",
+  "a11yColorWhite": "White",
+  "a11yIconAccountBalance": "Bank",
+  "a11yIconAccountBalanceWallet": "Wallet",
+  "a11yIconAttachMoney": "Money",
+  "a11yIconMoneyOff": "No money",
+  "a11yIconCreditCard": "Credit card",
+  "a11yIconSavings": "Savings",
+  "a11yIconReceiptLong": "Detailed receipt",
+  "a11yIconReceipt": "Receipt",
+  "a11yIconRequestQuote": "Invoice",
+  "a11yIconPaid": "Paid",
+  "a11yIconPriceCheck": "Price check",
+  "a11yIconPriceChange": "Price change",
+  "a11yIconCurrencyExchange": "Currency exchange",
+  "a11yIconMonetizationOn": "Monetization",
+  "a11yIconTrendingUp": "Trending up",
+  "a11yIconTrendingDown": "Trending down",
+  "a11yIconShowChart": "Chart",
+  "a11yIconReplay": "Recurring",
+  "a11yIconShoppingCart": "Shopping cart",
+  "a11yIconShoppingBag": "Shopping bag",
+  "a11yIconLocalMall": "Shopping mall",
+  "a11yIconStorefront": "Storefront",
+  "a11yIconRedeem": "Gift reward",
+  "a11yIconLoyalty": "Loyalty card",
+  "a11yIconSell": "Sale",
+  "a11yIconDiscount": "Discount",
+  "a11yIconRestaurant": "Restaurant",
+  "a11yIconLunchDining": "Lunch",
+  "a11yIconDinnerDining": "Dinner",
+  "a11yIconLocalCafe": "Cafe",
+  "a11yIconFastfood": "Fast food",
+  "a11yIconBakeryDining": "Bakery",
+  "a11yIconIcecream": "Ice cream",
+  "a11yIconLocalGroceryStore": "Supermarket",
+  "a11yIconHome": "Home",
+  "a11yIconHouse": "House",
+  "a11yIconApartment": "Apartment",
+  "a11yIconCottage": "Cottage",
+  "a11yIconBed": "Bedroom",
+  "a11yIconBathroom": "Bathroom",
+  "a11yIconKitchen": "Kitchen",
+  "a11yIconChair": "Furniture",
+  "a11yIconYard": "Garden",
+  "a11yIconGarage": "Garage",
+  "a11yIconElectricalServices": "Electrician",
+  "a11yIconPlumbing": "Plumbing",
+  "a11yIconDirectionsCar": "Car",
+  "a11yIconLocalGasStation": "Gas station",
+  "a11yIconCarRepair": "Car repair",
+  "a11yIconDirectionsBus": "Bus",
+  "a11yIconDirectionsSubway": "Metro",
+  "a11yIconDirectionsBike": "Bicycle",
+  "a11yIconTwoWheeler": "Motorbike",
+  "a11yIconFlight": "Flight",
+  "a11yIconHotel": "Hotel",
+  "a11yIconLocalTaxi": "Taxi",
+  "a11yIconTrain": "Train",
+  "a11yIconDirectionsBoat": "Boat",
+  "a11yIconEvStation": "Electric vehicle charger",
+  "a11yIconLocalParking": "Parking",
+  "a11yIconToll": "Toll",
+  "a11yIconLuggage": "Luggage",
+  "a11yIconLocalHospital": "Hospital",
+  "a11yIconMedicalServices": "Medical services",
+  "a11yIconMedication": "Medication",
+  "a11yIconHealing": "First aid",
+  "a11yIconFitnessCenter": "Gym",
+  "a11yIconSpa": "Spa",
+  "a11yIconSelfImprovement": "Self improvement",
+  "a11yIconPsychology": "Psychology",
+  "a11yIconLocalPharmacy": "Pharmacy",
+  "a11yIconVaccines": "Vaccine",
+  "a11yIconHealthAndSafety": "Health and safety",
+  "a11yIconAccessibilityNew": "Accessibility",
+  "a11yIconSchool": "School",
+  "a11yIconMenuBook": "Book",
+  "a11yIconAutoStories": "Reading",
+  "a11yIconScience": "Science",
+  "a11yIconCalculate": "Accounting",
+  "a11yIconLaptop": "Laptop",
+  "a11yIconWork": "Work",
+  "a11yIconBusinessCenter": "Business",
+  "a11yIconCorporateFare": "Company",
+  "a11yIconBadge": "Employment badge",
+  "a11yIconEngineering": "Engineering",
+  "a11yIconComputer": "Computer",
+  "a11yIconMovie": "Cinema",
+  "a11yIconTv": "Television",
+  "a11yIconMusicNote": "Music",
+  "a11yIconHeadphones": "Audio",
+  "a11yIconSportsEsports": "Video games",
+  "a11yIconSportsSoccer": "Football",
+  "a11yIconSportsBasketball": "Basketball",
+  "a11yIconSportsTennis": "Tennis",
+  "a11yIconHiking": "Hiking",
+  "a11yIconTerrain": "Mountain",
+  "a11yIconBeachAccess": "Beach",
+  "a11yIconPark": "Park",
+  "a11yIconTheaterComedy": "Theatre",
+  "a11yIconCasino": "Casino",
+  "a11yIconSportsBar": "Sports bar",
+  "a11yIconAttractions": "Amusement park",
+  "a11yIconBolt": "Electricity",
+  "a11yIconWaterDrop": "Water",
+  "a11yIconWifi": "Internet wifi",
+  "a11yIconPhone": "Phone",
+  "a11yIconSmartphone": "Mobile phone",
+  "a11yIconTvOutlined": "Streaming subscription",
+  "a11yIconRecycling": "Recycling",
+  "a11yIconLocalLaundryService": "Laundry",
+  "a11yIconCleaningServices": "Cleaning",
+  "a11yIconHandyman": "Handyman",
+  "a11yIconBuild": "Tools",
+  "a11yIconConstruction": "Construction",
+  "a11yIconChildCare": "Childcare",
+  "a11yIconPets": "Pets",
+  "a11yIconStyle": "Fashion",
+  "a11yIconFace": "Beauty",
+  "a11yIconVolunteerActivism": "Donation",
+  "a11yIconChurch": "Place of worship",
+  "a11yIconCelebration": "Party",
+  "a11yIconCake": "Birthday cake",
+  "a11yIconCardGiftcard": "Gift card",
+  "a11yIconCategory": "General category",
+  "a11yIconMoreHoriz": "Other",
+  "a11yIconStar": "Favorite",
+  "a11yIconFlag": "Flag",
+  "a11yIconBookmark": "Bookmark",
+  "a11yIconLabel": "Label",
+  "a11yIconTag": "Tag",
+  "a11yIconFlightTakeoff": "Departure flight",
+  "a11yIconFlightLand": "Arrival flight",
+  "a11yIconCommute": "Commute",
+  "a11yIconSubway": "Subway train",
+  "a11yIconElectricCar": "Electric car",
+  "a11yIconMotorcycle": "Motorcycle",
+  "a11yIconMap": "Map",
+  "a11yIconExplore": "Exploration",
+  "a11yIconNavigation": "Navigation",
+  "a11yIconCardMembership": "Membership card",
+  "a11yIconStore": "Department store",
+  "a11yIconLocalOffer": "Special offer",
+  "a11yIconPower": "Power plug",
+  "a11yIconElectricBolt": "Energy",
+  "a11yIconRouter": "Router",
+  "a11yIconDevices": "Electronic devices",
+  "a11yIconCloud": "Cloud storage",
+  "a11yIconSolarPower": "Solar power",
+  "a11yIconLocalBar": "Bar",
+  "a11yIconLiquor": "Liquor",
+  "a11yIconRamenDining": "Noodles",
+  "a11yIconTakeoutDining": "Takeaway",
+  "a11yIconWineBar": "Wine bar",
+  "a11yIconCoffee": "Coffee",
+  "a11yIconSoupKitchen": "Soup kitchen",
+  "a11yIconCameraAlt": "Photography",
+  "a11yIconPalette": "Art",
+  "a11yIconStadium": "Stadium",
+  "a11yIconMusicVideo": "Music video",
+  "a11yIconSportsMotorsports": "Motorsports",
+  "a11yIconSportsGolf": "Golf",
+  "a11yIconSportsBaseball": "Baseball",
+  "a11yIconSportsFootball": "American football",
+  "a11yIconPool": "Swimming pool",
+  "a11yIconFamilyRestroom": "Family care",
+  "a11yIconContentCut": "Hairdresser",
+  "a11yIconDryCleaning": "Dry cleaning",
+  "a11yIconSecurity": "Security",
+  "a11yIconShield": "Insurance shield",
+  "a11yIconWorkspacePremium": "Premium subscription",
+  "a11yIconPestControl": "Pest control",
+  "a11yIconRoofing": "Roofing repair",
+  "a11yIconDeck": "Terrace",
+  "a11yIconSchoolOutlined": "Higher education",
+  "a11yIconEvent": "Calendar event",
+  "a11yIconAlarm": "Alarm",
+  "a11yIconWatch": "Watch",
+  "a11yIconInterests": "Hobbies",
+  "a11yIconNewspaper": "Newspaper press",
+  "a11yIconPrint": "Printing",
+  "a11yEditItem": "Edit {name}",
+  "@a11yEditItem": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "a11yDeleteItem": "Delete {name}",
+  "@a11yDeleteItem": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "a11yEditName": "Edit {name}",
+  "@a11yEditName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "a11yDeleteName": "Delete {name}",
+  "@a11yDeleteName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "a11ySelectYear": "Select Year",
+  "a11ySelectMonth": "Select Month",
+  "selectYear": "Select Year",
+  "selectMonth": "Select Month",
+  "a11yProgressBar": "Progress: {percentage} percent",
+  "@a11yProgressBar": {
+    "placeholders": {
+      "percentage": {
+        "type": "String"
+      }
+    }
+  },
+  "a11yProgress": "Progress: {percentage} percent",
+  "@a11yProgress": {
+    "placeholders": {
+      "percentage": {
+        "type": "String"
+      }
+    }
+  },
+  "a11yProgressPercentage": "Progress: {percentage} percent",
+  "@a11yProgressPercentage": {
+    "placeholders": {
+      "percentage": {
+        "type": "String"
+      }
+    }
+  },
+  "a11yShowPassword": "Show password",
+  "a11yHidePassword": "Hide password",
+  "a11ySelectedHint": "Currently selected",
+  "a11yTapToSelect": "Double tap to select",
+  "addCategory": "Add category",
+  "addTag": "Add tag",
+  "a11yPinLockoutRemaining": "{seconds} seconds remaining until unlock",
+  "@a11yPinLockoutRemaining": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "a11yRecycleBinUrgent": "Urgent: ",
+  "a11yLoading": "Loading"
 }

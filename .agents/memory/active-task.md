@@ -1,11 +1,11 @@
-# Phase 72: Home Screen Widget Polish & Project Housekeeping
+# Phase 78: Home Widget UI Polish & System Theming
 
 ## Objective
-Refine the native 2x1 Home Screen widgets (Android and iOS) to support Dark Mode, launch the Stalvi app when tapped, display the app icon at the top center, and reduce text sizes. Add realistic widget previews for the OS widget gallery. Finally, perform project-wide housekeeping (clean up unused files/comments) and ensure all tests and CI workflows pass.
+Enhance the native home screen widget's visual presentation and system integration across iOS and Android. Ensure the widget features clean, rounded corners (`16dp` on Android) and natively adapts its background and text colors based on the device's active theme (Light/Dark mode) without breaking the existing data hydration flow.
 
 ## Tasks
-- [x] 1. **Android Widget:** Update XML layouts for Dark Mode support, reduce text size, add the Stalvi icon at the top center, set up a `PendingIntent` to open `MainActivity` on tap, and configure a realistic preview in the `appwidget-provider`.
-- [x] 2. **iOS Widget:** Update `StalviWidget.swift` (WidgetKit) for dynamic color schemes (Dark Mode), reduce font size, add the app icon image at the top, configure `.widgetURL` to open the app, and update the `PreviewProvider`.
-- [x] 3. **Housekeeping:** Sweep the project for dead code, unused imports, and obsolete comments.
-- [x] 4. **Validation:** Run `flutter analyze --fatal-infos --fatal-warnings`, `flutter test`, and confirm CI passes. 
-- [x] 5. **Documentation:** Update `roadmap.md` and `roadmap-summary.md` to mark Phase 72 as completed.
+- [x] 1. **Android Widget Background:** Create a custom drawable (`widget_background.xml`) with `16dp` rounded corners.
+- [x] 2. **Android Dynamic Theming:** Apply `?android:attr/colorBackground` and `?android:attr/textColorPrimary` to the widget layout (`widget_layout.xml`) to support native Light/Dark mode transitions.
+- [x] 3. **iOS Widget Styling:** Update `StalviWidget.swift` to ensure `.containerBackground` is used for modern iOS 17+ compatibility, verifying `UIColor.systemBackground` handles theme switching smoothly.
+- [x] 4. **Trilingual Support Verification:** Check `lib/core/l10n/app_*.arb` files to guarantee `widgetIncomeTitle` and `widgetExpenseTitle` keys are correctly localized in English, Spanish, and Catalan.
+- [x] 5. **Testing, QA & CI:** Run `flutter test`, `flutter analyze --fatal-infos --fatal-warnings`, and compile the native changes successfully. Mark this phase as completed in `roadmap.md`.

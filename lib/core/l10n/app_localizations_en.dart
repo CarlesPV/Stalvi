@@ -1217,4 +1217,776 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get a11ySelectDate => 'Select date';
+
+  @override
+  String get a11yPinBackspace => 'Backspace';
+
+  @override
+  String get a11yPinBiometric => 'Biometric authentication';
+
+  @override
+  String a11yPinDigit(Object digit) {
+    return 'Digit $digit';
+  }
+
+  @override
+  String a11yPinProgress(Object count, Object total) {
+    return '$count of $total digits entered';
+  }
+
+  @override
+  String get a11yEditCategory => 'Edit category';
+
+  @override
+  String get a11yDeleteCategory => 'Delete category';
+
+  @override
+  String get a11yStatisticsSummary => 'Statistics summary';
+
+  @override
+  String get a11yBudgetProgress => 'Budget progress';
+
+  @override
+  String get a11yChartTitle => 'Statistics chart.';
+
+  @override
+  String a11yChartTopCategory(String category, String percent) {
+    return 'Top category: $category with $percent%.';
+  }
+
+  @override
+  String a11yChartSecondCategory(String category, String percent) {
+    return 'Second: $category with $percent%.';
+  }
+
+  @override
+  String get a11yChartOtherCategories => 'Other categories make up the rest.';
+
+  @override
+  String get a11yChartNoData => 'No data available.';
+
+  @override
+  String get a11yDiscreetModeHidden => 'Balance hidden.';
+
+  @override
+  String get a11yDiscreetModeHint =>
+      'Double tap the visibility button to show.';
+
+  @override
+  String get a11yDiscreetModeToggleHide => 'Hide balances (discreet mode)';
+
+  @override
+  String get a11yDiscreetModeToggleShow => 'Show balances';
+
+  @override
+  String a11yRestoreItem(String item) {
+    return 'Restore $item';
+  }
+
+  @override
+  String a11yDeletePermanently(String item) {
+    return 'Delete $item permanently';
+  }
+
+  @override
+  String get a11yAcceptTerms => 'Accept terms and privacy policy';
+
+  @override
+  String a11yChartSummary(String details) {
+    return 'Statistics chart. $details';
+  }
+
+  @override
+  String get a11yColorBlue => 'Blue';
+
+  @override
+  String get a11yColorGreen => 'Green';
+
+  @override
+  String get a11yColorAmber => 'Amber';
+
+  @override
+  String get a11yColorPink => 'Pink';
+
+  @override
+  String get a11yColorPurple => 'Purple';
+
+  @override
+  String get a11yColorDeepOrange => 'Deep orange';
+
+  @override
+  String get a11yColorCyan => 'Cyan';
+
+  @override
+  String get a11yColorTeal => 'Teal';
+
+  @override
+  String get a11yColorLightGreen => 'Light green';
+
+  @override
+  String get a11yColorLime => 'Lime';
+
+  @override
+  String get a11yColorOrange => 'Orange';
+
+  @override
+  String get a11yColorRed => 'Red';
+
+  @override
+  String get a11yColorBrown => 'Brown';
+
+  @override
+  String get a11yColorBlueGrey => 'Blue grey';
+
+  @override
+  String get a11yColorDeepPurple => 'Deep purple';
+
+  @override
+  String get a11yColorIndigo => 'Indigo';
+
+  @override
+  String get a11yColorLightPink => 'Light pink';
+
+  @override
+  String get a11yColorMint => 'Mint';
+
+  @override
+  String get a11yColorLightLime => 'Light lime';
+
+  @override
+  String get a11yColorCoral => 'Coral';
+
+  @override
+  String get a11yColorLightBrown => 'Light brown';
+
+  @override
+  String get a11yColorGrey => 'Grey';
+
+  @override
+  String get a11yColorYellow => 'Yellow';
+
+  @override
+  String get a11yColorLightBlue => 'Light blue';
+
+  @override
+  String get a11yColorBlack => 'Black';
+
+  @override
+  String get a11yColorWhite => 'White';
+
+  @override
+  String get a11yIconAccountBalance => 'Bank';
+
+  @override
+  String get a11yIconAccountBalanceWallet => 'Wallet';
+
+  @override
+  String get a11yIconAttachMoney => 'Money';
+
+  @override
+  String get a11yIconMoneyOff => 'No money';
+
+  @override
+  String get a11yIconCreditCard => 'Credit card';
+
+  @override
+  String get a11yIconSavings => 'Savings';
+
+  @override
+  String get a11yIconReceiptLong => 'Detailed receipt';
+
+  @override
+  String get a11yIconReceipt => 'Receipt';
+
+  @override
+  String get a11yIconRequestQuote => 'Invoice';
+
+  @override
+  String get a11yIconPaid => 'Paid';
+
+  @override
+  String get a11yIconPriceCheck => 'Price check';
+
+  @override
+  String get a11yIconPriceChange => 'Price change';
+
+  @override
+  String get a11yIconCurrencyExchange => 'Currency exchange';
+
+  @override
+  String get a11yIconMonetizationOn => 'Monetization';
+
+  @override
+  String get a11yIconTrendingUp => 'Trending up';
+
+  @override
+  String get a11yIconTrendingDown => 'Trending down';
+
+  @override
+  String get a11yIconShowChart => 'Chart';
+
+  @override
+  String get a11yIconReplay => 'Recurring';
+
+  @override
+  String get a11yIconShoppingCart => 'Shopping cart';
+
+  @override
+  String get a11yIconShoppingBag => 'Shopping bag';
+
+  @override
+  String get a11yIconLocalMall => 'Shopping mall';
+
+  @override
+  String get a11yIconStorefront => 'Storefront';
+
+  @override
+  String get a11yIconRedeem => 'Gift reward';
+
+  @override
+  String get a11yIconLoyalty => 'Loyalty card';
+
+  @override
+  String get a11yIconSell => 'Sale';
+
+  @override
+  String get a11yIconDiscount => 'Discount';
+
+  @override
+  String get a11yIconRestaurant => 'Restaurant';
+
+  @override
+  String get a11yIconLunchDining => 'Lunch';
+
+  @override
+  String get a11yIconDinnerDining => 'Dinner';
+
+  @override
+  String get a11yIconLocalCafe => 'Cafe';
+
+  @override
+  String get a11yIconFastfood => 'Fast food';
+
+  @override
+  String get a11yIconBakeryDining => 'Bakery';
+
+  @override
+  String get a11yIconIcecream => 'Ice cream';
+
+  @override
+  String get a11yIconLocalGroceryStore => 'Supermarket';
+
+  @override
+  String get a11yIconHome => 'Home';
+
+  @override
+  String get a11yIconHouse => 'House';
+
+  @override
+  String get a11yIconApartment => 'Apartment';
+
+  @override
+  String get a11yIconCottage => 'Cottage';
+
+  @override
+  String get a11yIconBed => 'Bedroom';
+
+  @override
+  String get a11yIconBathroom => 'Bathroom';
+
+  @override
+  String get a11yIconKitchen => 'Kitchen';
+
+  @override
+  String get a11yIconChair => 'Furniture';
+
+  @override
+  String get a11yIconYard => 'Garden';
+
+  @override
+  String get a11yIconGarage => 'Garage';
+
+  @override
+  String get a11yIconElectricalServices => 'Electrician';
+
+  @override
+  String get a11yIconPlumbing => 'Plumbing';
+
+  @override
+  String get a11yIconDirectionsCar => 'Car';
+
+  @override
+  String get a11yIconLocalGasStation => 'Gas station';
+
+  @override
+  String get a11yIconCarRepair => 'Car repair';
+
+  @override
+  String get a11yIconDirectionsBus => 'Bus';
+
+  @override
+  String get a11yIconDirectionsSubway => 'Metro';
+
+  @override
+  String get a11yIconDirectionsBike => 'Bicycle';
+
+  @override
+  String get a11yIconTwoWheeler => 'Motorbike';
+
+  @override
+  String get a11yIconFlight => 'Flight';
+
+  @override
+  String get a11yIconHotel => 'Hotel';
+
+  @override
+  String get a11yIconLocalTaxi => 'Taxi';
+
+  @override
+  String get a11yIconTrain => 'Train';
+
+  @override
+  String get a11yIconDirectionsBoat => 'Boat';
+
+  @override
+  String get a11yIconEvStation => 'Electric vehicle charger';
+
+  @override
+  String get a11yIconLocalParking => 'Parking';
+
+  @override
+  String get a11yIconToll => 'Toll';
+
+  @override
+  String get a11yIconLuggage => 'Luggage';
+
+  @override
+  String get a11yIconLocalHospital => 'Hospital';
+
+  @override
+  String get a11yIconMedicalServices => 'Medical services';
+
+  @override
+  String get a11yIconMedication => 'Medication';
+
+  @override
+  String get a11yIconHealing => 'First aid';
+
+  @override
+  String get a11yIconFitnessCenter => 'Gym';
+
+  @override
+  String get a11yIconSpa => 'Spa';
+
+  @override
+  String get a11yIconSelfImprovement => 'Self improvement';
+
+  @override
+  String get a11yIconPsychology => 'Psychology';
+
+  @override
+  String get a11yIconLocalPharmacy => 'Pharmacy';
+
+  @override
+  String get a11yIconVaccines => 'Vaccine';
+
+  @override
+  String get a11yIconHealthAndSafety => 'Health and safety';
+
+  @override
+  String get a11yIconAccessibilityNew => 'Accessibility';
+
+  @override
+  String get a11yIconSchool => 'School';
+
+  @override
+  String get a11yIconMenuBook => 'Book';
+
+  @override
+  String get a11yIconAutoStories => 'Reading';
+
+  @override
+  String get a11yIconScience => 'Science';
+
+  @override
+  String get a11yIconCalculate => 'Accounting';
+
+  @override
+  String get a11yIconLaptop => 'Laptop';
+
+  @override
+  String get a11yIconWork => 'Work';
+
+  @override
+  String get a11yIconBusinessCenter => 'Business';
+
+  @override
+  String get a11yIconCorporateFare => 'Company';
+
+  @override
+  String get a11yIconBadge => 'Employment badge';
+
+  @override
+  String get a11yIconEngineering => 'Engineering';
+
+  @override
+  String get a11yIconComputer => 'Computer';
+
+  @override
+  String get a11yIconMovie => 'Cinema';
+
+  @override
+  String get a11yIconTv => 'Television';
+
+  @override
+  String get a11yIconMusicNote => 'Music';
+
+  @override
+  String get a11yIconHeadphones => 'Audio';
+
+  @override
+  String get a11yIconSportsEsports => 'Video games';
+
+  @override
+  String get a11yIconSportsSoccer => 'Football';
+
+  @override
+  String get a11yIconSportsBasketball => 'Basketball';
+
+  @override
+  String get a11yIconSportsTennis => 'Tennis';
+
+  @override
+  String get a11yIconHiking => 'Hiking';
+
+  @override
+  String get a11yIconTerrain => 'Mountain';
+
+  @override
+  String get a11yIconBeachAccess => 'Beach';
+
+  @override
+  String get a11yIconPark => 'Park';
+
+  @override
+  String get a11yIconTheaterComedy => 'Theatre';
+
+  @override
+  String get a11yIconCasino => 'Casino';
+
+  @override
+  String get a11yIconSportsBar => 'Sports bar';
+
+  @override
+  String get a11yIconAttractions => 'Amusement park';
+
+  @override
+  String get a11yIconBolt => 'Electricity';
+
+  @override
+  String get a11yIconWaterDrop => 'Water';
+
+  @override
+  String get a11yIconWifi => 'Internet wifi';
+
+  @override
+  String get a11yIconPhone => 'Phone';
+
+  @override
+  String get a11yIconSmartphone => 'Mobile phone';
+
+  @override
+  String get a11yIconTvOutlined => 'Streaming subscription';
+
+  @override
+  String get a11yIconRecycling => 'Recycling';
+
+  @override
+  String get a11yIconLocalLaundryService => 'Laundry';
+
+  @override
+  String get a11yIconCleaningServices => 'Cleaning';
+
+  @override
+  String get a11yIconHandyman => 'Handyman';
+
+  @override
+  String get a11yIconBuild => 'Tools';
+
+  @override
+  String get a11yIconConstruction => 'Construction';
+
+  @override
+  String get a11yIconChildCare => 'Childcare';
+
+  @override
+  String get a11yIconPets => 'Pets';
+
+  @override
+  String get a11yIconStyle => 'Fashion';
+
+  @override
+  String get a11yIconFace => 'Beauty';
+
+  @override
+  String get a11yIconVolunteerActivism => 'Donation';
+
+  @override
+  String get a11yIconChurch => 'Place of worship';
+
+  @override
+  String get a11yIconCelebration => 'Party';
+
+  @override
+  String get a11yIconCake => 'Birthday cake';
+
+  @override
+  String get a11yIconCardGiftcard => 'Gift card';
+
+  @override
+  String get a11yIconCategory => 'General category';
+
+  @override
+  String get a11yIconMoreHoriz => 'Other';
+
+  @override
+  String get a11yIconStar => 'Favorite';
+
+  @override
+  String get a11yIconFlag => 'Flag';
+
+  @override
+  String get a11yIconBookmark => 'Bookmark';
+
+  @override
+  String get a11yIconLabel => 'Label';
+
+  @override
+  String get a11yIconTag => 'Tag';
+
+  @override
+  String get a11yIconFlightTakeoff => 'Departure flight';
+
+  @override
+  String get a11yIconFlightLand => 'Arrival flight';
+
+  @override
+  String get a11yIconCommute => 'Commute';
+
+  @override
+  String get a11yIconSubway => 'Subway train';
+
+  @override
+  String get a11yIconElectricCar => 'Electric car';
+
+  @override
+  String get a11yIconMotorcycle => 'Motorcycle';
+
+  @override
+  String get a11yIconMap => 'Map';
+
+  @override
+  String get a11yIconExplore => 'Exploration';
+
+  @override
+  String get a11yIconNavigation => 'Navigation';
+
+  @override
+  String get a11yIconCardMembership => 'Membership card';
+
+  @override
+  String get a11yIconStore => 'Department store';
+
+  @override
+  String get a11yIconLocalOffer => 'Special offer';
+
+  @override
+  String get a11yIconPower => 'Power plug';
+
+  @override
+  String get a11yIconElectricBolt => 'Energy';
+
+  @override
+  String get a11yIconRouter => 'Router';
+
+  @override
+  String get a11yIconDevices => 'Electronic devices';
+
+  @override
+  String get a11yIconCloud => 'Cloud storage';
+
+  @override
+  String get a11yIconSolarPower => 'Solar power';
+
+  @override
+  String get a11yIconLocalBar => 'Bar';
+
+  @override
+  String get a11yIconLiquor => 'Liquor';
+
+  @override
+  String get a11yIconRamenDining => 'Noodles';
+
+  @override
+  String get a11yIconTakeoutDining => 'Takeaway';
+
+  @override
+  String get a11yIconWineBar => 'Wine bar';
+
+  @override
+  String get a11yIconCoffee => 'Coffee';
+
+  @override
+  String get a11yIconSoupKitchen => 'Soup kitchen';
+
+  @override
+  String get a11yIconCameraAlt => 'Photography';
+
+  @override
+  String get a11yIconPalette => 'Art';
+
+  @override
+  String get a11yIconStadium => 'Stadium';
+
+  @override
+  String get a11yIconMusicVideo => 'Music video';
+
+  @override
+  String get a11yIconSportsMotorsports => 'Motorsports';
+
+  @override
+  String get a11yIconSportsGolf => 'Golf';
+
+  @override
+  String get a11yIconSportsBaseball => 'Baseball';
+
+  @override
+  String get a11yIconSportsFootball => 'American football';
+
+  @override
+  String get a11yIconPool => 'Swimming pool';
+
+  @override
+  String get a11yIconFamilyRestroom => 'Family care';
+
+  @override
+  String get a11yIconContentCut => 'Hairdresser';
+
+  @override
+  String get a11yIconDryCleaning => 'Dry cleaning';
+
+  @override
+  String get a11yIconSecurity => 'Security';
+
+  @override
+  String get a11yIconShield => 'Insurance shield';
+
+  @override
+  String get a11yIconWorkspacePremium => 'Premium subscription';
+
+  @override
+  String get a11yIconPestControl => 'Pest control';
+
+  @override
+  String get a11yIconRoofing => 'Roofing repair';
+
+  @override
+  String get a11yIconDeck => 'Terrace';
+
+  @override
+  String get a11yIconSchoolOutlined => 'Higher education';
+
+  @override
+  String get a11yIconEvent => 'Calendar event';
+
+  @override
+  String get a11yIconAlarm => 'Alarm';
+
+  @override
+  String get a11yIconWatch => 'Watch';
+
+  @override
+  String get a11yIconInterests => 'Hobbies';
+
+  @override
+  String get a11yIconNewspaper => 'Newspaper press';
+
+  @override
+  String get a11yIconPrint => 'Printing';
+
+  @override
+  String a11yEditItem(String name) {
+    return 'Edit $name';
+  }
+
+  @override
+  String a11yDeleteItem(String name) {
+    return 'Delete $name';
+  }
+
+  @override
+  String a11yEditName(String name) {
+    return 'Edit $name';
+  }
+
+  @override
+  String a11yDeleteName(String name) {
+    return 'Delete $name';
+  }
+
+  @override
+  String get a11ySelectYear => 'Select Year';
+
+  @override
+  String get a11ySelectMonth => 'Select Month';
+
+  @override
+  String get selectYear => 'Select Year';
+
+  @override
+  String get selectMonth => 'Select Month';
+
+  @override
+  String a11yProgressBar(String percentage) {
+    return 'Progress: $percentage percent';
+  }
+
+  @override
+  String a11yProgress(String percentage) {
+    return 'Progress: $percentage percent';
+  }
+
+  @override
+  String a11yProgressPercentage(String percentage) {
+    return 'Progress: $percentage percent';
+  }
+
+  @override
+  String get a11yShowPassword => 'Show password';
+
+  @override
+  String get a11yHidePassword => 'Hide password';
+
+  @override
+  String get a11ySelectedHint => 'Currently selected';
+
+  @override
+  String get a11yTapToSelect => 'Double tap to select';
+
+  @override
+  String get addCategory => 'Add category';
+
+  @override
+  String get addTag => 'Add tag';
+
+  @override
+  String a11yPinLockoutRemaining(int seconds) {
+    return '$seconds seconds remaining until unlock';
+  }
+
+  @override
+  String get a11yRecycleBinUrgent => 'Urgent: ';
+
+  @override
+  String get a11yLoading => 'Loading';
 }

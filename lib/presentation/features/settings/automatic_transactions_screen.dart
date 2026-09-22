@@ -34,7 +34,11 @@ class AutomaticTransactionsScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(title: Text(l10n.settingsAutomaticTransactions)),
       body: transactionsAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => Center(
+          child: CircularProgressIndicator(
+            semanticsLabel: l10n.a11yLoading,
+          ),
+        ),
         error: (e, st) => Center(child: Text('${l10n.unexpectedError}: $e')),
         data: (transactions) {
           if (transactions.isEmpty) {
@@ -149,6 +153,7 @@ class AutomaticTransactionsScreen extends ConsumerWidget {
                               padding: EdgeInsets.zero,
                               constraints: const BoxConstraints(),
                               icon: const Icon(Icons.delete_outline, size: 20),
+                              tooltip: l10n.a11yDeleteItem(txn.name),
                               color: colorScheme.error,
                               onPressed: () async {
                                 final confirm = await showDialog<bool>(

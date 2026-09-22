@@ -1,8 +1,9 @@
 // ignore_for_file: non_const_argument_for_const_parameter
 import 'package:flutter/material.dart';
+import 'package:stalvi/core/l10n/app_localizations.dart';
 import 'package:stalvi/core/utils/icon_helper.dart';
 
-/// A grid picker that displays 128 unique Material Icons relevant to finances,
+/// A grid picker that displays 180 unique Material Icons relevant to finances,
 /// lifestyle, housing, transport, health, and more.
 ///
 /// The [selectedIcon] is the string key of the currently selected icon.
@@ -18,7 +19,7 @@ class CategoryIconPicker extends StatelessWidget {
   });
 
   // ---------------------------------------------------------------------------
-  // Icon catalogue — 128 unique, non-repeating entries
+  // Icon catalogue — 180 unique, non-repeating entries
   // ---------------------------------------------------------------------------
   static const List<MapEntry<String, IconData>> icons = [
     // ── Finance & Banking ────────────────────────────────────────────────────
@@ -257,31 +258,38 @@ class CategoryIconPicker extends StatelessWidget {
           final entry = icons[index];
           final isSelected = entry.key == selectedIcon;
 
-          return Tooltip(
-            message: entry.key.replaceAll('_', ' '),
-            child: InkWell(
-              key: ValueKey('iconPicker_${entry.key}'),
-              onTap: () => onIconSelected(entry.key),
-              borderRadius: BorderRadius.circular(8),
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 150),
-                decoration: BoxDecoration(
-                  color: isSelected
-                      ? colorScheme.primary.withValues(alpha: 0.18)
-                      : Colors.transparent,
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(
-                    color:
-                        isSelected ? colorScheme.primary : Colors.transparent,
-                    width: 1.5,
+          final localizedName = localizedIconName(context, entry.key);
+
+          return Semantics(
+            button: true,
+            selected: isSelected,
+            label: localizedName,
+            child: Tooltip(
+              message: localizedName,
+              child: InkWell(
+                key: ValueKey('iconPicker_${entry.key}'),
+                onTap: () => onIconSelected(entry.key),
+                borderRadius: BorderRadius.circular(8),
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 150),
+                  decoration: BoxDecoration(
+                    color: isSelected
+                        ? colorScheme.primary.withValues(alpha: 0.18)
+                        : Colors.transparent,
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color:
+                          isSelected ? colorScheme.primary : Colors.transparent,
+                      width: 1.5,
+                    ),
                   ),
-                ),
-                child: Icon(
-                  entry.value,
-                  size: 22,
-                  color: isSelected
-                      ? colorScheme.primary
-                      : colorScheme.onSurfaceVariant,
+                  child: Icon(
+                    entry.value,
+                    size: 22,
+                    color: isSelected
+                        ? colorScheme.primary
+                        : colorScheme.onSurfaceVariant,
+                  ),
                 ),
               ),
             ),
@@ -289,6 +297,411 @@ class CategoryIconPicker extends StatelessWidget {
         },
       ),
     );
+  }
+
+  /// Returns the localized meaning of the category icon key for screen readers.
+  static String localizedIconName(BuildContext context, String iconKey) {
+    final l10n = AppLocalizations.of(context);
+    if (l10n == null) return iconKey.replaceAll('_', ' ');
+
+    switch (iconKey) {
+      // ── Finance & Banking
+      case 'account_balance':
+        return l10n.a11yIconAccountBalance;
+      case 'account_balance_wallet':
+        return l10n.a11yIconAccountBalanceWallet;
+      case 'attach_money':
+        return l10n.a11yIconAttachMoney;
+      case 'money_off':
+        return l10n.a11yIconMoneyOff;
+      case 'credit_card':
+        return l10n.a11yIconCreditCard;
+      case 'savings':
+        return l10n.a11yIconSavings;
+      case 'receipt_long':
+        return l10n.a11yIconReceiptLong;
+      case 'receipt':
+        return l10n.a11yIconReceipt;
+      case 'request_quote':
+        return l10n.a11yIconRequestQuote;
+      case 'paid':
+        return l10n.a11yIconPaid;
+      case 'price_check':
+        return l10n.a11yIconPriceCheck;
+      case 'price_change':
+        return l10n.a11yIconPriceChange;
+      case 'currency_exchange':
+        return l10n.a11yIconCurrencyExchange;
+      case 'monetization_on':
+        return l10n.a11yIconMonetizationOn;
+      case 'trending_up':
+        return l10n.a11yIconTrendingUp;
+      case 'trending_down':
+        return l10n.a11yIconTrendingDown;
+      case 'show_chart':
+        return l10n.a11yIconShowChart;
+      case 'replay':
+        return l10n.a11yIconReplay;
+
+      // ── Shopping & Retail
+      case 'shopping_cart':
+        return l10n.a11yIconShoppingCart;
+      case 'shopping_bag':
+        return l10n.a11yIconShoppingBag;
+      case 'local_mall':
+        return l10n.a11yIconLocalMall;
+      case 'storefront':
+        return l10n.a11yIconStorefront;
+      case 'redeem':
+        return l10n.a11yIconRedeem;
+      case 'loyalty':
+        return l10n.a11yIconLoyalty;
+      case 'sell':
+        return l10n.a11yIconSell;
+      case 'discount':
+        return l10n.a11yIconDiscount;
+
+      // ── Food & Dining
+      case 'restaurant':
+        return l10n.a11yIconRestaurant;
+      case 'lunch_dining':
+        return l10n.a11yIconLunchDining;
+      case 'dinner_dining':
+        return l10n.a11yIconDinnerDining;
+      case 'local_cafe':
+        return l10n.a11yIconLocalCafe;
+      case 'fastfood':
+        return l10n.a11yIconFastfood;
+      case 'bakery_dining':
+        return l10n.a11yIconBakeryDining;
+      case 'icecream':
+        return l10n.a11yIconIcecream;
+      case 'local_grocery_store':
+        return l10n.a11yIconLocalGroceryStore;
+
+      // ── Housing & Home
+      case 'home':
+        return l10n.a11yIconHome;
+      case 'house':
+        return l10n.a11yIconHouse;
+      case 'apartment':
+        return l10n.a11yIconApartment;
+      case 'cottage':
+        return l10n.a11yIconCottage;
+      case 'bed':
+        return l10n.a11yIconBed;
+      case 'bathroom':
+        return l10n.a11yIconBathroom;
+      case 'kitchen':
+        return l10n.a11yIconKitchen;
+      case 'chair':
+        return l10n.a11yIconChair;
+      case 'yard':
+        return l10n.a11yIconYard;
+      case 'garage':
+        return l10n.a11yIconGarage;
+      case 'electrical_services':
+        return l10n.a11yIconElectricalServices;
+      case 'plumbing':
+        return l10n.a11yIconPlumbing;
+
+      // ── Transport & Travel
+      case 'directions_car':
+        return l10n.a11yIconDirectionsCar;
+      case 'local_gas_station':
+        return l10n.a11yIconLocalGasStation;
+      case 'car_repair':
+        return l10n.a11yIconCarRepair;
+      case 'directions_bus':
+        return l10n.a11yIconDirectionsBus;
+      case 'directions_subway':
+        return l10n.a11yIconDirectionsSubway;
+      case 'directions_bike':
+        return l10n.a11yIconDirectionsBike;
+      case 'two_wheeler':
+        return l10n.a11yIconTwoWheeler;
+      case 'flight':
+        return l10n.a11yIconFlight;
+      case 'hotel':
+        return l10n.a11yIconHotel;
+      case 'local_taxi':
+        return l10n.a11yIconLocalTaxi;
+      case 'train':
+        return l10n.a11yIconTrain;
+      case 'directions_boat':
+        return l10n.a11yIconDirectionsBoat;
+      case 'ev_station':
+        return l10n.a11yIconEvStation;
+      case 'local_parking':
+        return l10n.a11yIconLocalParking;
+      case 'toll':
+        return l10n.a11yIconToll;
+      case 'luggage':
+        return l10n.a11yIconLuggage;
+
+      // ── Health & Wellness
+      case 'local_hospital':
+        return l10n.a11yIconLocalHospital;
+      case 'medical_services':
+        return l10n.a11yIconMedicalServices;
+      case 'medication':
+        return l10n.a11yIconMedication;
+      case 'healing':
+        return l10n.a11yIconHealing;
+      case 'fitness_center':
+        return l10n.a11yIconFitnessCenter;
+      case 'spa':
+        return l10n.a11yIconSpa;
+      case 'self_improvement':
+        return l10n.a11yIconSelfImprovement;
+      case 'psychology':
+        return l10n.a11yIconPsychology;
+      case 'local_pharmacy':
+        return l10n.a11yIconLocalPharmacy;
+      case 'vaccines':
+        return l10n.a11yIconVaccines;
+      case 'health_and_safety':
+        return l10n.a11yIconHealthAndSafety;
+      case 'accessibility_new':
+        return l10n.a11yIconAccessibilityNew;
+
+      // ── Education & Work
+      case 'school':
+        return l10n.a11yIconSchool;
+      case 'menu_book':
+        return l10n.a11yIconMenuBook;
+      case 'auto_stories':
+        return l10n.a11yIconAutoStories;
+      case 'science':
+        return l10n.a11yIconScience;
+      case 'calculate':
+        return l10n.a11yIconCalculate;
+      case 'laptop':
+        return l10n.a11yIconLaptop;
+      case 'work':
+        return l10n.a11yIconWork;
+      case 'business_center':
+        return l10n.a11yIconBusinessCenter;
+      case 'corporate_fare':
+        return l10n.a11yIconCorporateFare;
+      case 'badge':
+        return l10n.a11yIconBadge;
+      case 'engineering':
+        return l10n.a11yIconEngineering;
+      case 'computer':
+        return l10n.a11yIconComputer;
+
+      // ── Entertainment & Leisure
+      case 'movie':
+        return l10n.a11yIconMovie;
+      case 'tv':
+        return l10n.a11yIconTv;
+      case 'music_note':
+        return l10n.a11yIconMusicNote;
+      case 'headphones':
+        return l10n.a11yIconHeadphones;
+      case 'sports_esports':
+        return l10n.a11yIconSportsEsports;
+      case 'sports_soccer':
+        return l10n.a11yIconSportsSoccer;
+      case 'sports_basketball':
+        return l10n.a11yIconSportsBasketball;
+      case 'sports_tennis':
+        return l10n.a11yIconSportsTennis;
+      case 'hiking':
+        return l10n.a11yIconHiking;
+      case 'terrain':
+        return l10n.a11yIconTerrain;
+      case 'beach_access':
+        return l10n.a11yIconBeachAccess;
+      case 'park':
+        return l10n.a11yIconPark;
+      case 'theater_comedy':
+        return l10n.a11yIconTheaterComedy;
+      case 'casino':
+        return l10n.a11yIconCasino;
+      case 'sports_bar':
+        return l10n.a11yIconSportsBar;
+      case 'attractions':
+        return l10n.a11yIconAttractions;
+
+      // ── Utilities & Bills
+      case 'bolt':
+        return l10n.a11yIconBolt;
+      case 'water_drop':
+        return l10n.a11yIconWaterDrop;
+      case 'wifi':
+        return l10n.a11yIconWifi;
+      case 'phone':
+        return l10n.a11yIconPhone;
+      case 'smartphone':
+        return l10n.a11yIconSmartphone;
+      case 'tv_outlined':
+        return l10n.a11yIconTvOutlined;
+      case 'recycling':
+        return l10n.a11yIconRecycling;
+      case 'local_laundry_service':
+        return l10n.a11yIconLocalLaundryService;
+      case 'cleaning_services':
+        return l10n.a11yIconCleaningServices;
+      case 'handyman':
+        return l10n.a11yIconHandyman;
+      case 'build':
+        return l10n.a11yIconBuild;
+      case 'construction':
+        return l10n.a11yIconConstruction;
+
+      // ── Personal & Misc
+      case 'child_care':
+        return l10n.a11yIconChildCare;
+      case 'pets':
+        return l10n.a11yIconPets;
+      case 'style':
+        return l10n.a11yIconStyle;
+      case 'face':
+        return l10n.a11yIconFace;
+      case 'volunteer_activism':
+        return l10n.a11yIconVolunteerActivism;
+      case 'church':
+        return l10n.a11yIconChurch;
+      case 'celebration':
+        return l10n.a11yIconCelebration;
+      case 'cake':
+        return l10n.a11yIconCake;
+      case 'card_giftcard':
+        return l10n.a11yIconCardGiftcard;
+      case 'category':
+        return l10n.a11yIconCategory;
+      case 'more_horiz':
+        return l10n.a11yIconMoreHoriz;
+      case 'star':
+        return l10n.a11yIconStar;
+      case 'flag':
+        return l10n.a11yIconFlag;
+      case 'bookmark':
+        return l10n.a11yIconBookmark;
+      case 'label':
+        return l10n.a11yIconLabel;
+      case 'tag':
+        return l10n.a11yIconTag;
+
+      // ── Travel, Aviation & Navigation
+      case 'flight_takeoff':
+        return l10n.a11yIconFlightTakeoff;
+      case 'flight_land':
+        return l10n.a11yIconFlightLand;
+      case 'commute':
+        return l10n.a11yIconCommute;
+      case 'subway':
+        return l10n.a11yIconSubway;
+      case 'electric_car':
+        return l10n.a11yIconElectricCar;
+      case 'motorcycle':
+        return l10n.a11yIconMotorcycle;
+      case 'map':
+        return l10n.a11yIconMap;
+      case 'explore':
+        return l10n.a11yIconExplore;
+      case 'navigation':
+        return l10n.a11yIconNavigation;
+
+      // ── Commerce, Retail & Deals
+      case 'card_membership':
+        return l10n.a11yIconCardMembership;
+      case 'store':
+        return l10n.a11yIconStore;
+      case 'local_offer':
+        return l10n.a11yIconLocalOffer;
+
+      // ── Technology, Power & Utilities
+      case 'power':
+        return l10n.a11yIconPower;
+      case 'electric_bolt':
+        return l10n.a11yIconElectricBolt;
+      case 'router':
+        return l10n.a11yIconRouter;
+      case 'devices':
+        return l10n.a11yIconDevices;
+      case 'cloud':
+        return l10n.a11yIconCloud;
+      case 'solar_power':
+        return l10n.a11yIconSolarPower;
+
+      // ── Dining, Beverages & Gastronomy
+      case 'local_bar':
+        return l10n.a11yIconLocalBar;
+      case 'liquor':
+        return l10n.a11yIconLiquor;
+      case 'ramen_dining':
+        return l10n.a11yIconRamenDining;
+      case 'takeout_dining':
+        return l10n.a11yIconTakeoutDining;
+      case 'wine_bar':
+        return l10n.a11yIconWineBar;
+      case 'coffee':
+        return l10n.a11yIconCoffee;
+      case 'soup_kitchen':
+        return l10n.a11yIconSoupKitchen;
+
+      // ── Entertainment, Arts & Sports
+      case 'camera_alt':
+        return l10n.a11yIconCameraAlt;
+      case 'palette':
+        return l10n.a11yIconPalette;
+      case 'stadium':
+        return l10n.a11yIconStadium;
+      case 'music_video':
+        return l10n.a11yIconMusicVideo;
+      case 'sports_motorsports':
+        return l10n.a11yIconSportsMotorsports;
+      case 'sports_golf':
+        return l10n.a11yIconSportsGolf;
+      case 'sports_baseball':
+        return l10n.a11yIconSportsBaseball;
+      case 'sports_football':
+        return l10n.a11yIconSportsFootball;
+      case 'pool':
+        return l10n.a11yIconPool;
+
+      // ── Services, Security & Maintenance
+      case 'family_restroom':
+        return l10n.a11yIconFamilyRestroom;
+      case 'content_cut':
+        return l10n.a11yIconContentCut;
+      case 'dry_cleaning':
+        return l10n.a11yIconDryCleaning;
+      case 'security':
+        return l10n.a11yIconSecurity;
+      case 'shield':
+        return l10n.a11yIconShield;
+      case 'workspace_premium':
+        return l10n.a11yIconWorkspacePremium;
+      case 'pest_control':
+        return l10n.a11yIconPestControl;
+      case 'roofing':
+        return l10n.a11yIconRoofing;
+      case 'deck':
+        return l10n.a11yIconDeck;
+
+      // ── Education, Time & General Life
+      case 'school_outlined':
+        return l10n.a11yIconSchoolOutlined;
+      case 'event':
+        return l10n.a11yIconEvent;
+      case 'alarm':
+        return l10n.a11yIconAlarm;
+      case 'watch':
+        return l10n.a11yIconWatch;
+      case 'interests':
+        return l10n.a11yIconInterests;
+      case 'newspaper':
+        return l10n.a11yIconNewspaper;
+      case 'print':
+        return l10n.a11yIconPrint;
+
+      default:
+        return iconKey.replaceAll('_', ' ');
+    }
   }
 
   /// Returns the [IconData] for a stored string key, falling back to
@@ -299,5 +712,105 @@ class CategoryIconPicker extends StatelessWidget {
     }
 
     return getIconData(key);
+  }
+
+  /// Returns the localized name of a color for screen readers.
+  static String localizedColorName(BuildContext context, String colorHexOrKey) {
+    final l10n = AppLocalizations.of(context);
+    if (l10n == null) return colorHexOrKey;
+
+    final key = colorHexOrKey.trim().toUpperCase().replaceAll('#', '');
+
+    switch (key) {
+      case '2196F3':
+      case 'BLUE':
+        return l10n.a11yColorBlue;
+      case '03A9F4':
+      case 'LIGHTBLUE':
+      case 'LIGHT_BLUE':
+        return l10n.a11yColorLightBlue;
+      case '4CAF50':
+      case 'GREEN':
+        return l10n.a11yColorGreen;
+      case '8BC34A':
+      case 'LIGHTGREEN':
+      case 'LIGHT_GREEN':
+        return l10n.a11yColorLightGreen;
+      case 'CDDC39':
+      case 'LIME':
+        return l10n.a11yColorLime;
+      case 'D4E157':
+      case 'LIGHTLIME':
+      case 'LIGHT_LIME':
+        return l10n.a11yColorLightLime;
+      case 'FFEB3B':
+      case 'YELLOW':
+        return l10n.a11yColorYellow;
+      case 'FFC107':
+      case 'AMBER':
+        return l10n.a11yColorAmber;
+      case 'FF9800':
+      case 'ORANGE':
+        return l10n.a11yColorOrange;
+      case 'FF5722':
+      case 'DEEPORANGE':
+      case 'DEEP_ORANGE':
+        return l10n.a11yColorDeepOrange;
+      case 'FF7043':
+      case 'CORAL':
+        return l10n.a11yColorCoral;
+      case 'F44336':
+      case 'RED':
+        return l10n.a11yColorRed;
+      case 'E91E63':
+      case 'PINK':
+        return l10n.a11yColorPink;
+      case 'EC407A':
+      case 'LIGHTPINK':
+      case 'LIGHT_PINK':
+        return l10n.a11yColorLightPink;
+      case '9C27B0':
+      case 'PURPLE':
+        return l10n.a11yColorPurple;
+      case '673AB7':
+      case 'DEEPPURPLE':
+      case 'DEEP_PURPLE':
+        return l10n.a11yColorDeepPurple;
+      case '3F51B5':
+      case 'INDIGO':
+        return l10n.a11yColorIndigo;
+      case '00BCD4':
+      case 'CYAN':
+        return l10n.a11yColorCyan;
+      case '009688':
+      case 'TEAL':
+        return l10n.a11yColorTeal;
+      case '26A69A':
+      case 'MINT':
+        return l10n.a11yColorMint;
+      case '795548':
+      case 'BROWN':
+        return l10n.a11yColorBrown;
+      case '8D6E63':
+      case 'LIGHTBROWN':
+      case 'LIGHT_BROWN':
+        return l10n.a11yColorLightBrown;
+      case '9E9E9E':
+      case 'GREY':
+      case 'GRAY':
+        return l10n.a11yColorGrey;
+      case '607D8B':
+      case 'BLUEGREY':
+      case 'BLUE_GREY':
+        return l10n.a11yColorBlueGrey;
+      case '000000':
+      case 'BLACK':
+        return l10n.a11yColorBlack;
+      case 'FFFFFF':
+      case 'WHITE':
+        return l10n.a11yColorWhite;
+      default:
+        return colorHexOrKey;
+    }
   }
 }

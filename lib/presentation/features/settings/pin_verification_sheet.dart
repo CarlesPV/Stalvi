@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:stalvi/core/l10n/app_localizations.dart';
 import 'profile_settings_controller.dart';
@@ -38,6 +39,7 @@ class _PinVerificationSheetState extends ConsumerState<PinVerificationSheet> {
   }
 
   Future<void> _onDigitTapped(String digit) async {
+    HapticFeedback.lightImpact();
     if (_isVerifying) return;
     if (_enteredPin.length >= _requiredPinLength) return;
 
@@ -103,15 +105,20 @@ class _PinVerificationSheetState extends ConsumerState<PinVerificationSheet> {
       aspectRatio: 1.5,
       child: Container(
         margin: const EdgeInsets.all(6),
-        child: InkWell(
-          onTap: () => _onDigitTapped(digit),
-          borderRadius: BorderRadius.circular(16),
-          child: Center(
-            child: Text(
-              digit,
-              style: theme.textTheme.headlineMedium?.copyWith(
-                fontWeight: FontWeight.w600,
-                color: colorScheme.onSurface,
+        constraints: const BoxConstraints(minHeight: 48, minWidth: 48),
+        child: Semantics(
+          button: true,
+          label: AppLocalizations.of(context)!.a11yPinDigit(digit),
+          child: InkWell(
+            onTap: () => _onDigitTapped(digit),
+            borderRadius: BorderRadius.circular(16),
+            child: Center(
+              child: Text(
+                digit,
+                style: theme.textTheme.headlineMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: colorScheme.onSurface,
+                ),
               ),
             ),
           ),
@@ -154,19 +161,27 @@ class _PinVerificationSheetState extends ConsumerState<PinVerificationSheet> {
           mainAxisSize: MainAxisSize.min,
           children: [
             // Handle bar
-            Container(
-              width: 40,
-              height: 4,
-              decoration: BoxDecoration(
-                color: colorScheme.outlineVariant,
-                borderRadius: BorderRadius.circular(2),
+            ExcludeSemantics(
+              child: Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: colorScheme.outlineVariant,
+                  borderRadius: BorderRadius.circular(2),
+                ),
               ),
             ),
             const SizedBox(height: 20),
-            Text(
-              l10n.authVerifyMessage,
-              style: theme.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w700,
+            Focus(
+              autofocus: true,
+              child: Semantics(
+                header: true,
+                child: Text(
+                  l10n.authVerifyMessage,
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
               ),
             ),
             const SizedBox(height: 20),
@@ -187,29 +202,42 @@ class _PinVerificationSheetState extends ConsumerState<PinVerificationSheet> {
               ),
             ] else ...[
               // PIN dots
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(
+              Semantics(
+                liveRegion: true,
+                label: l10n.a11yPinProgress(
+                  _enteredPin.length,
                   _requiredPinLength,
-                  (i) => _buildDot(i),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: List.generate(
+                    _requiredPinLength,
+                    (i) => _buildDot(i),
+                  ),
                 ),
               ),
               const SizedBox(height: 16),
               if (_errorText != null)
-                Text(
-                  _errorText!,
-                  maxLines: null,
-                  overflow: TextOverflow.visible,
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: colorScheme.error,
+                Semantics(
+                  liveRegion: true,
+                  child: Text(
+                    _errorText!,
+                    maxLines: null,
+                    overflow: TextOverflow.visible,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: colorScheme.error,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
-                  textAlign: TextAlign.center,
                 ),
               const SizedBox(height: 8),
               if (_isVerifying)
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 16),
-                  child: CircularProgressIndicator(strokeWidth: 2),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  child: CircularProgressIndicator(
+                    semanticsLabel: l10n.a11yLoading,
+                    strokeWidth: 2,
+                  ),
                 )
               else
                 Table(
@@ -259,29 +287,35 @@ class _PinVerificationSheetState extends ConsumerState<PinVerificationSheet> {
                           aspectRatio: 1.5,
                           child: Container(
                             margin: const EdgeInsets.all(6),
-                            child: IconButton(
-                              icon: Icon(
-                                Icons.backspace_outlined,
-                                size: 24,
-                                color: colorScheme.onSurfaceVariant,
-                              ),
-                              onPressed: () {
-                                if (_enteredPin.isNotEmpty) {
+                            child: Semantics(
+                              button: true,
+                              label: l10n.a11yPinBackspace,
+                              child: IconButton(
+                                icon: Icon(
+                                  Icons.backspace_outlined,
+                                  size: 24,
+                                  color: colorScheme.onSurfaceVariant,
+                                ),
+                                onPressed: () {
+                                  HapticFeedback.lightImpact();
+                                  if (_enteredPin.isNotEmpty) {
+                                    setState(() {
+                                      _enteredPin = _enteredPin.substring(
+                                        0,
+                                        _enteredPin.length - 1,
+                                      );
+                                      _errorText = null;
+                                    });
+                                  }
+                                },
+                                onLongPress: () {
+                                  HapticFeedback.lightImpact();
                                   setState(() {
-                                    _enteredPin = _enteredPin.substring(
-                                      0,
-                                      _enteredPin.length - 1,
-                                    );
+                                    _enteredPin = '';
                                     _errorText = null;
                                   });
-                                }
-                              },
-                              onLongPress: () {
-                                setState(() {
-                                  _enteredPin = '';
-                                  _errorText = null;
-                                });
-                              },
+                                },
+                              ),
                             ),
                           ),
                         ),

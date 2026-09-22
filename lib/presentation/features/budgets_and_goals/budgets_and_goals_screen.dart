@@ -40,6 +40,7 @@ class BudgetsAndGoalsScreen extends ConsumerWidget {
           ),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
+            tooltip: MaterialLocalizations.of(context).backButtonTooltip,
             onPressed: () => Navigator.of(context).pop(),
           ),
           bottom: TabBar(
@@ -62,18 +63,26 @@ class BudgetsAndGoalsScreen extends ConsumerWidget {
         ),
         floatingActionButton: Builder(
           builder: (context) {
-            return FloatingActionButton(
-              onPressed: () {
-                final tabController = DefaultTabController.of(context);
-                if (tabController.index == 0) {
-                  CreateEditBudgetSheet.show(context);
-                } else {
-                  CreateEditSavingsGoalSheet.show(context);
-                }
+            final tabController = DefaultTabController.of(context);
+            return AnimatedBuilder(
+              animation: tabController,
+              builder: (context, _) {
+                return FloatingActionButton(
+                  tooltip: tabController.index == 0
+                      ? AppLocalizations.of(context)!.addBudget
+                      : AppLocalizations.of(context)!.addSavingsGoal,
+                  onPressed: () {
+                    if (tabController.index == 0) {
+                      CreateEditBudgetSheet.show(context);
+                    } else {
+                      CreateEditSavingsGoalSheet.show(context);
+                    }
+                  },
+                  backgroundColor: colorScheme.primary,
+                  foregroundColor: colorScheme.onPrimary,
+                  child: const Icon(Icons.add_rounded),
+                );
               },
-              backgroundColor: colorScheme.primary,
-              foregroundColor: colorScheme.onPrimary,
-              child: const Icon(Icons.add_rounded),
             );
           },
         ),
@@ -91,7 +100,11 @@ class _BudgetsTabBody extends ConsumerWidget {
     final categoriesAsync = ref.watch(categoriesListProvider);
 
     return budgetsAsync.when(
-      loading: () => const Center(child: CircularProgressIndicator()),
+      loading: () => Center(
+        child: CircularProgressIndicator(
+          semanticsLabel: AppLocalizations.of(context)!.a11yLoading,
+        ),
+      ),
       error: (err, _) => _ErrorStateWidget(
         message: AppLocalizations.of(context)!.failedLoadBudgets,
         errorDetails: err.toString(),
@@ -206,111 +219,117 @@ class _BudgetCard extends ConsumerWidget {
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
-      child: Material(
-        color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
-        borderRadius: BorderRadius.circular(20),
-        child: InkWell(
-          onTap: () => CreateEditBudgetSheet.show(context, budget: budget),
-          borderRadius: BorderRadius.circular(20),
-          child: Container(
-            padding: const EdgeInsets.all(18),
-            decoration: BoxDecoration(
+      child: MergeSemantics(
+        child: Semantics(
+          label:
+              '${category.name}, ${AppLocalizations.of(context)!.a11yBudgetProgress} $progressStr, ${AppLocalizations.of(context)!.budgetSpentOf(spentStr, targetStr)}',
+          child: Material(
+            color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+            borderRadius: BorderRadius.circular(20),
+            child: InkWell(
+              onTap: () => CreateEditBudgetSheet.show(context, budget: budget),
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: colorScheme.outline.withValues(alpha: 0.08),
-              ),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
+              child: Container(
+                padding: const EdgeInsets.all(18),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: colorScheme.outline.withValues(alpha: 0.08),
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    CircleAvatar(
-                      radius: 18,
-                      backgroundColor: catColor.withValues(alpha: 0.12),
-                      child: Icon(catIcon, color: catColor, size: 18),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          FittedBox(
-                            fit: BoxFit.scaleDown,
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              category.name,
-                              style: theme.textTheme.bodyMedium?.copyWith(
-                                fontWeight: FontWeight.w700,
-                                color: colorScheme.onSurface,
+                    Row(
+                      children: [
+                        CircleAvatar(
+                          radius: 18,
+                          backgroundColor: catColor.withValues(alpha: 0.12),
+                          child: Icon(catIcon, color: catColor, size: 18),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              FittedBox(
+                                fit: BoxFit.scaleDown,
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  category.name,
+                                  style: theme.textTheme.bodyMedium?.copyWith(
+                                    fontWeight: FontWeight.w700,
+                                    color: colorScheme.onSurface,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                dateRangeStr,
+                                style: theme.textTheme.bodySmall?.copyWith(
+                                  color: colorScheme.onSurfaceVariant,
+                                  fontSize: 11,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text(
+                                progressStr,
+                                style: theme.textTheme.bodyMedium?.copyWith(
+                                  fontWeight: FontWeight.w800,
+                                  color: isOverspent
+                                      ? financialColors.negative
+                                      : colorScheme.onSurface,
+                                ),
                               ),
                             ),
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            dateRangeStr,
+                          ],
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            AppLocalizations.of(
+                              context,
+                            )!
+                                .budgetSpentOf(spentStr, targetStr),
                             style: theme.textTheme.bodySmall?.copyWith(
                               color: colorScheme.onSurfaceVariant,
-                              fontSize: 11,
+                              fontWeight: FontWeight.w500,
                             ),
                           ),
-                        ],
-                      ),
-                    ),
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        FittedBox(
-                          fit: BoxFit.scaleDown,
+                        ),
+                        const SizedBox(width: 8),
+                        Flexible(
                           child: Text(
-                            progressStr,
-                            style: theme.textTheme.bodyMedium?.copyWith(
-                              fontWeight: FontWeight.w800,
-                              color: isOverspent
-                                  ? financialColors.negative
-                                  : colorScheme.onSurface,
+                            statusText,
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: statusColor,
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
                         ),
                       ],
                     ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Text(
-                        AppLocalizations.of(
-                          context,
-                        )!
-                            .budgetSpentOf(spentStr, targetStr),
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: colorScheme.onSurfaceVariant,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Flexible(
-                      child: Text(
-                        statusText,
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: statusColor,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
+                    const SizedBox(height: 10),
+                    ProgressBarWidget(
+                      currentAmount: budget.currentAmount,
+                      targetAmount: budget.targetAmount,
+                      activeColor: catColor,
                     ),
                   ],
                 ),
-                const SizedBox(height: 10),
-                ProgressBarWidget(
-                  currentAmount: budget.currentAmount,
-                  targetAmount: budget.targetAmount,
-                  activeColor: catColor,
-                ),
-              ],
+              ),
             ),
           ),
         ),
@@ -327,7 +346,11 @@ class _SavingsGoalsTabBody extends ConsumerWidget {
     final savingsGoalsAsync = ref.watch(savingsGoalsStreamProvider);
 
     return savingsGoalsAsync.when(
-      loading: () => const Center(child: CircularProgressIndicator()),
+      loading: () => Center(
+        child: CircularProgressIndicator(
+          semanticsLabel: AppLocalizations.of(context)!.a11yLoading,
+        ),
+      ),
       error: (err, _) => _ErrorStateWidget(
         message: AppLocalizations.of(context)!.failedLoadSavingsGoals,
         errorDetails: err.toString(),
@@ -406,113 +429,121 @@ class _SavingsGoalCard extends ConsumerWidget {
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
-      child: Material(
-        color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
-        borderRadius: BorderRadius.circular(20),
-        child: InkWell(
-          onTap: () => CreateEditSavingsGoalSheet.show(context, goal: goal),
-          borderRadius: BorderRadius.circular(20),
-          child: Container(
-            padding: const EdgeInsets.all(18),
-            decoration: BoxDecoration(
+      child: MergeSemantics(
+        child: Semantics(
+          button: true,
+          hint: 'Double tap to edit',
+          label:
+              '${goal.name}, $progressStr, ${AppLocalizations.of(context)!.savingsSavedOf(savedStr, targetStr)}',
+          child: Material(
+            color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+            borderRadius: BorderRadius.circular(20),
+            child: InkWell(
+              onTap: () => CreateEditSavingsGoalSheet.show(context, goal: goal),
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: colorScheme.outline.withValues(alpha: 0.08),
-              ),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
+              child: Container(
+                padding: const EdgeInsets.all(18),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: colorScheme.outline.withValues(alpha: 0.08),
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    CircleAvatar(
-                      radius: 18,
-                      backgroundColor: goalColor.withValues(alpha: 0.12),
-                      child: Icon(goalIcon, color: goalColor, size: 18),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          FittedBox(
-                            fit: BoxFit.scaleDown,
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              goal.name,
-                              style: theme.textTheme.bodyMedium?.copyWith(
-                                fontWeight: FontWeight.w700,
-                                color: colorScheme.onSurface,
+                    Row(
+                      children: [
+                        CircleAvatar(
+                          radius: 18,
+                          backgroundColor: goalColor.withValues(alpha: 0.12),
+                          child: Icon(goalIcon, color: goalColor, size: 18),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              FittedBox(
+                                fit: BoxFit.scaleDown,
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  goal.name,
+                                  style: theme.textTheme.bodyMedium?.copyWith(
+                                    fontWeight: FontWeight.w700,
+                                    color: colorScheme.onSurface,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                targetDateStr,
+                                style: theme.textTheme.bodySmall?.copyWith(
+                                  color: colorScheme.onSurfaceVariant,
+                                  fontSize: 11,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text(
+                                progressStr,
+                                style: theme.textTheme.bodyMedium?.copyWith(
+                                  fontWeight: FontWeight.w800,
+                                  color: progress >= 1.0
+                                      ? financialColors.positive
+                                      : colorScheme.onSurface,
+                                ),
                               ),
                             ),
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            targetDateStr,
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: colorScheme.onSurfaceVariant,
-                              fontSize: 11,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        FittedBox(
-                          fit: BoxFit.scaleDown,
-                          child: Text(
-                            progressStr,
-                            style: theme.textTheme.bodyMedium?.copyWith(
-                              fontWeight: FontWeight.w800,
-                              color: progress >= 1.0
-                                  ? financialColors.positive
-                                  : colorScheme.onSurface,
-                            ),
-                          ),
+                          ],
                         ),
                       ],
                     ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Text(
-                        AppLocalizations.of(
-                          context,
-                        )!
-                            .savingsSavedOf(savedStr, targetStr),
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: colorScheme.onSurfaceVariant,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                    if (progress >= 1.0) ...[
-                      const SizedBox(width: 8),
-                      Flexible(
-                        child: Text(
-                          AppLocalizations.of(context)!.savingsGoalAchieved,
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: financialColors.positive,
-                            fontWeight: FontWeight.bold,
+                    const SizedBox(height: 16),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            AppLocalizations.of(
+                              context,
+                            )!
+                                .savingsSavedOf(savedStr, targetStr),
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: colorScheme.onSurfaceVariant,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                        if (progress >= 1.0) ...[
+                          const SizedBox(width: 8),
+                          Flexible(
+                            child: Text(
+                              AppLocalizations.of(context)!.savingsGoalAchieved,
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: financialColors.positive,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    ProgressBarWidget(
+                      currentAmount: goal.currentAmount,
+                      targetAmount: goal.targetAmount,
+                      activeColor: goalColor,
+                    ),
                   ],
                 ),
-                const SizedBox(height: 10),
-                ProgressBarWidget(
-                  currentAmount: goal.currentAmount,
-                  targetAmount: goal.targetAmount,
-                  activeColor: goalColor,
-                ),
-              ],
+              ),
             ),
           ),
         ),

@@ -164,7 +164,8 @@ The application strictly follows **Clean Architecture** to separate concerns and
 * **Native Widgets:** 2x1 horizontal glanceable home screen widgets on Android (RemoteViews) and iOS (WidgetKit/SwiftUI).
 * **Live Aggregations:** Displays rolling 30-day income and expenses converted to the user's default currency.
 * **Auto-Sync:** Synchronized reactively via `WidgetUpdateService` upon transaction mutations, currency updates, or locale changes.
-* **OS Polish:** Full Dark Mode support, direct tap-to-open routing to the app, compact typography, and realistic OS preview providers.
+* **OS Polish & Dynamic Theming:** Full Light/Dark mode adaptation via native system attributes (`?android:attr/colorBackground`, `?android:attr/textColorPrimary`, and iOS 17+ `.containerBackground` with `UIColor.systemBackground`), 16dp rounded corners drawable (`widget_background.xml`), direct tap-to-open routing to the app, compact typography, and realistic OS preview providers.
+* **Trilingual Localization:** Localized income and expenses titles across English, Spanish, and Catalan.
 
 ---
 
@@ -183,3 +184,32 @@ The application strictly follows **Clean Architecture** to separate concerns and
 3.  **Missing Initial Balance:** Accounts must mandate an initial balance to ensure financial ledgers match reality.
 4.  **Currency Ignorance:** Always factor in the exchange rate to the default currency; direct summation of different currencies will break totals.
 5.  **Missing Validations:** Prevent negative amounts, transfers with the same origin and destination, invalid dates, and categories that conflict with the transaction type.
+
+---
+
+### 8. Accessibility (a11y) & Screen Reader Architecture
+
+Stalvi enforces certified 100% accessibility compliance across Android (Google TalkBack) and iOS (Apple VoiceOver) following WCAG 2.1 AA/AAA and platform accessibility guidelines.
+
+#### 8.1. Semantic Tree Integration
+* **Semantic Merging (`MergeSemantics`):** Multi-element cards and list tiles (such as `_SummaryCard` in Analytics, `_TrashItemTile` in Recycle Bin, and settings `ListTile` items) MUST be wrapped in `MergeSemantics` so the title, subtitle, date, and amount are read sequentially as a single cohesive unit rather than fragmented, disjointed elements.
+* **Decorative Elements (`ExcludeSemantics`):** Purely decorative icons, avatar backgrounds, or redundant graphic indicators must be wrapped with `ExcludeSemantics` to keep the assistive navigation tree clean and direct.
+* **Semantic Values & Units (`Semantics(value: ..., label: ...)`):** Purely visual data indicators, such as `ProgressBarWidget`, must supply a localized label and numerical percentage value so screen readers vocalize progress and warning states clearly.
+
+#### 8.2. Dynamic Forms & Live Regions
+* **Dynamic Form Errors (`Semantics(liveRegion: true)`):** Validation error messages that appear asynchronously or on-demand (e.g., PIN retry count in `PinVerificationSheet`, budget limit validation in `CreateEditBudgetSheet`) must be wrapped in `Semantics(liveRegion: true)` to guarantee immediate announcement without shifting focus away from user inputs.
+* **Preserving Native Text Field Navigation:** Do NOT wrap `TextField` or `TextFormField` widgets in synthetic `Semantics(value: ...)` containers that override or block native cursor placement, character navigation, or selection controls.
+
+#### 8.3. Icon Pickers & Action Controls
+* **Localized Icon Catalogues:** All interactive icon cells (such as the 180 icons in `CategoryIconPicker`) must provide localized semantic labels (`a11yIcon...`) and tooltips across English, Spanish, and Catalan.
+* **Context-Aware Tooltips:** Management action buttons (e.g., Edit, Delete, Reorder) must provide context-aware tooltips specifying the target item name (e.g., "Delete Salary", "Edit Groceries").
+* **Touch Targets & Contrast:** All interactive controls must satisfy the minimum 48x48dp touch target constraint and maintain minimum 4.5:1 contrast ratios across both light and dark themes.
+
+### Accessibility (a11y) Compliance
+* **Screen Reader Support:** Full TalkBack (Android) and VoiceOver (iOS) compliance across all 28 presentation screens.
+* **Semantic Annotations:** All interactive elements (buttons, selectors, icons, color palettes) annotated with `Semantics(button, selected, label)`.
+* **Focus Management:** All modal dialogs and bottom sheets transfer focus on open.
+* **Live Regions:** Form validation errors announced automatically via `Semantics(liveRegion: true)`.
+* **Reduce Motion:** All animations respect `MediaQuery.disableAnimationsOf(context)`.
+* **Decorative Elements:** Non-informative icons wrapped with `ExcludeSemantics`.
+* **WCAG Contrast:** Minimum 4.5:1 contrast ratios on all interactive elements.

@@ -203,12 +203,14 @@ class _TransactionFilterSheetState
           children: [
             // ── Drag handle ────────────────────────────────────────────────
             Center(
-              child: Container(
-                width: 48,
-                height: 5,
-                decoration: BoxDecoration(
-                  color: colorScheme.onSurfaceVariant.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(10),
+              child: ExcludeSemantics(
+                child: Container(
+                  width: 48,
+                  height: 5,
+                  decoration: BoxDecoration(
+                    color: colorScheme.onSurfaceVariant.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                 ),
               ),
             ),
@@ -221,12 +223,18 @@ class _TransactionFilterSheetState
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        l10n.filterSheetTitle,
-                        style: theme.textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.w800,
-                          color: colorScheme.onSurface,
-                          letterSpacing: -0.3,
+                      Focus(
+                        autofocus: true,
+                        child: Semantics(
+                          header: true,
+                          child: Text(
+                            l10n.filterSheetTitle,
+                            style: theme.textTheme.titleLarge?.copyWith(
+                              fontWeight: FontWeight.w800,
+                              color: colorScheme.onSurface,
+                              letterSpacing: -0.3,
+                            ),
+                          ),
                         ),
                       ),
                       if (activeCount > 0) ...[

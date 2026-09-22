@@ -1,6 +1,6 @@
 # Terms and Conditions of Use
 
-**Effective Date:** August 17, 2026
+**Effective Date:** September 18, 2026
 
 Please read these Terms and Conditions ("Terms", "Agreement") carefully before downloading, installing, accessing, or using the Stalvi mobile application (the "Application" or "App").
 
@@ -18,6 +18,7 @@ Stalvi is a privacy-focused, local-first personal financial management tool desi
 ## 2. Local-First Architecture & SQLCipher Encryption
 - **Local-Only Storage:** Stalvi operates on a strict **local-first architecture**. All transaction logs, account balances, budgets, categories, PIN hashes, and custom preferences are stored exclusively on your device. Stalvi does not transmit, back up, sync, store, or process your financial data on external servers or cloud services.
 - **SQLCipher AES-256 Encryption:** The underlying SQLite database is encrypted at rest using **SQLCipher with AES-256 bit encryption**. Cryptographic keys are protected using native hardware-backed secure storage interfaces (Android KeyStore / iOS Keychain via `flutter_secure_storage`).
+- **Widget Display Visibility:** Native home screen or lock screen widgets display aggregated financial summaries (total income and expenses for the past 30 days) directly on the operating system interface without requiring PIN entry or biometric authentication. By choosing to add and display these widgets, you accept sole responsibility for the visual exposure of such totals to anyone with physical or visual access to your device.
 - **No Remote Access or Backdoors:** The developers have zero access to your device, your PIN, your encryption keys, or your database.
 
 ---
@@ -54,7 +55,8 @@ YOU ARE SOLELY RESPONSIBLE FOR VERIFYING THE ACCURACY OF ALL TRANSACTIONS, CALCU
 ## 5. User Responsibility & Data Backup
 - **Forgotten PIN / Biometrics:** Because all data is encrypted on-device with keys managed by your device credentials, forgetting your PIN or losing biometric access will render your database unreadable. **The developers cannot reset your PIN or recover your encrypted data.**
 - **Device Loss or Corruption:** If your device is lost, damaged, stolen, factory reset, or if the App is uninstalled without exporting an encrypted backup file, your financial data is permanently lost.
-- **Backup Responsibility:** You are solely responsible for creating regular encrypted database backups or CSV exports and transferring them to secure off-device storage.
+- **Backup Responsibility & Exported Files:** You are solely responsible for creating regular encrypted database backups or exports (CSV files or PDF reports) and transferring them to secure off-device storage. When you generate and export CSV files or PDF reports, these documents leave Stalvi's encrypted sandbox; the security, custody, and confidentiality of these exported files rest entirely with you and the third-party applications or storage platforms you select.
+- **Recycle Bin & Permanent Purge:** The Application provides a local recycle bin that retains deleted items for a 30-day grace period prior to automatic permanent purge. You are responsible for inspecting the recycle bin and restoring any necessary data before this retention window closes or prior to triggering a manual permanent purge.
 
 ---
 

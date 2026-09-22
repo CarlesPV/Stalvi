@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -265,6 +266,124 @@ void main() {
         await tester.pump();
 
         expect(find.text('Enable Biometric Login'), findsNothing);
+      },
+    );
+
+    testWidgets(
+      'triggers HapticFeedback.lightImpact on dial key tap and heavyImpact on error',
+      (WidgetTester tester) async {
+        final List<String> hapticFeedbackCalls = [];
+        tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+          SystemChannels.platform,
+          (MethodCall methodCall) async {
+            if (methodCall.method == 'HapticFeedback.vibrate') {
+              hapticFeedbackCalls.add(methodCall.arguments as String);
+            }
+            return null;
+          },
+        );
+
+        when(() => mockSecureStorage.hasPin()).thenAnswer((_) async => true);
+        when(() => mockSecureStorage.getPinLength()).thenAnswer((_) async => 4);
+        when(
+          () => mockSecureStorage.getPinHash(),
+        ).thenAnswer((_) async => hashPin('9999'));
+
+        final container = ProviderContainer(
+          overrides: [
+            secureStorageProvider.overrideWithValue(mockSecureStorage),
+            biometricAuthServiceProvider.overrideWithValue(mockBiometricAuth),
+            transactionsStreamProvider.overrideWith(
+              (ref) => Stream.value(<Transaction>[]),
+            ),
+            accountsListProvider.overrideWith(
+              (ref) => Stream.value(<Account>[]),
+            ),
+          ],
+        );
+        addTearDown(container.dispose);
+
+        await tester.pumpWidget(buildTestApp(container: container));
+        await tester.pump();
+
+        // Tap digit 1
+        await tester.tap(find.text('1'));
+        await tester.pump();
+
+        expect(
+          hapticFeedbackCalls,
+          contains('HapticFeedbackType.lightImpact'),
+        );
+        hapticFeedbackCalls.clear();
+
+        // Enter wrong pin: 1, 2, 3, 4
+        await tester.tap(find.text('2'));
+        await tester.pump();
+        await tester.tap(find.text('3'));
+        await tester.pump();
+        await tester.tap(find.text('4'));
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 200));
+
+        // Wrong pin should trigger heavy impact
+        expect(
+          hapticFeedbackCalls,
+          contains('HapticFeedbackType.heavyImpact'),
+        );
+      },
+    );
+
+    testWidgets(
+      'renders accessible terms checkbox and link buttons in setup form',
+      (WidgetTester tester) async {
+        when(() => mockSecureStorage.hasPin()).thenAnswer((_) async => false);
+
+        final container = ProviderContainer(
+          overrides: [
+            secureStorageProvider.overrideWithValue(mockSecureStorage),
+            biometricAuthServiceProvider.overrideWithValue(mockBiometricAuth),
+            transactionsStreamProvider.overrideWith(
+              (ref) => Stream.value(<Transaction>[]),
+            ),
+            accountsListProvider.overrideWith(
+              (ref) => Stream.value(<Account>[]),
+            ),
+          ],
+        );
+        addTearDown(container.dispose);
+
+        await tester.pumpWidget(buildTestApp(container: container));
+        await tester.pump();
+
+        // Verify Checkbox is wrapped in Semantics with label 'Accept terms and privacy policy'
+        final checkboxSemantics = find.byWidgetPredicate((widget) {
+          if (widget is Semantics) {
+            final props = widget.properties;
+            return props.label == 'Accept terms and privacy policy';
+          }
+          return false;
+        });
+        expect(checkboxSemantics, findsOneWidget);
+
+        // Verify Terms and Privacy Policy have Semantics button: true
+        final termsSemantics = find.byWidgetPredicate((widget) {
+          if (widget is Semantics) {
+            final props = widget.properties;
+            return props.button == true &&
+                props.label == 'Terms and Conditions';
+          }
+          return false;
+        });
+        expect(termsSemantics, findsOneWidget);
+
+        final privacySemantics = find.byWidgetPredicate((widget) {
+          if (widget is Semantics) {
+            final props = widget.properties;
+            return props.button == true && props.label == 'Privacy Policy';
+          }
+          return false;
+        });
+        expect(privacySemantics, findsOneWidget);
       },
     );
   });

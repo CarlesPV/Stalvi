@@ -174,6 +174,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
+          tooltip: MaterialLocalizations.of(context).backButtonTooltip,
           onPressed: isLoading ? null : () => Navigator.of(context).pop(),
         ),
       ),
@@ -198,84 +199,111 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                   child: Row(
                     children: [
                       Expanded(
-                        child: GestureDetector(
-                          onTap: () {
-                            ref
-                                .read(addTransactionProvider.notifier)
-                                .updateType(TransactionType.expense);
-                          },
-                          child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 200),
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              color: state.type == TransactionType.expense
-                                  ? financialColors.negative
-                                  : Colors.transparent,
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Text(
-                              AppLocalizations.of(context)!.expense(1),
-                              style: theme.textTheme.bodyMedium?.copyWith(
-                                fontWeight: FontWeight.w700,
+                        child: Semantics(
+                          button: true,
+                          selected: state.type == TransactionType.expense,
+                          label: AppLocalizations.of(context)!.expense(1),
+                          hint: state.type == TransactionType.expense
+                              ? AppLocalizations.of(context)!.a11ySelectedHint
+                              : AppLocalizations.of(context)!.a11yTapToSelect,
+                          child: GestureDetector(
+                            onTap: () {
+                              HapticFeedback.selectionClick();
+                              ref
+                                  .read(addTransactionProvider.notifier)
+                                  .updateType(TransactionType.expense);
+                            },
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 200),
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
                                 color: state.type == TransactionType.expense
-                                    ? colorScheme.onPrimary
-                                    : colorScheme.onSurfaceVariant,
+                                    ? financialColors.negative
+                                    : Colors.transparent,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Text(
+                                AppLocalizations.of(context)!.expense(1),
+                                style: theme.textTheme.bodyMedium?.copyWith(
+                                  fontWeight: FontWeight.w700,
+                                  color: state.type == TransactionType.expense
+                                      ? colorScheme.onPrimary
+                                      : colorScheme.onSurfaceVariant,
+                                ),
                               ),
                             ),
                           ),
                         ),
                       ),
                       Expanded(
-                        child: GestureDetector(
-                          onTap: () {
-                            ref
-                                .read(addTransactionProvider.notifier)
-                                .updateType(TransactionType.income);
-                          },
-                          child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 200),
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              color: state.type == TransactionType.income
-                                  ? financialColors.positive
-                                  : Colors.transparent,
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Text(
-                              AppLocalizations.of(context)!.income(1),
-                              style: theme.textTheme.bodyMedium?.copyWith(
-                                fontWeight: FontWeight.w700,
+                        child: Semantics(
+                          button: true,
+                          selected: state.type == TransactionType.income,
+                          label: AppLocalizations.of(context)!.income(1),
+                          hint: state.type == TransactionType.income
+                              ? AppLocalizations.of(context)!.a11ySelectedHint
+                              : AppLocalizations.of(context)!.a11yTapToSelect,
+                          child: GestureDetector(
+                            onTap: () {
+                              HapticFeedback.selectionClick();
+                              ref
+                                  .read(addTransactionProvider.notifier)
+                                  .updateType(TransactionType.income);
+                            },
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 200),
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
                                 color: state.type == TransactionType.income
-                                    ? colorScheme.onPrimary
-                                    : colorScheme.onSurfaceVariant,
+                                    ? financialColors.positive
+                                    : Colors.transparent,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Text(
+                                AppLocalizations.of(context)!.income(1),
+                                style: theme.textTheme.bodyMedium?.copyWith(
+                                  fontWeight: FontWeight.w700,
+                                  color: state.type == TransactionType.income
+                                      ? colorScheme.onPrimary
+                                      : colorScheme.onSurfaceVariant,
+                                ),
                               ),
                             ),
                           ),
                         ),
                       ),
                       Expanded(
-                        child: GestureDetector(
-                          onTap: () {
-                            ref
-                                .read(addTransactionProvider.notifier)
-                                .updateType(TransactionType.transfer);
-                          },
-                          child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 200),
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              color: state.type == TransactionType.transfer
-                                  ? colorScheme.primary
-                                  : Colors.transparent,
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Text(
-                              AppLocalizations.of(context)!.filterTransfer,
-                              style: theme.textTheme.bodyMedium?.copyWith(
-                                fontWeight: FontWeight.w700,
+                        child: Semantics(
+                          button: true,
+                          selected: state.type == TransactionType.transfer,
+                          label: AppLocalizations.of(context)!.filterTransfer,
+                          hint: state.type == TransactionType.transfer
+                              ? AppLocalizations.of(context)!.a11ySelectedHint
+                              : AppLocalizations.of(context)!.a11yTapToSelect,
+                          child: GestureDetector(
+                            onTap: () {
+                              HapticFeedback.selectionClick();
+                              ref
+                                  .read(addTransactionProvider.notifier)
+                                  .updateType(TransactionType.transfer);
+                            },
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 200),
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
                                 color: state.type == TransactionType.transfer
-                                    ? colorScheme.onPrimary
-                                    : colorScheme.onSurfaceVariant,
+                                    ? colorScheme.primary
+                                    : Colors.transparent,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Text(
+                                AppLocalizations.of(context)!.filterTransfer,
+                                style: theme.textTheme.bodyMedium?.copyWith(
+                                  fontWeight: FontWeight.w700,
+                                  color: state.type == TransactionType.transfer
+                                      ? colorScheme.onPrimary
+                                      : colorScheme.onSurfaceVariant,
+                                ),
                               ),
                             ),
                           ),
@@ -344,6 +372,10 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                                 ),
                                 textAlign: TextAlign.left,
                                 decoration: InputDecoration(
+                                  labelText:
+                                      '${AppLocalizations.of(context)!.labelAmount} ${CurrencyFormatter.getCurrencySymbol(state.currency ?? 'EUR')}',
+                                  floatingLabelBehavior:
+                                      FloatingLabelBehavior.never,
                                   hintText: AppLocalizations.of(
                                     context,
                                   )!
@@ -759,12 +791,14 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                     shadowColor: activeColor.withValues(alpha: 0.3),
                   ),
                   child: isLoading
-                      ? const SizedBox(
+                      ? SizedBox(
                           width: 24,
                           height: 24,
                           child: CircularProgressIndicator(
+                            semanticsLabel:
+                                AppLocalizations.of(context)!.a11yLoading,
                             strokeWidth: 2.5,
-                            valueColor: AlwaysStoppedAnimation<Color>(
+                            valueColor: const AlwaysStoppedAnimation<Color>(
                               Colors.white,
                             ),
                           ),
@@ -815,12 +849,18 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text(
-                titleText,
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w800,
+              Focus(
+                autofocus: true,
+                child: Semantics(
+                  header: true,
+                  child: Text(
+                    titleText,
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w800,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
                 ),
-                textAlign: TextAlign.center,
               ),
               const SizedBox(height: 16),
               Flexible(
@@ -853,6 +893,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                           ),
                         ),
                         child: ListTile(
+                          selected: isSelected,
                           leading: CircleAvatar(
                             backgroundColor: accColor.withValues(alpha: 0.12),
                             child: Icon(
@@ -915,6 +956,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                           ),
                         ),
                         child: ListTile(
+                          selected: isSelected,
                           leading: CircleAvatar(
                             backgroundColor: goalColor.withValues(alpha: 0.12),
                             child: Icon(
@@ -998,12 +1040,18 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text(
-                AppLocalizations.of(context)!.labelSelectCategory,
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w800,
+              Focus(
+                autofocus: true,
+                child: Semantics(
+                  header: true,
+                  child: Text(
+                    AppLocalizations.of(context)!.labelSelectCategory,
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w800,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
                 ),
-                textAlign: TextAlign.center,
               ),
               const SizedBox(height: 16),
               Flexible(
@@ -1083,6 +1131,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                       child: Material(
                         color: Colors.transparent,
                         child: ListTile(
+                          selected: isSelected,
                           leading: CircleAvatar(
                             backgroundColor: catColor.withValues(alpha: 0.12),
                             child: Icon(catIcon, color: catColor, size: 20),
@@ -1173,12 +1222,18 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text(
-                AppLocalizations.of(context)!.labelSelectCurrency,
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w800,
+              Focus(
+                autofocus: true,
+                child: Semantics(
+                  header: true,
+                  child: Text(
+                    AppLocalizations.of(context)!.labelSelectCurrency,
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w800,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
                 ),
-                textAlign: TextAlign.center,
               ),
               const SizedBox(height: 16),
               Flexible(
@@ -1206,6 +1261,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                         ),
                       ),
                       child: ListTile(
+                        selected: isSelected,
                         leading: CircleAvatar(
                           backgroundColor: colorScheme.primary.withValues(
                             alpha: 0.12,
@@ -1267,12 +1323,18 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text(
-                AppLocalizations.of(context)!.labelSelectTag,
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w800,
+              Focus(
+                autofocus: true,
+                child: Semantics(
+                  header: true,
+                  child: Text(
+                    AppLocalizations.of(context)!.labelSelectTag,
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w800,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
                 ),
-                textAlign: TextAlign.center,
               ),
               const SizedBox(height: 16),
               Flexible(
@@ -1353,6 +1415,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                       child: Material(
                         color: Colors.transparent,
                         child: ListTile(
+                          selected: isSelected,
                           leading: CircleAvatar(
                             backgroundColor: colorScheme.tertiary.withValues(
                               alpha: 0.12,
@@ -1421,6 +1484,7 @@ class _FormSelectorTile extends StatelessWidget {
     return MergeSemantics(
       child: Semantics(
         button: true,
+        label: '$label, $value',
         child: InkWell(
           onTap: onTap,
           borderRadius: BorderRadius.circular(20),
@@ -1458,9 +1522,11 @@ class _FormSelectorTile extends StatelessWidget {
                     ],
                   ),
                 ),
-                Icon(
-                  Icons.chevron_right_rounded,
-                  color: colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
+                ExcludeSemantics(
+                  child: Icon(
+                    Icons.chevron_right_rounded,
+                    color: colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
+                  ),
                 ),
               ],
             ),

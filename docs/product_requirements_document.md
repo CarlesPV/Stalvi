@@ -22,9 +22,11 @@ Individuals who want complete control over their personal finances without relyi
 - **Legal Compliance:** Separate visual access to Terms & Conditions and Privacy Policy documents, fully localized in the active language of the app, available both during registration and within settings.
 - **Data Portability:** Secure export and import functionalities (CSV, Excel, PDF, JSON), preserving and restoring user profiles (including usernames) and full Unicode font support in PDF exports to guarantee accurate rendering of all currency symbols without placeholder characters.
 - **Standardized Input Constraints & Formatters:** Robust length limits and formatters (Money: 13 digits + 2 decimals; Names/Usernames: 25 characters; Tags/Accounts/Categories/Savings Goals: 31 characters; Notes: 63 characters) with visible character counters, permitting full Unicode accented letters, combining marks, Catalan punt volat, apostrophes, and standard punctuation.
+- **Home Screen Widgets:** Glanceable 2x1 native widgets on Android and iOS displaying 30-day income and expense summaries in real-time with dynamic system theming (Light/Dark mode), 16dp rounded corners, and trilingual localization.
 
 ## 5. Non-Functional Requirements
 - **Platforms:** iOS and Android (via Flutter).
 - **Performance:** Instantaneous database queries utilizing SQLite aggregate functions. Reliable first-time account initialization and login.
 - **Localization:** 100% localization in English, Spanish, and Catalan, covering all user-interface text, buttons, errors, default category names, and default account titles.
 - **Responsive Layout & Text Scaling:** Defensive UI design preventing text overflow without truncation or content omission, employing proportional text scaling and clamped navigation bar font scaling.
+- **Accessibility (a11y):** 100% TalkBack and VoiceOver screen reader compliance across all screens, WCAG AAA contrast, reduce motion support, and dynamic live region error announcements.
